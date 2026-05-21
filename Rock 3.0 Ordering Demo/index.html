@@ -1,11 +1,1133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rock 3.0 CST Ordering Demo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protect My Ministry v3 Integration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --background: #FAFAFA;
+  --foreground: #252525;
+  --card: #FFFFFF;
+  --card-foreground: #252525;
+  --primary: #3555a0;
+  --primary-foreground: #fbfbfb;
+  --secondary: #F6F4F3;
+  --secondary-foreground: #363636;
+  --muted: #F6F6F6;
+  --muted-foreground: #6B6B6B;
+  --border: #E8E8E8;
+  --input-border: #C4C4C4;
+  --input-focus-border: #328CAE;
+  --ring: #1863CC;
+  --icon-bg: #2C3E50;
+  --icon-fg: #FFFFFF;
+  --demo-bg: #EFEDFa;
+  --demo-hover: #E8E7EF;
+  --demo-pressed: #D9D7E5;
+  --demo-border: #D9D7E5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+  --shadow-demo: 0 4px 12px rgba(0,0,0,0.15);
+  --font-family: 'Red Hat Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --heading-1: 18pt;
+  --section-heading: 14pt;
+  --local-heading: 16pt;
+  --button-label: 14pt;
+  --body-text: 14pt;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family);font-size:var(--text-base);font-weight:var(--font-regular);line-height:1.5;background:var(--background);color:var(--foreground);-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-family);font-weight:var(--font-medium);line-height:1.4;margin:0;}
+h1{font-size:var(--text-xl);}h2{font-size:var(--text-lg);}h3{font-size:var(--text-md);}h4{font-size:var(--text-base);}
+p{margin:0;}
+button{font-family:var(--font-family);font-weight:var(--font-medium);cursor:pointer;}
+input,select{font-family:var(--font-family);}
+a{color:var(--primary);}
+table{border-collapse:collapse;width:100%;}
+.page{display:none;}
+.page.active{display:block;}
+/* Badge */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:var(--text-xs);font-weight:var(--font-medium);font-family:var(--font-family);}
+.badge-pending{background:#FFF9C4;color:#F57F17;}
+.badge-invited{background:#E3F2FD;color:#1565C0;}
+.badge-opened{background:#E8EAF6;color:#3949AB;}
+.badge-failed{background:#FFEBEE;color:#B71C1C;}
+.badge-incomplete{background:#FFF3E0;color:#E65100;}
+.badge-complete{background:#E8F5E9;color:#2E7D32;}
+.badge-inprogress{background:#E3F2FD;color:#1565C0;}
+.badge-default{background:#F5F5F5;color:#616161;}
+/* Tab active */
+.tab-active{background:#EE7624!important;color:white!important;border-radius:4px 4px 0 0;}
+/* Stepper */
+.step-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--text-base);font-weight:var(--font-semibold);font-family:var(--font-family);}
+.step-active .step-circle{background:var(--primary);color:white;}
+.step-done .step-circle{background:#E0E0E0;color:#757575;}
+.step-todo .step-circle{background:#F5F5F5;color:#757575;}
+.step-active .step-label{color:var(--foreground);font-weight:var(--font-semibold);}
+.step-done .step-label,.step-todo .step-label{color:var(--muted-foreground);}
+/* Input / select base */
+.input-base{width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:var(--text-base);font-family:var(--font-family);background:var(--card);color:var(--foreground);}
+.input-base:focus{outline:none;border-color:var(--input-focus-border);}
+/* Btn */
+.btn-primary{padding:10px 24px;background:var(--primary);color:var(--primary-foreground);border:none;border-radius:var(--radius-md);font-size:var(--button-label);font-family:var(--font-family);font-weight:var(--font-medium);}
+.btn-secondary{padding:10px 24px;background:transparent;color:var(--foreground);border:1px solid var(--border);border-radius:var(--radius-md);font-size:var(--button-label);font-family:var(--font-family);font-weight:var(--font-medium);}
+.btn-orange{padding:10px 24px;background:#EE7624;color:white;border:none;border-radius:var(--radius-sm);font-size:var(--button-label);font-family:var(--font-family);font-weight:var(--font-medium);}
+.btn-muted{padding:var(--spacing-sm) var(--spacing-md);background:var(--muted);color:var(--foreground);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);font-weight:var(--font-medium);}
+.btn-outline-sm{padding:6px 12px;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);font-weight:var(--font-medium);display:inline-flex;align-items:center;gap:4px;}
+/* Card */
+.card{background:var(--card);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);}
+/* Alert banners */
+.alert-yellow{padding:var(--spacing-md);background:#FFF9E6;border:1px solid #FFE794;border-radius:var(--radius-sm);}
+.alert-green{padding:var(--spacing-md);background:#E8F5E9;border:1px solid #81C784;border-radius:var(--radius-sm);}
+.alert-red{padding:var(--spacing-lg);background:#FFEBEE;border:1px solid #EF5350;border-radius:var(--radius-sm);display:flex;align-items:flex-start;gap:var(--spacing-md);}
+/* Profile image placeholder */
+.profile-img-placeholder{width:100%;height:220px;background:#C8B8A2;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.profile-img-placeholder img{width:100%;height:100%;object-fit:cover;}
+</style>
 </head>
 <body>
-  <p>Demo coming soon — save rock-3-cst-ordering-demo.html to trigger auto-deploy.</p>
+
+<!-- =================== LANDING PAGE =================== -->
+<div id="page-landing" class="page active">
+  <header style="background:#E87722;padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.1);">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(255,255,255,0.2);">
+          <span style="color:#fff;">⛰</span>
+        </div>
+        <h4 style="color:#fff;margin:0;">Rock RMS</h4>
+      </div>
+      <span style="color:rgba(255,255,255,0.6);">/</span>
+      <span style="color:#fff;">Protect My Ministry</span>
+    </div>
+  </header>
+
+  <!-- Demo Controls -->
+  <div id="demo-controls-landing" style="position:fixed;bottom:32px;left:32px;z-index:50;background:var(--demo-bg);border-radius:var(--radius-md);box-shadow:var(--shadow-demo);border:1px solid var(--demo-border);padding:var(--spacing-lg);min-width:220px;">
+    <p style="font-size:var(--text-xs);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.5px;font-weight:var(--font-medium);margin-bottom:4px;">Demo Controls</p>
+    <p style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:8px;">Entry Point</p>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <button onclick="navigate('person-profile')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;text-align:left;background:transparent;color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);">
+        &#8594; Person Profile
+      </button>
+      <div>
+        <button onclick="void(0)" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);width:100%;">
+          &#8594; Direct Plugin
+        </button>
+        <div style="margin-left:16px;margin-top:4px;">
+          <button onclick="navigate('landing')" style="display:block;width:100%;padding:4px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;margin-bottom:4px;">Recommended</button>
+          <button onclick="navigate('unhappy-path')" style="display:block;width:100%;padding:4px 12px;background:transparent;color:var(--muted-foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;margin-bottom:4px;">Unhappy Path</button>
+          <button onclick="void(0)" style="display:block;width:100%;padding:4px 12px;background:transparent;color:var(--muted-foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;">NO CST</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:var(--spacing-2xl);max-width:1200px;margin:0 auto;">
+    <!-- Page Header -->
+    <div style="margin-bottom:var(--spacing-4xl);">
+      <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-sm);flex-wrap:wrap;">
+        <h1 style="font-size:var(--heading-1);font-weight:var(--font-semibold);color:var(--foreground);">Protect My Ministry</h1>
+        <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);background:#F0F0F0;padding:2px 8px;border-radius:var(--radius-sm);">V3 Integration</span>
+      </div>
+      <p style="font-size:var(--text-base);color:var(--secondary-foreground);">Order Background Checks and Safety Training, and manage your PMM Plugin</p>
+    </div>
+
+    <!-- Order Type Selection -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 style="margin-bottom:var(--spacing-xl);font-size:var(--section-heading);font-weight:var(--font-medium);color:#4A4A4A;">What would you like to order?</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--spacing-lg);">
+        <!-- Child Safety Training Card -->
+        <div class="card" style="padding:var(--spacing-xl);display:flex;flex-direction:column;height:200px;">
+          <div style="flex:1;margin-bottom:var(--spacing-lg);">
+            <div style="display:flex;align-items:center;gap:var(--spacing-md);margin-bottom:var(--spacing-md);">
+              <div style="width:32px;height:32px;border-radius:6px;background:var(--icon-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <h3 style="font-size:var(--text-md);font-weight:var(--font-medium);color:var(--foreground);">Child Safety Training</h3>
+            </div>
+            <p style="color:var(--secondary-foreground);font-size:var(--text-base);line-height:20px;">Order Child Safety Training for groups or individuals</p>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;">
+            <button onclick="navigate('child-safety-training-invite')" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:6px 8px;background:transparent;border:none;border-radius:var(--radius-md);color:var(--primary);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">
+              Start Order &#8250;
+            </button>
+          </div>
+        </div>
+        <!-- Background Check Card -->
+        <div class="card" style="padding:var(--spacing-xl);display:flex;flex-direction:column;height:200px;">
+          <div style="flex:1;margin-bottom:var(--spacing-lg);">
+            <div style="display:flex;align-items:center;gap:var(--spacing-md);margin-bottom:var(--spacing-md);">
+              <div style="width:32px;height:32px;border-radius:6px;background:var(--icon-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3 style="font-size:var(--text-md);font-weight:var(--font-medium);color:var(--foreground);">Background Check</h3>
+            </div>
+            <p style="color:var(--secondary-foreground);font-size:var(--text-base);line-height:20px;">Order Background checks via candidate invite or start a manual order. You can add safety training invite to background check orders too.</p>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:var(--spacing-lg);">
+            <button onclick="navigate('background-check-invite')" style="display:inline-flex;align-items:center;gap:4px;padding:6px 8px;background:transparent;border:none;color:var(--foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">Manual Order</button>
+            <button onclick="navigate('background-check-invite')" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:6px 8px;background:var(--primary);border:none;border-radius:var(--radius-md);color:var(--primary-foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">
+              Start Invite Order &#8250;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin-bottom:var(--spacing-2xl);"></div>
+
+    <!-- Plugin Settings -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 style="margin-bottom:var(--spacing-xl);font-size:var(--section-heading);font-weight:var(--font-medium);color:#4A4A4A;">Plugin Settings</h2>
+      <div class="card" style="padding:var(--spacing-xl);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+          <div style="flex:1;">
+            <button onclick="toggleWebhooks()" style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) 0;background:transparent;border:none;color:var(--foreground);font-size:var(--text-base);font-weight:var(--font-medium);font-family:var(--font-family);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 16.98h-5.99c-1.1 0-1.95.68-2.23 1.62m0 0A3.5 3.5 0 1 0 10 22h8M18 16.98a3.5 3.5 0 0 0 0-7h-1.67m-5.67 3.5a3.5 3.5 0 0 1-7 0 3.5 3.5 0 0 1 7 0z"/></svg>
+              <span>Advanced Settings</span>
+              <span id="webhook-chevron">&#8964;</span>
+            </button>
+            <div id="webhooks-panel" style="display:none;padding-left:24px;margin-top:var(--spacing-md);">
+              <div style="margin-bottom:var(--spacing-xl);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-md);">
+                  <p style="font-size:var(--text-base);font-weight:var(--font-medium);">Subscribed Webhooks</p>
+                  <button class="btn-secondary" style="padding:6px 12px;font-size:var(--text-sm);">Edit</button>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:var(--spacing-sm);">
+                  <div style="padding:var(--spacing-md);background:var(--muted);border-radius:var(--radius-sm);"><p style="font-size:var(--text-sm);font-family:monospace;">https://rock.church/api/pmm/webhook</p></div>
+                  <div style="padding:var(--spacing-md);background:var(--muted);border-radius:var(--radius-sm);"><p style="font-size:var(--text-sm);font-family:monospace;">https://backup.rock.church/api/pmm/webhook</p></div>
+                </div>
+              </div>
+              <div style="margin-bottom:var(--spacing-xl);">
+                <p style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:var(--spacing-md);">API Secret</p>
+                <div style="padding:var(--spacing-md);background:var(--muted);border-radius:var(--radius-sm);"><p style="font-size:var(--text-sm);">Configured</p></div>
+              </div>
+              <div>
+                <p style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:var(--spacing-md);">Update Group</p>
+                <div style="padding:var(--spacing-md);background:var(--muted);border-radius:var(--radius-sm);"><p style="font-size:var(--text-sm);">Completed Background Checks Notified Group</p></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:var(--spacing-sm);margin-left:var(--spacing-lg);flex-shrink:0;">
+            <button onclick="window.open('https://www.protectmyministry.com/','_blank')" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-lg);background:transparent;border:none;color:var(--foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">
+              Go to Protect My Ministry
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+            <button style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-lg);background:var(--muted);border:none;border-radius:var(--radius-md);color:var(--foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+              Sync Plugin
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin-bottom:var(--spacing-2xl);"></div>
+
+    <!-- Recent Orders Table -->
+    <div id="recent-orders-landing"></div>
+  </div>
+</div>
+
+<!-- =================== BACKGROUND CHECK INVITE (multi-step) =================== -->
+<div id="page-background-check-invite" class="page">
+  <header style="background:#E87722;padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.1);">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(255,255,255,0.2);"><span style="color:#fff;">⛰</span></div>
+        <h4 style="color:#fff;margin:0;">Rock RMS</h4>
+      </div>
+      <span style="color:rgba(255,255,255,0.6);">/</span>
+      <span style="color:#fff;">Protect My Ministry</span>
+    </div>
+  </header>
+  <div id="demo-controls-bgcheck" style="position:fixed;bottom:32px;left:32px;z-index:50;background:var(--demo-bg);border-radius:var(--radius-md);box-shadow:var(--shadow-demo);border:1px solid var(--demo-border);padding:var(--spacing-lg);min-width:220px;">
+    <p style="font-size:var(--text-xs);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.5px;font-weight:var(--font-medium);margin-bottom:4px;">Demo Controls</p>
+    <p style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:8px;">Entry Point</p>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <button onclick="navigate('person-profile')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:transparent;color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);">&#8594; Person Profile</button>
+      <button onclick="navigate('landing')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);">&#8594; Direct Plugin</button>
+    </div>
+  </div>
+  <div style="padding:var(--spacing-2xl);max-width:1200px;margin:0 auto;">
+    <h1 style="font-size:var(--heading-1);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Invite Order</h1>
+    <!-- Breadcrumb -->
+    <div style="display:flex;align-items:center;gap:4px;margin-bottom:var(--spacing-2xl);font-size:var(--text-sm);font-family:var(--font-family);">
+      <span style="color:var(--muted-foreground);">Home</span>
+      <span style="color:var(--muted-foreground);"> &rsaquo; </span>
+      <span style="color:var(--muted-foreground);">Installed Plugins</span>
+      <span style="color:var(--muted-foreground);"> &rsaquo; </span>
+      <a href="#" onclick="navigate('landing');return false;" style="color:var(--primary);text-decoration:none;">Protect My Ministry v3 Integration</a>
+      <span style="color:var(--muted-foreground);"> &rsaquo; </span>
+      <span style="color:var(--foreground);">Invite Order</span>
+    </div>
+    <!-- Stepper -->
+    <div id="bg-stepper" style="display:flex;align-items:center;justify-content:center;gap:var(--spacing-lg);margin-bottom:var(--spacing-3xl);padding:var(--spacing-xl) 0;"></div>
+    <!-- Steps content -->
+    <div id="bg-step-1"></div>
+    <div id="bg-step-2" style="display:none;"></div>
+    <div id="bg-step-3" style="display:none;"></div>
+    <div id="bg-step-4" style="display:none;"></div>
+    <div id="bg-step-5" style="display:none;"></div>
+    <div id="bg-step-6" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- =================== CHILD SAFETY TRAINING INVITE =================== -->
+<div id="page-child-safety-training-invite" class="page">
+  <header style="background:#E87722;padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.1);">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(255,255,255,0.2);"><span style="color:#fff;">⛰</span></div><h4 style="color:#fff;margin:0;">Rock RMS</h4></div>
+      <span style="color:rgba(255,255,255,0.6);">/</span><span style="color:#fff;">Protect My Ministry</span>
+    </div>
+  </header>
+  <div style="position:fixed;bottom:32px;left:32px;z-index:50;background:var(--demo-bg);border-radius:var(--radius-md);box-shadow:var(--shadow-demo);border:1px solid var(--demo-border);padding:var(--spacing-lg);min-width:220px;">
+    <p style="font-size:var(--text-xs);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.5px;font-weight:var(--font-medium);margin-bottom:4px;">Demo Controls</p>
+    <p style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:8px;">Entry Point</p>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <button onclick="navigate('person-profile')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:transparent;color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);">&#8594; Person Profile</button>
+      <button onclick="navigate('landing')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);">&#8594; Direct Plugin</button>
+    </div>
+  </div>
+  <div style="padding:var(--spacing-2xl);max-width:1000px;margin:0 auto;" id="cst-invite-content"></div>
+</div>
+
+<!-- =================== PERSON PROFILE =================== -->
+<div id="page-person-profile" class="page">
+  <header style="background:#E87722;padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.1);">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(255,255,255,0.2);"><span style="color:#fff;">⛰</span></div><h4 style="color:#fff;margin:0;">Rock RMS</h4></div>
+      <span style="color:rgba(255,255,255,0.6);">/</span><span style="color:#fff;">Protect My Ministry</span>
+    </div>
+  </header>
+  <div style="position:fixed;bottom:32px;left:32px;z-index:50;background:var(--demo-bg);border-radius:var(--radius-md);box-shadow:var(--shadow-demo);border:1px solid var(--demo-border);padding:var(--spacing-lg);min-width:220px;">
+    <p style="font-size:var(--text-xs);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.5px;font-weight:var(--font-medium);margin-bottom:4px;">Demo Controls</p>
+    <p style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:8px;">Entry Point</p>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <div>
+        <button style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);width:100%;">&#8594; Person Profile</button>
+        <div style="margin-left:16px;margin-top:4px;">
+          <button style="display:block;width:100%;padding:4px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;margin-bottom:4px;">Default</button>
+          <button style="display:block;width:100%;padding:4px 12px;background:transparent;color:var(--muted-foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;">NO CST</button>
+        </div>
+      </div>
+      <button onclick="navigate('landing')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:transparent;color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);">&#8594; Direct Plugin</button>
+    </div>
+  </div>
+  <!-- Tabs -->
+  <div style="background:var(--card);border-bottom:1px solid #E0E0E0;">
+    <div style="max-width:1400px;margin:0 auto;padding:0 var(--spacing-2xl);">
+      <div style="display:flex;gap:4px;">
+        <button class="tab-active" style="padding:10px 16px;border:none;font-family:var(--font-family);font-size:13px;font-weight:500;">Profile</button>
+        <button style="padding:10px 16px;background:transparent;border:none;color:#757575;font-family:var(--font-family);font-size:13px;cursor:pointer;">Extended Attributes</button>
+        <button style="padding:10px 16px;background:transparent;border:none;color:#757575;font-family:var(--font-family);font-size:13px;cursor:pointer;">Steps</button>
+        <button style="padding:10px 16px;background:transparent;border:none;color:#757575;font-family:var(--font-family);font-size:13px;cursor:pointer;">Groups</button>
+        <button style="padding:10px 16px;background:transparent;border:none;color:#757575;font-family:var(--font-family);font-size:13px;cursor:pointer;">Documents</button>
+        <button style="padding:10px 16px;background:transparent;border:none;color:#757575;font-family:var(--font-family);font-size:13px;cursor:pointer;">Contributions</button>
+        <button style="padding:10px 16px;background:transparent;border:none;color:#757575;font-family:var(--font-family);font-size:13px;cursor:pointer;">Security</button>
+        <button style="padding:10px 16px;background:transparent;border:none;color:#757575;font-family:var(--font-family);font-size:13px;cursor:pointer;">History</button>
+      </div>
+    </div>
+  </div>
+  <div style="padding:var(--spacing-2xl);max-width:1400px;margin:0 auto;">
+    <div style="display:grid;grid-template-columns:380px 1fr;gap:var(--spacing-2xl);">
+      <!-- Left: Profile Card -->
+      <div>
+        <div style="background:var(--card);border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+          <div class="profile-img-placeholder">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=220&fit=crop&crop=face" alt="Roy Keane" onerror="this.style.display='none'">
+          </div>
+          <div style="padding:24px;">
+            <h1 style="font-size:24px;font-weight:600;color:#252525;margin-bottom:12px;">Roy Keane</h1>
+            <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+              <span style="padding:4px 10px;background:#E8F5E9;color:#388E3C;border-radius:3px;font-size:12px;font-weight:500;">Visitor</span>
+              <span style="padding:4px 10px;background:#E3F2FD;color:#1976D2;border-radius:3px;font-size:12px;font-weight:500;">Follow</span>
+            </div>
+            <!-- Action Buttons -->
+            <div style="display:flex;gap:8px;margin-bottom:24px;">
+              <button style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 8px;background:#F5F5F5;border:1px solid #E0E0E0;border-radius:3px;cursor:pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span style="font-size:11px;color:#6B6B6B;">Email</span>
+              </button>
+              <div style="position:relative;flex:1;">
+                <button onclick="toggleActionsMenu()" style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 8px;background:#F5F5F5;border:1px solid #E0E0E0;border-radius:3px;cursor:pointer;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  <span style="font-size:11px;color:#6B6B6B;">Actions</span>
+                </button>
+                <div id="actions-menu" style="display:none;position:absolute;top:100%;left:0;width:280px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);z-index:100;overflow:hidden;">
+                  <button onclick="navigate('background-check-invite');toggleActionsMenu();" style="width:100%;text-align:left;padding:12px 16px;background:transparent;border:none;border-bottom:1px solid var(--border);font-size:var(--text-sm);font-family:var(--font-family);cursor:pointer;color:var(--foreground);">Send Background Check Invite</button>
+                  <button onclick="navigate('child-safety-training-invite');toggleActionsMenu();" style="width:100%;text-align:left;padding:12px 16px;background:transparent;border:none;border-bottom:1px solid var(--border);font-size:var(--text-sm);font-family:var(--font-family);cursor:pointer;color:var(--foreground);">Send Child Safety Training Invite-PMM</button>
+                  <button style="width:100%;text-align:left;padding:12px 16px;background:transparent;border:none;font-size:var(--text-sm);font-family:var(--font-family);cursor:pointer;color:var(--foreground);">Send Background Check Invite with Approval</button>
+                </div>
+              </div>
+              <button style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 8px;background:#F5F5F5;border:1px solid #E0E0E0;border-radius:3px;cursor:pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span style="font-size:11px;color:#6B6B6B;">Edit</span>
+              </button>
+            </div>
+            <!-- Contact Info -->
+            <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--border);padding-top:16px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span style="font-size:var(--text-sm);color:var(--primary);">roy.keane@example.com</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.09a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                <span style="font-size:var(--text-sm);color:var(--foreground);">+1 (555) 234-5678</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style="font-size:var(--text-sm);color:var(--foreground);">Manchester, UK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right: Main Content -->
+      <div>
+        <!-- PMM Section -->
+        <div class="card" style="padding:var(--spacing-xl);margin-bottom:var(--spacing-lg);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-xl);">
+            <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+              <div style="width:32px;height:32px;border-radius:6px;background:var(--icon-bg);display:flex;align-items:center;justify-content:center;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3 style="font-size:var(--text-md);font-weight:var(--font-medium);">Protect My Ministry</h3>
+            </div>
+            <button onclick="navigate('background-check-invite')" class="btn-primary" style="font-size:var(--text-sm);padding:8px 16px;">
+              + New Order
+            </button>
+          </div>
+          <!-- Recent Orders in Profile -->
+          <div id="recent-orders-profile"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== UNHAPPY PATH =================== -->
+<div id="page-unhappy-path" class="page">
+  <header style="background:#E87722;padding:16px 24px;border-bottom:1px solid rgba(0,0,0,0.1);">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(255,255,255,0.2);"><span style="color:#fff;">⛰</span></div><h4 style="color:#fff;margin:0;">Rock RMS</h4></div>
+      <span style="color:rgba(255,255,255,0.6);">/</span><span style="color:#fff;">Protect My Ministry</span>
+    </div>
+  </header>
+  <div style="position:fixed;bottom:32px;left:32px;z-index:50;background:var(--demo-bg);border-radius:var(--radius-md);box-shadow:var(--shadow-demo);border:1px solid var(--demo-border);padding:var(--spacing-lg);min-width:220px;">
+    <p style="font-size:var(--text-xs);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.5px;font-weight:var(--font-medium);margin-bottom:4px;">Demo Controls</p>
+    <p style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:8px;">Entry Point</p>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <button onclick="navigate('person-profile')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:transparent;color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);">&#8594; Person Profile</button>
+      <div>
+        <button style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);width:100%;">&#8594; Direct Plugin</button>
+        <div style="margin-left:16px;margin-top:4px;">
+          <button onclick="navigate('landing')" style="display:block;width:100%;padding:4px 12px;background:transparent;color:var(--muted-foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;margin-bottom:4px;">Recommended</button>
+          <button style="display:block;width:100%;padding:4px 12px;background:var(--demo-pressed);color:var(--foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;margin-bottom:4px;">Unhappy Path</button>
+          <button style="display:block;width:100%;padding:4px 12px;background:transparent;color:var(--muted-foreground);border:none;border-radius:var(--radius-sm);font-size:var(--text-sm);font-family:var(--font-family);text-align:left;">NO CST</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:var(--spacing-2xl);max-width:1200px;margin:0 auto;">
+    <div style="margin-bottom:var(--spacing-4xl);">
+      <div style="display:flex;align-items:center;gap:var(--spacing-sm);margin-bottom:var(--spacing-sm);flex-wrap:wrap;">
+        <h1 style="font-size:var(--heading-1);font-weight:var(--font-semibold);color:var(--foreground);">Protect My Ministry</h1>
+        <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);background:#F0F0F0;padding:2px 8px;border-radius:var(--radius-sm);">V3 Integration</span>
+      </div>
+      <p style="font-size:var(--text-base);color:var(--secondary-foreground);">Order Background Checks and Safety Training, and manage your PMM Plugin</p>
+    </div>
+    <!-- Same order cards but in unhappy path context -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 style="margin-bottom:var(--spacing-xl);font-size:var(--section-heading);font-weight:var(--font-medium);color:#4A4A4A;">What would you like to order?</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--spacing-lg);">
+        <div class="card" style="padding:var(--spacing-xl);display:flex;flex-direction:column;height:200px;">
+          <div style="flex:1;margin-bottom:var(--spacing-lg);">
+            <div style="display:flex;align-items:center;gap:var(--spacing-md);margin-bottom:var(--spacing-md);">
+              <div style="width:32px;height:32px;border-radius:6px;background:var(--icon-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <h3 style="font-size:var(--text-md);font-weight:var(--font-medium);color:var(--foreground);">Child Safety Training</h3>
+            </div>
+            <p style="color:var(--secondary-foreground);font-size:var(--text-base);line-height:20px;">Order Child Safety Training for groups or individuals</p>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;">
+            <button onclick="navigate('child-safety-training-invite')" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:6px 8px;background:transparent;border:none;border-radius:var(--radius-md);color:var(--primary);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">Start Order &#8250;</button>
+          </div>
+        </div>
+        <div class="card" style="padding:var(--spacing-xl);display:flex;flex-direction:column;height:200px;">
+          <div style="flex:1;margin-bottom:var(--spacing-lg);">
+            <div style="display:flex;align-items:center;gap:var(--spacing-md);margin-bottom:var(--spacing-md);">
+              <div style="width:32px;height:32px;border-radius:6px;background:var(--icon-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3 style="font-size:var(--text-md);font-weight:var(--font-medium);color:var(--foreground);">Background Check</h3>
+            </div>
+            <p style="color:var(--secondary-foreground);font-size:var(--text-base);line-height:20px;">Order Background checks via candidate invite or start a manual order. You can add safety training invite to background check orders too.</p>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:var(--spacing-lg);">
+            <button onclick="navigate('background-check-invite')" style="display:inline-flex;align-items:center;gap:4px;padding:6px 8px;background:transparent;border:none;color:var(--foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">Manual Order</button>
+            <button onclick="navigate('background-check-invite')" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:6px 8px;background:var(--primary);border:none;border-radius:var(--radius-md);color:var(--primary-foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">Start Invite Order &#8250;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:1px;background:var(--border);margin-bottom:var(--spacing-2xl);"></div>
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 style="margin-bottom:var(--spacing-xl);font-size:var(--section-heading);font-weight:var(--font-medium);color:#4A4A4A;">Plugin Settings</h2>
+      <div class="card" style="padding:var(--spacing-xl);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+          <button style="display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) 0;background:transparent;border:none;color:var(--foreground);font-size:var(--text-base);font-weight:var(--font-medium);font-family:var(--font-family);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 16.98h-5.99c-1.1 0-1.95.68-2.23 1.62m0 0A3.5 3.5 0 1 0 10 22h8M18 16.98a3.5 3.5 0 0 0 0-7h-1.67m-5.67 3.5a3.5 3.5 0 0 1-7 0 3.5 3.5 0 0 1 7 0z"/></svg>
+            Advanced Settings &#8964;
+          </button>
+          <div style="display:flex;gap:var(--spacing-sm);">
+            <button onclick="window.open('https://www.protectmyministry.com/','_blank')" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-lg);background:transparent;border:none;color:var(--foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">Go to Protect My Ministry &#8599;</button>
+            <button style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-sm) var(--spacing-lg);background:var(--muted);border:none;border-radius:var(--radius-md);color:var(--foreground);font-size:var(--text-base);font-family:var(--font-family);font-weight:var(--font-medium);">&#8635; Sync Plugin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:1px;background:var(--border);margin-bottom:var(--spacing-2xl);"></div>
+    <div id="recent-orders-unhappy"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ROUTING
+// ============================================================
+const pages = ['landing','background-check-invite','child-safety-training-invite','person-profile','unhappy-path'];
+
+function navigate(page) {
+  // hide all
+  pages.forEach(p => {
+    const el = document.getElementById('page-' + p);
+    if (el) el.classList.remove('active');
+  });
+  const target = document.getElementById('page-' + page);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo(0,0);
+  }
+  // Close any open menus
+  const am = document.getElementById('actions-menu');
+  if (am) am.style.display = 'none';
+  // Init page content
+  if (page === 'background-check-invite') initBgCheck();
+  if (page === 'child-safety-training-invite') initCstInvite();
+  if (page === 'person-profile') initProfileOrders();
+  if (page === 'unhappy-path') initUnhappyOrders();
+  if (page === 'landing') initLandingOrders();
+  // Update hash
+  location.hash = page === 'landing' ? '/' : '/' + page;
+}
+
+// Hash routing on load
+window.addEventListener('load', function() {
+  const hash = location.hash.replace('#/', '') || 'landing';
+  const page = hash === '' || hash === '/' ? 'landing' : hash;
+  navigate(page);
+});
+
+// ============================================================
+// TOGGLE HELPERS
+// ============================================================
+function toggleWebhooks() {
+  const panel = document.getElementById('webhooks-panel');
+  const chev = document.getElementById('webhook-chevron');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    chev.textContent = '⌃';
+  } else {
+    panel.style.display = 'none';
+    chev.textContent = '⌄';
+  }
+}
+
+function toggleActionsMenu() {
+  const menu = document.getElementById('actions-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close actions menu when clicking outside
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('actions-menu');
+  if (menu && !e.target.closest('#actions-menu') && !e.target.closest('button[onclick="toggleActionsMenu()"]')) {
+    menu.style.display = 'none';
+  }
+});
+
+// ============================================================
+// STATUS BADGE HELPER
+// ============================================================
+function makeBadge(status) {
+  if (!status || status === '-') return '<span style="color:var(--muted-foreground);">-</span>';
+  const map = {
+    'Pending': 'badge-pending',
+    'Invited': 'badge-invited',
+    'Opened': 'badge-opened',
+    'Failed': 'badge-failed',
+    'Incomplete': 'badge-incomplete',
+    'Complete': 'badge-complete',
+    'In Progress': 'badge-inprogress',
+  };
+  const cls = map[status] || 'badge-default';
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+
+// ============================================================
+// RECENT ORDERS TABLE (reusable)
+// ============================================================
+const ordersData = [
+  { name:'Jones, Julie', requested:'16/03/2026', completed:'18/03/2026', pkg:'Essential', status:'Complete', rec:'Approved', hasReport:true, training:'-', trainingStatus:'-', hasCert:false },
+  { name:'Martinez, Carlos', requested:'15/03/2026', completed:'17/03/2026', pkg:'-', status:'-', rec:'-', hasReport:false, training:'Volunteer', trainingStatus:'Complete', hasCert:true },
+  { name:'Slippers, Fuzzy', requested:'16/03/2026', completed:'18/03/2026', pkg:'Essential + MVR', status:'Complete', rec:'Conditional', hasReport:true, training:'Employee', trainingStatus:'Pending', hasCert:false },
+  { name:'Williams, Sarah', requested:'14/03/2026', completed:'-', pkg:'-', status:'-', rec:'-', hasReport:false, training:'Volunteer', trainingStatus:'In Progress', hasCert:false },
+  { name:'Test, 16_3_2026', requested:'16/03/2026', completed:'-', pkg:'Essential', status:'Pending', rec:'-', hasReport:false, training:'Employee', trainingStatus:'Complete', hasCert:true },
+  { name:'Keane, Roy', requested:'10/03/2026', completed:'12/03/2026', pkg:'Essential', status:'Complete', rec:'Approved', hasReport:true, training:'Volunteer', trainingStatus:'Complete', hasCert:true },
+  { name:'Thompson, Mark', requested:'12/03/2026', completed:'14/03/2026', pkg:'Statewide criminal search only', status:'Failed', rec:'Not Approved', hasReport:true, training:'-', trainingStatus:'-', hasCert:false },
+  { name:'Brown, Lisa', requested:'11/03/2026', completed:'13/03/2026', pkg:'-', status:'-', rec:'-', hasReport:false, training:'Employee', trainingStatus:'Complete', hasCert:true },
+  { name:'Willis, Jessie', requested:'10/03/2026', completed:'-', pkg:'MVR Only', status:'Opened', rec:'-', hasReport:false, training:'-', trainingStatus:'-', hasCert:false },
+  { name:'Snow, Michael', requested:'09/03/2026', completed:'-', pkg:'Essential', status:'Invited', rec:'-', hasReport:false, training:'-', trainingStatus:'-', hasCert:false },
+];
+
+function renderOrdersTable(containerId) {
+  const fileIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2" style="cursor:pointer;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`;
+  let rows = ordersData.map((o,i) => `
+    <tr style="border-bottom:${i < ordersData.length-1 ? '1px solid var(--border)' : 'none'};">
+      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.name}</td>
+      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.requested}</td>
+      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.completed}</td>
+      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.pkg}</td>
+      <td style="padding:var(--spacing-lg);">${makeBadge(o.status)}</td>
+      <td style="padding:var(--spacing-lg);color:var(--muted-foreground);font-size:var(--text-base);">${o.rec}</td>
+      <td style="padding:var(--spacing-lg);">${o.hasReport ? fileIcon : '<span style="color:var(--muted-foreground);">-</span>'}</td>
+      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.training}</td>
+      <td style="padding:var(--spacing-lg);">${makeBadge(o.trainingStatus)}</td>
+      <td style="padding:var(--spacing-lg);">${o.hasCert ? fileIcon : '<span style="color:var(--muted-foreground);">-</span>'}</td>
+    </tr>`).join('');
+
+  const html = `
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 style="margin-bottom:var(--spacing-xl);font-size:var(--section-heading);font-weight:var(--font-medium);color:#4A4A4A;">Recent Requests</h2>
+      <div class="card" style="overflow:hidden;">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);">
+                ${['Name','Requested','Completed','Background Check Package','Background Check Status','BG Check Recommendation','BG Check Report','Training','Training Status','Training Certificate'].map(h => `<th style="padding:var(--spacing-lg);text-align:left;color:var(--muted-foreground);font-weight:var(--font-medium);font-size:var(--text-sm);white-space:nowrap;">${h}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <div style="padding:var(--spacing-lg);display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);">
+          <p style="color:var(--muted-foreground);font-size:var(--text-sm);">Showing 1-10 of 127</p>
+          <div style="display:flex;gap:var(--spacing-sm);">
+            <button class="btn-outline-sm">&#8249; Previous</button>
+            <button class="btn-outline-sm">Next &#8250;</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = html;
+}
+
+function initLandingOrders() { renderOrdersTable('recent-orders-landing'); }
+function initUnhappyOrders() { renderOrdersTable('recent-orders-unhappy'); }
+function initProfileOrders() {
+  // Shorter table for profile
+  const fileIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2" style="cursor:pointer;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+  let rows = ordersData.slice(0,5).map((o,i) => `
+    <tr style="border-bottom:${i < 4 ? '1px solid var(--border)' : 'none'};">
+      <td style="padding:var(--spacing-md);font-size:var(--text-sm);">${o.requested}</td>
+      <td style="padding:var(--spacing-md);font-size:var(--text-sm);">${o.pkg !== '-' ? o.pkg : o.training}</td>
+      <td style="padding:var(--spacing-md);">${makeBadge(o.status !== '-' ? o.status : o.trainingStatus)}</td>
+      <td style="padding:var(--spacing-md);color:var(--muted-foreground);font-size:var(--text-sm);">${o.rec !== '-' ? o.rec : ''}</td>
+      <td style="padding:var(--spacing-md);">${(o.hasReport || o.hasCert) ? fileIcon : '<span style="color:var(--muted-foreground);">-</span>'}</td>
+    </tr>`).join('');
+  const html = `
+    <table>
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);">
+          ${['Date','Package / Training','Status','Recommendation','Report'].map(h=>`<th style="padding:var(--spacing-md);text-align:left;color:var(--muted-foreground);font-weight:var(--font-medium);font-size:var(--text-sm);">${h}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  const el = document.getElementById('recent-orders-profile');
+  if (el) el.innerHTML = html;
+}
+
+// ============================================================
+// BACKGROUND CHECK INVITE (multi-step)
+// ============================================================
+let bgState = {
+  currentStep: 1,
+  applicants: [{ id:'1', firstName:'Larisa', lastName:'Hidenmeier', email:'saratuanle@designbymb.com' }],
+  bgPackage: 'GA-Statewide',
+  trainingType: 'employee',
+  state: 'Alabama',
+  billingReference: 'HR',
+  bgEmailTemplate: 'logo-testing',
+  cstEmailTemplate: 'volunteer-safety-training',
+  agreedToCertification: false,
+  isUnhappyPath: false,
+};
+
+function initBgCheck() {
+  bgState.currentStep = 1;
+  bgState.agreedToCertification = false;
+  bgState.isUnhappyPath = false;
+  renderBgCheck();
+}
+
+function renderBgCheck() {
+  renderBgStepper();
+  // Show/hide step containers
+  const stepper = document.getElementById('bg-stepper');
+  if (bgState.currentStep >= 5) {
+    stepper.style.display = 'none';
+  } else {
+    stepper.style.display = 'flex';
+  }
+  for (let i = 1; i <= 6; i++) {
+    const el = document.getElementById('bg-step-' + i);
+    if (el) el.style.display = bgState.currentStep === i ? 'block' : 'none';
+  }
+  // Render current step content
+  const renders = {1: renderBgStep1, 2: renderBgStep2, 3: renderBgStep3, 4: renderBgStep4, 5: renderBgStep5, 6: renderBgStep6};
+  if (renders[bgState.currentStep]) renders[bgState.currentStep]();
+}
+
+function renderBgStepper() {
+  const steps = [{n:1,l:'Applicants'},{n:2,l:'Searches'},{n:3,l:'Billing & Email'},{n:4,l:'Review Order'}];
+  const s = document.getElementById('bg-stepper');
+  if (!s) return;
+  s.innerHTML = steps.map((step, idx) => {
+    let cls = bgState.currentStep === step.n ? 'step-active' : (bgState.currentStep > step.n ? 'step-done' : 'step-todo');
+    let html = `<div class="${cls}" style="display:flex;align-items:center;gap:var(--spacing-sm);">
+      <div class="step-circle">${step.n}</div>
+      <span class="step-label" style="font-size:var(--text-base);font-family:var(--font-family);">${step.l}</span>
+    </div>`;
+    if (idx < steps.length - 1) html += `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+    return html;
+  }).join('');
+}
+
+function renderBgStep1() {
+  const el = document.getElementById('bg-step-1');
+  const rows = bgState.applicants.map((a, idx) => `
+    <tr style="background:var(--card);${idx > 0 ? 'border-top:1px solid var(--border);' : ''}">
+      <td style="padding:var(--spacing-md);"><input class="input-base" value="${a.firstName}" onchange="bgState.applicants[${idx}].firstName=this.value" style="padding:var(--spacing-sm);"></td>
+      <td style="padding:var(--spacing-md);"><input class="input-base" value="${a.lastName}" onchange="bgState.applicants[${idx}].lastName=this.value" style="padding:var(--spacing-sm);"></td>
+      <td style="padding:var(--spacing-md);"><input class="input-base" type="email" value="${a.email}" onchange="bgState.applicants[${idx}].email=this.value" style="padding:var(--spacing-sm);"></td>
+      <td style="padding:var(--spacing-md);"><button onclick="bgRemoveApplicant('${a.id}')" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></td>
+    </tr>`).join('');
+  el.innerHTML = `
+    <div class="card" style="padding:var(--spacing-3xl);">
+      <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Applicants</h2>
+      <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Please add applicants for this order. You may add multiple applicants at once.</p>
+      <div style="margin-bottom:var(--spacing-xl);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-md);">
+          <span style="font-size:var(--text-base);font-weight:var(--font-medium);">${bgState.applicants.length} Applicant${bgState.applicants.length !== 1 ? 's' : ''}</span>
+          <button onclick="bgAddApplicant()" class="btn-muted"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Applicant</button>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+          <table>
+            <thead><tr style="background:var(--muted);">
+              <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">First Name*</th>
+              <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">Last Name*</th>
+              <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">Email**</th>
+              <th style="width:40px;"></th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:var(--spacing-sm);margin-top:var(--spacing-md);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.5;">Tip: Press Enter/Return after typing email of applicants to add new row.</p>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--spacing-md);">
+        <button onclick="bgState.currentStep=2;renderBgCheck();" class="btn-primary" style="display:inline-flex;align-items:center;gap:4px;">Next <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>`;
+}
+
+function bgAddApplicant() {
+  bgState.applicants.push({id: Date.now().toString(), firstName:'', lastName:'', email:''});
+  renderBgStep1();
+}
+function bgRemoveApplicant(id) {
+  bgState.applicants = bgState.applicants.filter(a => a.id !== id);
+  renderBgStep1();
+}
+
+function renderBgStep2() {
+  const el = document.getElementById('bg-step-2');
+  const a = bgState.applicants[0] || {firstName:'',lastName:''};
+  el.innerHTML = `
+    <div class="card" style="padding:var(--spacing-3xl);">
+      <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Searches</h2>
+      <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Please select a background check package for this applicant. You may also order child safety training at this step if desired.</p>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--spacing-3xl);">
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--spacing-lg);margin-bottom:var(--spacing-2xl);padding-bottom:var(--spacing-xl);border-bottom:1px solid var(--border);">
+            <div>
+              <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Name</label>
+              <div style="font-size:var(--text-base);padding-top:var(--spacing-sm);">${a.firstName} ${a.lastName}</div>
+            </div>
+            <div>
+              <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Background Check Package*</label>
+              <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgState.bgPackage=this.value;renderBgStep2();">
+                <option value="GA-Statewide" ${bgState.bgPackage==='GA-Statewide'?'selected':''}>GA-Statewide</option>
+                <option value="National" ${bgState.bgPackage==='National'?'selected':''}>National</option>
+                <option value="Basic" ${bgState.bgPackage==='Basic'?'selected':''}>Basic</option>
+                <option value="Essential" ${bgState.bgPackage==='Essential'?'selected':''}>Essential</option>
+                <option value="Essential + MVR" ${bgState.bgPackage==='Essential + MVR'?'selected':''}>Essential + MVR</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Child Safety Training</label>
+              <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgState.trainingType=this.value;renderBgStep2();">
+                <option value="employee" ${bgState.trainingType==='employee'?'selected':''}>Employee</option>
+                <option value="volunteer" ${bgState.trainingType==='volunteer'?'selected':''}>Volunteer</option>
+                <option value="none" ${bgState.trainingType==='none'?'selected':''}>None</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:var(--spacing-2xl);">
+            <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">State where employment or volunteering will occur*</label>
+            <select class="input-base" style="width:50%;padding:var(--spacing-sm);" onchange="bgState.state=this.value">
+              <option>Alabama</option><option>Georgia</option><option>Florida</option><option>Texas</option><option>California</option>
+            </select>
+          </div>
+        </div>
+        <!-- Order Summary -->
+        <div style="background:#F9F9F9;padding:var(--spacing-xl);border-radius:var(--radius-sm);height:fit-content;">
+          <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">Order Summary</h3>
+          <div style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:var(--spacing-sm);">${bgState.bgPackage}</div>
+          <div style="font-size:var(--text-sm);color:var(--muted-foreground);margin-bottom:var(--spacing-md);">Quantity: 1</div>
+          ${bgState.trainingType !== 'none' ? `<div style="font-size:var(--text-base);font-weight:var(--font-medium);margin-bottom:var(--spacing-sm);margin-top:var(--spacing-lg);">Child Safety Training</div><div style="font-size:var(--text-sm);color:var(--muted-foreground);margin-bottom:var(--spacing-sm);">${bgState.trainingType.charAt(0).toUpperCase()+bgState.trainingType.slice(1)}</div><div style="font-size:var(--text-sm);color:var(--muted-foreground);">Quantity: 1</div>` : ''}
+          <button onclick="bgState.currentStep=3;renderBgCheck();" class="btn-primary" style="width:100%;margin-top:var(--spacing-xl);">Next</button>
+          <p style="font-size:var(--text-xs);color:var(--muted-foreground);margin-top:var(--spacing-md);line-height:1.4;">*Mandatory state, court, jurisdictional or service/search fees may apply.</p>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:var(--spacing-2xl);padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+        <button onclick="bgState.currentStep=1;renderBgCheck();" class="btn-secondary" style="display:inline-flex;align-items:center;gap:4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Previous</button>
+      </div>
+    </div>`;
+}
+
+function renderBgStep3() {
+  const el = document.getElementById('bg-step-3');
+  el.innerHTML = `
+    <div class="card" style="padding:var(--spacing-3xl);">
+      <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Billing Reference &amp; Email Template</h2>
+      <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Please select a billing reference for this order. Your default email template has been applied.</p>
+      <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:var(--spacing-2xl);">
+        <table>
+          <thead><tr style="background:var(--muted);">
+            <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">Name</th>
+            <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">Billing Reference</th>
+            <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">BG Invite Email Template</th>
+            ${bgState.trainingType !== 'none' ? '<th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">CST Email Template</th>' : ''}
+          </tr></thead>
+          <tbody>${bgState.applicants.map(a => `
+            <tr>
+              <td style="padding:var(--spacing-md);font-size:var(--text-base);">${a.firstName} ${a.lastName}</td>
+              <td style="padding:var(--spacing-md);">
+                <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgState.billingReference=this.value">
+                  <option value="HR" ${bgState.billingReference==='HR'?'selected':''}>HR</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Ministry">Ministry</option>
+                </select>
+              </td>
+              <td style="padding:var(--spacing-md);">
+                <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgState.bgEmailTemplate=this.value">
+                  <option value="logo-testing">logo-testing</option>
+                  <option value="default">Default Template</option>
+                  <option value="spanish">Spanish Template</option>
+                </select>
+              </td>
+              ${bgState.trainingType !== 'none' ? `<td style="padding:var(--spacing-md);"><select class="input-base" style="padding:var(--spacing-sm);" onchange="bgState.cstEmailTemplate=this.value"><option value="volunteer-safety-training">volunteer-safety-training</option><option value="default">Default Template</option></select></td>` : ''}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+        <button onclick="bgState.currentStep=2;renderBgCheck();" class="btn-secondary" style="display:inline-flex;align-items:center;gap:4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Previous</button>
+        <button onclick="bgState.currentStep=4;renderBgCheck();" class="btn-primary" style="display:inline-flex;align-items:center;gap:4px;">Next <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>`;
+}
+
+function renderBgStep4() {
+  const el = document.getElementById('bg-step-4');
+  const chk = bgState.agreedToCertification;
+  el.innerHTML = `
+    <div class="card" style="padding:var(--spacing-3xl);">
+      <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Review Order</h2>
+      <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Please review your order details before sending invites.</p>
+      <!-- Summary Table -->
+      <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:var(--spacing-2xl);">
+        <table>
+          <thead><tr style="background:var(--muted);">
+            <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">Name</th>
+            <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">Email</th>
+            <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">BG Package</th>
+            <th style="padding:var(--spacing-md);text-align:left;font-size:var(--text-sm);font-weight:var(--font-semibold);">Training</th>
+          </tr></thead>
+          <tbody>${bgState.applicants.map(a => `
+            <tr>
+              <td style="padding:var(--spacing-md);font-size:var(--text-base);">${a.firstName} ${a.lastName}</td>
+              <td style="padding:var(--spacing-md);font-size:var(--text-base);">${a.email}</td>
+              <td style="padding:var(--spacing-md);font-size:var(--text-base);">${bgState.bgPackage}</td>
+              <td style="padding:var(--spacing-md);font-size:var(--text-base);">${bgState.trainingType !== 'none' ? bgState.trainingType.charAt(0).toUpperCase()+bgState.trainingType.slice(1) : '-'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <!-- FCRA -->
+      <div style="background:#F9F9F9;padding:var(--spacing-xl);border-radius:var(--radius-sm);margin-bottom:var(--spacing-2xl);">
+        <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">Fair Credit Reporting Act - Client Certification</h3>
+        <p style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;margin-bottom:var(--spacing-md);">By requesting a background check report from Protect My Ministry you certify the following:</p>
+        <ul style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;padding-left:var(--spacing-xl);margin:0;">
+          <li>You have provided the applicant with a clear and conspicuous disclosure for employment/volunteer purposes only.</li>
+          <li>You will comply with any adverse action requirements as described in the Fair Credit Reporting Act, if applicable.</li>
+          <li>You will not use information contained in the background check report in violation of any applicable federal or state equal employment opportunity law or regulation.</li>
+        </ul>
+        <p style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;margin-top:var(--spacing-md);">I certify that I have received authorization and will adhere to these legal requirements.</p>
+        <label style="display:flex;align-items:flex-start;gap:var(--spacing-sm);margin-top:var(--spacing-lg);cursor:pointer;">
+          <input type="checkbox" id="fcra-check" ${chk?'checked':''} onchange="bgState.agreedToCertification=this.checked;renderBgStep4();" style="margin-top:2px;width:18px;height:18px;cursor:pointer;">
+          <span style="font-size:var(--text-base);font-weight:var(--font-medium);">I agree to the Fair Credit Reporting Act certification</span>
+        </label>
+      </div>
+      ${bgState.trainingType !== 'none' ? `<div style="background:#F9F9F9;padding:var(--spacing-xl);border-radius:var(--radius-sm);margin-bottom:var(--spacing-2xl);"><h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">Child Safety Course Legal Disclaimer</h3><p style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;">All information included in this child presentation is for general informational purposes only. Such information does not, and is not intended to, constitute legal advice. While Protect my Ministry endeavors to keep the information contained in this presentation current and correct, such information may not constitute the most up-to-date information available...</p></div>` : ''}
+      <div style="display:flex;justify-content:space-between;padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+        <button onclick="bgState.currentStep=3;renderBgCheck();" class="btn-secondary" style="display:inline-flex;align-items:center;gap:4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Previous</button>
+        <button onclick="bgSendInvites()" ${chk?'':'disabled'} class="btn-primary" style="display:inline-flex;align-items:center;gap:4px;${chk?'':'opacity:0.6;cursor:not-allowed;background:#CCCCCC;'}">Send Invites <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </div>`;
+}
+
+function bgSendInvites() {
+  bgState.currentStep = bgState.isUnhappyPath ? 6 : 5;
+  renderBgCheck();
+}
+
+function renderBgStep5() {
+  const el = document.getElementById('bg-step-5');
+  el.innerHTML = `
+    <div class="card" style="padding:var(--spacing-3xl);max-width:600px;margin:0 auto;text-align:center;">
+      <div style="width:80px;height:80px;border-radius:50%;background:#E8F4FD;display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-xl);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Your invite has been sent!</h2>
+      <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Track its progress in the Background Check dashboard.</p>
+      <button onclick="navigate('landing')" class="btn-primary" style="width:100%;">Done</button>
+    </div>`;
+}
+
+function renderBgStep6() {
+  const el = document.getElementById('bg-step-6');
+  el.innerHTML = `
+    <div class="card" style="padding:var(--spacing-3xl);max-width:700px;margin:0 auto;">
+      <div style="width:80px;height:80px;border-radius:50%;background:#FFEBEE;display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-xl);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h2 style="font-size:20px;font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);text-align:center;">We couldn't submit your background check invite</h2>
+      <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);text-align:center;line-height:1.6;">Please contact support to resolve this issue.</p>
+      <div style="margin-bottom:var(--spacing-2xl);">
+        <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">What happened?</h3>
+        <p style="font-size:var(--text-base);color:var(--muted-foreground);line-height:1.6;">Your background check invitation could not be submitted - This could be due to a network issue or service disruption.</p>
+      </div>
+      <div style="margin-bottom:var(--spacing-2xl);">
+        <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">What can you do?</h3>
+        <p style="font-size:var(--text-base);color:var(--muted-foreground);line-height:1.6;">Please contact <a href="https://support.protectmyministry.com" target="_blank" style="color:var(--primary);">Protect My Ministry Support</a> - <strong>Please Note:</strong> Do not attempt to submit again as this can sometimes cause duplicate orders.</p>
+      </div>
+      <div style="padding:var(--spacing-md);background:#F9F9F9;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:var(--spacing-2xl);">
+        <p style="font-size:var(--text-sm);color:var(--muted-foreground);margin:0;"><strong>Error ID:</strong> PMM-ERR-5001</p>
+        <p style="font-size:var(--text-sm);color:var(--muted-foreground);margin:0;margin-top:4px;"><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        <p style="font-size:var(--text-sm);color:var(--muted-foreground);margin:0;margin-top:var(--spacing-md);">Please provide this information when contacting support.</p>
+      </div>
+      <div style="display:flex;justify-content:flex-end;">
+        <button onclick="navigate('landing')" class="btn-secondary">Close</button>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// CHILD SAFETY TRAINING INVITE
+// ============================================================
+let cstState = { step: 'form', trainingType: '', emailTemplate: 'default', isUnhappyPath: false };
+
+function initCstInvite() {
+  cstState.step = 'form';
+  cstState.trainingType = '';
+  cstState.emailTemplate = 'default';
+  renderCstInvite();
+}
+
+function renderCstInvite() {
+  const el = document.getElementById('cst-invite-content');
+  if (!el) return;
+
+  const breadcrumb = `<div style="font-size:var(--text-sm);color:var(--muted-foreground);margin-bottom:var(--spacing-lg);">
+    <a href="#" onclick="navigate('person-profile');return false;" style="color:var(--primary);text-decoration:none;">Home</a> &rsaquo;
+    <a href="#" onclick="navigate('person-profile');return false;" style="color:var(--primary);text-decoration:none;">Workflows</a> &rsaquo;
+    <span style="color:var(--foreground);">Send Child Safety Training Invite</span>
+  </div>`;
+
+  const pageHeader = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--spacing-xl);">
+    <h1 style="font-size:var(--heading-1);font-weight:var(--font-semibold);color:var(--foreground);">Send Child Safety Training Invite</h1>
+    <div style="display:flex;gap:var(--spacing-md);align-items:center;">
+      <span style="font-size:var(--text-sm);color:var(--muted-foreground);">Action ID:</span>
+      <span style="padding:4px 8px;background:#E3F2FD;color:#1976D2;border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:var(--font-medium);">00182</span>
+      <span style="font-size:var(--text-sm);color:var(--muted-foreground);">Added: 09/03/2026</span>
+    </div>
+  </div>`;
+
+  let content = '';
+  if (cstState.step === 'form') {
+    const canSubmit = cstState.trainingType !== '';
+    content = `
+      <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
+      <div class="card" style="padding:var(--spacing-2xl);">
+        <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Child Safety Training Invitation Details</h2>
+        <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Admin, please complete the form below to start the child safety training invitation process.</p>
+        <!-- Applicant -->
+        <div style="margin-bottom:var(--spacing-xl);">
+          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Applicant</label>
+          <a href="#" onclick="navigate('person-profile');return false;" style="font-size:var(--text-base);color:var(--primary);text-decoration:none;">Roy Keane</a>
+        </div>
+        <!-- Email -->
+        <div style="margin-bottom:var(--spacing-xl);">
+          <label style="display:flex;align-items:center;gap:var(--spacing-xs);font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Email <span style="color:#C62828;">*</span></label>
+          <div style="display:flex;align-items:center;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border);border-radius:var(--radius-sm);background:#F9F9F9;">
+            <span style="font-size:16px;margin-right:var(--spacing-sm);">✉️</span>
+            <span style="font-size:var(--text-base);">mary.healy+RK@ministrybrands.com</span>
+          </div>
+        </div>
+        <!-- Training Type -->
+        <div style="margin-bottom:var(--spacing-2xl);">
+          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Training Type <span style="color:#C62828;">*</span></label>
+          <select class="input-base" onchange="cstState.trainingType=this.value;renderCstInvite();" style="color:${cstState.trainingType?'var(--foreground)':'var(--muted-foreground)'};">
+            <option value="">Select training type...</option>
+            <option value="employee" ${cstState.trainingType==='employee'?'selected':''}>Employee</option>
+            <option value="volunteer" ${cstState.trainingType==='volunteer'?'selected':''}>Volunteer</option>
+            <option value="contractor" ${cstState.trainingType==='contractor'?'selected':''}>Contractor</option>
+          </select>
+        </div>
+        <!-- Email Template -->
+        <div style="margin-bottom:var(--spacing-2xl);">
+          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">CST Email Invite Template <span style="color:#C62828;">*</span></label>
+          <select class="input-base" onchange="cstState.emailTemplate=this.value">
+            <option value="default" ${cstState.emailTemplate==='default'?'selected':''}>Default Template</option>
+            <option value="spanish">Spanish Template</option>
+            <option value="youth">Youth Ministry Template</option>
+          </select>
+        </div>
+        <!-- Legal Disclaimer -->
+        <div style="padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+          <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">Child Safety Course Legal Disclaimer</h3>
+          <div style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;margin-bottom:var(--spacing-lg);">
+            <p>By selecting "Submit" I hereby confirm I understand that all information included in this child presentation is for general informational purposes only. Such information does not, and is not intended to, constitute legal advice. While Protect my Ministry endeavors to keep the information contained in this presentation current and correct, such information may not constitute the most up-to-date information available, and Protect My Ministry makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or suitability of the information contained herein for any purpose...</p>
+          </div>
+        </div>
+        <div style="margin-top:var(--spacing-2xl);padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+          <button onclick="cstState.step='alert';renderCstInvite();" ${canSubmit?'':'disabled'} class="btn-orange" style="${canSubmit?'':'opacity:0.6;cursor:not-allowed;'}">Submit</button>
+        </div>
+      </div>`;
+  } else if (cstState.step === 'alert') {
+    content = `
+      <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
+      <div class="card" style="padding:var(--spacing-2xl);">
+        <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-xl);">Child Safety Training Request Details</h2>
+        <div class="alert-yellow" style="margin-bottom:var(--spacing-lg);">
+          <p style="font-size:var(--text-sm);color:#856404;margin:0;"><strong>Notice:</strong> Child safety training has been completed for the applicant(s) in the past.</p>
+        </div>
+        <p style="font-size:var(--text-base);color:var(--foreground);margin-bottom:var(--spacing-2xl);">Please make sure you want to continue with this request!</p>
+        <div style="display:flex;gap:var(--spacing-md);">
+          <button onclick="cstSubmit()" class="btn-orange">Submit</button>
+          <button onclick="navigate('person-profile')" style="padding:10px 24px;background:#757575;border:none;border-radius:var(--radius-sm);color:white;font-size:var(--button-label);font-family:var(--font-family);font-weight:var(--font-medium);cursor:pointer;">Cancel</button>
+        </div>
+      </div>`;
+  } else if (cstState.step === 'success') {
+    content = `
+      <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
+      <div class="card" style="padding:var(--spacing-2xl);">
+        <div class="alert-green" style="margin-bottom:var(--spacing-2xl);">
+          <p style="font-size:var(--text-base);color:#2E7D32;margin:0;">The Child Safety Training Request has been submitted successfully.</p>
+        </div>
+        <button onclick="navigate('person-profile')" class="btn-orange">Done</button>
+      </div>`;
+  } else if (cstState.step === 'error') {
+    content = `
+      <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
+      <div class="card" style="padding:var(--spacing-2xl);">
+        <div class="alert-red" style="margin-bottom:var(--spacing-2xl);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <p style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#C62828;margin:0;margin-bottom:4px;">We couldn't submit your child safety training invite</p>
+            <p style="font-size:var(--text-sm);color:#D32F2F;margin:0;">Please contact support to resolve this issue.</p>
+          </div>
+        </div>
+        <div style="margin-bottom:var(--spacing-2xl);">
+          <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">What happened?</h2>
+          <p style="font-size:var(--text-base);color:var(--muted-foreground);line-height:1.6;">Your child safety training invitation could not be submitted - This could be due to a network issue or service disruption.</p>
+        </div>
+        <div style="margin-bottom:var(--spacing-2xl);">
+          <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">What can you do?</h2>
+          <p style="font-size:var(--text-base);color:var(--muted-foreground);line-height:1.6;">Please contact <a href="https://support.protectmyministry.com" target="_blank" style="color:var(--primary);">Protect My Ministry Support</a> - <strong>Please Note:</strong> Do not attempt to submit again as this can sometimes cause duplicate orders.</p>
+        </div>
+        <div style="padding:var(--spacing-md);background:#F9F9F9;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:var(--spacing-2xl);">
+          <p style="font-size:var(--text-sm);color:var(--muted-foreground);margin:0;"><strong>Error ID:</strong> PMM-ERR-5001</p>
+          <p style="font-size:var(--text-sm);color:var(--muted-foreground);margin:0;margin-top:4px;"><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+        <div style="display:flex;justify-content:flex-end;padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+          <button onclick="navigate('person-profile')" class="btn-secondary">Close</button>
+        </div>
+      </div>`;
+  }
+
+  el.innerHTML = breadcrumb + pageHeader + content;
+}
+
+function cstSubmit() {
+  cstState.step = cstState.isUnhappyPath ? 'error' : 'success';
+  renderCstInvite();
+}
+</script>
 </body>
 </html>
