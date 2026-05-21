@@ -1323,9 +1323,9 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                       )}
 
                       {/* Group box */}
-                      <div style={{ border: `1.5px solid ${activeGroupId === grp.id ? c.pri : c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
+                      <div style={{ border: `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
                         {/* Group header */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: activeGroupId === grp.id ? "#eff4ff" : c.bg, borderBottom: groupCriteria.length > 0 ? `1px solid ${c.borderLight}` : "none" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: c.bg, borderBottom: groupCriteria.length > 0 ? `1px solid ${c.borderLight}` : "none" }}>
                           {qbGroupEditingId === grp.id ? (
                             <input type="text" value={qbGroupEditingName} onChange={e => setQbGroupEditingName(e.target.value)} autoFocus
                               onBlur={() => { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); }}
@@ -1506,22 +1506,6 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
 
 
-                {/* Sort by */}
-                {qbSelectedCols.length > 0 && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", background: c.bg, borderRadius: 7, border: `1px solid ${c.borderLight}`, marginTop: 4 }}>
-                    <span style={{ fontSize: 12, color: c.textSec, whiteSpace: "nowrap", fontWeight: 500 }}>Sort by:</span>
-                    <select value={qbSortCol} onChange={e => setQbSortCol(e.target.value)}
-                      style={{ flex: 1, padding: "4px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
-                      {QB_AVAILABLE_COLUMNS.filter(col => qbSelectedCols.includes(col.id)).map(col => (
-                        <option key={col.id} value={col.id}>{col.label}</option>
-                      ))}
-                    </select>
-                    <div style={{ display: "flex", gap: 2 }}>
-                      <button onClick={() => setQbSortDir("asc")} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${qbSortDir === "asc" ? c.pri : c.border}`, background: qbSortDir === "asc" ? "#eff4ff" : c.white, cursor: "pointer", fontSize: 11, color: qbSortDir === "asc" ? c.pri : c.textSec, fontFamily: "inherit", fontWeight: qbSortDir === "asc" ? 600 : 400 }}>A→Z</button>
-                      <button onClick={() => setQbSortDir("desc")} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${qbSortDir === "desc" ? c.pri : c.border}`, background: qbSortDir === "desc" ? "#eff4ff" : c.white, cursor: "pointer", fontSize: 11, color: qbSortDir === "desc" ? c.pri : c.textSec, fontFamily: "inherit", fontWeight: qbSortDir === "desc" ? 600 : 400 }}>Z→A</button>
-                    </div>
-                  </div>
-                )}
 
               </div>{/* end RIGHT PANEL */}
 
