@@ -747,6 +747,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbGroupEditingName, setQbGroupEditingName] = useState("");
   const [qbCollapsedGroups, setQbCollapsedGroups] = useState(new Set()); // Set of collapsed group IDs
   const [qbMultiselectSearches, setQbMultiselectSearches] = useState({}); // { [criterionId]: searchString }
+  const [qbMultiselectDropOpen, setQbMultiselectDropOpen] = useState({}); // { [crId]: bool }
+  const [qbMultiselectDropRect, setQbMultiselectDropRect] = useState({}); // { [crId]: {top,left,width} }
   const [qbShowValidation, setQbShowValidation] = useState(false);
   const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
