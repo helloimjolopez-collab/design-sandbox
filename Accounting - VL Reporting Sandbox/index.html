@@ -1143,10 +1143,26 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); togglePanel("saveConfig"); }} icon={<BookmarkIcon size={12} />}>Save query</Btn>
             <Btn size="sm"
               disabled={isNew && !qbNewQueryName.trim()}
-              onClick={() => { setQueryBuilderOpen(false); setTimeout(() => handleRunReport(), 50); }}>
-              {isNew ? "Save & run" : "Apply"}
+              onClick={() => {
+                if (!isNew && qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0) {
+                  setQbShowValidation(true);
+                  return;
+                }
+                setQbShowValidation(false);
+                setQueryBuilderOpen(false);
+                setTimeout(() => handleRunReport(), 50);
+              }}>
+              {isNew ? "Save & run" : "Show Results"}
             </Btn>
           </div>
+
+          {/* Validation banner */}
+          {qbShowValidation && (
+            <div style={{ padding: "8px 16px", background: "#fef2f2", borderBottom: `1px solid #fecaca`, display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+              <span style={{ fontSize: 13, color: c.red, flex: 1 }}>Add at least one category before running the report.</span>
+              <button onClick={() => setQbShowValidation(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.red, padding: 2 }}><XIcon size={12} /></button>
+            </div>
+          )}
 
           {/* Applied / saved toast */}
           {showEditAppliedToast && (
