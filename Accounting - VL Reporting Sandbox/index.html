@@ -1168,7 +1168,11 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 }
                 setQbShowValidation(false);
                 setQueryBuilderOpen(false);
-                setTimeout(() => handleRunReport(), 50);
+                if (isNew) {
+                  // New query: run the report
+                  setTimeout(() => handleRunReport(), 50);
+                }
+                // Existing query "Show Results": just close the QB, preview is already live
               }}>
               {isNew ? "Save & run" : "Show Results"}
             </Btn>
