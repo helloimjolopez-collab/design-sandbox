@@ -736,7 +736,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbLogicOps, setQbLogicOps] = useState({}); // { [criterionId]: "and" | "or" } — logic before each criterion within a group
   const toggleQbLogic = (crId) => setQbLogicOps(prev => ({ ...prev, [crId]: prev[crId] === "or" ? "and" : "or" }));
   // ── Groups: criteria are organised into named groups (parenthetical boolean containers) ──
-  const [qbGroups, setQbGroups] = useState([{ id: 1, name: "Group 1" }]);
+  const [qbGroups, setQbGroups] = useState([{ id: 1, name: "Filter Group 1" }]);
   const qbNextGroupId = useRef(2);
   const [qbGroupLogics, setQbGroupLogics] = useState({}); // { groupId: "and" | "or" } — logic BEFORE each group (not first)
   const [activeGroupId, setActiveGroupId] = useState(1); // which group newly added criteria go into
@@ -744,7 +744,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbGroupEditingName, setQbGroupEditingName] = useState("");
   const [qbCollapsedGroups, setQbCollapsedGroups] = useState(new Set()); // Set of collapsed group IDs
   const [qbMultiselectSearches, setQbMultiselectSearches] = useState({}); // { [criterionId]: searchString }
-  const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
+  const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
   const removeQbGroup = (gid) => { if (qbGroups.length <= 1) return; setQbGroups(prev => prev.filter(g => g.id !== gid)); setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; }); setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev); };
   const renameQbGroup = (gid, name) => setQbGroups(prev => prev.map(g => g.id === gid ? { ...g, name } : g));
