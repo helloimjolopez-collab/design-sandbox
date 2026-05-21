@@ -1256,11 +1256,14 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   </div>
                 </div>
 
-                {/* ── Section: Add Columns ── */}
+                {/* ── Section: Output Columns ── */}
                 <div style={{ flex: 1 }}>
-                  <div style={{ padding: "9px 12px 5px", fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span>Columns <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({qbSelectedCols.length})</span></span>
+                  <div style={{ padding: "9px 12px 4px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px" }}>Output Columns <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({qbSelectedCols.length})</span></span>
                     <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 10, color: c.textSec, cursor: "pointer", fontFamily: "inherit", padding: 0 }}>Reset</button>
+                  </div>
+                  <div style={{ padding: "0 12px 6px", fontSize: 11, color: c.textTer, lineHeight: 1.4 }}>
+                    Check to include in report. Use arrows to set left-to-right column order.
                   </div>
                   <div style={{ padding: "0 8px 12px", overflowY: "auto" }}>
                     {QB_AVAILABLE_COLUMNS.map((col, idx) => {
@@ -1273,13 +1276,15 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                           <input type="checkbox" checked={isSel} onChange={() => toggleQbCol(col.id)} style={{ flexShrink: 0 }} />
                           <span style={{ flex: 1, color: isSel ? c.pri : c.textSec, fontWeight: isSel ? 500 : 400 }}>{col.label}</span>
                           {isSel && (
-                            <span style={{ display: "flex", gap: 1 }}>
-                              <button onClick={() => moveQbCol(col.id, "up")} disabled={colIdx === 0} title="Move up" style={{ background: "none", border: "none", cursor: colIdx === 0 ? "default" : "pointer", color: colIdx === 0 ? c.borderLight : c.textTer, fontSize: 9, padding: "1px 2px" }}
+                            <span style={{ display: "flex", gap: 1, flexShrink: 0 }}>
+                              <button onClick={() => moveQbCol(col.id, "up")} disabled={colIdx === 0} title="Move left in report"
+                                style={{ background: "none", border: "none", cursor: colIdx === 0 ? "default" : "pointer", color: colIdx === 0 ? c.borderLight : c.textTer, fontSize: 10, padding: "1px 3px", fontFamily: "inherit", lineHeight: 1 }}
                                 onMouseEnter={e => { if (colIdx > 0) e.currentTarget.style.color = c.text; }}
-                                onMouseLeave={e => { if (colIdx > 0) e.currentTarget.style.color = c.textTer; }}>▲</button>
-                              <button onClick={() => moveQbCol(col.id, "down")} disabled={colIdx === qbSelectedCols.length - 1} title="Move down" style={{ background: "none", border: "none", cursor: colIdx === qbSelectedCols.length - 1 ? "default" : "pointer", color: colIdx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, fontSize: 9, padding: "1px 2px" }}
+                                onMouseLeave={e => { if (colIdx > 0) e.currentTarget.style.color = c.textTer; }}>←</button>
+                              <button onClick={() => moveQbCol(col.id, "down")} disabled={colIdx === qbSelectedCols.length - 1} title="Move right in report"
+                                style={{ background: "none", border: "none", cursor: colIdx === qbSelectedCols.length - 1 ? "default" : "pointer", color: colIdx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, fontSize: 10, padding: "1px 3px", fontFamily: "inherit", lineHeight: 1 }}
                                 onMouseEnter={e => { if (colIdx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.text; }}
-                                onMouseLeave={e => { if (colIdx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.textTer; }}>▼</button>
+                                onMouseLeave={e => { if (colIdx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.textTer; }}>→</button>
                             </span>
                           )}
                         </div>
