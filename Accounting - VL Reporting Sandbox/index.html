@@ -1248,23 +1248,42 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 </div>
 
                 {/* ── Section: Other Queries ── */}
-                <div style={{ borderBottom: `1px solid ${c.border}`, padding: "9px 12px 10px" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 6 }}>Other Queries</div>
-                  {/* Selected query chips */}
-                  {qbSelectedOtherQueries.size > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 6 }}>
-                      {[...qbSelectedOtherQueries].map(id => {
-                        const cfg = savedQueryList.find(x => x.id === id);
-                        return cfg ? (
-                          <span key={id} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 6px 2px 8px", background: "#eff4ff", border: `1px solid #c7d7f7`, borderRadius: 10, fontSize: 11, color: c.pri, fontWeight: 500 }}>
-                            {cfg.name}
-                            <button onClick={() => setQbSelectedOtherQueries(prev => { const n = new Set(prev); n.delete(id); return n; })}
-                              style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", alignItems: "center" }}><XIcon size={10} /></button>
-                          </span>
-                        ) : null;
-                      })}
-                    </div>
-                  )}
+                <div style={{ padding: "9px 12px 10px" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 6 }}>Also Include Results From</div>
+                  {/* Selected query chips with view-more */}
+                  {qbSelectedOtherQueries.size > 0 && (() => {
+                    const allIds = [...qbSelectedOtherQueries];
+                    const visibleIds = qbOtherQueriesChipsExpanded ? allIds : allIds.slice(0, QB_CHIPS_VISIBLE);
+                    const hiddenCount = allIds.length - QB_CHIPS_VISIBLE;
+                    return (
+                      <div style={{ marginBottom: 6 }}>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                          {visibleIds.map(id => {
+                            const cfg = savedQueryList.find(x => x.id === id);
+                            return cfg ? (
+                              <span key={id} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 6px 2px 8px", background: "#eff4ff", border: `1px solid #c7d7f7`, borderRadius: 10, fontSize: 11, color: c.pri, fontWeight: 500 }}>
+                                {cfg.name}
+                                <button onClick={() => setQbSelectedOtherQueries(prev => { const n = new Set(prev); n.delete(id); return n; })}
+                                  style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", alignItems: "center" }}><XIcon size={10} /></button>
+                              </span>
+                            ) : null;
+                          })}
+                        </div>
+                        {!qbOtherQueriesChipsExpanded && hiddenCount > 0 && (
+                          <button onClick={() => setQbOtherQueriesChipsExpanded(true)}
+                            style={{ marginTop: 4, background: "none", border: "none", fontSize: 11, color: c.pri, cursor: "pointer", fontFamily: "inherit", padding: 0, fontWeight: 500 }}>
+                            + {hiddenCount} more
+                          </button>
+                        )}
+                        {qbOtherQueriesChipsExpanded && hiddenCount > 0 && (
+                          <button onClick={() => setQbOtherQueriesChipsExpanded(false)}
+                            style={{ marginTop: 4, background: "none", border: "none", fontSize: 11, color: c.textTer, cursor: "pointer", fontFamily: "inherit", padding: 0 }}>
+                            Show less
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
                   {/* Search trigger */}
                   <div style={{ position: "relative" }}>
                     <input
