@@ -750,6 +750,9 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbMultiselectDropOpen, setQbMultiselectDropOpen] = useState({}); // { [crId]: bool }
   const [qbMultiselectDropRect, setQbMultiselectDropRect] = useState({}); // { [crId]: {top,left,width} }
   const [qbShowValidation, setQbShowValidation] = useState(false);
+  const [qbLeftTab, setQbLeftTab] = useState("filters"); // "filters" | "columns"
+  const [qbOtherQueriesChipsExpanded, setQbOtherQueriesChipsExpanded] = useState(false);
+  const QB_CHIPS_VISIBLE = 3; // max chips before "view more"
   const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
   const removeQbGroup = (gid) => { if (qbGroups.length <= 1) return; setQbGroups(prev => prev.filter(g => g.id !== gid)); setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; }); setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev); };
