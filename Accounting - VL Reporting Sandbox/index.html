@@ -718,6 +718,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
     else if (field.type === "date") { defaultOp = "Specific"; defaultVal = ""; }
     else if (field.type === "number") { defaultOp = "Equal"; defaultVal = ""; }
     setQbCriteria(prev => [...prev, { id: newId, fieldId: field.id, label: field.label, type: field.type, op: defaultOp, value: defaultVal, catKey, options: field.options, groupId: activeGroupId }]);
+    setQbShowValidation(false);
   };
   const updateQbCriterion = (id, updates) => setQbCriteria(prev => prev.map(cr => cr.id === id ? { ...cr, ...updates } : cr));
   const removeQbCriterion = (id) => setQbCriteria(prev => prev.filter(cr => cr.id !== id));
