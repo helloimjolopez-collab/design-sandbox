@@ -1301,18 +1301,16 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               {/* ═══ RIGHT PANEL: criteria in groups + sort ═══ */}
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", background: c.white }}>
 
-                {/* Target group selector + Add group */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, padding: "8px 12px", background: c.bg, borderRadius: 7, border: `1px solid ${c.borderLight}` }}>
-                  <span style={{ fontSize: 12, color: c.textSec, whiteSpace: "nowrap", fontWeight: 500 }}>Add criteria to:</span>
-                  <select value={activeGroupId} onChange={e => setActiveGroupId(Number(e.target.value))}
-                    style={{ flex: 1, padding: "4px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
-                    {qbGroups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                  </select>
-                  <button onClick={addQbGroup}
-                    style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 10px", borderRadius: 5, border: `1px solid ${c.border}`, background: c.white, cursor: "pointer", fontSize: 12, color: c.textSec, fontFamily: "inherit", whiteSpace: "nowrap" }}>
-                    + Add group
-                  </button>
-                </div>
+                {/* Target group selector — only shown when multiple groups exist */}
+                {qbGroups.length > 1 && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, fontSize: 12, color: c.textTer }}>
+                    <span style={{ whiteSpace: "nowrap" }}>Fields from the left panel go to:</span>
+                    <select value={activeGroupId} onChange={e => setActiveGroupId(Number(e.target.value))}
+                      style={{ padding: "3px 7px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
+                      {qbGroups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                    </select>
+                  </div>
+                )}
 
                 {/* Empty state */}
                 {qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0 && (
