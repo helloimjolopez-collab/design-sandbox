@@ -1636,13 +1636,15 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
                   {/* Add group button — only when criteria exist */}
                   {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
-                    <button onClick={addQbGroup}
-                      style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, padding: "6px 10px", borderRadius: 5, border: "none", background: "none", cursor: "pointer", fontSize: 12, color: c.textSec, fontFamily: "inherit", marginBottom: 12, width: "100%", textDecoration: "underline" }}
-                      onMouseEnter={e => { e.currentTarget.style.color = c.text; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = c.textSec; }}>
-                      + Add filter group
-                      <span style={{ fontSize: 11, marginLeft: 4 }}>(OR logic between groups)</span>
-                    </button>
+                    <div style={{ marginBottom: 12, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                      <button onClick={addQbGroup}
+                        style={{ padding: "6px 16px", borderRadius: 5, border: `1px dashed ${c.border}`, background: "none", cursor: "pointer", fontSize: 12, color: c.textSec, fontFamily: "inherit" }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = c.textSec; e.currentTarget.style.color = c.text; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
+                        + Add filter group
+                      </button>
+                      <span style={{ fontSize: 11, color: c.textTer }}>OR logic between filter groups</span>
+                    </div>
                   )}
 
                   {/* Other Queries inclusions indicator */}
