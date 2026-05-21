@@ -1185,13 +1185,13 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               const alreadyAdded = qbCriteria.some(cr => cr.fieldId === field.id);
                               return (
                                 <div key={field.id}
-                                  onClick={() => { if (!alreadyAdded) addQbCriterion(field, cat.key); }}
-                                  title={alreadyAdded ? "Already added as a filter" : `Add "${field.label}" as a filter`}
-                                  style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: alreadyAdded ? "default" : "pointer", fontSize: 12, color: alreadyAdded ? cc.text : c.textSec, fontWeight: alreadyAdded ? 600 : 400, background: alreadyAdded ? cc.bg : "none", marginBottom: 1 }}
-                                  onMouseEnter={e => { if (!alreadyAdded) e.currentTarget.style.background = c.bg; }}
-                                  onMouseLeave={e => { if (!alreadyAdded) e.currentTarget.style.background = "none"; }}>
-                                  <span style={{ color: alreadyAdded ? cc.text : c.textTer, fontSize: 12, width: 12, flexShrink: 0, textAlign: "center" }}>{alreadyAdded ? "✓" : "+"}</span>
-                                  {field.label}
+                                  onClick={() => { if (alreadyAdded) { const cr = qbCriteria.find(cr => cr.fieldId === field.id); if (cr) removeQbCriterion(cr.id); } else { addQbCriterion(field, cat.key); } }}
+                                  title={alreadyAdded ? "Click to remove" : `Add "${field.label}" as a filter`}
+                                  style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", fontSize: 12, color: alreadyAdded ? cc.text : c.textSec, fontWeight: alreadyAdded ? 600 : 400, background: alreadyAdded ? cc.bg : "none", marginBottom: 1, border: alreadyAdded ? `1px solid ${cc.border}` : "1px solid transparent" }}
+                                  onMouseEnter={e => { e.currentTarget.style.opacity = "0.8"; }}
+                                  onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
+                                  <span style={{ flex: 1 }}>{field.label}</span>
+                                  <span style={{ color: alreadyAdded ? cc.text : c.textTer, fontSize: 11, flexShrink: 0 }}>{alreadyAdded ? "×" : "+"}</span>
                                 </div>
                               );
                             })}
