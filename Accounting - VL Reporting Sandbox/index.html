@@ -1179,7 +1179,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
           <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
               {/* ═══ LEFT PANEL: Add Categories / Other Queries / Columns ═══ */}
-              <div style={{ width: 280, minWidth: 280, borderRight: `1px solid ${c.border}`, overflowY: "auto", display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0 }}>
+              <div style={{ width: 360, minWidth: 320, borderRight: `1px solid ${c.border}`, overflowY: "auto", display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0 }}>
 
                 {/* ── Section: Add Categories ── */}
                 <div style={{ borderBottom: `1px solid ${c.border}` }}>
@@ -1306,21 +1306,21 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   )}
                 </div>
 
-                {/* Filter group targeting hint — only when multiple groups */}
-                {qbGroups.length > 1 && (
-                  <div style={{ fontSize: 11, color: c.textTer, marginBottom: 8 }}>Click a filter group to make it active, then add fields from the left.</div>
-                )}
-
-                {/* Empty state */}
+                {/* Empty state — shown only when no categories added */}
                 {qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0 && (
-                  <div style={{ padding: "28px 16px", background: c.bg, borderRadius: 8, border: `1px dashed ${c.border}`, textAlign: "center", marginBottom: 14 }}>
-                    <div style={{ fontSize: 13, color: c.textSec, marginBottom: 4 }}>No filters added yet.</div>
-                    <div style={{ fontSize: 12, color: c.textTer }}>Select a category from the left panel and choose the fields you want to filter by. Without filters, the report includes all assets.</div>
+                  <div style={{ padding: "40px 24px", textAlign: "center" }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: c.textSec, marginBottom: 6 }}>No Categories Added Yet</div>
+                    <div style={{ fontSize: 12, color: c.textTer, lineHeight: 1.6 }}>Select a category from the left to start.</div>
                   </div>
                 )}
 
-                {/* Groups */}
-                {qbGroups.map((grp, gi) => {
+                {/* Filter group targeting hint — only when multiple groups */}
+                {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.length > 1 && (
+                  <div style={{ fontSize: 11, color: c.textTer, marginBottom: 8 }}>Click a filter group to make it active, then add fields from the left.</div>
+                )}
+
+                {/* Groups — only shown once at least one field is added */}
+                {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.map((grp, gi) => {
                   const groupCriteria = qbCriteria.filter(cr => cr.groupId === grp.id);
                   return (
                     <React.Fragment key={grp.id}>
