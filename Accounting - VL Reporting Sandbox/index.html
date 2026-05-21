@@ -1362,283 +1362,374 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
               </div>{/* end LEFT PANEL */}
 
-              {/* ═══ RIGHT PANEL: filters in groups + columns + sort ═══ */}
+              {/* ═══ RIGHT PANEL: switches based on active left tab ═══ */}
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", background: c.white }}>
 
-                {/* Live match status — only shown once filters are active */}
-                {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
-                  <div style={{ padding: "6px 12px", background: qbLevelDeepTotal === 0 ? "#fef2f2" : "#f0f4ff", border: `1px solid ${qbLevelDeepTotal === 0 ? "#fecaca" : "#c7d7f7"}`, borderRadius: 6, marginBottom: 12, fontSize: 12, color: c.textSec, display: "flex", alignItems: "center", gap: 7 }}>
-                    <span style={{ fontWeight: 700, color: qbLevelDeepTotal === 0 ? c.red : c.text }}>~{qbLevelDeepTotal.toLocaleString()}</span>
-                    <span>of {TOTAL_ROW_COUNT.toLocaleString()} assets match</span>
-                    {qbLevelDeepTotal === 0 && <span style={{ color: c.red, fontSize: 11 }}>— no matches, adjust filters</span>}
-                    {qbLevelDeepTotal === TOTAL_ROW_COUNT && qbLevelDeepTotal > 0 && <span style={{ color: c.textTer, fontSize: 11 }}>— set filter values to narrow results</span>}
-                  </div>
-                )}
+                {/* ── FILTERS TAB RIGHT PANEL ── */}
+                {qbLeftTab === "filters" && (<>
 
-                {/* Empty state — shown only when no categories added */}
-                {qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0 && (
-                  <div style={{ padding: "40px 24px", textAlign: "center" }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: c.textSec, marginBottom: 6 }}>No Categories Added Yet</div>
-                    <div style={{ fontSize: 12, color: c.textTer, lineHeight: 1.6 }}>Select a category from the left to start.</div>
-                  </div>
-                )}
+                  {/* Live match status — only shown once filters are active */}
+                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
+                    <div style={{ padding: "6px 12px", background: qbLevelDeepTotal === 0 ? "#fef2f2" : "#f0f4ff", border: `1px solid ${qbLevelDeepTotal === 0 ? "#fecaca" : "#c7d7f7"}`, borderRadius: 6, marginBottom: 12, fontSize: 12, color: c.textSec, display: "flex", alignItems: "center", gap: 7 }}>
+                      <span style={{ fontWeight: 700, color: qbLevelDeepTotal === 0 ? c.red : c.text }}>~{qbLevelDeepTotal.toLocaleString()}</span>
+                      <span>of {TOTAL_ROW_COUNT.toLocaleString()} assets match</span>
+                      {qbLevelDeepTotal === 0 && <span style={{ color: c.red, fontSize: 11 }}>— no matches, adjust filters</span>}
+                      {qbLevelDeepTotal === TOTAL_ROW_COUNT && qbLevelDeepTotal > 0 && <span style={{ color: c.textTer, fontSize: 11 }}>— set filter values to narrow results</span>}
+                    </div>
+                  )}
 
-                {/* Filter group targeting hint — only when multiple groups */}
-                {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.length > 1 && (
-                  <div style={{ fontSize: 11, color: c.textTer, marginBottom: 8 }}>Click a filter group to make it active, then add fields from the left.</div>
-                )}
+                  {/* Empty state — shown only when no categories added */}
+                  {qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0 && (
+                    <div style={{ padding: "40px 24px", textAlign: "center" }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: c.textSec, marginBottom: 6 }}>No Categories Added Yet</div>
+                      <div style={{ fontSize: 12, color: c.textTer, lineHeight: 1.6 }}>Select a category from the left to start.</div>
+                    </div>
+                  )}
 
-                {/* Groups — only shown once at least one field is added */}
-                {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.map((grp, gi) => {
-                  const groupCriteria = qbCriteria.filter(cr => cr.groupId === grp.id);
-                  return (
-                    <React.Fragment key={grp.id}>
-                      {/* Between-group And/Or toggle */}
-                      {gi > 0 && (
-                        <div style={{ display: "flex", justifyContent: "center", padding: "3px 0" }}>
-                          <button onClick={() => toggleQbGroupLogic(grp.id)}
-                            style={{ padding: "2px 12px", borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${c.border}`, background: c.bg, color: c.textSec, textTransform: "uppercase" }}
-                            onMouseEnter={e => { e.currentTarget.style.background = "#eff4ff"; e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
-                            {qbGroupLogics[grp.id] || "and"}
-                          </button>
-                        </div>
-                      )}
+                  {/* Filter group targeting hint — only when multiple groups */}
+                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.length > 1 && (
+                    <div style={{ fontSize: 11, color: c.textTer, marginBottom: 8 }}>Click a filter group to make it active, then add fields from the left.</div>
+                  )}
 
-                      {/* Group box — active left-border indicator only when multiple groups */}
-                      <div style={{ border: `1px solid ${c.border}`, borderLeft: qbGroups.length > 1 && activeGroupId === grp.id ? `4px solid ${c.pri}` : `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
-                        {/* Group header — clicking anywhere expands/collapses; clicking name renames */}
-                        <div
-                          onClick={() => {
-                            if (qbGroupEditingId === grp.id) return;
-                            // Toggle collapse/expand on any header click
-                            setQbCollapsedGroups(prev => { const n = new Set(prev); n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id); return n; });
-                            // Also activate this group when multiple groups
-                            if (qbGroups.length > 1) setActiveGroupId(grp.id);
-                          }}
-                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: qbGroups.length > 1 && activeGroupId === grp.id ? "#f8fafc" : c.bg, borderBottom: groupCriteria.length > 0 && !qbCollapsedGroups.has(grp.id) ? `1px solid ${c.borderLight}` : "none", cursor: "pointer", userSelect: "none" }}>
-                          {/* Chevron on the LEFT */}
-                          <span style={{ fontSize: 9, color: c.textTer, flexShrink: 0, width: 10, textAlign: "center" }}>
-                            {qbCollapsedGroups.has(grp.id) ? "▶" : "▼"}
-                          </span>
-                          {qbGroupEditingId === grp.id ? (
-                            <input type="text" value={qbGroupEditingName} onChange={e => setQbGroupEditingName(e.target.value)} autoFocus
-                              onClick={e => e.stopPropagation()}
-                              onBlur={() => { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); }}
-                              onKeyDown={e => { if (e.key === "Enter") { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); } else if (e.key === "Escape") setQbGroupEditingId(null); }}
-                              style={{ flex: 1, padding: "2px 6px", border: `1px solid ${c.pri}`, borderRadius: 4, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                          ) : (
-                            <span
-                              onClick={e => { e.stopPropagation(); setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }}
-                              title="Click to rename"
-                              style={{ flex: 1, fontSize: 12, fontWeight: 600, color: c.textSec, cursor: "text" }}
-                              onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
-                              onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}>
-                              {grp.name}
-                            </span>
-                          )}
-                          <button onClick={e => { e.stopPropagation(); removeQbGroup(grp.id); }} title="Remove this filter group"
-                            style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 4px", display: "flex", alignItems: "center", flexShrink: 0 }}
-                            onMouseEnter={e => e.currentTarget.style.color = c.red}
-                            onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
-                        </div>
-
-                        {/* Criteria list — hidden when collapsed */}
-                        {!qbCollapsedGroups.has(grp.id) && (groupCriteria.length === 0 ? (
-                          <div style={{ padding: "10px 14px", fontSize: 12, color: c.textTer, fontStyle: "italic", background: c.white }}>
-                            {qbGroups.length > 1 && activeGroupId !== grp.id ? "Click this filter group to make it active, then add fields from the left." : "Open a category on the left and click a field to add it here."}
+                  {/* Groups — only shown once at least one field is added */}
+                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.map((grp, gi) => {
+                    const groupCriteria = qbCriteria.filter(cr => cr.groupId === grp.id);
+                    return (
+                      <React.Fragment key={grp.id}>
+                        {/* Between-group And/Or toggle */}
+                        {gi > 0 && (
+                          <div style={{ display: "flex", justifyContent: "center", padding: "3px 0" }}>
+                            <button onClick={() => toggleQbGroupLogic(grp.id)}
+                              style={{ padding: "2px 12px", borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${c.border}`, background: c.bg, color: c.textSec, textTransform: "uppercase" }}
+                              onMouseEnter={e => { e.currentTarget.style.background = "#eff4ff"; e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
+                              {qbGroupLogics[grp.id] || "and"}
+                            </button>
                           </div>
-                        ) : (
-                          <div style={{ padding: "8px 10px", display: "flex", flexDirection: "column", gap: 0, background: c.white }}>
-                            {groupCriteria.map((cr, idx) => {
-                              const bc = CAT_COLORS[cr.catKey] || CAT_COLORS.basic;
-                              return (
-                                <React.Fragment key={cr.id}>
-                                  {/* And/Or between criteria */}
-                                  {idx > 0 && (
-                                    <div style={{ padding: "2px 4px" }}>
-                                      <button onClick={() => toggleQbLogic(cr.id)}
-                                        style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${c.border}`, background: c.bg, color: c.textSec, textTransform: "uppercase" }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = "#eff4ff"; e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; }}
-                                        onMouseLeave={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
-                                        {qbLogicOps[cr.id] || "and"}
-                                      </button>
-                                    </div>
-                                  )}
+                        )}
 
-                                  {/* Criterion row — list-item style with trash on far right */}
-                                  <div style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "8px 8px", background: "#fafbfc", borderRadius: 6, border: `1px solid ${c.borderLight}` }}>
-                                    {/* Field badge */}
-                                    <span style={{ display: "inline-flex", alignItems: "center", padding: "3px 8px", borderRadius: 10, background: bc.bg, border: `1px solid ${bc.border}`, color: bc.text, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0, marginTop: 2 }}>
-                                      {cr.label}
-                                    </span>
+                        {/* Group box — active left-border indicator only when multiple groups */}
+                        <div style={{ border: `1px solid ${c.border}`, borderLeft: qbGroups.length > 1 && activeGroupId === grp.id ? `4px solid ${c.pri}` : `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
+                          {/* Group header — clicking anywhere expands/collapses; clicking name renames */}
+                          <div
+                            onClick={() => {
+                              if (qbGroupEditingId === grp.id) return;
+                              setQbCollapsedGroups(prev => { const n = new Set(prev); n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id); return n; });
+                              if (qbGroups.length > 1) setActiveGroupId(grp.id);
+                            }}
+                            style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: qbGroups.length > 1 && activeGroupId === grp.id ? "#f8fafc" : c.bg, borderBottom: groupCriteria.length > 0 && !qbCollapsedGroups.has(grp.id) ? `1px solid ${c.borderLight}` : "none", cursor: "pointer", userSelect: "none" }}>
+                            <span style={{ fontSize: 9, color: c.textTer, flexShrink: 0, width: 10, textAlign: "center" }}>
+                              {qbCollapsedGroups.has(grp.id) ? "▶" : "▼"}
+                            </span>
+                            {qbGroupEditingId === grp.id ? (
+                              <input type="text" value={qbGroupEditingName} onChange={e => setQbGroupEditingName(e.target.value)} autoFocus
+                                onClick={e => e.stopPropagation()}
+                                onBlur={() => { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); }}
+                                onKeyDown={e => { if (e.key === "Enter") { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); } else if (e.key === "Escape") setQbGroupEditingId(null); }}
+                                style={{ flex: 1, padding: "2px 6px", border: `1px solid ${c.pri}`, borderRadius: 4, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
+                            ) : (
+                              <span
+                                onClick={e => { e.stopPropagation(); setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }}
+                                title="Click to rename"
+                                style={{ flex: 1, fontSize: 12, fontWeight: 600, color: c.textSec, cursor: "text" }}
+                                onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
+                                onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}>
+                                {grp.name}
+                              </span>
+                            )}
+                            <button onClick={e => { e.stopPropagation(); removeQbGroup(grp.id); }} title="Remove this filter group"
+                              style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 4px", display: "flex", alignItems: "center", flexShrink: 0 }}
+                              onMouseEnter={e => e.currentTarget.style.color = c.red}
+                              onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
+                          </div>
 
-                                    {/* Controls (type-specific) */}
-                                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, minWidth: 0, alignItems: "flex-start" }}>
-                                      {cr.type === "boolean" && (
-                                        <div style={{ display: "flex", gap: 4 }}>
-                                          {["Yes", "No"].map(v => (
-                                            <button key={v} onClick={() => updateQbCriterion(cr.id, { value: v })}
-                                              style={{ padding: "4px 14px", borderRadius: 5, fontSize: 12, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${cr.value === v ? c.pri : c.border}`, background: cr.value === v ? "#eff4ff" : c.white, color: cr.value === v ? c.pri : c.textSec, fontWeight: cr.value === v ? 600 : 400 }}>{v}</button>
-                                          ))}
-                                        </div>
-                                      )}
+                          {/* Criteria list — hidden when collapsed */}
+                          {!qbCollapsedGroups.has(grp.id) && (groupCriteria.length === 0 ? (
+                            <div style={{ padding: "10px 14px", fontSize: 12, color: c.textTer, fontStyle: "italic", background: c.white }}>
+                              {qbGroups.length > 1 && activeGroupId !== grp.id ? "Click this filter group to make it active, then add fields from the left." : "Open a category on the left and click a field to add it here."}
+                            </div>
+                          ) : (
+                            <div style={{ padding: "8px 10px", display: "flex", flexDirection: "column", gap: 0, background: c.white }}>
+                              {groupCriteria.map((cr, idx) => {
+                                const bc = CAT_COLORS[cr.catKey] || CAT_COLORS.basic;
+                                return (
+                                  <React.Fragment key={cr.id}>
+                                    {/* And/Or between criteria */}
+                                    {idx > 0 && (
+                                      <div style={{ padding: "2px 4px" }}>
+                                        <button onClick={() => toggleQbLogic(cr.id)}
+                                          style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${c.border}`, background: c.bg, color: c.textSec, textTransform: "uppercase" }}
+                                          onMouseEnter={e => { e.currentTarget.style.background = "#eff4ff"; e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; }}
+                                          onMouseLeave={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
+                                          {qbLogicOps[cr.id] || "and"}
+                                        </button>
+                                      </div>
+                                    )}
 
-                                      {cr.type === "multiselect" && (() => {
-                                        const msSearch = qbMultiselectSearches[cr.id] || "";
-                                        const selectedCount = (cr.value || []).length;
-                                        const isOpen = !!qbMultiselectDropOpen[cr.id];
-                                        const dropRect = qbMultiselectDropRect[cr.id];
-                                        const filteredOpts = (cr.options || []).filter(o => !msSearch || o.toLowerCase().includes(msSearch.toLowerCase()));
-                                        return (
-                                          <div style={{ width: "100%", maxWidth: 320 }}>
-                                            {/* Collapsed trigger */}
-                                            <button
-                                              onFocus={e => {
-                                                const rect = e.currentTarget.getBoundingClientRect();
-                                                setQbMultiselectDropRect(prev => ({ ...prev, [cr.id]: { top: rect.bottom + 2, left: rect.left, width: Math.max(rect.width, 220) } }));
-                                                setQbMultiselectDropOpen(prev => ({ ...prev, [cr.id]: true }));
-                                              }}
-                                              onBlur={() => setTimeout(() => setQbMultiselectDropOpen(prev => ({ ...prev, [cr.id]: false })), 180)}
-                                              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "5px 8px", border: `1px solid ${isOpen ? c.pri : c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, cursor: "pointer", color: selectedCount > 0 ? c.text : c.textTer, textAlign: "left" }}>
-                                              <span>{selectedCount === 0 ? "Any (no filter)" : `${selectedCount} selected`}</span>
-                                              <span style={{ fontSize: 9, color: c.textTer }}>▾</span>
-                                            </button>
-                                            {/* Selected chips */}
-                                            {selectedCount > 0 && (
-                                              <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginTop: 4 }}>
-                                                {(cr.value || []).map(v => (
-                                                  <span key={v} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "1px 5px 1px 7px", background: "#eff4ff", border: `1px solid #c7d7f7`, borderRadius: 8, fontSize: 10, color: c.pri }}>
-                                                    {v}
-                                                    <button onMouseDown={e => e.preventDefault()} onClick={() => { const curr = cr.value || []; updateQbCriterion(cr.id, { value: curr.filter(x => x !== v) }); }}
-                                                      style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", alignItems: "center" }}><XIcon size={9} /></button>
-                                                  </span>
-                                                ))}
-                                              </div>
+                                    {/* Criterion row — list-item style with trash on far right */}
+                                    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "8px 8px", background: "#fafbfc", borderRadius: 6, border: `1px solid ${c.borderLight}` }}>
+                                      {/* Field badge */}
+                                      <span style={{ display: "inline-flex", alignItems: "center", padding: "3px 8px", borderRadius: 10, background: bc.bg, border: `1px solid ${bc.border}`, color: bc.text, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0, marginTop: 2 }}>
+                                        {cr.label}
+                                      </span>
+
+                                      {/* Controls (type-specific) */}
+                                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, minWidth: 0, alignItems: "flex-start" }}>
+                                        {cr.type === "boolean" && (
+                                          <div style={{ display: "flex", gap: 4 }}>
+                                            {["Yes", "No"].map(v => (
+                                              <button key={v} onClick={() => updateQbCriterion(cr.id, { value: v })}
+                                                style={{ padding: "4px 14px", borderRadius: 5, fontSize: 12, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${cr.value === v ? c.pri : c.border}`, background: cr.value === v ? "#eff4ff" : c.white, color: cr.value === v ? c.pri : c.textSec, fontWeight: cr.value === v ? 600 : 400 }}>{v}</button>
+                                            ))}
+                                          </div>
+                                        )}
+
+                                        {cr.type === "multiselect" && (() => {
+                                          const msSearch = qbMultiselectSearches[cr.id] || "";
+                                          const selectedCount = (cr.value || []).length;
+                                          const isOpen = !!qbMultiselectDropOpen[cr.id];
+                                          const dropRect = qbMultiselectDropRect[cr.id];
+                                          const filteredOpts = (cr.options || []).filter(o => !msSearch || o.toLowerCase().includes(msSearch.toLowerCase()));
+                                          return (
+                                            <div style={{ width: "100%", maxWidth: 320 }}>
+                                              {/* Collapsed trigger */}
+                                              <button
+                                                onFocus={e => {
+                                                  const rect = e.currentTarget.getBoundingClientRect();
+                                                  setQbMultiselectDropRect(prev => ({ ...prev, [cr.id]: { top: rect.bottom + 2, left: rect.left, width: Math.max(rect.width, 220) } }));
+                                                  setQbMultiselectDropOpen(prev => ({ ...prev, [cr.id]: true }));
+                                                }}
+                                                onBlur={() => setTimeout(() => setQbMultiselectDropOpen(prev => ({ ...prev, [cr.id]: false })), 180)}
+                                                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "5px 8px", border: `1px solid ${isOpen ? c.pri : c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, cursor: "pointer", color: selectedCount > 0 ? c.text : c.textTer, textAlign: "left" }}>
+                                                <span>{selectedCount === 0 ? "Any (no filter)" : `${selectedCount} selected`}</span>
+                                                <span style={{ fontSize: 9, color: c.textTer }}>▾</span>
+                                              </button>
+                                              {/* Selected chips */}
+                                              {selectedCount > 0 && (
+                                                <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginTop: 4 }}>
+                                                  {(cr.value || []).map(v => (
+                                                    <span key={v} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "1px 5px 1px 7px", background: "#eff4ff", border: `1px solid #c7d7f7`, borderRadius: 8, fontSize: 10, color: c.pri }}>
+                                                      {v}
+                                                      <button onMouseDown={e => e.preventDefault()} onClick={() => { const curr = cr.value || []; updateQbCriterion(cr.id, { value: curr.filter(x => x !== v) }); }}
+                                                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", alignItems: "center" }}><XIcon size={9} /></button>
+                                                    </span>
+                                                  ))}
+                                                </div>
+                                              )}
+                                              {/* Floating dropdown */}
+                                              {isOpen && dropRect && (
+                                                <div style={{ position: "fixed", top: dropRect.top, left: dropRect.left, width: dropRect.width, maxHeight: 240, background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 3000, display: "flex", flexDirection: "column" }}>
+                                                  <div style={{ padding: "6px 8px", borderBottom: `1px solid ${c.borderLight}`, position: "relative" }}>
+                                                    <input type="text" value={msSearch}
+                                                      onChange={e => setQbMultiselectSearches(prev => ({ ...prev, [cr.id]: e.target.value }))}
+                                                      onMouseDown={e => e.stopPropagation()}
+                                                      placeholder="Search…"
+                                                      autoFocus
+                                                      style={{ width: "100%", padding: "4px 8px 4px 24px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+                                                    <SearchIcon size={11} style={{ position: "absolute", left: 15, top: 13, color: c.textTer, pointerEvents: "none" }} />
+                                                  </div>
+                                                  <div style={{ overflowY: "auto", flex: 1 }}>
+                                                    {filteredOpts.length === 0 && <div style={{ padding: "8px 12px", fontSize: 11, color: c.textTer, fontStyle: "italic" }}>No matches</div>}
+                                                    {filteredOpts.map(opt => {
+                                                      const isChecked = (cr.value || []).includes(opt);
+                                                      return (
+                                                        <label key={opt} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12, background: isChecked ? "#f0f4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
+                                                          onMouseDown={e => e.preventDefault()}
+                                                          onMouseEnter={e => { if (!isChecked) e.currentTarget.style.background = c.bg; }}
+                                                          onMouseLeave={e => { e.currentTarget.style.background = isChecked ? "#f0f4ff" : c.white; }}>
+                                                          <input type="checkbox" checked={isChecked} onChange={() => {
+                                                            const curr = cr.value || [];
+                                                            updateQbCriterion(cr.id, { value: curr.includes(opt) ? curr.filter(x => x !== opt) : [...curr, opt] });
+                                                          }} />
+                                                          <span style={{ color: isChecked ? c.pri : c.text, fontWeight: isChecked ? 500 : 400 }}>{opt}</span>
+                                                        </label>
+                                                      );
+                                                    })}
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </div>
+                                          );
+                                        })()}
+
+                                        {cr.type === "select" && (
+                                          <select value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
+                                            style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", maxWidth: 280 }}>
+                                            {(cr.options || []).map(o => <option key={o} value={o}>{o}</option>)}
+                                          </select>
+                                        )}
+
+                                        {cr.type === "date" && (
+                                          <div style={{ display: "flex", flexDirection: "column", gap: 4, width: "100%", maxWidth: 320 }}>
+                                            <select value={cr.op || "Specific"} onChange={e => updateQbCriterion(cr.id, { op: e.target.value, value: "" })}
+                                              style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
+                                              {["Today", "Last 7 Days", "Month to Date", "Year to Date", "Previous Month", "Previous Calendar Year", "Specific", "Less than or equal", "Greater than or equal", "Range", "Has Value", "No Value"].map(o => <option key={o} value={o}>{o}</option>)}
+                                            </select>
+                                            {["Specific", "Less than or equal", "Greater than or equal"].includes(cr.op || "Specific") && (
+                                              <input type="date" value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
+                                                style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
                                             )}
-                                            {/* Floating dropdown */}
-                                            {isOpen && dropRect && (
-                                              <div style={{ position: "fixed", top: dropRect.top, left: dropRect.left, width: dropRect.width, maxHeight: 240, background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 3000, display: "flex", flexDirection: "column" }}>
-                                                <div style={{ padding: "6px 8px", borderBottom: `1px solid ${c.borderLight}`, position: "relative" }}>
-                                                  <input type="text" value={msSearch}
-                                                    onChange={e => setQbMultiselectSearches(prev => ({ ...prev, [cr.id]: e.target.value }))}
-                                                    onMouseDown={e => e.stopPropagation()}
-                                                    placeholder="Search…"
-                                                    autoFocus
-                                                    style={{ width: "100%", padding: "4px 8px 4px 24px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
-                                                  <SearchIcon size={11} style={{ position: "absolute", left: 15, top: 13, color: c.textTer, pointerEvents: "none" }} />
-                                                </div>
-                                                <div style={{ overflowY: "auto", flex: 1 }}>
-                                                  {filteredOpts.length === 0 && <div style={{ padding: "8px 12px", fontSize: 11, color: c.textTer, fontStyle: "italic" }}>No matches</div>}
-                                                  {filteredOpts.map(opt => {
-                                                    const isChecked = (cr.value || []).includes(opt);
-                                                    return (
-                                                      <label key={opt} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12, background: isChecked ? "#f0f4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
-                                                        onMouseDown={e => e.preventDefault()}
-                                                        onMouseEnter={e => { if (!isChecked) e.currentTarget.style.background = c.bg; }}
-                                                        onMouseLeave={e => { e.currentTarget.style.background = isChecked ? "#f0f4ff" : c.white; }}>
-                                                        <input type="checkbox" checked={isChecked} onChange={() => {
-                                                          const curr = cr.value || [];
-                                                          updateQbCriterion(cr.id, { value: curr.includes(opt) ? curr.filter(x => x !== opt) : [...curr, opt] });
-                                                        }} />
-                                                        <span style={{ color: isChecked ? c.pri : c.text, fontWeight: isChecked ? 500 : 400 }}>{opt}</span>
-                                                      </label>
-                                                    );
-                                                  })}
-                                                </div>
+                                            {(cr.op || "Specific") === "Range" && (
+                                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <input type="date" value={cr.value?.start || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), start: e.target.value } })}
+                                                  style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
+                                                <span style={{ fontSize: 11, color: c.textTer }}>to</span>
+                                                <input type="date" value={cr.value?.end || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), end: e.target.value } })}
+                                                  style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
                                               </div>
                                             )}
                                           </div>
-                                        );
-                                      })()}
+                                        )}
 
-                                      {cr.type === "select" && (
-                                        <select value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
-                                          style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", maxWidth: 280 }}>
-                                          {(cr.options || []).map(o => <option key={o} value={o}>{o}</option>)}
-                                        </select>
-                                      )}
-
-                                      {cr.type === "date" && (
-                                        <div style={{ display: "flex", flexDirection: "column", gap: 4, width: "100%", maxWidth: 320 }}>
-                                          <select value={cr.op || "Specific"} onChange={e => updateQbCriterion(cr.id, { op: e.target.value, value: "" })}
-                                            style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
-                                            {["Today", "Last 7 Days", "Month to Date", "Year to Date", "Previous Month", "Previous Calendar Year", "Specific", "Less than or equal", "Greater than or equal", "Range", "Has Value", "No Value"].map(o => <option key={o} value={o}>{o}</option>)}
-                                          </select>
-                                          {["Specific", "Less than or equal", "Greater than or equal"].includes(cr.op || "Specific") && (
-                                            <input type="date" value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
-                                              style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                                          )}
-                                          {(cr.op || "Specific") === "Range" && (
-                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                              <input type="date" value={cr.value?.start || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), start: e.target.value } })}
-                                                style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                                              <span style={{ fontSize: 11, color: c.textTer }}>to</span>
-                                              <input type="date" value={cr.value?.end || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), end: e.target.value } })}
-                                                style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                                            </div>
-                                          )}
-                                        </div>
-                                      )}
-
-                                      {(cr.type === "text" || cr.type === "number") && (
-                                        <div style={{ display: "flex", gap: 5, width: "100%", maxWidth: 360 }}>
-                                          <select value={cr.op || (cr.type === "number" ? "Equal" : "Contains")} onChange={e => updateQbCriterion(cr.id, { op: e.target.value })}
-                                            style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", flexShrink: 0 }}>
-                                            {(cr.type === "number"
-                                              ? ["Equal", "Greater Than Or Equal", "Less Than Or Equal", "Has Value", "No Value"]
-                                              : ["Contains", "Equal", "Starts With", "Does Not Contain", "Does Not Start With", "Has Value", "No Value"]
-                                            ).map(o => <option key={o} value={o}>{o}</option>)}
-                                          </select>
-                                          {!["Has Value", "No Value"].includes(cr.op || (cr.type === "number" ? "Equal" : "Contains")) && (
-                                            <input type={cr.type === "number" ? "number" : "text"} value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder={cr.type === "number" ? "0" : "Value…"}
-                                              style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", minWidth: 0 }} />
-                                          )}
-                                        </div>
-                                      )}
+                                        {(cr.type === "text" || cr.type === "number") && (
+                                          <div style={{ display: "flex", gap: 5, width: "100%", maxWidth: 360 }}>
+                                            <select value={cr.op || (cr.type === "number" ? "Equal" : "Contains")} onChange={e => updateQbCriterion(cr.id, { op: e.target.value })}
+                                              style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", flexShrink: 0 }}>
+                                              {(cr.type === "number"
+                                                ? ["Equal", "Greater Than Or Equal", "Less Than Or Equal", "Has Value", "No Value"]
+                                                : ["Contains", "Equal", "Starts With", "Does Not Contain", "Does Not Start With", "Has Value", "No Value"]
+                                              ).map(o => <option key={o} value={o}>{o}</option>)}
+                                            </select>
+                                            {!["Has Value", "No Value"].includes(cr.op || (cr.type === "number" ? "Equal" : "Contains")) && (
+                                              <input type={cr.type === "number" ? "number" : "text"} value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder={cr.type === "number" ? "0" : "Value…"}
+                                                style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", minWidth: 0 }} />
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                      {/* Subtle divider + trash icon on far right */}
+                                      <div style={{ width: 1, background: c.borderLight, alignSelf: "stretch", flexShrink: 0, marginLeft: 2 }} />
+                                      <button onClick={() => removeQbCriterion(cr.id)} title="Remove this filter"
+                                        style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 2px", display: "flex", alignItems: "center", flexShrink: 0, marginTop: 1 }}
+                                        onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                        onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
                                     </div>
-                                    {/* Subtle divider + trash icon on far right */}
-                                    <div style={{ width: 1, background: c.borderLight, alignSelf: "stretch", flexShrink: 0, marginLeft: 2 }} />
-                                    <button onClick={() => removeQbCriterion(cr.id)} title="Remove this filter"
-                                      style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 2px", display: "flex", alignItems: "center", flexShrink: 0, marginTop: 1 }}
-                                      onMouseEnter={e => e.currentTarget.style.color = c.red}
-                                      onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
-                                  </div>
-                                </React.Fragment>
-                              );
-                            })}
-                          </div>
-                        ))}
+                                  </React.Fragment>
+                                );
+                              })}
+                            </div>
+                          ))}
+                        </div>
+                      </React.Fragment>
+                    );
+                  })}
+
+                  {/* Add group button — only when criteria exist */}
+                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
+                    <button onClick={addQbGroup}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, padding: "6px 10px", borderRadius: 5, border: "none", background: "none", cursor: "pointer", fontSize: 12, color: c.textSec, fontFamily: "inherit", marginBottom: 12, width: "100%", textDecoration: "underline" }}
+                      onMouseEnter={e => { e.currentTarget.style.color = c.text; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = c.textSec; }}>
+                      + Add filter group
+                      <span style={{ fontSize: 11, marginLeft: 4 }}>(OR logic between groups)</span>
+                    </button>
+                  )}
+
+                  {/* Other Queries inclusions indicator */}
+                  {qbSelectedOtherQueries.size > 0 && (
+                    <div style={{ padding: "8px 12px", background: "#f1f5f9", border: `1px solid #cbd5e1`, borderRadius: 8, marginBottom: 12, fontSize: 12, color: "#475569", lineHeight: 1.6 }}>
+                      <span style={{ fontWeight: 600, color: c.text }}>Also includes results from: </span>
+                      {[...qbSelectedOtherQueries].map((id, i) => {
+                        const cfg = savedQueryList.find(x => x.id === id);
+                        return cfg ? <span key={id}>{i > 0 ? ", " : ""}<span style={{ fontWeight: 500 }}>{cfg.name}</span></span> : null;
+                      })}
+                      <span style={{ color: c.textTer }}> (combined with OR)</span>
+                    </div>
+                  )}
+
+                </>)}{/* end filters tab right panel */}
+
+                {/* ── COLUMNS TAB RIGHT PANEL ── */}
+                {qbLeftTab === "columns" && (<>
+
+                  {/* Section: Column order */}
+                  <div style={{ marginBottom: 20 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8 }}>Included Columns</div>
+
+                    {qbSelectedCols.length === 0 ? (
+                      <div style={{ padding: "20px 16px", textAlign: "center", border: `1px dashed ${c.border}`, borderRadius: 6 }}>
+                        <div style={{ fontSize: 12, color: c.textTer }}>No columns selected — use the list on the left to add columns.</div>
                       </div>
-                    </React.Fragment>
-                  );
-                })}
-
-                {/* Add group button — only when criteria exist */}
-                {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
-                  <button onClick={addQbGroup}
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, padding: "6px 10px", borderRadius: 5, border: "none", background: "none", cursor: "pointer", fontSize: 12, color: c.textSec, fontFamily: "inherit", marginBottom: 12, width: "100%", textDecoration: "underline" }}
-                    onMouseEnter={e => { e.currentTarget.style.color = c.text; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = c.textSec; }}>
-                    + Add filter group
-                    <span style={{ fontSize: 11, marginLeft: 4 }}>(OR logic between groups)</span>
-                  </button>
-                )}
-
-                {/* Other Queries inclusions indicator */}
-                {qbSelectedOtherQueries.size > 0 && (
-                  <div style={{ padding: "8px 12px", background: "#f1f5f9", border: `1px solid #cbd5e1`, borderRadius: 8, marginBottom: 12, fontSize: 12, color: "#475569", lineHeight: 1.6 }}>
-                    <span style={{ fontWeight: 600, color: c.text }}>Also includes results from: </span>
-                    {[...qbSelectedOtherQueries].map((id, i) => {
-                      const cfg = savedQueryList.find(x => x.id === id);
-                      return cfg ? <span key={id}>{i > 0 ? ", " : ""}<span style={{ fontWeight: 500 }}>{cfg.name}</span></span> : null;
-                    })}
-                    <span style={{ color: c.textTer }}> (combined with OR)</span>
+                    ) : (
+                      <div style={{ border: `1px solid ${c.border}`, borderRadius: 6, overflow: "hidden" }}>
+                        {qbSelectedCols.map((colId, idx) => {
+                          const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === colId);
+                          if (!col) return null;
+                          const isFirst = idx === 0;
+                          const isLast = idx === qbSelectedCols.length - 1;
+                          return (
+                            <div key={colId} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", background: idx % 2 === 0 ? c.white : c.bg, borderBottom: !isLast ? `1px solid ${c.borderLight}` : "none" }}>
+                              {/* Position number */}
+                              <span style={{ fontSize: 10, color: c.textTer, fontWeight: 600, minWidth: 16, textAlign: "right", flexShrink: 0 }}>{idx + 1}</span>
+                              {/* Column name */}
+                              <span style={{ flex: 1, fontSize: 12, color: c.text, fontWeight: 500 }}>{col.label}</span>
+                              {/* Reorder: move left (up in order) */}
+                              <button onClick={() => {
+                                if (isFirst) return;
+                                setQbSelectedCols(prev => { const n = [...prev]; [n[idx - 1], n[idx]] = [n[idx], n[idx - 1]]; return n; });
+                              }} title="Move left in report" disabled={isFirst}
+                                style={{ background: "none", border: "none", cursor: isFirst ? "default" : "pointer", color: isFirst ? c.borderLight : c.textTer, padding: "2px 3px", display: "flex", alignItems: "center", flexShrink: 0 }}
+                                onMouseEnter={e => { if (!isFirst) e.currentTarget.style.color = c.textSec; }}
+                                onMouseLeave={e => { e.currentTarget.style.color = isFirst ? c.borderLight : c.textTer; }}>
+                                ←
+                              </button>
+                              {/* Reorder: move right (down in order) */}
+                              <button onClick={() => {
+                                if (isLast) return;
+                                setQbSelectedCols(prev => { const n = [...prev]; [n[idx], n[idx + 1]] = [n[idx + 1], n[idx]]; return n; });
+                              }} title="Move right in report" disabled={isLast}
+                                style={{ background: "none", border: "none", cursor: isLast ? "default" : "pointer", color: isLast ? c.borderLight : c.textTer, padding: "2px 3px", display: "flex", alignItems: "center", flexShrink: 0 }}
+                                onMouseEnter={e => { if (!isLast) e.currentTarget.style.color = c.textSec; }}
+                                onMouseLeave={e => { e.currentTarget.style.color = isLast ? c.borderLight : c.textTer; }}>
+                                →
+                              </button>
+                              {/* Divider */}
+                              <div style={{ width: 1, background: c.borderLight, alignSelf: "stretch", flexShrink: 0, marginLeft: 2 }} />
+                              {/* Remove */}
+                              <button onClick={() => toggleQbCol(colId)} title="Remove column"
+                                style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 2px", display: "flex", alignItems: "center", flexShrink: 0 }}
+                                onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                )}
 
+                  {/* Section: Sort */}
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8 }}>Sort</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <select
+                        value={qbSortCol}
+                        onChange={e => setQbSortCol(e.target.value)}
+                        style={{ flex: 1, padding: "6px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: qbSelectedCols.length === 0 ? c.textTer : c.text, outline: "none" }}
+                        disabled={qbSelectedCols.length === 0}>
+                        {qbSelectedCols.length === 0
+                          ? <option>No columns selected</option>
+                          : qbSelectedCols.map(id => {
+                              const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === id);
+                              return col ? <option key={id} value={id}>{col.label}</option> : null;
+                            })
+                        }
+                      </select>
+                      {/* Asc / Desc toggle */}
+                      <button
+                        onClick={() => setQbSortDir(prev => prev === "asc" ? "desc" : "asc")}
+                        title={qbSortDir === "asc" ? "Ascending — click to switch to descending" : "Descending — click to switch to ascending"}
+                        style={{ display: "flex", alignItems: "center", gap: 4, padding: "6px 10px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 11, fontWeight: 600, fontFamily: "inherit", background: c.bg, color: c.textSec, cursor: "pointer", flexShrink: 0, whiteSpace: "nowrap" }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; e.currentTarget.style.background = "#eff4ff"; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; e.currentTarget.style.background = c.bg; }}>
+                        {qbSortDir === "asc" ? "↑ A → Z" : "↓ Z → A"}
+                      </button>
+                    </div>
+                    {qbSelectedCols.length === 0 && (
+                      <div style={{ marginTop: 6, fontSize: 11, color: c.textTer }}>Add columns to configure sorting.</div>
+                    )}
+                  </div>
 
-
+                </>)}{/* end columns tab right panel */}
 
               </div>{/* end RIGHT PANEL */}
 
