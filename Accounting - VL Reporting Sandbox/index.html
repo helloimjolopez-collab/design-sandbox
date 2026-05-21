@@ -1160,7 +1160,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
               {/* ═══ LEFT PANEL: Add Categories / Other Queries / Columns ═══ */}
-              <div style={{ width: 258, minWidth: 258, borderRight: `1px solid ${c.border}`, overflowY: "auto", display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0 }}>
+              <div style={{ width: 280, minWidth: 280, borderRight: `1px solid ${c.border}`, overflowY: "auto", display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0 }}>
 
                 {/* ── Section: Add Categories ── */}
                 <div style={{ borderBottom: `1px solid ${c.border}` }}>
@@ -1216,7 +1216,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     </div>
                   </div>
                   <div style={{ maxHeight: 180, overflowY: "auto", padding: "0 8px 8px" }}>
-                    {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).map(cfg => {
+                    {!qbOtherQuerySearch && <div style={{ fontSize: 11, color: c.textTer, padding: "4px 5px 6px", fontStyle: "italic" }}>Type to search saved queries</div>}
+                    {qbOtherQuerySearch && savedQueryList.filter(cfg => cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).map(cfg => {
                       const isSel = qbSelectedOtherQueries.has(cfg.id);
                       return (
                         <label key={cfg.id}
@@ -1230,7 +1231,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                         </label>
                       );
                     })}
-                    {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).length === 0 && (
+                    {qbOtherQuerySearch && savedQueryList.filter(cfg => cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).length === 0 && (
                       <div style={{ fontSize: 11, color: c.textTer, padding: "8px 5px", fontStyle: "italic" }}>No saved queries match.</div>
                     )}
                   </div>
