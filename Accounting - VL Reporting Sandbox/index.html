@@ -1245,10 +1245,17 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 <div style={{ borderBottom: `1px solid ${c.border}` }}>
                   <div style={{ padding: "9px 12px 5px", fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <span>Other Queries</span>
-                    {qbSelectedOtherQueries.size > 0 && <span style={{ fontSize: 9, fontWeight: 700, color: "#475569", background: "#e2e8f0", borderRadius: 8, padding: "1px 5px" }}>{qbSelectedOtherQueries.size}</span>}
+                    {qbSelectedOtherQueries.size > 0 && <span style={{ fontSize: 9, fontWeight: 700, color: "#475569", background: "#e2e8f0", borderRadius: 8, padding: "1px 5px" }}>{qbSelectedOtherQueries.size} added</span>}
                   </div>
-                  <div style={{ maxHeight: 200, overflowY: "auto", padding: "0 8px 8px" }}>
-                    {savedQueryList.map(cfg => {
+                  <div style={{ padding: "4px 8px 4px" }}>
+                    <div style={{ position: "relative" }}>
+                      <input type="text" value={qbOtherQuerySearch} onChange={e => setQbOtherQuerySearch(e.target.value)} placeholder="Search saved queries…"
+                        style={{ width: "100%", padding: "5px 8px 5px 26px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box", color: c.text }} />
+                      <SearchIcon size={11} style={{ position: "absolute", left: 8, top: 7, color: c.textTer }} />
+                    </div>
+                  </div>
+                  <div style={{ maxHeight: 180, overflowY: "auto", padding: "0 8px 8px" }}>
+                    {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).map(cfg => {
                       const isSel = qbSelectedOtherQueries.has(cfg.id);
                       return (
                         <label key={cfg.id}
@@ -1262,6 +1269,9 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                         </label>
                       );
                     })}
+                    {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).length === 0 && (
+                      <div style={{ fontSize: 11, color: c.textTer, padding: "8px 5px", fontStyle: "italic" }}>No saved queries match.</div>
+                    )}
                   </div>
                 </div>
 
