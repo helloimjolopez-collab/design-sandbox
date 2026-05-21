@@ -1539,6 +1539,30 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   </div>
                 )}
 
+                {/* Selected columns — feedback panel, mirrors left panel selection */}
+                {qbSelectedCols.length > 0 && (
+                  <div style={{ padding: "10px 12px", background: c.bg, borderRadius: 7, border: `1px solid ${c.borderLight}`, marginBottom: 10 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span>Columns ({qbSelectedCols.length})</span>
+                      <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 11, color: c.textSec, cursor: "pointer", fontFamily: "inherit", fontWeight: 400, padding: 0, textTransform: "none", letterSpacing: 0 }}>Reset to defaults</button>
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                      {qbSelectedCols.map(id => {
+                        const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === id);
+                        return (
+                          <span key={id} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "3px 7px", borderRadius: 4, background: c.white, border: `1px solid ${c.border}`, fontSize: 11, color: c.tagText, fontWeight: 500 }}>
+                            {col?.label || id}
+                            <button onClick={() => toggleQbCol(id)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.textTer, display: "flex", lineHeight: 0 }}
+                              onMouseEnter={e => e.currentTarget.style.color = c.red}
+                              onMouseLeave={e => e.currentTarget.style.color = c.textTer}><XIcon size={9} /></button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <div style={{ fontSize: 11, color: c.textTer, marginTop: 8 }}>Columns are independent of filters — they control what data shows in your report.</div>
+                  </div>
+                )}
+
                 {/* Sort by */}
                 {qbSelectedCols.length > 0 && (
                   <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", background: c.bg, borderRadius: 7, border: `1px solid ${c.borderLight}`, marginTop: 4 }}>
