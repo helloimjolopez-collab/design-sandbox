@@ -744,6 +744,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbGroupEditingName, setQbGroupEditingName] = useState("");
   const [qbCollapsedGroups, setQbCollapsedGroups] = useState(new Set()); // Set of collapsed group IDs
   const [qbMultiselectSearches, setQbMultiselectSearches] = useState({}); // { [criterionId]: searchString }
+  const [qbShowValidation, setQbShowValidation] = useState(false);
   const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
   const removeQbGroup = (gid) => { if (qbGroups.length <= 1) return; setQbGroups(prev => prev.filter(g => g.id !== gid)); setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; }); setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev); };
