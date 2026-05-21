@@ -1155,53 +1155,6 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             </div>
           )}
 
-          {/* ── VIEW MODE: query ready to run ── */}
-          {!isEditing && (
-            <div style={{ flex: 1, overflowY: "auto", padding: "24px 28px" }}>
-              <div style={{ maxWidth: 640 }}>
-                {/* Run report CTA — main action */}
-                <div style={{ padding: "16px 20px", background: "#f0f4ff", border: `1px solid #c7d7f7`, borderRadius: 10, marginBottom: 24, display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 3 }}>Ready to run</div>
-                    <div style={{ fontSize: 12, color: c.textSec }}>
-                      {qbCriteria.length > 0 ? `${qbCriteria.length} filter${qbCriteria.length !== 1 ? "s" : ""} applied · ` : "No filters — all assets included · "}
-                      {qbSelectedCols.length} column{qbSelectedCols.length !== 1 ? "s" : ""}
-                    </div>
-                  </div>
-                  <Btn size="sm" onClick={() => { setQueryBuilderOpen(false); setTimeout(() => handleRunReport(), 50); }}>Run report</Btn>
-                </div>
-
-                {/* Filters summary */}
-                <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Filters</div>
-                {(qbCriteria.length > 0 ? qbCriteria.map(cr => ({ label: cr.label, op: cr.op || "", value: Array.isArray(cr.value) ? cr.value.join(", ") : (cr.value || "") })) : editDetails.filtersList).length === 0 ? (
-                  <div style={{ fontSize: 13, color: c.textTer, fontStyle: "italic", marginBottom: 20 }}>No filters — all assets included</div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 20 }}>
-                    {(qbCriteria.length > 0 ? qbCriteria.map(cr => ({ label: cr.label, op: cr.op || "", value: Array.isArray(cr.value) ? cr.value.join(", ") : (cr.value || "") })) : editDetails.filtersList).map((f, i) => (
-                      <div key={i} style={{ padding: "7px 12px", background: c.bg, borderRadius: 6, border: `1px solid ${c.borderLight}`, position: "relative" }}>
-                        <span style={{ fontWeight: 600, color: c.text }}>{f.label}</span>
-                        {f.op && <span style={{ color: c.textSec, margin: "0 6px", fontSize: 12 }}>{f.op}</span>}
-                        {f.value && <span style={{ fontWeight: 500, color: c.text }}>{f.value}</span>}
-                        {i > 0 && <div style={{ position: "absolute", top: -9, left: 10, fontSize: 9, fontWeight: 700, color: c.textTer, background: c.bg, padding: "0 3px", textTransform: "uppercase" }}>AND</div>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Columns summary */}
-                <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Columns</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
-                  {qbSelectedCols.map(id => { const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === id); return col ? (
-                    <span key={id} style={{ padding: "4px 9px", borderRadius: 5, background: c.tagBg, border: `1px solid ${c.borderLight}`, fontSize: 12, color: c.tagText, fontWeight: 500 }}>{col.label}</span>
-                  ) : null; })}
-                  {qbSelectedCols.length === 0 && editDetails.columnsList.map((col, i) => (
-                    <span key={i} style={{ padding: "4px 9px", borderRadius: 5, background: c.tagBg, border: `1px solid ${c.borderLight}`, fontSize: 12, color: c.tagText, fontWeight: 500 }}>{col}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* ── EDIT MODE: two-panel builder ── */}
           {isEditing && (
             <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
