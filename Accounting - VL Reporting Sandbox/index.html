@@ -1368,17 +1368,27 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
                       {/* Group box — active left-border indicator only when multiple groups */}
                       <div style={{ border: `1px solid ${c.border}`, borderLeft: qbGroups.length > 1 && activeGroupId === grp.id ? `4px solid ${c.pri}` : `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
-                        {/* Group header */}
+                        {/* Group header — clicking anywhere expands/collapses; clicking name renames */}
                         <div
-                          onClick={() => { if (qbGroups.length > 1 && qbGroupEditingId !== grp.id) setActiveGroupId(grp.id); }}
-                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: qbGroups.length > 1 && activeGroupId === grp.id ? "#f8fafc" : c.bg, borderBottom: groupCriteria.length > 0 ? `1px solid ${c.borderLight}` : "none", cursor: qbGroups.length > 1 ? "pointer" : "default" }}>
+                          onClick={() => {
+                            if (qbGroupEditingId === grp.id) return;
+                            // Toggle collapse/expand on any header click
+                            setQbCollapsedGroups(prev => { const n = new Set(prev); n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id); return n; });
+                            // Also activate this group when multiple groups
+                            if (qbGroups.length > 1) setActiveGroupId(grp.id);
+                          }}
+                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: qbGroups.length > 1 && activeGroupId === grp.id ? "#f8fafc" : c.bg, borderBottom: groupCriteria.length > 0 && !qbCollapsedGroups.has(grp.id) ? `1px solid ${c.borderLight}` : "none", cursor: "pointer", userSelect: "none" }}>
+                          {/* Chevron on the LEFT */}
+                          <span style={{ fontSize: 9, color: c.textTer, flexShrink: 0, width: 10, textAlign: "center" }}>
+                            {qbCollapsedGroups.has(grp.id) ? "▶" : "▼"}
+                          </span>
                           {qbGroupEditingId === grp.id ? (
                             <input type="text" value={qbGroupEditingName} onChange={e => setQbGroupEditingName(e.target.value)} autoFocus
+                              onClick={e => e.stopPropagation()}
                               onBlur={() => { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); }}
                               onKeyDown={e => { if (e.key === "Enter") { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); } else if (e.key === "Escape") setQbGroupEditingId(null); }}
                               style={{ flex: 1, padding: "2px 6px", border: `1px solid ${c.pri}`, borderRadius: 4, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
                           ) : (
-                            /* Click name to rename; click elsewhere in header to activate group */
                             <span
                               onClick={e => { e.stopPropagation(); setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }}
                               title="Click to rename"
@@ -1388,20 +1398,12 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               {grp.name}
                             </span>
                           )}
-                          {/* No active label — stripe on box is the indicator */}
                           {groupCriteria.length > 0 && (
-                            <span style={{ fontSize: 11, color: c.textTer }}>({groupCriteria.length})</span>
+                            <span style={{ fontSize: 11, color: c.textTer, flexShrink: 0 }}>({groupCriteria.length})</span>
                           )}
-                          {/* Collapse/expand toggle */}
-                          <button onClick={e => { e.stopPropagation(); setQbCollapsedGroups(prev => { const n = new Set(prev); n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id); return n; }); }}
-                            style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "1px 4px", fontSize: 11, display: "flex", alignItems: "center" }}
-                            onMouseEnter={e => e.currentTarget.style.color = c.textSec}
-                            onMouseLeave={e => e.currentTarget.style.color = c.textTer}>
-                            {qbCollapsedGroups.has(grp.id) ? "▶" : "▼"}
-                          </button>
                           {qbGroups.length > 1 && (
                             <button onClick={e => { e.stopPropagation(); removeQbGroup(grp.id); }} title="Remove this group and all its filters"
-                              style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "1px 4px", borderRadius: 3, fontSize: 11, fontFamily: "inherit", fontWeight: 500 }}
+                              style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "1px 4px", borderRadius: 3, fontSize: 11, fontFamily: "inherit", fontWeight: 500, flexShrink: 0 }}
                               onMouseEnter={e => e.currentTarget.style.color = c.red}
                               onMouseLeave={e => e.currentTarget.style.color = c.textTer}>Remove</button>
                           )}
