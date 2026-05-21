@@ -1158,7 +1158,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               style={{ background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 8px", whiteSpace: "nowrap" }}>
               Reset all
             </button>
-            <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); togglePanel("saveConfig"); }} icon={<BookmarkIcon size={12} />}>Save query</Btn>
+            <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); setQueryBuilderOpen(false); setTimeout(() => togglePanel("saveConfig"), 50); }} icon={<BookmarkIcon size={12} />}>Save query</Btn>
             <Btn size="sm"
               disabled={isNew && !qbNewQueryName.trim()}
               onClick={() => {
@@ -1636,15 +1636,13 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
                   {/* Add group button — only when criteria exist */}
                   {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
-                    <div style={{ marginBottom: 12, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
-                      <button onClick={addQbGroup}
-                        style={{ padding: "6px 16px", borderRadius: 5, border: `1px dashed ${c.border}`, background: "none", cursor: "pointer", fontSize: 12, color: c.textSec, fontFamily: "inherit" }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = c.textSec; e.currentTarget.style.color = c.text; }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
-                        + Add filter group
-                      </button>
-                      <span style={{ fontSize: 11, color: c.textTer }}>OR logic between filter groups</span>
-                    </div>
+                    <button onClick={addQbGroup}
+                      style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, padding: "8px 12px", borderRadius: 5, border: `1px dashed ${c.border}`, background: "none", cursor: "pointer", fontFamily: "inherit", marginBottom: 12, width: "100%" }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = c.textSec; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; }}>
+                      <span style={{ fontSize: 12, color: c.textSec, textDecoration: "underline" }}>+ Add filter group</span>
+                      <span style={{ fontSize: 11, color: c.textTer, textDecoration: "none" }}>OR logic between filter groups</span>
+                    </button>
                   )}
 
                   {/* Other Queries inclusions indicator */}
