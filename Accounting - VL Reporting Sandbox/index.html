@@ -1414,8 +1414,24 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                           <div
                             onClick={() => {
                               if (qbGroupEditingId === grp.id) return;
-                              setQbCollapsedGroups(prev => { const n = new Set(prev); n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id); return n; });
-                              if (qbGroups.length > 1) setActiveGroupId(grp.id);
+                              if (qbGroups.length > 1) {
+                                // Accordion: clicking a group collapses all others, expands this one, and makes it active
+                                setQbCollapsedGroups(prev => {
+                                  const n = new Set(prev);
+                                  if (activeGroupId === grp.id) {
+                                    // Clicking already-active group: just toggle its own collapse
+                                    n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id);
+                                  } else {
+                                    // Switching to a different group: collapse all others, expand this one
+                                    qbGroups.forEach(g => { if (g.id !== grp.id) n.add(g.id); else n.delete(g.id); });
+                                  }
+                                  return n;
+                                });
+                                setActiveGroupId(grp.id);
+                              } else {
+                                // Single group: just toggle collapse
+                                setQbCollapsedGroups(prev => { const n = new Set(prev); n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id); return n; });
+                              }
                             }}
                             style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: qbGroups.length > 1 && activeGroupId === grp.id ? "#f8fafc" : c.bg, borderBottom: groupCriteria.length > 0 && !qbCollapsedGroups.has(grp.id) ? `1px solid ${c.borderLight}` : "none", cursor: "pointer", userSelect: "none" }}>
                             <span style={{ fontSize: 9, color: c.textTer, flexShrink: 0, width: 10, textAlign: "center" }}>
