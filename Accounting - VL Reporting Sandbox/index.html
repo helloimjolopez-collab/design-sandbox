@@ -1504,24 +1504,12 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   </div>
                 )}
 
-                {/* Plain-language summary */}
-                {qbPlainSummaryParts.length > 0 && (
-                  <div style={{ padding: "8px 10px", background: "#f0f4ff", border: `1px solid #c7d7f7`, borderRadius: 6, marginBottom: 12, fontSize: 12, color: c.textSec, lineHeight: 1.7 }}>
-                    <span style={{ fontWeight: 600, color: c.text }}>~{qbLevelDeepTotal}</span> of {TOTAL_ROW_COUNT} assets match where{" "}
-                    {qbPlainSummaryParts.map((g, gi) => (
-                      <React.Fragment key={g.groupId}>
-                        {g.groupLogic && <span style={{ fontWeight: 700, color: c.pri, margin: "0 3px" }}>{g.groupLogic}</span>}
-                        {qbPlainSummaryParts.length > 1 && <span style={{ color: c.textTer }}>(</span>}
-                        {g.criteria.map((p, i) => (
-                          <React.Fragment key={i}>
-                            <span style={{ fontWeight: 500, color: c.text }}>{p.label}</span>
-                            {" "}<span style={{ color: c.textTer }}>{p.valText}</span>
-                            {p.nextLogic && <span style={{ fontWeight: 700, color: "#9b59b6", margin: "0 3px" }}>{p.nextLogic}</span>}
-                          </React.Fragment>
-                        ))}
-                        {qbPlainSummaryParts.length > 1 && <span style={{ color: c.textTer }}>)</span>}
-                      </React.Fragment>
-                    ))}
+                {/* Match count — simple, won't blow up with many criteria */}
+                {qbCriteria.length > 0 && (
+                  <div style={{ padding: "7px 12px", background: "#f0f4ff", border: `1px solid #c7d7f7`, borderRadius: 6, marginBottom: 12, fontSize: 12, color: c.textSec, display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontWeight: 700, fontSize: 14, color: c.pri }}>~{qbLevelDeepTotal}</span>
+                    <span>of {TOTAL_ROW_COUNT} assets match</span>
+                    {qbLevelDeepTotal === 0 && <span style={{ color: c.textTer, fontSize: 11 }}>— no results with current filters</span>}
                   </div>
                 )}
 
