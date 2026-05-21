@@ -1112,15 +1112,21 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
           {/* ── TOP NAV with CTAs at top ── */}
           <div style={{ padding: "9px 16px", borderBottom: `1px solid ${c.border}`, background: c.white, display: "flex", alignItems: "center", gap: 10, flexShrink: 0, minHeight: 48 }}>
-            <button
-              onClick={() => {
-                if (isEditing && !isNew) { setQbEditMode(false); setShowEditAppliedToast(false); }
-                else if (initialPanel === "queryBuilder") { onBack(); }
-                else { setQueryBuilderOpen(false); }
-              }}
-              style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "4px 0", flexShrink: 0 }}>
-              <ArrowLeft size={14} /> {isEditing && !isNew ? "Cancel" : (initialPanel === "queryBuilder" ? "Reports Library" : "Back")}
-            </button>
+            {/* View mode: ← Edit query; New query edit: ← Reports Library / ← Back */}
+            {!isEditing && (
+              <button
+                onClick={() => setQbEditMode(true)}
+                style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "4px 0", flexShrink: 0 }}>
+                <ArrowLeft size={14} /> Edit query
+              </button>
+            )}
+            {isEditing && isNew && (
+              <button
+                onClick={() => { if (initialPanel === "queryBuilder") { onBack(); } else { setQueryBuilderOpen(false); } }}
+                style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "4px 0", flexShrink: 0 }}>
+                <ArrowLeft size={14} /> {initialPanel === "queryBuilder" ? "Reports Library" : "Back"}
+              </button>
+            )}
             <div style={{ width: 1, height: 16, background: c.borderLight, flexShrink: 0 }} />
             {isNew && isEditing ? (
               <input
@@ -1130,25 +1136,39 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             ) : (
               <span style={{ fontSize: 14, fontWeight: 700, color: c.text, whiteSpace: "nowrap" }}>{editName}</span>
             )}
-            {!isEditing && <span style={{ fontSize: 12, color: c.textTer, fontWeight: 400 }}>— Custom query</span>}
+            {!isEditing && <span style={{ fontSize: 12, color: c.textTer, fontWeight: 400 }}>— custom query</span>}
             <div style={{ flex: 1 }} />
             {isEditing ? (<>
               <button
-                onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); setQbGroups([{ id: 1, name: "Group 1" }]); setQbGroupLogics({}); setActiveGroupId(1); setQbSelectedOtherQueries(new Set()); }}
+                onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); setQbGroups([{ id: 1, name: "Group 1" }]); setQbGroupLogics({}); setActiveGroupId(1); setQbSelectedOtherQueries(new Set()); setQbOtherQuerySearch(""); }}
                 style={{ background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 8px", whiteSpace: "nowrap" }}>
                 Reset all
               </button>
-              <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); togglePanel("saveConfig"); }} icon={<BookmarkIcon size={12} />}>Save to library</Btn>
-              <Btn size="sm" onClick={() => { if (!isNew) setQbEditMode(false); setShowEditAppliedToast(true); setTimeout(() => setShowEditAppliedToast(false), 4000); }}>
+              <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); togglePanel("saveConfig"); }} icon={<BookmarkIcon size={12} />}>Save query</Btn>
+              <Btn size="sm" onClick={() => {
+                if (isNew) {
+                  // Save & run: close QB and trigger run
+                  setQueryBuilderOpen(false);
+                  setTimeout(() => handleRunReport(), 50);
+                } else {
+                  // Apply: go to view mode (user can then Run report)
+                  setQbEditMode(false);
+                }
+              }}>
                 {isNew ? "Save & run" : "Apply"}
               </Btn>
-            </>) : (<>
+              {/* Close icon — in edit mode only */}
               <button
-                onClick={() => { setQbEditMode(true); setQbSidebarTab("setup"); }}
-                style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 8px" }}>
-                <EditIcon size={13} /> Edit query
+                onClick={() => { if (!isNew) { setQbEditMode(false); } else { setQueryBuilderOpen(false); } }}
+                title="Close"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 6, background: "none", border: `1px solid ${c.borderLight}`, cursor: "pointer", color: c.textTer, flexShrink: 0 }}
+                onMouseEnter={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.color = c.textSec; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = c.textTer; }}>
+                <XIcon size={14} />
               </button>
-              <Btn size="sm" onClick={() => { setShowEditAppliedToast(true); setTimeout(() => setShowEditAppliedToast(false), 4000); }}>Run report</Btn>
+            </>) : (<>
+              <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); togglePanel("saveConfig"); }} icon={<BookmarkIcon size={12} />}>Save query</Btn>
+              <Btn size="sm" onClick={() => { setQueryBuilderOpen(false); setTimeout(() => handleRunReport(), 50); }}>Run report</Btn>
             </>)}
           </div>
 
