@@ -1185,8 +1185,27 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
           {/* ── TWO-PANEL BUILDER ── */}
           <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-              {/* ═══ LEFT PANEL: Add Categories / Other Queries / Columns ═══ */}
-              <div style={{ width: 360, minWidth: 320, borderRight: `1px solid ${c.border}`, overflowY: "auto", display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0 }}>
+              {/* ═══ LEFT PANEL: Tabbed ═══ */}
+              <div style={{ width: 360, minWidth: 320, borderRight: `1px solid ${c.border}`, display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0, overflow: "hidden" }}>
+
+                {/* Tab bar */}
+                <div style={{ display: "flex", borderBottom: `1px solid ${c.border}`, background: c.white, flexShrink: 0 }}>
+                  {[{ key: "filters", label: "Filters" }, { key: "columns", label: "Columns" }].map(tab => (
+                    <button key={tab.key} onClick={() => setQbLeftTab(tab.key)}
+                      style={{ flex: 1, padding: "9px 12px", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", background: "none", border: "none", borderBottom: `2px solid ${qbLeftTab === tab.key ? c.pri : "transparent"}`, color: qbLeftTab === tab.key ? c.text : c.textTer, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
+                      {tab.label}
+                      {tab.key === "filters" && qbCriteria.length > 0 && (
+                        <span style={{ fontSize: 10, fontWeight: 700, color: c.pri, background: "#eff4ff", borderRadius: 8, padding: "1px 6px" }}>{qbCriteria.length}</span>
+                      )}
+                      {tab.key === "columns" && (
+                        <span style={{ fontSize: 10, color: qbLeftTab === "columns" ? c.pri : c.textTer, background: qbLeftTab === "columns" ? "#eff4ff" : c.bg, borderRadius: 8, padding: "1px 6px" }}>{qbSelectedCols.length}</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* ── FILTERS TAB ── */}
+                {qbLeftTab === "filters" && <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
 
                 {/* ── Section: Add Categories ── */}
                 <div style={{ borderBottom: `1px solid ${c.border}` }}>
