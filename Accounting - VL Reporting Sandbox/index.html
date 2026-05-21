@@ -705,7 +705,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbColPickerOpen, setQbColPickerOpen] = useState(false);
   const [qbSelectedOtherQueries, setQbSelectedOtherQueries] = useState(new Set()); // Set of saved-config IDs
   const qbNextId = useRef(1);
-  const toggleQbCat = (key) => setQbExpandedCats(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  const toggleQbCat = (key) => setQbExpandedCats(prev => prev.includes(key) ? [] : [key]); // accordion: only one open at a time
   const addQbCriterion = (field, catKey) => {
     const newId = qbNextId.current++;
     let defaultOp = "Contains";
