@@ -1224,38 +1224,59 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 </div>
 
                 {/* ── Section: Other Queries ── */}
-                <div style={{ borderBottom: `1px solid ${c.border}` }}>
-                  <div style={{ padding: "9px 12px 5px", fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span>Other Queries</span>
-                    {qbSelectedOtherQueries.size > 0 && <span style={{ fontSize: 9, fontWeight: 700, color: "#475569", background: "#e2e8f0", borderRadius: 8, padding: "1px 5px" }}>{qbSelectedOtherQueries.size} added</span>}
-                  </div>
-                  <div style={{ padding: "4px 8px 4px" }}>
-                    <div style={{ position: "relative" }}>
-                      <input type="text" value={qbOtherQuerySearch} onChange={e => setQbOtherQuerySearch(e.target.value)} placeholder="Search saved queries…"
-                        style={{ width: "100%", padding: "5px 8px 5px 26px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box", color: c.text }} />
-                      <SearchIcon size={11} style={{ position: "absolute", left: 8, top: 7, color: c.textTer }} />
+                <div style={{ borderBottom: `1px solid ${c.border}`, padding: "9px 12px 10px" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 6 }}>Other Queries</div>
+                  {/* Selected query chips */}
+                  {qbSelectedOtherQueries.size > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 6 }}>
+                      {[...qbSelectedOtherQueries].map(id => {
+                        const cfg = savedQueryList.find(x => x.id === id);
+                        return cfg ? (
+                          <span key={id} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 6px 2px 8px", background: "#eff4ff", border: `1px solid #c7d7f7`, borderRadius: 10, fontSize: 11, color: c.pri, fontWeight: 500 }}>
+                            {cfg.name}
+                            <button onClick={() => setQbSelectedOtherQueries(prev => { const n = new Set(prev); n.delete(id); return n; })}
+                              style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", alignItems: "center" }}><XIcon size={10} /></button>
+                          </span>
+                        ) : null;
+                      })}
                     </div>
+                  )}
+                  {/* Search trigger */}
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text" value={qbOtherQuerySearch}
+                      onChange={e => setQbOtherQuerySearch(e.target.value)}
+                      onFocus={e => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setQbOtherQueriesDropRect({ top: rect.bottom + 2, left: rect.left, width: rect.width });
+                        setQbOtherQueriesDropOpen(true);
+                      }}
+                      onBlur={() => setTimeout(() => setQbOtherQueriesDropOpen(false), 180)}
+                      placeholder="Search saved queries to combine…"
+                      style={{ width: "100%", padding: "5px 8px 5px 26px", border: `1px solid ${qbOtherQueriesDropOpen ? c.pri : c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box", color: c.text }} />
+                    <SearchIcon size={11} style={{ position: "absolute", left: 8, top: 7, color: c.textTer, pointerEvents: "none" }} />
                   </div>
-                  <div style={{ maxHeight: 180, overflowY: "auto", padding: "0 8px 8px" }}>
-                    {!qbOtherQuerySearch && <div style={{ fontSize: 11, color: c.textTer, padding: "4px 5px 6px", fontStyle: "italic" }}>Type to search saved queries</div>}
-                    {qbOtherQuerySearch && savedQueryList.filter(cfg => cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).map(cfg => {
-                      const isSel = qbSelectedOtherQueries.has(cfg.id);
-                      return (
-                        <label key={cfg.id}
-                          style={{ display: "flex", alignItems: "flex-start", gap: 7, padding: "5px 5px", cursor: "pointer", borderRadius: 4, fontSize: 12, background: isSel ? "#f0f4ff" : "none" }}
-                          onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = c.bg; }}
-                          onMouseLeave={e => { if (!isSel) e.currentTarget.style.background = "none"; }}>
-                          <input type="checkbox" checked={isSel}
-                            onChange={() => setQbSelectedOtherQueries(prev => { const n = new Set(prev); if (n.has(cfg.id)) n.delete(cfg.id); else n.add(cfg.id); return n; })}
-                            style={{ marginTop: 2, flexShrink: 0 }} />
-                          <span style={{ color: isSel ? c.pri : c.textSec, fontWeight: isSel ? 500 : 400, lineHeight: 1.4 }}>{cfg.name}</span>
-                        </label>
-                      );
-                    })}
-                    {qbOtherQuerySearch && savedQueryList.filter(cfg => cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).length === 0 && (
-                      <div style={{ fontSize: 11, color: c.textTer, padding: "8px 5px", fontStyle: "italic" }}>No saved queries match.</div>
-                    )}
-                  </div>
+                  {/* Floating dropdown */}
+                  {qbOtherQueriesDropOpen && qbOtherQueriesDropRect && (
+                    <div style={{ position: "fixed", top: qbOtherQueriesDropRect.top, left: qbOtherQueriesDropRect.left, width: qbOtherQueriesDropRect.width, maxHeight: 220, overflowY: "auto", background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 3000 }}>
+                      {(() => {
+                        const filtered = savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase()));
+                        if (filtered.length === 0) return <div style={{ padding: "10px 12px", fontSize: 11, color: c.textTer, fontStyle: "italic" }}>No saved queries match.</div>;
+                        return filtered.map(cfg => {
+                          const isSel = qbSelectedOtherQueries.has(cfg.id);
+                          return (
+                            <label key={cfg.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 12px", cursor: "pointer", fontSize: 12, background: isSel ? "#f0f4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
+                              onMouseDown={e => e.preventDefault()}
+                              onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = c.bg; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = isSel ? "#f0f4ff" : c.white; }}>
+                              <input type="checkbox" checked={isSel} onChange={() => { setQbSelectedOtherQueries(prev => { const n = new Set(prev); if (n.has(cfg.id)) n.delete(cfg.id); else n.add(cfg.id); return n; }); setQbShowValidation(false); }} style={{ flexShrink: 0 }} />
+                              <span style={{ color: isSel ? c.pri : c.text, fontWeight: isSel ? 500 : 400 }}>{cfg.name}</span>
+                            </label>
+                          );
+                        });
+                      })()}
+                    </div>
+                  )}
                 </div>
 
                 {/* ── Section: Output Columns ── */}
