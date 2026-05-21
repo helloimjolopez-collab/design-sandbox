@@ -1273,6 +1273,19 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               {/* ═══ RIGHT PANEL: filters in groups + columns + sort ═══ */}
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", background: c.white }}>
 
+                {/* Assets match counter — always at top */}
+                <div style={{ padding: "6px 12px", background: qbCriteria.length > 0 ? "#f0f4ff" : c.bg, border: `1px solid ${qbCriteria.length > 0 ? "#c7d7f7" : c.borderLight}`, borderRadius: 6, marginBottom: 12, fontSize: 12, color: c.textSec, display: "flex", alignItems: "center", gap: 6 }}>
+                  {qbCriteria.length > 0 ? (
+                    <>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: c.pri }}>~{qbLevelDeepTotal}</span>
+                      <span>of {TOTAL_ROW_COUNT} assets match</span>
+                      {qbLevelDeepTotal === 0 && <span style={{ color: c.textTer, fontSize: 11 }}>— try removing some filters</span>}
+                    </>
+                  ) : (
+                    <span style={{ color: c.textTer }}>All {TOTAL_ROW_COUNT} assets — no filters applied</span>
+                  )}
+                </div>
+
                 {/* Target group selector — only shown when multiple groups exist */}
                 {qbGroups.length > 1 && (
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, fontSize: 12, color: c.textTer }}>
