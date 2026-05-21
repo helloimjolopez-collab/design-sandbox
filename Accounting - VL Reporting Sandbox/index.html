@@ -1348,14 +1348,22 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               style={{ flex: 1, padding: "2px 6px", border: `1px solid ${c.pri}`, borderRadius: 4, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
                           ) : (
                             <button onClick={() => setActiveGroupId(grp.id)}
-                              onDoubleClick={() => { setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }}
-                              title="Click to make active target · Double-click to rename"
+                              title="Click to set as target for new filters"
                               style={{ flex: 1, fontSize: 12, fontWeight: 600, color: activeGroupId === grp.id ? c.pri : c.textSec, background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left", padding: 0 }}>
                               {grp.name}
                             </button>
                           )}
                           {groupCriteria.length > 0 && (
                             <span style={{ fontSize: 11, color: c.textTer }}>({groupCriteria.length})</span>
+                          )}
+                          {/* Rename icon — always visible */}
+                          {qbGroupEditingId !== grp.id && (
+                            <button onClick={() => { setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }} title="Rename"
+                              style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "1px 3px", borderRadius: 3, display: "flex", alignItems: "center" }}
+                              onMouseEnter={e => e.currentTarget.style.color = c.textSec}
+                              onMouseLeave={e => e.currentTarget.style.color = c.textTer}>
+                              <EditIcon size={11} />
+                            </button>
                           )}
                           {qbGroups.length > 1 && (
                             <button onClick={() => removeQbGroup(grp.id)} title="Remove group"
