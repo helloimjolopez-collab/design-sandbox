@@ -1319,7 +1319,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                       )}
 
                       {/* Group box — active left-border indicator only when multiple groups */}
-                      <div style={{ border: `1px solid ${c.border}`, borderLeft: qbGroups.length > 1 && activeGroupId === grp.id ? `3px solid #94a3b8` : `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
+                      <div style={{ border: `1px solid ${c.border}`, borderLeft: qbGroups.length > 1 && activeGroupId === grp.id ? `4px solid #64748b` : `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
                         {/* Group header */}
                         <div
                           onClick={() => { if (qbGroups.length > 1 && qbGroupEditingId !== grp.id) setActiveGroupId(grp.id); }}
@@ -1401,29 +1401,53 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                         </div>
                                       )}
 
-                                      {cr.type === "multiselect" && (
-                                        <div>
-                                          <div style={{ fontSize: 11, color: c.textTer, marginBottom: 3 }}>
-                                            {(cr.value || []).length === 0 ? "Any (no filter)" : `${(cr.value || []).length} selected`}
+                                      {cr.type === "multiselect" && (() => {
+                                        const msSearch = qbMultiselectSearches[cr.id] || "";
+                                        const filteredOpts = (cr.options || []).filter(o => !msSearch || o.toLowerCase().includes(msSearch.toLowerCase()));
+                                        const selectedCount = (cr.value || []).length;
+                                        return (
+                                          <div>
+                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                                              <span style={{ fontSize: 11, color: c.textTer }}>
+                                                {selectedCount === 0 ? "Any (no filter)" : `${selectedCount} selected`}
+                                              </span>
+                                              {selectedCount > 0 && (
+                                                <button onClick={() => updateQbCriterion(cr.id, { value: [] })} style={{ background: "none", border: "none", fontSize: 11, color: c.textTer, cursor: "pointer", fontFamily: "inherit", padding: 0 }}
+                                                  onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                                  onMouseLeave={e => e.currentTarget.style.color = c.textTer}>Clear</button>
+                                              )}
+                                            </div>
+                                            {/* Search input — always shown */}
+                                            <div style={{ position: "relative", marginBottom: 3 }}>
+                                              <input
+                                                type="text" value={msSearch}
+                                                onChange={e => setQbMultiselectSearches(prev => ({ ...prev, [cr.id]: e.target.value }))}
+                                                placeholder="Search…"
+                                                style={{ width: "100%", padding: "4px 8px 4px 24px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+                                              <SearchIcon size={11} style={{ position: "absolute", left: 7, top: 6, color: c.textTer }} />
+                                            </div>
+                                            <div style={{ border: `1px solid ${c.border}`, borderRadius: 5, overflow: "hidden", maxHeight: 130, overflowY: "auto" }}>
+                                              {filteredOpts.length === 0 && (
+                                                <div style={{ padding: "6px 8px", fontSize: 11, color: c.textTer, fontStyle: "italic" }}>No matches</div>
+                                              )}
+                                              {filteredOpts.map(opt => {
+                                                const isChecked = (cr.value || []).includes(opt);
+                                                return (
+                                                  <label key={opt} style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 8px", cursor: "pointer", fontSize: 12, background: isChecked ? "#f1f5f9" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
+                                                    onMouseEnter={e => { if (!isChecked) e.currentTarget.style.background = c.bg; }}
+                                                    onMouseLeave={e => { if (!isChecked) e.currentTarget.style.background = isChecked ? "#f1f5f9" : c.white; }}>
+                                                    <input type="checkbox" checked={isChecked} onChange={() => {
+                                                      const curr = cr.value || [];
+                                                      updateQbCriterion(cr.id, { value: curr.includes(opt) ? curr.filter(x => x !== opt) : [...curr, opt] });
+                                                    }} />
+                                                    <span style={{ color: isChecked ? c.text : c.textSec, fontWeight: isChecked ? 500 : 400 }}>{opt}</span>
+                                                  </label>
+                                                );
+                                              })}
+                                            </div>
                                           </div>
-                                          <div style={{ border: `1px solid ${c.border}`, borderRadius: 5, overflow: "hidden", maxHeight: 140, overflowY: "auto" }}>
-                                            {(cr.options || []).map(opt => {
-                                              const isChecked = (cr.value || []).includes(opt);
-                                              return (
-                                                <label key={opt} style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 8px", cursor: "pointer", fontSize: 12, background: isChecked ? "#eff4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
-                                                  onMouseEnter={e => { if (!isChecked) e.currentTarget.style.background = c.bg; }}
-                                                  onMouseLeave={e => { if (!isChecked) e.currentTarget.style.background = c.white; }}>
-                                                  <input type="checkbox" checked={isChecked} onChange={() => {
-                                                    const curr = cr.value || [];
-                                                    updateQbCriterion(cr.id, { value: curr.includes(opt) ? curr.filter(x => x !== opt) : [...curr, opt] });
-                                                  }} />
-                                                  <span style={{ color: isChecked ? c.pri : c.textSec, fontWeight: isChecked ? 500 : 400 }}>{opt}</span>
-                                                </label>
-                                              );
-                                            })}
-                                          </div>
-                                        </div>
-                                      )}
+                                        );
+                                      })()}
 
                                       {cr.type === "select" && (
                                         <select value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
