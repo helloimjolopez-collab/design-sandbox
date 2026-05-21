@@ -755,7 +755,17 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const QB_CHIPS_VISIBLE = 3; // max chips before "view more"
   const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
-  const removeQbGroup = (gid) => { if (qbGroups.length <= 1) return; setQbGroups(prev => prev.filter(g => g.id !== gid)); setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; }); setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev); };
+  const removeQbGroup = (gid) => {
+    if (qbGroups.length <= 1) {
+      // Last group — clear its contents but keep the group
+      setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid));
+    } else {
+      setQbGroups(prev => prev.filter(g => g.id !== gid));
+      setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid));
+      setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; });
+      setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev);
+    }
+  };
   const renameQbGroup = (gid, name) => setQbGroups(prev => prev.map(g => g.id === gid ? { ...g, name } : g));
   const toggleQbGroupLogic = (gid) => setQbGroupLogics(prev => ({ ...prev, [gid]: prev[gid] === "or" ? "and" : "or" }));
 
