@@ -1323,16 +1323,31 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               {/* ═══ RIGHT PANEL: filters in groups + columns + sort ═══ */}
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", background: c.white }}>
 
-                {/* Assets match counter — always at top */}
-                <div style={{ padding: "6px 12px", background: qbCriteria.length > 0 ? "#f0f4ff" : c.bg, border: `1px solid ${qbCriteria.length > 0 ? "#c7d7f7" : c.borderLight}`, borderRadius: 6, marginBottom: 12, fontSize: 12, color: c.textSec, display: "flex", alignItems: "center", gap: 6 }}>
+                {/* Live query match counter */}
+                <div style={{ padding: "12px 14px", background: qbCriteria.length > 0 ? "#f0f4ff" : c.bg, border: `1px solid ${qbCriteria.length > 0 ? "#c7d7f7" : c.border}`, borderRadius: 8, marginBottom: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 6 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: qbCriteria.length > 0 ? c.green : c.textTer, display: "inline-block", flexShrink: 0 }} />
+                    <span style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px" }}>Live Query Preview</span>
+                  </div>
                   {qbCriteria.length > 0 ? (
-                    <>
-                      <span style={{ fontWeight: 700, fontSize: 14, color: c.pri }}>~{qbLevelDeepTotal}</span>
-                      <span>of {TOTAL_ROW_COUNT} assets match</span>
-                      {qbLevelDeepTotal === 0 && <span style={{ color: c.textTer, fontSize: 11 }}>— try removing some filters</span>}
-                    </>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                        <span style={{ fontSize: 26, fontWeight: 800, color: c.pri, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>~{qbLevelDeepTotal.toLocaleString()}</span>
+                        <span style={{ fontSize: 13, color: c.textSec }}>of {TOTAL_ROW_COUNT.toLocaleString()} assets match</span>
+                      </div>
+                      {qbLevelDeepTotal === 0
+                        ? <div style={{ fontSize: 11, color: c.red, marginTop: 5 }}>No assets match — try removing some filters.</div>
+                        : <div style={{ fontSize: 11, color: c.textTer, marginTop: 5 }}>{Math.round(qbLevelDeepTotal / TOTAL_ROW_COUNT * 100)}% of total asset database · updates as you add filters</div>
+                      }
+                    </div>
                   ) : (
-                    <span style={{ color: c.textTer }}>All {TOTAL_ROW_COUNT} assets — no filters applied</span>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                        <span style={{ fontSize: 26, fontWeight: 800, color: c.textSec, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{TOTAL_ROW_COUNT.toLocaleString()}</span>
+                        <span style={{ fontSize: 13, color: c.textTer }}>assets in database</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: c.textTer, marginTop: 5 }}>No filters applied — report will include all assets. Add a category to narrow results.</div>
+                    </div>
                   )}
                 </div>
 
