@@ -1322,33 +1322,35 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   )}
                 </div>
 
-                {/* ── Section: Output Columns ── */}
-                <div style={{ flex: 1 }}>
-                  <div style={{ padding: "9px 12px 4px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px" }}>Output Columns <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({qbSelectedCols.length})</span></span>
-                    <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 10, color: c.textSec, cursor: "pointer", fontFamily: "inherit", padding: 0 }}>Reset</button>
+                </div>{/* end Filters tab */}}
+
+                {/* ── COLUMNS TAB ── */}
+                {qbLeftTab === "columns" && <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+                  <div style={{ padding: "10px 14px 4px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px" }}>Output Columns</span>
+                    <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 10, color: c.textSec, cursor: "pointer", fontFamily: "inherit", padding: 0 }}>Reset to default</button>
                   </div>
-                  <div style={{ padding: "0 12px 6px", fontSize: 11, color: c.textTer, lineHeight: 1.4 }}>
-                    Check to include in report. Use arrows to set left-to-right column order.
+                  <div style={{ padding: "0 14px 8px", fontSize: 11, color: c.textTer, lineHeight: 1.5 }}>
+                    Check to include. Use ← → to set left-to-right column order in the report.
                   </div>
-                  <div style={{ padding: "0 8px 12px", overflowY: "auto" }}>
-                    {QB_AVAILABLE_COLUMNS.map((col, idx) => {
+                  <div style={{ padding: "0 8px 16px" }}>
+                    {QB_AVAILABLE_COLUMNS.map((col) => {
                       const isSel = qbSelectedCols.includes(col.id);
                       const colIdx = qbSelectedCols.indexOf(col.id);
                       return (
-                        <div key={col.id} style={{ display: "flex", alignItems: "center", gap: 5, padding: "3px 5px", borderRadius: 4, fontSize: 12, background: isSel ? "#eff4ff" : "none" }}
+                        <div key={col.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 5, fontSize: 12, background: isSel ? "#eff4ff" : "none" }}
                           onMouseEnter={e => e.currentTarget.style.background = isSel ? "#eff4ff" : c.bg}
                           onMouseLeave={e => e.currentTarget.style.background = isSel ? "#eff4ff" : "none"}>
                           <input type="checkbox" checked={isSel} onChange={() => toggleQbCol(col.id)} style={{ flexShrink: 0 }} />
                           <span style={{ flex: 1, color: isSel ? c.pri : c.textSec, fontWeight: isSel ? 500 : 400 }}>{col.label}</span>
                           {isSel && (
-                            <span style={{ display: "flex", gap: 1, flexShrink: 0 }}>
+                            <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>
                               <button onClick={() => moveQbCol(col.id, "up")} disabled={colIdx === 0} title="Move left in report"
-                                style={{ background: "none", border: "none", cursor: colIdx === 0 ? "default" : "pointer", color: colIdx === 0 ? c.borderLight : c.textTer, fontSize: 10, padding: "1px 3px", fontFamily: "inherit", lineHeight: 1 }}
+                                style={{ background: "none", border: "none", cursor: colIdx === 0 ? "default" : "pointer", color: colIdx === 0 ? c.borderLight : c.textTer, fontSize: 11, padding: "1px 4px", fontFamily: "inherit", lineHeight: 1 }}
                                 onMouseEnter={e => { if (colIdx > 0) e.currentTarget.style.color = c.text; }}
                                 onMouseLeave={e => { if (colIdx > 0) e.currentTarget.style.color = c.textTer; }}>←</button>
                               <button onClick={() => moveQbCol(col.id, "down")} disabled={colIdx === qbSelectedCols.length - 1} title="Move right in report"
-                                style={{ background: "none", border: "none", cursor: colIdx === qbSelectedCols.length - 1 ? "default" : "pointer", color: colIdx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, fontSize: 10, padding: "1px 3px", fontFamily: "inherit", lineHeight: 1 }}
+                                style={{ background: "none", border: "none", cursor: colIdx === qbSelectedCols.length - 1 ? "default" : "pointer", color: colIdx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, fontSize: 11, padding: "1px 4px", fontFamily: "inherit", lineHeight: 1 }}
                                 onMouseEnter={e => { if (colIdx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.text; }}
                                 onMouseLeave={e => { if (colIdx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.textTer; }}>→</button>
                             </span>
@@ -1357,7 +1359,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                       );
                     })}
                   </div>
-                </div>
+                </div>}{/* end Columns tab */}
 
               </div>{/* end LEFT PANEL */}
 
