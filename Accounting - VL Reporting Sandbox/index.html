@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AP Reports — Amplify Accounting Prototype</title>
+  <title>AP Reports â Amplify Accounting Prototype</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; overflow: hidden; height: 100vh; }
@@ -24,7 +24,7 @@
   <script type="text/babel" data-type="module">
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+// âââ DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const STANDARD_REPORTS = [
   { id: "cash-requirements", name: "Cash Requirements", description: "See what payments are coming due so you can plan cash needs and avoid late fees.", tier3: null },
@@ -48,7 +48,7 @@ const SCHEDULED_REPORTS = [
   { id: "sched-2", name: "Monthly Committee View", parentId: "cash-requirements", parentName: "Cash Requirements", recurrence: "Monthly", next: "May 1, 2026", lastRun: "Apr 13, 2026", lastRunStatus: "processing", recipient: null, scheduledBy: "Sarah Mitchell", status: "active" },
   { id: "sched-3", name: "Quarterly Vendor Summary", parentId: "vendor-summary", parentName: "Vendor Summary", recurrence: "Quarterly", next: "Jul 1, 2026", lastRun: "Apr 1, 2026", lastRunStatus: "completed", recipient: "board@gracechurch.org", scheduledBy: "David Park", status: "active" },
   { id: "sched-4", name: "1099 Annual Filing", parentId: "1099", parentName: "1099", recurrence: "Yearly", next: "Jan 15, 2027", lastRun: "Mar 28, 2026", lastRunStatus: "failed", recipient: null, scheduledBy: "David Park", status: "active" },
-  { id: "sched-5", name: "Weekly Aged Analysis", parentId: "aged-analysis", parentName: "Aged Analysis", recurrence: "Weekly", next: "—", lastRun: "Mar 10, 2026", lastRunStatus: "completed", recipient: "ap@gracechurch.org", scheduledBy: "Sarah Mitchell", status: "paused" },
+  { id: "sched-5", name: "Weekly Aged Analysis", parentId: "aged-analysis", parentName: "Aged Analysis", recurrence: "Weekly", next: "â", lastRun: "Mar 10, 2026", lastRunStatus: "completed", recipient: "ap@gracechurch.org", scheduledBy: "Sarah Mitchell", status: "paused" },
 ];
 
 const ENTITIES = ["Grace Community Church", "Grace Community Preschool", "All Entities"];
@@ -57,15 +57,13 @@ const CURRENT_USER = "Sarah Mitchell";
 const SCHEDULE_QUOTA = { max: 10, used: SCHEDULED_REPORTS.length }; // org-level cap
 
 const REPORT_RESULTS = {
-  "cash-requirements": { columns: ["Vendor","Invoice #","Invoice Date","Due Date","Days Until Due","Amount","Discount Available"], rows: [["Apex Office Supply","INV-4821","03/12/2026","04/12/2026","5","$1,245.00","$24.90"],["Summit Electric Co.","SE-20260301","03/01/2026","04/01/2026","—","$3,870.50","—"],["Crossway Publishing","CW-7891","03/20/2026","04/20/2026","13","$412.75","—"],["City Water & Sewer","UTIL-0326","03/25/2026","04/10/2026","3","$287.30","—"],["Grace Landscape Mgmt","GLM-2026-03","03/15/2026","04/15/2026","8","$1,950.00","$39.00"],["Piedmont HVAC Services","PH-5543","02/28/2026","04/07/2026","0","$6,200.00","—"],["Broadview Internet","BVI-26040","04/01/2026","04/30/2026","23","$189.99","—"],["Carolina Janitorial","CJ-1142","03/28/2026","04/28/2026","21","$875.00","—"],["Covenant Insurance Group","CIG-Q2-26","04/01/2026","05/01/2026","24","$4,320.00","$86.40"],["Faith Printing Services","FPS-3390","03/22/2026","04/22/2026","15","$1,125.50","—"]] },
-  "aged-analysis": { columns: ["Vendor","Current","1–30 Days","31–60 Days","61–90 Days","Over 90 Days","Total"], rows: [["Apex Office Supply","$1,245.00","—","—","—","—","$1,245.00"],["Summit Electric Co.","$3,870.50","$1,200.00","—","—","—","$5,070.50"],["Crossway Publishing","$412.75","—","$156.00","—","—","$568.75"],["Grace Landscape Mgmt","$1,950.00","$1,950.00","—","—","—","$3,900.00"],["Piedmont HVAC Services","$6,200.00","—","—","$2,400.00","—","$8,600.00"],["City Water & Sewer","$287.30","$274.10","$274.10","—","—","$835.50"],["Broadview Internet","$189.99","—","—","—","—","$189.99"],["Carolina Janitorial","$875.00","$875.00","—","—","—","$1,750.00"],["Covenant Insurance Group","$4,320.00","—","—","—","—","$4,320.00"],["Faith Printing Services","$1,125.50","$562.75","—","—","—","$1,688.25"]] },
+  "cash-requirements": { columns: ["Vendor","Invoice #","Invoice Date","Due Date","Days Until Due","Amount","Discount Available"], rows: [["Apex Office Supply","INV-4821","03/12/2026","04/12/2026","5","$1,245.00","$24.90"],["Summit Electric Co.","SE-20260301","03/01/2026","04/01/2026","â","$3,870.50","â"],["Crossway Publishing","CW-7891","03/20/2026","04/20/2026","13","$412.75","â"],["City Water & Sewer","UTIL-0326","03/25/2026","04/10/2026","3","$287.30","â"],["Grace Landscape Mgmt","GLM-2026-03","03/15/2026","04/15/2026","8","$1,950.00","$39.00"],["Piedmont HVAC Services","PH-5543","02/28/2026","04/07/2026","0","$6,200.00","â"],["Broadview Internet","BVI-26040","04/01/2026","04/30/2026","23","$189.99","â"],["Carolina Janitorial","CJ-1142","03/28/2026","04/28/2026","21","$875.00","â"],["Covenant Insurance Group","CIG-Q2-26","04/01/2026","05/01/2026","24","$4,320.00","$86.40"],["Faith Printing Services","FPS-3390","03/22/2026","04/22/2026","15","$1,125.50","â"]] },
+  "aged-analysis": { columns: ["Vendor","Current","1â30 Days","31â60 Days","61â90 Days","Over 90 Days","Total"], rows: [["Apex Office Supply","$1,245.00","â","â","â","â","$1,245.00"],["Summit Electric Co.","$3,870.50","$1,200.00","â","â","â","$5,070.50"],["Crossway Publishing","$412.75","â","$156.00","â","â","$568.75"],["Grace Landscape Mgmt","$1,950.00","$1,950.00","â","â","â","$3,900.00"],["Piedmont HVAC Services","$6,200.00","â","â","$2,400.00","â","$8,600.00"],["City Water & Sewer","$287.30","$274.10","$274.10","â","â","$835.50"],["Broadview Internet","$189.99","â","â","â","â","$189.99"],["Carolina Janitorial","$875.00","$875.00","â","â","â","$1,750.00"],["Covenant Insurance Group","$4,320.00","â","â","â","â","$4,320.00"],["Faith Printing Services","$1,125.50","$562.75","â","â","â","$1,688.25"]] },
   "vendor-summary": { columns: ["Vendor","Invoices","Payments","Credits","Net Activity","Open Balance"], rows: [["Apex Office Supply","$4,890.00","$3,645.00","$0.00","$4,890.00","$1,245.00"],["Summit Electric Co.","$11,420.50","$6,350.00","$200.00","$11,220.50","$5,070.50"],["Crossway Publishing","$2,145.00","$1,576.25","$0.00","$2,145.00","$568.75"],["Grace Landscape Mgmt","$7,800.00","$3,900.00","$0.00","$7,800.00","$3,900.00"],["Piedmont HVAC Services","$14,800.00","$6,200.00","$0.00","$14,800.00","$8,600.00"],["Broadview Internet","$1,139.94","$949.95","$0.00","$1,139.94","$189.99"],["City Water & Sewer","$3,445.20","$2,609.70","$0.00","$3,445.20","$835.50"],["Carolina Janitorial","$5,250.00","$3,500.00","$0.00","$5,250.00","$1,750.00"],["Covenant Insurance Group","$17,280.00","$12,960.00","$0.00","$17,280.00","$4,320.00"],["Faith Printing Services","$4,501.00","$2,812.75","$0.00","$4,501.00","$1,688.25"]] },
-  "contractor-report": { columns: ["Contractor","TIN (last 4)","Type","YTD Payments","1099 Eligible","Status"], rows: [["Rev. James Whitfield","••7823","Speaker / Evangelist","$4,500.00","Yes","Active"],["Maria Santos","••3341","Cleaning Service","$9,600.00","Yes","Active"],["Tom Brennan Audio","••9012","A/V Technician","$3,200.00","Yes","Active"],["Lisa Chen Design","••4456","Graphic Design","$2,850.00","Yes","Active"],["Robert Hayes","••6678","Lawn Care","$1,800.00","Yes","Active"],["Grace Properties LLC","••5590","Property Management","$7,200.00","Yes","Active"],["Riverside Rentals","••3378","Equipment Rental","$3,600.00","Yes","Active"],["Samantha Wright CPA","••8841","Tax Preparation","$2,400.00","Yes","Active"],["NextGen Web Solutions","••1275","Website Maintenance","$1,950.00","Yes","Active"],["Carlos Mendez Plumbing","••4903","Plumbing Services","$5,100.00","Yes","Active"]] },
-  "vendor-list": { columns: ["Vendor Name","Contact","Phone","Email","Payment Terms","Default GL Account"], rows: [["Apex Office Supply","Karen Torres","(555) 234-8910","orders@apexoffice.com","Net 30","6100 · Office Supplies"],["Summit Electric Co.","Mike Jennings","(555) 345-1020","service@summitelec.com","Net 30","6200 · Utilities"],["Crossway Publishing","Order Dept","(800) 323-3890","orders@crossway.org","Net 45","6310 · Curriculum & Literature"],["Grace Landscape Mgmt","Dan Ortiz","(555) 456-7890","dan@gracelandscape.com","Net 15","6400 · Grounds Maintenance"],["Piedmont HVAC Services","Jill Weaver","(555) 567-2345","dispatch@piedmonthvac.com","Net 30","6250 · Building Maintenance"],["Broadview Internet","Support","(555) 678-3456","billing@broadview.net","Net 30","6210 · Telecommunications"],["City Water & Sewer","Municipal Office","(555) 789-4567","billing@cityutil.gov","Due on receipt","6200 · Utilities"],["Carolina Janitorial","Marcus Lee","(555) 890-1234","marcus@carolinajanitor.com","Net 30","6260 · Janitorial"],["Covenant Insurance Group","Claims Dept","(555) 901-2345","claims@covenantins.com","Net 30","6500 · Insurance"],["Faith Printing Services","Rachel Kim","(555) 012-3456","orders@faithprint.com","Net 15","6120 · Printing"]] },
-  "distribution-info": { columns: ["GL Account","Fund","Department","Reference","Vendor","Amount"], rows: [["6100 · Office Supplies","General Fund","Administration","INV-4821","Apex Office Supply","$1,245.00"],["6200 · Utilities","General Fund","Facilities","SE-20260301","Summit Electric Co.","$3,870.50"],["6310 · Curriculum","Christian Ed Fund","Youth Ministry","CW-7891","Crossway Publishing","$412.75"],["6400 · Grounds","Building Fund","Facilities","GLM-2026-03","Grace Landscape Mgmt","$1,950.00"],["6250 · Bldg Maint","Building Fund","Facilities","PH-5543","Piedmont HVAC Services","$6,200.00"],["6210 · Telecom","General Fund","Administration","BVI-26040","Broadview Internet","$189.99"],["6200 · Utilities","General Fund","Facilities","UTIL-0326","City Water & Sewer","$287.30"],["6260 · Janitorial","General Fund","Facilities","CJ-1142","Carolina Janitorial","$875.00"],["6500 · Insurance","General Fund","Administration","CIG-Q2-26","Covenant Insurance Group","$4,320.00"],["6120 · Printing","General Fund","Administration","FPS-3390","Faith Printing Services","$1,125.50"]] },
-  "1099": { columns: ["Vendor","Address","TIN (last 4)","1099 Type","Box","YTD Amount","Threshold Met","Status"], rows: [["Rev. James Whitfield","102 Oak Hill Rd, Charlotte NC","••7823","NEC","1","$4,500.00","Yes","Ready"],["Maria Santos","55 Pine St, Matthews NC","••3341","NEC","1","$9,600.00","Yes","Ready"],["Tom Brennan Audio","890 Sound Ln, Charlotte NC","••9012","NEC","1","$3,200.00","Yes","Ready"],["Lisa Chen Design","412 Design Ave, Gastonia NC","••4456","NEC","1","$2,850.00","Yes","Ready"],["Robert Hayes","78 Lawn Ct, Matthews NC","••6678","NEC","1","$1,800.00","Yes","Ready"],["Piedmont HVAC Services","2200 Service Rd, Gastonia NC","••1199","NEC","1","$14,800.00","Yes","Ready"],["First National Bank","300 Main St, Charlotte NC","••2200","INT","1","$1,250.00","Yes","Ready"],["Covenant Credit Union","150 Faith Dr, Charlotte NC","••4410","INT","1","$890.00","Yes","Ready"],["Grace Properties LLC","900 Commerce Blvd, Charlotte NC","••5590","MISC","1","$7,200.00","Yes","Ready"],["Riverside Rentals","45 River Rd, Charlotte NC","••3378","MISC","2","$3,600.00","Yes","Ready"],["Pastor's Retirement Fund","PO Box 1200, Charlotte NC","••8812","R","—","$24,000.00","Yes","Ready"]] },
-  "vendor-labels": { columns: ["Vendor Name","Address Line 1","Address Line 2","City","State","ZIP"], rows: [["Apex Office Supply","1420 Commerce Blvd","Suite 200","Charlotte","NC","28203"],["Summit Electric Co.","890 Industrial Park Dr","","Charlotte","NC","28206"],["Crossway Publishing","1300 Crescent St","","Wheaton","IL","60187"],["Grace Landscape Mgmt","45 Greenway Ct","","Matthews","NC","28105"],["Piedmont HVAC Services","2200 Service Rd","Bay 14","Gastonia","NC","28054"],["Broadview Internet","PO Box 9900","","Charlotte","NC","28299"],["City Water & Sewer","600 E Fourth St","","Charlotte","NC","28202"],["Carolina Janitorial","312 Trade St","Suite 100","Charlotte","NC","28202"],["Covenant Insurance Group","750 Providence Rd","","Charlotte","NC","28207"],["Faith Printing Services","88 Church St","","Matthews","NC","28105"]] },
-  "gifts-report": { columns: ["Donor","Gift Date","Amount","Fund","Campaign","Payment Method","Receipt #"], rows: [["James & Linda Whitfield","04/07/2026","$2,500.00","General Fund","Easter 2026","Check","REC-4821"],["The Santos Family","04/06/2026","$500.00","Building Fund","Capital Campaign","Online","REC-4820"],["Tom & Sarah Brennan","04/06/2026","$1,000.00","General Fund","—","ACH","REC-4819"],["David Park","04/01/2026","$250.00","Missions Fund","Spring Missions","Online","REC-4818"],["Lisa Chen","03/30/2026","$150.00","Youth Ministry","Summer Camp","Credit Card","REC-4817"],["Robert & Mary Hayes","03/28/2026","$3,000.00","Building Fund","Capital Campaign","Check","REC-4816"],["Grace Community Foundation","03/25/2026","$10,000.00","General Fund","—","Wire Transfer","REC-4815"],["Janet & Bill Morrison","03/22/2026","$750.00","General Fund","—","Check","REC-4814"],["Angela Williams","03/20/2026","$200.00","Missions Fund","Spring Missions","Online","REC-4813"],["Kevin & Amy Nguyen","03/18/2026","$1,500.00","Building Fund","Capital Campaign","ACH","REC-4812"]] },
+  "contractor-report": { columns: ["Contractor","TIN (last 4)","Type","YTD Payments","1099 Eligible","Status"], rows: [["Rev. James Whitfield","â¢â¢7823","Speaker / Evangelist","$4,500.00","Yes","Active"],["Maria Santos","â¢â¢3341","Cleaning Service","$9,600.00","Yes","Active"],["Tom Brennan Audio","â¢â¢9012","A/V Technician","$3,200.00","Yes","Active"],["Lisa Chen Design","â¢â¢4456","Graphic Design","$2,850.00","Yes","Active"],["Robert Hayes","â¢â¢6678","Lawn Care","$1,800.00","Yes","Active"],["Grace Properties LLC","â¢â¢5590","Property Management","$7,200.00","Yes","Active"],["Riverside Rentals","â¢â¢3378","Equipment Rental","$3,600.00","Yes","Active"],["Samantha Wright CPA","â¢â¢8841","Tax Preparation","$2,400.00","Yes","Active"],["NextGen Web Solutions","â¢â¢1275","Website Maintenance","$1,950.00","Yes","Active"],["Carlos Mendez Plumbing","â¢â¢4903","Plumbing Services","$5,100.00","Yes","Active"]] },
+  "vendor-list": { columns: ["Vendor Name","Contact","Phone","Email","Payment Terms","Default GL Account"], rows: [["Apex Office Supply","Karen Torres","(555) 234-8910","orders@apexoffice.com","Net 30","6100 Â· Office Supplies"],["Summit Electric Co.","Mike Jennings","(555) 345-1020","service@summitelec.com","Net 30","6200 Â· Utilities"],["Crossway Publishing","Order Dept","(800) 323-3890","orders@crossway.org","Net 45","6310 Â· Curriculum & Literature"],["Grace Landscape Mgmt","Dan Ortiz","(555) 456-7890","dan@gracelandscape.com","Net 15","6400 Â· Grounds Maintenance"],["Piedmont HVAC Services","Jill Weaver","(555) 567-2345","dispatch@piedmonthvac.com","Net 30","6250 Â· Building Maintenance"],["Broadview Internet","Support","(555) 678-3456","billing@broadview.net","Net 30","6210 Â· Telecommunications"],["City Water & Sewer","Municipal Office","(555) 789-4567","billing@cityutil.gov","Due on receipt","6200 Â· Utilities"],["Carolina Janitorial","Marcus Lee","(555) 890-1234","marcus@carolinajanitor.com","Net 30","6260 Â· Janitorial"],["Covenant Insurance Group","Claims Dept","(555) 901-2345","claims@covenantins.com","Net 30","6500 Â· Insurance"],["Faith Printing Services","Rachel Kim","(555) 012-3456","orders@faithprint.com","Net 15","6120 Â· Printing"]] },
+  "distribution-info": { columns: ["GL Account","Fund","Department","Reference","Vendor","Amount"], rows: [["6100 Â· Office Supplies","General Fund","Administration","INV-4821","Apex Office Supply","$1,245.00"],["6200 Â· Utilities","General Fund","Facilities","SE-20260301","Summit Electric Co.","$3,870.50"],["6310 Â· Curriculum","Christian Ed Fund","Youth Ministry","CW-7891","Crossway Publishing","$412.75"],["6400 Â· Grounds","Building Fund","Facilities","GLM-2026-03","Grace Landscape Mgmt","$1,950.00"],["6250 Â· Bldg Maint","Building Fund","Facilities","PH-5543","Piedmont HVAC Services","$6,200.00"],["6210 Â· Telecom","General Fund","Administration","BVI-26040","Broadview Internet","$189.99"],["6200 Â· Utilities","General Fund","Facilities","UTIL-0326","City Water & Sewer","$287.30"],["6260 Â· Janitorial","General Fund","Facilities","CJ-1142","Carolina Janitorial","$875.00"],["6500 Â· Insurance","General Fund","Administration","CIG-Q2-26","Covenant Insurance Group","$4,320.00"],["6120 Â· Printing","General Fund","Administration","FPS-3390","Faith Printing Services","$1,125.50"]] },
+  "1099": { columns: ["Vendor","Address","TIN (last 4)","1099 Type","Box","YTD Amount","Threshold Met","Status"], rows: [["Rev. James Whitfield","102 Oak Hill Rd, Charlotte NC","â¢â¢7823","NEC","1","$4,500.00","Yes","Ready"],["Maria Santos","55 Pine St, Matthews NC","â¢â¢3341","NEC","1","$9,600.00","Yes","Ready"],["Tom Brennan Audio","890 Sound Ln, Charlotte NC","â¢â¢9012","NEC","1","$3,200.00","Yes","Ready"],["Lisa Chen Design","412 Design Ave, Gastonia NC","â¢â¢4456","NEC","1","$2,850.00","Yes","Ready"],["Robert Hayes","78 Lawn Ct, Matthews NC","â¢â¢6678","NEC","1","$1,800.00","Yes","Ready"],["Piedmont HVAC Services","2200 Service Rd, Gastonia NC","â¢â¢1199","NEC","1","$14,800.00","Yes","Ready"],["First National Bank","300 Main St, Charlotte NC","â¢â¢2200","INT","1","$1,250.00","Yes","Ready"],["Covenant Credit Union","150 Faith Dr, Charlotte NC","â¢â¢4410","INT","1","$890.00","Yes","Ready"],["Grace Properties LLC","900 Commerce Blvd, Charlotte NC","â¢â¢5590","MISC","1","$7,200.00","Yes","Ready"],["Riverside Rentals","45 River Rd, Charlotte NC","â¢â¢3378","MISC","2","$3,600.00","Yes","Ready"],["Pastor's Retirement Fund","PO Box 1200, Charlotte NC","â¢â¢8812","R","â","$24,000.00","Yes","Ready"]] },
 };
 
 const PERSON_SEARCH_DATA = [
@@ -81,7 +79,7 @@ const PERSON_SEARCH_DATA = [
   { id: "p10", name: "Pastor Michael Torres", email: "m.torres@gracechurch.org", phone: "(555) 111-2233", household: "Torres, Michael", memberStatus: "Staff", lastGift: "Mar 15, 2026" },
   { id: "p11", name: "Janet Morrison", email: "janet.m@email.com", phone: "(555) 222-3344", household: "Morrison, Janet & Bill", memberStatus: "Active", lastGift: "Feb 28, 2026" },
   { id: "p12", name: "Bill Morrison", email: "bill.morrison@email.com", phone: "(555) 222-3345", household: "Morrison, Janet & Bill", memberStatus: "Active", lastGift: "Feb 28, 2026" },
-  { id: "p13", name: "Grace Community Foundation", email: "admin@gcfoundation.org", phone: "(555) 333-4455", household: "—", memberStatus: "Organization", lastGift: "Mar 25, 2026" },
+  { id: "p13", name: "Grace Community Foundation", email: "admin@gcfoundation.org", phone: "(555) 333-4455", household: "â", memberStatus: "Organization", lastGift: "Mar 25, 2026" },
   { id: "p14", name: "Angela Williams", email: "angela.w@email.com", phone: "(555) 444-5566", household: "Williams, Angela", memberStatus: "Inactive", lastGift: "Dec 15, 2025" },
   { id: "p15", name: "Kevin Nguyen", email: "kevin.n@email.com", phone: "(555) 555-6677", household: "Nguyen, Kevin & Amy", memberStatus: "Active", lastGift: "Jan 10, 2026" },
 ];
@@ -89,7 +87,7 @@ const PERSON_SEARCH_DATA = [
 const REPORT_HISTORY = [
   { id:1, title:"Monthly Committee View", reportType:"Cash Requirements", parentId:"cash-requirements", scheduleId:"sched-2", date:"Apr 13, 2026", time:"9:12 AM", entity:"Grace Community Church", status:"processing", duration: null, failReason: null },
   { id:2, title:"Building Fund Expenses", reportType:"Distribution Information", parentId:"distribution-info", scheduleId:"sched-1", date:"Apr 1, 2026", time:"2:45 PM", entity:"Grace Community Church", status:"completed", duration:"1m 23s", failReason: null },
-  { id:3, title:"1099 Annual Filing", reportType:"1099", parentId:"1099", scheduleId:"sched-4", date:"Mar 28, 2026", time:"3:10 PM", entity:"All Entities", status:"failed", duration:"4m 12s", failReason:"Data source timeout — the GL export service did not respond within the allowed time. Try re-running or contact your administrator if the issue persists." },
+  { id:3, title:"1099 Annual Filing", reportType:"1099", parentId:"1099", scheduleId:"sched-4", date:"Mar 28, 2026", time:"3:10 PM", entity:"All Entities", status:"failed", duration:"4m 12s", failReason:"Data source timeout â the GL export service did not respond within the allowed time. Try re-running or contact your administrator if the issue persists." },
   { id:4, title:"Building Fund Expenses", reportType:"Distribution Information", parentId:"distribution-info", scheduleId:"sched-1", date:"Mar 15, 2026", time:"2:00 PM", entity:"Grace Community Church", status:"completed", duration:"58s", failReason: null },
   { id:5, title:"Quarterly Vendor Summary", reportType:"Vendor Summary", parentId:"vendor-summary", scheduleId:"sched-3", date:"Apr 1, 2026", time:"6:00 AM", entity:"Grace Community Church", status:"completed", duration:"2m 05s", failReason: null },
   { id:6, title:"Weekly Aged Analysis", reportType:"Aged Analysis", parentId:"aged-analysis", scheduleId:"sched-5", date:"Mar 10, 2026", time:"7:00 AM", entity:"Grace Community Church", status:"completed", duration:"45s", failReason: null },
@@ -98,12 +96,12 @@ const REPORT_HISTORY = [
   { id:9, title:"Building Fund Expenses", reportType:"Distribution Information", parentId:"distribution-info", scheduleId:"sched-1", date:"Feb 15, 2026", time:"2:00 PM", entity:"Grace Community Church", status:"completed", duration:"1m 15s", failReason: null },
 ];
 
-// ─── FIXED ASSETS DATA ──────────────────────────────────────────────────────
+// âââ FIXED ASSETS DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const FA_STANDARD_REPORTS = [
   { id: "fa-asset-listing", name: "Asset Listing", description: "View a complete inventory of all fixed assets with acquisition dates, costs, and current book values.", tier3: null },
   { id: "fa-depreciation-history", name: "Depreciation History", description: "View the historical depreciation activity for all assets across selected methods and useful lives.", tier3: null },
-  { id: "fa-custom-query", name: "Custom Query", description: "Build a custom report from scratch — define criteria to filter your asset database, choose which columns to display, and sort results your way.", tier3: "query", hidden: true },
+  { id: "fa-custom-query", name: "Custom Query", description: "Build a custom report from scratch â define criteria to filter your asset database, choose which columns to display, and sort results your way.", tier3: "query", hidden: true },
   { id: "fa-selections-listings", name: "Selections & Listings", description: "Browse and run your saved Custom Query configurations. Select one or more saved queries, review their setup, and generate reports.", tier3: "selection", hidden: true },
 ];
 
@@ -138,13 +136,13 @@ const FA_REPORT_RESULTS = {
   "fa-custom-query": { columns: ["Asset #","Description","Category","Location","Department","Cost","Book Value"], rows: [["FA-001","Main Sanctuary Building","Buildings","Campus","Facilities","$1,250,000.00","$762,500.00"],["FA-002","Fellowship Hall","Buildings","Campus","Facilities","$680,000.00","$476,000.00"],["FA-003","2022 Ford Transit Van","Vehicles","Parking Lot B","Youth Ministry","$42,500.00","$29,750.00"],["FA-004","Yamaha Grand Piano","Equipment","Sanctuary","Worship","$18,500.00","$11,100.00"],["FA-005","Commercial HVAC System","Equipment","Main Bldg","Facilities","$95,000.00","$66,500.00"],["FA-006","Parking Lot Resurface","Land Improve.","Campus","Facilities","$35,000.00","$29,750.00"],["FA-007","Sound & A/V System","Equipment","Sanctuary","Worship","$67,000.00","$40,200.00"],["FA-008","LED Parking Lights","Equipment","Parking Lot A","Facilities","$12,400.00","$11,780.00"],["FA-009","Office Furniture Set","Equipment","Admin Wing","Administration","$4,200.00","$3,780.00"],["FA-010","Playground Equipment","Equipment","South Lawn","Children's Ministry","$28,600.00","$22,880.00"]] },
 };
 
-// ─── QB LIVE FILTERING ───────────────────────────────────────────────────────
+// âââ QB LIVE FILTERING âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // Maps QB field IDs to column indices in FA_REPORT_RESULTS["fa-custom-query"]
 const QB_FIELD_COL_MAP = { tag: 0, name: 1, class: 2, building: 3, room: 4, capValue: 5, bookNet: 6 };
 
 function evalQbCriterion(row, cr) {
   const colIdx = QB_FIELD_COL_MAP[cr.fieldId];
-  if (colIdx === undefined) return true; // unmapped field — treat as always passing
+  if (colIdx === undefined) return true; // unmapped field â treat as always passing
   const raw = (row[colIdx] || '').toString();
   const cell = raw.toLowerCase();
   const val = (cr.value || '').toString().toLowerCase().trim();
@@ -158,7 +156,7 @@ function evalQbCriterion(row, cr) {
     if (cr.op === 'less than') return n < v;
     return true;
   }
-  if (!val) return true; // empty text filter — match everything
+  if (!val) return true; // empty text filter â match everything
   if (cr.op === 'equals') return cell === val;
   if (cr.op === 'starts with') return cell.startsWith(val);
   if (cr.op === 'is empty') return cell === '';
@@ -196,7 +194,7 @@ const FA_REPORT_HISTORY = [
 
 const FA_SCHEDULE_QUOTA = { max: 10, used: FA_SCHEDULED_REPORTS.length };
 
-// ─── QUERY BUILDER DATA (for Custom Query) ─────────────────────────────────
+// âââ QUERY BUILDER DATA (for Custom Query) âââââââââââââââââââââââââââââââââ
 
 const QB_CRITERIA_CATEGORIES = [
   { key: "basic", label: "Basic", fields: [
@@ -236,10 +234,10 @@ const QB_CRITERIA_CATEGORIES = [
     { id: "invDate", label: "Inventory Date", type: "date" },
   ]},
   { key: "savedQueries", label: "Other Queries", fields: [
-    { id: "sq_annualInventory", label: "Annual Asset Inventory — 2025", type: "boolean" },
+    { id: "sq_annualInventory", label: "Annual Asset Inventory â 2025", type: "boolean" },
     { id: "sq_equipmentOver5k", label: "Equipment Over $5,000", type: "boolean" },
     { id: "sq_churchBuildings", label: "Church Buildings Only", type: "boolean" },
-    { id: "sq_vehiclesList", label: "Vehicles — Full List", type: "boolean" },
+    { id: "sq_vehiclesList", label: "Vehicles â Full List", type: "boolean" },
     { id: "sq_retiredAssets", label: "Retired Assets Since 2020", type: "boolean" },
   ]},
 ];
@@ -270,7 +268,7 @@ const QB_AVAILABLE_COLUMNS = [
   { id: "expenseAcct", label: "Expense Account #" },
 ];
 
-// ─── APP DATA LOOKUP ────────────────────────────────────────────────────────
+// âââ APP DATA LOOKUP ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const APP_DATA = {
   ap: { label: "Accounts Payable", standard: STANDARD_REPORTS, saved: SAVED_CONFIGS, scheduled: SCHEDULED_REPORTS, results: REPORT_RESULTS, history: REPORT_HISTORY, quota: SCHEDULE_QUOTA,
@@ -287,7 +285,7 @@ const APP_LIST = [
   { key: "ar", label: "Accounts Receivable", disabled: true },
 ];
 
-// ─── CHURCH LOGO (generic placeholder) ──────────────────────────────────────
+// âââ CHURCH LOGO (generic placeholder) ââââââââââââââââââââââââââââââââââââââ
 const ChurchLogo = ({ size = 40 }) => (
   <svg width={size} height={size} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="120" height="120" rx="12" fill="#f0ece6" />
@@ -301,7 +299,7 @@ const ChurchLogo = ({ size = 40 }) => (
   </svg>
 );
 
-// ─── ICONS ───────────────────────────────────────────────────────────────────
+// âââ ICONS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const I = ({ children, size = 16, ...props }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }} {...props}>{children}</svg>
@@ -343,7 +341,7 @@ const SkipForwardIcon = (p) => <I {...p}><polygon points="5 4 15 12 5 20 5 4"/><
 const ExternalLinkIcon = (p) => <I {...p}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></I>;
 const UsersIcon = (p) => <I {...p}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></I>;
 
-// ─── STYLE TOKENS ────────────────────────────────────────────────────────────
+// âââ STYLE TOKENS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const c = {
   navBg: "#1e293b", navText: "#94a3b8", navTextActive: "#ffffff",
@@ -360,7 +358,7 @@ const c = {
   sideNavBg: "#ffffff", sideNavW: 220, sideNavCollapsedW: 0,
 };
 
-// ─── PRIMITIVES ──────────────────────────────────────────────────────────────
+// âââ PRIMITIVES ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function Sel({ value, onChange, options, label }) {
   return (
@@ -405,7 +403,7 @@ function SectionLabel({ children, style: xs }) {
   return <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: 14, paddingTop: 24, marginTop: 4, borderTop: `1px solid ${c.border}`, ...xs }}>{children}</div>;
 }
 
-// ─── APP SHELL: GLOBAL NAV ──────────────────────────────────────────────────
+// âââ APP SHELL: GLOBAL NAV ââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function UnityNav() {
   return (
@@ -477,7 +475,7 @@ function SubHeader({ activeApp, onAppChange }) {
   );
 }
 
-// ─── APP SHELL: SIDEBAR NAV ─────────────────────────────────────────────────
+// âââ APP SHELL: SIDEBAR NAV âââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const NAV_ITEMS = [
   { icon: <I size={16}><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></I>, label: "Enter" },
@@ -514,7 +512,7 @@ function AppSideNav({ collapsed, onToggle, activeApp }) {
   );
 }
 
-// ─── LIBRARY CARDS ───────────────────────────────────────────────────────────
+// âââ LIBRARY CARDS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function ReportCard({ report, onClick }) {
   const [h, setH] = useState(false);
@@ -541,7 +539,7 @@ function SavedConfigCard({ config, onClick, onToggleVisibility }) {
         <Tag color="purple"><FileTextIcon size={10} style={{ marginRight: 2 }} />{config.parentName}</Tag>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, fontSize: 11, color: c.textTer }}>
-        <span>{config.createdBy}</span><span>·</span><span>Last run {config.lastRun}</span>
+        <span>{config.createdBy}</span><span>Â·</span><span>Last run {config.lastRun}</span>
       </div>
       <button onClick={e => { e.stopPropagation(); onToggleVisibility(config.id); }}
         style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 4, border: `1px solid ${c.borderLight}`, background: c.bg, cursor: "pointer", fontSize: 11, color: c.textSec, fontFamily: "inherit", width: "fit-content" }}>
@@ -563,7 +561,7 @@ function SavedConfigCard({ config, onClick, onToggleVisibility }) {
   );
 }
 
-// ─── REPORT WORKSPACE (full-screen modal with config sidebar + document preview) ──
+// âââ REPORT WORKSPACE (full-screen modal with config sidebar + document preview) ââ
 
 function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, historyStatus, standardReports, reportResults, initialQbEditSource }) {
   const _STD = standardReports || STANDARD_REPORTS;
@@ -586,7 +584,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const isAgedReport = reportObj.tier3 === "aged";
   const [agedMode, setAgedMode] = useState("date"); // "date" | "current" | "other"
   const [asOfDate, setAsOfDate] = useState("2026-04-07");
-  const [asOfPeriod, setAsOfPeriod] = useState("4 — April");
+  const [asOfPeriod, setAsOfPeriod] = useState("4 â April");
   const [agedBasedOn, setAgedBasedOn] = useState("Due date");
   const [entity, setEntity] = useState("Grace Community Church");
   const [vendorFilter, setVendorFilter] = useState("All vendors");
@@ -634,7 +632,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const fontScaleMap = { "X-Small": { body: "11px", title: "20px" }, "Small": { body: "12px", title: "22px" }, "Medium": { body: "13px", title: "26px" }, "Large": { body: "14px", title: "28px" }, "X-Large": { body: "15px", title: "32px" } };
   const fontSize = fontScaleMap[fontScale]?.body || "13px";
   const titleFontSize = fontScaleMap[fontScale]?.title || "18px";
-  // Context header always shows — entity and period are always necessary
+  // Context header always shows â entity and period are always necessary
   const [altRowFill, setAltRowFill] = useState(true);
   const [showTotalsRow, setShowTotalsRow] = useState(true);
   const [showGridlines, setShowGridlines] = useState(false);
@@ -657,7 +655,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const PREVIEW_ROW_LIMIT = 10;
   const TOTAL_ROW_COUNT = 48;
 
-  // ── Query Builder state (for tier3 === "query") ──
+  // ââ Query Builder state (for tier3 === "query") ââ
   const isQueryReport = reportObj.tier3 === "query";
   const isSelectionReport = reportObj.tier3 === "selection";
   // Direct QB launch: when initialPanel === "queryBuilder" we skip the standard report view entirely
@@ -707,12 +705,12 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
     return next;
   });
   const [qbOutputFormat, setQbOutputFormat] = useState("detail"); // detail | summary | export | additions | name
-  const [qbLogicOps, setQbLogicOps] = useState({}); // { [criterionId]: "and" | "or" } — logic before each criterion within a group
+  const [qbLogicOps, setQbLogicOps] = useState({}); // { [criterionId]: "and" | "or" } â logic before each criterion within a group
   const toggleQbLogic = (crId) => setQbLogicOps(prev => ({ ...prev, [crId]: prev[crId] === "or" ? "and" : "or" }));
-  // ── Groups: criteria are organised into named groups (parenthetical boolean containers) ──
+  // ââ Groups: criteria are organised into named groups (parenthetical boolean containers) ââ
   const [qbGroups, setQbGroups] = useState([{ id: 1, name: "Filter group 1" }]);
   const qbNextGroupId = useRef(2);
-  const [qbGroupLogics, setQbGroupLogics] = useState({}); // { groupId: "and" | "or" } — logic BEFORE each group (not first)
+  const [qbGroupLogics, setQbGroupLogics] = useState({}); // { groupId: "and" | "or" } â logic BEFORE each group (not first)
   const [activeGroupId, setActiveGroupId] = useState(1); // which group newly added criteria go into
   const [qbGroupEditingId, setQbGroupEditingId] = useState(null); // groupId currently being renamed
   const [qbGroupEditingName, setQbGroupEditingName] = useState("");
@@ -727,7 +725,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbEditColumnsOpen, setQbEditColumnsOpen] = useState(false);
   const [qbEditFormatOpen, setQbEditFormatOpen] = useState(false);
   const [qbEditMetaOpen, setQbEditMetaOpen] = useState(false);
-  const [qbSidebarTab, setQbSidebarTab] = useState("setup"); // "setup" | "output" — tabs for level-deep sidebar
+  const [qbSidebarTab, setQbSidebarTab] = useState("setup"); // "setup" | "output" â tabs for level-deep sidebar
 
   const [showLongRunMsg, setShowLongRunMsg] = useState(false);
   const [runElapsed, setRunElapsed] = useState(0);
@@ -815,7 +813,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
       if (contractorPreset !== "Custom") {
         return { type: "info", msg: `This report is set to use "${contractorPreset.toLowerCase()}" as its date range. Each run will automatically calculate the dates relative to when it runs.` };
       }
-      return { type: "warn", msg: `This report is set to use a specific date range (${contractorStart} – ${contractorEnd}). Each scheduled run will use these same dates unless you adjust them or select a preset range like "Year to date."` };
+      return { type: "warn", msg: `This report is set to use a specific date range (${contractorStart} â ${contractorEnd}). Each scheduled run will use these same dates unless you adjust them or select a preset range like "Year to date."` };
     }
     return null;
   })();
@@ -827,8 +825,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
     "Last 3 months": { start: "7 Jan 2026", end: "7 Apr 2026", iso: { start: "2026-01-07", end: "2026-04-07" } },
   };
   const contractorDateLabel = contractorPreset === "Custom"
-    ? `${contractorStart} – ${contractorEnd}`
-    : `${contractorResolvedDates[contractorPreset]?.start} – ${contractorResolvedDates[contractorPreset]?.end}`;
+    ? `${contractorStart} â ${contractorEnd}`
+    : `${contractorResolvedDates[contractorPreset]?.start} â ${contractorResolvedDates[contractorPreset]?.end}`;
   const handleClose = () => { if (isRunning) { setShowExitWhileRunning(true); } else if (reportRan && !exportDone && !isHistoryCompleted) { setUnsavedAction("close"); setShowUnsavedReportWarning(true); } else if (reportRan || saveConfigDone || scheduleDone) { onBack(); } else if (configTouched) { setShowCancelConfirm(true); } else { onBack(); } };
   // Vendor Labels: "show name only" hides address columns (indices 1-5)
   const nameOnlyHidden = (reportObj.id === "vendor-labels" && showNameOnly) ? [1, 2, 3, 4, 5] : [];
@@ -846,10 +844,10 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
     columns: ["Aging Bucket", "Amount", "% of Total"],
     rows: [
       ["Current", "$14,015.55", "57.4%"],
-      ["1–30 Days", "$3,424.10", "14.0%"],
-      ["31–60 Days", "$430.10", "1.8%"],
-      ["61–90 Days", "$2,400.00", "9.8%"],
-      ["Over 90 Days", "$—", "0.0%"],
+      ["1â30 Days", "$3,424.10", "14.0%"],
+      ["31â60 Days", "$430.10", "1.8%"],
+      ["61â90 Days", "$2,400.00", "9.8%"],
+      ["Over 90 Days", "$â", "0.0%"],
       ["Total Outstanding", "$20,269.75", "100.0%"],
     ],
   };
@@ -893,7 +891,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
     return filtered;
   };
   const allFilteredRows = filterRows(effectiveRows);
-  // ── Sortable columns (all reports) ──
+  // ââ Sortable columns (all reports) ââ
   const [previewSortCol, setPreviewSortCol] = useState(null); // column index
   const [previewSortDir, setPreviewSortDir] = useState("asc"); // "asc" | "desc"
   const handleColSort = (colIdx) => {
@@ -921,7 +919,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
       let valText = '';
       if (cr.type === 'boolean') valText = `is ${cr.value || 'Yes'}`;
       else if (cr.type === 'select') valText = `= ${cr.value && cr.value !== 'All' ? cr.value : 'any'}`;
-      else if (cr.op && cr.op !== 'contains') valText = `${cr.op} ${cr.value || '…'}`;
+      else if (cr.op && cr.op !== 'contains') valText = `${cr.op} ${cr.value || 'â¦'}`;
       else valText = cr.value ? `contains "${cr.value}"` : 'has any value';
       const nextLogic = idx < gCriteria.length - 1 ? (qbLogicOps[gCriteria[idx + 1]?.id] || 'and').toUpperCase() : null;
       return { label: cr.label, valText, nextLogic };
@@ -940,13 +938,13 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   };
 
   // Working context values (from app shell)
-  const ctx = { company: "Grace Community Church", fy: "2026", period: "10 — April", bank: "10100 Operating" };
+  const ctx = { company: "Grace Community Church", fy: "2026", period: "10 â April", bank: "10100 Operating" };
 
   const PERIODS = [
-    { label: "January", value: "1 — January" }, { label: "February", value: "2 — February" }, { label: "March", value: "3 — March" },
-    { label: "April", value: "4 — April" }, { label: "May", value: "5 — May" }, { label: "June", value: "6 — June" },
-    { label: "July", value: "7 — July" }, { label: "August", value: "8 — August" }, { label: "September", value: "9 — September" },
-    { label: "October", value: "10 — October" }, { label: "November", value: "11 — November" }, { label: "December", value: "12 — December" },
+    { label: "January", value: "1 â January" }, { label: "February", value: "2 â February" }, { label: "March", value: "3 â March" },
+    { label: "April", value: "4 â April" }, { label: "May", value: "5 â May" }, { label: "June", value: "6 â June" },
+    { label: "July", value: "7 â July" }, { label: "August", value: "8 â August" }, { label: "September", value: "9 â September" },
+    { label: "October", value: "10 â October" }, { label: "November", value: "11 â November" }, { label: "December", value: "12 â December" },
   ];
 
   return (
@@ -1009,7 +1007,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
           </div>
         )}
 
-        {/* Modal header — hidden when viewing/editing a query one level deep */}
+        {/* Modal header â hidden when viewing/editing a query one level deep */}
         {!queryBuilderOpen && <div style={{ background: c.white, borderBottom: `1px solid ${c.border}`, padding: "0 20px", height: 52, display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
           <button onClick={handleClose} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "6px 0" }}><XIcon size={16} /> Close</button>
           {reportRan && !isHistoryCompleted && (<>
@@ -1022,11 +1020,11 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
           {isSelectionReport && slSelectedConfigs.size > 0 && <Tag color="default" style={{ fontSize: 11 }}>{slSelectedConfigs.size} quer{slSelectedConfigs.size === 1 ? "y" : "ies"} selected</Tag>}
           <div style={{ marginLeft: "auto", display: "flex", gap: 6, alignItems: "center" }}>
             {isHistoryProcessing ? (<>
-              {/* History: processing — show animated badge + cancel */}
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 500, background: c.amberLight, color: c.amber, border: `1px solid ${c.amberBorder}` }}><Spinner size={12} color={c.amber} />Processing…</span>
+              {/* History: processing â show animated badge + cancel */}
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 500, background: c.amberLight, color: c.amber, border: `1px solid ${c.amberBorder}` }}><Spinner size={12} color={c.amber} />Processingâ¦</span>
               <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", color: c.red, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 8px" }}><XIcon size={12} /> Cancel</button>
             </>) : isHistoryFailed ? (<>
-              {/* History: failed — show error badge + retry */}
+              {/* History: failed â show error badge + retry */}
               <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 500, background: c.redLight, color: c.red, border: `1px solid #fca5a5` }}><AlertIcon size={12} />Failed</span>
               <Btn variant="secondary" size="sm" onClick={handleRunReport} icon={<RefreshIcon size={12} />}>Retry</Btn>
             </>) : isHistoryCompleted || reportRan ? (<>
@@ -1057,7 +1055,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               </div>
             </>) : isRunning ? (<>
               {/* Running state: show spinner + elapsed, everything else disabled */}
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 500, background: c.amberLight, color: c.amber, border: `1px solid ${c.amberBorder}` }}><Spinner size={12} color={c.amber} />Generating… {runElapsed > 0 ? `${runElapsed}s` : ""}</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 500, background: c.amberLight, color: c.amber, border: `1px solid ${c.amberBorder}` }}><Spinner size={12} color={c.amber} />Generatingâ¦ {runElapsed > 0 ? `${runElapsed}s` : ""}</span>
             </>) : (<>
               {/* Pre-run: Save configuration | Schedule | Run Report */}
               <button onClick={() => { setMoreMenuOpen(false); if (!saveConfigName) setSaveConfigName(reportTitle); togglePanel("saveConfig"); }} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "6px 8px" }}><BookmarkIcon size={13} /> Save configuration</button>
@@ -1067,12 +1065,12 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
           </div>
         </div>}
 
-      {/* ── LEVEL-DEEP QUERY VIEW / EDITOR (S&L) ── */}
+      {/* ââ LEVEL-DEEP QUERY VIEW / EDITOR (S&L) ââ */}
       {queryBuilderOpen && (() => {
         const editName = qbEditSource?.from === "sl-new" ? qbNewQueryName : (qbEditSource?.name || "Query");
         const editCfg = qbEditSource ? ((_STD === FA_STANDARD_REPORTS ? FA_SAVED_CONFIGS : SAVED_CONFIGS).find(s => s.id === qbEditSource.id)) : null;
         const editDetails = editCfg?.queryDetails || { filtersList: [], columnsList: [], format: "Detail" };
-        // Generate a simulated preview based on current query state — map QB columns to data columns
+        // Generate a simulated preview based on current query state â map QB columns to data columns
         const editPreviewData = FA_REPORT_RESULTS["fa-custom-query"];
         const editDataColNames = editPreviewData ? editPreviewData.columns.map(c => c.toLowerCase().replace(/[^a-z]/g, "")) : [];
         const editQbLabelMap = { tag: "asset", name: "description", capDate: "acquired", class: "category", building: "location", room: "department", capValue: "cost", bookNet: "bookvalue", salvage: "salvagevalue", vendor: "vendor" };
@@ -1085,19 +1083,19 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
         const isEditing = qbEditMode;
         return (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-          {/* Top nav — single back button + title */}
+          {/* Top nav â single back button + title */}
           <div style={{ padding: "10px 20px", borderBottom: `1px solid ${c.border}`, background: c.white, display: "flex", alignItems: "center", gap: 12 }}>
             <button onClick={() => { if (isEditing) { setQbEditMode(false); setShowEditAppliedToast(false); } else if (initialPanel === "queryBuilder") { onBack(); } else { setQueryBuilderOpen(false); } }} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "4px 0", flexShrink: 0 }}>
               <ArrowLeft size={14} /> {isEditing ? editName : (initialPanel === "queryBuilder" ? "Reports Library" : "Back")}
             </button>
             <div style={{ width: 1, height: 16, background: c.borderLight, flexShrink: 0 }} />
             <span style={{ fontSize: 14, fontWeight: 700, color: c.text, whiteSpace: "nowrap" }}>{isEditing ? "Edit filters" : editName}</span>
-            {!isEditing && <span style={{ fontSize: 12, color: c.textTer, fontWeight: 400, whiteSpace: "nowrap" }}>— Custom report</span>}
+            {!isEditing && <span style={{ fontSize: 12, color: c.textTer, fontWeight: 400, whiteSpace: "nowrap" }}>â Custom report</span>}
           </div>
 
           {/* Body: builder + live preview */}
           <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-            {/* Left: QB builder — takes most of the space */}
+            {/* Left: QB builder â takes most of the space */}
             <div style={{ flex: 1, minWidth: 400, background: c.white, borderRight: `1px solid ${c.border}`, overflowY: "auto", display: "flex", flexDirection: "column" }}>
               <div style={{ position: "sticky", top: 0, background: c.white, zIndex: 2, borderBottom: `1px solid ${c.border}` }}>
                 <div style={{ display: "flex", padding: "0 16px" }}>
@@ -1108,14 +1106,14 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 </div>
               </div>
 
-              {/* Filters tab — view mode (read-only summary) */}
+              {/* Filters tab â view mode (read-only summary) */}
               {qbSidebarTab === "setup" && !isEditing && (
                 <div style={{ padding: "16px", flex: 1, overflowY: "auto" }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Report name</div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 18 }}>{editName}</div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Filters applied</div>
                   {editDetails.filtersList.length === 0 ? (
-                    <div style={{ fontSize: 13, color: c.textTer, fontStyle: "italic", marginBottom: 18 }}>No filters — all assets included</div>
+                    <div style={{ fontSize: 13, color: c.textTer, fontStyle: "italic", marginBottom: 18 }}>No filters â all assets included</div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 18 }}>
                       {editDetails.filtersList.map((f, i) => (
@@ -1138,10 +1136,10 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   <div style={{ fontSize: 13, color: c.text }}>{editDetails.format}</div>
                 </div>
               )}
-              {/* Filters tab — edit mode: TWO COLUMN LAYOUT */}
+              {/* Filters tab â edit mode: TWO COLUMN LAYOUT */}
               {qbSidebarTab === "setup" && isEditing && (
                 <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-                  {/* LEFT: Category field browser — collapsible sections with field chips */}
+                  {/* LEFT: Category field browser â collapsible sections with field chips */}
                   {(() => {
                     const CAT_COLORS = {
                       basic:        { bg: "#eff6ff", border: "#bfdbfe", text: "#1d4ed8" },
@@ -1159,15 +1157,15 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                           const isExpanded = qbExpandedCats.includes(cat.key);
                           return (
                             <div key={cat.key} style={{ marginBottom: 2 }}>
-                              {/* Section header — clickable to collapse */}
+                              {/* Section header â clickable to collapse */}
                               <button onClick={() => toggleQbCat(cat.key)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
                                 <span style={{ fontSize: 11, fontWeight: 700, color: c.text, flex: 1, textTransform: "uppercase", letterSpacing: "0.5px" }}>{cat.label}</span>
                                 {catActiveCount > 0 && (
                                   <span style={{ minWidth: 16, height: 16, borderRadius: 8, background: cc.text, color: "#fff", fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 3px", flexShrink: 0 }}>{catActiveCount}</span>
                                 )}
-                                <span style={{ color: c.textTer, fontSize: 10 }}>{isExpanded ? "▲" : "▼"}</span>
+                                <span style={{ color: c.textTer, fontSize: 10 }}>{isExpanded ? "â²" : "â¼"}</span>
                               </button>
-                              {/* Field chips — only visible when expanded */}
+                              {/* Field chips â only visible when expanded */}
                               {isExpanded && (
                                 <div style={{ padding: "2px 10px 8px", display: "flex", flexWrap: "wrap", gap: 4 }}>
                                   {cat.fields.map(field => {
@@ -1197,7 +1195,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     <div style={{ marginBottom: 16 }}>
                       <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: c.textTer, marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.5px" }}>Report name</label>
                       {qbEditSource?.from === "sl-new" ? (
-                        <input type="text" value={qbNewQueryName} onChange={e => setQbNewQueryName(e.target.value)} placeholder="Name your report…" style={{ width: "100%", padding: "8px 10px", border: `1px solid ${c.pri}`, borderRadius: 6, fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit", color: c.text }} />
+                        <input type="text" value={qbNewQueryName} onChange={e => setQbNewQueryName(e.target.value)} placeholder="Name your reportâ¦" style={{ width: "100%", padding: "8px 10px", border: `1px solid ${c.pri}`, borderRadius: 6, fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit", color: c.text }} />
                       ) : (
                         <input type="text" value={editName} readOnly style={{ width: "100%", padding: "8px 10px", border: `1px solid ${c.border}`, borderRadius: 6, fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit", color: c.text, background: c.bg }} />
                       )}
@@ -1261,7 +1259,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                         {(cr.type === "date" ? ["on", "before", "after", "between"] : cr.type === "number" ? ["=", ">", "<", "between"] : ["contains", "equals", "starts with", "is empty"]).map(o => <option key={o} value={o}>{o}</option>)}
                                       </select>
                                       {cr.op !== "is empty" && (
-                                        <input type={cr.type === "date" ? "date" : "text"} value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder={cr.type === "number" ? "0.00" : "Value…"} style={{ padding: "4px 7px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", width: 90 }} />
+                                        <input type={cr.type === "date" ? "date" : "text"} value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder={cr.type === "number" ? "0.00" : "Valueâ¦"} style={{ padding: "4px 7px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", width: 90 }} />
                                       )}
                                     </div>
                                   )}
@@ -1296,7 +1294,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                       </div>
                     )}
 
-                    {/* ── Columns — part of query config, not formatting ── */}
+                    {/* ââ Columns â part of query config, not formatting ââ */}
                     <div style={{ borderTop: `1px solid ${c.borderLight}`, paddingTop: 14, marginTop: 4 }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                         <label style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px" }}>Columns <span style={{ color: c.textTer, fontWeight: 400, textTransform: "none" }}>({qbSelectedCols.length} selected)</span></label>
@@ -1314,10 +1312,10 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               <span style={{ fontSize: 12, color: c.text, fontWeight: 500, flex: 1 }}>{col?.label || id}</span>
                               <button onClick={() => moveQbCol(id, "up")} disabled={idx === 0} title="Move up" style={{ background: "none", border: "none", cursor: idx === 0 ? "default" : "pointer", padding: "2px 3px", color: idx === 0 ? c.borderLight : c.textTer, display: "flex", borderRadius: 3 }}
                                 onMouseEnter={e => { if (idx > 0) e.currentTarget.style.color = c.text; }}
-                                onMouseLeave={e => { if (idx > 0) e.currentTarget.style.color = c.textTer; }}>▲</button>
+                                onMouseLeave={e => { if (idx > 0) e.currentTarget.style.color = c.textTer; }}>â²</button>
                               <button onClick={() => moveQbCol(id, "down")} disabled={idx === qbSelectedCols.length - 1} title="Move down" style={{ background: "none", border: "none", cursor: idx === qbSelectedCols.length - 1 ? "default" : "pointer", padding: "2px 3px", color: idx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, display: "flex", borderRadius: 3, fontSize: 10 }}
                                 onMouseEnter={e => { if (idx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.text; }}
-                                onMouseLeave={e => { if (idx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.textTer; }}>▼</button>
+                                onMouseLeave={e => { if (idx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.textTer; }}>â¼</button>
                               <button onClick={() => toggleQbCol(id)} title="Remove" style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 3px", color: c.textTer, display: "flex", borderRadius: 3 }}
                                 onMouseEnter={e => e.currentTarget.style.color = c.red}
                                 onMouseLeave={e => e.currentTarget.style.color = c.textTer}><XIcon size={11} /></button>
@@ -1350,7 +1348,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 </div>
               )}
 
-              {/* Layout & Formatting tab — Output format + Page layout (NO columns) */}
+              {/* Layout & Formatting tab â Output format + Page layout (NO columns) */}
               {qbSidebarTab === "output" && (
                 <div style={{ padding: "16px", flex: 1, overflowY: "auto" }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>Output Format</div>
@@ -1380,7 +1378,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Paper Size</div>
                   <select style={{ width: "100%", padding: "8px 10px", border: `1px solid ${c.border}`, borderRadius: 6, fontSize: 13, fontFamily: "inherit", marginBottom: 16, background: c.white, color: c.text }}>
-                    <option>Letter (8.5 × 11)</option><option>Legal (8.5 × 14)</option><option>A4</option>
+                    <option>Letter (8.5 Ã 11)</option><option>Legal (8.5 Ã 14)</option><option>A4</option>
                   </select>
                   <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>Header / Footer</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -1397,7 +1395,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               )}
             </div>
 
-            {/* Right: Live preview — collapsible panel */}
+            {/* Right: Live preview â collapsible panel */}
             <div style={{ width: qbPreviewOpen ? 280 : 36, minWidth: 0, flexShrink: 0, background: c.bg, display: "flex", flexDirection: "column", borderLeft: `1px solid ${c.border}` }}>
               <button onClick={() => setQbPreviewOpen(o => !o)} title={qbPreviewOpen ? "Hide preview" : "Show preview"} style={{ display: "flex", alignItems: "center", gap: 6, padding: "10px 12px", background: "none", border: "none", borderBottom: `1px solid ${c.border}`, cursor: "pointer", fontFamily: "inherit", color: c.textSec, fontSize: 12, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0, width: "100%" }}>
                 {qbPreviewOpen ? <><ChevronRight size={13} style={{ flexShrink: 0 }} /><span>Preview</span></> : <ChevronLeft size={13} />}
@@ -1451,7 +1449,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               {/* Preview notice */}
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, padding: "8px 12px", background: "#f0f3f7", border: `1px solid #dfe4eb`, borderRadius: 8 }}>
                 <span style={{ width: 22, height: 22, borderRadius: 11, background: "#7a8599", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><EyeIcon size={12} style={{ color: "#fff" }} /></span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: "#5b6577", flex: 1 }}>{isEditing ? "Preview — changes update in real time." : "Report preview — read-only view."}</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: "#5b6577", flex: 1 }}>{isEditing ? "Preview â changes update in real time." : "Report preview â read-only view."}</span>
               </div>
 
               {/* Report card */}
@@ -1469,13 +1467,13 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   <span style={{ width: 6, height: 6, borderRadius: 3, background: (isEditing ? qbCriteria.length : editDetails.filtersList.length) > 0 ? c.green : c.textTer, flexShrink: 0 }} />
                   {isEditing ? (
                     qbCriteria.length === 0
-                      ? <span>Showing all assets — {TOTAL_ROW_COUNT} records in full dataset</span>
+                      ? <span>Showing all assets â {TOTAL_ROW_COUNT} records in full dataset</span>
                       : editPreviewRows.length === 0
                         ? <span style={{ color: c.red }}>No assets match these filters</span>
                         : <span>~{qbSimulatedTotal} matching asset{qbSimulatedTotal !== 1 ? "s" : ""} in full dataset ({editPreviewRows.length} shown in preview)</span>
                   ) : (
                     editDetails.filtersList.length === 0
-                      ? <span>No filters — showing all assets</span>
+                      ? <span>No filters â showing all assets</span>
                       : <span>{editDetails.filtersList.length} filter{editDetails.filtersList.length !== 1 ? "s" : ""} applied</span>
                   )}
                 </div>
@@ -1488,8 +1486,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                           <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                             {col.label}
                             <span style={{ display: "inline-flex", flexDirection: "column", lineHeight: 0, gap: 0, fontSize: 8 }}>
-                              <span style={{ color: "#3a3a3a55", lineHeight: "8px" }}>▲</span>
-                              <span style={{ color: "#3a3a3a55", lineHeight: "8px" }}>▼</span>
+                              <span style={{ color: "#3a3a3a55", lineHeight: "8px" }}>â²</span>
+                              <span style={{ color: "#3a3a3a55", lineHeight: "8px" }}>â¼</span>
                             </span>
                           </span>
                         </th>
@@ -1499,7 +1497,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                       {editPreviewRows.length > 0 ? editPreviewRows.map((row, ri) => (
                         <tr key={ri} style={{ background: ri % 2 === 1 ? "#fafafa" : "transparent", borderTop: `1px solid ${c.borderLight}` }}>
                           {editPreviewCols.map((col, ci) => (
-                            <td key={ci} style={{ padding: "8px 14px", color: ci === 0 ? c.text : c.textSec, fontWeight: ci === 0 ? 500 : 400, whiteSpace: "nowrap", fontSize: 13 }}>{col.dataIdx >= 0 ? (row[col.dataIdx] || "—") : "—"}</td>
+                            <td key={ci} style={{ padding: "8px 14px", color: ci === 0 ? c.text : c.textSec, fontWeight: ci === 0 ? 500 : 400, whiteSpace: "nowrap", fontSize: 13 }}>{col.dataIdx >= 0 ? (row[col.dataIdx] || "â") : "â"}</td>
                           ))}
                         </tr>
                       )) : (
@@ -1511,8 +1509,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   </table>
                 </div>
                 <div style={{ padding: "10px 28px", borderTop: `1px solid ${c.borderLight}`, display: "flex", justifyContent: "space-between", fontSize: 10, color: c.textTer }}>
-                  <span>{editName} — {entity}</span>
-                  <span>Preview · Page 1</span>
+                  <span>{editName} â {entity}</span>
+                  <span>Preview Â· Page 1</span>
                 </div>
               </div>
             </div>}
@@ -1557,14 +1555,14 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             </div>
 
             <div style={{ padding: "14px 16px", flex: 1 }}>
-              {/* ── SETUP TAB ── */}
+              {/* ââ SETUP TAB ââ */}
               {sidebarTab === "setup" && (<>
                 <SectionLabel style={{ borderTop: "none", paddingTop: 0, marginTop: 0 }}>Report Title</SectionLabel>
                 <div style={{ marginBottom: 16 }}>
                   <input type="text" value={reportTitle} onChange={e => setReportTitle(e.target.value)} placeholder={reportObj.name} style={{ width: "100%", padding: "8px 12px", border: `1px solid ${c.border}`, borderRadius: 6, fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit", color: c.text }} />
                 </div>
 
-                {/* ── CUSTOM REPORT FILTERS (read-only summary + edit link) ── */}
+                {/* ââ CUSTOM REPORT FILTERS (read-only summary + edit link) ââ */}
                 {isQueryReport && (<>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <SectionLabel style={{ margin: 0 }}>Filters</SectionLabel>
@@ -1572,14 +1570,14 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                       <EditIcon size={10} /> Edit filters
                     </button>
                   </div>
-                  {/* Read-only filter list — from saved config or active criteria */}
+                  {/* Read-only filter list â from saved config or active criteria */}
                   {(() => {
                     const filterItems = qbCriteria.length > 0
                       ? qbCriteria.map(cr => ({ label: cr.label, op: cr.op || "", value: cr.value || "" }))
                       : (qbSavedConfig?.queryDetails?.filtersList || []);
                     return filterItems.length === 0 ? (
                       <div style={{ padding: "12px 14px", background: c.bg, borderRadius: 8, border: `1px dashed ${c.border}`, textAlign: "center", marginBottom: 12 }}>
-                        <div style={{ fontSize: 12, color: c.textTer }}>No filters — all assets will be included.</div>
+                        <div style={{ fontSize: 12, color: c.textTer }}>No filters â all assets will be included.</div>
                         <div style={{ fontSize: 11, color: c.textTer, marginTop: 4 }}>Use "Edit filters" to add them.</div>
                       </div>
                     ) : (
@@ -1659,7 +1657,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   </div>
                 </>)}
 
-                {/* ── SELECTIONS & LISTINGS (Selection mode) ── */}
+                {/* ââ SELECTIONS & LISTINGS (Selection mode) ââ */}
                 {isSelectionReport && (<>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: `1px solid ${c.borderLight}`, paddingTop: 14, marginTop: 4, marginBottom: 12 }}>
                     <span style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.8px" }}>Saved Queries</span>
@@ -1681,7 +1679,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               <button onClick={(e) => { e.stopPropagation(); toggleSlConfig(cfg.id); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.textTer, display: "flex", lineHeight: 0 }}><XIcon size={9} /></button>
                             </span>
                           ))}
-                          <input id="sl-search-input" type="text" value={slSearchText} onChange={e => setSlSearchText(e.target.value)} placeholder={selectedList.length > 0 ? "Add more…" : "Search saved reports…"} style={{ flex: 1, minWidth: 100, padding: "2px 0", border: "none", fontSize: 12, outline: "none", fontFamily: "inherit", color: c.text, background: "transparent" }} />
+                          <input id="sl-search-input" type="text" value={slSearchText} onChange={e => setSlSearchText(e.target.value)} placeholder={selectedList.length > 0 ? "Add moreâ¦" : "Search saved reportsâ¦"} style={{ flex: 1, minWidth: 100, padding: "2px 0", border: "none", fontSize: 12, outline: "none", fontFamily: "inherit", color: c.text, background: "transparent" }} />
                         </div>
                         <SearchIcon size={13} style={{ position: "absolute", left: 10, top: 12, color: c.textTer }} />
                         {/* Dropdown results */}
@@ -1691,7 +1689,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               <div key={cfg.id} onClick={() => { toggleSlConfig(cfg.id); setSlSearchText(""); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", cursor: "pointer", borderBottom: idx < filtered.length - 1 ? `1px solid ${c.borderLight}` : "none" }} onMouseEnter={e => e.currentTarget.style.background = c.bg} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                   <div style={{ fontSize: 12, fontWeight: 600, color: c.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{cfg.name}</div>
-                                  <div style={{ fontSize: 10, color: c.textTer, marginTop: 1 }}>{cfg.createdBy} · {cfg.lastRun}</div>
+                                  <div style={{ fontSize: 10, color: c.textTer, marginTop: 1 }}>{cfg.createdBy} Â· {cfg.lastRun}</div>
                                 </div>
                               </div>
                             ))}
@@ -1708,7 +1706,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                         {slSelectedConfigs.size > 0 && <button onClick={() => { setSlSelectedConfigs(new Set()); setSlFocusedConfig(null); }} style={{ background: "none", border: "none", fontSize: 11, color: c.red, cursor: "pointer", fontFamily: "inherit", fontWeight: 500 }}>Clear all</button>}
                       </div>
 
-                      {/* Simple list of selected queries — name + View query */}
+                      {/* Simple list of selected queries â name + View query */}
                       {selectedList.length > 0 && (
                         <div style={{ border: `1px solid ${c.border}`, borderRadius: 8, overflow: "hidden", marginBottom: 16 }}>
                           {selectedList.map((cfg, idx) => (
@@ -1726,7 +1724,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   })()}
                 </>)}
 
-                {/* ── NON-QUERY REPORT CONFIGS ── */}
+                {/* ââ NON-QUERY REPORT CONFIGS ââ */}
                 {!isQueryReport && !isSelectionReport && reportObj.id === "cash-requirements" && (<>
                   <SectionLabel>Payment Status</SectionLabel>
                   <div style={{ display: "flex", gap: 4, marginBottom: 14 }}>
@@ -1820,7 +1818,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   </div>
                 </>)}
                 {!isQueryReport && reportObj.id === "distribution-info" && (<>
-                  {/* No additional config — entity selector is shared below */}
+                  {/* No additional config â entity selector is shared below */}
                 </>)}
                 {!isQueryReport && reportObj.id === "1099" && (<>
                   <SectionLabel>Calendar Year</SectionLabel>
@@ -1854,7 +1852,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     <div style={{ marginBottom: 14 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, padding: "7px 10px" }}>
                         <SearchIcon size={13} style={{ color: c.textTer }} />
-                        <input type="text" placeholder="Search vendor name…" style={{ border: "none", background: "none", outline: "none", fontSize: 12, flex: 1, fontFamily: "inherit", color: c.text }} />
+                        <input type="text" placeholder="Search vendor nameâ¦" style={{ border: "none", background: "none", outline: "none", fontSize: 12, flex: 1, fontFamily: "inherit", color: c.text }} />
                       </div>
                     </div>
                   )}
@@ -1880,7 +1878,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     <div style={{ marginBottom: 14 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, padding: "7px 10px" }}>
                         <SearchIcon size={13} style={{ color: c.textTer }} />
-                        <input type="text" placeholder="Search vendor name…" style={{ border: "none", background: "none", outline: "none", fontSize: 12, flex: 1, fontFamily: "inherit", color: c.text }} />
+                        <input type="text" placeholder="Search vendor nameâ¦" style={{ border: "none", background: "none", outline: "none", fontSize: 12, flex: 1, fontFamily: "inherit", color: c.text }} />
                       </div>
                     </div>
                   )}
@@ -1939,17 +1937,17 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 <Sel value={entity} onChange={setEntity} options={ENTITIES} />
               </>)}
 
-              {/* ── OUTPUT TAB ── */}
+              {/* ââ OUTPUT TAB ââ */}
               {sidebarTab === "output" && (<>
                 {reportObj.id === "vendor-labels" ? (<>
-                  {/* ── LABEL-SPECIFIC OUTPUT ── */}
+                  {/* ââ LABEL-SPECIFIC OUTPUT ââ */}
                   <SectionLabel style={{ borderTop: "none", paddingTop: 0 }}>Label Template</SectionLabel>
                   <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 16 }}>
                     {[
-                      { val: "30 (Avery 5160)", desc: '1" × 2⅝" · 3 columns × 10 rows' },
-                      { val: "20 (Avery 5161)", desc: '1" × 4" · 2 columns × 10 rows' },
-                      { val: "14 (Avery 5162)", desc: '1⅓" × 4" · 2 columns × 7 rows' },
-                      { val: "10 (Avery 5163)", desc: '2" × 4" · 2 columns × 5 rows' },
+                      { val: "30 (Avery 5160)", desc: '1" Ã 2â" Â· 3 columns Ã 10 rows' },
+                      { val: "20 (Avery 5161)", desc: '1" Ã 4" Â· 2 columns Ã 10 rows' },
+                      { val: "14 (Avery 5162)", desc: '1â" Ã 4" Â· 2 columns Ã 7 rows' },
+                      { val: "10 (Avery 5163)", desc: '2" Ã 4" Â· 2 columns Ã 5 rows' },
                     ].map(t => (
                       <button key={t.val} onClick={() => setLabelsPerSheet(t.val)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 6, border: `1px solid ${labelsPerSheet === t.val ? c.text : c.border}`, background: labelsPerSheet === t.val ? c.tagBg : c.white, cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
                         <div style={{ width: 14, height: 14, borderRadius: 7, border: `2px solid ${labelsPerSheet === t.val ? c.text : c.border}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -1980,7 +1978,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     </div>
                   </div>
                 </>) : isQueryReport ? (<>
-                  {/* ── CUSTOM QUERY OUTPUT ── */}
+                  {/* ââ CUSTOM QUERY OUTPUT ââ */}
                   <SectionLabel style={{ borderTop: "none", paddingTop: 0 }}>Report Format</SectionLabel>
                   <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 20 }}>
                     {[
@@ -2029,7 +2027,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     <Toggle checked={showGridlines} onChange={setShowGridlines} label="Gridlines" />
                   </div>
                 </>) : (<>
-                  {/* ── STANDARD REPORT OUTPUT ── */}
+                  {/* ââ STANDARD REPORT OUTPUT ââ */}
                   <SectionLabel style={{ borderTop: "none", paddingTop: 0 }}>Subtitle & Notes</SectionLabel>
                   <div style={{ marginBottom: 12 }}>
                     <label style={{ display: "block", fontSize: 12, fontWeight: 400, color: c.textSec, marginBottom: 5 }}>Subtitle <span style={{ fontWeight: 400, color: c.textTer }}>(optional)</span></label>
@@ -2094,7 +2092,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                         <div style={{ padding: "16px 12px", background: c.bg, borderRadius: 8, border: `1px dashed ${c.border}`, textAlign: "center" }}>
                           <div style={{ fontSize: 12, color: c.textSec, marginBottom: 6 }}>No logo saved in Amplify</div>
                           <button style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "6px 12px", borderRadius: 6, border: `1px solid ${c.border}`, background: c.white, fontSize: 12, fontWeight: 500, color: c.textSec, cursor: "pointer", fontFamily: "inherit" }}><UploadIcon size={12} /> Upload logo</button>
-                          <div style={{ fontSize: 10, color: c.textTer, marginTop: 6 }}>PNG or SVG, max 200 × 60 px</div>
+                          <div style={{ fontSize: 10, color: c.textTer, marginTop: 6 }}>PNG or SVG, max 200 Ã 60 px</div>
                         </div>
                       )}
                     </div>
@@ -2109,7 +2107,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
         {/* Right: Report area */}
         <div style={{ flex: 1, overflowY: "auto", background: c.bg }}>
           <div style={{ padding: "14px 20px 48px" }}>
-            {/* Sidebar toggle when closed (only in preview mode — in run mode, use header "Edit Configuration") */}
+            {/* Sidebar toggle when closed (only in preview mode â in run mode, use header "Edit Configuration") */}
             {!sidebarOpen && !reportRan && !isRunning && (
               <div style={{ marginBottom: 12 }}>
                 <button onClick={() => setSidebarOpen(true)} style={{ display: "flex", alignItems: "center", gap: 4, background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, padding: "5px 10px", cursor: "pointer", fontSize: 12, color: c.textSec, fontFamily: "inherit" }}><SidebarIcon size={13} /> Settings</button>
@@ -2117,11 +2115,11 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             )}
 
 
-            {/* Report ready notice — remind user to export */}
+            {/* Report ready notice â remind user to export */}
             {showHistoryToast && (
               <div style={{ background: c.amberLight, border: `1px solid ${c.amberBorder}`, borderRadius: 10, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 8, color: c.amber }}>
                 <AlertIcon size={16} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: c.text }}>Your report is ready. Download or email it before closing — it won't be saved automatically.</span>
+                <span style={{ fontSize: 13, fontWeight: 500, color: c.text }}>Your report is ready. Download or email it before closing â it won't be saved automatically.</span>
                 <button onClick={() => setShowHistoryToast(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 2, marginLeft: "auto" }}><XIcon size={14} /></button>
               </div>
             )}
@@ -2135,7 +2133,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               </div>
             )}
 
-            {/* Save config panel — summary view (already saved, not editing) */}
+            {/* Save config panel â summary view (already saved, not editing) */}
             {activePanel === "saveConfig" && saveConfigDone && !saveConfigEditing && (
               <div style={{ background: c.white, border: `1px solid ${c.border}`, borderRadius: 10, padding: 18, marginBottom: 14 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 14 }}>Custom Configuration</div>
@@ -2153,7 +2151,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               </div>
             )}
 
-            {/* Save config panel — edit form (new or editing existing) */}
+            {/* Save config panel â edit form (new or editing existing) */}
             {activePanel === "saveConfig" && (!saveConfigDone || saveConfigEditing) && (
               <div style={{ background: c.white, border: `1px solid ${c.border}`, borderRadius: 10, padding: 18, marginBottom: 14 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 4 }}>{saveConfigDone ? "Edit Configuration" : "Save as Custom Configuration"}</div>
@@ -2192,14 +2190,14 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               </div>
             )}
 
-            {/* Schedule panel — summary view (already scheduled, not editing) */}
+            {/* Schedule panel â summary view (already scheduled, not editing) */}
             {activePanel === "schedule" && scheduleDone && !scheduleEditing && (
               <div style={{ background: c.white, border: `1px solid ${c.border}`, borderRadius: 10, padding: 18, marginBottom: 14 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 14 }}>Schedule Report</div>
                 <div style={{ padding: "14px 16px", background: c.greenLight, border: `1px solid ${c.greenBorder}`, borderRadius: 8, marginBottom: 14 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, color: c.green, marginBottom: 6 }}><CheckIcon size={14} /><span style={{ fontSize: 13, fontWeight: 600 }}>Scheduled</span></div>
                   <div style={{ fontSize: 12, color: c.textSec, lineHeight: 1.7 }}>
-                    <div><span style={{ color: c.textTer }}>Next run:</span> {scheduleStartDate ? new Date(scheduleStartDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}</div>
+                    <div><span style={{ color: c.textTer }}>Next run:</span> {scheduleStartDate ? new Date(scheduleStartDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "â"}</div>
                     {scheduleIsRecurring && <div><span style={{ color: c.textTer }}>Repeats:</span> {scheduleRecurrence}{scheduleEndDate && ` until ${new Date(scheduleEndDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}</div>}
                     {scheduleEmail && <div><span style={{ color: c.textTer }}>Forward to:</span> {scheduleEmail}</div>}
                   </div>
@@ -2211,7 +2209,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               </div>
             )}
 
-            {/* Schedule panel — edit form (new schedule or editing existing) */}
+            {/* Schedule panel â edit form (new schedule or editing existing) */}
             {activePanel === "schedule" && (!scheduleDone || scheduleEditing) && (() => {
               const remaining = SCHEDULE_QUOTA.max - SCHEDULE_QUOTA.used;
               const atCapacity = remaining <= 0 && !scheduleDone;
@@ -2300,11 +2298,11 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
                 <div style={{ fontSize: 12, color: c.textSec, marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}><CheckIcon size={12} style={{ color: c.green }} /> Scheduled runs are saved automatically to Scheduled Reports</div>
 
-                {/* Forward report to… */}
+                {/* Forward report toâ¦ */}
                 <div style={{ borderTop: `1px solid ${c.borderLight}`, paddingTop: 14, marginBottom: 14 }}>
                   <button onClick={() => { setScheduleEmailEnabled(!scheduleEmailEnabled); if (scheduleEmailEnabled) setScheduleEmail(""); }}
                     style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${scheduleEmailEnabled ? c.text : c.border}`, background: scheduleEmailEnabled ? c.tagBg : c.white, color: scheduleEmailEnabled ? c.text : c.textSec }}>
-                    <MailIcon size={12} /> Forward report to…
+                    <MailIcon size={12} /> Forward report toâ¦
                   </button>
                   {scheduleEmailEnabled && (
                     <div style={{ marginTop: 8 }}>
@@ -2338,9 +2336,9 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 </div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: c.text, marginBottom: 8 }}>What you can do</div>
                 <div style={{ fontSize: 12, color: c.textSec, lineHeight: 1.8, marginBottom: 14 }}>
-                  <div>1. <strong>Retry the report</strong> — the issue may have been temporary</div>
-                  <div>2. <strong>Narrow the date range</strong> — if the dataset was too large, try a shorter period</div>
-                  <div>3. <strong>Contact support</strong> — if the issue persists, reach out to your administrator</div>
+                  <div>1. <strong>Retry the report</strong> â the issue may have been temporary</div>
+                  <div>2. <strong>Narrow the date range</strong> â if the dataset was too large, try a shorter period</div>
+                  <div>3. <strong>Contact support</strong> â if the issue persists, reach out to your administrator</div>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   <Btn size="sm" onClick={handleRunReport} icon={<RefreshIcon size={12} />}>Retry report</Btn>
@@ -2353,7 +2351,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             {isHistoryProcessing && (
               <div style={{ background: c.white, border: `1px solid ${c.amberBorder}`, borderRadius: 10, padding: "24px 20px", marginBottom: 14, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}><Spinner size={24} color={c.amber} /></div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 4 }}>Report is processing…</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 4 }}>Report is processingâ¦</div>
                 <div style={{ fontSize: 12, color: c.textTer, marginBottom: 4 }}>This scheduled report is currently being generated.</div>
                 <div style={{ fontSize: 12, color: c.textTer, marginBottom: 16 }}>This scheduled report is still being generated. It will appear as completed in Scheduled Reports when done.</div>
                 <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
@@ -2363,17 +2361,17 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               </div>
             )}
 
-            {exportDone && (<div style={{ background: c.white, border: `1px solid ${c.greenBorder}`, borderRadius: 10, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 8, color: c.green }}><CheckIcon size={16} /><span style={{ fontSize: 13, fontWeight: 500 }}>{reportObj.name} — {exportFormat} downloaded.</span><button onClick={() => setExportDone(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 2, marginLeft: "auto" }}><XIcon size={14} /></button></div>)}
+            {exportDone && (<div style={{ background: c.white, border: `1px solid ${c.greenBorder}`, borderRadius: 10, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 8, color: c.green }}><CheckIcon size={16} /><span style={{ fontSize: 13, fontWeight: 500 }}>{reportObj.name} â {exportFormat} downloaded.</span><button onClick={() => setExportDone(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 2, marginLeft: "auto" }}><XIcon size={14} /></button></div>)}
 
             {/* Running indicator */}
             {isRunning && (
               <div style={{ background: c.white, border: `1px solid ${c.border}`, borderRadius: 10, padding: "24px 20px", marginBottom: 14, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}><Spinner size={24} color={c.pri} /></div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 4 }}>{showLongRunMsg ? "Still generating…" : "Generating report…"}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 4 }}>{showLongRunMsg ? "Still generatingâ¦" : "Generating reportâ¦"}</div>
                 {showLongRunMsg && (
                   <div style={{ fontSize: 12, color: c.textSec, marginBottom: 6, lineHeight: 1.5 }}>Hang tight, this can take a little while. Please don't close this window.</div>
                 )}
-                <div style={{ fontSize: 12, color: c.textTer }}>{runElapsed > 0 ? `${runElapsed}s elapsed` : "Preparing data…"}</div>
+                <div style={{ fontSize: 12, color: c.textTer }}>{runElapsed > 0 ? `${runElapsed}s elapsed` : "Preparing dataâ¦"}</div>
               </div>
             )}
 
@@ -2381,21 +2379,21 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             {reportRan ? (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: c.green, textTransform: "uppercase", letterSpacing: "0.5px" }}>Report Output</div>
-                <span style={{ fontSize: 11, color: c.textTer }}>{allFilteredRows.length} records · Generated {runTimestamp}</span>
+                <span style={{ fontSize: 11, color: c.textTer }}>{allFilteredRows.length} records Â· Generated {runTimestamp}</span>
               </div>
             ) : !isRunning ? (
               !previewBannerDismissed && <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, padding: "8px 12px", background: "#f0f3f7", border: `1px solid #dfe4eb`, borderRadius: 8 }}>
                 <span style={{ width: 22, height: 22, borderRadius: 11, background: "#7a8599", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><EyeIcon size={12} style={{ color: "#fff" }} /></span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: "#5b6577", flex: 1 }}>Live preview — updates as you change settings. <button onClick={handleRunReport} style={{ background: "none", border: "none", color: c.pri, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 600, padding: 0 }}>Run report</button> for full data.</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: "#5b6577", flex: 1 }}>Live preview â updates as you change settings. <button onClick={handleRunReport} style={{ background: "none", border: "none", color: c.pri, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 600, padding: 0 }}>Run report</button> for full data.</span>
                 <button onClick={() => setPreviewBannerDismissed(true)} style={{ background: "none", border: "none", cursor: "pointer", color: "#9aa3b2", padding: 2, flexShrink: 0, display: "flex", borderRadius: 3 }} onMouseEnter={e => e.currentTarget.style.color = "#6b7280"} onMouseLeave={e => e.currentTarget.style.color = "#9aa3b2"}><XIcon size={12} /></button>
               </div>
             ) : null}
 
             {/* Report Document */}
             <div style={{ position: "relative" }}>
-            {/* watermark removed — users interact with preview directly */}
+            {/* watermark removed â users interact with preview directly */}
             {reportObj.id === "vendor-labels" ? (
-              /* ── LABEL SHEET PREVIEW ── */
+              /* ââ LABEL SHEET PREVIEW ââ */
               (() => {
                 const templateConfig = { "30 (Avery 5160)": { cols: 3, rows: 10 }, "20 (Avery 5161)": { cols: 2, rows: 10 }, "14 (Avery 5162)": { cols: 2, rows: 7 }, "10 (Avery 5163)": { cols: 2, rows: 5 } };
                 const tmpl = templateConfig[labelsPerSheet] || { cols: 3, rows: 10 };
@@ -2407,10 +2405,10 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     {showLabelHeader && (
                       <div style={{ padding: "20px 28px 12px", borderBottom: `1px solid ${c.borderLight}` }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: c.text, marginBottom: 4 }}>Vendor Labels</div>
-                        <div style={{ fontSize: 11, color: c.textSec }}>{labelsPerSheet} · {entity} · {addressType} addresses{reportRan && runTimestamp ? ` · Generated ${runTimestamp}` : ""}</div>
+                        <div style={{ fontSize: 11, color: c.textSec }}>{labelsPerSheet} Â· {entity} Â· {addressType} addresses{reportRan && runTimestamp ? ` Â· Generated ${runTimestamp}` : ""}</div>
                       </div>
                     )}
-                    {/* Label grid — simulates a sheet of labels */}
+                    {/* Label grid â simulates a sheet of labels */}
                     <div style={{ padding: 20, background: "#fafafa" }}>
                       <div style={{ background: c.white, border: `1px solid ${c.border}`, borderRadius: 2, padding: 16, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.02)" }}>
                         <div style={{ display: "grid", gridTemplateColumns: `repeat(${tmpl.cols}, 1fr)`, gap: 1 }}>
@@ -2437,12 +2435,12 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                         </div>
                       </div>
                     </div>
-                    {showPageNum && (<div style={{ padding: "10px 28px", borderTop: `1px solid ${c.borderLight}`, display: "flex", justifyContent: "space-between", fontSize: 10, color: c.textTer }}><span>Vendor Labels — {entity}</span><span>Page 1 of {Math.ceil(displayRows.length / labelCount) || 1}</span></div>)}
+                    {showPageNum && (<div style={{ padding: "10px 28px", borderTop: `1px solid ${c.borderLight}`, display: "flex", justifyContent: "space-between", fontSize: 10, color: c.textTer }}><span>Vendor Labels â {entity}</span><span>Page 1 of {Math.ceil(displayRows.length / labelCount) || 1}</span></div>)}
                   </div>
                 );
               })()
             ) : (
-              /* ── STANDARD TABLE REPORT ── */
+              /* ââ STANDARD TABLE REPORT ââ */
               <div style={{ background: c.white, borderRadius: 4, boxShadow: "0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)", overflow: "hidden", opacity: isRunning ? 0.5 : 1, transition: "opacity 0.3s", fontFamily: fontFamily === "System default" ? "inherit" : fontFamily, fontSize: fontSize }}>
                 <div style={{ padding: "28px 36px 20px" }}>
                   {showLogo && (
@@ -2501,7 +2499,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   <div style={{ padding: "8px 36px", borderTop: `1px solid ${c.borderLight}`, display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: c.textSec }}>
                     <span style={{ width: 6, height: 6, borderRadius: 3, background: qbCriteria.length > 0 ? c.green : c.textTer, flexShrink: 0 }} />
                     {qbCriteria.length === 0
-                      ? <span>No filters — all {TOTAL_ROW_COUNT} assets will be included</span>
+                      ? <span>No filters â all {TOTAL_ROW_COUNT} assets will be included</span>
                       : qbLiveFilteredRows.length === 0
                         ? <span style={{ color: c.red }}>No assets match these filters</span>
                         : <span>~{qbSimulatedTotal} of {TOTAL_ROW_COUNT} assets match ({qbLiveFilteredRows.length} shown in preview)</span>
@@ -2513,8 +2511,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   <div style={{ padding: "8px 36px", borderTop: `1px solid ${c.borderLight}`, display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: c.textSec }}>
                     <span style={{ width: 6, height: 6, borderRadius: 3, background: slSelectedConfigs.size > 0 ? c.green : c.textTer, flexShrink: 0 }} />
                     {slSelectedConfigs.size === 0
-                      ? <span>No queries selected — choose one or more saved queries from the sidebar</span>
-                      : <span>Running {slSelectedConfigs.size} quer{slSelectedConfigs.size === 1 ? "y" : "ies"} · ~{slSelectedConfigs.size * 18} combined records</span>
+                      ? <span>No queries selected â choose one or more saved queries from the sidebar</span>
+                      : <span>Running {slSelectedConfigs.size} quer{slSelectedConfigs.size === 1 ? "y" : "ies"} Â· ~{slSelectedConfigs.size * 18} combined records</span>
                     }
                   </div>
                 )}
@@ -2526,8 +2524,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                         <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                           {col.name}
                           <span style={{ display: "inline-flex", flexDirection: "column", lineHeight: 0, gap: 0, fontSize: 8, marginTop: -1 }}>
-                            <span style={{ color: isActive && previewSortDir === "asc" ? c.pri : (theme.headText + "55"), lineHeight: "8px" }}>▲</span>
-                            <span style={{ color: isActive && previewSortDir === "desc" ? c.pri : (theme.headText + "55"), lineHeight: "8px" }}>▼</span>
+                            <span style={{ color: isActive && previewSortDir === "asc" ? c.pri : (theme.headText + "55"), lineHeight: "8px" }}>â²</span>
+                            <span style={{ color: isActive && previewSortDir === "desc" ? c.pri : (theme.headText + "55"), lineHeight: "8px" }}>â¼</span>
                           </span>
                         </span>
                       </th>);
@@ -2540,40 +2538,40 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     </tbody>
                   </table>
                 </div>
-                {/* Vendor notes & invoice memos — rendered on report when toggled */}
+                {/* Vendor notes & invoice memos â rendered on report when toggled */}
                 {includeNotes && (
                   <div style={{ padding: "12px 36px", borderTop: `1px solid ${c.borderLight}` }}>
                     <div style={{ fontSize: 10, fontWeight: 600, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Vendor Notes and Invoice Memos</div>
                     <div style={{ fontSize: 11, color: c.textSec, lineHeight: 1.6, fontStyle: "italic" }}>Vendor notes and invoice memos will appear here when the report is run with live data.</div>
                   </div>
                 )}
-                {/* Filter summary — rendered on report when toggled */}
+                {/* Filter summary â rendered on report when toggled */}
                 {includeSetupInfo && (
                   <div style={{ padding: "12px 36px", borderTop: `1px solid ${c.borderLight}` }}>
                     <div style={{ fontSize: 10, fontWeight: 600, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Report Configuration</div>
                     <div style={{ fontSize: 11, color: c.textSec, lineHeight: 1.8 }}>
                       <span>Entity: {entity}</span>
-                      <span style={{ margin: "0 6px", color: c.borderLight }}>·</span>
+                      <span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span>
                       <span>Period: {ctx.period}</span>
-                      {reportObj.id === "cash-requirements" && <><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>Payment status: {paymentStatus}</span></>}
-                      {reportObj.id === "aged-analysis" && <><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>As of: {agedDateLabel}</span><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>Based on: {agedBasedOn}</span><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>Display: {agedDetailSummary}</span></>}
-                      {reportObj.id === "vendor-summary" && <><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>{yearType}: {summaryYear}</span></>}
-                      {reportObj.id === "contractor-report" && <><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>Date range: {contractorDateLabel}</span><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>Threshold: ${threshold}</span></>}
-                      {reportObj.id === "1099" && <><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>Calendar year: {calendarYear1099}</span><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>1099 type: {type1099}</span><span style={{ margin: "0 6px", color: c.borderLight }}>·</span><span>Threshold: ${threshold}</span></>}
+                      {reportObj.id === "cash-requirements" && <><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>Payment status: {paymentStatus}</span></>}
+                      {reportObj.id === "aged-analysis" && <><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>As of: {agedDateLabel}</span><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>Based on: {agedBasedOn}</span><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>Display: {agedDetailSummary}</span></>}
+                      {reportObj.id === "vendor-summary" && <><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>{yearType}: {summaryYear}</span></>}
+                      {reportObj.id === "contractor-report" && <><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>Date range: {contractorDateLabel}</span><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>Threshold: ${threshold}</span></>}
+                      {reportObj.id === "1099" && <><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>Calendar year: {calendarYear1099}</span><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>1099 type: {type1099}</span><span style={{ margin: "0 6px", color: c.borderLight }}>Â·</span><span>Threshold: ${threshold}</span></>}
                     </div>
                   </div>
                 )}
-                {showPageNum && (<div style={{ padding: "10px 36px", borderTop: `1px solid ${c.borderLight}`, display: "flex", justifyContent: "space-between", fontSize: 10, color: c.textTer }}><span>{reportTitle}{reportSubtitle ? ` — ${reportSubtitle}` : ""} — {entity}</span><span>Page 1 of 1</span></div>)}
+                {showPageNum && (<div style={{ padding: "10px 36px", borderTop: `1px solid ${c.borderLight}`, display: "flex", justifyContent: "space-between", fontSize: 10, color: c.textTer }}><span>{reportTitle}{reportSubtitle ? ` â ${reportSubtitle}` : ""} â {entity}</span><span>Page 1 of 1</span></div>)}
               </div>
             )}
 
             </div>{/* end report document wrapper */}
 
-            {/* Preview notice removed from bottom — now rendered as amber banner above the report */}
+            {/* Preview notice removed from bottom â now rendered as amber banner above the report */}
           </div>
         </div>
       </div>}
-      {/* ── PERSON SEARCH OVERLAY ── */}
+      {/* ââ PERSON SEARCH OVERLAY ââ */}
       {showPersonSearch && (() => {
         const filtered = PERSON_SEARCH_DATA.filter(p => {
           if (!personSearchText) return true;
@@ -2604,7 +2602,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             <div style={{ padding: "14px 20px", background: c.bg, borderBottom: `1px solid ${c.border}`, display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, maxWidth: 400, background: c.white, border: `1px solid ${c.border}`, borderRadius: 8, padding: "8px 12px" }}>
                 <SearchIcon size={14} style={{ color: c.textTer }} />
-                <input type="text" placeholder="Search by name, email, phone, or household…" value={personSearchText} onChange={e => setPersonSearchText(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
+                <input type="text" placeholder="Search by name, email, phone, or householdâ¦" value={personSearchText} onChange={e => setPersonSearchText(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
                 {personSearchText && <button onClick={() => setPersonSearchText("")} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 1 }}><XIcon size={13} /></button>}
               </div>
               <span style={{ fontSize: 12, color: c.textTer }}>{filtered.length} people</span>
@@ -2678,7 +2676,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   );
 }
 
-// ─── REPORT HISTORY ──────────────────────────────────────────────────────────
+// âââ REPORT HISTORY ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const Spinner = ({ size = 14, color }) => (
   <svg width={size} height={size} viewBox="0 0 16 16" style={{ animation: "spin 1.2s linear infinite", flexShrink: 0 }}>
@@ -2694,7 +2692,7 @@ function StatusBadge({ status }) {
   return <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500, background: c.greenLight, color: c.green }}><CheckIcon size={10} />Completed</span>;
 }
 
-// ─── UNIFIED SCHEDULED REPORTS TABLE ─────────────────────────────────────────
+// âââ UNIFIED SCHEDULED REPORTS TABLE âââââââââââââââââââââââââââââââââââââââââ
 
 function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, reportHistory }) {
   const _SCHEDULED = scheduledReports || SCHEDULED_REPORTS;
@@ -2715,10 +2713,10 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
   // Build a unified flat list
   const unified = [
     ..._SCHEDULED.map(s => ({
-      _kind: "schedule", _sortDate: new Date(s.next === "—" ? "1970-01-01" : s.next),
+      _kind: "schedule", _sortDate: new Date(s.next === "â" ? "1970-01-01" : s.next),
       id: s.id, name: s.name, parentId: s.parentId, parentName: s.parentName,
       status: s.status === "paused" ? "paused" : s.lastRunStatus === "processing" ? "processing" : "scheduled",
-      nextRun: s.status === "paused" ? "—" : s.next,
+      nextRun: s.status === "paused" ? "â" : s.next,
       lastRan: s.lastRun,
       recurrence: s.recurrence, scheduledBy: s.scheduledBy, recipient: s.recipient,
       _raw: s,
@@ -2791,7 +2789,7 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6, width: 280, background: c.white, border: `1px solid ${c.border}`, borderRadius: 8, padding: "7px 12px" }}>
           <SearchIcon size={14} style={{ color: c.textTer }} />
-          <input type="text" placeholder="Search scheduled reports…" value={searchText} onChange={e => setSearchText(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
+          <input type="text" placeholder="Search scheduled reportsâ¦" value={searchText} onChange={e => setSearchText(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
           {searchText && <button onClick={() => setSearchText("")} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 1 }}><XIcon size={13} /></button>}
         </div>
         {filterStatus !== "All" && (
@@ -2800,7 +2798,7 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
           </button>
         )}
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 4 }}>
-          <span style={{ fontSize: 12, color: c.textTer }}>{sorted.length} results · Sort:</span>
+          <span style={{ fontSize: 12, color: c.textTer }}>{sorted.length} results Â· Sort:</span>
           <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ fontSize: 12, color: c.textSec, border: "none", background: "none", cursor: "pointer", fontFamily: "inherit", outline: "none" }}>
             <option value="date-desc">Newest first</option>
             <option value="date-asc">Oldest first</option>
@@ -2889,7 +2887,7 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
                         {row.lastRan ? (
                           <span>{row.lastRan}{isRun && row.time ? <span> {row.time}</span> : null}</span>
                         ) : (
-                          <span>—</span>
+                          <span>â</span>
                         )}
                       </td>
                       {/* Next Run */}
@@ -2897,7 +2895,7 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
                         {isSchedule ? (
                           <span>{row.nextRun}</span>
                         ) : (
-                          <span>—</span>
+                          <span>â</span>
                         )}
                       </td>
                       {/* Recurrence */}
@@ -2905,7 +2903,7 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
                         {isSchedule ? (
                           <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 4, background: c.bg, fontSize: 12, fontWeight: 500, color: c.textSec }}><RefreshIcon size={11} />{row.recurrence}</span>
                         ) : (
-                          <span style={{ color: c.textTer }}>—</span>
+                          <span style={{ color: c.textTer }}>â</span>
                         )}
                       </td>
                       {/* Scheduled By */}
@@ -2916,7 +2914,7 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
                             {isOwner && <span style={{ fontSize: 10, fontWeight: 600, color: c.teal, background: c.tealLight, padding: "1px 6px", borderRadius: 4 }}>You</span>}
                           </span>
                         ) : (
-                          <span>—</span>
+                          <span>â</span>
                         )}
                       </td>
                       {/* Actions menu */}
@@ -3009,7 +3007,7 @@ function ScheduledReportsTab({ onOpenReport, onEditSchedule, scheduledReports, r
   );
 }
 
-// ─── MAIN APP ────────────────────────────────────────────────────────────────
+// âââ MAIN APP ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function APReportsApp() {
   const [activeApp, setActiveApp] = useState("ap"); // "ap" | "fa"
@@ -3036,7 +3034,7 @@ function APReportsApp() {
   const [showQuotaTooltip, setShowQuotaTooltip] = useState(false);
   const [initialQbEditSrc, setInitialQbEditSrc] = useState(null);
 
-  // ─── Derive active data from activeApp ─────────────────────────────────
+  // âââ Derive active data from activeApp âââââââââââââââââââââââââââââââââ
   const appData = APP_DATA[activeApp];
   const currentStandard = appData.standard;
   const currentSaved = activeApp === "ap" ? savedConfigs : faSavedConfigs;
@@ -3126,7 +3124,7 @@ function APReportsApp() {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                     <div style={{ fontSize: 18, fontWeight: 700, color: c.text }}>Reports Library</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      {/* FA-only: Build Custom Query — secondary, beside New Report */}
+                      {/* FA-only: Build Custom Query â secondary, beside New Report */}
                       {activeApp === "fa" && (
                         <button onClick={handleBuildCustomQuery}
                           style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: 8, border: `1px solid #3555a0`, background: "transparent", color: "#3555a0", fontSize: 14, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.1px", lineHeight: "20px", transition: "all 0.15s" }}
@@ -3148,7 +3146,7 @@ function APReportsApp() {
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, width: 280, background: c.white, border: `1px solid ${c.border}`, borderRadius: 8, padding: "7px 12px" }}>
                       <SearchIcon size={14} style={{ color: c.textTer }} />
-                      <input type="text" placeholder="Search reports…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
+                      <input type="text" placeholder="Search reportsâ¦" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
                       {searchQuery && <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 1 }}><XIcon size={13} /></button>}
                     </div>
                     <div style={{ display: "flex", gap: 3 }}>
@@ -3192,7 +3190,7 @@ function APReportsApp() {
                     </>);
                   })()}
 
-                  {/* ── LIBRARY SECTIONS ── */}
+                  {/* ââ LIBRARY SECTIONS ââ */}
                   {!searchQuery && (() => {
                     const showStd = libraryFilter === "all" || libraryFilter === "standard";
                     const showCustom = libraryFilter === "all" || libraryFilter === "custom" || libraryFilter === "saved-queries";
@@ -3204,7 +3202,7 @@ function APReportsApp() {
 
                     const recentLimit = (INITIAL_ROWS + showMoreRecent * MORE_ROWS) * COLS;
 
-                    /* ── Sort selects (rendered inline with first section heading) ── */
+                    /* ââ Sort selects (rendered inline with first section heading) ââ */
                     const sectionHeadStyle = { fontSize: 11, fontWeight: 600, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px" };
                     const sortSelectStyle = { fontSize: 11, color: c.textSec, border: "none", background: "none", cursor: "pointer", fontFamily: "inherit", outline: "none" };
                     const allSortSelect = (
@@ -3222,7 +3220,7 @@ function APReportsApp() {
                         <select value={customSortBy} onChange={e => setCustomSortBy(e.target.value)} style={sortSelectStyle}>
                           <option value="added-desc">Last added</option>
                           <option value="used-desc">Last used</option>
-                          <option value="name-asc">Name A–Z</option>
+                          <option value="name-asc">Name AâZ</option>
                         </select>
                       </div>
                     );
@@ -3232,7 +3230,7 @@ function APReportsApp() {
                     const maybeAllSort = () => { if (isAll && !allSortPlaced) { allSortPlaced = true; return allSortSelect; } return null; };
 
                     return (<>
-                      {/* ── "Most Recent" section (only when All + sort by recent) ── */}
+                      {/* ââ "Most Recent" section (only when All + sort by recent) ââ */}
                       {isAll && allSortBy === "recent" && allRecentItems.length > 0 && (
                         <div style={{ marginBottom: 28 }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
@@ -3244,7 +3242,7 @@ function APReportsApp() {
                               const rpt = currentStandard.find(r => r.id === item.parentId);
                               const cfg = currentSaved.find(sc => sc.name === item.name);
                               if (cfg) return <SavedConfigCard key={item.id} config={cfg} onClick={() => handleCardClick(cfg, true)} onToggleVisibility={handleToggleVisibility} />;
-                              if (rpt) return <ReportCard key={item.id} report={{ ...rpt, description: `Scheduled run — ${item.date}` }} onClick={() => handleCardClick(rpt, false)} />;
+                              if (rpt) return <ReportCard key={item.id} report={{ ...rpt, description: `Scheduled run â ${item.date}` }} onClick={() => handleCardClick(rpt, false)} />;
                               return null;
                             })}
                           </div>
@@ -3254,7 +3252,7 @@ function APReportsApp() {
                         </div>
                       )}
 
-                      {/* ── Standard Reports ── */}
+                      {/* ââ Standard Reports ââ */}
                       {showStd && filteredStandard.length > 0 && (
                         <div style={{ marginBottom: 28 }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
@@ -3267,7 +3265,7 @@ function APReportsApp() {
                         </div>
                       )}
 
-                      {/* ── Saved Reports (all saved configs: standard report configs + custom queries) ── */}
+                      {/* ââ Saved Reports (all saved configs: standard report configs + custom queries) ââ */}
                       {showCustom && (() => {
                         return (
                         <div style={{ marginBottom: 28 }}>
@@ -3360,16 +3358,16 @@ function APReportsApp() {
       </div>
 
       {/* Full-screen modal workspace */}
-      {/* Select Starting Report — same modal as ReportWorkspace */}
+      {/* Select Starting Report â same modal as ReportWorkspace */}
       {view === "selectReport" && (() => {
         const matchedReports = currentStandard.filter(r => !newReportSearch || r.name.toLowerCase().includes(newReportSearch.toLowerCase()) || r.description.toLowerCase().includes(newReportSearch.toLowerCase()));
         return (
           <div style={{ position: "fixed", top: 48, left: 0, right: 0, bottom: 48, zIndex: 1000, display: "flex", flexDirection: "column", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', color: c.text }}>
             {/* Scrim */}
             <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 0 }} onClick={() => setView("library")} />
-            {/* Modal container — identical to ReportWorkspace */}
+            {/* Modal container â identical to ReportWorkspace */}
             <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", margin: "12px 16px 16px", flex: 1, background: c.bg, borderRadius: 12, boxShadow: "0 4px 32px rgba(0,0,0,0.2)", overflow: "hidden" }}>
-              {/* Modal header — identical to ReportWorkspace */}
+              {/* Modal header â identical to ReportWorkspace */}
               <div style={{ background: c.white, borderBottom: `1px solid ${c.border}`, padding: "0 20px", height: 52, display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
                 <button onClick={() => setView("library")} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "6px 0" }}><XIcon size={16} /> Close</button>
                 <div style={{ width: 1, height: 24, background: c.border }} />
@@ -3383,7 +3381,7 @@ function APReportsApp() {
                   {/* Search */}
                   <div style={{ display: "flex", alignItems: "center", gap: 6, background: c.white, border: `1px solid ${c.border}`, borderRadius: 8, padding: "8px 12px", marginBottom: 18 }}>
                     <SearchIcon size={14} style={{ color: c.textTer }} />
-                    <input type="text" placeholder="Search reports…" value={newReportSearch} onChange={e => setNewReportSearch(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
+                    <input type="text" placeholder="Search reportsâ¦" value={newReportSearch} onChange={e => setNewReportSearch(e.target.value)} style={{ border: "none", background: "none", outline: "none", fontSize: 13, flex: 1, fontFamily: "inherit", color: c.text }} />
                     {newReportSearch && <button onClick={() => setNewReportSearch("")} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 1 }}><XIcon size={13} /></button>}
                   </div>
                   {/* Report cards grid */}
