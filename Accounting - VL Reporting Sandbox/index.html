@@ -725,6 +725,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbOtherQueriesChipsExpanded, setQbOtherQueriesChipsExpanded] = useState(false);
   const QB_CHIPS_VISIBLE = 3;
   const [qbColSearch, setQbColSearch] = useState("");
+  const [qbSelectedOtherQueries, setQbSelectedOtherQueries] = useState(new Set());
+  const [qbOtherQuerySearch, setQbOtherQuerySearch] = useState("");
   const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
   const removeQbGroup = (gid) => { if (qbGroups.length <= 1) return; setQbGroups(prev => prev.filter(g => g.id !== gid)); setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; }); setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev); };
