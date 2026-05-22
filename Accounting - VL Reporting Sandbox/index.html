@@ -34,8 +34,6 @@ const STANDARD_REPORTS = [
   { id: "vendor-list", name: "Vendor List", description: "View a complete directory of all vendors with contact details and payment terms.", tier3: null },
   { id: "distribution-info", name: "Distribution Information", description: "See how expenses are allocated across GL accounts, funds, and department codes.", tier3: "distribution" },
   { id: "1099", name: "1099", description: "Generate year-end 1099 data for vendors who meet the IRS reporting threshold.", tier3: "1099" },
-  { id: "vendor-labels", name: "Vendor Labels", description: "Print mailing labels for vendor correspondence, statements, or year-end mailings.", tier3: "labels" },
-  { id: "gifts-report", name: "Gifts Report", description: "Analyze giving history and donor contributions across funds, campaigns, and date ranges.", tier3: null },
 ];
 
 const SAVED_CONFIGS = [
@@ -104,19 +102,14 @@ const REPORT_HISTORY = [
 
 const FA_STANDARD_REPORTS = [
   { id: "fa-asset-listing", name: "Asset Listing", description: "View a complete inventory of all fixed assets with acquisition dates, costs, and current book values.", tier3: null },
-  { id: "fa-depreciation-schedule", name: "Depreciation Schedule", description: "Calculate and display periodic depreciation for all assets across selected methods and useful lives.", tier3: null },
-  { id: "fa-additions-deletions", name: "Additions & Deletions", description: "Track assets added to or removed from your books during a selected period.", tier3: null },
-  { id: "fa-book-value-summary", name: "Book Value Summary", description: "Summarize the total cost, accumulated depreciation, and net book value of assets by category.", tier3: null },
-  { id: "fa-asset-detail", name: "Asset Detail", description: "View comprehensive information for a single asset including purchase history, depreciation, and disposal status.", tier3: null },
-  { id: "fa-insurance-listing", name: "Insurance Listing", description: "List asset replacement values and insurance coverage details for risk management review.", tier3: null },
-  { id: "fa-disposal-report", name: "Disposal Report", description: "Review assets that have been sold, traded, or written off with gain/loss calculations.", tier3: null },
+  { id: "fa-depreciation-history", name: "Depreciation History", description: "View the historical depreciation activity for all assets across selected methods and useful lives.", tier3: null },
   { id: "fa-custom-query", name: "Custom Query", description: "Build a custom report from scratch — define criteria to filter your asset database, choose which columns to display, and sort results your way.", tier3: "query", hidden: true },
   { id: "fa-selections-listings", name: "Selections & Listings", description: "Browse and run your saved Custom Query configurations. Select one or more saved queries, review their setup, and generate reports.", tier3: "selection", hidden: true },
 ];
 
 const FA_SAVED_CONFIGS = [
   { id: "fa-saved-1", name: "Buildings & Improvements", parentId: "fa-asset-listing", parentName: "Asset Listing", createdBy: "Sarah Mitchell", visibility: "shared", lastRun: "Mar 20, 2026", schedule: null },
-  { id: "fa-saved-2", name: "Annual Depr by Category", parentId: "fa-depreciation-schedule", parentName: "Depreciation Schedule", createdBy: "David Park", visibility: "shared", lastRun: "Mar 31, 2026",
+  { id: "fa-saved-2", name: "Annual Depr by Category", parentId: "fa-depreciation-history", parentName: "Depreciation History", createdBy: "David Park", visibility: "shared", lastRun: "Mar 31, 2026",
     schedule: { recurrence: "Monthly", next: "Apr 30, 2026", recipient: "finance@gracechurch.org", scheduledBy: "David Park" } },
   { id: "fa-saved-3", name: "Vehicles & Equipment Query", parentId: "fa-custom-query", parentName: "Custom Query", createdBy: "Sarah Mitchell", visibility: "private", lastRun: "Apr 1, 2026", schedule: null,
     queryDetails: { filtersList: [{ label: "Class", op: "equals", value: "Vehicles" }, { label: "Active", op: "is", value: "Yes" }], columnsList: ["Tag #", "Name", "Cap. Date", "Class", "Capitalized Value", "Book Net Value"], format: "Detail" } },
@@ -135,19 +128,13 @@ const FA_SAVED_CONFIGS = [
 ];
 
 const FA_SCHEDULED_REPORTS = [
-  { id: "fa-sched-1", name: "Annual Depr by Category", parentId: "fa-depreciation-schedule", parentName: "Depreciation Schedule", recurrence: "Monthly", next: "Apr 30, 2026", lastRun: "Mar 31, 2026", lastRunStatus: "completed", recipient: "finance@gracechurch.org", scheduledBy: "David Park", status: "active" },
+  { id: "fa-sched-1", name: "Annual Depr by Category", parentId: "fa-depreciation-history", parentName: "Depreciation History", recurrence: "Monthly", next: "Apr 30, 2026", lastRun: "Mar 31, 2026", lastRunStatus: "completed", recipient: "finance@gracechurch.org", scheduledBy: "David Park", status: "active" },
   { id: "fa-sched-2", name: "Buildings & Improvements", parentId: "fa-asset-listing", parentName: "Asset Listing", recurrence: "Quarterly", next: "Jul 1, 2026", lastRun: "Apr 1, 2026", lastRunStatus: "completed", recipient: "board@gracechurch.org", scheduledBy: "Sarah Mitchell", status: "active" },
-  { id: "fa-sched-3", name: "Insurance Values Refresh", parentId: "fa-insurance-listing", parentName: "Insurance Listing", recurrence: "Yearly", next: "Jan 15, 2027", lastRun: "Jan 15, 2026", lastRunStatus: "completed", recipient: null, scheduledBy: "David Park", status: "active" },
 ];
 
 const FA_REPORT_RESULTS = {
   "fa-asset-listing": { columns: ["Asset #","Description","Category","Acquired","Cost","Accum Depr","Book Value","Location"], rows: [["FA-001","Main Sanctuary Building","Buildings","06/15/1998","$1,250,000.00","$487,500.00","$762,500.00","Campus"],["FA-002","Fellowship Hall","Buildings","03/20/2005","$680,000.00","$204,000.00","$476,000.00","Campus"],["FA-003","2022 Ford Transit Van","Vehicles","08/10/2022","$42,500.00","$12,750.00","$29,750.00","Parking Lot B"],["FA-004","Yamaha Grand Piano","Equipment","01/15/2019","$18,500.00","$7,400.00","$11,100.00","Sanctuary"],["FA-005","Commercial HVAC System","Equipment","11/01/2020","$95,000.00","$28,500.00","$66,500.00","Main Bldg"],["FA-006","Parking Lot Resurface","Land Improve.","05/22/2023","$35,000.00","$5,250.00","$29,750.00","Campus"],["FA-007","Sound & A/V System","Equipment","09/15/2021","$67,000.00","$26,800.00","$40,200.00","Sanctuary"],["FA-008","LED Parking Lights","Equipment","04/01/2026","$12,400.00","$620.00","$11,780.00","Parking Lot A"],["FA-009","Office Furniture Set","Equipment","03/15/2026","$4,200.00","$420.00","$3,780.00","Admin Wing"],["FA-010","Playground Equipment","Equipment","02/01/2025","$28,600.00","$5,720.00","$22,880.00","South Lawn"]] },
-  "fa-depreciation-schedule": { columns: ["Asset #","Description","Method","Life (Yrs)","Annual Depr","Monthly Depr","Remaining Life","Next Depr Date"], rows: [["FA-001","Main Sanctuary Building","Straight Line","40","$31,250.00","$2,604.17","12.5 yrs","May 1, 2026"],["FA-002","Fellowship Hall","Straight Line","40","$17,000.00","$1,416.67","19.0 yrs","May 1, 2026"],["FA-003","2022 Ford Transit Van","MACRS 5-Year","5","$8,500.00","$708.33","1.3 yrs","May 1, 2026"],["FA-004","Yamaha Grand Piano","Straight Line","10","$1,850.00","$154.17","2.8 yrs","May 1, 2026"],["FA-005","Commercial HVAC System","Straight Line","15","$6,333.33","$527.78","9.5 yrs","May 1, 2026"],["FA-006","Parking Lot Resurface","Straight Line","15","$2,333.33","$194.44","12.5 yrs","May 1, 2026"],["FA-007","Sound & A/V System","MACRS 5-Year","5","$13,400.00","$1,116.67","0.4 yrs","May 1, 2026"],["FA-008","LED Parking Lights","Straight Line","10","$1,240.00","$103.33","9.9 yrs","May 1, 2026"],["FA-009","Office Furniture Set","Straight Line","7","$600.00","$50.00","6.9 yrs","May 1, 2026"],["FA-010","Playground Equipment","Straight Line","10","$2,860.00","$238.33","8.8 yrs","May 1, 2026"]] },
-  "fa-additions-deletions": { columns: ["Date","Asset #","Description","Category","Type","Cost/Proceeds","Gain/Loss"], rows: [["04/01/2026","FA-008","LED Parking Lights","Equipment","Addition","$12,400.00","—"],["03/15/2026","FA-009","Office Furniture Set","Equipment","Addition","$4,200.00","—"],["02/28/2026","FA-OLD-3","2014 Chevy Express Van","Vehicles","Disposal","$3,500.00","($1,200.00)"],["02/01/2025","FA-010","Playground Equipment","Equipment","Addition","$28,600.00","—"],["01/20/2026","FA-OLD-7","Copier – Ricoh MP3054","Equipment","Disposal","$800.00","($350.00)"],["12/15/2025","FA-OLD-9","1997 John Deere Mower","Equipment","Disposal","$500.00","($200.00)"],["11/10/2025","FA-011","Security Camera System","Equipment","Addition","$8,750.00","—"],["10/22/2025","FA-012","Baptistery Heater","Equipment","Addition","$3,400.00","—"],["09/05/2025","FA-OLD-5","Window AC Units (3)","Equipment","Disposal","$150.00","($600.00)"],["08/18/2025","FA-013","Stained Glass Restoration","Buildings","Addition","$45,000.00","—"]] },
-  "fa-book-value-summary": { columns: ["Category","# Assets","Total Cost","Accum Depreciation","Net Book Value","% of Total"], rows: [["Buildings","2","$1,930,000.00","$691,500.00","$1,238,500.00","72.6%"],["Vehicles","1","$42,500.00","$12,750.00","$29,750.00","1.7%"],["Equipment","4","$192,900.00","$70,100.00","$122,800.00","7.2%"],["Land Improvements","1","$35,000.00","$5,250.00","$29,750.00","1.7%"],["Land","1","$285,000.00","$0.00","$285,000.00","16.7%"]] },
-  "fa-asset-detail": { columns: ["Field","Value"], rows: [["Asset #","FA-003"],["Description","2022 Ford Transit Van"],["Category","Vehicles"],["Acquisition Date","08/10/2022"],["Original Cost","$42,500.00"],["Salvage Value","$5,000.00"],["Useful Life","5 years"],["Depreciation Method","MACRS 5-Year"],["Accumulated Depreciation","$12,750.00"],["Net Book Value","$29,750.00"],["Location","Parking Lot B"],["Department","Youth Ministry"],["Vendor","Grace Auto Group"],["PO #","PO-2022-0087"]] },
-  "fa-insurance-listing": { columns: ["Asset #","Description","Category","Book Value","Replacement Value","Coverage","Policy #"], rows: [["FA-001","Main Sanctuary Building","Buildings","$762,500.00","$2,100,000.00","Building & Contents","POL-44521"],["FA-002","Fellowship Hall","Buildings","$476,000.00","$1,200,000.00","Building & Contents","POL-44521"],["FA-003","2022 Ford Transit Van","Vehicles","$29,750.00","$38,000.00","Commercial Auto","POL-44522"],["FA-004","Yamaha Grand Piano","Equipment","$11,100.00","$22,000.00","Inland Marine","POL-44523"],["FA-005","Commercial HVAC System","Equipment","$66,500.00","$110,000.00","Building & Contents","POL-44521"],["FA-006","Parking Lot Resurface","Land Improve.","$29,750.00","$45,000.00","Building & Contents","POL-44521"],["FA-007","Sound & A/V System","Equipment","$40,200.00","$75,000.00","Inland Marine","POL-44523"],["FA-008","LED Parking Lights","Equipment","$11,780.00","$14,000.00","Building & Contents","POL-44521"],["FA-009","Office Furniture Set","Equipment","$3,780.00","$5,500.00","Building & Contents","POL-44521"],["FA-010","Playground Equipment","Equipment","$22,880.00","$35,000.00","General Liability","POL-44524"]] },
-  "fa-disposal-report": { columns: ["Disposal Date","Asset #","Description","Original Cost","Accum Depr","Book Value","Proceeds","Gain/(Loss)"], rows: [["02/28/2026","FA-OLD-3","2014 Chevy Express Van","$32,000.00","$27,300.00","$4,700.00","$3,500.00","($1,200.00)"],["01/20/2026","FA-OLD-7","Copier – Ricoh MP3054","$6,500.00","$5,350.00","$1,150.00","$800.00","($350.00)"]] },
+  "fa-depreciation-history": { columns: ["Asset #","Description","Method","Life (Yrs)","Annual Depr","Monthly Depr","Remaining Life","Next Depr Date"], rows: [["FA-001","Main Sanctuary Building","Straight Line","40","$31,250.00","$2,604.17","12.5 yrs","May 1, 2026"],["FA-002","Fellowship Hall","Straight Line","40","$17,000.00","$1,416.67","19.0 yrs","May 1, 2026"],["FA-003","2022 Ford Transit Van","MACRS 5-Year","5","$8,500.00","$708.33","1.3 yrs","May 1, 2026"],["FA-004","Yamaha Grand Piano","Straight Line","10","$1,850.00","$154.17","2.8 yrs","May 1, 2026"],["FA-005","Commercial HVAC System","Straight Line","15","$6,333.33","$527.78","9.5 yrs","May 1, 2026"],["FA-006","Parking Lot Resurface","Straight Line","15","$2,333.33","$194.44","12.5 yrs","May 1, 2026"],["FA-007","Sound & A/V System","MACRS 5-Year","5","$13,400.00","$1,116.67","0.4 yrs","May 1, 2026"],["FA-008","LED Parking Lights","Straight Line","10","$1,240.00","$103.33","9.9 yrs","May 1, 2026"],["FA-009","Office Furniture Set","Straight Line","7","$600.00","$50.00","6.9 yrs","May 1, 2026"],["FA-010","Playground Equipment","Straight Line","10","$2,860.00","$238.33","8.8 yrs","May 1, 2026"]] },
   "fa-custom-query": { columns: ["Asset #","Description","Category","Location","Department","Cost","Book Value"], rows: [["FA-001","Main Sanctuary Building","Buildings","Campus","Facilities","$1,250,000.00","$762,500.00"],["FA-002","Fellowship Hall","Buildings","Campus","Facilities","$680,000.00","$476,000.00"],["FA-003","2022 Ford Transit Van","Vehicles","Parking Lot B","Youth Ministry","$42,500.00","$29,750.00"],["FA-004","Yamaha Grand Piano","Equipment","Sanctuary","Worship","$18,500.00","$11,100.00"],["FA-005","Commercial HVAC System","Equipment","Main Bldg","Facilities","$95,000.00","$66,500.00"],["FA-006","Parking Lot Resurface","Land Improve.","Campus","Facilities","$35,000.00","$29,750.00"],["FA-007","Sound & A/V System","Equipment","Sanctuary","Worship","$67,000.00","$40,200.00"],["FA-008","LED Parking Lights","Equipment","Parking Lot A","Facilities","$12,400.00","$11,780.00"],["FA-009","Office Furniture Set","Equipment","Admin Wing","Administration","$4,200.00","$3,780.00"],["FA-010","Playground Equipment","Equipment","South Lawn","Children's Ministry","$28,600.00","$22,880.00"]] },
 };
 
@@ -202,9 +189,8 @@ function applyQbFilters(rows, criteria, logicOps, groups, groupLogics) {
 }
 
 const FA_REPORT_HISTORY = [
-  { id:101, title:"Annual Depr by Category", reportType:"Depreciation Schedule", parentId:"fa-depreciation-schedule", scheduleId:"fa-sched-1", date:"Mar 31, 2026", time:"6:00 AM", entity:"Grace Community Church", status:"completed", duration:"1m 45s", failReason: null },
+  { id:101, title:"Annual Depr by Category", reportType:"Depreciation History", parentId:"fa-depreciation-history", scheduleId:"fa-sched-1", date:"Mar 31, 2026", time:"6:00 AM", entity:"Grace Community Church", status:"completed", duration:"1m 45s", failReason: null },
   { id:102, title:"Buildings & Improvements", reportType:"Asset Listing", parentId:"fa-asset-listing", scheduleId:"fa-sched-2", date:"Apr 1, 2026", time:"6:00 AM", entity:"Grace Community Church", status:"completed", duration:"32s", failReason: null },
-  { id:103, title:"Insurance Values Refresh", reportType:"Insurance Listing", parentId:"fa-insurance-listing", scheduleId:"fa-sched-3", date:"Jan 15, 2026", time:"7:00 AM", entity:"Grace Community Church", status:"completed", duration:"28s", failReason: null },
   { id:104, title:"Vehicles & Equipment Query", reportType:"Custom Query", parentId:"fa-custom-query", scheduleId:null, date:"Apr 1, 2026", time:"10:22 AM", entity:"Grace Community Church", status:"completed", duration:"15s", failReason: null },
 ];
 
@@ -217,28 +203,20 @@ const QB_CRITERIA_CATEGORIES = [
     { id: "active", label: "Active", type: "boolean" },
     { id: "tag", label: "Tag #", type: "text" },
     { id: "name", label: "Name", type: "text" },
-    { id: "newUsed", label: "New/Used", type: "select", options: ["New", "Used"] },
-    { id: "itcExempt", label: "Investment Tax Credit Exempt", type: "boolean" },
-    { id: "itc", label: "Investment Tax Credit", type: "boolean" },
-    { id: "po", label: "Purchase Order #", type: "text" },
-    { id: "class", label: "Class", type: "multiselect", options: ["Camera", "Equipment", "Hardware", "Laptop", "Office Equipment", "Office Furniture"] },
-    { id: "building", label: "Building", type: "multiselect", options: ["Main Sanctuary", "Fellowship Hall", "Education Wing", "Admin Office"] },
+    { id: "note", label: "Notes", type: "text" },
+    { id: "class", label: "Class", type: "select", options: ["All", "Buildings", "Vehicles", "Equipment", "Land", "Land Improvements"] },
+    { id: "building", label: "Building", type: "select", options: ["All", "Main Sanctuary", "Fellowship Hall", "Education Wing", "Admin Office"] },
     { id: "room", label: "Room", type: "text" },
-    { id: "replDate", label: "Replacement Date", type: "date" },
-    { id: "transDate", label: "Transfer Date", type: "date" },
-    { id: "saleDate", label: "Sale Date", type: "date" },
-    { id: "retireDate", label: "Retirement Date", type: "date" },
-    { id: "invDate", label: "Inventory Date", type: "date" },
-    { id: "comments", label: "Comments", type: "text" },
     { id: "vendor", label: "Vendor", type: "text" },
+    { id: "po", label: "Purchase Order #", type: "text" },
+    { id: "newUsed", label: "New/Used", type: "select", options: ["All", "New", "Used"] },
   ]},
   { key: "depreciation", label: "Depreciation", fields: [
     { id: "capDate", label: "Capitalized Date", type: "date" },
     { id: "capValue", label: "Capitalized Value", type: "number" },
     { id: "salvage", label: "Salvage Value", type: "number" },
-    { id: "taxMethod", label: "Tax Method", type: "select", options: ["Straight Line", "MACRS 3-Year", "MACRS 5-Year", "MACRS 7-Year", "MACRS 15-Year"] },
-    { id: "taxLife", label: "Tax Life (years)", type: "number" },
-    { id: "bookMethod", label: "Book Method", type: "select", options: ["Straight Line", "Declining Balance", "Sum of Years"] },
+    { id: "taxMethod", label: "Tax Method", type: "select", options: ["All", "Straight Line", "MACRS 3-Year", "MACRS 5-Year", "MACRS 7-Year", "MACRS 15-Year"] },
+    { id: "bookMethod", label: "Book Method", type: "select", options: ["All", "Straight Line", "Declining Balance", "Sum of Years"] },
     { id: "bookLife", label: "Book Life (years)", type: "number" },
   ]},
   { key: "gl", label: "General Ledger", fields: [
@@ -250,40 +228,46 @@ const QB_CRITERIA_CATEGORIES = [
     { id: "hasWarranty", label: "Has Warranty Contract", type: "boolean" },
     { id: "warrantyVendor", label: "Warranty Vendor", type: "text" },
   ]},
+  { key: "dates", label: "Key Dates", fields: [
+    { id: "replDate", label: "Replacement Date", type: "date" },
+    { id: "transDate", label: "Transfer Date", type: "date" },
+    { id: "saleDate", label: "Sale Date", type: "date" },
+    { id: "retireDate", label: "Retirement Date", type: "date" },
+    { id: "invDate", label: "Inventory Date", type: "date" },
+  ]},
+  { key: "savedQueries", label: "Other Queries", fields: [
+    { id: "sq_annualInventory", label: "Annual Asset Inventory — 2025", type: "boolean" },
+    { id: "sq_equipmentOver5k", label: "Equipment Over $5,000", type: "boolean" },
+    { id: "sq_churchBuildings", label: "Church Buildings Only", type: "boolean" },
+    { id: "sq_vehiclesList", label: "Vehicles — Full List", type: "boolean" },
+    { id: "sq_retiredAssets", label: "Retired Assets Since 2020", type: "boolean" },
+  ]},
 ];
 
 const QB_AVAILABLE_COLUMNS = [
-  // Default selected (matches production defaults)
-  { id: "tag",    label: "Tag #",    default: true, defaultSort: true },
-  { id: "name",   label: "Name",     default: true },
-  { id: "class",  label: "Class",    default: true },
+  { id: "tag", label: "Tag #", default: true, defaultSort: true },
+  { id: "name", label: "Name", default: true },
+  { id: "capDate", label: "Cap. Date", default: true },
+  { id: "class", label: "Class", default: true },
   { id: "building", label: "Building", default: true },
-  { id: "room",   label: "Room",     default: true },
-  { id: "note",   label: "Note",     default: true },
-  // Available but not selected by default
-  { id: "capDate",       label: "Cap. Date" },
-  { id: "setup",         label: "Setup" },
-  { id: "capValue",      label: "Capitalized Value" },
-  { id: "salvage",       label: "Salvage Value" },
-  { id: "bookMethod",    label: "Book Method" },
-  { id: "bookLife",      label: "Book Life" },
-  { id: "bookDepr",      label: "Book Depreciable Value" },
-  { id: "bookBeginAccum",label: "Book Beginning Accumulated" },
-  { id: "bookCurrYear",  label: "Book Current Year" },
-  { id: "bookAccum",     label: "Book Accumulated" },
-  { id: "bookNet",       label: "Book Net Value" },
-  { id: "taxMethod",     label: "Tax Method" },
-  { id: "taxLife",       label: "Tax Life" },
-  { id: "taxDepr",       label: "Tax Depreciable Value" },
-  { id: "taxBeginAccum", label: "Tax Beginning Accumulated" },
-  { id: "taxCurrYear",   label: "Tax Current Year" },
-  { id: "taxAccum",      label: "Tax Accumulated" },
-  { id: "taxNet",        label: "Tax Net Value" },
-  { id: "vendor",        label: "Vendor" },
-  { id: "po",            label: "Purchase Order #" },
-  { id: "assetAcct",     label: "Asset Account #" },
-  { id: "accumAcct",     label: "Accum. Depr. Acct #" },
-  { id: "expenseAcct",   label: "Expense Account #" },
+  { id: "room", label: "Room", default: true },
+  { id: "note", label: "Note" },
+  { id: "capValue", label: "Capitalized Value" },
+  { id: "salvage", label: "Salvage Value" },
+  { id: "bookMethod", label: "Book Method" },
+  { id: "bookLife", label: "Book Life" },
+  { id: "bookDepr", label: "Book Depreciable Value" },
+  { id: "bookBeginAccum", label: "Book Begin. Accumulated" },
+  { id: "bookCurrYear", label: "Book Current Year" },
+  { id: "bookAccum", label: "Book Accumulated" },
+  { id: "bookNet", label: "Book Net Value" },
+  { id: "taxMethod", label: "Tax Method" },
+  { id: "taxLife", label: "Tax Life" },
+  { id: "vendor", label: "Vendor" },
+  { id: "po", label: "Purchase Order #" },
+  { id: "assetAcct", label: "Asset Account #" },
+  { id: "accumAcct", label: "Accum. Depr. Acct #" },
+  { id: "expenseAcct", label: "Expense Account #" },
 ];
 
 // ─── APP DATA LOOKUP ────────────────────────────────────────────────────────
@@ -699,28 +683,15 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
     setSlConfirmLeave(false);
   };
   const [qbExpandedCats, setQbExpandedCats] = useState(["basic"]);
-  const [qbCriteria, setQbCriteria] = useState([]); // [{id, fieldId, label, op, value, catKey, type, options, groupId}]
+  const [qbCriteria, setQbCriteria] = useState([]); // [{id, fieldId, label, op, value, catKey}]
   const [qbSelectedCols, setQbSelectedCols] = useState(() => QB_AVAILABLE_COLUMNS.filter(x => x.default).map(x => x.id));
   const [qbSortCol, setQbSortCol] = useState("tag");
-  const [qbSortDir, setQbSortDir] = useState("asc");
   const [qbColPickerOpen, setQbColPickerOpen] = useState(false);
-  const [qbSelectedOtherQueries, setQbSelectedOtherQueries] = useState(new Set()); // Set of saved-config IDs
-  const [qbOtherQuerySearch, setQbOtherQuerySearch] = useState("");
-  const [qbOtherQueriesDropOpen, setQbOtherQueriesDropOpen] = useState(false);
-  const [qbOtherQueriesDropRect, setQbOtherQueriesDropRect] = useState(null);
   const qbNextId = useRef(1);
-  const toggleQbCat = (key) => setQbExpandedCats(prev => prev.includes(key) ? [] : [key]); // accordion: only one open at a time
+  const toggleQbCat = (key) => setQbExpandedCats(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
   const addQbCriterion = (field, catKey) => {
     const newId = qbNextId.current++;
-    let defaultOp = "Contains";
-    let defaultVal = "";
-    if (field.type === "boolean") { defaultOp = "is"; defaultVal = "Yes"; }
-    else if (field.type === "select") { defaultOp = "is"; defaultVal = field.options?.[0] || ""; }
-    else if (field.type === "multiselect") { defaultOp = "includes"; defaultVal = []; }
-    else if (field.type === "date") { defaultOp = "Specific"; defaultVal = ""; }
-    else if (field.type === "number") { defaultOp = "Equal"; defaultVal = ""; }
-    setQbCriteria(prev => [...prev, { id: newId, fieldId: field.id, label: field.label, type: field.type, op: defaultOp, value: defaultVal, catKey, options: field.options, groupId: activeGroupId }]);
-    setQbShowValidation(false);
+    setQbCriteria(prev => [...prev, { id: newId, fieldId: field.id, label: field.label, type: field.type, op: field.type === "boolean" ? "is" : field.type === "select" ? "is" : "contains", value: field.type === "boolean" ? "Yes" : field.type === "select" ? (field.options?.[0] || "") : "", catKey, options: field.options, groupId: activeGroupId }]);
   };
   const updateQbCriterion = (id, updates) => setQbCriteria(prev => prev.map(cr => cr.id === id ? { ...cr, ...updates } : cr));
   const removeQbCriterion = (id) => setQbCriteria(prev => prev.filter(cr => cr.id !== id));
@@ -739,34 +710,15 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbLogicOps, setQbLogicOps] = useState({}); // { [criterionId]: "and" | "or" } — logic before each criterion within a group
   const toggleQbLogic = (crId) => setQbLogicOps(prev => ({ ...prev, [crId]: prev[crId] === "or" ? "and" : "or" }));
   // ── Groups: criteria are organised into named groups (parenthetical boolean containers) ──
-  const [qbGroups, setQbGroups] = useState([{ id: 1, name: "Filter Group 1" }]);
+  const [qbGroups, setQbGroups] = useState([{ id: 1, name: "Filter group 1" }]);
   const qbNextGroupId = useRef(2);
   const [qbGroupLogics, setQbGroupLogics] = useState({}); // { groupId: "and" | "or" } — logic BEFORE each group (not first)
   const [activeGroupId, setActiveGroupId] = useState(1); // which group newly added criteria go into
   const [qbGroupEditingId, setQbGroupEditingId] = useState(null); // groupId currently being renamed
   const [qbGroupEditingName, setQbGroupEditingName] = useState("");
-  const [qbCollapsedGroups, setQbCollapsedGroups] = useState(new Set()); // Set of collapsed group IDs
-  const [qbMultiselectSearches, setQbMultiselectSearches] = useState({}); // { [criterionId]: searchString }
-  const [qbMultiselectDropOpen, setQbMultiselectDropOpen] = useState({}); // { [crId]: bool }
-  const [qbMultiselectDropRect, setQbMultiselectDropRect] = useState({}); // { [crId]: {top,left,width} }
-  const [qbShowValidation, setQbShowValidation] = useState(false);
-  const [qbLeftTab, setQbLeftTab] = useState("filters"); // "filters" | "columns"
-  const [qbOtherQueriesChipsExpanded, setQbOtherQueriesChipsExpanded] = useState(false);
-  const QB_CHIPS_VISIBLE = 3;
-  const [qbColSearch, setQbColSearch] = useState("");
-  const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); setQbCollapsedGroups(prev => { const n = new Set(prev); qbGroups.forEach(g => n.add(g.id)); return n; }); };
+  const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
-  const removeQbGroup = (gid) => {
-    if (qbGroups.length <= 1) {
-      // Last group — clear its contents but keep the group
-      setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid));
-    } else {
-      setQbGroups(prev => prev.filter(g => g.id !== gid));
-      setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid));
-      setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; });
-      setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev);
-    }
-  };
+  const removeQbGroup = (gid) => { if (qbGroups.length <= 1) return; setQbGroups(prev => prev.filter(g => g.id !== gid)); setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; }); setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev); };
   const renameQbGroup = (gid, name) => setQbGroups(prev => prev.map(g => g.id === gid ? { ...g, name } : g));
   const toggleQbGroupLogic = (gid) => setQbGroupLogics(prev => ({ ...prev, [gid]: prev[gid] === "or" ? "and" : "or" }));
 
@@ -1062,11 +1014,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
           <button onClick={handleClose} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "6px 0" }}><XIcon size={16} /> Close</button>
           {reportRan && !isHistoryCompleted && (<>
             <div style={{ width: 1, height: 24, background: c.border }} />
-            {isQueryReport ? (
-              <button onClick={() => { setReportRan(false); setQueryBuilderOpen(true); setQbEditMode(true); }} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: `1px solid ${c.border}`, borderRadius: 6, color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 10px" }}><ArrowLeft size={13} /> Edit query</button>
-            ) : (
-              <button onClick={handleEditConfig} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: `1px solid ${c.border}`, borderRadius: 6, color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 10px" }}><ArrowLeft size={13} /> Edit configuration</button>
-            )}
+            <button onClick={handleEditConfig} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: `1px solid ${c.border}`, borderRadius: 6, color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 10px" }}><ArrowLeft size={13} /> Edit Configuration</button>
           </>)}
           <div style={{ width: 1, height: 24, background: c.border }} />
           <div style={{ fontSize: 15, fontWeight: 700, color: c.text }}>{savedConfigName || reportObj.name}</div>
@@ -1121,645 +1069,469 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
       {/* ── LEVEL-DEEP QUERY VIEW / EDITOR (S&L) ── */}
       {queryBuilderOpen && (() => {
-        const editName = qbEditSource?.from === "sl-new" ? (qbNewQueryName || "New Query") : (qbEditSource?.name || "Custom Query");
-        const isEditing = qbEditMode;
-        const isNew = qbEditSource?.from === "sl-new";
+        const editName = qbEditSource?.from === "sl-new" ? qbNewQueryName : (qbEditSource?.name || "Query");
         const editCfg = qbEditSource ? ((_STD === FA_STANDARD_REPORTS ? FA_SAVED_CONFIGS : SAVED_CONFIGS).find(s => s.id === qbEditSource.id)) : null;
         const editDetails = editCfg?.queryDetails || { filtersList: [], columnsList: [], format: "Detail" };
-        const savedQueryList = _STD === FA_STANDARD_REPORTS ? FA_SAVED_CONFIGS : SAVED_CONFIGS;
-        const CAT_COLORS = {
-          basic:        { bg: "#ecfeff", border: "#a5f3fc", text: "#0e7490" },
-          depreciation: { bg: "#f5f3ff", border: "#ddd6fe", text: "#6d28d9" },
-          gl:           { bg: "#f0fdfa", border: "#99f6e4", text: "#0f766e" },
-          warranty:     { bg: "#ecfdf5", border: "#a7f3d0", text: "#047857" },
-        };
+        // Generate a simulated preview based on current query state — map QB columns to data columns
+        const editPreviewData = FA_REPORT_RESULTS["fa-custom-query"];
+        const editDataColNames = editPreviewData ? editPreviewData.columns.map(c => c.toLowerCase().replace(/[^a-z]/g, "")) : [];
+        const editQbLabelMap = { tag: "asset", name: "description", capDate: "acquired", class: "category", building: "location", room: "department", capValue: "cost", bookNet: "bookvalue", salvage: "salvagevalue", vendor: "vendor" };
+        const editColMapping = qbSelectedCols.map(id => {
+          const mapped = editQbLabelMap[id] || QB_AVAILABLE_COLUMNS.find(c => c.id === id)?.label.toLowerCase().replace(/[^a-z]/g, "") || "";
+          return { qbCol: QB_AVAILABLE_COLUMNS.find(c => c.id === id), dataIdx: editDataColNames.findIndex(dn => dn.includes(mapped) || mapped.includes(dn)) };
+        }).filter(m => m.qbCol);
+        const editPreviewCols = editColMapping.map(m => ({ ...m.qbCol, dataIdx: m.dataIdx }));
+        const editPreviewRows = qbLiveFilteredRows.slice(0, 5); // limit to 5 rows; real filter applied from QB criteria
+        const isEditing = qbEditMode;
         return (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
-          {/* ── TOP NAV ── */}
-          <div style={{ padding: "9px 16px", borderBottom: `1px solid ${c.border}`, background: c.white, display: "flex", alignItems: "center", gap: 10, flexShrink: 0, minHeight: 48 }}>
-            <button
-              onClick={() => setQueryBuilderOpen(false)}
-              style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "6px 0", flexShrink: 0 }}>
-              <XIcon size={16} /> Close
+          {/* Top nav — single back button + title */}
+          <div style={{ padding: "10px 20px", borderBottom: `1px solid ${c.border}`, background: c.white, display: "flex", alignItems: "center", gap: 12 }}>
+            <button onClick={() => { if (isEditing) { setQbEditMode(false); setShowEditAppliedToast(false); } else if (initialPanel === "queryBuilder") { onBack(); } else { setQueryBuilderOpen(false); } }} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 13, fontFamily: "inherit", fontWeight: 500, padding: "4px 0", flexShrink: 0 }}>
+              <ArrowLeft size={14} /> {isEditing ? editName : (initialPanel === "queryBuilder" ? "Reports Library" : "Back")}
             </button>
             <div style={{ width: 1, height: 16, background: c.borderLight, flexShrink: 0 }} />
-            {isNew ? (
-              <input
-                type="text" value={qbNewQueryName} onChange={e => setQbNewQueryName(e.target.value)}
-                placeholder="Name your query…"
-                style={{ flex: "0 1 260px", padding: "5px 9px", border: `1px solid ${c.pri}`, borderRadius: 6, fontSize: 14, fontWeight: 600, outline: "none", fontFamily: "inherit", color: c.text }} />
-            ) : (
-              <span style={{ fontSize: 14, fontWeight: 700, color: c.text, whiteSpace: "nowrap" }}>{editName}</span>
-            )}
-            <div style={{ flex: 1 }} />
-            <button
-              onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); setQbGroups([{ id: 1, name: "Filter Group 1" }]); setQbGroupLogics({}); setActiveGroupId(1); setQbSelectedOtherQueries(new Set()); setQbOtherQuerySearch(""); setQbLeftTab("filters"); setQbShowValidation(false); }}
-              style={{ background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 8px", whiteSpace: "nowrap" }}>
-              Reset all
-            </button>
-            <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); setQueryBuilderOpen(false); setTimeout(() => togglePanel("saveConfig"), 50); }} icon={<BookmarkIcon size={12} />}>Save query</Btn>
-            <Btn size="sm"
-              disabled={isNew && !qbNewQueryName.trim()}
-              onClick={() => {
-                if (!isNew && qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0) {
-                  setQbShowValidation(true);
-                  return;
-                }
-                setQbShowValidation(false);
-                setQueryBuilderOpen(false);
-                if (isNew) {
-                  // New query: run the report
-                  setTimeout(() => handleRunReport(), 50);
-                }
-                // Existing query "Show Results": just close the QB, preview is already live
-              }}>
-              {isNew ? "Save & run" : "Show Results"}
-            </Btn>
+            <span style={{ fontSize: 14, fontWeight: 700, color: c.text, whiteSpace: "nowrap" }}>{isEditing ? "Edit filters" : editName}</span>
+            {!isEditing && <span style={{ fontSize: 12, color: c.textTer, fontWeight: 400, whiteSpace: "nowrap" }}>— Custom report</span>}
           </div>
 
-          {/* Validation banner */}
-          {qbShowValidation && (
-            <div style={{ padding: "8px 16px", background: "#fef2f2", borderBottom: `1px solid #fecaca`, display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-              <span style={{ fontSize: 13, color: c.red, flex: 1 }}>Add at least one category before running the report.</span>
-              <button onClick={() => setQbShowValidation(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.red, padding: 2 }}><XIcon size={12} /></button>
-            </div>
-          )}
-
-          {/* Applied / saved toast */}
-          {showEditAppliedToast && (
-            <div style={{ padding: "8px 16px", background: c.greenLight, borderBottom: `1px solid ${c.greenBorder}`, display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-              <CheckIcon size={14} style={{ color: c.green, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, fontWeight: 500, color: c.green, flex: 1 }}>
-                {isNew ? `Query "${qbNewQueryName || "Untitled"}" saved.` : `Changes applied to "${editName}".`}
-              </span>
-              <button onClick={() => setShowEditAppliedToast(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.green, padding: 2 }}><XIcon size={12} /></button>
-            </div>
-          )}
-
-          {/* ── TWO-PANEL BUILDER ── */}
+          {/* Body: builder + live preview */}
           <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-
-              {/* ═══ LEFT PANEL: Tabbed ═══ */}
-              <div style={{ width: 360, minWidth: 320, borderRight: `1px solid ${c.border}`, display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0, overflow: "hidden" }}>
-
-                {/* Tab bar */}
-                <div style={{ display: "flex", borderBottom: `1px solid ${c.border}`, background: c.white, flexShrink: 0 }}>
-                  {[{ key: "filters", label: "Filters" }, { key: "columns", label: "Columns" }].map(tab => (
-                    <button key={tab.key} onClick={() => setQbLeftTab(tab.key)}
-                      style={{ flex: 1, padding: "9px 12px", fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", background: "none", border: "none", borderBottom: `2px solid ${qbLeftTab === tab.key ? c.pri : "transparent"}`, color: qbLeftTab === tab.key ? c.text : c.textTer, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
-                      {tab.label}
-                      {tab.key === "filters" && qbCriteria.length > 0 && (
-                        <span style={{ fontSize: 10, fontWeight: 700, color: c.pri, background: "#eff4ff", borderRadius: 8, padding: "1px 6px" }}>{qbCriteria.length}</span>
-                      )}
-                      {tab.key === "columns" && (
-                        <span style={{ fontSize: 10, color: qbLeftTab === "columns" ? c.pri : c.textTer, background: qbLeftTab === "columns" ? "#eff4ff" : c.bg, borderRadius: 8, padding: "1px 6px" }}>{qbSelectedCols.length}</span>
-                      )}
-                    </button>
+            {/* Left: QB builder — takes most of the space */}
+            <div style={{ flex: 1, minWidth: 400, background: c.white, borderRight: `1px solid ${c.border}`, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+              <div style={{ position: "sticky", top: 0, background: c.white, zIndex: 2, borderBottom: `1px solid ${c.border}` }}>
+                <div style={{ display: "flex", padding: "0 16px" }}>
+                  {[{ key: "setup", label: "Query Settings" }, { key: "output", label: "Layout & Formatting" }].map(t => (
+                    <button key={t.key} onClick={() => setQbSidebarTab(t.key)}
+                      style={{ padding: "11px 14px", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", background: "none", border: "none", borderBottom: `2px solid ${qbSidebarTab === t.key ? c.pri : "transparent"}`, color: qbSidebarTab === t.key ? c.text : c.textTer, marginBottom: -1 }}>{t.label}</button>
                   ))}
                 </div>
+              </div>
 
-                {/* ── FILTERS TAB ── */}
-                {qbLeftTab === "filters" && <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
-
-                {/* ── Section: Add Categories ── */}
-                <div style={{ borderBottom: `1px solid ${c.border}` }}>
-                  <div style={{ padding: "9px 12px 5px", fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px" }}>Categories</div>
-                  {QB_CRITERIA_CATEGORIES.map(cat => {
-                    const cc = CAT_COLORS[cat.key] || CAT_COLORS.basic;
-                    const catCount = qbCriteria.filter(cr => cr.catKey === cat.key).length;
-                    const isExpanded = qbExpandedCats.includes(cat.key);
+              {/* Filters tab — view mode (read-only summary) */}
+              {qbSidebarTab === "setup" && !isEditing && (
+                <div style={{ padding: "16px", flex: 1, overflowY: "auto" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Report name</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 18 }}>{editName}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Filters applied</div>
+                  {editDetails.filtersList.length === 0 ? (
+                    <div style={{ fontSize: 13, color: c.textTer, fontStyle: "italic", marginBottom: 18 }}>No filters — all assets included</div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 18 }}>
+                      {editDetails.filtersList.map((f, i) => (
+                        <div key={i} style={{ padding: "7px 10px", background: c.bg, borderRadius: 6, border: `1px solid ${c.borderLight}`, position: "relative" }}>
+                          <div style={{ fontSize: 13, color: c.text }}>
+                            <span style={{ fontWeight: 600 }}>{f.label}</span>
+                            <span style={{ color: c.textSec, margin: "0 5px" }}>{f.op}</span>
+                            <span style={{ fontWeight: 500 }}>{f.value}</span>
+                          </div>
+                          {i > 0 && <div style={{ position: "absolute", top: -9, left: 10, fontSize: 9, fontWeight: 700, color: c.textTer, background: c.white, padding: "0 3px", textTransform: "uppercase" }}>AND</div>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Columns</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 18 }}>
+                    {editDetails.columnsList.map((col, i) => (<span key={i} style={{ padding: "4px 8px", borderRadius: 4, background: c.tagBg, border: `1px solid ${c.borderLight}`, fontSize: 12, color: c.tagText, fontWeight: 500 }}>{col}</span>))}
+                  </div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Output format</div>
+                  <div style={{ fontSize: 13, color: c.text }}>{editDetails.format}</div>
+                </div>
+              )}
+              {/* Filters tab — edit mode: TWO COLUMN LAYOUT */}
+              {qbSidebarTab === "setup" && isEditing && (
+                <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+                  {/* LEFT: Category field browser — collapsible sections with field chips */}
+                  {(() => {
+                    const CAT_COLORS = {
+                      basic:        { bg: "#eff6ff", border: "#bfdbfe", text: "#1d4ed8" },
+                      depreciation: { bg: "#fffbeb", border: "#fde68a", text: "#b45309" },
+                      gl:           { bg: "#f0fdfa", border: "#99f6e4", text: "#0f766e" },
+                      warranty:     { bg: "#ecfdf5", border: "#a7f3d0", text: "#047857" },
+                      dates:        { bg: "#f5f2f9", border: "#d4cce3", text: "#6d4c8a" },
+                      savedQueries: { bg: "#f1f5f9", border: "#cbd5e1", text: "#475569" },
+                    };
                     return (
-                      <div key={cat.key}>
-                        <button onClick={() => toggleQbCat(cat.key)}
-                          style={{ width: "100%", display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", background: isExpanded ? c.white : "none", border: "none", borderTop: `1px solid ${c.borderLight}`, cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
-                          <span style={{ fontSize: 12, fontWeight: 600, color: c.text, flex: 1 }}>{cat.label}</span>
-                          {catCount > 0 && (
-                            <span style={{ minWidth: 16, height: 16, borderRadius: 8, background: cc.text, color: "#fff", fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 3px", flexShrink: 0 }}>{catCount}</span>
-                          )}
-                          <span style={{ color: c.textTer, fontSize: 10, flexShrink: 0 }}>{isExpanded ? "▲" : "▼"}</span>
-                        </button>
-                        {isExpanded && (
-                          <div style={{ padding: "3px 8px 8px 10px", background: c.white }}>
-                            {cat.fields.map(field => {
-                              const alreadyAdded = qbCriteria.some(cr => cr.fieldId === field.id);
-                              return (
-                                <div key={field.id}
-                                  onClick={() => { if (alreadyAdded) { const cr = qbCriteria.find(cr => cr.fieldId === field.id); if (cr) removeQbCriterion(cr.id); } else { addQbCriterion(field, cat.key); } }}
-                                  title={alreadyAdded ? "Click to remove" : `Add "${field.label}" as a filter`}
-                                  style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", fontSize: 12, color: alreadyAdded ? cc.text : c.textSec, fontWeight: alreadyAdded ? 600 : 400, background: alreadyAdded ? cc.bg : "none", marginBottom: 1, border: alreadyAdded ? `1px solid ${cc.border}` : "1px solid transparent" }}
-                                  onMouseEnter={e => { e.currentTarget.style.opacity = "0.8"; }}
-                                  onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
-                                  <span style={{ flex: 1 }}>{field.label}</span>
-                                  <span style={{ color: alreadyAdded ? cc.text : c.textTer, fontSize: 11, flexShrink: 0 }}>{alreadyAdded ? "×" : "+"}</span>
+                      <div style={{ width: 210, minWidth: 210, borderRight: `1px solid ${c.border}`, overflowY: "auto", padding: "8px 0 16px" }}>
+                        {QB_CRITERIA_CATEGORIES.map(cat => {
+                          const cc = CAT_COLORS[cat.key] || CAT_COLORS.basic;
+                          const catActiveCount = qbCriteria.filter(cr => cr.catKey === cat.key).length;
+                          const isExpanded = qbExpandedCats.includes(cat.key);
+                          return (
+                            <div key={cat.key} style={{ marginBottom: 2 }}>
+                              {/* Section header — clickable to collapse */}
+                              <button onClick={() => toggleQbCat(cat.key)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
+                                <span style={{ fontSize: 11, fontWeight: 700, color: c.text, flex: 1, textTransform: "uppercase", letterSpacing: "0.5px" }}>{cat.label}</span>
+                                {catActiveCount > 0 && (
+                                  <span style={{ minWidth: 16, height: 16, borderRadius: 8, background: cc.text, color: "#fff", fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 3px", flexShrink: 0 }}>{catActiveCount}</span>
+                                )}
+                                <span style={{ color: c.textTer, fontSize: 10 }}>{isExpanded ? "▲" : "▼"}</span>
+                              </button>
+                              {/* Field chips — only visible when expanded */}
+                              {isExpanded && (
+                                <div style={{ padding: "2px 10px 8px", display: "flex", flexWrap: "wrap", gap: 4 }}>
+                                  {cat.fields.map(field => {
+                                    const alreadyAdded = qbCriteria.some(cr => cr.fieldId === field.id);
+                                    return (
+                                      <button key={field.id} onClick={() => { if (!alreadyAdded) addQbCriterion(field, cat.key); }}
+                                        title={alreadyAdded ? "Already in active filters" : `Add "${field.label}" filter`}
+                                        style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "3px 8px", borderRadius: 12, border: `1px solid ${alreadyAdded ? cc.border : c.borderLight}`, background: alreadyAdded ? cc.bg : c.bg, color: alreadyAdded ? cc.text : c.textSec, fontSize: 11, fontWeight: alreadyAdded ? 600 : 400, cursor: alreadyAdded ? "default" : "pointer", fontFamily: "inherit", whiteSpace: "nowrap", transition: "all 0.1s" }}
+                                        onMouseEnter={e => { if (!alreadyAdded) { e.currentTarget.style.background = cc.bg; e.currentTarget.style.borderColor = cc.border; e.currentTarget.style.color = cc.text; } }}
+                                        onMouseLeave={e => { if (!alreadyAdded) { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.borderLight; e.currentTarget.style.color = c.textSec; } }}>
+                                        {alreadyAdded ? <CheckIcon size={9} /> : <span style={{ fontSize: 10, lineHeight: 0 }}>+</span>}
+                                        {field.label}
+                                      </button>
+                                    );
+                                  })}
                                 </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* ── Section: Other Queries ── */}
-                <div style={{ padding: "9px 12px 10px" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 6 }}>Also Include Results From</div>
-                  {/* Selected query chips with view-more */}
-                  {qbSelectedOtherQueries.size > 0 && (() => {
-                    const allIds = [...qbSelectedOtherQueries];
-                    const visibleIds = qbOtherQueriesChipsExpanded ? allIds : allIds.slice(0, QB_CHIPS_VISIBLE);
-                    const hiddenCount = allIds.length - QB_CHIPS_VISIBLE;
-                    return (
-                      <div style={{ marginBottom: 6 }}>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                          {visibleIds.map(id => {
-                            const cfg = savedQueryList.find(x => x.id === id);
-                            return cfg ? (
-                              <span key={id} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 6px 2px 8px", background: "#eff4ff", border: `1px solid #c7d7f7`, borderRadius: 10, fontSize: 11, color: c.pri, fontWeight: 500 }}>
-                                {cfg.name}
-                                <button onClick={() => setQbSelectedOtherQueries(prev => { const n = new Set(prev); n.delete(id); return n; })}
-                                  style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", alignItems: "center" }}><XIcon size={10} /></button>
-                              </span>
-                            ) : null;
-                          })}
-                        </div>
-                        {!qbOtherQueriesChipsExpanded && hiddenCount > 0 && (
-                          <button onClick={() => setQbOtherQueriesChipsExpanded(true)}
-                            style={{ marginTop: 4, background: "none", border: "none", fontSize: 11, color: c.pri, cursor: "pointer", fontFamily: "inherit", padding: 0, fontWeight: 500 }}>
-                            + {hiddenCount} more
-                          </button>
-                        )}
-                        {qbOtherQueriesChipsExpanded && hiddenCount > 0 && (
-                          <button onClick={() => setQbOtherQueriesChipsExpanded(false)}
-                            style={{ marginTop: 4, background: "none", border: "none", fontSize: 11, color: c.textTer, cursor: "pointer", fontFamily: "inherit", padding: 0 }}>
-                            Show less
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })()}
-                  {/* Search trigger */}
-                  <div style={{ position: "relative" }}>
-                    <input
-                      type="text" value={qbOtherQuerySearch}
-                      onChange={e => setQbOtherQuerySearch(e.target.value)}
-                      onFocus={e => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        setQbOtherQueriesDropRect({ top: rect.bottom + 2, left: rect.left, width: rect.width });
-                        setQbOtherQueriesDropOpen(true);
-                      }}
-                      onBlur={() => setTimeout(() => setQbOtherQueriesDropOpen(false), 180)}
-                      placeholder="Search saved queries to combine…"
-                      style={{ width: "100%", padding: "5px 8px 5px 26px", border: `1px solid ${qbOtherQueriesDropOpen ? c.pri : c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box", color: c.text }} />
-                    <SearchIcon size={11} style={{ position: "absolute", left: 8, top: 7, color: c.textTer, pointerEvents: "none" }} />
-                  </div>
-                  {/* Floating dropdown */}
-                  {qbOtherQueriesDropOpen && qbOtherQueriesDropRect && (
-                    <div style={{ position: "fixed", top: qbOtherQueriesDropRect.top, left: qbOtherQueriesDropRect.left, width: qbOtherQueriesDropRect.width, maxHeight: 220, overflowY: "auto", background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 3000 }}>
-                      {(() => {
-                        const filtered = savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase()));
-                        if (filtered.length === 0) return <div style={{ padding: "10px 12px", fontSize: 11, color: c.textTer, fontStyle: "italic" }}>No saved queries match.</div>;
-                        return filtered.map(cfg => {
-                          const isSel = qbSelectedOtherQueries.has(cfg.id);
-                          return (
-                            <label key={cfg.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 12px", cursor: "pointer", fontSize: 12, background: isSel ? "#f0f4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
-                              onMouseDown={e => e.preventDefault()}
-                              onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = c.bg; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = isSel ? "#f0f4ff" : c.white; }}>
-                              <input type="checkbox" checked={isSel} onChange={() => { setQbSelectedOtherQueries(prev => { const n = new Set(prev); if (n.has(cfg.id)) n.delete(cfg.id); else n.add(cfg.id); return n; }); setQbShowValidation(false); }} style={{ flexShrink: 0 }} />
-                              <span style={{ color: isSel ? c.pri : c.text, fontWeight: isSel ? 500 : 400 }}>{cfg.name}</span>
-                            </label>
-                          );
-                        });
-                      })()}
-                    </div>
-                  )}
-                </div>
-
-                </div>}{/* end Filters tab */}
-
-                {/* ── COLUMNS TAB ── */}
-                {qbLeftTab === "columns" && <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
-                  <div style={{ padding: "10px 12px 6px", fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px" }}>Available Columns</div>
-                  <div style={{ padding: "0 8px 6px", position: "relative" }}>
-                    <input type="text" value={qbColSearch} onChange={e => setQbColSearch(e.target.value)} placeholder="Search columns…"
-                      style={{ width: "100%", padding: "5px 8px 5px 26px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box", color: c.text }} />
-                    <SearchIcon size={11} style={{ position: "absolute", left: 15, top: 7, color: c.textTer, pointerEvents: "none" }} />
-                  </div>
-                  <div style={{ padding: "0 8px 16px" }}>
-                    {QB_AVAILABLE_COLUMNS.filter(col => !qbColSearch || col.label.toLowerCase().includes(qbColSearch.toLowerCase())).map((col) => {
-                      const isSel = qbSelectedCols.includes(col.id);
-                      return (
-                        <div key={col.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 6px", borderRadius: 5, fontSize: 12, cursor: "pointer", background: isSel ? "#eff4ff" : "none", borderBottom: `1px solid ${c.borderLight}` }}
-                          onClick={() => toggleQbCol(col.id)}
-                          onMouseEnter={e => e.currentTarget.style.background = isSel ? "#eff4ff" : c.bg}
-                          onMouseLeave={e => e.currentTarget.style.background = isSel ? "#eff4ff" : "none"}>
-                          <input type="checkbox" checked={isSel} onChange={() => toggleQbCol(col.id)} onClick={e => e.stopPropagation()} style={{ flexShrink: 0 }} />
-                          <span style={{ flex: 1, color: isSel ? c.text : c.textSec, fontWeight: isSel ? 500 : 400 }}>{col.label}</span>
-                          {isSel && <span style={{ fontSize: 10, color: c.textTer }}>#{qbSelectedCols.indexOf(col.id) + 1}</span>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>}{/* end Columns tab */}
-
-              </div>{/* end LEFT PANEL */}
-
-              {/* ═══ RIGHT PANEL: switches based on active left tab ═══ */}
-              <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", background: c.white }}>
-
-                {/* ── FILTERS TAB RIGHT PANEL ── */}
-                {qbLeftTab === "filters" && (<>
-
-                  {/* Live match status — only shown once filters are active */}
-                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
-                    <div style={{ padding: "6px 12px", background: qbLevelDeepTotal === 0 ? "#fef2f2" : "#f0f4ff", border: `1px solid ${qbLevelDeepTotal === 0 ? "#fecaca" : "#c7d7f7"}`, borderRadius: 6, marginBottom: 12, fontSize: 12, color: c.textSec, display: "flex", alignItems: "center", gap: 7 }}>
-                      <span style={{ fontWeight: 700, color: qbLevelDeepTotal === 0 ? c.red : c.text }}>~{qbLevelDeepTotal.toLocaleString()}</span>
-                      <span>of {TOTAL_ROW_COUNT.toLocaleString()} assets match</span>
-                      {qbLevelDeepTotal === 0 && <span style={{ color: c.red, fontSize: 11 }}>— no matches, adjust filters</span>}
-                      {qbLevelDeepTotal === TOTAL_ROW_COUNT && qbLevelDeepTotal > 0 && <span style={{ color: c.textTer, fontSize: 11 }}>— set filter values to narrow results</span>}
-                    </div>
-                  )}
-
-                  {/* Empty state — shown only when no categories added */}
-                  {qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0 && (
-                    <div style={{ padding: "40px 24px", textAlign: "center" }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: c.textSec, marginBottom: 6 }}>No Categories Added Yet</div>
-                      <div style={{ fontSize: 12, color: c.textTer, lineHeight: 1.6 }}>Select a category from the left to start.</div>
-                    </div>
-                  )}
-
-                  {/* Filter group targeting hint — only when multiple groups */}
-                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.length > 1 && (
-                    <div style={{ fontSize: 11, color: c.textTer, marginBottom: 8 }}>Click a filter group to make it active, then add fields from the left.</div>
-                  )}
-
-                  {/* Groups — only shown once at least one field is added */}
-                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && qbGroups.map((grp, gi) => {
-                    const groupCriteria = qbCriteria.filter(cr => cr.groupId === grp.id);
-                    return (
-                      <React.Fragment key={grp.id}>
-                        {/* Between-group And/Or toggle */}
-                        {gi > 0 && (
-                          <div style={{ display: "flex", justifyContent: "center", padding: "3px 0" }}>
-                            <button onClick={() => toggleQbGroupLogic(grp.id)}
-                              style={{ padding: "2px 12px", borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${c.border}`, background: c.bg, color: c.textSec, textTransform: "uppercase" }}
-                              onMouseEnter={e => { e.currentTarget.style.background = "#eff4ff"; e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
-                              {qbGroupLogics[grp.id] || "and"}
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Group box — active left-border indicator only when multiple groups */}
-                        <div style={{ border: `1px solid ${c.border}`, borderLeft: qbGroups.length > 1 && activeGroupId === grp.id ? `4px solid ${c.pri}` : `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
-                          {/* Group header — clicking anywhere expands/collapses; clicking name renames */}
-                          <div
-                            onClick={() => {
-                              if (qbGroupEditingId === grp.id) return;
-                              if (qbGroups.length > 1) {
-                                // Accordion: clicking a group collapses all others, expands this one, and makes it active
-                                setQbCollapsedGroups(prev => {
-                                  const n = new Set(prev);
-                                  if (activeGroupId === grp.id) {
-                                    // Clicking already-active group: just toggle its own collapse
-                                    n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id);
-                                  } else {
-                                    // Switching to a different group: collapse all others, expand this one
-                                    qbGroups.forEach(g => { if (g.id !== grp.id) n.add(g.id); else n.delete(g.id); });
-                                  }
-                                  return n;
-                                });
-                                setActiveGroupId(grp.id);
-                              } else {
-                                // Single group: just toggle collapse
-                                setQbCollapsedGroups(prev => { const n = new Set(prev); n.has(grp.id) ? n.delete(grp.id) : n.add(grp.id); return n; });
-                              }
-                            }}
-                            style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: qbGroups.length > 1 && activeGroupId === grp.id ? "#f8fafc" : c.bg, borderBottom: groupCriteria.length > 0 && !qbCollapsedGroups.has(grp.id) ? `1px solid ${c.borderLight}` : "none", cursor: "pointer", userSelect: "none" }}>
-                            <span style={{ fontSize: 9, color: c.textTer, flexShrink: 0, width: 10, textAlign: "center" }}>
-                              {qbCollapsedGroups.has(grp.id) ? "▶" : "▼"}
-                            </span>
-                            {qbGroupEditingId === grp.id ? (
-                              <input type="text" value={qbGroupEditingName} onChange={e => setQbGroupEditingName(e.target.value)} autoFocus
-                                onClick={e => e.stopPropagation()}
-                                onBlur={() => { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); }}
-                                onKeyDown={e => { if (e.key === "Enter") { renameQbGroup(grp.id, qbGroupEditingName || grp.name); setQbGroupEditingId(null); } else if (e.key === "Escape") setQbGroupEditingId(null); }}
-                                style={{ flex: 1, padding: "2px 6px", border: `1px solid ${c.pri}`, borderRadius: 4, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                            ) : (
-                              <span
-                                onClick={e => { e.stopPropagation(); setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }}
-                                title="Click to rename"
-                                style={{ flex: 1, fontSize: 12, fontWeight: 600, color: c.textSec, cursor: "text" }}
-                                onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
-                                onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}>
-                                {grp.name}
-                              </span>
-                            )}
-                            <button onClick={e => { e.stopPropagation(); removeQbGroup(grp.id); }} title="Remove this filter group"
-                              style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 4px", display: "flex", alignItems: "center", flexShrink: 0 }}
-                              onMouseEnter={e => e.currentTarget.style.color = c.red}
-                              onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
-                          </div>
-
-                          {/* Criteria list — hidden when collapsed */}
-                          {!qbCollapsedGroups.has(grp.id) && (groupCriteria.length === 0 ? (
-                            <div style={{ padding: "10px 14px", fontSize: 12, color: c.textTer, fontStyle: "italic", background: c.white }}>
-                              {qbGroups.length > 1 && activeGroupId !== grp.id ? "Click this filter group to make it active, then add fields from the left." : "Open a category on the left and click a field to add it here."}
-                            </div>
-                          ) : (
-                            <div style={{ padding: "8px 10px", display: "flex", flexDirection: "column", gap: 0, background: c.white }}>
-                              {groupCriteria.map((cr, idx) => {
-                                const bc = CAT_COLORS[cr.catKey] || CAT_COLORS.basic;
-                                return (
-                                  <React.Fragment key={cr.id}>
-                                    {/* And/Or between criteria */}
-                                    {idx > 0 && (
-                                      <div style={{ padding: "2px 4px" }}>
-                                        <button onClick={() => toggleQbLogic(cr.id)}
-                                          style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${c.border}`, background: c.bg, color: c.textSec, textTransform: "uppercase" }}
-                                          onMouseEnter={e => { e.currentTarget.style.background = "#eff4ff"; e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; }}
-                                          onMouseLeave={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
-                                          {qbLogicOps[cr.id] || "and"}
-                                        </button>
-                                      </div>
-                                    )}
-
-                                    {/* Criterion row — list-item style with trash on far right */}
-                                    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "8px 8px", background: "#fafbfc", borderRadius: 6, border: `1px solid ${c.borderLight}` }}>
-                                      {/* Field badge */}
-                                      <span style={{ display: "inline-flex", alignItems: "center", padding: "3px 8px", borderRadius: 10, background: bc.bg, border: `1px solid ${bc.border}`, color: bc.text, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0, marginTop: 2 }}>
-                                        {cr.label}
-                                      </span>
-
-                                      {/* Controls (type-specific) */}
-                                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, minWidth: 0, alignItems: "flex-start" }}>
-                                        {cr.type === "boolean" && (
-                                          <div style={{ display: "flex", gap: 4 }}>
-                                            {["Yes", "No"].map(v => (
-                                              <button key={v} onClick={() => updateQbCriterion(cr.id, { value: v })}
-                                                style={{ padding: "4px 14px", borderRadius: 5, fontSize: 12, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${cr.value === v ? c.pri : c.border}`, background: cr.value === v ? "#eff4ff" : c.white, color: cr.value === v ? c.pri : c.textSec, fontWeight: cr.value === v ? 600 : 400 }}>{v}</button>
-                                            ))}
-                                          </div>
-                                        )}
-
-                                        {cr.type === "multiselect" && (() => {
-                                          const msSearch = qbMultiselectSearches[cr.id] || "";
-                                          const selectedCount = (cr.value || []).length;
-                                          const isOpen = !!qbMultiselectDropOpen[cr.id];
-                                          const dropRect = qbMultiselectDropRect[cr.id];
-                                          const filteredOpts = (cr.options || []).filter(o => !msSearch || o.toLowerCase().includes(msSearch.toLowerCase()));
-                                          return (
-                                            <div style={{ width: "100%", maxWidth: 320 }}>
-                                              {/* Collapsed trigger */}
-                                              <button
-                                                onFocus={e => {
-                                                  const rect = e.currentTarget.getBoundingClientRect();
-                                                  setQbMultiselectDropRect(prev => ({ ...prev, [cr.id]: { top: rect.bottom + 2, left: rect.left, width: Math.max(rect.width, 220) } }));
-                                                  setQbMultiselectDropOpen(prev => ({ ...prev, [cr.id]: true }));
-                                                }}
-                                                onBlur={() => setTimeout(() => setQbMultiselectDropOpen(prev => ({ ...prev, [cr.id]: false })), 300)}
-                                                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "5px 8px", border: `1px solid ${isOpen ? c.pri : c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, cursor: "pointer", color: selectedCount > 0 ? c.text : c.textTer, textAlign: "left" }}>
-                                                <span>{selectedCount === 0 ? "Any (no filter)" : `${selectedCount} selected`}</span>
-                                                <span style={{ fontSize: 9, color: c.textTer }}>▾</span>
-                                              </button>
-                                              {/* Selected chips */}
-                                              {selectedCount > 0 && (
-                                                <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginTop: 4 }}>
-                                                  {(cr.value || []).map(v => (
-                                                    <span key={v} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "1px 5px 1px 7px", background: "#eff4ff", border: `1px solid #c7d7f7`, borderRadius: 8, fontSize: 10, color: c.pri }}>
-                                                      {v}
-                                                      <button onMouseDown={e => e.preventDefault()} onClick={() => { const curr = cr.value || []; updateQbCriterion(cr.id, { value: curr.filter(x => x !== v) }); }}
-                                                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", alignItems: "center" }}><XIcon size={9} /></button>
-                                                    </span>
-                                                  ))}
-                                                </div>
-                                              )}
-                                              {/* Floating dropdown */}
-                                              {isOpen && dropRect && (
-                                                <div style={{ position: "fixed", top: dropRect.top, left: dropRect.left, width: dropRect.width, maxHeight: 240, background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 3000, display: "flex", flexDirection: "column" }}>
-                                                  <div style={{ padding: "6px 8px", borderBottom: `1px solid ${c.borderLight}`, position: "relative" }}>
-                                                    <input type="text" value={msSearch}
-                                                      onChange={e => setQbMultiselectSearches(prev => ({ ...prev, [cr.id]: e.target.value }))}
-                                                      onMouseDown={e => e.stopPropagation()}
-                                                      onFocus={e => e.stopPropagation()}
-                                                      placeholder="Search…"
-                                                      style={{ width: "100%", padding: "4px 8px 4px 24px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
-                                                    <SearchIcon size={11} style={{ position: "absolute", left: 15, top: 13, color: c.textTer, pointerEvents: "none" }} />
-                                                  </div>
-                                                  <div style={{ overflowY: "auto", flex: 1 }}>
-                                                    {filteredOpts.length === 0 && <div style={{ padding: "8px 12px", fontSize: 11, color: c.textTer, fontStyle: "italic" }}>No matches</div>}
-                                                    {filteredOpts.map(opt => {
-                                                      const isChecked = (cr.value || []).includes(opt);
-                                                      return (
-                                                        <label key={opt} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", cursor: "pointer", fontSize: 12, background: isChecked ? "#f0f4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
-                                                          onMouseDown={e => e.preventDefault()}
-                                                          onMouseEnter={e => { if (!isChecked) e.currentTarget.style.background = c.bg; }}
-                                                          onMouseLeave={e => { e.currentTarget.style.background = isChecked ? "#f0f4ff" : c.white; }}>
-                                                          <input type="checkbox" checked={isChecked} onChange={() => {
-                                                            const curr = cr.value || [];
-                                                            updateQbCriterion(cr.id, { value: curr.includes(opt) ? curr.filter(x => x !== opt) : [...curr, opt] });
-                                                          }} />
-                                                          <span style={{ color: isChecked ? c.pri : c.text, fontWeight: isChecked ? 500 : 400 }}>{opt}</span>
-                                                        </label>
-                                                      );
-                                                    })}
-                                                  </div>
-                                                </div>
-                                              )}
-                                            </div>
-                                          );
-                                        })()}
-
-                                        {cr.type === "select" && (
-                                          <select value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
-                                            style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", maxWidth: 280 }}>
-                                            {(cr.options || []).map(o => <option key={o} value={o}>{o}</option>)}
-                                          </select>
-                                        )}
-
-                                        {cr.type === "date" && (
-                                          <div style={{ display: "flex", flexDirection: "column", gap: 4, width: "100%", maxWidth: 320 }}>
-                                            <select value={cr.op || "Specific"} onChange={e => updateQbCriterion(cr.id, { op: e.target.value, value: "" })}
-                                              style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
-                                              {["Today", "Last 7 Days", "Month to Date", "Year to Date", "Previous Month", "Previous Calendar Year", "Specific", "Less than or equal", "Greater than or equal", "Range", "Has Value", "No Value"].map(o => <option key={o} value={o}>{o}</option>)}
-                                            </select>
-                                            {["Specific", "Less than or equal", "Greater than or equal"].includes(cr.op || "Specific") && (
-                                              <input type="date" value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
-                                                style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                                            )}
-                                            {(cr.op || "Specific") === "Range" && (
-                                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                                <input type="date" value={cr.value?.start || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), start: e.target.value } })}
-                                                  style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                                                <span style={{ fontSize: 11, color: c.textTer }}>to</span>
-                                                <input type="date" value={cr.value?.end || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), end: e.target.value } })}
-                                                  style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
-                                              </div>
-                                            )}
-                                          </div>
-                                        )}
-
-                                        {(cr.type === "text" || cr.type === "number") && (
-                                          <div style={{ display: "flex", gap: 5, width: "100%", maxWidth: 360 }}>
-                                            <select value={cr.op || (cr.type === "number" ? "Equal" : "Contains")} onChange={e => updateQbCriterion(cr.id, { op: e.target.value })}
-                                              style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", flexShrink: 0 }}>
-                                              {(cr.type === "number"
-                                                ? ["Equal", "Greater Than Or Equal", "Less Than Or Equal", "Has Value", "No Value"]
-                                                : ["Contains", "Equal", "Starts With", "Does Not Contain", "Does Not Start With", "Has Value", "No Value"]
-                                              ).map(o => <option key={o} value={o}>{o}</option>)}
-                                            </select>
-                                            {!["Has Value", "No Value"].includes(cr.op || (cr.type === "number" ? "Equal" : "Contains")) && (
-                                              <input type={cr.type === "number" ? "number" : "text"} value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder={cr.type === "number" ? "0" : "Value…"}
-                                                style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", minWidth: 0 }} />
-                                            )}
-                                          </div>
-                                        )}
-                                      </div>
-                                      {/* Subtle divider + trash icon on far right */}
-                                      <div style={{ width: 1, background: c.borderLight, alignSelf: "stretch", flexShrink: 0, marginLeft: 2 }} />
-                                      <button onClick={() => removeQbCriterion(cr.id)} title="Remove this filter"
-                                        style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 2px", display: "flex", alignItems: "center", flexShrink: 0, marginTop: 1 }}
-                                        onMouseEnter={e => e.currentTarget.style.color = c.red}
-                                        onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
-                                    </div>
-                                  </React.Fragment>
-                                );
-                              })}
-                            </div>
-                          ))}
-                        </div>
-                      </React.Fragment>
-                    );
-                  })}
-
-                  {/* Add group button — only when criteria exist */}
-                  {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
-                    <button onClick={addQbGroup}
-                      style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, padding: "8px 12px", borderRadius: 5, border: `1px dashed ${c.border}`, background: "none", cursor: "pointer", fontFamily: "inherit", marginBottom: 12, width: "100%" }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = c.textSec; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; }}>
-                      <span style={{ fontSize: 12, color: c.textSec, textDecoration: "underline" }}>+ Add filter group</span>
-                      <span style={{ fontSize: 11, color: c.textTer, textDecoration: "none" }}>OR logic between filter groups</span>
-                    </button>
-                  )}
-
-                  {/* Other Queries inclusions indicator */}
-                  {qbSelectedOtherQueries.size > 0 && (
-                    <div style={{ padding: "8px 12px", background: "#f1f5f9", border: `1px solid #cbd5e1`, borderRadius: 8, marginBottom: 12, fontSize: 12, color: "#475569", lineHeight: 1.6 }}>
-                      <span style={{ fontWeight: 600, color: c.text }}>Also includes results from: </span>
-                      {[...qbSelectedOtherQueries].map((id, i) => {
-                        const cfg = savedQueryList.find(x => x.id === id);
-                        return cfg ? <span key={id}>{i > 0 ? ", " : ""}<span style={{ fontWeight: 500 }}>{cfg.name}</span></span> : null;
-                      })}
-                      <span style={{ color: c.textTer }}> (combined with OR)</span>
-                    </div>
-                  )}
-
-                </>)}{/* end filters tab right panel */}
-
-                {/* ── COLUMNS TAB RIGHT PANEL ── */}
-                {qbLeftTab === "columns" && (<>
-
-                  {/* Section: Column order */}
-                  <div style={{ marginBottom: 20 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8 }}>Included Columns</div>
-
-                    {qbSelectedCols.length === 0 ? (
-                      <div style={{ padding: "20px 16px", textAlign: "center", border: `1px dashed ${c.border}`, borderRadius: 6 }}>
-                        <div style={{ fontSize: 12, color: c.textTer }}>No columns selected — use the list on the left to add columns.</div>
-                      </div>
-                    ) : (
-                      <div style={{ border: `1px solid ${c.border}`, borderRadius: 6, overflow: "hidden" }}>
-                        {qbSelectedCols.map((colId, idx) => {
-                          const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === colId);
-                          if (!col) return null;
-                          const isFirst = idx === 0;
-                          const isLast = idx === qbSelectedCols.length - 1;
-                          return (
-                            <div key={colId} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", background: idx % 2 === 0 ? c.white : c.bg, borderBottom: !isLast ? `1px solid ${c.borderLight}` : "none" }}>
-                              {/* Position number */}
-                              <span style={{ fontSize: 10, color: c.textTer, fontWeight: 600, minWidth: 16, textAlign: "right", flexShrink: 0 }}>{idx + 1}</span>
-                              {/* Column name */}
-                              <span style={{ flex: 1, fontSize: 12, color: c.text, fontWeight: 500 }}>{col.label}</span>
-                              {/* Reorder: move left (up in order) */}
-                              <button onClick={() => {
-                                if (isFirst) return;
-                                setQbSelectedCols(prev => { const n = [...prev]; [n[idx - 1], n[idx]] = [n[idx], n[idx - 1]]; return n; });
-                              }} title="Move left in report" disabled={isFirst}
-                                style={{ background: "none", border: "none", cursor: isFirst ? "default" : "pointer", color: isFirst ? c.borderLight : c.textTer, padding: "2px 3px", display: "flex", alignItems: "center", flexShrink: 0 }}
-                                onMouseEnter={e => { if (!isFirst) e.currentTarget.style.color = c.textSec; }}
-                                onMouseLeave={e => { e.currentTarget.style.color = isFirst ? c.borderLight : c.textTer; }}>
-                                ←
-                              </button>
-                              {/* Reorder: move right (down in order) */}
-                              <button onClick={() => {
-                                if (isLast) return;
-                                setQbSelectedCols(prev => { const n = [...prev]; [n[idx], n[idx + 1]] = [n[idx + 1], n[idx]]; return n; });
-                              }} title="Move right in report" disabled={isLast}
-                                style={{ background: "none", border: "none", cursor: isLast ? "default" : "pointer", color: isLast ? c.borderLight : c.textTer, padding: "2px 3px", display: "flex", alignItems: "center", flexShrink: 0 }}
-                                onMouseEnter={e => { if (!isLast) e.currentTarget.style.color = c.textSec; }}
-                                onMouseLeave={e => { e.currentTarget.style.color = isLast ? c.borderLight : c.textTer; }}>
-                                →
-                              </button>
-                              {/* Divider */}
-                              <div style={{ width: 1, background: c.borderLight, alignSelf: "stretch", flexShrink: 0, marginLeft: 2 }} />
-                              {/* Remove */}
-                              <button onClick={() => toggleQbCol(colId)} title="Remove column"
-                                style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 2px", display: "flex", alignItems: "center", flexShrink: 0 }}
-                                onMouseEnter={e => e.currentTarget.style.color = c.red}
-                                onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
+                              )}
                             </div>
                           );
                         })}
                       </div>
-                    )}
-                  </div>
+                    );
+                  })()}
 
-                  {/* Section: Sort */}
-                  <div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 8 }}>Sort</div>
-                    {qbSelectedCols.length === 0 ? (
-                      <div style={{ fontSize: 12, color: c.textTer, fontStyle: "italic" }}>Add columns first to configure sorting.</div>
+                  {/* RIGHT: Active filters + report name */}
+                  <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px" }}>
+                    <div style={{ marginBottom: 16 }}>
+                      <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: c.textTer, marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.5px" }}>Report name</label>
+                      {qbEditSource?.from === "sl-new" ? (
+                        <input type="text" value={qbNewQueryName} onChange={e => setQbNewQueryName(e.target.value)} placeholder="Name your report…" style={{ width: "100%", padding: "8px 10px", border: `1px solid ${c.pri}`, borderRadius: 6, fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit", color: c.text }} />
+                      ) : (
+                        <input type="text" value={editName} readOnly style={{ width: "100%", padding: "8px 10px", border: `1px solid ${c.border}`, borderRadius: 6, fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit", color: c.text, background: c.bg }} />
+                      )}
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                      <label style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        Active filters{qbCriteria.length > 0 ? ` (${qbCriteria.length})` : ""}
+                      </label>
+                      {qbCriteria.length > 0 && (
+                        <button onClick={() => { setQbCriteria([]); setQbLogicOps({}); setQbGroups([{ id: 1, name: "Filter group 1" }]); setQbGroupLogics({}); setActiveGroupId(1); }} style={{ background: "none", border: "none", fontSize: 12, color: c.red, cursor: "pointer", fontFamily: "inherit", fontWeight: 500, padding: 0 }}>Clear all</button>
+                      )}
+                    </div>
+
+                    {qbCriteria.length === 0 ? (
+                      <div style={{ padding: "20px 14px", background: c.bg, borderRadius: 8, border: `1px dashed ${c.border}`, textAlign: "center", marginBottom: 12 }}>
+                        <div style={{ fontSize: 13, color: c.textSec, marginBottom: 4 }}>No filters added yet.</div>
+                        <div style={{ fontSize: 12, color: c.textTer }}>Select fields from the left to filter your assets.</div>
+                      </div>
                     ) : (
-                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                        {/* Sort column */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 12, color: c.textSec, flexShrink: 0, minWidth: 48 }}>Sort by</span>
-                          <select
-                            value={qbSelectedCols.includes(qbSortCol) ? qbSortCol : qbSelectedCols[0]}
-                            onChange={e => setQbSortCol(e.target.value)}
-                            style={{ flex: 1, padding: "6px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
-                            {qbSelectedCols.map(id => {
-                              const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === id);
-                              return col ? <option key={id} value={id}>{col.label}</option> : null;
-                            })}
-                          </select>
-                        </div>
-                        {/* Direction segmented control */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 12, color: c.textSec, flexShrink: 0, minWidth: 48 }}>Order</span>
-                          <div style={{ display: "flex", border: `1px solid ${c.border}`, borderRadius: 5, overflow: "hidden", flexShrink: 0 }}>
-                            {[{ val: "asc", label: "A → Z" }, { val: "desc", label: "Z → A" }].map(opt => (
-                              <button key={opt.val} onClick={() => setQbSortDir(opt.val)}
-                                style={{ padding: "5px 14px", fontSize: 12, fontFamily: "inherit", fontWeight: qbSortDir === opt.val ? 600 : 400, cursor: "pointer", border: "none", borderRight: opt.val === "asc" ? `1px solid ${c.border}` : "none", background: qbSortDir === opt.val ? "#eff4ff" : c.white, color: qbSortDir === opt.val ? c.pri : c.textSec, outline: "none" }}>
-                                {opt.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 12 }}>
+                        {(() => {
+                          const BADGE_COLORS = {
+                            basic:        { bg: "#eff6ff", border: "#bfdbfe", text: "#1d4ed8" },
+                            depreciation: { bg: "#fffbeb", border: "#fde68a", text: "#b45309" },
+                            gl:           { bg: "#f0fdfa", border: "#99f6e4", text: "#0f766e" },
+                            warranty:     { bg: "#ecfdf5", border: "#a7f3d0", text: "#047857" },
+                            dates:        { bg: "#f5f2f9", border: "#d4cce3", text: "#6d4c8a" },
+                            savedQueries: { bg: "#f1f5f9", border: "#cbd5e1", text: "#475569" },
+                          };
+                          return qbCriteria.map((cr, idx) => {
+                            const bc = BADGE_COLORS[cr.catKey] || BADGE_COLORS.basic;
+                            return (
+                              <React.Fragment key={cr.id}>
+                                {idx > 0 && (
+                                  <div style={{ padding: "2px 6px" }}>
+                                    <button onClick={() => toggleQbLogic(cr.id)}
+                                      style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${c.border}`, background: c.bg, color: c.textSec, textTransform: "uppercase" }}
+                                      onMouseEnter={e => { e.currentTarget.style.background = "#eff4ff"; e.currentTarget.style.borderColor = c.pri; e.currentTarget.style.color = c.pri; }}
+                                      onMouseLeave={e => { e.currentTarget.style.background = c.bg; e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textSec; }}>
+                                      {(qbLogicOps[cr.id] || "and")}
+                                    </button>
+                                  </div>
+                                )}
+                                <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 8px", background: c.white, borderRadius: 6, border: `1px solid ${c.border}`, minHeight: 36, flexWrap: "nowrap" }}>
+                                  {/* Colored field badge */}
+                                  <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: 10, background: bc.bg, border: `1px solid ${bc.border}`, color: bc.text, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>{cr.label}</span>
+                                  {cr.type === "boolean" ? (
+                                    <div style={{ display: "flex", gap: 3, marginLeft: "auto" }}>
+                                      {["Yes", "No"].map(v => (
+                                        <button key={v} onClick={() => updateQbCriterion(cr.id, { value: v })} style={{ padding: "3px 9px", borderRadius: 4, fontSize: 11, cursor: "pointer", fontFamily: "inherit", border: `1px solid ${cr.value === v ? c.pri : c.border}`, background: cr.value === v ? "#eff4ff" : c.white, color: cr.value === v ? c.pri : c.textSec, fontWeight: cr.value === v ? 600 : 400 }}>{v}</button>
+                                      ))}
+                                    </div>
+                                  ) : cr.type === "select" ? (
+                                    <select value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} style={{ padding: "4px 6px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", maxWidth: 120, marginLeft: "auto" }}>
+                                      {(cr.options || []).map(o => <option key={o} value={o}>{o}</option>)}
+                                    </select>
+                                  ) : (
+                                    <div style={{ display: "flex", gap: 4, alignItems: "center", marginLeft: "auto" }}>
+                                      <select value={cr.op} onChange={e => updateQbCriterion(cr.id, { op: e.target.value })} style={{ padding: "4px 6px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
+                                        {(cr.type === "date" ? ["on", "before", "after", "between"] : cr.type === "number" ? ["=", ">", "<", "between"] : ["contains", "equals", "starts with", "is empty"]).map(o => <option key={o} value={o}>{o}</option>)}
+                                      </select>
+                                      {cr.op !== "is empty" && (
+                                        <input type={cr.type === "date" ? "date" : "text"} value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder={cr.type === "number" ? "0.00" : "Value…"} style={{ padding: "4px 7px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", width: 90 }} />
+                                      )}
+                                    </div>
+                                  )}
+                                  <button onClick={() => removeQbCriterion(cr.id)} style={{ background: "none", border: "none", cursor: "pointer", padding: "3px", color: c.textTer, display: "flex", borderRadius: 4, flexShrink: 0 }}
+                                    onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                    onMouseLeave={e => e.currentTarget.style.color = c.textTer}><XIcon size={12} /></button>
+                                </div>
+                              </React.Fragment>
+                            );
+                          });
+                        })()}
                       </div>
                     )}
+
+                    {qbPlainSummaryParts.length > 0 && (
+                      <div style={{ padding: "8px 10px", background: "#f0f4ff", border: `1px solid #c7d7f7`, borderRadius: 6, marginBottom: 16, fontSize: 12, color: c.textSec, lineHeight: 1.7 }}>
+                        <span style={{ fontWeight: 600, color: c.text }}>~{qbLevelDeepTotal}</span> of {TOTAL_ROW_COUNT} assets match where{" "}
+                        {qbPlainSummaryParts.map((g, gi) => (
+                          <React.Fragment key={g.groupId}>
+                            {g.groupLogic && <span style={{ fontWeight: 700, color: c.pri, margin: "0 3px" }}>{g.groupLogic}</span>}
+                            {qbPlainSummaryParts.length > 1 && <span style={{ color: c.textTer }}>(</span>}
+                            {g.criteria.map((p, i) => (
+                              <React.Fragment key={i}>
+                                <span style={{ fontWeight: 500, color: c.text }}>{p.label}</span>
+                                {" "}<span style={{ color: c.textTer }}>{p.valText}</span>
+                                {p.nextLogic && <span style={{ fontWeight: 700, color: "#9b59b6", margin: "0 3px" }}>{p.nextLogic}</span>}
+                              </React.Fragment>
+                            ))}
+                            {qbPlainSummaryParts.length > 1 && <span style={{ color: c.textTer }}>)</span>}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* ── Columns — part of query config, not formatting ── */}
+                    <div style={{ borderTop: `1px solid ${c.borderLight}`, paddingTop: 14, marginTop: 4 }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px" }}>Columns <span style={{ color: c.textTer, fontWeight: 400, textTransform: "none" }}>({qbSelectedCols.length} selected)</span></label>
+                        <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 11, color: c.textSec, cursor: "pointer", fontFamily: "inherit", fontWeight: 500 }}>Reset to default</button>
+                      </div>
+                      {/* Selected columns list with ordering */}
+                      <div style={{ border: `1px solid ${c.border}`, borderRadius: 7, overflow: "hidden", marginBottom: 10 }}>
+                        {qbSelectedCols.length === 0 && (
+                          <div style={{ padding: "12px", fontSize: 12, color: c.textTer, fontStyle: "italic", textAlign: "center" }}>No columns selected</div>
+                        )}
+                        {qbSelectedCols.map((id, idx) => {
+                          const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === id);
+                          return (
+                            <div key={id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 8px", background: idx % 2 === 0 ? c.white : c.bg, borderBottom: idx < qbSelectedCols.length - 1 ? `1px solid ${c.borderLight}` : "none" }}>
+                              <span style={{ fontSize: 12, color: c.text, fontWeight: 500, flex: 1 }}>{col?.label || id}</span>
+                              <button onClick={() => moveQbCol(id, "up")} disabled={idx === 0} title="Move up" style={{ background: "none", border: "none", cursor: idx === 0 ? "default" : "pointer", padding: "2px 3px", color: idx === 0 ? c.borderLight : c.textTer, display: "flex", borderRadius: 3 }}
+                                onMouseEnter={e => { if (idx > 0) e.currentTarget.style.color = c.text; }}
+                                onMouseLeave={e => { if (idx > 0) e.currentTarget.style.color = c.textTer; }}>▲</button>
+                              <button onClick={() => moveQbCol(id, "down")} disabled={idx === qbSelectedCols.length - 1} title="Move down" style={{ background: "none", border: "none", cursor: idx === qbSelectedCols.length - 1 ? "default" : "pointer", padding: "2px 3px", color: idx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, display: "flex", borderRadius: 3, fontSize: 10 }}
+                                onMouseEnter={e => { if (idx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.text; }}
+                                onMouseLeave={e => { if (idx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.textTer; }}>▼</button>
+                              <button onClick={() => toggleQbCol(id)} title="Remove" style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 3px", color: c.textTer, display: "flex", borderRadius: 3 }}
+                                onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                onMouseLeave={e => e.currentTarget.style.color = c.textTer}><XIcon size={11} /></button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {/* Available columns picker (collapsed by default) */}
+                      <button onClick={() => setQbColPickerOpen(!qbColPickerOpen)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px", borderRadius: 6, border: `1px solid ${c.border}`, background: c.white, cursor: "pointer", fontFamily: "inherit", fontSize: 12, fontWeight: 500, color: c.textSec, marginBottom: qbColPickerOpen ? 0 : 4 }}>
+                        <span>Add columns</span>
+                        {qbColPickerOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                      </button>
+                      {qbColPickerOpen && (
+                        <div style={{ border: `1px solid ${c.border}`, borderTop: "none", borderRadius: "0 0 7px 7px", overflow: "hidden", maxHeight: 200, overflowY: "auto", marginBottom: 4 }}>
+                          {QB_AVAILABLE_COLUMNS.filter(col => !qbSelectedCols.includes(col.id)).map((col, idx, arr) => (
+                            <div key={col.id} onClick={() => toggleQbCol(col.id)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 12px", cursor: "pointer", background: c.white, borderBottom: idx < arr.length - 1 ? `1px solid ${c.borderLight}` : "none" }}
+                              onMouseEnter={e => e.currentTarget.style.background = c.bg}
+                              onMouseLeave={e => e.currentTarget.style.background = c.white}>
+                              <span style={{ color: c.textTer, fontSize: 14, lineHeight: 0, fontWeight: 300 }}>+</span>
+                              <span style={{ fontSize: 12, color: c.text }}>{col.label}</span>
+                            </div>
+                          ))}
+                          {QB_AVAILABLE_COLUMNS.filter(col => !qbSelectedCols.includes(col.id)).length === 0 && (
+                            <div style={{ padding: "10px 12px", fontSize: 12, color: c.textTer, fontStyle: "italic" }}>All columns selected</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                </div>
+              )}
 
-                </>)}{/* end columns tab right panel */}
-
-              </div>{/* end RIGHT PANEL */}
-
+              {/* Layout & Formatting tab — Output format + Page layout (NO columns) */}
+              {qbSidebarTab === "output" && (
+                <div style={{ padding: "16px", flex: 1, overflowY: "auto" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>Output Format</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 20 }}>
+                    {[
+                      { val: "detail", label: "Detail", desc: "Full record view" },
+                      { val: "summary", label: "Summary", desc: "Aggregated totals" },
+                      { val: "additions", label: "Additions / Deletions", desc: "Period changes" },
+                      { val: "name", label: "Name List", desc: "Compact listing" },
+                    ].map(t => (
+                      <button key={t.val} onClick={() => setQbOutputFormat(t.val)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 10px", borderRadius: 6, border: `1px solid ${qbOutputFormat === t.val ? c.text : c.border}`, background: qbOutputFormat === t.val ? c.tagBg : c.white, cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
+                        <div style={{ width: 15, height: 15, borderRadius: 8, border: `2px solid ${qbOutputFormat === t.val ? c.text : c.border}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          {qbOutputFormat === t.val && <div style={{ width: 7, height: 7, borderRadius: 4, background: c.text }} />}
+                        </div>
+                        <div>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: c.text }}>{t.label}</span>
+                          <span style={{ fontSize: 12, color: c.textTer, marginLeft: 6 }}>{t.desc}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>Page Layout</div>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+                    {["Portrait", "Landscape"].map(o => (
+                      <button key={o} style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: `1px solid ${o === "Portrait" ? c.text : c.border}`, background: o === "Portrait" ? c.tagBg : c.white, cursor: "pointer", fontSize: 13, fontWeight: 500, fontFamily: "inherit", color: c.text }}>{o}</button>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Paper Size</div>
+                  <select style={{ width: "100%", padding: "8px 10px", border: `1px solid ${c.border}`, borderRadius: 6, fontSize: 13, fontFamily: "inherit", marginBottom: 16, background: c.white, color: c.text }}>
+                    <option>Letter (8.5 × 11)</option><option>Legal (8.5 × 14)</option><option>A4</option>
+                  </select>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>Header / Footer</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {[{ label: "Show report title", checked: true }, { label: "Show page numbers", checked: true }, { label: "Show run date/time", checked: false }].map((opt, i) => (
+                      <label key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: c.text, cursor: "pointer" }}>
+                        <div style={{ width: 15, height: 15, borderRadius: 3, border: `1.5px solid ${opt.checked ? c.text : c.border}`, background: opt.checked ? c.text : c.white, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          {opt.checked && <CheckIcon size={9} style={{ color: c.white }} />}
+                        </div>
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          {/* end two-panel builder */}
 
+            {/* Right: Live preview — collapsible panel */}
+            <div style={{ width: qbPreviewOpen ? 280 : 36, minWidth: 0, flexShrink: 0, background: c.bg, display: "flex", flexDirection: "column", borderLeft: `1px solid ${c.border}` }}>
+              <button onClick={() => setQbPreviewOpen(o => !o)} title={qbPreviewOpen ? "Hide preview" : "Show preview"} style={{ display: "flex", alignItems: "center", gap: 6, padding: "10px 12px", background: "none", border: "none", borderBottom: `1px solid ${c.border}`, cursor: "pointer", fontFamily: "inherit", color: c.textSec, fontSize: 12, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0, width: "100%" }}>
+                {qbPreviewOpen ? <><ChevronRight size={13} style={{ flexShrink: 0 }} /><span>Preview</span></> : <ChevronLeft size={13} />}
+              </button>
+              {qbPreviewOpen && <div style={{ overflowY: "auto", padding: 16, flex: 1 }}>
+              {/* Success toast after applying edits */}
+              {showEditAppliedToast && (
+                <div style={{ background: c.greenLight, border: `1px solid ${c.greenBorder}`, borderRadius: 10, padding: "12px 16px", marginBottom: 10, display: "flex", alignItems: "center", gap: 8, color: c.green, animation: "fadeIn .25s ease" }}>
+                  <CheckIcon size={16} />
+                  <span style={{ fontSize: 13, fontWeight: 500 }}>Changes applied to "{qbEditSource?.name || "Query"}".</span>
+                  <button onClick={() => setShowEditAppliedToast(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.green, padding: 2, marginLeft: "auto", opacity: 0.6 }}><XIcon size={14} /></button>
+                </div>
+              )}
+              {/* Save config toast */}
+              {showConfigToast && (
+                <div style={{ background: c.greenLight, border: `1px solid ${c.greenBorder}`, borderRadius: 10, padding: "12px 16px", marginBottom: 10, display: "flex", alignItems: "center", gap: 8, color: c.green }}>
+                  <CheckIcon size={16} />
+                  <span style={{ fontSize: 13, fontWeight: 500 }}>Configuration "{saveConfigName || "Untitled"}" saved.</span>
+                  <button onClick={() => setShowConfigToast(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.green, padding: 2, marginLeft: "auto", opacity: 0.6 }}><XIcon size={14} /></button>
+                </div>
+              )}
+              {/* Save config panel (when triggered from level-deep) */}
+              {activePanel === "saveConfig" && (!saveConfigDone || saveConfigEditing) && (
+                <div style={{ background: c.white, border: `1px solid ${c.border}`, borderRadius: 10, padding: 18, marginBottom: 14 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: c.text, marginBottom: 4 }}>{saveConfigDone ? "Edit Configuration" : "Save as Custom Configuration"}</div>
+                  <div style={{ fontSize: 12, color: c.textSec, marginBottom: 12 }}>Create a reusable report template with your current filters, formatting, and column selections.</div>
+                  <div style={{ marginBottom: 10 }}><label style={{ display: "block", fontSize: 12, fontWeight: 400, color: c.textSec, marginBottom: 5 }}>Configuration Name</label><input type="text" value={saveConfigName} onChange={e => setSaveConfigName(e.target.value)} placeholder="e.g., Monthly Board Review" style={{ width: "100%", padding: "7px 10px", border: `1px solid ${c.border}`, borderRadius: 6, fontSize: 13, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} /></div>
+                  <div style={{ marginBottom: 12 }}>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 400, color: c.textSec, marginBottom: 5 }}>Who can access this</label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      {[
+                        { val: "private", label: "Only me", desc: "Only you can see and use this configuration", icon: <LockIcon size={12} /> },
+                        { val: "shared", label: "My organization", desc: "Anyone in your organization can see and use this", icon: <UsersIcon size={12} /> },
+                      ].map(v => (
+                        <button key={v.val} onClick={() => setSaveConfigVisibility(v.val)} style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "10px 12px", borderRadius: 6, border: `1px solid ${saveConfigVisibility === v.val ? c.text : c.border}`, background: saveConfigVisibility === v.val ? c.tagBg : c.white, cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
+                          <span style={{ marginTop: 1, color: saveConfigVisibility === v.val ? c.text : c.textSecTer }}>{v.icon}</span>
+                          <div>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: saveConfigVisibility === v.val ? c.text : c.textSec }}>{v.label}</div>
+                            <div style={{ fontSize: 11, color: saveConfigVisibility === v.val ? c.text : c.textSecTer, opacity: 0.8, marginTop: 1 }}>{v.desc}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <Btn size="sm" onClick={() => { setSaveConfigDone(true); setSaveConfigEditing(false); setShowConfigToast(true); setActivePanel(null); setTimeout(() => setShowConfigToast(false), 4000); }} icon={<BookmarkIcon size={12} />}>{saveConfigDone ? "Save Changes" : "Save Configuration"}</Btn>
+                    <Btn variant="ghost" size="sm" onClick={() => { if (saveConfigDone) { setSaveConfigEditing(false); } else { setActivePanel(null); } }}>Cancel</Btn>
+                  </div>
+                </div>
+              )}
+              {/* Preview notice */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, padding: "8px 12px", background: "#f0f3f7", border: `1px solid #dfe4eb`, borderRadius: 8 }}>
+                <span style={{ width: 22, height: 22, borderRadius: 11, background: "#7a8599", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><EyeIcon size={12} style={{ color: "#fff" }} /></span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: "#5b6577", flex: 1 }}>{isEditing ? "Preview — changes update in real time." : "Report preview — read-only view."}</span>
+              </div>
+
+              {/* Report card */}
+              <div style={{ background: c.white, borderRadius: 4, boxShadow: "0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+                <div style={{ padding: "20px 28px 14px" }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: c.text, marginBottom: 4 }}>{editName}</div>
+                  <div style={{ fontSize: 12, color: c.textSec, lineHeight: 1.7 }}>
+                    <span><span style={{ color: c.textTer }}>Entity:</span> {entity}</span>
+                    <span style={{ margin: "0 8px", color: c.border }}>|</span>
+                    <span><span style={{ color: c.textTer }}>Format:</span> {isEditing ? ({ detail: "Detail", summary: "Summary", additions: "Additions / Deletions", name: "Name List" })[qbOutputFormat] || qbOutputFormat : editDetails.format}</span>
+                  </div>
+                </div>
+                {/* Filter status */}
+                <div style={{ padding: "8px 28px", borderTop: `1px solid ${c.borderLight}`, display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: c.textSec }}>
+                  <span style={{ width: 6, height: 6, borderRadius: 3, background: (isEditing ? qbCriteria.length : editDetails.filtersList.length) > 0 ? c.green : c.textTer, flexShrink: 0 }} />
+                  {isEditing ? (
+                    qbCriteria.length === 0
+                      ? <span>Showing all assets — {TOTAL_ROW_COUNT} records in full dataset</span>
+                      : editPreviewRows.length === 0
+                        ? <span style={{ color: c.red }}>No assets match these filters</span>
+                        : <span>~{qbSimulatedTotal} matching asset{qbSimulatedTotal !== 1 ? "s" : ""} in full dataset ({editPreviewRows.length} shown in preview)</span>
+                  ) : (
+                    editDetails.filtersList.length === 0
+                      ? <span>No filters — showing all assets</span>
+                      : <span>{editDetails.filtersList.length} filter{editDetails.filtersList.length !== 1 ? "s" : ""} applied</span>
+                  )}
+                </div>
+                {/* Preview table */}
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead><tr style={{ background: "#f5f5f5", borderTop: `1px solid ${c.borderLight}` }}>
+                      {editPreviewCols.map((col, ci) => (
+                        <th key={col.id} style={{ padding: "9px 14px", textAlign: "left", fontWeight: 600, color: "#3a3a3a", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                            {col.label}
+                            <span style={{ display: "inline-flex", flexDirection: "column", lineHeight: 0, gap: 0, fontSize: 8 }}>
+                              <span style={{ color: "#3a3a3a55", lineHeight: "8px" }}>▲</span>
+                              <span style={{ color: "#3a3a3a55", lineHeight: "8px" }}>▼</span>
+                            </span>
+                          </span>
+                        </th>
+                      ))}
+                    </tr></thead>
+                    <tbody>
+                      {editPreviewRows.length > 0 ? editPreviewRows.map((row, ri) => (
+                        <tr key={ri} style={{ background: ri % 2 === 1 ? "#fafafa" : "transparent", borderTop: `1px solid ${c.borderLight}` }}>
+                          {editPreviewCols.map((col, ci) => (
+                            <td key={ci} style={{ padding: "8px 14px", color: ci === 0 ? c.text : c.textSec, fontWeight: ci === 0 ? 500 : 400, whiteSpace: "nowrap", fontSize: 13 }}>{col.dataIdx >= 0 ? (row[col.dataIdx] || "—") : "—"}</td>
+                          ))}
+                        </tr>
+                      )) : (
+                        <tr><td colSpan={editPreviewCols.length || 5} style={{ padding: "32px 14px", textAlign: "center", color: c.textTer, fontSize: 13, fontStyle: "italic" }}>
+                          No assets match these filters.
+                        </td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ padding: "10px 28px", borderTop: `1px solid ${c.borderLight}`, display: "flex", justifyContent: "space-between", fontSize: 10, color: c.textTer }}>
+                  <span>{editName} — {entity}</span>
+                  <span>Preview · Page 1</span>
+                </div>
+              </div>
+            </div>}
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div style={{ padding: "10px 20px", borderTop: `1px solid ${c.border}`, background: c.white, display: "flex", alignItems: "center", gap: 8 }}>
+            {isEditing ? (<>
+              <div style={{ flex: 1 }} />
+              <button onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); }} style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "6px 10px" }}>Reset all changes</button>
+              <Btn variant="secondary" size="sm" onClick={() => { if (!saveConfigName) setSaveConfigName(editName); togglePanel("saveConfig"); }} icon={<BookmarkIcon size={12} />}>Save to library</Btn>
+              <Btn size="sm" onClick={() => { setShowEditAppliedToast(true); setTimeout(() => setShowEditAppliedToast(false), 4000); }}>{qbEditSource?.from === "sl-new" ? "Save & run" : "Apply filters"}</Btn>
+            </>) : (<>
+              <div style={{ flex: 1 }} />
+              <button onClick={() => { setQbEditMode(true); setQbSidebarTab("setup"); setQbEditFiltersOpen(true); }} style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "6px 10px" }}><EditIcon size={13} style={{ marginRight: 4 }} /> Edit filters</button>
+              <Btn size="sm" onClick={() => { setShowEditAppliedToast(true); setTimeout(() => setShowEditAppliedToast(false), 4000); }}>Run report</Btn>
+            </>)}
+          </div>
         </div>
         );
       })()}
@@ -1796,7 +1568,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 {isQueryReport && (<>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <SectionLabel style={{ margin: 0 }}>Filters</SectionLabel>
-                    <button onClick={() => { setQueryBuilderOpen(true); setQbEditMode(true); setQbSidebarTab("setup"); }} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 9px", borderRadius: 5, border: `1px solid ${c.border}`, background: c.white, color: c.textSec, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                    <button onClick={() => { setQueryBuilderOpen(true); setQbEditMode(true); setQbSidebarTab("setup"); setQbEditFiltersOpen(true); }} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 9px", borderRadius: 5, border: `1px solid ${c.border}`, background: c.white, color: c.textSec, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                       <EditIcon size={10} /> Edit filters
                     </button>
                   </div>
@@ -1891,7 +1663,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 {isSelectionReport && (<>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: `1px solid ${c.borderLight}`, paddingTop: 14, marginTop: 4, marginBottom: 12 }}>
                     <span style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.8px" }}>Saved Queries</span>
-                    <button onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); setQbNewQueryName("New Custom Query"); setQbEditSource({ name: "New Custom Query", from: "sl-new" }); setQbEditMode(true); setQueryBuilderOpen(true); setQbSidebarTab("setup"); }} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 5, border: `1px solid ${c.pri}`, background: c.pri, color: c.white, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>+ New Custom Query</button>
+                    <button onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); setQbNewQueryName("New Custom Query"); setQbEditSource({ name: "New Custom Query", from: "sl-new" }); setQbEditMode(true); setQueryBuilderOpen(true); setQbSidebarTab("setup"); setQbEditFiltersOpen(true); }} style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 5, border: `1px solid ${c.pri}`, background: c.pri, color: c.white, fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>+ New Custom Query</button>
                   </div>
                   {/* Search + multi-select combobox */}
                   {(() => {
@@ -3300,6 +3072,7 @@ function APReportsApp() {
   const filteredStandard = currentStandard.filter(r => !r.hidden && (!searchQuery || r.name.toLowerCase().includes(searchQuery.toLowerCase()) || r.description.toLowerCase().includes(searchQuery.toLowerCase())));
 
   const filteredSaved = currentSaved.filter(cfg => {
+    if (libraryFilter === "saved-queries" && cfg.parentId !== "fa-custom-query") return false;
     if (libraryFilter === "custom" && savedReportFilter !== "All" && cfg.parentName !== savedReportFilter) return false;
     if (searchQuery && !cfg.name.toLowerCase().includes(searchQuery.toLowerCase()) && !cfg.parentName.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
@@ -3379,7 +3152,12 @@ function APReportsApp() {
                       {searchQuery && <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: 1 }}><XIcon size={13} /></button>}
                     </div>
                     <div style={{ display: "flex", gap: 3 }}>
-                      {[{ val: "all", label: "All" }, { val: "standard", label: "Standard" }, { val: "custom", label: "Custom" }].map(f => (
+                      {[
+                        { val: "all", label: "All" },
+                        { val: "standard", label: "Standard" },
+                        { val: "custom", label: "Custom" },
+                        ...(activeApp === "fa" ? [{ val: "saved-queries", label: "Saved Custom Queries" }] : []),
+                      ].map(f => (
                         <button key={f.val} onClick={() => { setLibraryFilter(f.val); setSavedReportFilter("All"); }}
                           style={{ padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer", fontFamily: "inherit", border: "none", background: libraryFilter === f.val ? c.tagBg : "transparent", color: libraryFilter === f.val ? c.text : c.textSec }}>
                           {f.label}
@@ -3417,7 +3195,7 @@ function APReportsApp() {
                   {/* ── LIBRARY SECTIONS ── */}
                   {!searchQuery && (() => {
                     const showStd = libraryFilter === "all" || libraryFilter === "standard";
-                    const showCustom = libraryFilter === "all" || libraryFilter === "custom";
+                    const showCustom = libraryFilter === "all" || libraryFilter === "custom" || libraryFilter === "saved-queries";
                     const isAll = libraryFilter === "all";
                     const COLS = 3;
                     const INITIAL_ROWS = 2;
@@ -3494,8 +3272,8 @@ function APReportsApp() {
                         return (
                         <div style={{ marginBottom: 28 }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                            <div style={sectionHeadStyle}>Saved Reports</div>
-                            {libraryFilter === "custom" ? customSortSelect : maybeAllSort()}
+                            <div style={sectionHeadStyle}>{libraryFilter === "saved-queries" ? "Saved Custom Queries" : "Saved Reports"}</div>
+                            {(libraryFilter === "custom" || libraryFilter === "saved-queries") ? customSortSelect : maybeAllSort()}
                           </div>
                           {libraryFilter === "custom" && (
                             <div style={{ position: "relative", marginBottom: 12 }}>
