@@ -279,7 +279,9 @@ tbody tr.ar:hover .td-name{background:#fff2e6}
 
 /* Actions cell */
 .act-cell{display:flex;align-items:center;justify-content:flex-end;gap:5px}
-.an-badge{background:var(--red-bg);color:var(--red);font-size:12px;font-weight:500;padding:3px 7px;border-radius:8px;white-space:nowrap}
+.an-badge{background:var(--red-bg);color:var(--red);font-size:12px;font-weight:500;padding:3px 7px;border-radius:8px;white-space:nowrap;cursor:pointer;border:none;position:relative;font-family:inherit;line-height:1.4}
+.an-badge:hover{background:#ffd4d4}
+.an-badge .badge-tip{left:auto;right:0;width:240px}
 .ell-btn{width:28px;height:28px;border-radius:var(--r6);border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--fg3);transition:background 100ms;position:relative}
 .ell-btn:hover{background:var(--surf2);color:var(--ink)}
 .drop-menu{position:absolute;right:0;top:100%;background:#fff;border:1px solid var(--border);border-radius:var(--r8);box-shadow:var(--sh-md);z-index:40;min-width:188px;padding:4px 0;display:none}
@@ -862,6 +864,7 @@ function renderRow(person){
   const c = currentCase(person);
   const s = STATUS[c.status];
   const ar = s && s.action;
+  const arTip = ar ? (s.tip || 'Action required on this case.') : '';
   const assessDate = c.assessment ? c.assessment.date : null;
   const actions = getActions(person, c);
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
@@ -885,7 +888,7 @@ function renderRow(person){
     <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">${renderBadge(c.status, assessDate)}</td>
     <td onclick="event.stopPropagation()">
       <div class="act-cell">
-        ${ar ? '<span class="an-badge">Action needed</span>' : ''}
+        ${ar ? `<button class="an-badge" onclick="openProfileAtCase('${person.id}','${c.id}',event)">Action needed<span class="badge-tip">${esc(arTip)}</span></button>` : ''}
         <div class="ell-btn" id="ell-${person.id}" onclick="toggleMenu('${person.id}',event)">
           <svg width="14" height="14"><use href="#ic-more"/></svg>
           <div class="drop-menu" id="menu-${person.id}">
