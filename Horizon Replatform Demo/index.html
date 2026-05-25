@@ -1985,41 +1985,55 @@ function homeSort(col){
   renderHomeTable();
 }
 
+function closeAllMenus(){
+  document.querySelectorAll('.drop-menu.open').forEach(m=>{
+    m.classList.remove('open');
+    if(m._menuOrigParent){ m._menuOrigParent.appendChild(m); delete m._menuOrigParent; }
+    m.style.cssText='';
+  });
+}
+
 function toggleMenu(pid, e){
   e.stopPropagation();
   const menuId = `menu-${pid}`;
-  const alreadyOpen = document.getElementById(menuId)?.classList.contains('open');
-  // Close all open menus and reset their positioning
-  document.querySelectorAll('.drop-menu.open').forEach(m=>{
-    m.style.position=''; m.style.top=''; m.style.right=''; m.style.bottom=''; m.style.left=''; m.style.zIndex='';
-    m.classList.remove('open');
-  });
+  const menu = document.getElementById(menuId);
+  if(!menu) return;
+  const alreadyOpen = menu.classList.contains('open');
+  closeAllMenus();
   if(!alreadyOpen){
-    const menu = document.getElementById(menuId);
-    if(!menu) return;
     const btn = e.currentTarget;
     const rect = btn.getBoundingClientRect();
-    const menuH = 200; // estimated
-    const spaceBelow = window.innerHeight - rect.bottom;
+    // Move to body to escape overflow:hidden clipping
+    menu._menuOrigParent = menu.parentElement;
+    document.body.appendChild(menu);
+    // Measure menu size after display
     menu.style.position = 'fixed';
-    menu.style.zIndex = '9000';
-    menu.style.right = (window.innerWidth - rect.right) + 'px';
+    menu.style.visibility = 'hidden';
+    menu.style.display = 'block';
+    menu.classList.add('open');
+    const menuRect = menu.getBoundingClientRect();
+    menu.style.visibility = '';
+    const menuW = menuRect.width || 190;
+    const menuH = menuRect.height || 200;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceRight = rect.right;
+    menu.style.zIndex = '9900';
+    // Horizontal: align right edge of menu to right edge of button
+    const rightPos = window.innerWidth - rect.right;
+    menu.style.right = Math.max(4, rightPos) + 'px';
     menu.style.left = 'auto';
-    if(spaceBelow < menuH){
+    // Vertical
+    if(spaceBelow < menuH + 8){
       menu.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
       menu.style.top = 'auto';
     } else {
       menu.style.top = (rect.bottom + 4) + 'px';
       menu.style.bottom = 'auto';
     }
-    menu.classList.add('open');
   }
 }
 
-document.addEventListener('click',()=>document.querySelectorAll('.drop-menu.open').forEach(m=>{
-  m.style.position=''; m.style.top=''; m.style.right=''; m.style.bottom=''; m.style.left=''; m.style.zIndex='';
-  m.classList.remove('open');
-}));
+document.addEventListener('click', closeAllMenus);
 
 function openProfileAtCase(pid, cid, e){
   e.stopPropagation();
