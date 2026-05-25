@@ -1730,10 +1730,12 @@ function getInlineAction(person, c){
     return `<button class="row-act-btn row-act-primary" onclick="openReport('${c.id}',event)">Assess</button>`;
   }
   if(s==='invite-expiring'){
-    return `<button class="row-act-btn row-act-warn" onclick="toast('Invite resent');event.stopPropagation()">Resend invite</button>`;
+    const label = c.via==='invite' ? 'Renew and resend' : 'Renew invite link';
+    return `<button class="row-act-btn row-act-warn" onclick="toast('${label === 'Renew and resend' ? 'Invite renewed and resent to ' + person.email : 'Invite link renewed — copy new link to resend'}');event.stopPropagation()">${label}</button>`;
   }
   if(s==='invite-expired'){
-    return `<button class="row-act-btn row-act-warn" onclick="toast('Re-invite sent');event.stopPropagation()">Re-invite</button>`;
+    const label = c.via==='invite' ? 'Generate and send' : 'Generate new link';
+    return `<button class="row-act-btn row-act-warn" onclick="toast('${c.via==='invite' ? 'New invite sent to ' + person.email : 'New invite link generated — copy to send'}');event.stopPropagation()">${label}</button>`;
   }
   if(s==='email-bounced'){
     return `<button class="row-act-btn row-act-warn" onclick="toast('Opening email fix…');event.stopPropagation()">Fix email</button>`;
