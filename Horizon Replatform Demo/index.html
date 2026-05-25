@@ -1364,17 +1364,12 @@ function renderHomeRow(person){
   const created = fmtTableDate(c.dateInitiated);
   const updated = fmtTableDate(lastUpdatedDate(c));
 
-  // via delivery sub-label for invite statuses
-  let viaHint = '';
-  if(c.via==='invite'){
-    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-env"/></svg>Via email</div>`;
-  } else if(c.via==='manual'){
-    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-person"/></svg>Manual order</div>`;
-  } else if(c.via==='flow'){
-    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-flow"/></svg>Screening flow</div>`;
-  } else if(c.via==='integration'){
-    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-integration"/></svg>Integration</div>`;
-  }
+  // Via sub-label: belongs with check type (what was ordered and how)
+  const VIA_META = {invite:'Email invite',manual:'Manual order',flow:'Screening flow',integration:'Integration'};
+  const VIA_IC   = {invite:'ic-env',manual:'ic-person',flow:'ic-flow',integration:'ic-integration'};
+  const viaIcon  = VIA_IC[c.via] || 'ic-link';
+  const viaLabel = VIA_META[c.via] || '';
+  const viaHint = viaLabel ? `<div style="font-size:11px;color:var(--fg4);margin-top:3px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#${viaIcon}"/></svg>${esc(viaLabel)}</div>` : '';
 
   return `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
     <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}" onclick="toggleSelect('${person.id}')"></div></td>
@@ -1383,14 +1378,16 @@ function renderHomeRow(person){
       <div class="name-main">${esc(person.name)}</div>
       <div class="name-email">${esc(person.email)}</div>
       <div style="font-size:11px;color:var(--fg4);margin-top:1px">${esc(person.position)} · ${esc(person.team)}</div>
+      ${showCstInline ? renderCstInline(person) : ''}
     </td>
-    <td>${renderCheckTypeChip(c.checkType)}</td>
+    <td>
+      ${renderCheckTypeChip(c.checkType)}
+      ${viaHint}
+    </td>
     <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(created)}</td>
     <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(updated)}</td>
     <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">
       ${renderBadge(c.status)}
-      ${viaHint}
-      ${showCstInline?renderCstInline(person):''}
     </td>
     <td class="td-act-r" onclick="event.stopPropagation()">
       <div class="act-cell">
