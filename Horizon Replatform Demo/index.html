@@ -1792,9 +1792,58 @@ function toggleSelect(pid){
 function updateHomeBulkBar(){
   const n = STATE.selectedPeople.size;
   const bar = document.getElementById('home-bulk-action-bar');
-  const cnt = document.getElementById('home-sel-count');
-  if(bar){ bar.style.display = n ? 'flex' : 'none'; }
-  if(cnt){ cnt.textContent = `${n} selected`; }
+  if(!bar) return;
+  if(!n){ bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+
+  // Analyze selection to determine applicable actions
+  const selPeople = [...STATE.selectedPeople].map(id => personById(id)).filter(Boolean);
+  const bgCases = selPeople.map(p => currentCase(p));
+
+  const allInviteExpired     = bgCases.every(c => c.status === 'invite-expired');
+  const allEmailInviteExpired= bgCases.every(c => c.status === 'invite-expired' && c.via === 'invite');
+  const anyInviteExpired     = bgCases.some(c => c.status === 'invite-expired');
+  const allPendingInvite     = bgCases.every(c => ['invite-sent','invite-expiring'].includes(c.status));
+  const anyPendingInvite     = bgCases.some(c => ['invite-sent','invite-expiring'].includes(c.status));
+  const anyCancellable       = bgCases.some(c => ['invite-sent','invite-expiring','invite-created','consent-signed-action','order-submitted','screening-progress'].includes(c.status));
+  const anyCstNotSent        = selPeople.some(p => p.cst && p.cst.status === 'cst-not-sent');
+
+  const btns = [];
+
+  // Resend invite email — only if ALL selected have a live pending invite
+  if(allPendingInvite){
+    btns.push(`<button class="btn btn-secondary btn-sm" onclick="toast('Invites resent to ${n} people');clearHomeSelection()">Resend invite email</button>`);
+  }
+
+  // Renew invite link — only if ALL selected have an expired invite
+  // Note: renewing the link does not re-send an email. It just generates a fresh link.
+  if(allInviteExpired && !allEmailInviteExpired){
+    btns.push(`<button class="btn btn-secondary btn-sm" onclick="toast('Invite links renewed for ${n} cases');clearHomeSelection()">Renew invite link</button>`);
+  }
+
+  // Renew and resend — only if ALL selected are email-invite cases with expired links
+  // This is the combined action: generate a new link AND re-send the email.
+  if(allEmailInviteExpired){
+    btns.push(`<button class="btn btn-secondary btn-sm" onclick="toast('Invite links renewed and resent for ${n} cases');clearHomeSelection()">Renew &amp; resend invite</button>`);
+  }
+
+  // Send CST invite — if any selected people need it
+  if(anyCstNotSent){
+    btns.push(`<button class="btn btn-secondary btn-sm" onclick="toast('CST invites sent');clearHomeSelection()">Send CST invite</button>`);
+  }
+
+  // Export — always available
+  btns.push(`<button class="btn btn-secondary btn-sm" onclick="toast('Exporting ${n} records…');clearHomeSelection()">Export selected</button>`);
+
+  // Cancel invites — only if any cancellable
+  if(anyCancellable){
+    btns.push(`<button class="btn btn-secondary btn-sm" style="color:var(--red)" onclick="toast('${n} invite${n===1?'':'s'} cancelled');clearHomeSelection()">Cancel invite${n===1?'':'s'}</button>`);
+  }
+
+  bar.innerHTML = `
+    <span style="font-size:13px;font-weight:600;color:var(--blue);white-space:nowrap">${n} selected</span>
+    ${btns.join('')}
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="clearHomeSelection()">Clear</button>`;
 }
 
 function clearHomeSelection(){
