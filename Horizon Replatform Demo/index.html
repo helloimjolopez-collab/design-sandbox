@@ -1831,8 +1831,14 @@ function renderTable(){
 function toggleSelect(pid){
   if(STATE.selectedPeople.has(pid)) STATE.selectedPeople.delete(pid);
   else STATE.selectedPeople.add(pid);
+  // Visually update just the clicked row's checkbox without full re-render
+  const on = STATE.selectedPeople.has(pid);
+  document.querySelectorAll(`[data-pid="${pid}"] .cb`).forEach(cb=>{
+    cb.classList.toggle('on',on);
+    cb.innerHTML = on ? `<svg viewBox="0 0 16 16" width="9" height="9" fill="none"><path d="M2.5 8l4 4 7-7" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>` : '';
+  });
   updateHomeBulkBar();
-  renderHomeTable();
+  updateSelectAllCb();
 }
 
 function updateHomeBulkBar(){
