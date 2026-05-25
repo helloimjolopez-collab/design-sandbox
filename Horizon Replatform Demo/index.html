@@ -1399,14 +1399,12 @@ function switchTab(tab){
   // show/hide New BG check button
   const btnHome = document.getElementById('btn-new-home');
   if(btnHome) btnHome.style.display = (tab==='cst') ? 'none' : '';
-  // update the case type filter chip based on tab
-  const caseChip = document.getElementById('home-chip-casetype');
-  if(caseChip){
-    const lbl = caseChip.querySelector('.fchip-lbl');
-    if(tab==='bg'){ if(lbl)lbl.textContent='Background Check'; caseChip.classList.add('active'); }
-    else if(tab==='cst'){ if(lbl)lbl.textContent='Child Safety Training'; caseChip.classList.add('active'); }
-    else{ if(lbl)lbl.textContent='Case type: All'; caseChip.classList.remove('active'); }
-  }
+  // show CST filter chip only on CST tab
+  const cstChip = document.getElementById('home-chip-cst');
+  if(cstChip) cstChip.style.display = (tab==='cst') ? '' : 'none';
+  // hide status filter on CST tab
+  const statusChip = document.getElementById('home-chip-status');
+  if(statusChip) statusChip.style.display = (tab==='cst') ? 'none' : '';
   renderHomeTable();
 }
 
