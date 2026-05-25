@@ -1890,22 +1890,45 @@ function renderLinkManagement(person, c){
   const expiryDate = c.inviteExpiry ? fmtTableDate(c.inviteExpiry) : '14 Jun 2026';
   const isBounced = c.status === 'email-bounced';
   const isExpiring = c.status === 'invite-expiring';
-  const deliveredVia = c.via==='invite' ? 'Email invite' : 'Person-bound link';
+  // Resolve delivery method label — use actual integration name if available
+  let deliveredVia = 'Person-bound link';
+  if(c.via==='invite') deliveredVia = 'Email invite';
+  else if(c.via==='flow') deliveredVia = 'Screening flow (Rock CRM)';
+  else if(c.via==='integration') deliveredVia = person.source && person.source!=='PMM' ? `${person.source} integration` : 'CRM integration';
+
+  const bounceBanner = isBounced ? `
+    <div style="background:var(--fill-static-negative-subtle);border:1px solid var(--stroke-static-negative-base);border-radius:var(--r8);padding:12px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px">
+      <svg width="16" height="16" style="color:var(--red);flex-shrink:0;margin-top:1px"><use href="#ic-warning"/></svg>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:3px">Email bounced — not delivered</div>
+        <div style="font-size:12px;color:var(--fg2);margin-bottom:10px">The invite to <strong>${esc(person.email)}</strong> failed to deliver. Fix the address and resend, or copy the link to share another way.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="toast('Opening email editor…')">
+            <svg width="12" height="12"><use href="#ic-edit"/></svg>Fix email and resend
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="toast('Link copied to clipboard')">
+            <svg width="12" height="12"><use href="#ic-link"/></svg>Copy link instead
+          </button>
+        </div>
+      </div>
+    </div>` : '';
+
   return `<div class="pnl-sec" style="padding-top:0;padding-bottom:14px">
-    <div class="pnl-sec-title"><span>Invite link</span></div>
-    <div style="background:var(--fill-static-neutral-subtle);border:1px solid var(--border);border-radius:var(--r8);padding:12px 14px;margin-bottom:10px">
+    <div class="pnl-sec-title"><span>Invite</span></div>
+    ${bounceBanner}
+    <div style="background:var(--fill-static-neutral-subtle);border:1px solid var(--border);border-radius:var(--r8);padding:12px 14px;margin-bottom:10px;${isBounced?'opacity:.6':''}">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
         <svg width="13" height="13" style="color:var(--fg3);flex-shrink:0"><use href="#ic-link"/></svg>
         <code style="font-size:12px;color:var(--fg2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(fakeLink)}</code>
         <button class="btn btn-xs btn-secondary" onclick="toast('Link copied to clipboard')">Copy</button>
       </div>
-      <div style="font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:10px">
+      <div style="font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span>Sent via: <strong style="color:var(--fg2)">${esc(deliveredVia)}</strong></span>
         <span>·</span>
         <span style="color:${isExpiring?'var(--amber)':'var(--fg3)'}">Expires: <strong style="color:${isExpiring?'var(--amber)':'var(--fg2)'}">${esc(expiryDate)}</strong>${isExpiring?' (3 days)':''}</span>
       </div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
+    ${!isBounced ? `<div style="display:flex;gap:6px;flex-wrap:wrap">
       <button class="btn btn-secondary btn-sm" onclick="toast('Invite resent to ${esc(person.email)}')">
         <svg width="12" height="12"><use href="#ic-send"/></svg>Resend invite
       </button>
@@ -1916,7 +1939,7 @@ function renderLinkManagement(person, c){
         <svg width="12" height="12"><use href="#ic-clock"/></svg>Extend expiry
       </button>
       <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="toast('Invite cancelled')">Cancel invite</button>
-    </div>
+    </div>` : ''}
   </div>
   <div class="pnl-divider"></div>`;
 }
