@@ -1258,23 +1258,77 @@ function renderHomeRow(person, showCst=true){
   return bgRow + cstRow;
 }
 
+function switchTab(tab){
+  STATE.mainTab = tab;
+  STATE.homeCardFilter = '';
+  document.querySelectorAll('#home-tabs .tab-item').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  // show/hide New BG check button
+  const btnHome = document.getElementById('btn-new-home');
+  if(btnHome) btnHome.style.display = (tab==='cst') ? 'none' : '';
+  // update the case type filter chip based on tab
+  const caseChip = document.getElementById('home-chip-casetype');
+  if(caseChip){
+    const lbl = caseChip.querySelector('.fchip-lbl');
+    if(tab==='bg'){ if(lbl)lbl.textContent='Background Check'; caseChip.classList.add('active'); }
+    else if(tab==='cst'){ if(lbl)lbl.textContent='Child Safety Training'; caseChip.classList.add('active'); }
+    else{ if(lbl)lbl.textContent='Case type: All'; caseChip.classList.remove('active'); }
+  }
+  renderHomeTable();
+}
+
+function renderHomeCSTOnlyRow(person){
+  const cst = person.cst;
+  if(!cst || cst.status==='cst-na') return '';
+  const c = currentCase(person);
+  const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
+  const cs = CST_STATUS_LABELS[cst.status] || {label:cst.status,cls:'b-grey',tip:''};
+  const dateStr = cst.completedDate ? ` · ${cst.completedDate}` : (cst.inviteSentDate ? ` · Sent ${cst.inviteSentDate}` : '');
+  const cstAction = cst.status==='cst-not-sent'
+    ? `<button class="row-act-btn row-act-primary" onclick="toast('CST invite sent');event.stopPropagation()">Send invite</button>`
+    : cst.status==='cst-invited'
+    ? `<button class="row-act-btn" onclick="toast('CST invite resent');event.stopPropagation()">Resend</button>`
+    : '';
+  return `<tr data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
+    <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}"></div></td>
+    <td><div class="av" style="background:${ac}">${esc(initials(person.name))}</div></td>
+    <td class="td-name"><div class="name-main">${esc(person.name)}</div><div class="name-email">${esc(person.email)}</div></td>
+    <td><span class="chip chip-cst"><svg width="11" height="11" style="flex-shrink:0"><use href="#ic-cst"/></svg>Child Safety Training</span></td>
+    <td onclick="event.stopPropagation()">${renderCstTypeChip(cst.type)}</td>
+    <td><span class="badge ${cs.cls}" style="cursor:default"><span class="bdot"></span>${esc(cs.label)}${dateStr}<span class="badge-tip">${esc(cs.tip)}</span></span></td>
+    <td onclick="event.stopPropagation()"><div class="act-cell">${cstAction}<div class="ell-btn" onclick="toggleMenu('cst-${person.id}',event)"><svg width="14" height="14"><use href="#ic-more"/></svg><div class="drop-menu" id="menu-cst-${person.id}"><div class="drop-item" onclick="toast('CST invite sent');event.stopPropagation()">Send training invite</div><div class="drop-sep"></div><div class="drop-item" onclick="openProfile('${person.id}');event.stopPropagation()">View profile</div></div></div></div></td>
+  </tr>`;
+}
+
 function renderHomeStats(){
   const all = filteredPeople();
   const strip = document.getElementById('home-summary-strip');
   if(!strip) return;
-  const actionNeeded = all.filter(p=>STATUS[currentCase(p).status]?.action).length;
-  const newResults = all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
-  const expiring = all.filter(p=>currentCase(p).status==='invite-expiring').length;
-  const cstPending = all.filter(p=>p.cst && p.cst.status==='cst-invited').length;
+  const tab = STATE.mainTab;
   const f = STATE.homeCardFilter;
   const tile=(val,label,cls,key)=>`<div class="ss-tile${f===key?' active':''}" onclick="setHomeCardFilter('${key}')">
     <div><div class="ss-num ${val?cls:'zero'}">${val}</div><div class="ss-lbl">${label}</div></div>
   </div>`;
-  strip.innerHTML =
-    tile(actionNeeded,'Action needed','alert','action') +
-    tile(newResults,'New results','violet','new-results') +
-    tile(expiring,'Expiring soon','warn','expiring') +
-    tile(cstPending,'CST pending','grey','cst-pending');
+  if(tab==='cst'){
+    const cstCompleted = all.filter(p=>p.cst&&p.cst.status==='cst-completed').length;
+    const cstInvited = all.filter(p=>p.cst&&p.cst.status==='cst-invited').length;
+    const cstNotSent = all.filter(p=>p.cst&&p.cst.status==='cst-not-sent').length;
+    const cstNa = all.filter(p=>p.cst&&p.cst.status==='cst-na').length;
+    strip.innerHTML =
+      tile(cstCompleted,'Completed','grey','cst-done') +
+      tile(cstInvited,'Invite sent','warn','cst-invited') +
+      tile(cstNotSent,'Not sent','alert','cst-not-sent') +
+      tile(cstNa,'Not required','grey','cst-na');
+  } else {
+    const actionNeeded = all.filter(p=>STATUS[currentCase(p).status]?.action).length;
+    const newResults = all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
+    const expiring = all.filter(p=>currentCase(p).status==='invite-expiring').length;
+    const cstPending = all.filter(p=>p.cst && p.cst.status==='cst-invited').length;
+    strip.innerHTML =
+      tile(actionNeeded,'Action needed','alert','action') +
+      tile(newResults,'New results','violet','new-results') +
+      tile(expiring,'Expiring soon','warn','expiring') +
+      tile(cstPending,'CST pending','grey','cst-pending');
+  }
 }
 
 function renderHomeTable(){
