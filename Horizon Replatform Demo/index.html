@@ -940,12 +940,6 @@ tbody tr:hover .row-act-btn{opacity:1}
         </div>
       </button>
       <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
-        <div class="bulk-home-bar" id="home-bulk-bar" style="display:none;align-items:center;gap:8px;padding:0 6px">
-          <span class="bulk-count" id="home-bulk-count">0 selected</span>
-          <button class="btn btn-secondary btn-sm" onclick="toast('Bulk resend sent');clearHomeSelection()">Resend invites</button>
-          <button class="btn btn-secondary btn-sm" onclick="toast('Export started');clearHomeSelection()">Export selected</button>
-          <button class="btn btn-ghost btn-sm" onclick="clearHomeSelection()">Clear</button>
-        </div>
         <button class="btn btn-secondary btn-sm" id="home-export-btn" onclick="toggleDrop('home-drop-export',this)" style="position:relative">
           <svg width="13" height="13"><use href="#ic-export"/></svg>Export
           <div class="filter-drop" id="home-drop-export" style="right:0;left:auto;min-width:170px">
@@ -1237,7 +1231,7 @@ const PEOPLE = [
 const VIA_ICONS = {invite:'ic-env',manual:'ic-person',flow:'ic-flow',integration:'ic-integration'};
 const VIA_LABELS = {invite:'Email invite',manual:'Manual order',flow:'Screening flow',integration:'Integration'};
 
-let STATE = {dept:'all',search:'',actionFilter:false,selectedPeople:new Set(),currentPerson:null,currentCase:null,wzStep:1,wzPeople:[],wzLevel:null,wzLvlDropOpen:false,wzLvlSearch:'',wzLvlExpanded:false,wzSuccess:false,wzAdvancedOpen:false,wzEmailOn:true,wzApproval:false,wzShowNewPerson:false,wzNewPerson:{fn:'',ln:'',email:'',role:'',dept:''},statusFilter:'',viaFilter:'',homeCardFilter:'',homeCaseTypeFilter:'',openDrop:'',lvEditId:null,lvDraft:{name:'',tmpl:'essential',depts:[],isDefault:false},defaultLevel:'premier-mvr',mainTab:'all'};
+let STATE = {dept:'all',search:'',actionFilter:false,selectedPeople:new Set(),currentPerson:null,currentCase:null,wzStep:1,wzPeople:[],wzLevel:null,wzLvlDropOpen:false,wzLvlSearch:'',wzLvlExpanded:false,wzSuccess:false,wzAdvancedOpen:false,wzEmailOn:true,wzApproval:false,wzShowNewPerson:false,wzNewPerson:{fn:'',ln:'',email:'',role:'',dept:''},statusFilter:'',viaFilter:'',homeCardFilter:'',homeCaseTypeFilter:'',homeStatusFilter:'',homeCstFilter:'',openDrop:'',lvEditId:null,lvDraft:{name:'',tmpl:'essential',depts:[],isDefault:false},defaultLevel:'premier-mvr',mainTab:'all'};
 
 function personById(id){return PEOPLE.find(p=>p.id===id)}
 function caseById(id){for(const p of PEOPLE)for(const c of p.cases)if(c.id===id)return{person:p,kase:c};return null}
@@ -1259,6 +1253,8 @@ function filteredPeople(){
 function filteredHomePeople(){
   let people = filteredPeople();
   const tab = STATE.mainTab;
+  // status filter (home-specific)
+  if(STATE.homeStatusFilter) people = people.filter(p => currentCase(p).status === STATE.homeStatusFilter);
   // card filter
   if(STATE.homeCardFilter === 'action') people = people.filter(p => STATUS[currentCase(p).status]?.action);
   else if(STATE.homeCardFilter === 'new-results') people = people.filter(p => currentCase(p).status === 'awaiting-assessment');
@@ -1269,7 +1265,20 @@ function filteredHomePeople(){
   else if(STATE.homeCardFilter === 'cst-not-sent') people = people.filter(p => p.cst && p.cst.status === 'cst-not-sent');
   else if(STATE.homeCardFilter === 'cst-done') people = people.filter(p => p.cst && p.cst.status === 'cst-completed');
   else if(STATE.homeCardFilter === 'cst-na') people = people.filter(p => p.cst && p.cst.status === 'cst-na');
-  // For CST tab: include everyone (even if cst-na, still show them)
+  // Apply sort
+  if(homeSortCol){
+    people = [...people].sort((a,b)=>{
+      let av='',bv='';
+      const ca=currentCase(a), cb=currentCase(b);
+      if(homeSortCol==='name'){av=a.name;bv=b.name;}
+      else if(homeSortCol==='type'){av=ca.checkType||'';bv=cb.checkType||'';}
+      else if(homeSortCol==='created'){av=ca.dateInitiated||'';bv=cb.dateInitiated||'';}
+      else if(homeSortCol==='updated'){av=lastUpdatedDate(ca);bv=lastUpdatedDate(cb);}
+      else if(homeSortCol==='status'){av=ca.status||'';bv=cb.status||'';}
+      const cmp = av.localeCompare(bv);
+      return homeSortDir==='asc'?cmp:-cmp;
+    });
+  }
   return people;
 }
 
@@ -1322,7 +1331,7 @@ function renderCstInline(person){
   return `<div style="margin-top:4px;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--fg3)"><svg width="10" height="10" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;color:${dot}"><path d="M10 2L3 5.5v4c0 4.15 2.88 8.03 7 9 4.12-.97 7-4.85 7-9v-4L10 2z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><span>CST: ${esc(cs.label)}</span></div>`;
 }
 
-function fmtDate(str){
+function fmtTableDate(str){
   if(!str) return '—';
   const d = new Date(str);
   if(isNaN(d)) return str;
@@ -1348,8 +1357,8 @@ function renderHomeRow(person){
   const ar = s && s.action;
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
   const showCstInline = STATE.mainTab === 'all';
-  const created = fmtDate(c.dateInitiated);
-  const updated = fmtDate(lastUpdatedDate(c));
+  const created = fmtTableDate(c.dateInitiated);
+  const updated = fmtTableDate(lastUpdatedDate(c));
 
   // via delivery sub-label for invite statuses
   let viaHint = '';
@@ -1643,6 +1652,40 @@ function renderTable(){
 function toggleSelect(pid){
   if(STATE.selectedPeople.has(pid)) STATE.selectedPeople.delete(pid);
   else STATE.selectedPeople.add(pid);
+  updateHomeBulkBar();
+  renderHomeTable();
+}
+
+function updateHomeBulkBar(){
+  const n = STATE.selectedPeople.size;
+  const bar = document.getElementById('home-bulk-action-bar');
+  const cnt = document.getElementById('home-sel-count');
+  if(bar){ bar.style.display = n ? 'flex' : 'none'; }
+  if(cnt){ cnt.textContent = `${n} selected`; }
+}
+
+function clearHomeSelection(){
+  STATE.selectedPeople.clear();
+  updateHomeBulkBar();
+  renderHomeTable();
+}
+
+let homeSortCol = '';
+let homeSortDir = 'asc';
+function homeSort(col){
+  if(homeSortCol===col){ homeSortDir = homeSortDir==='asc'?'desc':'asc'; }
+  else { homeSortCol=col; homeSortDir='asc'; }
+  document.querySelectorAll('.th-sort').forEach(th=>{
+    th.classList.remove('asc','desc');
+    const ic = th.querySelector('.sort-ic use');
+    if(ic) ic.setAttribute('href','#ic-sort-none');
+  });
+  const active = document.querySelector(`.th-sort[data-col="${col}"]`);
+  if(active){
+    active.classList.add(homeSortDir);
+    const ic = active.querySelector('.sort-ic use');
+    if(ic) ic.setAttribute('href', homeSortDir==='asc'?'#ic-sort-asc':'#ic-sort-desc');
+  }
   renderHomeTable();
 }
 
@@ -1839,14 +1882,52 @@ function renderCSTCompact(person){
   </div>`;
 }
 
+function renderLinkManagement(person, c){
+  const fakeLink = `https://pmm.ministrybrands.com/consent/${person.id.substring(1)}a4f9c`;
+  const expiryDate = c.inviteExpiry ? fmtTableDate(c.inviteExpiry) : '14 Jun 2026';
+  const isBounced = c.status === 'email-bounced';
+  const isExpiring = c.status === 'invite-expiring';
+  const deliveredVia = c.via==='invite' ? 'Email invite' : 'Person-bound link';
+  return `<div class="pnl-sec" style="padding-top:0;padding-bottom:14px">
+    <div class="pnl-sec-title"><span>Invite link</span></div>
+    <div style="background:var(--fill-static-neutral-subtle);border:1px solid var(--border);border-radius:var(--r8);padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <svg width="13" height="13" style="color:var(--fg3);flex-shrink:0"><use href="#ic-link"/></svg>
+        <code style="font-size:12px;color:var(--fg2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(fakeLink)}</code>
+        <button class="btn btn-xs btn-secondary" onclick="toast('Link copied to clipboard')">Copy</button>
+      </div>
+      <div style="font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:10px">
+        <span>Sent via: <strong style="color:var(--fg2)">${esc(deliveredVia)}</strong></span>
+        <span>·</span>
+        <span style="color:${isExpiring?'var(--amber)':'var(--fg3)'}">Expires: <strong style="color:${isExpiring?'var(--amber)':'var(--fg2)'}">${esc(expiryDate)}</strong>${isExpiring?' (3 days)':''}</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm" onclick="toast('Invite resent to ${esc(person.email)}')">
+        <svg width="12" height="12"><use href="#ic-send"/></svg>Resend invite
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="toast('Link copied to clipboard')">
+        <svg width="12" height="12"><use href="#ic-link"/></svg>Copy link
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="toast('Invite expiry extended by 30 days')">
+        <svg width="12" height="12"><use href="#ic-clock"/></svg>Extend expiry
+      </button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="toast('Invite cancelled')">Cancel invite</button>
+    </div>
+  </div>
+  <div class="pnl-divider"></div>`;
+}
+
 function renderPanelBody(person, targetCaseId){
   const c = currentCase(person);
   const s = STATUS[c.status];
   const pb = document.getElementById('panel-body');
 
+  const showLinkMgmt = ['invite-created','invite-sent','invite-expiring','email-bounced'].includes(c.status);
   pb.innerHTML = `
     <div style="padding:16px 20px 0">
       ${renderPanelAction(person, c)}
+      ${showLinkMgmt ? renderLinkManagement(person, c) : ''}
       <div class="pnl-sec" style="padding-top:0">
         <div class="pnl-sec-title"><span>Identity</span></div>
         ${renderIdentityCompact(person)}
@@ -3195,13 +3276,9 @@ function setHomeFilter(key, val, chipId, prefix){
   if(chip){
     const lbl = chip.querySelector('.fchip-lbl');
     if(lbl){
-      if(!val) lbl.textContent = prefix+': All';
-      else if(key==='homeCaseTypeFilter') lbl.textContent = val==='bg'?'Background Check':'Child Safety Training';
-      else{
-        const opts = [['','All statuses'],['invite-sent','Invite sent'],['consent-signed-action','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']];
-        const found = opts.find(o=>o[0]===val);
-        lbl.textContent = prefix+': '+(found?found[1]:val);
-      }
+      if(!val){ lbl.textContent = prefix+': All'; }
+      else if(STATUS[val]){ lbl.textContent = prefix+': '+STATUS[val].label; }
+      else { lbl.textContent = prefix+': '+val; }
     }
     chip.classList.toggle('active', !!val);
   }
