@@ -222,9 +222,22 @@ input,select,textarea{font-family:inherit}
 .toolbar{padding:12px 22px 0;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
 .search-box{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--border2);border-radius:var(--r6);padding:0 10px;height:34px;flex:1;max-width:320px}
 .search-box input{border:none;outline:none;font-size:13px;color:var(--ink);width:100%;background:transparent}
-.filter-chip{height:30px;padding:0 12px;border-radius:14px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 100ms}
-.filter-chip:hover{border-color:var(--brand);color:var(--brand)}
-.filter-chip.on{background:var(--brand-l);border-color:var(--brand);color:var(--brand);font-weight:600}
+.filter-chip{height:32px;padding:0 10px 0 10px;border-radius:16px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--fg2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 100ms;position:relative;white-space:nowrap;flex-shrink:0}
+.filter-chip:hover{border-color:var(--fg3)}
+.filter-chip.on,.filter-chip.active{background:var(--brand-l);border-color:var(--brand);color:var(--brand)}
+.filter-chip .fchip-chevron{color:var(--fg4);margin-left:1px;flex-shrink:0;transition:transform 100ms}
+.filter-chip.drop-open .fchip-chevron{transform:rotate(180deg)}
+/* Filter dropdown */
+.filter-drop{position:absolute;top:calc(100% + 6px);left:0;min-width:180px;background:#fff;border:1px solid var(--border);border-radius:var(--r8);box-shadow:var(--sh-md);z-index:50;overflow:hidden;display:none}
+.filter-drop.open{display:block}
+.fdrop-item{padding:8px 14px;font-size:13px;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 80ms}
+.fdrop-item:hover{background:var(--surf2)}
+.fdrop-item.selected{color:var(--brand);font-weight:500}
+.fdrop-item.selected::after{content:"✓";margin-left:auto;font-size:12px}
+.fdrop-sep{height:1px;background:var(--border);margin:4px 0}
+/* Active filter card */
+.ss-tile.active{border-color:var(--brand);background:var(--brand-l)}
+.ss-tile.active .ss-lbl{color:var(--brand)}
 
 /* Table */
 .table-wrap{flex:1;overflow:auto;padding:12px 22px 22px}
@@ -585,6 +598,7 @@ tbody tr.ar:hover .td-name{background:#fff2e6}
     <symbol id="ic-home" viewBox="0 0 20 20"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/><path d="M7.5 18v-5h5v5" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="ic-levels" viewBox="0 0 20 20"><rect x="2" y="12" width="4" height="6" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/><rect x="8" y="7" width="4" height="11" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/><rect x="14" y="2" width="4" height="16" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/></symbol>
     <symbol id="ic-cst" viewBox="0 0 20 20"><path d="M10 2L3 5.5v4c0 4.15 2.88 8.03 7 9 4.12-.97 7-4.85 7-9v-4L10 2z" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/><path d="M7 9.5l2 2.5 4-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="ic-filter" viewBox="0 0 20 20"><path d="M3 5h14M6 10h8M9 15h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
     <symbol id="ic-search" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M13.5 13.5l4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
     <symbol id="ic-back" viewBox="0 0 20 20"><path d="M12 4L7 10l5 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
   </defs>
@@ -654,6 +668,39 @@ tbody tr.ar:hover .td-name{background:#fff2e6}
         <div class="page-sub" id="home-sub">All departments</div>
       </div>
     </div>
+    <div class="toolbar" id="home-toolbar">
+      <div class="search-box">
+        <svg width="14" height="14" style="color:var(--fg4);flex-shrink:0"><use href="#ic-search"/></svg>
+        <input id="home-search" placeholder="Search name, email, position, team…">
+      </div>
+      <button class="filter-chip" id="home-chip-status" onclick="toggleDrop('home-drop-status',this)">
+        <svg width="13" height="13"><use href="#ic-filter"/></svg>
+        <span class="fchip-lbl">Status: All</span>
+        <svg width="13" height="13" class="fchip-chevron"><use href="#ic-chevdown"/></svg>
+        <div class="filter-drop" id="home-drop-status">
+<div class="fdrop-item selected" onclick="setHomeFilter('homeStatusFilter','','home-chip-status','Status')">All statuses</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-sent','home-chip-status','Status')">Invite sent</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','consent-signed-action','home-chip-status','Status')">Consent signed — action needed</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','screening-progress','home-chip-status','Status')">Screening in progress</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','awaiting-assessment','home-chip-status','Status')">Awaiting assessment</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','cleared','home-chip-status','Status')">Cleared</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','needs-review','home-chip-status','Status')">Needs review</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','escalated','home-chip-status','Status')">Escalated</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-expiring','home-chip-status','Status')">Invite expiring soon</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-expired','home-chip-status','Status')">Invite expired</div>
+        </div>
+      </button>
+      <button class="filter-chip" id="home-chip-casetype" onclick="toggleDrop('home-drop-casetype',this)">
+        <svg width="13" height="13"><use href="#ic-filter"/></svg>
+        <span class="fchip-lbl">Case type: All</span>
+        <svg width="13" height="13" class="fchip-chevron"><use href="#ic-chevdown"/></svg>
+        <div class="filter-drop" id="home-drop-casetype">
+<div class="fdrop-item selected" onclick="setHomeFilter('homeCaseTypeFilter','','home-chip-casetype','Case type')">All</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeCaseTypeFilter','bg','home-chip-casetype','Case type')">Background Check</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeCaseTypeFilter','cst','home-chip-casetype','Case type')">Child Safety Training</div>
+        </div>
+      </button>
+    </div>
     <div class="summary-strip" id="home-summary-strip"></div>
     <div style="flex:1;overflow:auto;padding:0 24px 24px;margin-top:10px">
       <table class="data-table home-table" style="width:100%">
@@ -684,13 +731,41 @@ tbody tr.ar:hover .td-name{background:#fff2e6}
     </div>
     <div class="summary-strip" id="summary-strip"></div>
     <div class="bulk-bar" id="bulk-bar" style="display:none"></div>
-    <div class="toolbar">
+    <div class="toolbar" id="scr-toolbar">
       <div class="search-box">
         <svg width="14" height="14" style="color:var(--fg4);flex-shrink:0"><use href="#ic-search"/></svg>
         <input id="tbl-search" placeholder="Search name, email, position, team…">
       </div>
-      <button class="filter-chip" id="chip-action">Action needed</button>
-      <button class="filter-chip" id="chip-all-s">All statuses</button>
+      <button class="filter-chip" id="scr-chip-status" onclick="toggleDrop('scr-drop-status',this)">
+        <svg width="13" height="13"><use href="#ic-filter"/></svg>
+        <span class="fchip-lbl">Status: All</span>
+        <svg width="13" height="13" class="fchip-chevron"><use href="#ic-chevdown"/></svg>
+        <div class="filter-drop" id="scr-drop-status">
+<div class="fdrop-item selected" onclick="setScrFilter('statusFilter','','scr-chip-status','Status')">All statuses</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','invite-sent','scr-chip-status','Status')">Invite sent</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','consent-signed-action','scr-chip-status','Status')">Consent signed — action needed</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','screening-progress','scr-chip-status','Status')">Screening in progress</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','awaiting-assessment','scr-chip-status','Status')">Awaiting assessment</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','cleared','scr-chip-status','Status')">Cleared</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','needs-review','scr-chip-status','Status')">Needs review</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','escalated','scr-chip-status','Status')">Escalated</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','invite-expiring','scr-chip-status','Status')">Invite expiring soon</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','invite-expired','scr-chip-status','Status')">Invite expired</div>
+        </div>
+      </button>
+      <button class="filter-chip" id="scr-chip-via" onclick="toggleDrop('scr-drop-via',this)">
+        <svg width="13" height="13"><use href="#ic-flow"/></svg>
+        <span class="fchip-lbl">Via: All</span>
+        <svg width="13" height="13" class="fchip-chevron"><use href="#ic-chevdown"/></svg>
+        <div class="filter-drop" id="scr-drop-via">
+<div class="fdrop-item selected" onclick="setScrFilter('viaFilter','','scr-chip-via','Via')">All</div>
+<div class="fdrop-item" onclick="setScrFilter('viaFilter','invite','scr-chip-via','Via')">Email invite</div>
+<div class="fdrop-item" onclick="setScrFilter('viaFilter','manual','scr-chip-via','Via')">Manual order</div>
+<div class="fdrop-item" onclick="setScrFilter('viaFilter','flow','scr-chip-via','Via')">Screening flow</div>
+<div class="fdrop-item" onclick="setScrFilter('viaFilter','integration','scr-chip-via','Via')">Integration</div>
+        </div>
+      </button>
+      <button class="filter-chip" id="chip-action" onclick="toggleActionFilter(this)">Action needed</button>
     </div>
     <div class="table-wrap">
       <div class="tbl-outer">
@@ -879,7 +954,7 @@ const PEOPLE = [
 const VIA_ICONS = {invite:'ic-env',manual:'ic-person',flow:'ic-flow',integration:'ic-integration'};
 const VIA_LABELS = {invite:'Email invite',manual:'Manual order',flow:'Screening flow',integration:'Integration'};
 
-let STATE = {dept:'all',search:'',actionFilter:false,selectedPeople:new Set(),currentPerson:null,currentCase:null,wzStep:1,wzPeople:[],wzLevel:null,wzLvlDropOpen:false,wzLvlSearch:'',wzLvlExpanded:false,wzSuccess:false,wzAdvancedOpen:false,wzEmailOn:true,wzApproval:false,wzShowNewPerson:false,wzNewPerson:{fn:'',ln:'',email:'',role:'',dept:''}};
+let STATE = {dept:'all',search:'',actionFilter:false,selectedPeople:new Set(),currentPerson:null,currentCase:null,wzStep:1,wzPeople:[],wzLevel:null,wzLvlDropOpen:false,wzLvlSearch:'',wzLvlExpanded:false,wzSuccess:false,wzAdvancedOpen:false,wzEmailOn:true,wzApproval:false,wzShowNewPerson:false,wzNewPerson:{fn:'',ln:'',email:'',role:'',dept:''},statusFilter:'',viaFilter:'',homeCardFilter:'',homeCaseTypeFilter:'',openDrop:''};
 
 function personById(id){return PEOPLE.find(p=>p.id===id)}
 function caseById(id){for(const p of PEOPLE)for(const c of p.cases)if(c.id===id)return{person:p,kase:c};return null}
@@ -889,10 +964,22 @@ function filteredPeople(){
   let people = PEOPLE;
   if(STATE.dept !== 'all') people = people.filter(p => p.team === STATE.dept);
   if(STATE.actionFilter) people = people.filter(p => STATUS[currentCase(p).status]?.action);
+  if(STATE.statusFilter) people = people.filter(p => currentCase(p).status === STATE.statusFilter);
+  if(STATE.viaFilter) people = people.filter(p => currentCase(p).via === STATE.viaFilter);
   if(STATE.search){
     const q = STATE.search.toLowerCase();
     people = people.filter(p => p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q) || p.position.toLowerCase().includes(q) || p.team.toLowerCase().includes(q));
   }
+  return people;
+}
+
+function filteredHomePeople(){
+  let people = filteredPeople();
+  if(STATE.homeCardFilter === 'action') people = people.filter(p => STATUS[currentCase(p).status]?.action);
+  else if(STATE.homeCardFilter === 'new-results') people = people.filter(p => currentCase(p).status === 'awaiting-assessment');
+  else if(STATE.homeCardFilter === 'expiring') people = people.filter(p => currentCase(p).status === 'invite-expiring');
+  else if(STATE.homeCardFilter === 'cst-pending') people = people.filter(p => p.cst && p.cst.status === 'cst-invited');
+  if(STATE.homeCaseTypeFilter === 'bg') return people; // bg rows only — cst rows hidden in renderHomeRow
   return people;
 }
 
@@ -938,7 +1025,7 @@ function renderCstTypeChip(typeId){
   return `<span class="chip">${esc(t.name)}<span class="chip-tip">${esc(t.desc)}</span></span>`;
 }
 
-function renderHomeRow(person, isBg){
+function renderHomeRow(person, showCst=true){
   const c = currentCase(person);
   const s = STATUS[c.status];
   const ar = s && s.action;
@@ -968,7 +1055,7 @@ function renderHomeRow(person, isBg){
 
   let cstRow = '';
   const cst = person.cst;
-  if(cst && cst.status !== 'cst-na'){
+  if(showCst && cst && cst.status !== 'cst-na'){
     const cs = CST_STATUS_LABELS[cst.status] || {label:cst.status,cls:'b-grey',tip:''};
     const cstDateStr = cst.completedDate ? ` · ${cst.completedDate}` : (cst.inviteSentDate ? ` · Sent ${cst.inviteSentDate}` : '');
     cstRow = `<tr data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
@@ -996,24 +1083,26 @@ function renderHomeStats(){
   const newResults = all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
   const expiring = all.filter(p=>currentCase(p).status==='invite-expiring').length;
   const cstPending = all.filter(p=>p.cst && p.cst.status==='cst-invited').length;
-  const tile=(val,label,cls,fn)=>`<div class="ss-tile" onclick="${fn||''}">
+  const f = STATE.homeCardFilter;
+  const tile=(val,label,cls,key)=>`<div class="ss-tile${f===key?' active':''}" onclick="setHomeCardFilter('${key}')">
     <div><div class="ss-val ${val?cls:'zero'}">${val}</div><div class="ss-lbl">${label}</div></div>
   </div>`;
   strip.innerHTML =
-    tile(actionNeeded,'Action needed','alert','') +
-    tile(newResults,'New results','violet','') +
-    tile(expiring,'Expiring soon','warn','') +
-    tile(cstPending,'CST pending','grey','');
+    tile(actionNeeded,'Action needed','alert','action') +
+    tile(newResults,'New results','violet','new-results') +
+    tile(expiring,'Expiring soon','warn','expiring') +
+    tile(cstPending,'CST pending','grey','cst-pending');
 }
 
 function renderHomeTable(){
-  const people = filteredPeople();
+  const people = filteredHomePeople();
   renderHomeStats();
   if(!people.length){
     document.getElementById('home-tbody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--fg3)">No cases match the current filter.</td></tr>`;
     return;
   }
-  document.getElementById('home-tbody').innerHTML = people.map(p=>renderHomeRow(p,true)).join('');
+  const showCst = STATE.homeCaseTypeFilter !== 'bg';
+  document.getElementById('home-tbody').innerHTML = people.map(p=>renderHomeRow(p, showCst)).join('');
 }
 
 
@@ -1097,17 +1186,18 @@ function renderSummaryStrip(){
   const expired=all.filter(p=>currentCase(p).status==='invite-expired').length;
   const strip=document.getElementById('summary-strip');
   if(!strip)return;
-  const tile=(val,label,cls,clickFn)=>`<div class="ss-tile" onclick="${clickFn||''}">
-    <div>
-      <div class="ss-val ${val?cls:'zero'}">${val}</div>
-      <div class="ss-lbl">${label}</div>
-    </div>
-  </div>`;
+  const f = STATE.statusFilter;
+  const tile=(val,label,cls,filterVal)=>{
+    const isActive = filterVal && (filterVal==='action'?(STATE.actionFilter):(f===filterVal));
+    return `<div class="ss-tile${isActive?' active':''}" onclick="setScrCardFilter('${filterVal}')">
+      <div><div class="ss-val ${val?cls:'zero'}">${val}</div><div class="ss-lbl">${label}</div></div>
+    </div>`;
+  };
   strip.innerHTML=
-    tile(newResults,'New results','violet',`STATE.actionFilter=false;renderTable()`) +
-    tile(alerts,'Action needed','alert',`STATE.actionFilter=true;document.getElementById('chip-action').classList.add('on');renderTable()`) +
-    tile(expiring,'Expiring soon','warn','') +
-    tile(expired,'Expired','grey','');
+    tile(newResults,'New results','violet','awaiting-assessment') +
+    tile(alerts,'Action needed','alert','action') +
+    tile(expiring,'Expiring soon','warn','invite-expiring') +
+    tile(expired,'Expired','grey','invite-expired');
 }
 
 function renderBulkBar(){
@@ -2153,11 +2243,109 @@ document.querySelectorAll('.dept-item').forEach(item=>{
 
 document.getElementById('tbl-search').addEventListener('input',e=>{STATE.search=e.target.value;renderTable()});
 
-document.getElementById('chip-action').addEventListener('click',function(){
-  STATE.actionFilter = !STATE.actionFilter;
-  this.classList.toggle('on', STATE.actionFilter);
+// ── Filter functions ────────────────────────────────────────────────
+function toggleDrop(dropId, chipEl){
+  event.stopPropagation();
+  const isOpen = STATE.openDrop === dropId;
+  closeAllDrops();
+  if(!isOpen){
+    STATE.openDrop = dropId;
+    const drop = document.getElementById(dropId);
+    if(drop) drop.classList.add('open');
+    if(chipEl) chipEl.classList.add('drop-open');
+  }
+}
+
+function closeAllDrops(){
+  document.querySelectorAll('.filter-drop.open').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.filter-chip.drop-open').forEach(c=>c.classList.remove('drop-open'));
+  STATE.openDrop = '';
+}
+
+document.addEventListener('click', closeAllDrops);
+
+function setScrFilter(key, val, chipId, prefix){
+  event.stopPropagation();
+  STATE[key] = val;
+  const chip = document.getElementById(chipId);
+  if(chip){
+    const lbl = chip.querySelector('.fchip-lbl');
+    const opts = key==='statusFilter' ? [['','All statuses'],['invite-sent','Invite sent'],['consent-signed-action','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']] : [['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']];
+    const found = opts.find(o=>o[0]===val);
+    if(lbl) lbl.textContent = val ? prefix+': '+(found?found[1]:val) : prefix+': All';
+    chip.classList.toggle('active', !!val);
+  }
+  closeAllDrops();
+  // update selected state in dropdown
+  const drop = document.getElementById(chipId.replace('chip','drop'));
+  if(drop) drop.querySelectorAll('.fdrop-item').forEach(it=>{
+    it.classList.toggle('selected', it.textContent.trim()===(val?((key==='statusFilter'?[['','All statuses'],['invite-sent','Invite sent'],['consent-signed-action','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']]:[['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']]).find(o=>o[0]===val)||['',''])[1]:'All statuses'));
+  });
   renderTable();
+  renderSummaryStrip();
+}
+
+function setHomeFilter(key, val, chipId, prefix){
+  event.stopPropagation();
+  STATE[key] = val;
+  const chip = document.getElementById(chipId);
+  if(chip){
+    const lbl = chip.querySelector('.fchip-lbl');
+    if(lbl){
+      if(!val) lbl.textContent = prefix+': All';
+      else if(key==='homeCaseTypeFilter') lbl.textContent = val==='bg'?'Background Check':'Child Safety Training';
+      else{
+        const opts = [['','All statuses'],['invite-sent','Invite sent'],['consent-signed-action','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']];
+        const found = opts.find(o=>o[0]===val);
+        lbl.textContent = prefix+': '+(found?found[1]:val);
+      }
+    }
+    chip.classList.toggle('active', !!val);
+  }
+  closeAllDrops();
+  renderHomeTable();
+}
+
+function setHomeCardFilter(key){
+  STATE.homeCardFilter = STATE.homeCardFilter === key ? '' : key;
+  renderHomeTable();
+}
+
+function setScrCardFilter(key){
+  if(key === 'action'){
+    STATE.actionFilter = !STATE.actionFilter;
+    const chip = document.getElementById('chip-action');
+    if(chip) chip.classList.toggle('on', STATE.actionFilter);
+  } else {
+    STATE.statusFilter = STATE.statusFilter === key ? '' : key;
+    // update chip label
+    const chip = document.getElementById('scr-chip-status');
+    if(chip){
+      const lbl = chip.querySelector('.fchip-lbl');
+      const opts = [['','All statuses'],['invite-sent','Invite sent'],['consent-signed-action','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']];
+      const found = opts.find(o=>o[0]===STATE.statusFilter);
+      if(lbl) lbl.textContent = STATE.statusFilter ? 'Status: '+(found?found[1]:STATE.statusFilter) : 'Status: All';
+      chip.classList.toggle('active', !!STATE.statusFilter);
+    }
+  }
+  renderTable();
+  renderSummaryStrip();
+}
+
+function toggleActionFilter(chipEl){
+  event.stopPropagation();
+  STATE.actionFilter = !STATE.actionFilter;
+  chipEl.classList.toggle('on', STATE.actionFilter);
+  renderTable();
+  renderSummaryStrip();
+}
+
+// home search
+document.getElementById('home-search').addEventListener('input', e=>{
+  STATE.search = e.target.value;
+  renderHomeTable();
 });
+
 
 function toast(msg){
   const t=document.createElement('div');
