@@ -1327,35 +1327,56 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                           {qbSelectedOtherQueries.size > 0 && <span style={{ fontSize: 9, fontWeight: 700, color: "#475569", background: "#e2e8f0", borderRadius: 8, padding: "1px 5px" }}>{qbSelectedOtherQueries.size} selected</span>}
                         </div>
 
-                        <div style={{ padding: "4px 8px 8px" }}>
-                          {/* Search input */}
-                          <div style={{ position: "relative", marginBottom: 4 }}>
-                            <input type="text" value={qbOtherQuerySearch} onChange={e => setQbOtherQuerySearch(e.target.value)} placeholder="Search saved queries…"
+                        {/* Selected chips */}
+                        {qbSelectedOtherQueries.size > 0 && (
+                          <div style={{ padding: "0 10px 6px", display: "flex", flexWrap: "wrap", gap: 4 }}>
+                            {[...qbSelectedOtherQueries].map(id => {
+                              const cfg = savedQueryList.find(x => x.id === id);
+                              return cfg ? (
+                                <span key={id} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "3px 7px", borderRadius: 10, background: "#eff4ff", border: `1px solid #c7d7f7`, fontSize: 11, color: c.pri, fontWeight: 500 }}>
+                                  {cfg.name}
+                                  <button onMouseDown={e => { e.preventDefault(); setQbSelectedOtherQueries(prev => { const n = new Set(prev); n.delete(id); return n; }); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", lineHeight: 0 }}
+                                    onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                    onMouseLeave={e => e.currentTarget.style.color = c.pri}><XIcon size={9} /></button>
+                                </span>
+                              ) : null;
+                            })}
+                          </div>
+                        )}
+
+                        {/* Search-and-select input */}
+                        <div style={{ padding: "4px 8px 8px", position: "relative" }}>
+                          <div style={{ position: "relative" }}>
+                            <input type="text" value={qbOtherQuerySearch} onChange={e => { setQbOtherQuerySearch(e.target.value); setQbOtherQueriesDropOpen(true); }}
+                              onFocus={e => { const rect = e.currentTarget.getBoundingClientRect(); setQbOtherQueriesDropRect(rect); setQbOtherQueriesDropOpen(true); }}
+                              onBlur={() => setTimeout(() => setQbOtherQueriesDropOpen(false), 300)}
+                              placeholder="Search and select queries…"
                               style={{ width: "100%", padding: "5px 8px 5px 26px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box", color: c.text }} />
                             <SearchIcon size={11} style={{ position: "absolute", left: 8, top: 7, color: c.textTer }} />
                           </div>
-                          {/* Always-visible scrollable multiselect list */}
-                          <div style={{ maxHeight: 180, overflowY: "auto", border: `1px solid ${c.border}`, borderRadius: 5, background: c.white }}>
-                            {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).length === 0 && (
-                              <div style={{ fontSize: 11, color: c.textTer, padding: "8px 10px", fontStyle: "italic" }}>No queries found.</div>
-                            )}
-                            {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).map(cfg => {
-                              const isSelected = qbSelectedOtherQueries.has(cfg.id);
-                              return (
-                                <div key={cfg.id}
-                                  onClick={() => setQbSelectedOtherQueries(prev => { const n = new Set(prev); isSelected ? n.delete(cfg.id) : n.add(cfg.id); return n; })}
-                                  style={{ padding: "7px 10px", cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 8, borderBottom: `1px solid ${c.borderLight}`, background: isSelected ? "#eff4ff" : c.white, color: isSelected ? c.pri : c.textSec }}
-                                  onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = c.bg; }}
-                                  onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = c.white; }}>
-                                  {/* Checkbox */}
-                                  <div style={{ width: 14, height: 14, borderRadius: 3, border: `1.5px solid ${isSelected ? c.pri : c.border}`, background: isSelected ? c.pri : c.white, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                    {isSelected && <span style={{ color: "#fff", fontSize: 9, lineHeight: 1, fontWeight: 700 }}>✓</span>}
+                          {qbOtherQueriesDropOpen && qbOtherQueriesDropRect && ReactDOM.createPortal(
+                            <div style={{ position: "fixed", top: qbOtherQueriesDropRect.bottom + 2, left: qbOtherQueriesDropRect.left, width: Math.max(qbOtherQueriesDropRect.width, 240), background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 16px rgba(0,0,0,0.12)", zIndex: 9999, maxHeight: 220, overflowY: "auto" }}>
+                              {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).length === 0 && (
+                                <div style={{ fontSize: 11, color: c.textTer, padding: "10px", fontStyle: "italic" }}>No queries found.</div>
+                              )}
+                              {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).map(cfg => {
+                                const isSelected = qbSelectedOtherQueries.has(cfg.id);
+                                return (
+                                  <div key={cfg.id}
+                                    onMouseDown={e => { e.preventDefault(); setQbSelectedOtherQueries(prev => { const n = new Set(prev); isSelected ? n.delete(cfg.id) : n.add(cfg.id); return n; }); }}
+                                    style={{ padding: "8px 10px", cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 8, borderBottom: `1px solid ${c.borderLight}`, background: isSelected ? "#eff4ff" : c.white, color: isSelected ? c.pri : c.textSec }}
+                                    onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = c.bg; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background = isSelected ? "#eff4ff" : c.white; }}>
+                                    <div style={{ width: 14, height: 14, borderRadius: 3, border: `1.5px solid ${isSelected ? c.pri : c.border}`, background: isSelected ? c.pri : c.white, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                      {isSelected && <span style={{ color: "#fff", fontSize: 9, lineHeight: 1, fontWeight: 700 }}>✓</span>}
+                                    </div>
+                                    {cfg.name}
                                   </div>
-                                  <span style={{ flex: 1 }}>{cfg.name}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
+                                );
+                              })}
+                            </div>,
+                            document.body
+                          )}
                         </div>
                       </div>
                     </div>
