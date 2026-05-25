@@ -1560,10 +1560,12 @@ function switchTab(tab){
   const secBar = document.getElementById('home-toolbar-sec');
   if(secBar) secBar.style.display = (tab==='cst') ? 'none' : '';
 
-  // Type column (home-col-type) — only visible on All tab
-  document.querySelectorAll('.home-col-type').forEach(el=>{
-    el.style.display = (tab==='all') ? '' : 'none';
-  });
+  // Type column — use CSS class on table so newly rendered rows inherit hiding
+  const homeTbl = document.querySelector('.home-table');
+  if(homeTbl){
+    homeTbl.classList.remove('tab-all','tab-bg','tab-cst');
+    homeTbl.classList.add('tab-' + tab);
+  }
 
   // Update Detail column header and sort by-tab
   const thDetail = document.getElementById('th-casedetail');
