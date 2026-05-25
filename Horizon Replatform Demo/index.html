@@ -1670,6 +1670,7 @@ function renderHomeTable(){
     });
     tbody.innerHTML = rows || `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--fg3)">No cases match the current filter.</td></tr>`;
   }
+  updateSelectAllCb();
   // update home sub
   const sub = document.getElementById('home-sub');
   if(sub){
@@ -1839,6 +1840,50 @@ function toggleSelect(pid){
   });
   updateHomeBulkBar();
   updateSelectAllCb();
+}
+
+function toggleSelectAll(e){
+  e.stopPropagation();
+  const rows = filteredHomePeople();
+  const allIds = rows.map(p=>p.id);
+  const allSelected = allIds.length>0 && allIds.every(id=>STATE.selectedPeople.has(id));
+  if(allSelected){
+    allIds.forEach(id=>STATE.selectedPeople.delete(id));
+  } else {
+    allIds.forEach(id=>STATE.selectedPeople.add(id));
+  }
+  // Re-render checkboxes in visible rows
+  document.querySelectorAll('#home-tbody tr[data-pid]').forEach(tr=>{
+    const pid = tr.dataset.pid;
+    const on = STATE.selectedPeople.has(pid);
+    tr.querySelectorAll('.cb').forEach(cb=>{
+      cb.classList.toggle('on',on);
+      cb.innerHTML = on ? `<svg viewBox="0 0 16 16" width="9" height="9" fill="none"><path d="M2.5 8l4 4 7-7" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>` : '';
+    });
+  });
+  updateHomeBulkBar();
+  updateSelectAllCb();
+}
+
+function updateSelectAllCb(){
+  const cb = document.getElementById('home-cb-all');
+  if(!cb) return;
+  const rows = filteredHomePeople();
+  const allIds = rows.map(p=>p.id);
+  const noneSelected = !allIds.some(id=>STATE.selectedPeople.has(id));
+  const allSelected = allIds.length>0 && allIds.every(id=>STATE.selectedPeople.has(id));
+  const someSelected = !noneSelected && !allSelected;
+  cb.classList.toggle('on', allSelected || someSelected);
+  if(noneSelected){
+    cb.style.background='';cb.style.borderColor='';
+    cb.innerHTML='';
+  } else if(someSelected){
+    cb.style.background='var(--brand)';cb.style.borderColor='var(--brand)';
+    cb.innerHTML=`<svg viewBox="0 0 16 16" width="9" height="9" fill="none"><path d="M3 8h10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>`;
+  } else {
+    cb.style.background='var(--brand)';cb.style.borderColor='var(--brand)';
+    cb.innerHTML=`<svg viewBox="0 0 16 16" width="9" height="9" fill="none"><path d="M2.5 8l4 4 7-7" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
 }
 
 function updateHomeBulkBar(){
