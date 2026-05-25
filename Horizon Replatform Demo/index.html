@@ -1544,13 +1544,17 @@ function switchTab(tab){
   const cstChip = document.getElementById('home-chip-cst');
   if(cstChip) cstChip.style.display = (tab==='cst') ? '' : 'none';
 
-  // Status, initiated, detail, sort chips — hide on CST tab
-  ['home-chip-status','home-chip-initiated','home-chip-detail'].forEach(id=>{
+  // Status, initiated chips — hide on CST tab
+  ['home-chip-status','home-chip-initiated'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.style.display = (tab==='cst') ? 'none' : '';
   });
+  const detailChip = document.getElementById('home-chip-detail');
+  if(detailChip) detailChip.style.display = (tab==='bg') ? '' : 'none';
   const sortChip = document.getElementById('home-chip-sort');
   if(sortChip) sortChip.style.display = (tab==='cst') ? 'none' : '';
+  const secBar = document.getElementById('home-toolbar-sec');
+  if(secBar) secBar.style.display = (tab==='cst') ? 'none' : '';
 
   // Type column (home-col-type) — only visible on All tab
   document.querySelectorAll('.home-col-type').forEach(el=>{
@@ -1561,7 +1565,7 @@ function switchTab(tab){
   const thDetail = document.getElementById('th-casedetail');
   if(thDetail){
     const sortIc = thDetail.querySelector('svg');
-    thDetail.textContent = tab==='cst' ? 'Training' : tab==='bg' ? 'Check type' : 'Detail';
+    thDetail.textContent = 'Case';
     if(sortIc) thDetail.appendChild(sortIc);
   }
 
