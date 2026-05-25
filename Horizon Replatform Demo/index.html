@@ -1263,7 +1263,9 @@ function filteredHomePeople(){
   if(STATE.homeCardFilter === 'action') people = people.filter(p => STATUS[currentCase(p).status]?.action);
   else if(STATE.homeCardFilter === 'new-results') people = people.filter(p => currentCase(p).status === 'awaiting-assessment');
   else if(STATE.homeCardFilter === 'expiring') people = people.filter(p => currentCase(p).status === 'invite-expiring');
-  else if(STATE.homeCardFilter === 'cst-pending'||STATE.homeCardFilter==='cst-invited') people = people.filter(p => p.cst && p.cst.status === 'cst-invited');
+  else if(STATE.homeCardFilter === 'rescreen') people = people.filter(p => ['due-rescreening','screening-overdue'].includes(currentCase(p).status));
+  else if(STATE.homeCardFilter === 'cst-invited') people = people.filter(p => p.cst && p.cst.status === 'cst-invited');
+  else if(STATE.homeCardFilter === 'cst-pending') people = people.filter(p => p.cst && p.cst.status === 'cst-invited');
   else if(STATE.homeCardFilter === 'cst-not-sent') people = people.filter(p => p.cst && p.cst.status === 'cst-not-sent');
   else if(STATE.homeCardFilter === 'cst-done') people = people.filter(p => p.cst && p.cst.status === 'cst-completed');
   else if(STATE.homeCardFilter === 'cst-na') people = people.filter(p => p.cst && p.cst.status === 'cst-na');
