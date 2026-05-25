@@ -1964,9 +1964,7 @@ function renderLinkManagement(person, c){
       </div>
     </div>` : '';
 
-  return `<div class="pnl-sec" style="padding-top:0;padding-bottom:14px">
-    <div class="pnl-sec-title"><span>Invite</span></div>
-    ${bounceBanner}
+  return `${bounceBanner}
     <div style="background:var(--fill-static-neutral-subtle);border:1px solid var(--border);border-radius:var(--r8);padding:12px 14px;margin-bottom:10px;${isBounced?'opacity:.6':''}">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
         <svg width="13" height="13" style="color:var(--fg3);flex-shrink:0"><use href="#ic-link"/></svg>
@@ -1979,7 +1977,7 @@ function renderLinkManagement(person, c){
         <span style="color:${isExpiring?'var(--amber)':'var(--fg3)'}">Expires: <strong style="color:${isExpiring?'var(--amber)':'var(--fg2)'}">${esc(expiryDate)}</strong>${isExpiring?' (3 days)':''}</span>
       </div>
     </div>
-    ${!isBounced ? `<div style="display:flex;gap:6px;flex-wrap:wrap">
+    ${!isBounced ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">
       <button class="btn btn-secondary btn-sm" onclick="toast('Invite resent to ${esc(person.email)}')">
         <svg width="12" height="12"><use href="#ic-send"/></svg>Resend invite
       </button>
@@ -1990,9 +1988,7 @@ function renderLinkManagement(person, c){
         <svg width="12" height="12"><use href="#ic-clock"/></svg>Extend expiry
       </button>
       <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="toast('Invite cancelled')">Cancel invite</button>
-    </div>` : ''}
-  </div>
-  <div class="pnl-divider"></div>`;
+    </div>` : ''}`;
 }
 
 function renderPanelBody(person, targetCaseId){
