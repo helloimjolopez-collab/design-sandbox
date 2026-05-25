@@ -358,6 +358,8 @@ tbody tr:hover .row-act-btn{opacity:1}
 .hist-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 60ms}
 .hist-row:last-child{border-bottom:none}
 .hist-row:hover{background:var(--fill-static-neutral-subtle)}
+.hist-row-current{background:var(--fill-static-info-light);margin:0 -8px;padding:10px 8px;border-radius:6px;border-bottom-color:transparent}
+.hist-row-current:hover{background:var(--fill-static-info-subtle)}
 .hist-row-main{flex:1;min-width:0}
 .hist-row-title{font-size:13px;font-weight:600;color:var(--ink)}
 .hist-row-meta{font-size:12px;color:var(--fg3);margin-top:1px}
@@ -1661,9 +1663,12 @@ function renderCasesCompact(person, targetCaseId){
       }
     }
 
-    return `<div class="hist-row" data-case-id="${c.id}">
+    return `<div class="hist-row${isFirst?' hist-row-current':''}" data-case-id="${c.id}">
       <div class="hist-row-main">
-        <div class="hist-row-title">${esc(c.checkType)}</div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="hist-row-title">${esc(c.checkType)}</div>
+          ${isFirst?`<span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--brand);background:var(--fill-static-info-light);padding:1px 6px;border-radius:3px">Current</span>`:''}
+        </div>
         <div class="hist-row-meta">${fmtShort(c.dateInitiated)} · ${VIA_LABELS[c.via]||c.via}</div>
       </div>
       ${badgeHtml}
