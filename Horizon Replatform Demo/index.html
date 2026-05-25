@@ -1158,11 +1158,16 @@ function filteredPeople(){
 
 function filteredHomePeople(){
   let people = filteredPeople();
+  const tab = STATE.mainTab;
+  // card filter
   if(STATE.homeCardFilter === 'action') people = people.filter(p => STATUS[currentCase(p).status]?.action);
   else if(STATE.homeCardFilter === 'new-results') people = people.filter(p => currentCase(p).status === 'awaiting-assessment');
   else if(STATE.homeCardFilter === 'expiring') people = people.filter(p => currentCase(p).status === 'invite-expiring');
-  else if(STATE.homeCardFilter === 'cst-pending') people = people.filter(p => p.cst && p.cst.status === 'cst-invited');
-  if(STATE.homeCaseTypeFilter === 'bg') return people; // bg rows only — cst rows hidden in renderHomeRow
+  else if(STATE.homeCardFilter === 'cst-pending'||STATE.homeCardFilter==='cst-invited') people = people.filter(p => p.cst && p.cst.status === 'cst-invited');
+  else if(STATE.homeCardFilter === 'cst-not-sent') people = people.filter(p => p.cst && p.cst.status === 'cst-not-sent');
+  else if(STATE.homeCardFilter === 'cst-done') people = people.filter(p => p.cst && p.cst.status === 'cst-completed');
+  else if(STATE.homeCardFilter === 'cst-na') people = people.filter(p => p.cst && p.cst.status === 'cst-na');
+  // For CST tab: include everyone (even if cst-na, still show them)
   return people;
 }
 
