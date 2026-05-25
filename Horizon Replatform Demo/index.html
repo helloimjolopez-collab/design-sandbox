@@ -1226,7 +1226,11 @@ const PEOPLE = [
 ];
 
 const VIA_ICONS = {invite:'ic-env',manual:'ic-person',flow:'ic-flow',integration:'ic-integration'};
-const VIA_LABELS = {invite:'Email invite',manual:'Manual order',flow:'Screening flow',integration:'Integration'};
+const VIA_LABELS = {invite:'Email invite',manual:'Manual order',flow:'Screening flow',integration:'CRM integration'};
+function viaLabel(c, person){
+  if(c.via==='integration' && person && person.source && person.source!=='PMM') return person.source;
+  return VIA_LABELS[c.via] || c.via;
+}
 
 let STATE = {dept:'all',search:'',actionFilter:false,selectedPeople:new Set(),currentPerson:null,currentCase:null,wzStep:1,wzPeople:[],wzLevel:null,wzLvlDropOpen:false,wzLvlSearch:'',wzLvlExpanded:false,wzSuccess:false,wzAdvancedOpen:false,wzEmailOn:true,wzApproval:false,wzShowNewPerson:false,wzNewPerson:{fn:'',ln:'',email:'',role:'',dept:''},statusFilter:'',viaFilter:'',homeCardFilter:'',homeCaseTypeFilter:'',homeStatusFilter:'',homeCstFilter:'',openDrop:'',lvEditId:null,lvDraft:{name:'',tmpl:'essential',depts:[],isDefault:false},defaultLevel:'premier-mvr',mainTab:'all'};
 
