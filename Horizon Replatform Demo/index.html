@@ -2972,24 +2972,20 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     this.classList.add('active');
     const homeView = document.getElementById('home-view');
-    const screeningsView = document.getElementById('screenings-view');
     const stubView = document.getElementById('stub-view');
     const levelsView = document.getElementById('levels-view');
     // hide all
     if(homeView) homeView.style.display='none';
-    if(screeningsView) screeningsView.style.display='none';
     if(stubView) stubView.style.display='none';
     if(levelsView) levelsView.style.display='none';
-    if(page==='home'){
+    if(page==='screenings-main'){
       if(homeView){ homeView.style.display='flex'; renderHomeTable(); }
-    } else if(page==='screenings'){
-      if(screeningsView) screeningsView.style.display='flex';
     } else if(page==='levels'){
       if(levelsView){ levelsView.style.display='flex'; renderLevels(); }
     } else {
       if(stubView){
         stubView.style.display='flex';
-        const labels = {training:'Training',settings:'Settings',flows:'Screening Flows'};
+        const labels = {settings:'Settings',flows:'Screening Flows'};
         stubView.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--fg3)"><svg width="32" height="32" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.4"/><path d="M10 6v5l3 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><div style="font-size:16px;font-weight:600;color:var(--fg2)">${esc(labels[page]||page)}</div><div style="font-size:14px">This section is in scope but not yet built in this iteration.</div></div>`;
       }
     }
@@ -2997,13 +2993,15 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
 });
 
 renderHomeTable();
+// Show the new BG check button by default (All tab is active)
+const btnNewHome = document.getElementById('btn-new-home');
+if(btnNewHome){ btnNewHome.style.display=''; btnNewHome.addEventListener('click',openWizard); }
 
 document.querySelectorAll('.dept-item').forEach(item=>{
   item.addEventListener('click',()=>{
     STATE.dept = item.dataset.dept;
     document.querySelectorAll('.dept-item').forEach(d=>d.classList.toggle('active',d===item));
-    document.getElementById('page-title').textContent = STATE.dept==='all'?'Background Checks':STATE.dept;
-    renderTable();
+    renderHomeTable();
   });
 });
 
