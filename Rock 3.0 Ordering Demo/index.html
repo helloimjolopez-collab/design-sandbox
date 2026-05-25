@@ -1064,11 +1064,31 @@ function renderBgStep2() {
             </div>
             <div>
               <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Child Safety Training</label>
-              <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgState.trainingType=this.value;renderBgStep2();">
-                <option value="employee" ${bgState.trainingType==='employee'?'selected':''}>Employee</option>
-                <option value="volunteer" ${bgState.trainingType==='volunteer'?'selected':''}>Volunteer</option>
-                <option value="none" ${bgState.trainingType==='none'?'selected':''}>None</option>
-              </select>
+              ${noCst ? `
+                <div style="position:relative;display:inline-block;">
+                  <select class="input-base" disabled style="padding:var(--spacing-sm);opacity:0.45;cursor:not-allowed;background:#F5F5F5;"
+                    onmouseenter="document.getElementById('cst-tooltip').style.display='block'"
+                    onmouseleave="document.getElementById('cst-tooltip').style.display='none'"
+                    ontouchstart="document.getElementById('cst-tooltip').style.display='block'">
+                    <option>None</option>
+                  </select>
+                  <div id="cst-tooltip" style="display:none;position:absolute;bottom:calc(100% + 6px);left:0;min-width:260px;background:#333;color:#fff;font-size:var(--text-sm);line-height:1.5;padding:8px 12px;border-radius:var(--radius-sm);z-index:99;pointer-events:none;">
+                    Need to add Child Safety Training? <a href="https://www.protectmyministry.com/child-safety-training/" target="_blank" rel="noopener" style="color:#90CAF9;text-decoration:underline;pointer-events:auto;">Connect with us</a> to unlock training options.
+                  </div>
+                </div>
+                <div style="margin-top:var(--spacing-sm);">
+                  <a href="https://www.protectmyministry.com/child-safety-training/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:var(--text-sm);color:var(--primary);font-weight:var(--font-medium);text-decoration:none;">
+                    Enable Child Safety Training with PMM
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                </div>
+              ` : `
+                <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgState.trainingType=this.value;renderBgStep2();">
+                  <option value="employee" ${bgState.trainingType==='employee'?'selected':''}>Employee</option>
+                  <option value="volunteer" ${bgState.trainingType==='volunteer'?'selected':''}>Volunteer</option>
+                  <option value="none" ${bgState.trainingType==='none'?'selected':''}>None</option>
+                </select>
+              `}
             </div>
           </div>
           <div style="margin-bottom:var(--spacing-2xl);">
