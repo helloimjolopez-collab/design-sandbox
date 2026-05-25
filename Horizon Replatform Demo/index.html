@@ -1532,12 +1532,14 @@ function switchTab(tab){
   STATE.homeCardFilter = '';
   document.querySelectorAll('#home-tabs .tab-item').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
 
-  // New BG check button — hide on CST tab
+  // CTA buttons — show/hide by tab
   const ctasHome = document.getElementById('home-ctas');
   if(ctasHome){
     ctasHome.style.display = 'flex';
     const btnCst = document.getElementById('btn-new-cst-home');
     if(btnCst) btnCst.style.display = (tab==='bg') ? 'none' : '';
+    const btnBg = document.getElementById('btn-new-home');
+    if(btnBg) btnBg.style.display = (tab==='cst') ? 'none' : '';
   }
 
   // CST filter chip — only on CST tab
