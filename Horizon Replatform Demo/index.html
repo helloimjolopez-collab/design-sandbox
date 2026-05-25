@@ -1458,12 +1458,25 @@ function openProfile(pid, targetCaseId){
 
 function renderPanelHead(person){
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
+  const c = currentCase(person);
+  const s = STATUS[c.status];
+  const srcMap = {'Rock CRM':'rock','PCO':'pco','PMM':'pmm'};
+  const srcKey = srcMap[person.source||'PMM']||'pmm';
+  const sourceChip = `<span class="source-chip ${srcKey}">${esc(person.source||'PMM')}</span>`;
   document.getElementById('panel-head-content').innerHTML = `
-    <div class="profile-name-row">
-      <div class="profile-av" style="background:${ac}">${esc(initials(person.name))}</div>
-      <div>
-        <div class="profile-name">${esc(person.name)}</div>
-        <div style="font-size:13px;color:var(--fg2);margin-top:2px">${esc(person.position)} · ${esc(person.team)}</div>
+    <div style="display:flex;align-items:flex-start;gap:14px">
+      <div class="profile-av" style="background:${ac};width:44px;height:44px;font-size:15px;flex-shrink:0">${esc(initials(person.name))}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
+          <div class="profile-name" style="font-size:18px">${esc(person.name)}</div>
+          ${sourceChip}
+        </div>
+        <div style="font-size:13px;color:var(--fg2)">${esc(person.position)} &middot; ${esc(person.team)}</div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          ${renderBadge(c.status, c.assessment?.date)}
+          ${c.assessment?`<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;background:${c.assessment.outcome==='Cleared'?'var(--green-bg)':c.assessment.outcome==='Escalated'?'var(--red-bg)':'var(--amber-bg)'};color:${c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)'}">${esc(c.assessment.outcome)}</span>`:''}
+          ${person.rescreenDue?`<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--amber-bg);color:var(--amber)">Rescreen due ${esc(person.rescreenDue)}</span>`:''}
+        </div>
       </div>
     </div>`;
 }
