@@ -1184,12 +1184,11 @@ function filteredHomePeople(){
   return people;
 }
 
-function renderBadge(statusKey, assessmentDate){
+function renderBadge(statusKey){
   const s = STATUS[statusKey];
   if(!s) return '';
-  let label = s.label;
-  if(assessmentDate && (statusKey==='cleared'||statusKey==='escalated')) label += ` — ${assessmentDate}`;
-  return `<span class="badge ${s.cls}" onclick="event.stopPropagation()"><span class="bdot"></span>${esc(label)}<span class="badge-tip">${esc(s.tip)}</span></span>`;
+  const icon = s.icon || 'ic-check';
+  return `<span class="badge ${s.cls}" data-tip="${esc(s.tip)}" onclick="event.stopPropagation()"><svg class="bic" viewBox="0 0 20 20" fill="none"><use href="#${icon}"/></svg>${esc(s.label)}</span>`;
 }
 
 function renderVia(via){
