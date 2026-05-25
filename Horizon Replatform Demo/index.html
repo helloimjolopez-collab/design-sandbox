@@ -1230,9 +1230,9 @@ const STATUS = {
   'order-failed':{label:'Order failed',cls:'b-danger',icon:'ic-x',action:true,tip:'Order submission failed. Retry or contact support.'},
   'screening-progress':{label:'Screening in progress',cls:'b-progress',icon:'ic-loader',action:false,tip:'The background check is being processed by the provider.'},
   'screening-error':{label:'Screening error',cls:'b-danger',icon:'ic-x',action:true,tip:'An error occurred during processing. Contact support.'},
-  'awaiting-assessment':{label:'Awaiting assessment',cls:'b-pending',icon:'ic-eye',action:true,tip:'Report received. Review the report and record your assessment to close this case.'},
-  'cleared':{label:'Cleared',cls:'b-positive',icon:'ic-check',action:false,tip:'Reviewed and cleared for this role.'},
-  'escalated':{label:'Escalated',cls:'b-danger',icon:'ic-stop',action:true,tip:'Escalated — do not activate. FCRA adverse action process may be required.'},
+  'awaiting-assessment':{label:'Awaiting assessment',cls:'b-pending',icon:'ic-clock-fill',action:true,tip:'Report received. Review the report and record your assessment to close this case.'},
+  'cleared':{label:'Cleared',cls:'b-positive',icon:'ic-thumb-up',action:false,tip:'Reviewed and cleared for this role.'},
+  'escalated':{label:'Escalated',cls:'b-danger',icon:'ic-ban',action:true,tip:'Escalated — do not activate. FCRA adverse action process may be required.'},
   'due-rescreening':{label:'Rescreen due soon',cls:'b-warn',icon:'ic-calendar',action:true,tip:'Rescreen date is approaching. Current check is still valid — start a new check soon.'},
   'screening-overdue':{label:'Check out of date',cls:'b-danger',icon:'ic-warning',action:true,tip:'Rescreen date has passed. This check is no longer current. A new background check is required.'},
   'needs-review':{label:'Needs review',cls:'b-orange',icon:'ic-flag',action:true,tip:'Flagged for further review. Follow-up decision required.'},
@@ -1403,10 +1403,16 @@ const CHECK_TYPE_INFO = {
 };
 
 const CST_STATUS_LABELS = {
-  'cst-completed': {label:'Completed',cls:'b-green',tip:'Child safety training completed.'},
-  'cst-invited':   {label:'Invite sent',cls:'b-blue',tip:'Training invite has been sent. Awaiting completion.'},
-  'cst-not-sent':  {label:'Not sent',cls:'b-grey',tip:'No child safety training invite has been sent.'},
-  'cst-na':        {label:'Not required',cls:'b-grey',tip:'Child safety training not required for this role.'},
+  'cst-link-created': {label:'Link created',     cls:'b-neutral', icon:'ic-link',       tip:'A training invite link has been created but not yet sent.'},
+  'cst-invite-sent':  {label:'Invite sent',       cls:'b-neutral', icon:'ic-env',        tip:'Training invite sent. Awaiting the applicant to start.'},
+  'cst-in-progress':  {label:'In progress',       cls:'b-progress',icon:'ic-loader',     tip:'The applicant has opened the training link and is working through it.'},
+  'cst-link-expiring':{label:'Link expiring',     cls:'b-warn',    icon:'ic-bell',       tip:'The training invite link expires soon. Resend if needed.'},
+  'cst-link-expired': {label:'Link expired',      cls:'b-neutral', icon:'ic-x',          tip:'The training invite link has expired. Send a new invite to restart.'},
+  'cst-certified':    {label:'Training certified',cls:'b-positive',icon:'ic-check',      tip:'Child safety training completed. Certificate on file.'},
+  'cst-not-sent':     {label:'Not sent',          cls:'b-neutral', icon:'ic-env',        tip:'No child safety training invite has been sent yet.'},
+  'cst-na':           {label:'Not required',      cls:'b-grey',    icon:'ic-x',          tip:'Child safety training not required for this role.'},
+  'cst-invited':      {label:'Invite sent',       cls:'b-neutral', icon:'ic-env',        tip:'Training invite sent. Awaiting the applicant to start.'},
+  'cst-completed':    {label:'Training certified',cls:'b-positive',icon:'ic-check',      tip:'Child safety training completed. Certificate on file.'},
 };
 
 function renderCheckTypeChip(checkType){
