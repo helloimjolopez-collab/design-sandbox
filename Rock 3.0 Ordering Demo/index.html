@@ -619,32 +619,33 @@ const ordersData = [
 
 function renderOrdersTable(containerId) {
   const fileIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2" style="cursor:pointer;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`;
-  let rows = ordersData.map((o,i) => `
-    <tr style="border-bottom:${i < ordersData.length-1 ? '1px solid var(--border)' : 'none'};">
-      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.name}</td>
-      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.requested}</td>
-      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.completed}</td>
-      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.pkg}</td>
-      <td style="padding:var(--spacing-lg);">${makeBadge(o.status)}</td>
-      <td style="padding:var(--spacing-lg);color:var(--muted-foreground);font-size:var(--text-base);">${o.rec}</td>
-      <td style="padding:var(--spacing-lg);">${o.hasReport ? fileIcon : '<span style="color:var(--muted-foreground);">-</span>'}</td>
-      <td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.training}</td>
-      <td style="padding:var(--spacing-lg);">${makeBadge(o.trainingStatus)}</td>
-      <td style="padding:var(--spacing-lg);">${o.hasCert ? fileIcon : '<span style="color:var(--muted-foreground);">-</span>'}</td>
-    </tr>`).join('');
+  const allCols = [
+    { label:'Name',                    renderCell: o => `<td style="padding:var(--spacing-lg);font-size:var(--text-base);white-space:nowrap;">${o.name}</td>` },
+    { label:'Requested',               renderCell: o => `<td style="padding:var(--spacing-lg);font-size:var(--text-base);white-space:nowrap;">${o.requested}</td>` },
+    { label:'Completed',               renderCell: o => `<td style="padding:var(--spacing-lg);font-size:var(--text-base);white-space:nowrap;">${o.completed}</td>` },
+    { label:'Background Check Package',renderCell: o => `<td style="padding:var(--spacing-lg);font-size:var(--text-base);white-space:nowrap;">${o.pkg}</td>` },
+    { label:'Background Check Status', renderCell: o => `<td style="padding:var(--spacing-lg);">${makeBadge(o.status)}</td>` },
+    { label:'BG Check Recommendation', renderCell: o => `<td style="padding:var(--spacing-lg);color:var(--muted-foreground);font-size:var(--text-base);">${o.rec}</td>` },
+    { label:'BG Check Report',         renderCell: o => `<td style="padding:var(--spacing-lg);">${o.hasReport ? fileIcon : '<span style="color:var(--muted-foreground);">-</span>'}</td>` },
+    { label:'Training',                renderCell: o => `<td style="padding:var(--spacing-lg);font-size:var(--text-base);">${o.training}</td>` },
+    { label:'Training Status',         renderCell: o => `<td style="padding:var(--spacing-lg);">${makeBadge(o.trainingStatus)}</td>` },
+    { label:'Training Certificate',    renderCell: o => `<td style="padding:var(--spacing-lg);">${o.hasCert ? fileIcon : '<span style="color:var(--muted-foreground);">-</span>'}</td>` },
+  ];
+  const orderKey = '_colOrder_' + containerId;
+  if (!window[orderKey]) window[orderKey] = allCols.map((_,i) => i);
+  const el = document.getElementById(containerId);
+  if (!el) return;
 
-  const html = `
+  const gripIcon = `<svg width="8" height="12" viewBox="0 0 8 12" fill="none" style="margin-left:5px;opacity:0.3;flex-shrink:0;vertical-align:middle;"><circle cx="2" cy="1.5" r="1.2" fill="currentColor"/><circle cx="6" cy="1.5" r="1.2" fill="currentColor"/><circle cx="2" cy="6" r="1.2" fill="currentColor"/><circle cx="6" cy="6" r="1.2" fill="currentColor"/><circle cx="2" cy="10.5" r="1.2" fill="currentColor"/><circle cx="6" cy="10.5" r="1.2" fill="currentColor"/></svg>`;
+
+  el.innerHTML = `
     <div style="margin-bottom:var(--spacing-3xl);">
       <h2 style="margin-bottom:var(--spacing-xl);font-size:var(--section-heading);font-weight:var(--font-medium);color:#4A4A4A;">Recent Requests</h2>
       <div class="card" style="overflow:hidden;">
         <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr style="border-bottom:1px solid var(--border);">
-                ${['Name','Requested','Completed','Background Check Package','Background Check Status','BG Check Recommendation','BG Check Report','Training','Training Status','Training Certificate'].map(h => `<th style="padding:var(--spacing-lg);text-align:left;color:var(--muted-foreground);font-weight:var(--font-medium);font-size:var(--text-sm);white-space:nowrap;">${h}</th>`).join('')}
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
+          <table id="tbl_${containerId}">
+            <thead><tr id="thead_${containerId}" style="border-bottom:1px solid var(--border);"></tr></thead>
+            <tbody id="tbody_${containerId}"></tbody>
           </table>
         </div>
         <div style="padding:var(--spacing-lg);display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);">
@@ -656,8 +657,63 @@ function renderOrdersTable(containerId) {
         </div>
       </div>
     </div>`;
-  const el = document.getElementById(containerId);
-  if (el) el.innerHTML = html;
+
+  function paint() {
+    const order = window[orderKey];
+    const cols = order.map(i => allCols[i]);
+    document.getElementById('thead_' + containerId).innerHTML = cols.map((c, pos) =>
+      `<th data-pos="${pos}" draggable="true" style="padding:var(--spacing-lg);text-align:left;color:var(--muted-foreground);font-weight:var(--font-medium);font-size:var(--text-sm);white-space:nowrap;cursor:grab;user-select:none;transition:background 0.12s;box-sizing:border-box;border-left:3px solid transparent;">
+        <span style="display:inline-flex;align-items:center;">${c.label}${gripIcon}</span>
+      </th>`
+    ).join('');
+    document.getElementById('tbody_' + containerId).innerHTML = ordersData.map((o, ri) =>
+      `<tr style="border-bottom:${ri < ordersData.length-1 ? '1px solid var(--border)' : 'none'};">
+        ${cols.map((c,ci) => {
+          const raw = c.renderCell(o);
+          return raw.replace('<td ', `<td data-col="${ci}" style="box-sizing:border-box;border-left:3px solid transparent;" `).replace('style="box-sizing:border-box;border-left:3px solid transparent;" style=', 'style="box-sizing:border-box;border-left:3px solid transparent;');
+        }).join('')}
+      </tr>`
+    ).join('');
+    bindDrag();
+  }
+
+  function clearDrop() {
+    const thead = document.getElementById('thead_' + containerId);
+    const tbody = document.getElementById('tbody_' + containerId);
+    if (thead) thead.querySelectorAll('th').forEach(t => { t.style.borderLeftColor = 'transparent'; t.style.background = ''; t.style.opacity = '1'; });
+    if (tbody) tbody.querySelectorAll('td').forEach(t => t.style.borderLeftColor = 'transparent');
+  }
+
+  function showDrop(pos) {
+    clearDrop();
+    const thead = document.getElementById('thead_' + containerId);
+    const tbody = document.getElementById('tbody_' + containerId);
+    if (thead) { const th = thead.querySelectorAll('th')[pos]; if (th) { th.style.borderLeftColor = '#3555a0'; th.style.background = '#EEF4FF'; } }
+    if (tbody) tbody.querySelectorAll('tr').forEach(row => { const td = row.querySelectorAll('td')[pos]; if (td) td.style.borderLeftColor = '#3555a0'; });
+  }
+
+  function bindDrag() {
+    const thead = document.getElementById('thead_' + containerId);
+    if (!thead) return;
+    const ths = [...thead.querySelectorAll('th')];
+    let src = null;
+    ths.forEach((th, pos) => {
+      th.ondragstart = e => {
+        src = pos; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(pos));
+        setTimeout(() => { th.style.opacity = '0.35'; th.style.background = '#F0F0F0'; }, 0);
+      };
+      th.ondragover = e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; if (pos !== src) showDrop(pos); };
+      th.ondrop = e => {
+        e.preventDefault();
+        if (src === null || pos === src) return;
+        const o = [...window[orderKey]]; const [item] = o.splice(src, 1); o.splice(pos, 0, item);
+        window[orderKey] = o; src = null; paint();
+      };
+      th.ondragend = () => { clearDrop(); src = null; };
+    });
+  }
+
+  paint();
 }
 
 function renderCstBanner() {
