@@ -988,10 +988,29 @@ function renderHomeRow(person, isBg){
   return bgRow + cstRow;
 }
 
+function renderHomeStats(){
+  const all = filteredPeople();
+  const strip = document.getElementById('home-summary-strip');
+  if(!strip) return;
+  const actionNeeded = all.filter(p=>STATUS[currentCase(p).status]?.action).length;
+  const newResults = all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
+  const expiring = all.filter(p=>currentCase(p).status==='invite-expiring').length;
+  const cstPending = all.filter(p=>p.cst && p.cst.status==='cst-invited').length;
+  const tile=(val,label,cls,fn)=>`<div class="ss-tile" onclick="${fn||''}">
+    <div><div class="ss-val ${val?cls:'zero'}">${val}</div><div class="ss-lbl">${label}</div></div>
+  </div>`;
+  strip.innerHTML =
+    tile(actionNeeded,'Action needed','alert','') +
+    tile(newResults,'New results','violet','') +
+    tile(expiring,'Expiring soon','warn','') +
+    tile(cstPending,'CST pending','grey','');
+}
+
 function renderHomeTable(){
   const people = filteredPeople();
+  renderHomeStats();
   if(!people.length){
-    document.getElementById('home-tbody').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--fg3)">No cases match the current filter.</td></tr>`;
+    document.getElementById('home-tbody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--fg3)">No cases match the current filter.</td></tr>`;
     return;
   }
   document.getElementById('home-tbody').innerHTML = people.map(p=>renderHomeRow(p,true)).join('');
