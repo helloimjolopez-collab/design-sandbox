@@ -1363,10 +1363,11 @@ function renderHomeRow(person){
   const created = fmtTableDate(c.dateInitiated);
   const updated = fmtTableDate(lastUpdatedDate(c));
   const roleTeamFull = `${person.position} · ${person.team}`;
-
-  // On All tab: show CST status chip in the case type cell (not in name cell)
-  const cstCellExtra = (isAllTab && person.cst && person.cst.status !== 'cst-na')
-    ? `<div style="margin-top:5px">${renderCstInline(person)}</div>` : '';
+  // On All tab: show "Background check" type label above the level chip so the
+  // case type is unambiguous (BG rows will be interleaved with CST rows).
+  const caseTypeLabel = isAllTab
+    ? `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--fg4);margin-bottom:4px">Background check</div>`
+    : '';
 
   return `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
     <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}" onclick="toggleSelect('${person.id}')"></div></td>
@@ -1377,8 +1378,7 @@ function renderHomeRow(person){
       <div class="name-role" data-tip="${esc(roleTeamFull)}">${esc(roleTeamFull)}</div>
     </td>
     <td>
-      ${renderCheckTypeChip(c.checkType)}
-      ${cstCellExtra}
+      ${caseTypeLabel}${renderCheckTypeChip(c.checkType)}
     </td>
     <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(created)}</td>
     <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(updated)}</td>
