@@ -1481,45 +1481,186 @@ function renderPanelHead(person){
     </div>`;
 }
 
+function renderPanelAction(person, c){
+  const s = STATUS[c.status];
+  if(!s) return '';
+  let cls='', title='', desc='', btns='';
+  if(c.status==='consent-signed-action'){
+    cls='action';
+    title='Consent received — approval required';
+    desc=c.consentForm?.mismatch
+      ? `Name on consent form ("${c.consentForm.nameOnForm}") does not match record ("${c.consentForm.nameOnRecord}"). Review before approving.`
+      : 'Approval gate is on for this department. Review consent and approve to place the order.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="toast('Order placed for ${person.name}')">Approve and place order</button><button class="btn btn-sm btn-secondary" onclick="toast('Opening consent form…')">View consent form</button>`;
+  } else if(c.status==='awaiting-assessment'){
+    cls='action';title='Report received — record your assessment';
+    desc='The background check report has been returned. Review it before recording your decision.';
+    btns=`<button class="btn btn-sm btn-primary" data-open-report="${c.id}">Review report &amp; assess</button>`;
+  } else if(c.status==='escalated'){
+    cls='bad';title='Escalated — do not activate this person';
+    desc=c.assessment?.notes||'This case has been escalated. Review the report and begin adverse action if needed.';
+    btns=`<button class="btn btn-sm btn-secondary" data-open-report="${c.id}">View report</button><button class="btn btn-sm btn-ghost" style="color:var(--red)" onclick="toast('Adverse action process started')">Begin adverse action</button>`;
+  } else if(c.status==='invite-expiring'){
+    cls='warn';title='Invite expiring in 3 days';
+    desc='The applicant has not yet submitted their consent form.';
+    btns=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="toast('Link extended')">Extend expiry</button>`;
+  } else if(c.status==='invite-expired'){
+    cls='bad';title='Invite expired — no consent received';
+    desc='Re-invite this person to restart consent collection.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="toast('New invite sent')">Re-invite</button>`;
+  } else if(c.status==='email-bounced'){
+    cls='warn';title='Invite email bounced';
+    desc='The invite email was not delivered. Correct the address and resend, or copy the link to share another way.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="toast('Opening email correction…')">Fix email and resend</button>`;
+  } else if(c.status==='due-rescreening'){
+    cls='warn';title='Rescreening due soon';
+    desc='This person\'s background check is due for renewal.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="openWizard()">Start new background check</button>`;
+  } else {
+    return '';
+  }
+  return `<div class="pnl-action ${cls}">
+    <div class="pnl-action-title">${esc(title)}</div>
+    ${desc?`<div class="pnl-action-desc">${esc(desc)}</div>`:''}
+    ${btns?`<div class="pnl-action-btns">${btns}</div>`:''}
+  </div>`;
+}
+
+function renderIdentityCompact(person){
+  const isIntegration = person.source && person.source !== 'PMM';
+  const orgColor = person.orgStatus==='Active'?'green':person.orgStatus==='Archived'?'':'';
+  return `<div class="pnl-meta-grid">
+    <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Email</div><div class="pnl-meta-val">${esc(person.email)}</div></div>
+    <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Phone</div><div class="pnl-meta-val muted">${esc(person.phone||'—')}</div></div>
+    <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Date of birth</div><div class="pnl-meta-val muted">${esc(person.dob||'—')}</div></div>
+    <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Org status</div><div class="pnl-meta-val ${orgColor}">${esc(person.orgStatus||'—')}</div></div>
+    <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Full legal name</div><div class="pnl-meta-val muted">${esc(person.fullLegal||person.name)}</div></div>
+    <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Preferred name</div><div class="pnl-meta-val muted">${esc(person.preferredName||'—')}</div></div>
+    ${person.rescreenDue?`<div class="pnl-meta-cell full"><div class="pnl-meta-lbl">Rescreening due</div><div class="pnl-meta-val warn">${esc(person.rescreenDue)}</div></div>`:''}
+    ${person.tags&&person.tags.length?`<div class="pnl-meta-cell full"><div class="pnl-meta-lbl">Tags</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:3px">${person.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>`:''}
+  </div>`;
+}
+
+function renderCasesCompact(person, targetCaseId){
+  if(!person.cases||!person.cases.length) return `<div style="font-size:13px;color:var(--fg4);padding:8px 0">No background checks on file.</div>`;
+  return person.cases.map((c,i)=>{
+    const s = STATUS[c.status];
+    const assessDate = c.assessment ? c.assessment.date : null;
+    const badgeHtml = renderBadge(c.status, assessDate);
+    const isFirst = i===0;
+
+    const eventsHtml = c.events.map(ev=>`
+      <div class="ev-row">
+        <div class="ev-dot ${ev.type}"></div>
+        <div class="ev-content">
+          <div class="ev-title">${esc(ev.title)}</div>
+          <div class="ev-time">${esc(ev.date)} · ${esc(ev.time)} · ${esc(ev.by)}</div>
+        </div>
+      </div>`).join('');
+
+    let extraHtml = '';
+    if(c.report){
+      extraHtml += `<div style="margin-top:10px;padding:10px 12px;background:var(--surf2);border-radius:var(--r6);display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">Report received ${c.report.receivedDate}</div>
+          <div style="font-size:12px;color:var(--fg2);margin-top:1px">${esc(c.report.refId)} · ${esc(c.report.hits)}</div>
+        </div>
+        <button class="btn btn-xs btn-secondary" data-open-report="${c.id}">View report</button>
+      </div>`;
+    }
+    if(c.consentForm){
+      const mm = c.consentForm.mismatch;
+      extraHtml += `<div style="margin-top:8px;padding:9px 12px;background:${mm?'var(--orange-bg)':'var(--surf2)'};border-radius:var(--r6);${mm?'border-left:3px solid var(--orange)':''}">
+        <div style="font-size:13px;font-weight:600;color:var(--ink)">Consent form${mm?' — name mismatch':''}</div>
+        <div style="font-size:12px;color:var(--fg2);margin-top:1px">Submitted ${c.consentForm.submittedDate} · Name on form: "${c.consentForm.nameOnForm}"</div>
+        ${mm?`<div style="margin-top:7px;display:flex;gap:6px"><button class="btn btn-xs btn-secondary" onclick="toast('Mismatch acknowledged')">Acknowledge</button><button class="btn btn-xs btn-ghost" onclick="toast('Correction requested')">Request correction</button></div>`:''}
+      </div>`;
+    }
+    if(c.assessment){
+      const outcomeColor = c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)';
+      extraHtml += `<div style="margin-top:8px;padding:9px 12px;background:var(--surf2);border-radius:var(--r6)">
+        <div style="font-size:12px;font-weight:700;color:${outcomeColor}">Assessment: ${esc(c.assessment.outcome)} — ${esc(c.assessment.date)}</div>
+        <div style="font-size:12px;color:var(--fg2);margin-top:1px">Recorded by ${esc(c.assessment.author)}${c.assessment.notes?` · "${c.assessment.notes}"`:''}</div>
+      </div>`;
+      if(c.assessment.outcome==='Escalated'){
+        extraHtml += `<div style="margin-top:8px"><button class="btn btn-sm btn-ghost" style="color:var(--red)" onclick="toast('Adverse action started')">Begin adverse action</button><div style="font-size:11px;color:var(--fg3);margin-top:3px">FCRA requires a pre-adverse action notice before communicating this decision to the applicant.</div></div>`;
+      }
+    }
+
+    return `<div class="hist-row" data-case-id="${c.id}">
+      <div class="hist-row-main">
+        <div class="hist-row-title">${esc(c.checkType)}</div>
+        <div class="hist-row-meta">${fmtShort(c.dateInitiated)} · ${VIA_LABELS[c.via]||c.via}</div>
+      </div>
+      ${badgeHtml}
+      ${c.assessment?`<span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:8px;background:${c.assessment.outcome==='Cleared'?'var(--green-bg)':c.assessment.outcome==='Escalated'?'var(--red-bg)':'var(--amber-bg)'};color:${c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)'}">${esc(c.assessment.outcome)}</span>`:''}
+      <svg class="hist-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="hist-detail${isFirst?' open':''}">
+      <div class="elog">${eventsHtml}</div>
+      ${extraHtml}
+    </div>`;
+  }).join('');
+}
+
+function renderCSTCompact(person){
+  if(!person.cst || person.cst.status==='cst-na'){
+    return `<div style="font-size:13px;color:var(--fg4);padding:4px 0">Not required for this role.</div>`;
+  }
+  const cstMap = {'cst-completed':'Completed','cst-invited':'Invite sent','cst-not-sent':'Not sent'};
+  const cstLabel = cstMap[person.cst.status]||person.cst.status;
+  const cstColor = person.cst.status==='cst-completed'?'var(--green)':person.cst.status==='cst-not-sent'?'var(--fg3)':'var(--amber)';
+  const dateStr = person.cst.completedDate||person.cst.inviteSentDate||'';
+  return `<div class="cst-row">
+    <div class="cst-row-label">Child safety training</div>
+    ${dateStr?`<div class="cst-row-date">${esc(dateStr)}</div>`:''}
+    <span style="font-size:12px;font-weight:600;color:${cstColor}">${esc(cstLabel)}</span>
+    ${person.cst.status!=='cst-completed'?`<button class="btn btn-xs btn-secondary" onclick="toast('CST invite sent')" style="margin-left:4px">${person.cst.status==='cst-not-sent'?'Send invite':'Resend'}</button>`:''}
+  </div>`;
+}
+
 function renderPanelBody(person, targetCaseId){
   const c = currentCase(person);
   const s = STATUS[c.status];
   const pb = document.getElementById('panel-body');
 
-  let sitHTML = renderSituation(person, c);
-  let identHTML = renderIdentity(person);
-  let casesHTML = renderCases(person, targetCaseId);
-  let docsHTML = renderDocuments(person);
-  let cstHTML = renderCST(person);
-
   pb.innerHTML = `
-    <div class="p-section" style="padding-top:16px">${identHTML}</div>
-    <div class="p-section"><div class="sec-lbl">Current situation</div>${sitHTML}</div>
-    <div class="p-section"><div class="sec-lbl">Child safety training</div>${cstHTML}</div>
-    <div class="p-section"><div class="sec-lbl">Background checks</div>${casesHTML}</div>
-    <div class="p-section"><div class="sec-lbl">Documents</div>${docsHTML}</div>`;
+    <div style="padding:16px 20px 0">
+      ${renderPanelAction(person, c)}
+      <div class="pnl-sec" style="padding-top:0">
+        <div class="pnl-sec-title"><span>Identity</span></div>
+        ${renderIdentityCompact(person)}
+      </div>
+      <div class="pnl-divider"></div>
+      <div class="pnl-sec">
+        <div class="pnl-sec-title"><span>Screening history</span></div>
+        ${renderCasesCompact(person, targetCaseId)}
+      </div>
+      <div class="pnl-divider"></div>
+      <div class="pnl-sec">
+        <div class="pnl-sec-title"><span>Child safety training</span></div>
+        ${renderCSTCompact(person)}
+      </div>
+      <div class="pnl-divider"></div>
+      <div class="pnl-sec">
+        <div class="pnl-sec-title"><span>Documents</span></div>
+        ${renderDocuments(person)}
+      </div>
+    </div>`;
 
-  pb.querySelectorAll('.cc-head').forEach(h=>{
-    h.addEventListener('click',()=>{
-      const body = h.nextElementSibling;
-      const isOpen = body.classList.contains('open');
-      h.classList.toggle('open', !isOpen);
-      body.classList.toggle('open', !isOpen);
-    });
-  });
   pb.querySelectorAll('[data-open-report]').forEach(btn=>{
     btn.addEventListener('click',e=>{e.stopPropagation();openReport(btn.dataset.openReport,e)});
   });
-
-  if(targetCaseId){
-    const target = pb.querySelector(`[data-case-id="${targetCaseId}"]`);
-    if(target){
-      setTimeout(()=>{
-        target.querySelector('.cc-head').click();
-        target.scrollIntoView({behavior:'smooth',block:'start'});
-      },80);
-    }
-  }
+  pb.querySelectorAll('.hist-row').forEach(row=>{
+    row.addEventListener('click',()=>{
+      const det = row.nextElementSibling;
+      const chev = row.querySelector('.hist-chevron');
+      if(det && det.classList.contains('hist-detail')){
+        det.classList.toggle('open');
+        if(chev) chev.classList.toggle('open');
+      }
+    });
+  });
 }
 
 function renderSituation(person, c){
