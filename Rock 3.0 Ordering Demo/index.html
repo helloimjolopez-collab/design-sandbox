@@ -1437,6 +1437,222 @@ function cstSubmit() {
   cstState.step = cstState.isUnhappyPath ? 'error' : 'success';
   renderCstInvite();
 }
+
+// ============================================================
+// BG CHECK INVITE — PERSON PROFILE ENTRY (single-page form)
+// ============================================================
+let bgProfileState = {
+  bgPackage: 'GA-Statewide',
+  trainingType: 'employee',
+  state: 'Alabama',
+  billingReference: 'HR',
+  cstEmailTemplate: 'volunteer-safety-training',
+  bgEmailTemplate: 'logo-testing',
+  agreedToFcra: false,
+  agreedToCst: false,
+  step: 'form',
+};
+
+function initBgCheckProfile() {
+  bgProfileState.agreedToFcra = false;
+  bgProfileState.agreedToCst = false;
+  bgProfileState.step = 'form';
+  updateProfileSubButtons();
+  renderBgCheckProfile();
+}
+
+function renderBgCheckProfile() {
+  const el = document.getElementById('bg-check-profile-content');
+  if (!el) return;
+  const noCst = sessionStorage.getItem('pmm-no-cst') === 'true';
+  const PMM_URL = 'https://www.protectmyministry.com/child-safety-training/';
+
+  const breadcrumb = `<div style="font-size:var(--text-sm);color:var(--muted-foreground);margin-bottom:var(--spacing-lg);">
+    <a href="#" onclick="navigate('person-profile');return false;" style="color:var(--primary);text-decoration:none;">Home</a> &rsaquo;
+    <a href="#" onclick="navigate('person-profile');return false;" style="color:var(--primary);text-decoration:none;">Workflows</a> &rsaquo;
+    <span style="color:var(--foreground);">Send Background Check Invite</span>
+  </div>`;
+
+  const pageHeader = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--spacing-xl);">
+    <h1 style="font-size:var(--heading-1);font-weight:var(--font-semibold);color:var(--foreground);">Send Background Check Invite</h1>
+    <div style="display:flex;gap:var(--spacing-md);align-items:center;">
+      <span style="font-size:var(--text-sm);color:var(--muted-foreground);">Action ID:</span>
+      <span style="padding:4px 8px;background:#E3F2FD;color:#1976D2;border-radius:var(--radius-sm);font-size:var(--text-sm);font-weight:var(--font-medium);">00181</span>
+      <span style="font-size:var(--text-sm);color:var(--muted-foreground);">Added: 09/03/2026</span>
+    </div>
+  </div>`;
+
+  let content = '';
+
+  if (bgProfileState.step === 'form') {
+    const showCst = !noCst && bgProfileState.trainingType !== 'none';
+    const canSubmit = bgProfileState.agreedToFcra && (!showCst || bgProfileState.agreedToCst);
+
+    const cstCol = noCst ? `
+      <div>
+        <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Child Safety Training</label>
+        <div style="position:relative;display:inline-block;">
+          <select class="input-base" disabled style="padding:var(--spacing-sm);opacity:0.45;cursor:not-allowed;background:#F5F5F5;"
+            onmouseenter="document.getElementById('bgp-cst-tip').style.display='block'"
+            onmouseleave="document.getElementById('bgp-cst-tip').style.display='none'"
+            ontouchstart="var t=document.getElementById('bgp-cst-tip');t.style.display=t.style.display==='block'?'none':'block'">
+            <option>None</option>
+          </select>
+          <div id="bgp-cst-tip" style="display:none;position:absolute;bottom:calc(100% + 6px);left:0;min-width:270px;background:#333;color:#fff;font-size:var(--text-sm);line-height:1.5;padding:8px 12px;border-radius:var(--radius-sm);z-index:99;pointer-events:none;">
+            Need to add Child Safety Training? <a href="${PMM_URL}" target="_blank" rel="noopener" style="color:#90CAF9;text-decoration:underline;pointer-events:auto;">Connect with us</a> to unlock training options.
+          </div>
+        </div>
+        <div style="margin-top:var(--spacing-sm);">
+          <a href="${PMM_URL}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:var(--text-sm);color:var(--primary);font-weight:var(--font-medium);text-decoration:none;">
+            Enable Child Safety Training with PMM
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </div>` : `
+      <div>
+        <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Child Safety Training</label>
+        <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgProfileState.trainingType=this.value;renderBgCheckProfile();">
+          <option value="employee" ${bgProfileState.trainingType==='employee'?'selected':''}>Employee</option>
+          <option value="volunteer" ${bgProfileState.trainingType==='volunteer'?'selected':''}>Volunteer</option>
+          <option value="none" ${bgProfileState.trainingType==='none'?'selected':''}>None</option>
+        </select>
+      </div>`;
+
+    content = `
+      <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
+      <div class="card" style="padding:var(--spacing-2xl);">
+        <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Background Check Invitation Details</h2>
+        <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Admin, please complete the form below to send a background check invitation.</p>
+        <!-- Applicant -->
+        <div style="margin-bottom:var(--spacing-xl);">
+          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Applicant</label>
+          <a href="#" onclick="navigate('person-profile');return false;" style="font-size:var(--text-base);color:var(--primary);text-decoration:none;">Roy Keane</a>
+        </div>
+        <!-- Email -->
+        <div style="margin-bottom:var(--spacing-xl);">
+          <label style="display:flex;align-items:center;gap:var(--spacing-xs);font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Email <span style="color:#C62828;">*</span></label>
+          <div style="display:flex;align-items:center;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border);border-radius:var(--radius-sm);background:#F9F9F9;">
+            <span style="font-size:16px;margin-right:var(--spacing-sm);">✉️</span>
+            <span style="font-size:var(--text-base);">mary.healy+RK@ministrybrands.com</span>
+          </div>
+        </div>
+        <!-- BG Package + State + CST -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--spacing-xl);margin-bottom:var(--spacing-xl);">
+          <div>
+            <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Background Check Package <span style="color:#C62828;">*</span></label>
+            <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgProfileState.bgPackage=this.value;">
+              <option value="GA-Statewide" ${bgProfileState.bgPackage==='GA-Statewide'?'selected':''}>GA-Statewide</option>
+              <option value="National" ${bgProfileState.bgPackage==='National'?'selected':''}>National</option>
+              <option value="Basic" ${bgProfileState.bgPackage==='Basic'?'selected':''}>Basic</option>
+              <option value="Essential" ${bgProfileState.bgPackage==='Essential'?'selected':''}>Essential</option>
+              <option value="Essential + MVR" ${bgProfileState.bgPackage==='Essential + MVR'?'selected':''}>Essential + MVR</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">State where employment or volunteering will occur <span style="color:#C62828;">*</span></label>
+            <select class="input-base" style="padding:var(--spacing-sm);" onchange="bgProfileState.state=this.value">
+              <option>Alabama</option><option>Georgia</option><option>Florida</option><option>Texas</option><option>California</option>
+            </select>
+          </div>
+          ${cstCol}
+        </div>
+        <!-- CST Email Template (only when CST selected) -->
+        ${showCst ? `<div style="margin-bottom:var(--spacing-xl);">
+          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">CST Email Template</label>
+          <select class="input-base" onchange="bgProfileState.cstEmailTemplate=this.value" style="max-width:360px;">
+            <option value="volunteer-safety-training" ${bgProfileState.cstEmailTemplate==='volunteer-safety-training'?'selected':''}>volunteer-safety-training</option>
+            <option value="default">Default Template</option>
+            <option value="spanish">Spanish Template</option>
+          </select>
+        </div>` : ''}
+        <!-- BG Email Template + Billing Reference -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-xl);margin-bottom:var(--spacing-2xl);">
+          <div>
+            <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">BG Invite Email Template</label>
+            <select class="input-base" onchange="bgProfileState.bgEmailTemplate=this.value">
+              <option value="logo-testing" ${bgProfileState.bgEmailTemplate==='logo-testing'?'selected':''}>logo-testing</option>
+              <option value="default">Default Template</option>
+              <option value="spanish">Spanish Template</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Billing Reference</label>
+            <select class="input-base" onchange="bgProfileState.billingReference=this.value">
+              <option value="HR" ${bgProfileState.billingReference==='HR'?'selected':''}>HR</option>
+              <option value="Finance">Finance</option>
+              <option value="Ministry">Ministry</option>
+            </select>
+          </div>
+        </div>
+        <!-- FCRA -->
+        <div style="background:#F9F9F9;padding:var(--spacing-xl);border-radius:var(--radius-sm);margin-bottom:var(--spacing-xl);">
+          <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">Fair Credit Reporting Act - Client Certification</h3>
+          <p style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;margin-bottom:var(--spacing-md);">By requesting a background check report from Protect My Ministry you certify the following:</p>
+          <ul style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;padding-left:var(--spacing-xl);margin:0;">
+            <li>You have provided the applicant with a clear and conspicuous disclosure for employment/volunteer purposes only.</li>
+            <li>You will comply with any adverse action requirements as described in the Fair Credit Reporting Act, if applicable.</li>
+            <li>You will not use information contained in the background check report in violation of any applicable federal or state equal employment opportunity law or regulation.</li>
+          </ul>
+          <label style="display:flex;align-items:flex-start;gap:var(--spacing-sm);margin-top:var(--spacing-lg);cursor:pointer;">
+            <input type="checkbox" id="bgp-fcra-check" ${bgProfileState.agreedToFcra?'checked':''} onchange="bgProfileState.agreedToFcra=this.checked;renderBgCheckProfile();" style="margin-top:2px;width:18px;height:18px;cursor:pointer;">
+            <span style="font-size:var(--text-base);font-weight:var(--font-medium);">I agree to the Fair Credit Reporting Act certification</span>
+          </label>
+        </div>
+        <!-- CST Legal Disclaimer (only when CST selected) -->
+        ${showCst ? `<div style="background:#F9F9F9;padding:var(--spacing-xl);border-radius:var(--radius-sm);margin-bottom:var(--spacing-xl);">
+          <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">Child Safety Course Legal Disclaimer</h3>
+          <div style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.7;margin-bottom:var(--spacing-lg);max-height:140px;overflow-y:auto;padding-right:4px;">
+            <p>By selecting "Send Background Check Invite" I hereby confirm I understand that all information included in this child presentation is for general informational purposes only. Such information does not, and is not intended to, constitute legal advice. While Protect my Ministry endeavors to keep the information contained in this presentation current and correct, such information may not constitute the most up-to-date information available, and Protect My Ministry makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or suitability of the information contained herein for any purpose. The links to third-party websites included in this presentation are only for convenience and ease of use; Protect My Ministry does not recommend or endorse the contents of the third-party sites. Any reliance a Client places on the information contained in this presentation is strictly at the Client's own risk. Use of this presentation does not create an attorney-client relationship a Client and Protect My Ministry or any of its attorneys, affiliates, agents, representatives, directors, officers, or employees. Clients using this presentation should contact their attorney to obtain advice with respect to any particular legal, employment, or personnel matter, including the hiring, retention, screening, training, and/or supervision of Client employees and volunteers. The information contained herein may differ from, or be inconsistent with, laws and regulations in relevant jurisdictions. No Client should act or refrain from acting on the basis of information included in this presentation, and should in all instances seek legal advice from counsel in the relevant jurisdiction. Only a Client's individual attorney can provide assurances that the information contained herein - and the Client's interpretation of it - is applicable or appropriate to the Client's particular situation and in compliance with applicable laws and/or regulations.</p>
+          </div>
+          <label style="display:flex;align-items:flex-start;gap:var(--spacing-sm);cursor:pointer;">
+            <input type="checkbox" id="bgp-cst-check" ${bgProfileState.agreedToCst?'checked':''} onchange="bgProfileState.agreedToCst=this.checked;renderBgCheckProfile();" style="margin-top:2px;width:18px;height:18px;cursor:pointer;">
+            <span style="font-size:var(--text-base);font-weight:var(--font-medium);">I acknowledge and agree to the Child Safety Course Legal Disclaimer</span>
+          </label>
+        </div>` : ''}
+        <div style="display:flex;justify-content:flex-end;gap:var(--spacing-md);padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+          <button onclick="navigate('person-profile')" class="btn-secondary">Cancel</button>
+          <button onclick="bgProfileSubmit()" ${canSubmit?'':'disabled'} class="btn-primary" style="${canSubmit?'':'opacity:0.6;cursor:not-allowed;'}">Send Background Check Invite</button>
+        </div>
+      </div>`;
+
+  } else if (bgProfileState.step === 'success') {
+    content = `
+      <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
+      <div class="card" style="padding:var(--spacing-3xl);max-width:600px;margin:0 auto;text-align:center;">
+        <div style="width:80px;height:80px;border-radius:50%;background:#E8F4FD;display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-xl);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 style="font-size:var(--local-heading);font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);">Your invite has been sent!</h2>
+        <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);">Track its progress in the Background Check dashboard.</p>
+        <button onclick="navigate('person-profile')" class="btn-primary" style="width:100%;">Done</button>
+      </div>`;
+
+  } else if (bgProfileState.step === 'error') {
+    content = `
+      <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
+      <div class="card" style="padding:var(--spacing-3xl);max-width:700px;margin:0 auto;">
+        <div style="width:80px;height:80px;border-radius:50%;background:#FFEBEE;display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-xl);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h2 style="font-size:20px;font-weight:var(--font-semibold);color:var(--foreground);margin-bottom:var(--spacing-md);text-align:center;">We couldn't submit your background check invite</h2>
+        <p style="font-size:var(--text-base);color:var(--muted-foreground);margin-bottom:var(--spacing-2xl);text-align:center;line-height:1.6;">Please contact support to resolve this issue.</p>
+        <div style="padding:var(--spacing-md);background:#F9F9F9;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:var(--spacing-2xl);">
+          <p style="font-size:var(--text-sm);color:var(--muted-foreground);margin:0;"><strong>Error ID:</strong> PMM-ERR-5001</p>
+          <p style="font-size:var(--text-sm);color:var(--muted-foreground);margin:0;margin-top:4px;"><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+          <button onclick="navigate('person-profile')" class="btn-secondary">Close</button>
+        </div>
+      </div>`;
+  }
+
+  el.innerHTML = breadcrumb + pageHeader + content;
+}
+
+function bgProfileSubmit() {
+  bgProfileState.step = 'success';
+  renderBgCheckProfile();
+}
 </script>
 </body>
 </html>
