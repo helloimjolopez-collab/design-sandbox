@@ -742,7 +742,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [activeGroupId, setActiveGroupId] = useState(1); // which group newly added criteria go into
   const [qbGroupEditingId, setQbGroupEditingId] = useState(null); // groupId currently being renamed
   const [qbGroupEditingName, setQbGroupEditingName] = useState("");
-  const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
+  const addQbGroup = () => { const gid = qbNextGroupId.current++; setQbCollapsedGroups(new Set(qbGroups.map(g => g.id))); setQbGroups(prev => [...prev, { id: gid, name: `Filter Group ${gid}` }]); setQbGroupLogics(prev => ({ ...prev, [gid]: "and" })); setActiveGroupId(gid); };
   const [qbPreviewOpen, setQbPreviewOpen] = useState(true);
   const removeQbGroup = (gid) => { if (qbGroups.length <= 1) { setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); return; } setQbGroups(prev => prev.filter(g => g.id !== gid)); setQbCriteria(prev => prev.filter(cr => cr.groupId !== gid)); setQbGroupLogics(prev => { const n = {...prev}; delete n[gid]; return n; }); setActiveGroupId(prev => prev === gid ? (qbGroups.find(g => g.id !== gid)?.id || 1) : prev); };
   const renameQbGroup = (gid, name) => setQbGroups(prev => prev.map(g => g.id === gid ? { ...g, name } : g));
@@ -756,6 +756,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbColSearch, setQbColSearch] = useState("");
   const [qbMultiselectDropOpen, setQbMultiselectDropOpen] = useState(null);
   const [qbMultiselectDropRect, setQbMultiselectDropRect] = useState(null);
+  const [qbOtherQueriesDropOpen, setQbOtherQueriesDropOpen] = useState(false);
+  const [qbOtherQueriesDropRect, setQbOtherQueriesDropRect] = useState(null);
 
   // Accordion state for the level-deep S&L Edit Query screen
   const [qbEditFiltersOpen, setQbEditFiltersOpen] = useState(true);
@@ -1153,7 +1155,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
             <div style={{ flex: 1 }} />
             {isEditing ? (<>
               <button
-                onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); setQbGroups([{ id: 1, name: "Filter Group 1" }]); setQbGroupLogics({}); setActiveGroupId(1); setQbSelectedOtherQueries(new Set()); setQbOtherQuerySearch(""); setQbCollapsedGroups(new Set()); setQbShowValidation(false); }}
+                onClick={() => { setQbCriteria([]); setQbLogicOps({}); resetQbCols(); setQbOutputFormat("detail"); setQbGroups([{ id: 1, name: "Filter Group 1" }]); setQbGroupLogics({}); setActiveGroupId(1); setQbSelectedOtherQueries(new Set()); setQbOtherQuerySearch(""); setQbCollapsedGroups(new Set()); setQbShowValidation(false); setQbLeftTab("filters"); }}
                 style={{ background: "none", border: "none", color: c.textSec, cursor: "pointer", fontSize: 12, fontFamily: "inherit", fontWeight: 500, padding: "5px 8px", whiteSpace: "nowrap" }}>
                 Reset all
               </button>
@@ -1161,7 +1163,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               <Btn size="sm"
                 disabled={isNew && !qbNewQueryName.trim()}
                 onClick={() => {
-                  if (qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0) {
+                  if (!isNew && qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0) {
                     setQbShowValidation(true);
                     return;
                   }
@@ -1256,15 +1258,6 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
               {/* ═══ LEFT PANEL: Tabbed — Filters / Columns ═══ */}
               <div style={{ width: 360, minWidth: 320, borderRight: `1px solid ${c.border}`, display: "flex", flexDirection: "column", background: c.bg, flexShrink: 0 }}>
 
-                {/* Validation banner */}
-                {qbShowValidation && (
-                  <div style={{ padding: "8px 12px", background: "#fef2f2", borderBottom: `1px solid #fca5a5`, display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                    <AlertIcon size={13} style={{ color: c.red, flexShrink: 0 }} />
-                    <span style={{ fontSize: 12, color: c.red, flex: 1 }}>Please add at least one filter or other query before running.</span>
-                    <button onClick={() => setQbShowValidation(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.red, padding: 2 }}><XIcon size={11} /></button>
-                  </div>
-                )}
-
                 {/* Tab bar */}
                 <div style={{ display: "flex", borderBottom: `1px solid ${c.border}`, background: c.white, flexShrink: 0 }}>
                   {[
@@ -1315,8 +1308,8 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                         style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: alreadyAdded ? "default" : "pointer", fontSize: 12, color: alreadyAdded ? cc.text : c.textSec, fontWeight: alreadyAdded ? 600 : 400, background: alreadyAdded ? cc.bg : "none", marginBottom: 1 }}
                                         onMouseEnter={e => { if (!alreadyAdded) e.currentTarget.style.background = c.bg; }}
                                         onMouseLeave={e => { if (!alreadyAdded) e.currentTarget.style.background = "none"; }}>
-                                        <span style={{ color: alreadyAdded ? cc.text : c.textTer, fontSize: 12, width: 12, flexShrink: 0, textAlign: "center" }}>{alreadyAdded ? "✓" : "+"}</span>
                                         {field.label}
+                                        <span style={{ color: alreadyAdded ? cc.text : c.textTer, fontSize: 12, flexShrink: 0, marginLeft: "auto" }}>{alreadyAdded ? "✓" : "+"}</span>
                                       </div>
                                     );
                                   })}
@@ -1327,10 +1320,10 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                         })}
                       </div>
 
-                      {/* Other Queries section */}
+                      {/* Also Include Results From section */}
                       <div style={{ borderBottom: `1px solid ${c.border}` }}>
                         <div style={{ padding: "9px 12px 5px", fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span>Other Queries</span>
+                          <span>Also Include Results From</span>
                           {qbSelectedOtherQueries.size > 0 && <span style={{ fontSize: 9, fontWeight: 700, color: "#475569", background: "#e2e8f0", borderRadius: 8, padding: "1px 5px" }}>{qbSelectedOtherQueries.size} added</span>}
                         </div>
 
@@ -1352,38 +1345,39 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                             </div>
                             {qbSelectedOtherQueries.size > QB_CHIPS_VISIBLE && (
                               <button onClick={() => setQbOtherQueriesChipsExpanded(prev => !prev)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: c.pri, fontFamily: "inherit", padding: "0 2px" }}>
-                                {qbOtherQueriesChipsExpanded ? "View less" : `View ${qbSelectedOtherQueries.size - QB_CHIPS_VISIBLE} more`}
+                                {qbOtherQueriesChipsExpanded ? "Show less" : `View ${qbSelectedOtherQueries.size - QB_CHIPS_VISIBLE} more`}
                               </button>
                             )}
                           </div>
                         )}
 
-                        <div style={{ padding: "4px 8px 4px" }}>
+                        <div style={{ padding: "4px 8px 8px" }}>
                           <div style={{ position: "relative" }}>
                             <input type="text" value={qbOtherQuerySearch} onChange={e => setQbOtherQuerySearch(e.target.value)} placeholder="Search saved queries…"
+                              onFocus={e => { const rect = e.currentTarget.getBoundingClientRect(); setQbOtherQueriesDropRect(rect); setQbOtherQueriesDropOpen(true); }}
+                              onBlur={() => setTimeout(() => setQbOtherQueriesDropOpen(false), 300)}
                               style={{ width: "100%", padding: "5px 8px 5px 26px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box", color: c.text }} />
                             <SearchIcon size={11} style={{ position: "absolute", left: 8, top: 7, color: c.textTer }} />
                           </div>
                         </div>
-                        <div style={{ maxHeight: 160, overflowY: "auto", padding: "0 8px 8px" }}>
-                          {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).map(cfg => {
-                            const isSel = qbSelectedOtherQueries.has(cfg.id);
-                            return (
-                              <label key={cfg.id}
-                                style={{ display: "flex", alignItems: "flex-start", gap: 7, padding: "5px 5px", cursor: "pointer", borderRadius: 4, fontSize: 12, background: isSel ? "#f0f4ff" : "none" }}
-                                onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = c.bg; }}
-                                onMouseLeave={e => { if (!isSel) e.currentTarget.style.background = "none"; }}>
-                                <input type="checkbox" checked={isSel}
-                                  onChange={() => setQbSelectedOtherQueries(prev => { const n = new Set(prev); if (n.has(cfg.id)) n.delete(cfg.id); else n.add(cfg.id); return n; })}
-                                  style={{ marginTop: 2, flexShrink: 0 }} />
-                                <span style={{ color: isSel ? c.pri : c.textSec, fontWeight: isSel ? 500 : 400, lineHeight: 1.4 }}>{cfg.name}</span>
-                              </label>
-                            );
-                          })}
-                          {savedQueryList.filter(cfg => !qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase())).length === 0 && (
-                            <div style={{ fontSize: 11, color: c.textTer, padding: "8px 5px", fontStyle: "italic" }}>No saved queries match.</div>
-                          )}
-                        </div>
+                        {/* Floating portal dropdown */}
+                        {qbOtherQueriesDropOpen && qbOtherQueriesDropRect && ReactDOM.createPortal(
+                          <div style={{ position: "fixed", top: qbOtherQueriesDropRect.bottom + 2, left: qbOtherQueriesDropRect.left, width: Math.max(qbOtherQueriesDropRect.width, 220), background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 9999, maxHeight: 200, overflowY: "auto" }}>
+                            {savedQueryList.filter(cfg => !qbSelectedOtherQueries.has(cfg.id) && (!qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase()))).map(cfg => (
+                              <div key={cfg.id}
+                                onMouseDown={e => { e.preventDefault(); setQbSelectedOtherQueries(prev => { const n = new Set(prev); n.add(cfg.id); return n; }); setQbOtherQuerySearch(""); }}
+                                style={{ padding: "7px 10px", cursor: "pointer", fontSize: 12, color: c.textSec, borderBottom: `1px solid ${c.borderLight}` }}
+                                onMouseEnter={e => e.currentTarget.style.background = c.bg}
+                                onMouseLeave={e => e.currentTarget.style.background = c.white}>
+                                {cfg.name}
+                              </div>
+                            ))}
+                            {savedQueryList.filter(cfg => !qbSelectedOtherQueries.has(cfg.id) && (!qbOtherQuerySearch || cfg.name.toLowerCase().includes(qbOtherQuerySearch.toLowerCase()))).length === 0 && (
+                              <div style={{ fontSize: 11, color: c.textTer, padding: "8px 10px", fontStyle: "italic" }}>No queries to add.</div>
+                            )}
+                          </div>,
+                          document.body
+                        )}
                       </div>
                     </div>
                   )}
@@ -1392,7 +1386,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                   {qbLeftTab === "columns" && (
                     <div style={{ flex: 1 }}>
                       <div style={{ padding: "9px 12px 5px", fontSize: 10, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.6px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <span>Columns <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({qbSelectedCols.length})</span></span>
+                        <span>Output Columns <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({qbSelectedCols.length})</span></span>
                         <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 10, color: c.textSec, cursor: "pointer", fontFamily: "inherit", padding: 0 }}>Reset</button>
                       </div>
                       <div style={{ padding: "4px 8px 6px" }}>
@@ -1413,14 +1407,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               <input type="checkbox" checked={isSel} onChange={() => toggleQbCol(col.id)} style={{ flexShrink: 0 }} />
                               <span style={{ flex: 1, color: isSel ? c.pri : c.textSec, fontWeight: isSel ? 500 : 400 }}>{col.label}</span>
                               {isSel && (
-                                <span style={{ display: "flex", gap: 1 }}>
-                                  <button onClick={() => moveQbCol(col.id, "up")} disabled={colIdx === 0} title="Move up" style={{ background: "none", border: "none", cursor: colIdx === 0 ? "default" : "pointer", color: colIdx === 0 ? c.borderLight : c.textTer, fontSize: 9, padding: "1px 2px" }}
-                                    onMouseEnter={e => { if (colIdx > 0) e.currentTarget.style.color = c.text; }}
-                                    onMouseLeave={e => { if (colIdx > 0) e.currentTarget.style.color = c.textTer; }}>▲</button>
-                                  <button onClick={() => moveQbCol(col.id, "down")} disabled={colIdx === qbSelectedCols.length - 1} title="Move down" style={{ background: "none", border: "none", cursor: colIdx === qbSelectedCols.length - 1 ? "default" : "pointer", color: colIdx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, fontSize: 9, padding: "1px 2px" }}
-                                    onMouseEnter={e => { if (colIdx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.text; }}
-                                    onMouseLeave={e => { if (colIdx < qbSelectedCols.length - 1) e.currentTarget.style.color = c.textTer; }}>▼</button>
-                                </span>
+                                <span style={{ fontSize: 10, fontWeight: 600, color: c.textTer, flexShrink: 0 }}>#{colIdx + 1}</span>
                               )}
                             </div>
                           );
@@ -1439,6 +1426,15 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 {/* ── RIGHT PANEL: FILTERS view ── */}
                 {qbLeftTab === "filters" && (
                   <div>
+                    {/* Validation banner */}
+                    {qbShowValidation && (
+                      <div style={{ padding: "8px 12px", background: "#fef2f2", border: `1px solid #fca5a5`, borderRadius: 6, display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                        <AlertIcon size={13} style={{ color: c.red, flexShrink: 0 }} />
+                        <span style={{ fontSize: 12, color: c.red, flex: 1 }}>Add at least one category before running the report.</span>
+                        <button onClick={() => setQbShowValidation(false)} style={{ background: "none", border: "none", cursor: "pointer", color: c.red, padding: 2 }}><XIcon size={11} /></button>
+                      </div>
+                    )}
+
                     {/* Empty state — no groups have any criteria */}
                     {qbCriteria.length === 0 && qbSelectedOtherQueries.size === 0 && (
                       <div style={{ padding: "40px 20px", background: c.bg, borderRadius: 10, border: `1px dashed ${c.border}`, textAlign: "center", marginBottom: 14 }}>
@@ -1469,8 +1465,11 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                           {/* Group box */}
                           <div style={{ border: `1px solid ${c.border}`, borderLeft: qbGroups.length > 1 && isActive ? `4px solid ${c.pri}` : `1px solid ${c.border}`, borderRadius: 8, marginBottom: 8, overflow: "hidden" }}>
                             {/* Group header */}
-                            <div onClick={() => { if (qbGroupEditingId !== grp.id) { setQbCollapsedGroups(prev => { const n = new Set(prev); if (n.has(grp.id)) n.delete(grp.id); else n.add(grp.id); return n; }); setActiveGroupId(grp.id); } }}
+                            <div onClick={() => { if (qbGroupEditingId !== grp.id) { if (!isActive) { setQbCollapsedGroups(prev => { const n = new Set(); qbGroups.forEach(g => { if (g.id !== grp.id) n.add(g.id); }); return n; }); } else { setQbCollapsedGroups(prev => { const n = new Set(prev); if (n.has(grp.id)) n.delete(grp.id); else n.add(grp.id); return n; }); } setActiveGroupId(grp.id); } }}
                               style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: c.bg, borderBottom: (!isCollapsed && groupCriteria.length > 0) ? `1px solid ${c.borderLight}` : "none", cursor: "pointer" }}>
+                              {/* Chevron on the LEFT */}
+                              <span style={{ fontSize: 9, color: c.textTer, flexShrink: 0 }}>{isCollapsed ? "▶" : "▼"}</span>
+                              {/* Group name in middle — click to rename */}
                               {qbGroupEditingId === grp.id ? (
                                 <input type="text" value={qbGroupEditingName} onChange={e => setQbGroupEditingName(e.target.value)} autoFocus
                                   onClick={e => e.stopPropagation()}
@@ -1480,26 +1479,17 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                               ) : (
                                 <span onClick={e => { e.stopPropagation(); setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }}
                                   title="Click to rename"
-                                  style={{ flex: 1, fontSize: 12, fontWeight: 600, color: isActive ? c.pri : c.textSec, cursor: "text" }}>
+                                  style={{ flex: 1, fontSize: 12, fontWeight: 600, color: c.textSec, cursor: "text" }}
+                                  onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
+                                  onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}>
                                   {grp.name}
                                 </span>
                               )}
-                              {/* Rename icon */}
-                              {qbGroupEditingId !== grp.id && (
-                                <button onClick={e => { e.stopPropagation(); setQbGroupEditingId(grp.id); setQbGroupEditingName(grp.name); }} title="Rename"
-                                  style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "1px 3px", borderRadius: 3, display: "flex", alignItems: "center" }}
-                                  onMouseEnter={e => e.currentTarget.style.color = c.textSec}
-                                  onMouseLeave={e => e.currentTarget.style.color = c.textTer}>
-                                  <EditIcon size={11} />
-                                </button>
-                              )}
-                              {/* Collapse indicator */}
-                              <span style={{ fontSize: 9, color: c.textTer }}>{isCollapsed ? "▼" : "▲"}</span>
-                              {/* Delete group button */}
+                              {/* TrashIcon on the FAR RIGHT */}
                               <button onClick={e => { e.stopPropagation(); removeQbGroup(grp.id); }} title="Remove filter group"
-                                style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "1px 4px", borderRadius: 3, fontSize: 14, lineHeight: 1 }}
+                                style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "1px 4px", borderRadius: 3, display: "flex", alignItems: "center", flexShrink: 0 }}
                                 onMouseEnter={e => e.currentTarget.style.color = c.red}
-                                onMouseLeave={e => e.currentTarget.style.color = c.textTer}>×</button>
+                                onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
                             </div>
 
                             {/* Criteria list — hidden when collapsed */}
@@ -1530,19 +1520,13 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                           </div>
                                         )}
 
-                                        {/* Criterion row — column direction */}
-                                        <div style={{ padding: "8px 8px", background: "#fafbfc", borderRadius: 6, border: `1px solid ${c.borderLight}`, display: "flex", flexDirection: "column", gap: 5 }}>
-                                          {/* Row: label badge + remove */}
-                                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                            <span style={{ display: "inline-flex", alignItems: "center", padding: "3px 8px", borderRadius: 10, background: bc.bg, border: `1px solid ${bc.border}`, color: bc.text, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", flex: 1 }}>{cr.label}</span>
-                                            <button onClick={() => removeQbCriterion(cr.id)} title="Remove"
-                                              style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 3px", color: c.textTer, display: "flex", borderRadius: 4, flexShrink: 0 }}
-                                              onMouseEnter={e => e.currentTarget.style.color = c.red}
-                                              onMouseLeave={e => e.currentTarget.style.color = c.textTer}><XIcon size={12} /></button>
-                                          </div>
+                                        {/* Criterion row — horizontal */}
+                                        <div style={{ padding: "6px 8px", background: "#fafbfc", borderRadius: 6, border: `1px solid ${c.borderLight}`, display: "flex", flexDirection: "row", alignItems: "flex-start", gap: 6 }}>
+                                          {/* LEFT: field badge/label */}
+                                          <span style={{ display: "inline-flex", alignItems: "center", padding: "3px 8px", borderRadius: 10, background: bc.bg, border: `1px solid ${bc.border}`, color: bc.text, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0, marginTop: 2 }}>{cr.label}</span>
 
-                                          {/* Controls */}
-                                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                          {/* MIDDLE: criterion controls */}
+                                          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
                                             {cr.type === "boolean" && (
                                               <div style={{ display: "flex", gap: 4 }}>
                                                 {["Yes", "No"].map(v => (
@@ -1554,32 +1538,61 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
                                             {cr.type === "multiselect" && (
                                               <div>
-                                                <div style={{ fontSize: 11, color: c.textTer, marginBottom: 3 }}>
+                                                {/* Collapsed trigger button */}
+                                                <button
+                                                  onClick={e => {
+                                                    const rect = e.currentTarget.getBoundingClientRect();
+                                                    setQbMultiselectDropRect(rect);
+                                                    setQbMultiselectDropOpen(qbMultiselectDropOpen === cr.id ? null : cr.id);
+                                                    setQbMultiselectSearches(prev => ({ ...prev, [cr.id]: "" }));
+                                                  }}
+                                                  style={{ padding: "4px 10px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.textSec, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
                                                   {(cr.value || []).length === 0 ? "Any (no filter)" : `${(cr.value || []).length} selected`}
-                                                </div>
-                                                <div style={{ padding: "3px 6px 4px", background: c.bg, borderRadius: 4, marginBottom: 4 }}>
-                                                  <div style={{ position: "relative" }}>
-                                                    <input type="text" value={qbMultiselectSearches[cr.id] || ""} onChange={e => setQbMultiselectSearches(prev => ({ ...prev, [cr.id]: e.target.value }))} placeholder="Search…"
-                                                      style={{ width: "100%", padding: "4px 6px 4px 22px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
-                                                    <SearchIcon size={10} style={{ position: "absolute", left: 6, top: 6, color: c.textTer }} />
+                                                  <span style={{ fontSize: 9, color: c.textTer }}>▼</span>
+                                                </button>
+                                                {/* Selected chips shown below trigger */}
+                                                {(cr.value || []).length > 0 && (
+                                                  <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginTop: 4 }}>
+                                                    {(cr.value || []).map(v => (
+                                                      <span key={v} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "2px 6px", borderRadius: 8, background: "#eff4ff", border: `1px solid #c7d7f7`, fontSize: 11, color: c.pri, fontWeight: 500 }}>
+                                                        {v}
+                                                        <button onClick={() => { const curr = cr.value || []; updateQbCriterion(cr.id, { value: curr.filter(x => x !== v) }); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.pri, display: "flex", lineHeight: 0 }}
+                                                          onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                                          onMouseLeave={e => e.currentTarget.style.color = c.pri}><XIcon size={9} /></button>
+                                                      </span>
+                                                    ))}
                                                   </div>
-                                                </div>
-                                                <div style={{ border: `1px solid ${c.border}`, borderRadius: 5, overflow: "hidden", maxHeight: 120, overflowY: "auto" }}>
-                                                  {(cr.options || []).filter(opt => !(qbMultiselectSearches[cr.id] || "") || opt.toLowerCase().includes((qbMultiselectSearches[cr.id] || "").toLowerCase())).map(opt => {
-                                                    const isChecked = (cr.value || []).includes(opt);
-                                                    return (
-                                                      <label key={opt} style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 8px", cursor: "pointer", fontSize: 12, background: isChecked ? "#eff4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
-                                                        onMouseEnter={e => { if (!isChecked) e.currentTarget.style.background = c.bg; }}
-                                                        onMouseLeave={e => { if (!isChecked) e.currentTarget.style.background = c.white; }}>
-                                                        <input type="checkbox" checked={isChecked} onChange={() => {
-                                                          const curr = cr.value || [];
-                                                          updateQbCriterion(cr.id, { value: curr.includes(opt) ? curr.filter(x => x !== opt) : [...curr, opt] });
-                                                        }} />
-                                                        <span style={{ color: isChecked ? c.pri : c.textSec, fontWeight: isChecked ? 500 : 400 }}>{opt}</span>
-                                                      </label>
-                                                    );
-                                                  })}
-                                                </div>
+                                                )}
+                                                {/* Floating portal dropdown */}
+                                                {qbMultiselectDropOpen === cr.id && qbMultiselectDropRect && ReactDOM.createPortal(
+                                                  <div style={{ position: "fixed", top: qbMultiselectDropRect.bottom + 2, left: qbMultiselectDropRect.left, width: Math.max(qbMultiselectDropRect.width, 200), background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 9999, overflow: "hidden" }}>
+                                                    <div style={{ padding: "6px 8px", borderBottom: `1px solid ${c.borderLight}` }}>
+                                                      <div style={{ position: "relative" }}>
+                                                        <input autoFocus type="text" value={qbMultiselectSearches[cr.id] || ""} onChange={e => setQbMultiselectSearches(prev => ({ ...prev, [cr.id]: e.target.value }))} placeholder="Search…"
+                                                          onBlur={() => setTimeout(() => setQbMultiselectDropOpen(null), 300)}
+                                                          style={{ width: "100%", padding: "4px 6px 4px 22px", border: `1px solid ${c.border}`, borderRadius: 4, fontSize: 11, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+                                                        <SearchIcon size={10} style={{ position: "absolute", left: 6, top: 6, color: c.textTer }} />
+                                                      </div>
+                                                    </div>
+                                                    <div style={{ maxHeight: 160, overflowY: "auto" }}>
+                                                      {(cr.options || []).filter(opt => !(qbMultiselectSearches[cr.id] || "") || opt.toLowerCase().includes((qbMultiselectSearches[cr.id] || "").toLowerCase())).map(opt => {
+                                                        const isChecked = (cr.value || []).includes(opt);
+                                                        return (
+                                                          <label key={opt} style={{ display: "flex", alignItems: "center", gap: 7, padding: "5px 10px", cursor: "pointer", fontSize: 12, background: isChecked ? "#eff4ff" : c.white, borderBottom: `1px solid ${c.borderLight}` }}
+                                                            onMouseEnter={e => { if (!isChecked) e.currentTarget.style.background = c.bg; }}
+                                                            onMouseLeave={e => { if (!isChecked) e.currentTarget.style.background = isChecked ? "#eff4ff" : c.white; }}>
+                                                            <input type="checkbox" checked={isChecked} onChange={() => {
+                                                              const curr = cr.value || [];
+                                                              updateQbCriterion(cr.id, { value: curr.includes(opt) ? curr.filter(x => x !== opt) : [...curr, opt] });
+                                                            }} />
+                                                            <span style={{ color: isChecked ? c.pri : c.textSec, fontWeight: isChecked ? 500 : 400 }}>{opt}</span>
+                                                          </label>
+                                                        );
+                                                      })}
+                                                    </div>
+                                                  </div>,
+                                                  document.body
+                                                )}
                                               </div>
                                             )}
 
@@ -1628,6 +1641,14 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                               </div>
                                             )}
                                           </div>
+                                          {/* FAR RIGHT: vertical divider + TrashIcon */}
+                                          <div style={{ display: "flex", alignItems: "flex-start", gap: 0, flexShrink: 0 }}>
+                                            <div style={{ width: 1, background: c.borderLight, alignSelf: "stretch", margin: "0 4px" }} />
+                                            <button onClick={() => removeQbCriterion(cr.id)} title="Remove"
+                                              style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 3px", color: c.textTer, display: "flex", borderRadius: 4, marginTop: 2 }}
+                                              onMouseEnter={e => e.currentTarget.style.color = c.red}
+                                              onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
+                                          </div>
                                         </div>
                                       </React.Fragment>
                                     );
@@ -1643,14 +1664,12 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                     {/* Add filter group button — only when criteria exist */}
                     {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
                       <button onClick={addQbGroup}
-                        style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, padding: "7px 10px", borderRadius: 5, border: `1px dashed ${c.border}`, background: "none", cursor: "pointer", fontSize: 12, color: c.textTer, fontFamily: "inherit", marginBottom: 4, width: "100%" }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = c.textSec; e.currentTarget.style.color = c.textSec; }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.textTer; }}>
-                        + Add filter group
+                        style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, padding: "8px 10px", borderRadius: 5, border: `1px dashed ${c.border}`, background: "none", cursor: "pointer", fontFamily: "inherit", marginBottom: 12, width: "100%" }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = c.textSec; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; }}>
+                        <span style={{ fontSize: 12, color: c.textSec, textDecoration: "underline" }}>+ Add filter group</span>
+                        <span style={{ fontSize: 11, color: c.textTer }}>(OR logic between filter groups)</span>
                       </button>
-                    )}
-                    {(qbCriteria.length > 0 || qbSelectedOtherQueries.size > 0) && (
-                      <div style={{ fontSize: 11, color: c.textTer, textAlign: "center", marginBottom: 12 }}>(OR logic between filter groups)</div>
                     )}
 
                     {/* Other Queries inclusions indicator */}
@@ -1679,43 +1698,56 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                 {/* ── RIGHT PANEL: COLUMNS view ── */}
                 {qbLeftTab === "columns" && (
                   <div>
-                    {/* Selected columns chips */}
-                    {qbSelectedCols.length > 0 && (
-                      <div style={{ padding: "10px 12px", background: c.bg, borderRadius: 7, border: `1px solid ${c.borderLight}`, marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span>Selected Columns ({qbSelectedCols.length})</span>
-                          <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 11, color: c.textSec, cursor: "pointer", fontFamily: "inherit", fontWeight: 400, padding: 0, textTransform: "none", letterSpacing: 0 }}>Reset to defaults</button>
-                        </div>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                          {qbSelectedCols.map(id => {
+                    {/* Included Columns — ordered list with reorder and remove */}
+                    <div style={{ marginBottom: 16 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <span>Included Columns ({qbSelectedCols.length})</span>
+                        <button onClick={resetQbCols} style={{ background: "none", border: "none", fontSize: 11, color: c.textSec, cursor: "pointer", fontFamily: "inherit", fontWeight: 400, padding: 0, textTransform: "none", letterSpacing: 0 }}>Reset to defaults</button>
+                      </div>
+                      {qbSelectedCols.length === 0 ? (
+                        <div style={{ fontSize: 12, color: c.textTer, fontStyle: "italic", padding: "8px 0" }}>No columns selected. Select columns from the left panel.</div>
+                      ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                          {qbSelectedCols.map((id, idx) => {
                             const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === id);
                             return (
-                              <span key={id} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "3px 7px", borderRadius: 4, background: c.white, border: `1px solid ${c.border}`, fontSize: 11, color: c.tagText, fontWeight: 500 }}>
-                                {col?.label || id}
-                                <button onClick={() => toggleQbCol(id)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: c.textTer, display: "flex", lineHeight: 0 }}
+                              <div key={id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 8px", background: c.bg, borderRadius: 5, border: `1px solid ${c.borderLight}` }}>
+                                <span style={{ fontSize: 10, fontWeight: 600, color: c.textTer, width: 20, flexShrink: 0, textAlign: "center" }}>#{idx + 1}</span>
+                                <span style={{ flex: 1, fontSize: 12, color: c.text, fontWeight: 500 }}>{col?.label || id}</span>
+                                <div style={{ display: "flex", gap: 1, flexShrink: 0 }}>
+                                  <button onClick={() => moveQbCol(id, "up")} disabled={idx === 0} title="Move up" style={{ background: "none", border: `1px solid ${c.borderLight}`, borderRadius: 3, cursor: idx === 0 ? "default" : "pointer", color: idx === 0 ? c.borderLight : c.textTer, fontSize: 10, padding: "2px 5px", fontFamily: "inherit" }}
+                                    onMouseEnter={e => { if (idx > 0) { e.currentTarget.style.color = c.text; e.currentTarget.style.borderColor = c.border; } }}
+                                    onMouseLeave={e => { if (idx > 0) { e.currentTarget.style.color = c.textTer; e.currentTarget.style.borderColor = c.borderLight; } }}>←</button>
+                                  <button onClick={() => moveQbCol(id, "down")} disabled={idx === qbSelectedCols.length - 1} title="Move down" style={{ background: "none", border: `1px solid ${c.borderLight}`, borderRadius: 3, cursor: idx === qbSelectedCols.length - 1 ? "default" : "pointer", color: idx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, fontSize: 10, padding: "2px 5px", fontFamily: "inherit" }}
+                                    onMouseEnter={e => { if (idx < qbSelectedCols.length - 1) { e.currentTarget.style.color = c.text; e.currentTarget.style.borderColor = c.border; } }}
+                                    onMouseLeave={e => { if (idx < qbSelectedCols.length - 1) { e.currentTarget.style.color = c.textTer; e.currentTarget.style.borderColor = c.borderLight; } }}>→</button>
+                                </div>
+                                <button onClick={() => toggleQbCol(id)} title="Remove column" style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 3px", borderRadius: 3, display: "flex", alignItems: "center", flexShrink: 0 }}
                                   onMouseEnter={e => e.currentTarget.style.color = c.red}
-                                  onMouseLeave={e => e.currentTarget.style.color = c.textTer}><XIcon size={9} /></button>
-                              </span>
+                                  onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
+                              </div>
                             );
                           })}
                         </div>
-                        <div style={{ fontSize: 11, color: c.textTer, marginTop: 8 }}>Columns are independent of filters — they control what data shows in your report.</div>
-                      </div>
-                    )}
+                      )}
+                    </div>
 
-                    {/* Sort by */}
+                    {/* Sort section */}
                     {qbSelectedCols.length > 0 && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", background: c.bg, borderRadius: 7, border: `1px solid ${c.borderLight}`, marginBottom: 10 }}>
-                        <span style={{ fontSize: 12, color: c.textSec, whiteSpace: "nowrap", fontWeight: 500 }}>Sort by:</span>
-                        <select value={qbSortCol} onChange={e => setQbSortCol(e.target.value)}
-                          style={{ flex: 1, padding: "4px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
-                          {QB_AVAILABLE_COLUMNS.filter(col => qbSelectedCols.includes(col.id)).map(col => (
-                            <option key={col.id} value={col.id}>{col.label}</option>
-                          ))}
-                        </select>
-                        <div style={{ display: "flex", gap: 2 }}>
-                          <button onClick={() => setQbSortDir("asc")} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${qbSortDir === "asc" ? c.pri : c.border}`, background: qbSortDir === "asc" ? "#eff4ff" : c.white, cursor: "pointer", fontSize: 11, color: qbSortDir === "asc" ? c.pri : c.textSec, fontFamily: "inherit", fontWeight: qbSortDir === "asc" ? 600 : 400 }}>A→Z</button>
-                          <button onClick={() => setQbSortDir("desc")} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${qbSortDir === "desc" ? c.pri : c.border}`, background: qbSortDir === "desc" ? "#eff4ff" : c.white, cursor: "pointer", fontSize: 11, color: qbSortDir === "desc" ? c.pri : c.textSec, fontFamily: "inherit", fontWeight: qbSortDir === "desc" ? 600 : 400 }}>Z→A</button>
+                      <div style={{ padding: "12px", background: c.bg, borderRadius: 7, border: `1px solid ${c.borderLight}` }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: c.textTer, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Sort</div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                          <span style={{ fontSize: 12, color: c.textSec, whiteSpace: "nowrap", fontWeight: 500 }}>Sort by</span>
+                          <select value={qbSortCol} onChange={e => setQbSortCol(e.target.value)}
+                            style={{ flex: 1, padding: "4px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
+                            {QB_AVAILABLE_COLUMNS.filter(col => qbSelectedCols.includes(col.id)).map(col => (
+                              <option key={col.id} value={col.id}>{col.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div style={{ display: "flex", gap: 0, border: `1px solid ${c.border}`, borderRadius: 5, overflow: "hidden", width: "fit-content" }}>
+                          <button onClick={() => setQbSortDir("asc")} style={{ padding: "5px 14px", border: "none", borderRight: `1px solid ${c.border}`, background: qbSortDir === "asc" ? c.pri : c.white, cursor: "pointer", fontSize: 12, color: qbSortDir === "asc" ? "#fff" : c.textSec, fontFamily: "inherit", fontWeight: qbSortDir === "asc" ? 600 : 400 }}>A → Z</button>
+                          <button onClick={() => setQbSortDir("desc")} style={{ padding: "5px 14px", border: "none", background: qbSortDir === "desc" ? c.pri : c.white, cursor: "pointer", fontSize: 12, color: qbSortDir === "desc" ? "#fff" : c.textSec, fontFamily: "inherit", fontWeight: qbSortDir === "desc" ? 600 : 400 }}>Z → A</button>
                         </div>
                       </div>
                     )}
