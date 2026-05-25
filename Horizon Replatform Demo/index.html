@@ -1790,33 +1790,187 @@ function renderRow(person){
 function getActions(person, c){
   const acts = [];
   const s = c.status;
-  if(s==='awaiting-assessment'||s==='escalated'||s==='cleared'){
-    acts.push({label: s==='awaiting-assessment'?'Record assessment':'View / edit assessment', cls:'pri', fn:`openReport('${c.id}',event)`});
+  const via = c.via;
+  const esc_ = s => s; // label strings are safe literals
+
+  // Assessment actions
+  if(s==='awaiting-assessment'||s==='escalated'||s==='cleared'||s==='needs-review'){
+    acts.push({label:s==='awaiting-assessment'?'Record assessment':'View / edit assessment',cls:'pri',fn:`openReport('${c.id}',event)`});
   }
+
+  // Pending approval (consent received, approval gate on)
   if(s==='consent-signed-action'){
     acts.push({label:'Approve and place order',cls:'pri',fn:`toast('Order placed for ${person.name}');event.stopPropagation()`});
     acts.push({label:'View consent form',fn:`toast('Opening consent form…');event.stopPropagation()`});
   }
-  if(s==='invite-sent'||s==='invite-expiring'){
-    acts.push({label:'Resend invite email',fn:`toast('Invite resent to ${person.email}');event.stopPropagation()`});
+
+  // Active invite — sent or just link created
+  if(s==='invite-sent'||s==='invite-created'){
+    if(via==='invite') acts.push({label:'Resend invite email',fn:`toast('Invite resent to ${person.email}');event.stopPropagation()`});
     acts.push({label:'Copy invite link',fn:`toast('Invite link copied');event.stopPropagation()`});
+    acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
   }
+
+  // Expiring invite — offer renewal, split by original delivery method
+  if(s==='invite-expiring'){
+    if(via==='invite'){
+      acts.push({label:'Renew and resend',cls:'pri',fn:`toast('Invite renewed and resent to ${person.email}');event.stopPropagation()`});
+    } else {
+      acts.push({label:'Renew invite link',cls:'pri',fn:`toast('Invite link renewed — copy new link to resend');event.stopPropagation()`});
+    }
+    acts.push({label:'Copy invite link',fn:`toast('Invite link copied');event.stopPropagation()`});
+    acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
+  }
+
+  // Expired invite — generate fresh invite, split by original method
   if(s==='invite-expired'){
-    acts.push({label:'Re-invite',cls:'pri',fn:`toast('New invite sent to ${person.name}');event.stopPropagation()`});
+    if(via==='invite'){
+      acts.push({label:'Generate new invite and send',cls:'pri',fn:`toast('New invite sent to ${person.email}');event.stopPropagation()`});
+    } else {
+      acts.push({label:'Generate new invite link',cls:'pri',fn:`toast('New invite link generated — copy to send');event.stopPropagation()`});
+    }
+    acts.push({label:'Copy new invite link',fn:`toast('New invite link copied');event.stopPropagation()`});
   }
-  if(s==='due-rescreening'){
-    acts.push({label:'Start new background check',cls:'pri',fn:`openWizard();event.stopPropagation()`});
-  }
+
+  // Bounced email — fix and resend
   if(s==='email-bounced'){
     acts.push({label:'Fix email and resend',cls:'pri',fn:`toast('Opening email correction…');event.stopPropagation()`});
     acts.push({label:'Copy invite link',fn:`toast('Invite link copied');event.stopPropagation()`});
+    acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
   }
+
+  // Rescreen / overdue
+  if(s==='due-rescreening'||s==='screening-overdue'){
+    acts.push({label:'Start new background check',cls:'pri',fn:`openWizard();event.stopPropagation()`});
+  }
+
+  // View profile — always
   acts.push({label:'View profile',fn:`openProfile('${person.id}');event.stopPropagation()`});
-  if(!['cleared','escalated','invite-expired','invite-cancelled','bg-expired'].includes(s)){
+
+  // Archive — completed or dead-end cases only
+  const archivable = ['cleared','escalated','needs-review','invite-expired','invite-cancelled','case-cancelled','bg-expired','due-rescreening','screening-overdue'].includes(s);
+  if(archivable){
     acts.push({label:'',fn:'',cls:'drop-sep'});
-    acts.push({label:'Cancel case',cls:'danger',fn:`toast('Case cancelled');event.stopPropagation()`});
+    acts.push({label:'Archive person',fn:`archivePerson('${person.id}');event.stopPropagation()`});
   }
+
+  // Cancel case — only when order has NOT been placed and consent is either absent or gated
+  // Not available once check is processing or complete
+  const cancellable = ['invite-created','invite-sent','invite-expiring','invite-expired','invite-cancelled','email-bounced','consent-signed-action'].includes(s);
+  if(cancellable){
+    if(!archivable) acts.push({label:'',fn:'',cls:'drop-sep'});
+    acts.push({label:'Cancel case',cls:'danger',fn:`cancelCase('${person.id}','${c.id}');event.stopPropagation()`});
+  }
+
   return acts.filter(a=>a.label||a.cls==='drop-sep');
+}
+
+/* ─── Confirm dialog ───────────────────────────────────────────────── */
+function showConfirm({title, body, cancelLabel, actionLabel, actionStyle, onConfirm}){
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-body').innerHTML = body;
+  const cancelBtn = document.querySelector('#confirm-modal .modal-foot .btn-secondary');
+  if(cancelLabel) cancelBtn.textContent = cancelLabel;
+  else cancelBtn.textContent = 'Cancel';
+  const btn = document.getElementById('confirm-action-btn');
+  btn.textContent = actionLabel || 'Confirm';
+  btn.style.cssText = actionStyle || 'background:var(--red);color:#fff';
+  btn.onclick = ()=>{ closeConfirm(); onConfirm(); };
+  document.getElementById('confirm-modal').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); }
+
+/* ─── Cancel invite (invite only — case stays open) ───────────────── */
+function cancelInvite(pid, cid){
+  showConfirm({
+    title: 'Cancel invite?',
+    body: 'The invite link will be invalidated immediately. <strong>The case stays open</strong> — you can generate a new invite when ready.',
+    cancelLabel: 'Keep invite',
+    actionLabel: 'Cancel invite',
+    actionStyle: 'background:var(--red);color:#fff',
+    onConfirm(){
+      const person = personById(pid);
+      if(!person) return;
+      const c = person.cases.find(x=>x.id===cid);
+      if(!c) return;
+      c.status = 'invite-cancelled';
+      c.events = c.events||[];
+      c.events.push({type:'none',title:'Invite cancelled by admin',date:todayStr(),time:'',by:'Admin'});
+      renderTable(); renderHomeTable();
+      toast('Invite cancelled — case remains open.');
+    }
+  });
+}
+
+/* ─── Cancel case (terminal — cannot be undone) ───────────────────── */
+function cancelCase(pid, cid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases.find(x=>x.id===cid);
+  if(!c) return;
+
+  // Guard: consent submitted and order is not gated = cannot cancel
+  const consentSubmitted = c.consentForm && c.consentForm.submittedDate;
+  const approvalGated = c.approvalGate;
+  const orderPlaced = ['screening-progress','order-submitted','order-failed','awaiting-assessment','cleared','needs-review','escalated'].includes(c.status);
+
+  if(orderPlaced){
+    showConfirm({
+      title: 'Cannot cancel this case',
+      body: 'The background check order has already been submitted to the provider. Cases in progress or completed cannot be cancelled. <br><br>If you need to take action, make an assessment or contact support.',
+      cancelLabel: 'Close',
+      actionLabel: '',
+      actionStyle: 'display:none',
+      onConfirm(){}
+    });
+    // Hide the action button
+    setTimeout(()=>{document.getElementById('confirm-action-btn').style.display='none';},10);
+    return;
+  }
+
+  const name = person.name;
+  const checkType = c.checkType;
+  const consentWarning = (consentSubmitted && !approvalGated)
+    ? '<br><br><strong>Note:</strong> The applicant already submitted their consent form. This data will be retained in case history.'
+    : '';
+
+  showConfirm({
+    title: 'Cancel this case?',
+    body: `This will permanently close the <strong>${checkType}</strong> case for <strong>${name}</strong>. The case cannot be reopened.${consentWarning}<br><br>The person record and case history are retained. A new case can be opened if screening is needed in future.`,
+    cancelLabel: 'Keep case',
+    actionLabel: 'Cancel case',
+    actionStyle: 'background:var(--red);color:#fff',
+    onConfirm(){
+      c.status = 'case-cancelled';
+      c.events = c.events||[];
+      c.events.push({type:'none',title:'Case cancelled by admin',date:todayStr(),time:'',by:'Admin'});
+      renderTable(); renderHomeTable();
+      toast(`Case cancelled for ${name}.`);
+    }
+  });
+}
+
+/* ─── Archive person ──────────────────────────────────────────────── */
+function archivePerson(pid){
+  const person = personById(pid);
+  if(!person) return;
+  showConfirm({
+    title: 'Archive this person?',
+    body: `<strong>${person.name}</strong> will be moved to archived records. Their screening history is retained for compliance purposes and can be retrieved at any time.<br><br>Archived people do not appear in the main Home view.`,
+    cancelLabel: 'Keep active',
+    actionLabel: 'Archive',
+    actionStyle: 'background:var(--ink);color:#fff',
+    onConfirm(){
+      person.orgStatus = 'archived';
+      renderTable(); renderHomeTable();
+      toast(`${person.name} archived.`);
+    }
+  });
+}
+
+function todayStr(){
+  const d=new Date();
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
 }
 
 function renderSummaryStrip(){
