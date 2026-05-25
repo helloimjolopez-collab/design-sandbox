@@ -1280,6 +1280,32 @@ function renderHomeTable(){
 }
 
 
+function getInlineAction(person, c){
+  const s = c.status;
+  if(s==='consent-signed-action'){
+    return `<button class="row-act-btn row-act-primary" onclick="openProfileAtCase('${person.id}','${c.id}',event)">Approve order</button>`;
+  }
+  if(s==='awaiting-assessment'){
+    return `<button class="row-act-btn row-act-primary" onclick="openReport('${c.id}',event)">Assess</button>`;
+  }
+  if(s==='invite-expiring'){
+    return `<button class="row-act-btn row-act-warn" onclick="toast('Invite resent');event.stopPropagation()">Resend invite</button>`;
+  }
+  if(s==='invite-expired'){
+    return `<button class="row-act-btn row-act-warn" onclick="toast('Re-invite sent');event.stopPropagation()">Re-invite</button>`;
+  }
+  if(s==='email-bounced'){
+    return `<button class="row-act-btn row-act-warn" onclick="toast('Opening email fix…');event.stopPropagation()">Fix email</button>`;
+  }
+  if(s==='escalated'){
+    return `<button class="row-act-btn row-act-danger" onclick="openReport('${c.id}',event)">View escalation</button>`;
+  }
+  if(s==='due-rescreening'){
+    return `<button class="row-act-btn" onclick="openWizard();event.stopPropagation()">Rescreen</button>`;
+  }
+  return '';
+}
+
 function renderRow(person){
   const c = currentCase(person);
   const s = STATUS[c.status];
@@ -1308,7 +1334,7 @@ function renderRow(person){
     <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">${renderBadge(c.status, assessDate)}</td>
     <td onclick="event.stopPropagation()">
       <div class="act-cell">
-        ${ar ? `<button class="an-badge" onclick="openProfileAtCase('${person.id}','${c.id}',event)">Action needed<span class="badge-tip">${esc(arTip)}</span></button>` : ''}
+        ${getInlineAction(person, c)}
         <div class="ell-btn" id="ell-${person.id}" onclick="toggleMenu('${person.id}',event)">
           <svg width="14" height="14"><use href="#ic-more"/></svg>
           <div class="drop-menu" id="menu-${person.id}">
