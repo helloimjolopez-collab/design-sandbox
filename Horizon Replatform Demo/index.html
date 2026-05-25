@@ -1492,11 +1492,19 @@ function renderHomeTable(){
   }
   if(tab==='cst'){
     const rows = people.map(p=>renderHomeCSTOnlyRow(p)).filter(Boolean).join('');
-    tbody.innerHTML = rows || `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--fg3)">No training records match the current filter.</td></tr>`;
+    tbody.innerHTML = rows || `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--fg3)">No training records match the current filter.</td></tr>`;
   } else if(tab==='bg'){
-    tbody.innerHTML = people.map(p=>renderHomeRow(p, false)).join('');
+    tbody.innerHTML = people.map(p=>renderHomeRow(p)).join('');
   } else {
-    tbody.innerHTML = people.map(p=>renderHomeRow(p, true)).join('');
+    // All tab: interleave BG rows and CST rows so case type is always explicit
+    let rows = '';
+    people.forEach(p=>{
+      rows += renderHomeRow(p); // BG row — labelled "Background check"
+      if(p.cst && p.cst.status !== 'cst-na'){
+        rows += renderHomeCSTOnlyRow(p); // CST row — labelled with CST chip
+      }
+    });
+    tbody.innerHTML = rows || `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--fg3)">No cases match the current filter.</td></tr>`;
   }
   // update home sub
   const sub = document.getElementById('home-sub');
