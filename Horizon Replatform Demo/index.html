@@ -1817,14 +1817,75 @@ function renderIdentityCompact(person){
   </div>`;
 }
 
-function renderCasesCompact(person, targetCaseId){
-  if(!person.cases||!person.cases.length) return `<div style="font-size:13px;color:var(--fg4);padding:8px 0">No background checks on file.</div>`;
-  return person.cases.map((c,i)=>{
-    const s = STATUS[c.status];
-    const assessDate = c.assessment ? c.assessment.date : null;
-    const badgeHtml = renderBadge(c.status, assessDate);
-    const isFirst = i===0;
+// ── Case detail blocks (reused in current case section) ──────────────────
+function caseExtraBlocks(c, person){
+  let h = '';
+  if(c.report){
+    h += `<div style="margin-top:10px;padding:10px 12px;background:var(--surf2);border-radius:var(--r6);display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink)">Report received ${c.report.receivedDate}</div>
+        <div style="font-size:12px;color:var(--fg2);margin-top:1px">${esc(c.report.refId)} · ${esc(c.report.hits)}</div>
+      </div>
+      <button class="btn btn-xs btn-secondary" data-open-report="${c.id}">View report</button>
+    </div>`;
+  }
+  if(c.consentForm){
+    const mm = c.consentForm.mismatch;
+    h += `<div style="margin-top:8px;padding:9px 12px;background:${mm?'var(--orange-bg)':'var(--surf2)'};border-radius:var(--r6);${mm?'border-left:3px solid var(--orange)':''}">
+      <div style="font-size:13px;font-weight:600;color:var(--ink)">Consent form${mm?' — name mismatch':''}</div>
+      <div style="font-size:12px;color:var(--fg2);margin-top:1px">Submitted ${c.consentForm.submittedDate} · Name on form: "${c.consentForm.nameOnForm}"</div>
+      ${mm?`<div style="margin-top:7px;display:flex;gap:6px"><button class="btn btn-xs btn-secondary" onclick="toast('Mismatch acknowledged')">Acknowledge</button><button class="btn btn-xs btn-ghost" onclick="toast('Correction requested')">Request correction</button></div>`:''}
+    </div>`;
+  }
+  if(c.assessment){
+    const outColor = c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)';
+    h += `<div style="margin-top:8px;padding:9px 12px;background:var(--surf2);border-radius:var(--r6)">
+      <div style="font-size:12px;font-weight:700;color:${outColor}">Assessment: ${esc(c.assessment.outcome)} — ${esc(c.assessment.date)}</div>
+      <div style="font-size:12px;color:var(--fg2);margin-top:1px">By ${esc(c.assessment.author)}${c.assessment.notes?` · "${c.assessment.notes}"`:''}</div>
+    </div>`;
+    if(c.assessment.outcome==='Escalated'){
+      h += `<div style="margin-top:8px"><button class="btn btn-sm btn-ghost" style="color:var(--red)" onclick="toast('Adverse action started')">Begin adverse action</button><div style="font-size:11px;color:var(--fg3);margin-top:3px">FCRA requires a pre-adverse action notice before communicating this decision.</div></div>`;
+    }
+  }
+  return h;
+}
 
+// ── Current case section ─────────────────────────────────────────────────
+// Shows only the active case — not collapsible, full detail visible.
+function renderCurrentCase(person, c){
+  const showLinkMgmt = ['invite-created','invite-sent','invite-expiring','email-bounced'].includes(c.status);
+  const eventsHtml = c.events.map(ev=>`
+    <div class="ev-row">
+      <div class="ev-dot ${ev.type}"></div>
+      <div class="ev-content">
+        <div class="ev-title">${esc(ev.title)}</div>
+        <div class="ev-time">${esc(ev.date)} · ${esc(ev.time)} · ${esc(ev.by)}</div>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      ${renderCheckTypeChip(c.checkType)}
+      <span style="font-size:12px;color:var(--fg3)">Started ${fmtShort(c.dateInitiated)} · ${viaLabel(c,person)}</span>
+    </div>
+    ${showLinkMgmt ? renderLinkManagement(person, c) : ''}
+    ${caseExtraBlocks(c, person)}
+    ${eventsHtml ? `<div class="elog" style="margin-top:10px">${eventsHtml}</div>` : ''}`;
+}
+
+// ── Screening history section ────────────────────────────────────────────
+// Shows ONLY past cases (cases[1+]). Date is the primary anchor, not check type.
+function renderScreeningHistory(person){
+  const past = person.cases.slice(1);
+  if(!past.length) return `<div style="font-size:13px;color:var(--fg4)">No previous checks on file.</div>`;
+
+  return past.map(c=>{
+    const s = STATUS[c.status];
+    const outcomeLabel = c.assessment ? c.assessment.outcome : (s ? s.label : c.status);
+    const outColor = c.assessment
+      ? (c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)')
+      : (s ? s.cls.replace('b-','') : '');
+    const badgeHtml = renderBadge(c.status);
     const eventsHtml = c.events.map(ev=>`
       <div class="ev-row">
         <div class="ev-dot ${ev.type}"></div>
@@ -1833,50 +1894,19 @@ function renderCasesCompact(person, targetCaseId){
           <div class="ev-time">${esc(ev.date)} · ${esc(ev.time)} · ${esc(ev.by)}</div>
         </div>
       </div>`).join('');
+    const extra = caseExtraBlocks(c, person);
 
-    let extraHtml = '';
-    if(c.report){
-      extraHtml += `<div style="margin-top:10px;padding:10px 12px;background:var(--surf2);border-radius:var(--r6);display:flex;align-items:center;justify-content:space-between;gap:10px">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--ink)">Report received ${c.report.receivedDate}</div>
-          <div style="font-size:12px;color:var(--fg2);margin-top:1px">${esc(c.report.refId)} · ${esc(c.report.hits)}</div>
-        </div>
-        <button class="btn btn-xs btn-secondary" data-open-report="${c.id}">View report</button>
-      </div>`;
-    }
-    if(c.consentForm){
-      const mm = c.consentForm.mismatch;
-      extraHtml += `<div style="margin-top:8px;padding:9px 12px;background:${mm?'var(--orange-bg)':'var(--surf2)'};border-radius:var(--r6);${mm?'border-left:3px solid var(--orange)':''}">
-        <div style="font-size:13px;font-weight:600;color:var(--ink)">Consent form${mm?' — name mismatch':''}</div>
-        <div style="font-size:12px;color:var(--fg2);margin-top:1px">Submitted ${c.consentForm.submittedDate} · Name on form: "${c.consentForm.nameOnForm}"</div>
-        ${mm?`<div style="margin-top:7px;display:flex;gap:6px"><button class="btn btn-xs btn-secondary" onclick="toast('Mismatch acknowledged')">Acknowledge</button><button class="btn btn-xs btn-ghost" onclick="toast('Correction requested')">Request correction</button></div>`:''}
-      </div>`;
-    }
-    if(c.assessment){
-      const outcomeColor = c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)';
-      extraHtml += `<div style="margin-top:8px;padding:9px 12px;background:var(--surf2);border-radius:var(--r6)">
-        <div style="font-size:12px;font-weight:700;color:${outcomeColor}">Assessment: ${esc(c.assessment.outcome)} — ${esc(c.assessment.date)}</div>
-        <div style="font-size:12px;color:var(--fg2);margin-top:1px">Recorded by ${esc(c.assessment.author)}${c.assessment.notes?` · "${c.assessment.notes}"`:''}</div>
-      </div>`;
-      if(c.assessment.outcome==='Escalated'){
-        extraHtml += `<div style="margin-top:8px"><button class="btn btn-sm btn-ghost" style="color:var(--red)" onclick="toast('Adverse action started')">Begin adverse action</button><div style="font-size:11px;color:var(--fg3);margin-top:3px">FCRA requires a pre-adverse action notice before communicating this decision to the applicant.</div></div>`;
-      }
-    }
-
-    return `<div class="hist-row${isFirst?' hist-row-current':''}" data-case-id="${c.id}">
+    return `<div class="hist-row" data-case-id="${c.id}">
       <div class="hist-row-main">
-        <div style="display:flex;align-items:center;gap:7px">
-          <div class="hist-row-title">${esc(c.checkType)}</div>
-          ${isFirst?`<span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--brand);background:var(--fill-static-info-light);padding:1px 6px;border-radius:3px">Current</span>`:''}
-        </div>
-        <div class="hist-row-meta">${fmtShort(c.dateInitiated)} · ${viaLabel(c,person)}</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)">${fmtShort(c.dateInitiated)}</div>
+        <div style="font-size:12px;color:var(--fg3);margin-top:1px">${esc(c.checkType)}</div>
       </div>
       ${badgeHtml}
       <svg class="hist-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
-    <div class="hist-detail${isFirst?' open':''}">
+    <div class="hist-detail">
       <div class="elog">${eventsHtml}</div>
-      ${extraHtml}
+      ${extra}
     </div>`;
   }).join('');
 }
