@@ -1266,7 +1266,7 @@ function renderCstInvite() {
 
   let content = '';
   if (cstState.step === 'form') {
-    const canSubmit = cstState.trainingType !== '';
+    const canSubmit = cstState.trainingType !== '' && cstState.agreedToDisclaimer;
     content = `
       <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--muted-foreground);margin-bottom:var(--spacing-xs);">Invitation Entry</div>
       <div class="card" style="padding:var(--spacing-2xl);">
@@ -1286,33 +1286,46 @@ function renderCstInvite() {
           </div>
         </div>
         <!-- Training Type -->
-        <div style="margin-bottom:var(--spacing-2xl);">
+        <div style="margin-bottom:var(--spacing-xl);">
           <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Training Type <span style="color:#C62828;">*</span></label>
           <select class="input-base" onchange="cstState.trainingType=this.value;renderCstInvite();" style="max-width:400px;color:${cstState.trainingType?'var(--foreground)':'var(--muted-foreground)'};">
             <option value="">Select training type...</option>
-            <option value="employee" ${cstState.trainingType==='employee'?'selected':''}>Employee</option>
             <option value="volunteer" ${cstState.trainingType==='volunteer'?'selected':''}>Volunteer</option>
-            <option value="contractor" ${cstState.trainingType==='contractor'?'selected':''}>Contractor</option>
+            <option value="employee-english" ${cstState.trainingType==='employee-english'?'selected':''}>Employee, English</option>
+            <option value="employee-spanish" ${cstState.trainingType==='employee-spanish'?'selected':''}>Employee, Spanish</option>
           </select>
         </div>
-        <!-- Email Template -->
-        <div style="margin-bottom:var(--spacing-2xl);">
-          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">CST Email Invite Template <span style="color:#C62828;">*</span></label>
+        <!-- CST Email Template -->
+        <div style="margin-bottom:var(--spacing-xl);">
+          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">CST Invite Email Template <span style="color:#C62828;">*</span></label>
           <select class="input-base" onchange="cstState.emailTemplate=this.value" style="max-width:400px;">
+            <option value="volunteer-safety-training" ${cstState.emailTemplate==='volunteer-safety-training'?'selected':''}>volunteer-safety-training</option>
             <option value="default" ${cstState.emailTemplate==='default'?'selected':''}>Default Template</option>
-            <option value="spanish">Spanish Template</option>
-            <option value="youth">Youth Ministry Template</option>
+            <option value="spanish" ${cstState.emailTemplate==='spanish'?'selected':''}>Spanish Template</option>
+          </select>
+        </div>
+        <!-- Billing Reference -->
+        <div style="margin-bottom:var(--spacing-2xl);">
+          <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:var(--spacing-xs);">Billing Reference</label>
+          <select class="input-base" onchange="cstState.billingReference=this.value" style="max-width:400px;">
+            <option value="HR" ${cstState.billingReference==='HR'?'selected':''}>HR</option>
+            <option value="Finance" ${cstState.billingReference==='Finance'?'selected':''}>Finance</option>
+            <option value="Ministry" ${cstState.billingReference==='Ministry'?'selected':''}>Ministry</option>
           </select>
         </div>
         <!-- Legal Disclaimer -->
-        <div style="padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
+        <div style="padding:var(--spacing-xl);background:#F9F9F9;border-radius:var(--radius-sm);border-top:1px solid var(--border);">
           <h3 style="font-size:var(--text-base);font-weight:var(--font-semibold);margin-bottom:var(--spacing-md);">Child Safety Course Legal Disclaimer</h3>
-          <div style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.6;margin-bottom:var(--spacing-lg);">
-            <p>By selecting "Submit" I hereby confirm I understand that all information included in this child presentation is for general informational purposes only. Such information does not, and is not intended to, constitute legal advice. While Protect my Ministry endeavors to keep the information contained in this presentation current and correct, such information may not constitute the most up-to-date information available, and Protect My Ministry makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or suitability of the information contained herein for any purpose...</p>
+          <div style="font-size:var(--text-sm);color:var(--muted-foreground);line-height:1.7;margin-bottom:var(--spacing-lg);max-height:180px;overflow-y:auto;padding-right:4px;">
+            <p>By selecting "Send Safety Training Invite" I hereby confirm I understand that all information included in this child presentation is for general informational purposes only. Such information does not, and is not intended to, constitute legal advice. While Protect my Ministry endeavors to keep the information contained in this presentation current and correct, such information may not constitute the most up-to-date information available, and Protect My Ministry makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or suitability of the information contained herein for any purpose. The links to third-party websites included in this presentation are only for convenience and ease of use; Protect My Ministry does not recommend or endorse the contents of the third-party sites. Any reliance a Client places on the information contained in this presentation is strictly at the Client's own risk. Use of this presentation does not create an attorney-client relationship a Client and Protect My Ministry or any of its attorneys, affiliates, agents, representatives, directors, officers, or employees. Clients using this presentation should contact their attorney to obtain advice with respect to any particular legal, employment, or personnel matter, including the hiring, retention, screening, training, and/or supervision of Client employees and volunteers. The information contained herein may differ from, or be inconsistent with, laws and regulations in relevant jurisdictions. No Client should act or refrain from acting on the basis of information included in this presentation, and should in all instances seek legal advice from counsel in the relevant jurisdiction. Only a Client's individual attorney can provide assurances that the information contained herein - and the Client's interpretation of it - is applicable or appropriate to the Client's particular situation and in compliance with applicable laws and/or regulations.</p>
           </div>
+          <label style="display:flex;align-items:flex-start;gap:var(--spacing-sm);cursor:pointer;">
+            <input type="checkbox" id="cst-disclaimer-check" ${cstState.agreedToDisclaimer?'checked':''} onchange="cstState.agreedToDisclaimer=this.checked;renderCstInvite();" style="margin-top:2px;width:18px;height:18px;flex-shrink:0;cursor:pointer;">
+            <span style="font-size:var(--text-base);font-weight:var(--font-medium);">I acknowledge and agree to the Child Safety Course Legal Disclaimer</span>
+          </label>
         </div>
-        <div style="margin-top:var(--spacing-2xl);padding-top:var(--spacing-xl);border-top:1px solid var(--border);">
-          <button onclick="cstState.step='alert';renderCstInvite();" ${canSubmit?'':'disabled'} class="btn-orange" style="${canSubmit?'':'opacity:0.6;cursor:not-allowed;'}">Submit</button>
+        <div style="margin-top:var(--spacing-2xl);">
+          <button onclick="cstState.step='alert';renderCstInvite();" ${canSubmit?'':'disabled'} class="btn-orange" style="${canSubmit?'':'opacity:0.6;cursor:not-allowed;'}">Send Safety Training Invite</button>
         </div>
       </div>`;
   } else if (cstState.step === 'alert') {
