@@ -1052,7 +1052,7 @@ tbody tr:hover .row-act-btn{opacity:1}
       <table class="data-table home-table" style="width:100%">
         <thead>
           <tr>
-            <th style="width:36px"></th>
+            <th style="width:36px"><div class="cb" id="home-cb-all" onclick="toggleSelectAll(event)" style="margin:0 auto"></div></th>
             <th style="width:36px"></th>
             <th class="th-sort" data-col="name" onclick="homeSort('name')">Name<svg class="sort-ic" width="12" height="12"><use href="#ic-sort-none"/></svg></th>
             <th class="th-sort home-col-type" id="th-casetype" data-col="type" onclick="homeSort('type')">Type<svg class="sort-ic" width="12" height="12"><use href="#ic-sort-none"/></svg></th>
@@ -1424,9 +1424,9 @@ const CST_STATUS_LABELS = {
 
 function renderCheckTypeChip(checkType){
   const info = CHECK_TYPE_INFO[checkType];
-  if(!info) return `<span class="chip">${esc(checkType)}</span>`;
+  if(!info) return `<span class="chip chip-trunc"><span class="chip-txt">${esc(checkType)}</span></span>`;
   const tipText = info.checks.map(c=>`• ${c}`).join('\n');
-  return `<span class="chip" data-tip="${esc(tipText)}" style="cursor:help"><svg width="11" height="11" viewBox="0 0 20 20" style="flex-shrink:0;color:var(--fg4)"><use href="#ic-shield-fill"/></svg>${esc(checkType)}</span>`;
+  return `<span class="chip chip-trunc" data-tip="${esc(tipText)}" style="cursor:help"><svg width="11" height="11" viewBox="0 0 20 20" style="flex-shrink:0;color:var(--fg4)"><use href="#ic-shield-fill"/></svg><span class="chip-txt">${esc(checkType)}</span></span>`;
 }
 
 function renderCstTypeChip(typeId){
