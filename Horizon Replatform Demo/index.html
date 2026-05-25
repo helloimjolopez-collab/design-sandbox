@@ -3143,6 +3143,46 @@ window.switchTab = switchTab;
 window.renderHomeTable = renderHomeTable;
 
 renderTable();
+
+// Global tooltip — handles data-tip on any element, fixed-position so it escapes overflow:hidden
+(function(){
+  const tip = document.getElementById('g-tip');
+  if(!tip) return;
+  let activeEl = null;
+  function position(el){
+    const r = el.getBoundingClientRect();
+    tip.style.opacity = '0'; // measure first
+    tip.style.visibility = 'hidden';
+    tip.style.display = 'block';
+    const tw = tip.offsetWidth;
+    const th = tip.offsetHeight;
+    tip.style.display = '';
+    tip.style.visibility = '';
+    let left = r.left;
+    let top = r.top - th - 8;
+    if(top < 8) top = r.bottom + 8;
+    if(left + tw > window.innerWidth - 8) left = window.innerWidth - tw - 8;
+    if(left < 8) left = 8;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }
+  document.addEventListener('mouseover', function(e){
+    const el = e.target.closest('[data-tip]');
+    if(!el || !el.dataset.tip) { if(activeEl && !activeEl.contains(e.relatedTarget)){tip.style.opacity='0';activeEl=null;} return; }
+    activeEl = el;
+    tip.textContent = el.dataset.tip;
+    position(el);
+    tip.style.opacity = '1';
+  });
+  document.addEventListener('mouseout', function(e){
+    const el = e.target.closest('[data-tip]');
+    if(el && !el.contains(e.relatedTarget)){
+      tip.style.opacity = '0';
+      activeEl = null;
+    }
+  });
+  document.addEventListener('scroll', function(){ tip.style.opacity='0'; activeEl=null; }, true);
+})();
 </script>
 </body>
 </html>
