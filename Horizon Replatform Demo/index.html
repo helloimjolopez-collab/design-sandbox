@@ -932,7 +932,8 @@ tbody tr:hover .row-act-btn{opacity:1}
       <div class="tab-item" data-tab="cst" onclick="switchTab('cst')">Child Safety Training</div>
     </div>
     <div class="summary-strip" id="home-summary-strip"></div>
-    <div class="toolbar" id="home-toolbar">
+    <div id="home-toolbar">
+    <div class="toolbar">
       <div class="search-box">
         <svg width="14" height="14" style="color:var(--fg4);flex-shrink:0"><use href="#ic-search"/></svg>
         <input id="home-search" placeholder="Search name, email, role, team…">
@@ -1529,8 +1530,12 @@ function switchTab(tab){
   document.querySelectorAll('#home-tabs .tab-item').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
 
   // New BG check button — hide on CST tab
-  const btnHome = document.getElementById('btn-new-home');
-  if(btnHome) btnHome.style.display = (tab==='cst') ? 'none' : '';
+  const ctasHome = document.getElementById('home-ctas');
+  if(ctasHome){
+    ctasHome.style.display = 'flex';
+    const btnCst = document.getElementById('btn-new-cst-home');
+    if(btnCst) btnCst.style.display = (tab==='bg') ? 'none' : '';
+  }
 
   // CST filter chip — only on CST tab
   const cstChip = document.getElementById('home-chip-cst');
@@ -3600,8 +3605,8 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
 
 renderHomeTable();
 // Show the new BG check button by default (All tab is active)
-const btnNewHome = document.getElementById('btn-new-home');
-if(btnNewHome){ btnNewHome.style.display=''; btnNewHome.addEventListener('click',openWizard); }
+const btnNewHome = document.getElementById('home-ctas');
+if(btnNewHome){ btnNewHome.style.display='flex'; }
 
 document.querySelectorAll('.dept-item').forEach(item=>{
   item.addEventListener('click',()=>{
