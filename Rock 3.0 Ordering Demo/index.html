@@ -901,6 +901,14 @@ function updateLandingDemoControls() {
 function initLandingOrders() { renderCstBanner(); renderLandingCards(); renderOrdersTable('recent-orders-landing'); updateLandingDemoControls(); }
 function initUnhappyOrders() { renderOrdersTable('recent-orders-unhappy'); }
 function initProfileOrders() {
+  // Update active state on Default / NO CST sub-buttons
+  const noCstMode = sessionStorage.getItem('pmm-no-cst') === 'true';
+  document.querySelectorAll('[data-profile-sub]').forEach(btn => {
+    const isActive = (btn.dataset.profileSub === 'nocst' && noCstMode) || (btn.dataset.profileSub === 'default' && !noCstMode);
+    btn.style.background = isActive ? 'var(--demo-pressed)' : 'transparent';
+    btn.style.color = isActive ? 'var(--foreground)' : 'var(--muted-foreground)';
+    btn.style.fontWeight = isActive ? 'var(--font-medium)' : 'normal';
+  });
   // Shorter table for profile
   const fileIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="2" style="cursor:pointer;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
   let rows = ordersData.slice(0,5).map((o,i) => `
