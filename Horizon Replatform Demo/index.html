@@ -897,27 +897,62 @@ tbody tr:hover .row-act-btn{opacity:1}
         <svg width="13" height="13" class="fchip-chevron"><use href="#ic-chevdown"/></svg>
         <div class="filter-drop" id="home-drop-status">
 <div class="fdrop-item selected" onclick="setHomeFilter('homeStatusFilter','','home-chip-status','Status')">All statuses</div>
+<div class="fdrop-sep"></div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-created','home-chip-status','Status')">Invite link created</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-sent','home-chip-status','Status')">Invite sent</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','consent-signed-action','home-chip-status','Status')">Consent signed — action needed</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','screening-progress','home-chip-status','Status')">Screening in progress</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','awaiting-assessment','home-chip-status','Status')">Awaiting assessment</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','cleared','home-chip-status','Status')">Cleared</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','needs-review','home-chip-status','Status')">Needs review</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','escalated','home-chip-status','Status')">Escalated</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-expiring','home-chip-status','Status')">Invite expiring soon</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-expired','home-chip-status','Status')">Invite expired</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-cancelled','home-chip-status','Status')">Invite cancelled</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','email-bounced','home-chip-status','Status')">Email bounced</div>
+<div class="fdrop-sep"></div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','consent-signed-action','home-chip-status','Status')">Consent received</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','order-submitted','home-chip-status','Status')">Order submitted</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','order-failed','home-chip-status','Status')">Order failed</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','screening-progress','home-chip-status','Status')">Screening in progress</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','screening-error','home-chip-status','Status')">Screening error</div>
+<div class="fdrop-sep"></div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','awaiting-assessment','home-chip-status','Status')">Awaiting assessment</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','needs-review','home-chip-status','Status')">Needs review</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','cleared','home-chip-status','Status')">Cleared</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','escalated','home-chip-status','Status')">Escalated</div>
+<div class="fdrop-sep"></div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','due-rescreening','home-chip-status','Status')">Rescreen due</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','screening-overdue','home-chip-status','Status')">Rescreen overdue</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','bg-expired','home-chip-status','Status')">Check expired</div>
         </div>
       </button>
-      <button class="filter-chip" id="home-chip-casetype" onclick="toggleDrop('home-drop-casetype',this)">
-        <svg width="13" height="13"><use href="#ic-filter"/></svg>
-        <span class="fchip-lbl">Case type: All</span>
+      <button class="filter-chip" id="home-chip-cst" style="display:none" onclick="toggleDrop('home-drop-cst',this)">
+        <svg width="13" height="13"><use href="#ic-cst"/></svg>
+        <span class="fchip-lbl">Training: All</span>
         <svg width="13" height="13" class="fchip-chevron"><use href="#ic-chevdown"/></svg>
-        <div class="filter-drop" id="home-drop-casetype">
-<div class="fdrop-item selected" onclick="setHomeFilter('homeCaseTypeFilter','','home-chip-casetype','Case type')">All</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeCaseTypeFilter','bg','home-chip-casetype','Case type')">Background Check</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeCaseTypeFilter','cst','home-chip-casetype','Case type')">Child Safety Training</div>
+        <div class="filter-drop" id="home-drop-cst">
+<div class="fdrop-item selected" onclick="setHomeFilter('homeCstFilter','','home-chip-cst','Training')">All</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeCstFilter','cst-completed','home-chip-cst','Training')">Completed</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeCstFilter','cst-invited','home-chip-cst','Training')">Invite sent</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeCstFilter','cst-not-sent','home-chip-cst','Training')">Not sent</div>
         </div>
       </button>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+        <div class="bulk-home-bar" id="home-bulk-bar" style="display:none;align-items:center;gap:8px;padding:0 6px">
+          <span class="bulk-count" id="home-bulk-count">0 selected</span>
+          <button class="btn btn-secondary btn-sm" onclick="toast('Bulk resend sent');clearHomeSelection()">Resend invites</button>
+          <button class="btn btn-secondary btn-sm" onclick="toast('Export started');clearHomeSelection()">Export selected</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearHomeSelection()">Clear</button>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="home-export-btn" onclick="toggleDrop('home-drop-export',this)" style="position:relative">
+          <svg width="13" height="13"><use href="#ic-export"/></svg>Export
+          <div class="filter-drop" id="home-drop-export" style="right:0;left:auto;min-width:170px">
+            <div class="fdrop-item" onclick="toast('Exporting as CSV…');closeAllDrops()">Export as CSV</div>
+            <div class="fdrop-item" onclick="toast('Exporting as Excel…');closeAllDrops()">Export as Excel</div>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div id="home-bulk-action-bar" style="display:none;padding:7px 22px;background:var(--brand-l);border-bottom:1px solid var(--stroke-static-brand-base);align-items:center;gap:10px;flex-shrink:0">
+      <span style="font-size:13px;font-weight:600;color:var(--brand)" id="home-sel-count">0 selected</span>
+      <button class="btn btn-secondary btn-sm" onclick="toast('Resending invites…');clearHomeSelection()">Resend invites</button>
+      <button class="btn btn-secondary btn-sm" onclick="toast('Export started');clearHomeSelection()">Export selected</button>
+      <button class="btn btn-secondary btn-sm btn-naked-secondary" onclick="clearHomeSelection()">Clear selection</button>
     </div>
     <div style="flex:1;overflow:auto;padding:16px 24px 24px;margin-top:0">
       <table class="data-table home-table" style="width:100%">
