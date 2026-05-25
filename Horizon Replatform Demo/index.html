@@ -147,7 +147,7 @@
   --r12:var(--radius-xl);
   --font:var(--font-family);
 }
-body{font-family:var(--font-family);font-size:14px;color:var(--ink);background:#fafafa;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+body{font-family:var(--font-family);font-size:14px;color:var(--ink);background:#f6f5f3;display:flex;flex-direction:column;height:100vh;overflow:hidden}
 button{font-family:inherit;cursor:pointer}
 input,select,textarea{font-family:inherit}
 
@@ -886,8 +886,31 @@ tbody tr.ar:hover .td-name{background:#fff2e6}
     </div>
   </div>
   <div id="stub-view" style="display:none;flex:1;align-items:center;justify-content:center"></div>
+
+  <!-- Screening Levels page -->
+  <div id="levels-view" style="display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0">
+    <div class="levels-page" id="levels-page-inner"></div>
+  </div>
+
 </div>
 </div><!-- /.app-body -->
+
+<!-- New / Edit screening level modal -->
+<div class="lv-modal-scrim" id="lv-modal" onclick="if(event.target===this)closeLvModal()">
+  <div class="lv-modal-box">
+    <div class="lv-modal-head">
+      <div class="lv-modal-title" id="lv-modal-title">New screening level</div>
+      <button class="topnav-icon" style="color:var(--fg3)" onclick="closeLvModal()">
+        <svg width="16" height="16"><use href="#ic-x"/></svg>
+      </button>
+    </div>
+    <div class="lv-modal-body" id="lv-modal-body"></div>
+    <div class="lv-modal-foot">
+      <button class="btn btn-ghost" onclick="closeLvModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLvModal()">Save level</button>
+    </div>
+  </div>
+</div>
 
 <div class="scrim" id="scrim"></div>
 
@@ -1052,7 +1075,7 @@ const PEOPLE = [
 const VIA_ICONS = {invite:'ic-env',manual:'ic-person',flow:'ic-flow',integration:'ic-integration'};
 const VIA_LABELS = {invite:'Email invite',manual:'Manual order',flow:'Screening flow',integration:'Integration'};
 
-let STATE = {dept:'all',search:'',actionFilter:false,selectedPeople:new Set(),currentPerson:null,currentCase:null,wzStep:1,wzPeople:[],wzLevel:null,wzLvlDropOpen:false,wzLvlSearch:'',wzLvlExpanded:false,wzSuccess:false,wzAdvancedOpen:false,wzEmailOn:true,wzApproval:false,wzShowNewPerson:false,wzNewPerson:{fn:'',ln:'',email:'',role:'',dept:''},statusFilter:'',viaFilter:'',homeCardFilter:'',homeCaseTypeFilter:'',openDrop:''};
+let STATE = {dept:'all',search:'',actionFilter:false,selectedPeople:new Set(),currentPerson:null,currentCase:null,wzStep:1,wzPeople:[],wzLevel:null,wzLvlDropOpen:false,wzLvlSearch:'',wzLvlExpanded:false,wzSuccess:false,wzAdvancedOpen:false,wzEmailOn:true,wzApproval:false,wzShowNewPerson:false,wzNewPerson:{fn:'',ln:'',email:'',role:'',dept:''},statusFilter:'',viaFilter:'',homeCardFilter:'',homeCaseTypeFilter:'',openDrop:'',lvEditId:null,lvDraft:{name:'',tmpl:'essential',depts:[],isDefault:false},defaultLevel:'premier-mvr'};
 
 function personById(id){return PEOPLE.find(p=>p.id===id)}
 function caseById(id){for(const p of PEOPLE)for(const c of p.cases)if(c.id===id)return{person:p,kase:c};return null}
@@ -2302,6 +2325,330 @@ window.startCstTemplateEdit=function(){const t=(WZ_TEMPLATES.cst||[]).find(x=>x.
 window.saveBgTemplateEdit=function(){const ta=document.getElementById('bg-template-edit');if(!ta)return;const body=ta.value;const id='custom-bg-'+Date.now();WZ_TEMPLATES.bgcheck.push({id,name:'Custom template (saved)',body});STATE.wzEmailTemplate=id;STATE.wzEditBgBody=null;STATE.wzPreviewBgTemplate=false;renderWizard();toast('Template saved');};
 window.saveCstTemplateEdit=function(){const ta=document.getElementById('cst-template-edit');if(!ta)return;const body=ta.value;const id='custom-cst-'+Date.now();WZ_TEMPLATES.cst.push({id,name:'Custom template (saved)',body});STATE.wzCstTemplate=id;STATE.wzEditCstBody=null;STATE.wzPreviewCstTemplate=false;renderWizard();toast('Template saved');};
 
+// ── Screening Levels page ───────────────────────────────────────────────
+
+// Custom levels are stored separately; base levels come from LEVELS array
+let CUSTOM_LEVELS = [
+  {id:'premier-mvr',name:'Premier + MVR',tmpl:'premier',depts:['All departments'],isDefault:true,
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification','County criminal search (7-year)','Alias search (extended)','Federal criminal search','Motor vehicle record (MVR)']},
+  {id:'driver',name:'Driver Standard',tmpl:'essential',depts:["Children's Ministry"],isDefault:false,
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification','Motor vehicle record (MVR)']},
+];
+
+const BASE_LEVELS_DEF = [
+  {id:'essential',name:'Essential',
+   riskLabel:'Low risk',riskColor:'#5475c6',accentColor:'#8daee8',accentBg:'#eef2fb',
+   rolefit:'General volunteers with no direct access to children or finances',
+   examples:['Ushers','Greeters','Kitchen helpers','Administrative support'],
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification']},
+  {id:'preferred',name:'Preferred',
+   riskLabel:'Higher risk',riskColor:'#2d4889',accentColor:'#3a5aaa',accentBg:'#e0e8f7',
+   rolefit:'Anyone with regular child or vulnerable adult contact',
+   examples:["Children's ministry volunteers","Sunday school assistants","Nursery workers","Care team volunteers"],
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification','County criminal search (7-year)','Alias search']},
+  {id:'premier',name:'Premier',
+   riskLabel:'Highest risk',riskColor:'#353063',accentColor:'#353063',accentBg:'#eeedf7',
+   rolefit:'Leadership, finance, staff, and multi-role high-trust positions',
+   examples:["Lead teachers","Youth pastors","Finance volunteers","Staff"],
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification','County criminal search (7-year)','Alias search (extended)','Federal criminal search']},
+];
+
+const DEPTS_ALL = ["Children's Ministry","Student Ministry","Operations","Worship Team","Finance","All departments"];
+
+function renderLevels(){
+  const el = document.getElementById('levels-page-inner');
+  if(!el) return;
+
+  const customCount = CUSTOM_LEVELS.length;
+
+  el.innerHTML = `
+  <div class="levels-ph">
+    <div class="levels-ph-left">
+      <div class="levels-ph-title">Screening Levels</div>
+      <div class="levels-ph-sub">Define what is included in each screening level and assign them to departments.</div>
+    </div>
+    <button class="btn btn-primary" onclick="openLvModal(null)" style="flex-shrink:0">
+      <svg width="14" height="14"><use href="#ic-plus"/></svg> New level
+    </button>
+  </div>
+
+  <!-- Section 1: Base levels reference -->
+  <div class="levels-section">
+    <div class="levels-sec-head">Base screening levels</div>
+    <div class="levels-sec-sub">These three levels are defined by Protect My Ministry and cannot be edited. Use them as starting points when creating custom levels for your organisation.</div>
+
+    <!-- Risk spectrum -->
+    <div class="risk-spectrum-wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:600;color:var(--fg3);text-transform:uppercase;letter-spacing:.07em">Risk spectrum</span>
+        <span style="font-size:11px;color:var(--fg4)">Lower numbers = fewer checks required</span>
+      </div>
+      <div class="risk-spectrum-bar">
+        <div class="risk-band-1"></div>
+        <div class="risk-band-2"></div>
+        <div class="risk-band-3"></div>
+        <div class="risk-band-4"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <span style="font-size:11px;color:#8daee8;font-weight:600">Essential</span>
+        <span style="font-size:11px;color:#3a5aaa;font-weight:600">Preferred</span>
+        <span style="font-size:11px;color:#353063;font-weight:600">Premier</span>
+      </div>
+    </div>
+
+    <!-- Base level cards -->
+    <div class="base-levels-grid">
+      ${BASE_LEVELS_DEF.map((bl,i)=>{
+        const prevChecks = i>0 ? BASE_LEVELS_DEF[i-1].checks : [];
+        return `
+        <div class="base-card">
+          <div class="base-card-accent" style="background:${bl.accentColor}"></div>
+          <div class="base-card-body">
+            <div class="base-card-name">${esc(bl.name)}</div>
+            <div class="base-card-risk" style="color:${bl.riskColor}">${esc(bl.riskLabel)}</div>
+            <div class="base-card-roles">
+              ${bl.examples.map(e=>`<span class="base-card-role">${esc(e)}</span>`).join('')}
+            </div>
+            <div class="base-card-checks">
+              <div class="base-card-checks-title">Checks included</div>
+              ${bl.checks.map(c=>{
+                const isNew = !prevChecks.includes(c);
+                return `<div class="base-card-check${isNew&&i>0?' added':''}">
+                  <div class="base-card-check-dot"></div>
+                  <span>${esc(c)}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+          <div class="base-card-footer">
+            <svg width="13" height="13" style="color:var(--fg3);flex-shrink:0"><use href="#ic-person"/></svg>
+            <span class="base-card-fit">${esc(bl.rolefit)}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:6px">
+      <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block"></span> Highlighted checks are additions from the previous level.</span>
+    </div>
+  </div>
+
+  <!-- Section 2: Your screening levels -->
+  <div class="levels-section">
+    <div class="levels-sec-head">Your screening levels</div>
+    <div class="levels-sec-sub">Custom levels your organisation has configured. Use these when ordering checks — base levels appear here too for reference.</div>
+
+    <div class="levels-toolbar">
+      <div class="levels-search">
+        <svg width="14" height="14" style="color:var(--fg4);flex-shrink:0"><use href="#ic-search"/></svg>
+        <input id="lv-search" placeholder="Search levels…" oninput="filterLvList(this.value)">
+      </div>
+    </div>
+
+    <div class="levels-list" id="lv-list">
+      ${renderLvList('')}
+    </div>
+  </div>
+  `;
+}
+
+function renderLvList(q){
+  const allRows = [
+    ...BASE_LEVELS_DEF.map(b=>({...b,type:'base',checks:b.checks,depts:['All departments'],isDefault:false})),
+    ...CUSTOM_LEVELS.map(c=>({...c,type:'custom'})),
+  ];
+  const rows = q ? allRows.filter(r=>r.name.toLowerCase().includes(q.toLowerCase())) : allRows;
+  if(!rows.length) return `<div style="padding:24px;text-align:center;font-size:13px;color:var(--fg3)">No levels match.</div>`;
+
+  return `
+  <div class="levels-list-head">
+    <div>Level name</div>
+    <div>Type</div>
+    <div>Assigned to</div>
+    <div>Checks</div>
+    <div style="text-align:right">Actions</div>
+  </div>
+  ${rows.map(r=>{
+    const isDefault = (r.id===STATE.defaultLevel);
+    const defaultEl = isDefault
+      ? `<span class="default-pill">Default</span>`
+      : r.type==='custom' ? `<button class="tog${isDefault?' on':''}" title="Set as default" onclick="setDefaultLevel('${r.id}')"></button>` : '';
+
+    return `<div class="llr${r.type==='base'?' base-row':''}">
+      <div class="llr-name">
+        ${esc(r.name)}
+        ${isDefault?`<span class="default-pill" style="margin-left:4px">Default</span>`:''}
+      </div>
+      <div>
+        <span class="llr-type-badge ${r.type==='base'?'llr-type-base':'llr-type-custom'}">${r.type==='base'?'Base':'Custom'}</span>
+      </div>
+      <div class="llr-tags">
+        ${(r.depts||[]).map(d=>`<span class="llr-tag dept">${esc(d)}</span>`).join('')}
+      </div>
+      <div class="llr-checks">${r.checks.length} check${r.checks.length!==1?'s':''}</div>
+      <div class="llr-actions">
+        ${r.type==='custom'?`
+          ${!isDefault?`<button class="llr-action-btn" title="Set as default" onclick="setDefaultLevel('${r.id}')">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 2l2.4 5.2H18l-4.5 3.3 1.7 5.5L10 13l-5.2 3 1.7-5.5L2 7.2h5.6z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          </button>`:''}
+          <button class="llr-action-btn" title="Edit level" onclick="openLvModal('${r.id}')">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M13.5 3.5l3 3-9.5 9.5H4v-3l9.5-9.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="llr-action-btn del" title="Delete level" onclick="deleteLvLevel('${r.id}')">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4h4v2M7 9v6M13 9v6M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        `:`<span style="font-size:11px;color:var(--fg4);padding-right:4px">Read only</span>`}
+      </div>
+    </div>`;
+  }).join('')}
+  `;
+}
+
+window.filterLvList=function(q){
+  const el=document.getElementById('lv-list');
+  if(el) el.innerHTML=renderLvList(q);
+};
+
+window.setDefaultLevel=function(id){
+  STATE.defaultLevel=id;
+  // Rebuild just the list
+  const el=document.getElementById('lv-list');
+  if(el){
+    const q=document.getElementById('lv-search');
+    el.innerHTML=renderLvList(q?q.value:'');
+  }
+  toast('Default level updated');
+};
+
+window.deleteLvLevel=function(id){
+  if(!confirm('Delete this screening level? This cannot be undone.')) return;
+  CUSTOM_LEVELS=CUSTOM_LEVELS.filter(c=>c.id!==id);
+  if(STATE.defaultLevel===id) STATE.defaultLevel='';
+  renderLevels();
+  toast('Level deleted');
+};
+
+// ── Level modal ──────────────────────────────────────────────────────────
+
+window.openLvModal=function openLvModal(editId){
+  STATE.lvEditId=editId;
+  if(editId){
+    const existing=CUSTOM_LEVELS.find(c=>c.id===editId);
+    if(!existing) return;
+    STATE.lvDraft={name:existing.name,tmpl:existing.tmpl||'essential',depts:[...(existing.depts||[])],isDefault:STATE.defaultLevel===editId};
+    document.getElementById('lv-modal-title').textContent='Edit screening level';
+    document.querySelector('#lv-modal .lv-modal-foot .btn-primary').textContent='Save changes';
+  } else {
+    STATE.lvDraft={name:'',tmpl:'essential',depts:[],isDefault:false};
+    document.getElementById('lv-modal-title').textContent='New screening level';
+    document.querySelector('#lv-modal .lv-modal-foot .btn-primary').textContent='Save level';
+  }
+  renderLvModalBody();
+  document.getElementById('lv-modal').classList.add('open');
+}
+
+window.closeLvModal=function(){
+  document.getElementById('lv-modal').classList.remove('open');
+};
+
+window.renderLvModalBody=function renderLvModalBody(){
+  const d=STATE.lvDraft;
+  const baseTmpls=[
+    {id:'essential',name:'Essential',desc:'National criminal database, sex offender registry, identity verification'},
+    {id:'preferred',name:'Preferred',desc:'Essential + county criminal (7-year) + alias search'},
+    {id:'premier',name:'Premier',desc:'Preferred + federal criminal + extended alias'},
+  ];
+  const sel=baseTmpls.find(t=>t.id===d.tmpl)||baseTmpls[0];
+  const tmplChecks=BASE_LEVELS_DEF.find(b=>b.id===d.tmpl)?.checks||BASE_LEVELS_DEF[0].checks;
+
+  document.getElementById('lv-modal-body').innerHTML=`
+    <div>
+      <label class="lv-field-label" for="lv-name">Level name</label>
+      <input class="lv-input" id="lv-name" placeholder="e.g. Driver Standard" value="${esc(d.name)}" oninput="STATE.lvDraft.name=this.value">
+    </div>
+    <div>
+      <label class="lv-field-label">Start from base level</label>
+      <div style="font-size:12px;color:var(--fg3);margin-bottom:8px">The selected base level defines the minimum checks included. You can add motor vehicle records (MVR) as an option.</div>
+      <div class="tmpl-grid">
+        ${baseTmpls.map(t=>`
+          <div class="tmpl-card${d.tmpl===t.id?' sel':''}" onclick="selectLvTmpl('${t.id}')">
+            <div class="tmpl-card-name">${esc(t.name)}</div>
+            <div class="tmpl-card-desc">${esc(t.desc)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div>
+      <label class="lv-field-label">Add-ons</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;color:var(--fg2)">
+        <input type="checkbox" id="lv-mvr" ${d.mvr?'checked':''} onchange="STATE.lvDraft.mvr=this.checked;renderLvModalBody()">
+        Motor vehicle record (MVR) — required for drivers
+      </label>
+    </div>
+    <div>
+      <div class="checks-preview">
+        <div class="checks-preview-title">Checks included in this level</div>
+        ${[...tmplChecks,...(d.mvr?['Motor vehicle record (MVR)']:[])].map(c=>`
+          <div class="check-preview-item"><div class="check-preview-dot"></div>${esc(c)}</div>
+        `).join('')}
+      </div>
+    </div>
+    <div>
+      <label class="lv-field-label">Assign to departments <span style="font-weight:400;color:var(--fg4)">(optional)</span></label>
+      <div style="font-size:12px;color:var(--fg3);margin-bottom:8px">Tag which departments this level applies to. Admins will see it when ordering checks.</div>
+      <div class="dept-pills">
+        ${DEPTS_ALL.map(dep=>`
+          <button class="dept-pill${d.depts.includes(dep)?' sel':''}" onclick="toggleLvDept('${dep}')">${esc(dep)}</button>
+        `).join('')}
+      </div>
+    </div>
+    <div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;color:var(--fg2)">
+        <input type="checkbox" id="lv-default" ${d.isDefault?'checked':''} onchange="STATE.lvDraft.isDefault=this.checked">
+        Set as the default screening level for new cases
+      </label>
+    </div>
+  `;
+}
+
+window.selectLvTmpl=function(id){
+  STATE.lvDraft.tmpl=id;
+  renderLvModalBody();
+};
+
+window.toggleLvDept=function(dep){
+  const idx=STATE.lvDraft.depts.indexOf(dep);
+  if(idx>=0) STATE.lvDraft.depts.splice(idx,1);
+  else STATE.lvDraft.depts.push(dep);
+  renderLvModalBody();
+};
+
+window.saveLvModal=function(){
+  const d=STATE.lvDraft;
+  if(!d.name.trim()){toast('Please enter a name for this level');return;}
+  const tmplChecks=BASE_LEVELS_DEF.find(b=>b.id===d.tmpl)?.checks||BASE_LEVELS_DEF[0].checks;
+  const checks=[...tmplChecks,...(d.mvr?['Motor vehicle record (MVR)']:[])];
+
+  if(STATE.lvEditId){
+    const idx=CUSTOM_LEVELS.findIndex(c=>c.id===STATE.lvEditId);
+    if(idx>=0){
+      CUSTOM_LEVELS[idx]={...CUSTOM_LEVELS[idx],name:d.name.trim(),tmpl:d.tmpl,depts:d.depts,checks};
+    }
+    if(d.isDefault) STATE.defaultLevel=STATE.lvEditId;
+    toast('Level updated');
+  } else {
+    const newId='custom-'+Date.now();
+    CUSTOM_LEVELS.push({id:newId,name:d.name.trim(),tmpl:d.tmpl,depts:d.depts,checks});
+    if(d.isDefault) STATE.defaultLevel=newId;
+    // Also add to LEVELS array so wizard can use it
+    LEVELS.push({id:newId,name:d.name.trim(),tier:'custom',group:'Custom levels',tag:d.depts.join(', ')||null,
+      riskLabel:BASE_LEVELS_DEF.find(b=>b.id===d.tmpl)?.riskLabel||'',
+      rolefit:'',examples:[],checks,desc:'',color:'#565656',bg:'#f0f0f0'});
+    toast('Level created');
+  }
+  closeLvModal();
+  renderLevels();
+};
+
 document.querySelectorAll('.nav-item').forEach(btn=>{
   btn.addEventListener('click',function(){
     const page = this.dataset.page;
@@ -2310,18 +2657,22 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
     const homeView = document.getElementById('home-view');
     const screeningsView = document.getElementById('screenings-view');
     const stubView = document.getElementById('stub-view');
+    const levelsView = document.getElementById('levels-view');
     // hide all
     if(homeView) homeView.style.display='none';
     if(screeningsView) screeningsView.style.display='none';
     if(stubView) stubView.style.display='none';
+    if(levelsView) levelsView.style.display='none';
     if(page==='home'){
       if(homeView){ homeView.style.display='flex'; renderHomeTable(); }
     } else if(page==='screenings'){
       if(screeningsView) screeningsView.style.display='flex';
+    } else if(page==='levels'){
+      if(levelsView){ levelsView.style.display='flex'; renderLevels(); }
     } else {
       if(stubView){
         stubView.style.display='flex';
-        const labels = {training:'Training',settings:'Settings',flows:'Screening Flows',levels:'Screening Levels'};
+        const labels = {training:'Training',settings:'Settings',flows:'Screening Flows'};
         stubView.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--fg3)"><svg width="32" height="32" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.4"/><path d="M10 6v5l3 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><div style="font-size:16px;font-weight:600;color:var(--fg2)">${esc(labels[page]||page)}</div><div style="font-size:14px">This section is in scope but not yet built in this iteration.</div></div>`;
       }
     }
