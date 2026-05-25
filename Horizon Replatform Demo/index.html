@@ -1993,23 +1993,26 @@ function renderLinkManagement(person, c){
 
 function renderPanelBody(person, targetCaseId){
   const c = currentCase(person);
-  const s = STATUS[c.status];
   const pb = document.getElementById('panel-body');
+  const hasPastCases = person.cases.length > 1;
 
-  const showLinkMgmt = ['invite-created','invite-sent','invite-expiring','email-bounced'].includes(c.status);
   pb.innerHTML = `
     <div style="padding:16px 20px 0">
       ${renderPanelAction(person, c)}
-      ${showLinkMgmt ? renderLinkManagement(person, c) : ''}
       <div class="pnl-sec" style="padding-top:0">
         <div class="pnl-sec-title"><span>Identity</span></div>
         ${renderIdentityCompact(person)}
       </div>
       <div class="pnl-divider"></div>
       <div class="pnl-sec">
-        <div class="pnl-sec-title"><span>Screening history</span></div>
-        ${renderCasesCompact(person, targetCaseId)}
+        <div class="pnl-sec-title"><span>Current case</span></div>
+        ${renderCurrentCase(person, c)}
       </div>
+      ${hasPastCases ? `<div class="pnl-divider"></div>
+      <div class="pnl-sec">
+        <div class="pnl-sec-title"><span>Screening history</span></div>
+        ${renderScreeningHistory(person)}
+      </div>` : ''}
       <div class="pnl-divider"></div>
       <div class="pnl-sec">
         <div class="pnl-sec-title"><span>Child safety training</span></div>
