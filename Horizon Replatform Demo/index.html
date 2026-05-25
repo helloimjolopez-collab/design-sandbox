@@ -984,8 +984,8 @@ tbody tr:hover .row-act-btn{opacity:1}
 <div class="fdrop-item" onclick="setHomeInitiatedFilter('manual')">Manual</div>
         </div>
       </button>
-      <!-- Case detail filter — visible on all and bg tabs -->
-      <button class="filter-chip home-bg-only-filter" id="home-chip-detail" onclick="toggleDrop('home-drop-detail',this)">
+      <!-- Case detail filter — visible on BG tab only -->
+      <button class="filter-chip home-bg-only-filter" id="home-chip-detail" style="display:none" onclick="toggleDrop('home-drop-detail',this)">
         <svg width="13" height="13"><use href="#ic-shield-sm"/></svg>
         <span class="fchip-lbl">Check type: All</span>
         <svg width="13" height="13" class="fchip-chevron"><use href="#ic-chevdown"/></svg>
@@ -3735,12 +3735,9 @@ function setHomeSort(col, dir){
   homeSortCol = col;
   homeSortDir = dir;
   // Update chip label
-  const chip = document.getElementById('home-chip-sort');
-  if(chip){
-    const lbl = chip.querySelector('.fchip-lbl');
-    const label = col==='name' ? (dir==='asc' ? 'Name A–Z' : 'Name Z–A') : (dir==='desc' ? 'Latest' : 'Earliest');
-    if(lbl) lbl.textContent = 'Sort: '+label;
-  }
+  const lbl = document.getElementById('home-sort-lbl');
+  const label = col==='name' ? (dir==='asc' ? 'Name A–Z' : 'Name Z–A') : (dir==='desc' ? 'Latest' : 'Earliest');
+  if(lbl) lbl.textContent = 'Sort: '+label;
   // Update dropdown selected states
   const optMap = {
     'sort-opt-latest': col==='created'&&dir==='desc',
