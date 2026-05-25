@@ -1366,7 +1366,7 @@ function caseById(id){for(const p of PEOPLE)for(const c of p.cases)if(c.id===id)
 function currentCase(p){return p.cases[0]}
 
 function filteredPeople(){
-  let people = PEOPLE;
+  let people = PEOPLE.filter(p => p.orgStatus !== 'archived');
   if(STATE.dept !== 'all') people = people.filter(p => p.team === STATE.dept);
   if(STATE.actionFilter) people = people.filter(p => STATUS[currentCase(p).status]?.action);
   if(STATE.statusFilter) people = people.filter(p => currentCase(p).status === STATE.statusFilter);
