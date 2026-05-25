@@ -1585,7 +1585,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                           <span style={{ display: "inline-flex", alignItems: "center", padding: "3px 8px", borderRadius: 10, background: bc.bg, border: `1px solid ${bc.border}`, color: bc.text, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0, marginTop: 2 }}>{cr.label}</span>
 
                                           {/* MIDDLE: criterion controls */}
-                                          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+                                          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start" }}>
                                             {cr.type === "boolean" && (
                                               <div style={{ display: "flex", gap: 4 }}>
                                                 {["Yes", "No"].map(v => (
@@ -1663,22 +1663,22 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                             )}
 
                                             {cr.type === "date" && (
-                                              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                              <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start" }}>
                                                 <select value={cr.op || "Specific"} onChange={e => updateQbCriterion(cr.id, { op: e.target.value, value: "" })}
-                                                  style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", width: "auto" }}>
+                                                  style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", width: "auto", maxWidth: 210 }}>
                                                   {["Today", "Last 7 Days", "Month to Date", "Year to Date", "Previous Month", "Previous Calendar Year", "Specific", "Less than or equal", "Greater than or equal", "Range", "Has Value", "No Value"].map(o => <option key={o} value={o}>{o}</option>)}
                                                 </select>
                                                 {["Specific", "Less than or equal", "Greater than or equal"].includes(cr.op || "Specific") && (
                                                   <input type="date" value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
-                                                    style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: "auto" }} />
+                                                    style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: 160 }} />
                                                 )}
                                                 {(cr.op || "Specific") === "Range" && (
                                                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                                                     <input type="date" value={cr.value?.start || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), start: e.target.value } })}
-                                                      style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: "auto" }} />
+                                                      style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: 155 }} />
                                                     <span style={{ fontSize: 11, color: c.textTer }}>to</span>
                                                     <input type="date" value={cr.value?.end || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), end: e.target.value } })}
-                                                      style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: "auto" }} />
+                                                      style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: 155 }} />
                                                   </div>
                                                 )}
                                               </div>
