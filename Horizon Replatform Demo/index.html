@@ -1424,20 +1424,26 @@ function lastUpdatedDate(c){
   return c.dateInitiated||'';
 }
 
+function renderInitiatedCell(c, person){
+  const icon = VIA_ICONS[c.via] || 'ic-link';
+  const label = c.via === 'integration' && person.source && person.source !== 'PMM'
+    ? person.source
+    : (VIA_LABELS[c.via] || c.via);
+  return `<div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--fg2)">
+    <svg width="13" height="13" style="color:var(--fg4);flex-shrink:0"><use href="#${icon}"/></svg>
+    ${esc(label)}
+  </div>`;
+}
+
 function renderHomeRow(person){
   const c = currentCase(person);
   const s = STATUS[c.status];
   const ar = s && s.action;
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
-  const isAllTab = STATE.mainTab === 'all';
   const created = fmtTableDate(c.dateInitiated);
   const updated = fmtTableDate(lastUpdatedDate(c));
   const roleTeamFull = `${person.position} · ${person.team}`;
-  // On All tab: show "Background check" type label above the level chip so the
-  // case type is unambiguous (BG rows will be interleaved with CST rows).
-  const caseTypeLabel = isAllTab
-    ? `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--fg4);margin-bottom:4px">Background check</div>`
-    : '';
+  const updDisplay = STATE.homeColumns.updated ? '' : 'display:none';
 
   return `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
     <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}" onclick="toggleSelect('${person.id}')"></div></td>
@@ -1447,11 +1453,15 @@ function renderHomeRow(person){
       <div class="name-email">${esc(person.email)}</div>
       <div class="name-role" data-tip="${esc(roleTeamFull)}">${esc(roleTeamFull)}</div>
     </td>
-    <td>
-      ${caseTypeLabel}${renderCheckTypeChip(c.checkType)}
+    <td class="home-col-type">
+      <span class="chip chip-bg" style="font-size:11px;padding:2px 7px">
+        <svg width="10" height="10" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;opacity:.7"><use href="#ic-shield-sm"/></svg>BG
+      </span>
     </td>
-    <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(created)}</td>
-    <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(updated)}</td>
+    <td class="home-col-detail td-level">${renderCheckTypeChip(c.checkType)}</td>
+    <td class="home-col-initiated">${renderInitiatedCell(c, person)}</td>
+    <td class="home-col-created" style="font-size:13px;color:var(--fg2)">${esc(created)}</td>
+    <td class="home-col-updated" style="font-size:13px;color:var(--fg2);${updDisplay}">${esc(updated)}</td>
     <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">
       ${renderBadge(c.status)}
     </td>
