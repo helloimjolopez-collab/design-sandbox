@@ -1407,6 +1407,13 @@ function switchTab(tab){
   // hide status filter on CST tab
   const statusChip = document.getElementById('home-chip-status');
   if(statusChip) statusChip.style.display = (tab==='cst') ? 'none' : '';
+  // update case type column header label per tab
+  const thType = document.getElementById('th-casetype');
+  if(thType){
+    const sortIc = thType.querySelector('svg');
+    thType.textContent = tab==='cst' ? 'Training' : tab==='bg' ? 'Check type' : 'Case type';
+    if(sortIc) thType.appendChild(sortIc);
+  }
   renderHomeTable();
 }
 
