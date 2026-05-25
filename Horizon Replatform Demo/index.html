@@ -1514,7 +1514,7 @@ function renderTable(){
 function toggleSelect(pid){
   if(STATE.selectedPeople.has(pid)) STATE.selectedPeople.delete(pid);
   else STATE.selectedPeople.add(pid);
-  renderTable();
+  renderHomeTable();
 }
 
 function toggleMenu(pid, e){
@@ -1995,7 +1995,7 @@ function openReport(caseId, e){
     if((selE||selNR) && !notes){toast('Notes required for this outcome');return}
     c.assessment = {outcome, date: fmtDate(new Date()), author:'Admin', notes};
     c.status = selC ? 'cleared' : selNR ? 'needs-review' : 'escalated';
-    renderTable();
+    renderHomeTable();
     if(STATE.currentPerson) renderPanelBody(STATE.currentPerson);
     closeReport();
     toast(`Assessment saved: ${outcome}`);
