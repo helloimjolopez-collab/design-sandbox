@@ -1453,13 +1453,15 @@ function renderHomeStats(){
   } else {
     const actionNeeded = all.filter(p=>STATUS[currentCase(p).status]?.action).length;
     const newResults = all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
-    const expiring = all.filter(p=>currentCase(p).status==='invite-expiring').length;
-    const cstPending = all.filter(p=>p.cst && p.cst.status==='cst-invited').length;
+    const inviteExpiring = all.filter(p=>currentCase(p).status==='invite-expiring').length;
+    const rescreenDue = all.filter(p=>currentCase(p).status==='due-rescreening'||currentCase(p).status==='screening-overdue').length;
+    const cstInviteSent = all.filter(p=>p.cst && p.cst.status==='cst-invited').length;
     strip.innerHTML =
       tile(actionNeeded,'Action needed','alert','action') +
       tile(newResults,'New results','violet','new-results') +
-      tile(expiring,'Expiring soon','warn','expiring') +
-      tile(cstPending,'CST pending','grey','cst-pending');
+      tile(inviteExpiring,'Invite expiring','warn','expiring') +
+      tile(rescreenDue,'Rescreen due','warn','rescreen') +
+      (STATE.mainTab==='all' ? tile(cstInviteSent,'CST invite sent','grey','cst-invited') : '');
   }
 }
 
