@@ -1550,7 +1550,12 @@ function renderPanelHead(person){
   const s = STATUS[c.status];
   const srcMap = {'Rock CRM':'rock','PCO':'pco','PMM':'pmm'};
   const srcKey = srcMap[person.source||'PMM']||'pmm';
-  const sourceChip = `<span class="source-chip ${srcKey}">${esc(person.source||'PMM')}</span>`;
+  const srcTips = {
+    'PMM':'Record is owned and managed directly in Protect My Ministry. Identity fields can be edited here.',
+    'Rock CRM':'Identity data synced from Rock CRM. Fields are read-only in PMM; edits must be made in Rock.',
+    'PCO':'Identity data synced from Planning Center Online. Fields are read-only in PMM.',
+  };
+  const sourceChip = `<span class="source-chip ${srcKey}" data-tip="${esc(srcTips[person.source||'PMM']||'')}" style="cursor:help">${esc(person.source||'PMM')}</span>`;
   document.getElementById('panel-head-content').innerHTML = `
     <div style="display:flex;align-items:flex-start;gap:14px">
       <div class="profile-av" style="background:${ac};width:44px;height:44px;font-size:15px;flex-shrink:0">${esc(initials(person.name))}</div>
