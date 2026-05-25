@@ -1488,22 +1488,36 @@ function switchTab(tab){
   STATE.mainTab = tab;
   STATE.homeCardFilter = '';
   document.querySelectorAll('#home-tabs .tab-item').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  // show/hide New BG check button
+
+  // New BG check button — hide on CST tab
   const btnHome = document.getElementById('btn-new-home');
   if(btnHome) btnHome.style.display = (tab==='cst') ? 'none' : '';
-  // show CST filter chip only on CST tab
+
+  // CST filter chip — only on CST tab
   const cstChip = document.getElementById('home-chip-cst');
   if(cstChip) cstChip.style.display = (tab==='cst') ? '' : 'none';
-  // hide status filter on CST tab
-  const statusChip = document.getElementById('home-chip-status');
-  if(statusChip) statusChip.style.display = (tab==='cst') ? 'none' : '';
-  // update case type column header label per tab
-  const thType = document.getElementById('th-casetype');
-  if(thType){
-    const sortIc = thType.querySelector('svg');
-    thType.textContent = tab==='cst' ? 'Training' : tab==='bg' ? 'Check type' : 'Case type';
-    if(sortIc) thType.appendChild(sortIc);
+
+  // Status, initiated, detail, sort chips — hide on CST tab
+  ['home-chip-status','home-chip-initiated','home-chip-detail'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = (tab==='cst') ? 'none' : '';
+  });
+  const sortChip = document.getElementById('home-chip-sort');
+  if(sortChip) sortChip.style.display = (tab==='cst') ? 'none' : '';
+
+  // Type column (home-col-type) — only visible on All tab
+  document.querySelectorAll('.home-col-type').forEach(el=>{
+    el.style.display = (tab==='all') ? '' : 'none';
+  });
+
+  // Update Detail column header and sort by-tab
+  const thDetail = document.getElementById('th-casedetail');
+  if(thDetail){
+    const sortIc = thDetail.querySelector('svg');
+    thDetail.textContent = tab==='cst' ? 'Training' : tab==='bg' ? 'Check type' : 'Detail';
+    if(sortIc) thDetail.appendChild(sortIc);
   }
+
   renderHomeTable();
 }
 
