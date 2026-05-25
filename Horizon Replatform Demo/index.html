@@ -2891,86 +2891,99 @@ function renderLevels(){
   const el = document.getElementById('levels-page-inner');
   if(!el) return;
 
-  const customCount = CUSTOM_LEVELS.length;
+  const CHECK_IC = `<svg width="9" height="9" viewBox="0 0 20 20" fill="none"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  // Accent colors per level: escalating intensity, same family
+  const ACCENT = ['#7da8e0','#3a5aaa','#1e3572'];
+  // Role context labels
+  const ROLE_CONTEXT = [
+    'General volunteers — ushers, greeters, kitchen, admin support',
+    'Roles with regular child or vulnerable adult contact',
+    'Leadership, staff, finance, and high-trust roles',
+  ];
 
   el.innerHTML = `
   <div class="levels-ph">
     <div class="levels-ph-left">
       <div class="levels-ph-title">Screening Levels</div>
-      <div class="levels-ph-sub">Define what is included in each screening level and assign them to departments.</div>
+      <div class="levels-ph-sub">Match the role to a level. The level determines which background checks are run. Each level includes everything in the one before it, plus additional checks.</div>
     </div>
     <button class="btn btn-primary" onclick="openLvModal(null)" style="flex-shrink:0">
       <svg width="14" height="14"><use href="#ic-plus"/></svg> New level
     </button>
   </div>
 
-  <!-- Section 1: Base levels reference -->
+  <!-- Section 1: Base levels -->
   <div class="levels-section">
-    <div class="levels-sec-head">Base screening levels</div>
-    <div class="levels-sec-sub">These three levels are defined by Protect My Ministry and cannot be edited. Use them as starting points when creating custom levels for your organisation.</div>
+    <div class="levels-sec-head">Standard levels</div>
 
-    <!-- Risk spectrum -->
-    <div class="risk-spectrum-wrap">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-size:11px;font-weight:600;color:var(--fg3);text-transform:uppercase;letter-spacing:.07em">Risk spectrum</span>
-        <span style="font-size:11px;color:var(--fg4)">Lower numbers = fewer checks required</span>
-      </div>
-      <div class="risk-spectrum-bar">
-        <div class="risk-band-1"></div>
-        <div class="risk-band-2"></div>
-        <div class="risk-band-3"></div>
-        <div class="risk-band-4"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px">
-        <span style="font-size:11px;color:#8daee8;font-weight:600">Essential</span>
-        <span style="font-size:11px;color:#3a5aaa;font-weight:600">Preferred</span>
-        <span style="font-size:11px;color:#353063;font-weight:600">Premier</span>
-      </div>
-    </div>
-
-    <!-- Base level cards -->
     <div class="base-levels-grid">
       ${BASE_LEVELS_DEF.map((bl,i)=>{
-        const prevChecks = i>0 ? BASE_LEVELS_DEF[i-1].checks : [];
+        const prevChecks = i > 0 ? BASE_LEVELS_DEF[i-1].checks : [];
+        const inheritedChecks = bl.checks.filter(c => prevChecks.includes(c));
+        const addedChecks     = bl.checks.filter(c => !prevChecks.includes(c));
+
+        const inheritedHtml = inheritedChecks.map(c=>`
+          <div class="base-card-check inherited">
+            <div class="base-card-check-ic">${CHECK_IC}</div>
+            <span>${esc(c)}</span>
+          </div>`).join('');
+
+        const addedDivider = (i > 0 && addedChecks.length && inheritedChecks.length)
+          ? `<div class="base-card-added-divider">Added at this level</div>` : '';
+
+        const addedHtml = addedChecks.map(c=>`
+          <div class="base-card-check added">
+            <div class="base-card-check-ic">${CHECK_IC}</div>
+            <span>${esc(c)}</span>
+          </div>`).join('');
+
         return `
         <div class="base-card">
-          <div class="base-card-accent" style="background:${bl.accentColor}"></div>
-          <div class="base-card-body">
+          <div class="base-card-accent" style="background:${ACCENT[i]}"></div>
+          <div class="base-card-head">
             <div class="base-card-name">${esc(bl.name)}</div>
-            <div class="base-card-risk" style="color:${bl.riskColor}">${esc(bl.riskLabel)}</div>
+            <div class="base-card-count">${bl.checks.length} check${bl.checks.length!==1?'s':''}</div>
+          </div>
+
+          <div class="base-card-roles-block">
+            <div class="base-card-section-lbl">Typical roles</div>
+            <p style="font-size:12px;color:var(--fg3);margin:0 0 8px;line-height:1.4">${esc(ROLE_CONTEXT[i])}</p>
             <div class="base-card-roles">
               ${bl.examples.map(e=>`<span class="base-card-role">${esc(e)}</span>`).join('')}
             </div>
-            <div class="base-card-checks">
-              <div class="base-card-checks-title">Checks included</div>
-              ${bl.checks.map(c=>{
-                const isNew = !prevChecks.includes(c);
-                const dotContent = isNew && i>0
-                  ? `<svg width="10" height="10" viewBox="0 0 20 20" fill="none" style="color:#fff"><path d="M4 10l4.5 4.5L16 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-                  : '';
-                return `<div class="base-card-check${isNew&&i>0?' added':''}">
-                  <div class="base-card-check-dot">${dotContent}</div>
-                  <span>${esc(c)}</span>
-                </div>`;
-              }).join('')}
-            </div>
           </div>
-          <div class="base-card-footer">
-            <svg width="13" height="13" style="color:var(--fg3);flex-shrink:0"><use href="#ic-person"/></svg>
-            <span class="base-card-fit">${esc(bl.rolefit)}</span>
+
+          <div class="base-card-checks-block">
+            <div class="base-card-section-lbl">Checks included</div>
+            ${inheritedHtml}
+            ${addedDivider}
+            ${addedHtml}
           </div>
         </div>`;
       }).join('')}
     </div>
-    <div style="margin-top:10px;font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:6px">
-      <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block"></span> Highlighted checks are additions from the previous level.</span>
+
+    <div style="margin-top:12px;display:flex;align-items:center;gap:16px;font-size:12px;color:var(--fg3)">
+      <span style="display:inline-flex;align-items:center;gap:5px">
+        <span style="width:14px;height:14px;border-radius:50%;border:1.5px solid #d0d0d0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="8" height="8" viewBox="0 0 20 20" fill="none"><path d="M4 10l4.5 4.5L16 6" stroke="#b0b0b0" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Included from a lower level
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:5px">
+        <span style="width:14px;height:14px;border-radius:50%;background:var(--brand);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="8" height="8" viewBox="0 0 20 20" fill="none"><path d="M4 10l4.5 4.5L16 6" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Added at this level
+      </span>
     </div>
   </div>
 
   <!-- Section 2: Your screening levels -->
   <div class="levels-section">
     <div class="levels-sec-head">Your screening levels</div>
-    <div class="levels-sec-sub">Custom levels your organisation has configured. Use these when ordering checks — base levels appear here too for reference.</div>
+    <div class="levels-sec-sub">Levels configured for your organisation. Use these when ordering checks.</div>
 
     <div class="levels-toolbar">
       <div class="levels-search">
