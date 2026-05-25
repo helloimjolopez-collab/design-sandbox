@@ -1346,7 +1346,9 @@ function filteredHomePeople(){
       let av='',bv='';
       const ca=currentCase(a), cb=currentCase(b);
       if(homeSortCol==='name'){av=a.name;bv=b.name;}
-      else if(homeSortCol==='type'){av=ca.checkType||'';bv=cb.checkType||'';}
+      else if(homeSortCol==='type'){av='bg';bv='bg';} // BG rows are all same type in bg tab
+      else if(homeSortCol==='detail'){av=ca.checkType||'';bv=cb.checkType||'';}
+      else if(homeSortCol==='initiated'){av=ca.via||'';bv=cb.via||'';}
       else if(homeSortCol==='created'){av=ca.dateInitiated||'';bv=cb.dateInitiated||'';}
       else if(homeSortCol==='updated'){av=lastUpdatedDate(ca);bv=lastUpdatedDate(cb);}
       else if(homeSortCol==='status'){av=ca.status||'';bv=cb.status||'';}
@@ -1801,8 +1803,8 @@ function clearHomeSelection(){
   renderHomeTable();
 }
 
-let homeSortCol = '';
-let homeSortDir = 'asc';
+let homeSortCol = 'created';
+let homeSortDir = 'desc';
 function homeSort(col){
   if(homeSortCol===col){ homeSortDir = homeSortDir==='asc'?'desc':'asc'; }
   else { homeSortCol=col; homeSortDir='asc'; }
