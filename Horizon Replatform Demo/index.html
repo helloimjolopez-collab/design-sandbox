@@ -1326,6 +1326,10 @@ function filteredHomePeople(){
   const tab = STATE.mainTab;
   // status filter (home-specific)
   if(STATE.homeStatusFilter) people = people.filter(p => currentCase(p).status === STATE.homeStatusFilter);
+  // initiated filter
+  if(STATE.homeInitiatedFilter) people = people.filter(p => currentCase(p).via === STATE.homeInitiatedFilter);
+  // case detail filter (check type)
+  if(STATE.homeCaseDetailFilter) people = people.filter(p => currentCase(p).checkType === STATE.homeCaseDetailFilter);
   // card filter
   if(STATE.homeCardFilter === 'action') people = people.filter(p => STATUS[currentCase(p).status]?.action);
   else if(STATE.homeCardFilter === 'new-results') people = people.filter(p => currentCase(p).status === 'awaiting-assessment');
