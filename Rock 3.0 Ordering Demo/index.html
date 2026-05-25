@@ -695,8 +695,6 @@ function renderOrdersTable(containerId) {
   const el = document.getElementById(containerId);
   if (!el) return;
 
-  const gripIcon = `<svg width="8" height="12" viewBox="0 0 8 12" fill="none" style="margin-left:5px;opacity:0.3;flex-shrink:0;vertical-align:middle;"><circle cx="2" cy="1.5" r="1.2" fill="currentColor"/><circle cx="6" cy="1.5" r="1.2" fill="currentColor"/><circle cx="2" cy="6" r="1.2" fill="currentColor"/><circle cx="6" cy="6" r="1.2" fill="currentColor"/><circle cx="2" cy="10.5" r="1.2" fill="currentColor"/><circle cx="6" cy="10.5" r="1.2" fill="currentColor"/></svg>`;
-
   el.innerHTML = `
     <div style="margin-bottom:var(--spacing-3xl);">
       <h2 style="margin-bottom:var(--spacing-xl);font-size:var(--section-heading);font-weight:var(--font-medium);color:#4A4A4A;">Recent Requests</h2>
@@ -722,7 +720,7 @@ function renderOrdersTable(containerId) {
     const cols = order.map(i => allCols[i]);
     document.getElementById('thead_' + containerId).innerHTML = cols.map((c, pos) =>
       `<th data-pos="${pos}" draggable="true" style="padding:var(--spacing-lg);text-align:left;color:var(--muted-foreground);font-weight:var(--font-medium);font-size:var(--text-sm);white-space:nowrap;cursor:grab;user-select:none;transition:background 0.12s;box-sizing:border-box;border-left:3px solid transparent;">
-        <span style="display:inline-flex;align-items:center;">${c.label}${gripIcon}</span>
+        <span style="display:inline-flex;align-items:center;">${c.label}</span>
       </th>`
     ).join('');
     document.getElementById('tbody_' + containerId).innerHTML = ordersData.map((o, ri) =>
