@@ -1320,12 +1320,46 @@ function renderCstInline(person){
   return `<div style="margin-top:4px;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--fg3)"><svg width="10" height="10" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;color:${dot}"><path d="M10 2L3 5.5v4c0 4.15 2.88 8.03 7 9 4.12-.97 7-4.85 7-9v-4L10 2z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><span>CST: ${esc(cs.label)}</span></div>`;
 }
 
+function fmtDate(str){
+  if(!str) return '—';
+  const d = new Date(str);
+  if(isNaN(d)) return str;
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function lastUpdatedDate(c){
+  // Return most recent event date, or dateInitiated if no events
+  if(c.events && c.events.length){
+    // events have date like '15.04.2026', convert to sortable
+    const last = c.events[c.events.length-1];
+    if(last.date){
+      const parts = last.date.split('.');
+      if(parts.length===3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+  }
+  return c.dateInitiated||'';
+}
+
 function renderHomeRow(person){
   const c = currentCase(person);
   const s = STATUS[c.status];
   const ar = s && s.action;
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
   const showCstInline = STATE.mainTab === 'all';
+  const created = fmtDate(c.dateInitiated);
+  const updated = fmtDate(lastUpdatedDate(c));
+
+  // via delivery sub-label for invite statuses
+  let viaHint = '';
+  if(c.via==='invite'){
+    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-env"/></svg>Via email</div>`;
+  } else if(c.via==='manual'){
+    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-person"/></svg>Manual order</div>`;
+  } else if(c.via==='flow'){
+    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-flow"/></svg>Screening flow</div>`;
+  } else if(c.via==='integration'){
+    viaHint = `<div style="font-size:11px;color:var(--fg4);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#ic-integration"/></svg>Integration</div>`;
+  }
 
   return `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
     <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}" onclick="toggleSelect('${person.id}')"></div></td>
@@ -1336,8 +1370,11 @@ function renderHomeRow(person){
       <div style="font-size:11px;color:var(--fg4);margin-top:1px">${esc(person.position)} · ${esc(person.team)}</div>
     </td>
     <td>${renderCheckTypeChip(c.checkType)}</td>
+    <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(created)}</td>
+    <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(updated)}</td>
     <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">
       ${renderBadge(c.status)}
+      ${viaHint}
       ${showCstInline?renderCstInline(person):''}
     </td>
     <td class="td-act-r" onclick="event.stopPropagation()">
