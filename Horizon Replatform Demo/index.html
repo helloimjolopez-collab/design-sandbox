@@ -1213,54 +1213,45 @@ function renderCstTypeChip(typeId){
   return `<span class="chip">${esc(t.name)}<span class="chip-tip">${esc(t.desc)}</span></span>`;
 }
 
-function renderHomeRow(person, showCst=true){
+function renderCstInline(person){
+  const cst = person.cst;
+  if(!cst || cst.status==='cst-na') return '';
+  const cs = CST_STATUS_LABELS[cst.status] || {label:cst.status,cls:'b-grey',tip:''};
+  const dot = cst.status==='cst-completed'?'#1f602e':cst.status==='cst-invited'?'#55290c':'#6b6b6b';
+  return `<div style="margin-top:4px;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--fg3)"><svg width="10" height="10" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;color:${dot}"><path d="M10 2L3 5.5v4c0 4.15 2.88 8.03 7 9 4.12-.97 7-4.85 7-9v-4L10 2z" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><span>CST: ${esc(cs.label)}</span></div>`;
+}
+
+function renderHomeRow(person){
   const c = currentCase(person);
   const s = STATUS[c.status];
   const ar = s && s.action;
-  const arTip = ar ? (s.tip||'Action required on this case.') : '';
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
-  const assessDate = c.assessment ? c.assessment.date : null;
+  const showCstInline = STATE.mainTab === 'all';
 
-  const bgRow = `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
+  return `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
     <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}" onclick="toggleSelect('${person.id}')"></div></td>
     <td><div class="av" style="background:${ac}">${esc(initials(person.name))}</div></td>
     <td class="td-name">
       <div class="name-main">${esc(person.name)}</div>
       <div class="name-email">${esc(person.email)}</div>
+      <div style="font-size:11px;color:var(--fg4);margin-top:1px">${esc(person.position)} · ${esc(person.team)}</div>
     </td>
-    <td><span class="chip chip-bg"><svg width="11" height="11" style="flex-shrink:0"><use href="#ic-shield"/></svg>Background Check</span></td>
-    <td onclick="event.stopPropagation()">${renderCheckTypeChip(c.checkType)}</td>
-    <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">${renderBadge(c.status, assessDate)}</td>
+    <td>${renderCheckTypeChip(c.checkType)}</td>
+    <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">
+      ${renderBadge(c.status)}
+      ${showCstInline?renderCstInline(person):''}
+    </td>
     <td onclick="event.stopPropagation()">
       <div class="act-cell">
-        ${getInlineAction(person, c)}
         <div class="ell-btn" onclick="toggleMenu('${person.id}',event)">
           <svg width="14" height="14"><use href="#ic-more"/></svg>
+          <div class="drop-menu" id="menu-${person.id}">
+            ${getActions(person,c).map(a=>`<div class="drop-item ${a.cls||''}" onclick="${a.fn}">${esc(a.label)}</div>`).join('')}
+          </div>
         </div>
       </div>
     </td>
   </tr>`;
-
-  let cstRow = '';
-  const cst = person.cst;
-  if(showCst && cst && cst.status !== 'cst-na'){
-    const cs = CST_STATUS_LABELS[cst.status] || {label:cst.status,cls:'b-grey',tip:''};
-    const cstDateStr = cst.completedDate ? ` · ${cst.completedDate}` : (cst.inviteSentDate ? ` · Sent ${cst.inviteSentDate}` : '');
-    cstRow = `<tr data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
-      <td onclick="event.stopPropagation()"></td>
-      <td><div class="av" style="background:${ac};opacity:.35">${esc(initials(person.name))}</div></td>
-      <td class="td-name">
-        <div class="name-main" style="color:var(--fg3);font-size:13px">${esc(person.name)}</div>
-        <div class="name-email" style="font-size:11px">${esc(person.email)}</div>
-      </td>
-      <td><span class="chip chip-cst"><svg width="11" height="11" style="flex-shrink:0"><use href="#ic-cst"/></svg>Child Safety Training</span></td>
-      <td onclick="event.stopPropagation()">${renderCstTypeChip(cst.type)}</td>
-      <td><span class="badge ${cs.cls}" style="cursor:default"><span class="bdot"></span>${esc(cs.label)}${cstDateStr}<span class="badge-tip">${esc(cs.tip)}</span></span></td>
-      <td></td>
-    </tr>`;
-  }
-
-  return bgRow + cstRow;
 }
 
 function switchTab(tab){
