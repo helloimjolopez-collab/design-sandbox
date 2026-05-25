@@ -1354,16 +1354,14 @@ function renderHomeRow(person){
   const s = STATUS[c.status];
   const ar = s && s.action;
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
-  const showCstInline = STATE.mainTab === 'all';
+  const isAllTab = STATE.mainTab === 'all';
   const created = fmtTableDate(c.dateInitiated);
   const updated = fmtTableDate(lastUpdatedDate(c));
+  const roleTeamFull = `${person.position} · ${person.team}`;
 
-  // Via sub-label: belongs with check type (what was ordered and how)
-  const VIA_META = {invite:'Email invite',manual:'Manual order',flow:'Screening flow',integration:'Integration'};
-  const VIA_IC   = {invite:'ic-env',manual:'ic-person',flow:'ic-flow',integration:'ic-integration'};
-  const viaIcon  = VIA_IC[c.via] || 'ic-link';
-  const viaLabel = VIA_META[c.via] || '';
-  const viaHint = viaLabel ? `<div style="font-size:11px;color:var(--fg4);margin-top:3px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 20 20" fill="none"><use href="#${viaIcon}"/></svg>${esc(viaLabel)}</div>` : '';
+  // On All tab: show CST status chip in the case type cell (not in name cell)
+  const cstCellExtra = (isAllTab && person.cst && person.cst.status !== 'cst-na')
+    ? `<div style="margin-top:5px">${renderCstInline(person)}</div>` : '';
 
   return `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
     <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}" onclick="toggleSelect('${person.id}')"></div></td>
@@ -1371,12 +1369,11 @@ function renderHomeRow(person){
     <td class="td-name">
       <div class="name-main">${esc(person.name)}</div>
       <div class="name-email">${esc(person.email)}</div>
-      <div style="font-size:11px;color:var(--fg4);margin-top:1px">${esc(person.position)} · ${esc(person.team)}</div>
-      ${showCstInline ? renderCstInline(person) : ''}
+      <div class="name-role" data-tip="${esc(roleTeamFull)}">${esc(roleTeamFull)}</div>
     </td>
     <td>
       ${renderCheckTypeChip(c.checkType)}
-      ${viaHint}
+      ${cstCellExtra}
     </td>
     <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(created)}</td>
     <td style="font-size:13px;color:var(--fg2);white-space:nowrap">${esc(updated)}</td>
