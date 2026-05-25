@@ -758,6 +758,21 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
   const [qbMultiselectDropRect, setQbMultiselectDropRect] = useState(null);
   const [qbOtherQueriesDropOpen, setQbOtherQueriesDropOpen] = useState(false);
   const [qbOtherQueriesDropRect, setQbOtherQueriesDropRect] = useState(null);
+  const [qbTypeaheadOpen, setQbTypeaheadOpen] = useState(null); // criterion id
+  const [qbTypeaheadRect, setQbTypeaheadRect] = useState(null);
+  const [qbDragColId, setQbDragColId] = useState(null);
+  const QB_FIELD_SAMPLES = {
+    tag: ["A-1001","A-1002","A-1003","B-2001","B-2002","C-3001","C-3002","C-3003","D-4001"],
+    name: ["Dell Laptop","HP Printer","Office Desk","Conference Table","Projector","Server Rack","Filing Cabinet","Reception Chair","Whiteboard"],
+    room: ["101","102","103","201","202","Conference A","Conference B","Server Room","Storage"],
+    po: ["PO-2024-001","PO-2024-002","PO-2024-003","PO-2023-099","PO-2023-100"],
+    comments: ["Purchased new","Transferred from HQ","Donated","Refurbished","Under warranty"],
+    vendor: ["Dell Inc.","HP Inc.","Steelcase","Herman Miller","Apple","Cisco","Lenovo","Canon"],
+    assetAcct: ["1500","1510","1520","1530","1540","1550"],
+    accumAcct: ["1600","1610","1620","1630","1640"],
+    expenseAcct: ["6100","6110","6120","6130","6200","6210"],
+    warrantyVendor: ["Dell ProSupport","HP Care Pack","AppleCare","Cisco SmartNet","Generic Warranty"],
+  };
 
   // Accordion state for the level-deep S&L Edit Query screen
   const [qbEditFiltersOpen, setQbEditFiltersOpen] = useState(true);
@@ -966,7 +981,30 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
     const groupLogic = gi > 0 ? (qbGroupLogics[grp.id] || 'and').toUpperCase() : null;
     return { groupId: grp.id, groupName: grp.name, criteria: criteriaTexts, groupLogic };
   }).filter(g => g.criteria.length > 0);
-  const qbLevelDeepTotal = qbSimulatedTotal;
+  const qbLevelDeepTotal = (() => {
+    if (!isQueryReport) return TOTAL_ROW_COUNT;
+    const activeCriteria = qbCriteria.filter(cr => {
+      if (["Has Value", "No Value"].includes(cr.op)) return true;
+      if (cr.type === "boolean") return true;
+      if (cr.type === "multiselect") return (cr.value || []).length > 0;
+      return (cr.value || "").toString().trim() !== "";
+    });
+    if (activeCriteria.length === 0 && qbSelectedOtherQueries.size === 0) return TOTAL_ROW_COUNT;
+    // Each active criterion with a value reduces results deterministically
+    let total = TOTAL_ROW_COUNT;
+    activeCriteria.forEach(cr => {
+      const val = (cr.value || "").toString().trim();
+      const seed = (val + cr.fieldId).split("").reduce((a, ch) => a + ch.charCodeAt(0), 17);
+      const factor = 0.35 + (seed % 100) / 180; // 35–91% pass rate, deterministic per value
+      total = Math.round(total * factor);
+    });
+    // OR groups (multiple filter groups) widen results
+    const filledGroups = qbGroups.filter(g => qbCriteria.some(cr => cr.groupId === g.id)).length;
+    if (filledGroups > 1) total = Math.min(TOTAL_ROW_COUNT, Math.round(total * (1 + (filledGroups - 1) * 0.35)));
+    // "Also Include" other queries add more
+    if (qbSelectedOtherQueries.size > 0) total = Math.min(TOTAL_ROW_COUNT, total + qbSelectedOtherQueries.size * 5);
+    return Math.max(0, total);
+  })();
   const displayRows = reportRan ? sortedRows : (isQueryReport ? qbLiveFilteredRows : sortedRows.slice(0, PREVIEW_ROW_LIMIT));
   const togglePanel = (p) => {
     const opening = activePanel !== p;
@@ -1619,7 +1657,7 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
 
                                             {cr.type === "select" && (
                                               <select value={cr.value} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
-                                                style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", maxWidth: "100%" }}>
+                                                style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", width: "auto" }}>
                                                 {(cr.options || []).map(o => <option key={o} value={o}>{o}</option>)}
                                               </select>
                                             )}
@@ -1627,40 +1665,74 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                                             {cr.type === "date" && (
                                               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                                                 <select value={cr.op || "Specific"} onChange={e => updateQbCriterion(cr.id, { op: e.target.value, value: "" })}
-                                                  style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none" }}>
+                                                  style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", width: "auto" }}>
                                                   {["Today", "Last 7 Days", "Month to Date", "Year to Date", "Previous Month", "Previous Calendar Year", "Specific", "Less than or equal", "Greater than or equal", "Range", "Has Value", "No Value"].map(o => <option key={o} value={o}>{o}</option>)}
                                                 </select>
                                                 {["Specific", "Less than or equal", "Greater than or equal"].includes(cr.op || "Specific") && (
                                                   <input type="date" value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })}
-                                                    style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", maxWidth: "100%" }} />
+                                                    style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: "auto" }} />
                                                 )}
                                                 {(cr.op || "Specific") === "Range" && (
                                                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                                                     <input type="date" value={cr.value?.start || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), start: e.target.value } })}
-                                                      style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", minWidth: 0 }} />
+                                                      style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: "auto" }} />
                                                     <span style={{ fontSize: 11, color: c.textTer }}>to</span>
                                                     <input type="date" value={cr.value?.end || ""} onChange={e => updateQbCriterion(cr.id, { value: { ...(cr.value || {}), end: e.target.value } })}
-                                                      style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", minWidth: 0 }} />
+                                                      style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", width: "auto" }} />
                                                   </div>
                                                 )}
                                               </div>
                                             )}
 
-                                            {(cr.type === "text" || cr.type === "number") && (
-                                              <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                                                <select value={cr.op || (cr.type === "number" ? "Equal" : "Contains")} onChange={e => updateQbCriterion(cr.id, { op: e.target.value })}
-                                                  style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", flexShrink: 0, maxWidth: "100%" }}>
-                                                  {(cr.type === "number"
-                                                    ? ["Equal", "Greater Than Or Equal", "Less Than Or Equal", "Has Value", "No Value"]
-                                                    : ["Contains", "Equal", "Starts With", "Does Not Contain", "Does Not Start With", "Has Value", "No Value"]
-                                                  ).map(o => <option key={o} value={o}>{o}</option>)}
+                                            {cr.type === "number" && (
+                                              <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+                                                <select value={cr.op || "Equal"} onChange={e => updateQbCriterion(cr.id, { op: e.target.value })}
+                                                  style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", width: "auto", flexShrink: 0 }}>
+                                                  {["Equal", "Greater Than Or Equal", "Less Than Or Equal", "Has Value", "No Value"].map(o => <option key={o} value={o}>{o}</option>)}
                                                 </select>
-                                                {!["Has Value", "No Value"].includes(cr.op || (cr.type === "number" ? "Equal" : "Contains")) && (
-                                                  <input type={cr.type === "number" ? "number" : "text"} value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder={cr.type === "number" ? "0" : "Value…"}
-                                                    style={{ flex: 1, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", minWidth: 80 }} />
+                                                {!["Has Value", "No Value"].includes(cr.op || "Equal") && (
+                                                  <input type="number" value={cr.value || ""} onChange={e => updateQbCriterion(cr.id, { value: e.target.value })} placeholder="0"
+                                                    style={{ width: 80, padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none" }} />
                                                 )}
                                               </div>
                                             )}
+
+                                            {cr.type === "text" && (() => {
+                                              const samples = QB_FIELD_SAMPLES[cr.fieldId] || [];
+                                              const val = cr.value || "";
+                                              const matches = val.trim() ? samples.filter(s => s.toLowerCase().includes(val.toLowerCase())) : samples;
+                                              const showDrop = qbTypeaheadOpen === cr.id && samples.length > 0;
+                                              return (
+                                                <div style={{ display: "flex", gap: 5, alignItems: "flex-start", flexWrap: "wrap" }}>
+                                                  <select value={cr.op || "Contains"} onChange={e => updateQbCriterion(cr.id, { op: e.target.value })}
+                                                    style={{ padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", background: c.white, color: c.text, outline: "none", width: "auto", flexShrink: 0 }}>
+                                                    {["Contains", "Equal", "Starts With", "Does Not Contain", "Does Not Start With", "Has Value", "No Value"].map(o => <option key={o} value={o}>{o}</option>)}
+                                                  </select>
+                                                  {!["Has Value", "No Value"].includes(cr.op || "Contains") && (
+                                                    <div style={{ position: "relative", flex: 1, minWidth: 100, maxWidth: 200 }}>
+                                                      <input type="text" value={val} placeholder="Type to search…"
+                                                        onChange={e => { updateQbCriterion(cr.id, { value: e.target.value }); setQbTypeaheadOpen(cr.id); }}
+                                                        onFocus={e => { setQbTypeaheadRect(e.currentTarget.getBoundingClientRect()); setQbTypeaheadOpen(cr.id); }}
+                                                        onBlur={() => setTimeout(() => setQbTypeaheadOpen(null), 200)}
+                                                        style={{ width: "100%", padding: "5px 8px", border: `1px solid ${c.border}`, borderRadius: 5, fontSize: 12, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+                                                      {showDrop && qbTypeaheadRect && ReactDOM.createPortal(
+                                                        <div style={{ position: "fixed", top: qbTypeaheadRect.bottom + 2, left: qbTypeaheadRect.left, width: Math.max(qbTypeaheadRect.width, 180), background: c.white, border: `1px solid ${c.border}`, borderRadius: 6, boxShadow: "0 4px 12px rgba(0,0,0,0.12)", zIndex: 9999, maxHeight: 180, overflowY: "auto" }}>
+                                                          {matches.length === 0 ? (
+                                                            <div style={{ padding: "8px 10px", fontSize: 11, color: c.red, fontStyle: "italic" }}>No matches found</div>
+                                                          ) : matches.map(s => (
+                                                            <div key={s} onMouseDown={e => { e.preventDefault(); updateQbCriterion(cr.id, { value: s }); setQbTypeaheadOpen(null); }}
+                                                              style={{ padding: "7px 10px", fontSize: 12, color: c.textSec, cursor: "pointer", borderBottom: `1px solid ${c.borderLight}` }}
+                                                              onMouseEnter={e => e.currentTarget.style.background = c.bg}
+                                                              onMouseLeave={e => e.currentTarget.style.background = c.white}>{s}</div>
+                                                          ))}
+                                                        </div>,
+                                                        document.body
+                                                      )}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              );
+                                            })()}
                                           </div>
                                           {/* FAR RIGHT: vertical divider + TrashIcon */}
                                           <div style={{ display: "flex", alignItems: "flex-start", gap: 0, flexShrink: 0 }}>
@@ -1708,27 +1780,39 @@ function ReportWorkspace({ report, savedConfigName, onBack, initialPanel, histor
                       {qbSelectedCols.length === 0 ? (
                         <div style={{ fontSize: 12, color: c.textTer, fontStyle: "italic", padding: "8px 0" }}>No columns selected. Select columns from the left panel.</div>
                       ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                           {qbSelectedCols.map((id, idx) => {
                             const col = QB_AVAILABLE_COLUMNS.find(cl => cl.id === id);
+                            const isDragging = qbDragColId === id;
                             return (
-                              <div key={id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 8px", background: c.bg, borderRadius: 5, border: `1px solid ${c.borderLight}` }}>
-                                <span style={{ fontSize: 10, fontWeight: 600, color: c.textTer, width: 20, flexShrink: 0, textAlign: "center" }}>#{idx + 1}</span>
+                              <div key={id} draggable
+                                onDragStart={() => setQbDragColId(id)}
+                                onDragEnd={() => setQbDragColId(null)}
+                                onDragOver={e => { e.preventDefault(); }}
+                                onDrop={e => {
+                                  e.preventDefault();
+                                  if (!qbDragColId || qbDragColId === id) return;
+                                  setQbSelectedCols(prev => {
+                                    const next = [...prev];
+                                    const fromIdx = next.indexOf(qbDragColId);
+                                    const toIdx = next.indexOf(id);
+                                    next.splice(fromIdx, 1);
+                                    next.splice(toIdx, 0, qbDragColId);
+                                    return next;
+                                  });
+                                  setQbDragColId(null);
+                                }}
+                                style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 8px", background: isDragging ? "#eff4ff" : c.bg, borderRadius: 5, border: `1px solid ${isDragging ? c.pri : c.borderLight}`, cursor: "grab", opacity: isDragging ? 0.5 : 1, userSelect: "none" }}>
+                                <span style={{ fontSize: 13, color: c.textTer, flexShrink: 0, cursor: "grab" }}>⠿</span>
+                                <span style={{ fontSize: 10, fontWeight: 600, color: c.textTer, width: 18, flexShrink: 0, textAlign: "center" }}>#{idx + 1}</span>
                                 <span style={{ flex: 1, fontSize: 12, color: c.text, fontWeight: 500 }}>{col?.label || id}</span>
-                                <div style={{ display: "flex", gap: 1, flexShrink: 0 }}>
-                                  <button onClick={() => moveQbCol(id, "up")} disabled={idx === 0} title="Move up" style={{ background: "none", border: `1px solid ${c.borderLight}`, borderRadius: 3, cursor: idx === 0 ? "default" : "pointer", color: idx === 0 ? c.borderLight : c.textTer, fontSize: 10, padding: "2px 5px", fontFamily: "inherit" }}
-                                    onMouseEnter={e => { if (idx > 0) { e.currentTarget.style.color = c.text; e.currentTarget.style.borderColor = c.border; } }}
-                                    onMouseLeave={e => { if (idx > 0) { e.currentTarget.style.color = c.textTer; e.currentTarget.style.borderColor = c.borderLight; } }}>←</button>
-                                  <button onClick={() => moveQbCol(id, "down")} disabled={idx === qbSelectedCols.length - 1} title="Move down" style={{ background: "none", border: `1px solid ${c.borderLight}`, borderRadius: 3, cursor: idx === qbSelectedCols.length - 1 ? "default" : "pointer", color: idx === qbSelectedCols.length - 1 ? c.borderLight : c.textTer, fontSize: 10, padding: "2px 5px", fontFamily: "inherit" }}
-                                    onMouseEnter={e => { if (idx < qbSelectedCols.length - 1) { e.currentTarget.style.color = c.text; e.currentTarget.style.borderColor = c.border; } }}
-                                    onMouseLeave={e => { if (idx < qbSelectedCols.length - 1) { e.currentTarget.style.color = c.textTer; e.currentTarget.style.borderColor = c.borderLight; } }}>→</button>
-                                </div>
                                 <button onClick={() => toggleQbCol(id)} title="Remove column" style={{ background: "none", border: "none", cursor: "pointer", color: c.textTer, padding: "2px 3px", borderRadius: 3, display: "flex", alignItems: "center", flexShrink: 0 }}
                                   onMouseEnter={e => e.currentTarget.style.color = c.red}
                                   onMouseLeave={e => e.currentTarget.style.color = c.textTer}><TrashIcon size={13} /></button>
                               </div>
                             );
                           })}
+                          <div style={{ fontSize: 11, color: c.textTer, padding: "4px 2px", fontStyle: "italic" }}>Drag to reorder</div>
                         </div>
                       )}
                     </div>
