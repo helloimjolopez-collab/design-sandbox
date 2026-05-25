@@ -3492,6 +3492,89 @@ function setHomeCardFilter(key){
   renderHomeTable();
 }
 
+function setHomeInitiatedFilter(val){
+  event.stopPropagation();
+  STATE.homeInitiatedFilter = val;
+  const chip = document.getElementById('home-chip-initiated');
+  if(chip){
+    const lbl = chip.querySelector('.fchip-lbl');
+    const map = {invite:'Email invite',flow:'Screening flow',integration:'CRM integration',manual:'Manual'};
+    if(lbl) lbl.textContent = val ? 'Initiated: '+(map[val]||val) : 'Initiated: All';
+    chip.classList.toggle('active', !!val);
+  }
+  closeAllDrops();
+  renderHomeTable();
+}
+
+function setHomeCaseDetailFilter(val){
+  event.stopPropagation();
+  STATE.homeCaseDetailFilter = val;
+  const chip = document.getElementById('home-chip-detail');
+  if(chip){
+    const lbl = chip.querySelector('.fchip-lbl');
+    if(lbl) lbl.textContent = val ? 'Check type: '+val : 'Check type: All';
+    chip.classList.toggle('active', !!val);
+  }
+  closeAllDrops();
+  renderHomeTable();
+}
+
+function setHomeSort(col, dir){
+  event.stopPropagation();
+  homeSortCol = col;
+  homeSortDir = dir;
+  // Update chip label
+  const chip = document.getElementById('home-chip-sort');
+  if(chip){
+    const lbl = chip.querySelector('.fchip-lbl');
+    const label = col==='name' ? (dir==='asc' ? 'Name A–Z' : 'Name Z–A') : (dir==='desc' ? 'Latest' : 'Earliest');
+    if(lbl) lbl.textContent = 'Sort: '+label;
+  }
+  // Update dropdown selected states
+  const optMap = {
+    'sort-opt-latest': col==='created'&&dir==='desc',
+    'sort-opt-earliest': col==='created'&&dir==='asc',
+    'sort-opt-name-az': col==='name'&&dir==='asc',
+    'sort-opt-name-za': col==='name'&&dir==='desc',
+  };
+  Object.entries(optMap).forEach(([id,active])=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('selected',active);
+  });
+  // Sync column header sort icons
+  document.querySelectorAll('.th-sort').forEach(th=>{
+    th.classList.remove('asc','desc');
+    const ic = th.querySelector('.sort-ic use');
+    if(ic) ic.setAttribute('href','#ic-sort-none');
+  });
+  const active = document.querySelector(`.th-sort[data-col="${col}"]`);
+  if(active){
+    active.classList.add(dir);
+    const ic = active.querySelector('.sort-ic use');
+    if(ic) ic.setAttribute('href', dir==='asc'?'#ic-sort-asc':'#ic-sort-desc');
+  }
+  closeAllDrops();
+  renderHomeTable();
+}
+
+function toggleHomeCol(col, e){
+  if(e) e.stopPropagation();
+  STATE.homeColumns[col] = !STATE.homeColumns[col];
+  // Update checkbox UI
+  const chk = document.getElementById('col-check-'+col);
+  if(chk){
+    chk.classList.toggle('on', STATE.homeColumns[col]);
+    chk.innerHTML = STATE.homeColumns[col]
+      ? '<svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '';
+  }
+  // Apply visibility to th and all td cells
+  const show = STATE.homeColumns[col];
+  document.querySelectorAll('.home-col-'+col).forEach(el=>{
+    el.style.display = show ? '' : 'none';
+  });
+}
+
 function setScrCardFilter(key){
   if(key === 'action'){
     STATE.actionFilter = !STATE.actionFilter;
