@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horizon / PMM — Customer Journey Maps</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --n50:#f9fafb;--n100:#f3f4f6;--n200:#e5e7eb;--n300:#d1d5db;--n400:#9ca3af;--n500:#6b7280;--n700:#374151;--n900:#111827;
+  --b50:#eff6ff;--b100:#dbeafe;--b600:#2563eb;--b700:#1d4ed8;
+  --r50:#fef2f2;--r100:#fee2e2;--r600:#dc2626;--r700:#b91c1c;
+  --a50:#fffbeb;--a100:#fef3c7;--a600:#d97706;
+  --g50:#f0fdf4;--g100:#dcfce7;--g600:#16a34a;--g700:#15803d;
+  --p50:#faf5ff;--p100:#f3e8ff;--p600:#9333ea;--p700:#7e22ce;
+  --brand:#12122A;--brandmid:#1C1C38;--brandblue:#4C63D4;
+  --lw:160px;--cw:280px;
+}
+body{font-family:var(--font);font-size:13px;line-height:1.5;color:var(--n900);background:var(--n50);min-height:100vh}
+
+/* Header */
+.ph{background:var(--brand);color:#fff;padding:18px 24px 12px;position:sticky;top:0;z-index:300}
+.ph h1{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.ph p{font-size:11px;color:#7878A0;margin-top:3px}
+
+/* Tab nav */
+.tn{background:var(--brandmid);display:flex;padding:0 20px;border-bottom:1px solid #2D2D50;overflow-x:auto;position:sticky;top:58px;z-index:200}
+.tb{background:none;border:none;color:#7878A0;padding:10px 18px;font-size:13px;font-family:var(--font);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.tb:hover{color:#C0C0E0}
+.tb.active{color:#fff;border-bottom-color:var(--brandblue)}
+
+/* Mode toggle bar */
+.mb{background:#fff;border-bottom:1px solid var(--n200);padding:10px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:100px;z-index:190}
+.ml{font-size:10px;font-weight:700;color:var(--n500);text-transform:uppercase;letter-spacing:.07em}
+.mt{display:flex;background:var(--n100);border-radius:8px;padding:3px;gap:2px}
+.mbtn{padding:5px 16px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--n500);font-family:var(--font);transition:all .15s}
+.mbtn.active{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.mbtn.cur.active{color:var(--r600)}
+.mbtn.vis.active{color:var(--g600)}
+
+/* Flow panels */
+.fp{display:none}.fp.active{display:block}
+.mv{display:none}.mv.visible{display:block}
+
+/* Persona context */
+.ctx{background:#EDECEB;border-bottom:1px solid #D8D7D3;padding:14px 20px}
+.ctx-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:#6B6B80;text-transform:uppercase;margin-bottom:10px}
+.pg{display:flex;gap:12px;flex-wrap:wrap}
+.pc{background:#fff;border:1px solid #DDDCDA;border-radius:7px;padding:12px 14px;flex:1;min-width:240px;max-width:440px}
+.pch{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.pav{width:28px;height:28px;border-radius:50%;background:var(--brandblue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px}
+.pn{font-size:13px;font-weight:600;color:#1A1A2E}
+.pr{font-size:11px;color:#6B6B80;margin-top:1px}
+.pb{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:3px;margin-top:3px}
+.pb.pri{background:#EEF2FF;color:#3730A3}.pb.sec{background:#F0FDF4;color:#14532D}
+.pdiv{border:none;border-top:1px solid #EBEBEB;margin:8px 0}
+.pbdy{font-size:12px;color:#4A4A5A;line-height:1.5}
+.pjtbd{font-size:11px;color:#6B6B80;margin-top:6px;line-height:1.5}
+.pjtbd p{margin-top:3px}
+
+/* Priority improvement cards (Phase 2 vision) */
+.prio{display:flex;gap:10px;padding:12px 20px;flex-wrap:wrap;background:#F5F3FF;border-bottom:2px solid #DDD8FC}
+.prio-hd{font-size:10px;font-weight:700;letter-spacing:.08em;color:#5B21B6;text-transform:uppercase;width:100%;margin-bottom:4px}
+.prc{background:#fff;border:1px solid #DDD8FC;border-left:3px solid #7C3AED;border-radius:6px;padding:10px 12px;flex:1;min-width:150px;max-width:340px}
+.prc h5{font-size:11px;font-weight:700;color:#4338CA;margin-bottom:4px}
+.prc .prb{font-size:11px;color:var(--r600);margin-bottom:3px}
+.prc .prh{font-size:11px;color:var(--n700)}
+
+/* Summary cards (vision) */
+.sb{display:flex;gap:12px;padding:14px 20px;flex-wrap:wrap;background:#EDECEB;border-bottom:1px solid #D8D7D3}
+.sc{background:#fff;border:1px solid #DDDCDA;border-radius:7px;padding:12px 14px;flex:1;min-width:180px}
+.sc h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--n500);margin-bottom:5px}
+.sc p{font-size:12px;line-height:1.5;color:var(--n700)}
+.sc.red{border-left:3px solid var(--r600)}
+.sc.green{border-left:3px solid var(--g600)}
+.sc.blue{border-left:3px solid var(--brandblue)}
+.sc.amber{border-left:3px solid var(--a600)}
+
+/* Transitions note */
+.tn-note{padding:12px 20px}
+.tni{padding:10px 14px;background:var(--p50);border:1px solid var(--p100);border-radius:7px;font-size:12px;color:var(--p700);line-height:1.5}
+
+/* Table */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.jt{border-collapse:separate;border-spacing:0;table-layout:fixed;min-width:max-content}
+table.jt td{vertical-align:top;padding:10px 12px;border-right:1px solid var(--n200);border-bottom:1px solid var(--n200);line-height:1.5;font-size:12px}
+td.lc{width:var(--lw);min-width:var(--lw);position:sticky;left:0;z-index:2;border-right:2px solid var(--n300)!important;vertical-align:middle;box-shadow:2px 0 6px -2px rgba(0,0,0,.08)}
+td.cc{width:var(--cw);min-width:var(--cw)}
+
+/* Left column layout */
+.li{display:flex;flex-direction:column;gap:4px;align-items:center;padding:2px 0}
+.licon{font-size:18px;display:block;line-height:1;color:var(--n400)}
+.ltxt{font-size:10px;font-weight:700;color:var(--n500);text-transform:uppercase;letter-spacing:.05em;text-align:center}
+
+/* Steps row — lavender */
+.rStp td{background:#EDE9FD;color:#3730A3;vertical-align:middle}
+.rStp td.lc{background:#DDD8FC!important}
+.rStp .ltxt{color:#6D28D9}
+.rStp .licon{color:#7C3AED}
+.sn{font-size:18px;font-weight:700;color:#4338CA;display:block;margin-bottom:2px}
+.st{font-size:13px;font-weight:600;color:#3730A3;display:block;line-height:1.3}
+.su{font-size:10px;color:#7C3AED;font-family:ui-monospace,monospace;display:block;margin-top:4px}
+
+/* Other row types */
+.rUsr td{background:#fff}.rUsr td.lc{background:var(--n50)!important}
+.rUsr .licon{color:var(--n500)}
+.rSec td{background:var(--n50);font-size:11px;color:var(--n500)}.rSec td.lc{background:var(--n100)!important}
+.rSec .licon{color:var(--n400)}
+.rPrs td{background:var(--n50);font-size:12px}.rPrs td.lc{background:var(--n100)!important}
+.rPrs .licon{color:var(--n400)}
+.psr{font-weight:600;font-size:12px;color:#1A1A2E}.psrr{font-size:11px;color:#6B6B80;margin-top:2px}
+
+/* Emotion row */
+.rEmo td{background:#fff;padding:0}.rEmo td.lc{background:var(--n50)!important;padding:10px 12px;vertical-align:middle}
+.rEmo .licon{color:var(--r600)}
+.et{position:relative;height:58px}
+.el{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.eline{border-top:1px solid var(--n200);width:100%}
+.em{font-size:22px;position:absolute;left:50%;transform:translateX(-50%);line-height:1}
+.ep4{top:0}.ep3{top:10px}.ep2{top:21px}.ep1{top:32px}.ep0{top:42px}
+
+/* Row colors */
+.rPain td{background:var(--r50);font-size:12px}.rPain td.lc{background:var(--r100)!important}.rPain .ltxt{color:var(--r700)}.rPain .licon{color:var(--r600)}
+.rOpp td{background:var(--g50);font-size:12px}.rOpp td.lc{background:var(--g100)!important}.rOpp .ltxt{color:var(--g700)}.rOpp .licon{color:var(--g600)}
+.rHmw td{background:var(--p50);font-size:12px}.rHmw td.lc{background:var(--p100)!important}.rHmw .ltxt{color:var(--p700)}.rHmw .licon{color:var(--p600)}
+.rChg td{background:var(--g50);font-size:12px}.rChg td.lc{background:var(--g100)!important}.rChg .ltxt{color:var(--g700)}.rChg .licon{color:var(--g600)}
+
+/* Badges */
+.empty{color:var(--n300)}
+.nc{display:inline-block;background:var(--a100);color:var(--a600);border:1px solid #FCD34D;border-radius:3px;font-size:10px;padding:2px 5px;margin-top:4px;line-height:1.4}
+.jo{display:inline-block;background:var(--b50);color:var(--b700);border:1px solid var(--b100);border-radius:3px;font-size:10px;padding:2px 5px;margin-top:4px;line-height:1.4}
+.vtag{display:inline-block;background:var(--g100);color:var(--g700);border:1px solid #BBF7D0;border-radius:3px;font-size:10px;padding:2px 5px;margin-bottom:4px;font-weight:600}
+
+@media(max-width:640px){
+  :root{--lw:110px;--cw:200px}
+  .ph{padding:12px 16px}
+  .tn{top:50px}.mb{top:88px}
+}
+</style>
+</head>
+<body>
+
+<header class="ph">
+  <h1>Horizon / PMM — Customer Journey Maps</h1>
+  <p>Project Oak Phase 2 &nbsp;·&nbsp; Current production vs Phase 2 vision &nbsp;·&nbsp; Source: Figma + Marvin research + production walk 2026-04-21</p>
+</header>
+
+<nav class="tn">
+  <button class="tb active" onclick="showFlow('invite',this)">Invite Order</button>
+  <button class="tb" onclick="showFlow('results',this)">Results Review</button>
+  <button class="tb" onclick="showFlow('manual',this)">Manual Order</button>
+  <button class="tb" onclick="showFlow('rescreen',this)">Rescreen</button>
+</nav>
+
+<div class="mb">
+  <span class="ml">View</span>
+  <div class="mt">
+    <button class="mbtn cur active" onclick="setMode('cur',this)">Current production</button>
+    <button class="mbtn vis" onclick="setMode('vis',this)">Phase 2 vision</button>
+  </div>
+</div>
+
+<!-- ═══════════ INVITE ORDER ═══════════ -->
+<div id="invite" class="fp active">
+
+<!-- CURRENT STATE -->
+<div class="mv cur visible">
+<div class="ctx">
+  <div class="ctx-label">Personas &amp; Context · Invite Order</div>
+  <div class="pg">
+    <div class="pc">
+      <div class="pch"><div class="pav">SW</div><div><div class="pn">Sarah Whitman</div><div class="pr">Background Check Coordinator</div><span class="pb pri">Primary</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Highest-frequency task. Initiates all background check invites for new and returning volunteers and staff. Working from a paper or spreadsheet roster, adding applicants one by one.</div>
+      <div class="pjtbd">
+        <p>→ When I have a new batch of volunteers, I want to send invites in one session so they are in the queue before Sunday.</p>
+        <p>→ When I hit Send, I want clear confirmation that something happened and where to find these applicants next.</p>
+      </div>
+    </div>
+    <div class="pc">
+      <div class="pch"><div class="pav" style="background:#6B6B9A">MR</div><div><div class="pn">Pastor Mike Reyes</div><div class="pr">Lead Pastor</div><span class="pb sec">Secondary</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Occasionally involved if his name is on the billing certification or a staff hire requires sign-off.</div>
+      <div class="pjtbd"><p>→ When a staff hire needs to start quickly, I want to confirm the invite was sent and the right searches ordered.</p></div>
+    </div>
+  </div>
+</div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">Trigger invite</span><span class="su">/user/background-checks</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Add applicants</span><span class="su">/user/order/Invite</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Select searches</span><span class="su">/user/order/Invite</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Set billing &amp; email</span><span class="su">/user/order/Invite</span></td>
+  <td class="cc"><span class="sn">5.</span><span class="st">Review &amp; send</span><span class="su">/user/order/Invite</span></td>
+  <td class="cc"><span class="sn">6.</span><span class="st">Success &amp; return</span><span class="su">/user/order/Invite → dashboard</span></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">User Actions</span></div></td>
+  <td class="cc">Lands on the Background Checks dashboard. Scans KPI tiles and the recent orders table. Clicks Invite New Applicant(s) in the top-right.</td>
+  <td class="cc">Clicks + Applicant to add a row. Types First Name, Last Name, Email — picks from autocomplete or types new. Working from paper roster or spreadsheet. Repeats per person or presses Enter.</td>
+  <td class="cc">Opens the Background Check Package dropdown. No descriptions, no risk context, no role guidance. Scrolls to something familiar or defaults to last time. Optionally adds Child Safety Training — no 'Don't include' default clearly labeled. Opens the State dropdown — purpose unclear at this step.</td>
+  <td class="cc">Scans Billing Reference, BG Check Email Template, and CST Email Template columns. Leaves pre-selected defaults or swaps them. Optionally clicks eye icon to preview the applicant email.</td>
+  <td class="cc">Reads the review table. Reads the three FCRA certification statements. Ticks I certify. Send Invites button turns dark blue. Clicks it.</td>
+  <td class="cc">Sees the success screen: blue checkmark, 'Your invite has been sent!', one line pointing to the dashboard. Clicks Done. Lands on the dashboard — table body reads empty.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">Monday morning. Coffee in hand, Sarah checks the dashboard and reaches for the Invite button.</td>
+  <td class="cc">Flipping through a directory of people, picking who gets the invite this week. Eyes on the paper list, hands on the keyboard.</td>
+  <td class="cc">Eyes flicker across a long list of packages. Which one is right for this role? She picks the one she used last time and hopes it's correct.</td>
+  <td class="cc">Peering at the preview as if standing next to the applicant reading it — and realising the sender address doesn't look right.</td>
+  <td class="cc">Pauses at the certification. Ticks the box. Commits.</td>
+  <td class="cc">A brief cheer, then the dashboard looks blank. Did it really go through?</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😕</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😕</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😕</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc">Async context carried in by Sarah: user guides, old support emails, internal cheat-sheets about which package to use. Nothing in-context from the product.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">No in-product descriptions. Async references: user guide, old support emails about package selection, internal notes that may be stale.</td>
+  <td class="cc">In-product preview (eye icon) shows sender as message@mobilizemyministry.com — not the live send address. Sarah is previewing something that will not ship as shown.</td>
+  <td class="cc">No outbound yet. This is the last chance to change anything. FCRA certification text is a legal commitment captured implicitly on checkbox tick.</td>
+  <td class="cc">Two emails within ~60 seconds. Applicant: [org_name]@protectmyministry.net, subject 'Background Check Invitation', registration link under horizon-web-prod. Logo broken. Admin: same sender, ~1 minute later, only applicant name and a login-required deep link. No package, state, CST, billing ref, or total. Logo broken. Outlook flags sender as external.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">PMM API loads dashboard KPIs and recent orders table.</td>
+  <td class="cc">Autocomplete queries existing Person records for the account (synced from host ChMS by email). No order-side persistence — abandoning here saves nothing.</td>
+  <td class="cc">Package, CST, and State dropdowns hydrate from account config. No pricing call observed. Client-side draft only.</td>
+  <td class="cc">Email Template and Billing Reference dropdowns hydrate from account config. Eye icon renders a client-side preview — no send occurs.</td>
+  <td class="cc">Commit point. PMM creates Person, Applicant, and case records and dispatches order to Digital Delve. This is the first back-end write of the session.</td>
+  <td class="cc">Success screen is an in-flow state (URL still /user/order/Invite). Done navigates to dashboard — table re-fetch does not reliably include the new row immediately.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Coordinators call support to ask which package to select for a given role. Most common pre-order support contact type.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">If applicant never registers, re-invite path is not signposted. Coordinators contact PMM support to ask what to do next.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Dashboard typically embedded inside Rock RMS, Planning Center, or CCB. Majority of usage runs inside host.</td>
+  <td class="cc">Person records originate in the host ChMS, matched by email. Creating a new person here eventually round-trips back to the host.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">No ChMS call on commit. Results write back when Digital Delve completes.</td>
+  <td class="cc">Host embed shows same empty-table anomaly after return.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Receives order. Generates applicant registration URL under horizon-web-prod.protection-services.com/registration/&lt;uuid&gt; and triggers invite email.</td>
+  <td class="cc">Applicant continues on the registration URL delivered by email (separate applicant-side flow).</td>
+</tr>
+
+<tr class="rPain">
+  <td class="lc"><div class="li"><span class="licon">😤</span><span class="ltxt">Pain Points</span></div></td>
+  <td class="cc">No way to filter the main table by tag or role, select a cohort, and initiate checks in bulk — each order must be started fresh from the invite wizard. Nothing in-product helps distinguish who needs screening, who is already covered, or who is a duplicate.</td>
+  <td class="cc">The person search-and-select behaves neither like a standard combobox nor a person-picker. No serving context (role, department, tags) visible. No screening status at point of adding — no indication of a check in progress, a cleared check on file, or a case awaiting review. Abandoning mid-flow loses all progress with no save or resume.</td>
+  <td class="cc">Package dropdown has no descriptions and no role guidance. Coordinators cannot tell at a glance what level suits a given role. No explicitly labeled 'Don't include CST' option. State dropdown: purpose at this step is not explained.</td>
+  <td class="cc">Billing Reference is a dropdown, not free text — if the expected code is not listed, nothing on this screen adds one. CST Email Template column renders a required asterisk even when CST was not ordered. Preview shows wrong sender address.</td>
+  <td class="cc">No edit shortcut — correcting a value means walking the whole stepper back. 'Send Invites' labels this as email delivery but it is actually record creation, a billing event, and email dispatch simultaneously. FCRA text looks like legal boilerplate, not a commit gate.</td>
+  <td class="cc">Success screen has one CTA: 'Done.' Returns to an empty dashboard. No in-product receipt. Admin confirmation email arrives ~1 minute later with only the applicant's name — no package, state, total, or billing ref. Logo broken in both emails.</td>
+</tr>
+
+<tr class="rOpp">
+  <td class="lc"><div class="li"><span class="licon">💡</span><span class="ltxt">Opportunities</span></div></td>
+  <td class="cc">Visibility of who is already covered, who is new, who might be a duplicate. A recognisable starting line for a process that usually begins outside the product.</td>
+  <td class="cc">A standard person-picker with an explicit 'add new person' pattern. Serving context (role, department) visible at point of selection. Screening status chip: In progress / Cleared / Expired / None. Duplicate detection before commit.</td>
+  <td class="cc">Three platform screening levels each showing a risk label, the type of roles it suits, and role examples. CST as an explicit on/off toggle. State field purpose clarified or removed if not needed at this step.</td>
+  <td class="cc">Preview that matches what applicants actually receive. CST email template hidden when no CST was ordered. Billing Reference that connects to what finance actually expects.</td>
+  <td class="cc">Commit point legibility: label Send clearly as the action that creates records, fires emails, and opens a billable order. Ability to correct a single value without rewinding the stepper.</td>
+  <td class="cc">A lasting in-product receipt: who was ordered, which level, which state, which billing code, when invites expire. Cases visible in table immediately after commit.</td>
+</tr>
+
+<tr class="rHmw">
+  <td class="lc"><div class="li"><span class="licon">💭</span><span class="ltxt">How Might We</span></div></td>
+  <td class="cc">How might we help staff arrive knowing which cohort needs screening, who is already covered, and whether any are duplicates?</td>
+  <td class="cc">How might we make it visible, before commit, whether each row will merge with an existing person or create a new one — and catch typos while the user is still on this step?</td>
+  <td class="cc">How might we give coordinators enough in-context information to pick a level that clearly matches the role's risk profile, without calling support or consulting an external cheat-sheet?</td>
+  <td class="cc">How might we show a preview that matches what applicants will actually receive, and hide the CST template when no CST was ordered?</td>
+  <td class="cc">How might we make 'Send Invites' unambiguously the commit point, and let staff correct a single value without re-walking the stepper?</td>
+  <td class="cc">How might we give staff an in-product record that answers 'what did I just send, for whom, under what level, at what cost code' without a login-gated click-through?</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end invite current -->
+
+<!-- INVITE ORDER VISION -->
+<div class="mv vis">
+<div class="prio">
+  <div class="prio-hd">Phase 2 priority improvement areas — Invite Order</div>
+  <div class="prc"><h5>Applicant entry</h5><div class="prb">Current: one-at-a-time entry, no serving context, no screening status, no bulk path.</div><div class="prh">Why highest impact: highest-friction routine task. Blocks rescreening at scale.</div></div>
+  <div class="prc"><h5>Screening level clarity</h5><div class="prb">Current: package dropdown with no descriptions, no role guidance. Most common pre-order support contact.</div><div class="prh">Why highest impact: eliminates support calls and wrong-level orders for the most frequent ordering task.</div></div>
+  <div class="prc"><h5>Commit point legibility</h5><div class="prb">Current: 'Send Invites' label understates what the action does — record creation, billing, and email dispatch at once.</div><div class="prh">Why highest impact: reduces admin anxiety and post-send confusion about what happened.</div></div>
+</div>
+<div class="sb">
+  <div class="sc blue"><h4>What changes</h4><p>4 steps instead of 6. Flow starts with who, not which method. Person picker shows serving context and screening status before any order is placed. Commit point is clearly labeled.</p></div>
+  <div class="sc green"><h4>Screening levels</h4><p>Platform levels (Basic, Enhanced, Comprehensive) plus account-configured custom levels and add-ons. Each shows a risk label, the type of roles it suits, and role examples. Information, not recommendations. Enough context to choose without calling support.</p></div>
+  <div class="sc amber"><h4>Commit point</h4><p>"Confirming creates a background check case for each person listed." Labeled explicitly above the confirm button. Person records and cases created on confirm, not before.</p></div>
+</div>
+<div class="tn-note"><div class="tni">Phase 2 changes addressed: status architecture (PMM-002), applicant entry (PMM-033), commit point separation (PMM-026), consent delivery method (PMM-029), screening levels (PMM-036), contextual ordering (PMM-020).</div></div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">People</span><span class="su">New background check wizard</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Screening level</span><span class="su">New background check wizard</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Consent &amp; delivery</span><span class="su">New background check wizard</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Review &amp; confirm</span><span class="su">New background check wizard</span></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">Admin Experience</span></div></td>
+  <td class="cc">Type to search existing people — add new inline if no match. Or bulk-add from CSV. Each added person shows role, department, tags, and screening status chip (Cleared / In progress / Expired / None). Duplicate check at add-time. Flow persists through back-navigation. From the main Screenings table, coordinator can also filter by tag (e.g. 'Summer Camp 2026') or role, select all, and trigger a new check for the cohort directly.</td>
+  <td class="cc">Platform screening levels (Basic, Enhanced, Comprehensive) plus account-configured custom levels and add-ons, each as a selectable card. Each card shows: risk label, plain-language description of the type of roles it suits, and concrete role examples (Basic: greeters, ushers; Enhanced: Sunday school assistant, camp counselor; Comprehensive: treasurer, fundraiser). Expanding a card shows individual searches in plain language. Child Safety Training toggle, off by default with explicit label.</td>
+  <td class="cc">Three method cards: Send invite by email (PMM sends directly, default), Generate person-bound link (admin copies and sends; link is tied to this specific person), Consent on file (edge case; admin confirms valid FCRA consent was separately obtained). Expiry selector: 7/14/30/60/90 days. Approval gate toggle (off by default) with description of what gate-on means.</td>
+  <td class="cc">One row per person: name, email, level, delivery method, expiry. Optional billing reference field. One line above confirm: "Confirming creates a background check case for each person listed." Button: Confirm order. On success: cases visible in table immediately, invite links accessible with copy buttons if link-delivery was chosen.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">Sarah searches 'Evelyn.' An existing person appears: 'Children's Ministry · Cleared 8 months ago.' She selects. Types two new names inline. Drops in a CSV for the rest of the cohort. No 'Option 1 / Option 2' to parse.</td>
+  <td class="cc">She clicks the Enhanced card. 'For roles working directly with children or vulnerable adults.' Youth group volunteer fits. She closes it confident she chose correctly. No support call, no second-guessing.</td>
+  <td class="cc">She selects Send invite by email. Sets 90 days. Approval gate is already on for Children's Ministry — noted next to the toggle. She does not need to configure it separately.</td>
+  <td class="cc">One list. One button. 'Confirming creates a case for each person listed.' She clicks Confirm. Cases appear in the table. Invite links are copyable from the success view.</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep4">😊</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Invite delivery method is an explicit choice at this step — no discovery needed later. Expiry date is set here and visible to the applicant in their email.</td>
+  <td class="cc">On confirm: invite sent from [org_name]@protectmyministry.net with correct sender, working logo, expiry date visible. Admin confirmation email includes level, billing ref, expiry date, and total. Preview at step 3 matches what applicants actually receive.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">Person search queries existing records. New person created only on confirm, not mid-wizard. Draft persists through back-navigation. Duplicate check runs at add-time against existing cases of same type.</td>
+  <td class="cc">Screening level cards hydrate from account config — platform levels plus custom and add-ons. No separate call per card expansion.</td>
+  <td class="cc">Expiry and approval gate settings persisted per case on confirm. Invite link is person-bound and generated at confirm, not before.</td>
+  <td class="cc">Person records and cases created on confirm only. No orphaned records from abandoned wizards. Cases appear in the Screenings table immediately on confirm. Invite dispatch to Digital Delve triggered on confirm.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc">Duplicate check at add-time prevents the most common duplicate-applicant support ticket.</td>
+  <td class="cc">In-context level descriptions eliminate 'which package should I use' contacts — the most common pre-order support call type.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">In-product receipt answers 'what did I just send' without a login-gated click-through — reduces post-confirm support contacts.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Person search queries ChMS person records. Serving context (role, department) pulled from host. New people created in PMM and synced back to host on confirm.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">On confirm, cases created in PMM and lifecycle status written back to host person record immediately. Host embed shows new cases without the empty-table anomaly.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Receives batch order on confirm. Generates person-bound registration URLs. Sends invite emails with correct sender and working logo.</td>
+</tr>
+
+<tr class="rChg">
+  <td class="lc"><div class="li"><span class="licon">✅</span><span class="ltxt">What Changes</span></div></td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Intuitive add flow without labeled options to parse. Role, department, tags, and screening status visible at point of selection — role and tags give instant risk context before level selection. Bulk-add from CSV. Bulk-initiate from main table via tag or role filter. Duplicate check at add-time. Flow persists through back-navigation.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Platform levels and custom levels each shown as a card with risk label, plain-language description, role examples, and expandable search detail. Coordinator can choose confidently without calling support. Not recommendations — role-risk information that supports the coordinator's own judgment.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Invite link always generated and person-bound. Expiry always set. Delivery method is an explicit choice. Approval gate behavior described at order time, not discovered later when a case sits in Awaiting order.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Commit point is named. Success state shows new cases in table immediately. Invite links copyable from success view. Post-confirm admin email includes full order summary: level, billing reference, expiry date.</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end invite vision -->
+</div><!-- end invite flow -->
+
+<!-- ═══════════ RESULTS REVIEW ═══════════ -->
+<div id="results" class="fp">
+
+<!-- CURRENT STATE -->
+<div class="mv cur visible">
+<div class="ctx">
+  <div class="ctx-label">Personas &amp; Context · Results Review</div>
+  <div class="pg">
+    <div class="pc">
+      <div class="pch"><div class="pav">SW</div><div><div class="pn">Sarah Whitman</div><div class="pr">Background Check Coordinator</div><span class="pb pri">Primary — Steps 1–3</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Monitors the dashboard for status changes and incoming results. Routes flagged results to Pastor Mike for the final call.</div>
+      <div class="pjtbd"><p>→ When a result comes in, I want to know immediately and be able to get it to the right person without delays.</p></div>
+    </div>
+    <div class="pc">
+      <div class="pch"><div class="pav" style="background:#6B6B9A">MR</div><div><div class="pn">Pastor Mike Reyes</div><div class="pr">Lead Pastor / Final Approver</div><span class="pb sec">Primary — Steps 4–5</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Drops in to review the report and make the final assessment call: Clear, Needs review, or Escalate. Does not log in frequently — needs context immediately on arrival.</div>
+      <div class="pjtbd"><p>→ When I review a report, I want to record my decision, add a note, and move on.</p></div>
+    </div>
+    <div class="pc">
+      <div class="pch"><div class="pav" style="background:#2D6A4F">MT</div><div><div class="pn">Maggie Tanaka</div><div class="pr">Safe Ministry Coordinator</div><span class="pb sec">Tertiary — Step 7</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Responsible for the organization's compliance posture. Needs a defensible audit trail for underwriters and insurance carriers.</div>
+      <div class="pjtbd"><p>→ When the insurance carrier asks for a screening record, I want to produce a dated, attributed audit trail without manually reconstructing it from emails.</p></div>
+    </div>
+  </div>
+</div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">Dashboard arrival</span><span class="su">/user/background-checks</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Find the case</span><span class="su">/user/background-checks</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Open applicant profile</span><span class="su">/user/applicant-profile/{id}?origin=BGCheck</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Open the report</span><span class="su">/user/report-results/</span></td>
+  <td class="cc"><span class="sn">5.</span><span class="st">Record assessment</span><span class="su">/user/report-results/ (Edit Assessment modal)</span></td>
+  <td class="cc"><span class="sn">6.</span><span class="st">Status updates</span><span class="su">/user/background-checks</span></td>
+  <td class="cc"><span class="sn">7.</span><span class="st">Compliance review</span><span class="su">Applicant History</span></td>
+</tr>
+
+<tr class="rPrs">
+  <td class="lc"><div class="li"><span class="licon">👥</span><span class="ltxt">Personas</span></div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+  <td class="cc"><div class="psr">Sarah → Mike</div><div class="psrr">Sarah finds and routes; Mike opens and assesses</div></td>
+  <td class="cc"><div class="psr">Pastor Mike</div></td>
+  <td class="cc"><div class="psr">Pastor Mike</div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+  <td class="cc"><div class="psr">Maggie Tanaka</div></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">User Actions</span></div></td>
+  <td class="cc">Sees dashboard KPI tiles: New Results, Alerts, Due for Rescreen, Expired Invites. Clicks a tile to navigate — but the table that loads is not filtered to the relevant cases. Must scan manually.</td>
+  <td class="cc">Scrolls the table looking for results that need review. Status column shows labels like Complete, Pending, Sent. Cannot tell from the table alone whether 'Pending' means awaiting applicant submission, awaiting admin order, or awaiting Digital Delve result.</td>
+  <td class="cc">Clicks a row to open the applicant profile. Sees name, email, status badge, a few fields. Applicant History section shows only profile creation. No events for invite sent, consent submitted, order placed, or report received. No lifecycle track.</td>
+  <td class="cc">Finds a 'Report Results' button (or 'Edit Assessment' — same modal title for both read-only and editable views). Opens modal: PDF on the left, three radio buttons (Review / Clear / Escalate) on the right. No context about what to do. No visible notes field.</td>
+  <td class="cc">Selects a radio button. Clicks Save. Case status updates. No log of who made the change, no timestamp, no record of prior value. Assessment pill is visible in the table row but not clickable — requires kebab menu to reach.</td>
+  <td class="cc">Sees status updated in the table. Other team members with access also see the update. No in-product notification mechanism to communicate outcome to the ministry leader who initiated the request.</td>
+  <td class="cc">Maggie navigates to Applicant History. Sees only profile creation event. No invite sent, no consent, no order, no report, no assessment events. Nothing usable as an audit trail. She reconstructs from email threads.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">Sarah refreshes the dashboard. The number in the Alerts tile has changed. She is not sure which of the 12 alerts apply to her.</td>
+  <td class="cc">She scrolls. Three rows say Pending. She cannot tell which one means waiting for the applicant and which means something is actually wrong.</td>
+  <td class="cc">She clicks a row. The profile opens. She sends a Slack message to Mike: "Marcus Johnson's check came back, I think you need to look at it."</td>
+  <td class="cc">Mike logs in. Opens the report. Three radio buttons, no context, no notes field visible. He reads the PDF and makes his call.</td>
+  <td class="cc">He clicks Escalate. Clicks Save. Logs out. Nobody in the system has recorded why he escalated. That reasoning lives in his head.</td>
+  <td class="cc">Sarah sees the status update. She emails the children's ministry director to let her know. This part happens outside the product entirely.</td>
+  <td class="cc">Six months later, the insurance carrier asks for a screening record. Maggie cannot produce one from PMM. She calls Sarah.</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😟</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😟</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😟</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep0">😤</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😟</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc">No in-product notification that a result has arrived. Sarah discovers reactively by checking the dashboard.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Sarah routes results to Mike via Slack or email — outside the product entirely.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">No in-product mechanism to communicate outcome to the ministry leader or the person who initiated the request. All result-sharing happens by Slack, email, or in-person.</td>
+  <td class="cc">Insurance carrier communication happens entirely outside the product. Maggie reconstructs from email threads.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">KPI tiles load from a count query. Tile data is stale on first load — refreshing updates counts.</td>
+  <td class="cc">Status field is a single string conflating invite link status, consent form status, BG check order status, and assessment status. 'Pending' is used as a fallback for unmapped statuses.</td>
+  <td class="cc">Applicant History queries event log, which only contains profile creation events. No other lifecycle events are persisted.</td>
+  <td class="cc">Modal fetches report from Digital Delve. Same modal title ('Report Results') used for read-only view and editable assessment view. No modal state differentiation in the URL.</td>
+  <td class="cc">Assessment radio selection writes directly to the case record. No separate assessment_events table. No prior value preserved.</td>
+  <td class="cc">Status field updated. No webhook, no notification, no scoped visibility rule.</td>
+  <td class="cc">No audit event table. Assessment changes are not versioned. Archive events are not recorded.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Coordinators call support to ask what different status labels mean — particularly 'Pending' and 'Incomplete.'</td>
+  <td class="cc">Coordinators contact support to ask what Applicant History should show and why it only shows profile creation.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Admins call support to ask how to change an assessment after saving, since the assessment pill is not clickable.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Dashboard may be embedded in Rock or PCO. Status field not synced accurately to host person record.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Assessment outcome written back to host only when check completes, not when assessment is made. Host record may lag.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Report fetched from Digital Delve. Same API call used for read-only view and editable assessment view.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rPain">
+  <td class="lc"><div class="li"><span class="licon">😤</span><span class="ltxt">Pain Points</span></div></td>
+  <td class="cc">Dashboard alert tiles ('Alerts: 12') are not actionable — they surface a count with no explanation of what the alerts are or what Sarah should do. Clicking through does not filter the table to show only those cases.</td>
+  <td class="cc">Status vocabulary is inconsistent: filter says 'Complete,' row pill says 'Completed.' 'Pending' can mean three different things. Expired and Due for Rescreen are not in the status filter. No search or filter on the BG checks table.</td>
+  <td class="cc">Applicant History shows only profile creation. If Mike asks 'when did she submit her consent form?' the answer is not in the product. No lifecycle track, no event log.</td>
+  <td class="cc">Both read-only and editable assessment views are called 'Report Results.' Mike cannot tell whether he is seeing a view or an edit form. Three radio buttons with no context, no place to write a justification, no required note on Escalate.</td>
+  <td class="cc">No log of who made an assessment change or when. Assessment pill visible in table row but not clickable — requires two-click kebab menu. No required note on Escalate.</td>
+  <td class="cc">No in-product mechanism to communicate outcome to a ministry leader or the person who initiated the request. All result-sharing happens by Slack, email, or in-person outside the product.</td>
+  <td class="cc">No audit trail usable for compliance review. Profile creation event only. Cannot demonstrate due diligence to an underwriter. Maggie reconstructs from email threads.</td>
+</tr>
+
+<tr class="rHmw">
+  <td class="lc"><div class="li"><span class="licon">💭</span><span class="ltxt">How Might We</span></div></td>
+  <td class="cc">How might we make the dashboard tell Sarah who needs her attention, not just how many things are waiting?</td>
+  <td class="cc">How might we make the status of a case unambiguous at a glance, with values that cannot be misread?</td>
+  <td class="cc">How might we give every case a full event log so any admin can reconstruct what happened and when without calling support?</td>
+  <td class="cc">How might we make the assessment modal clearly an edit form when action is needed, with a required note on Escalate?</td>
+  <td class="cc">How might we log every assessment change — who, what outcome, when, any notes — so Maggie can produce an audit trail on demand?</td>
+  <td class="cc">How might we give scoped team members appropriate visibility into outcomes without requiring the coordinator to manually relay everything?</td>
+  <td class="cc">How might we make the PMM record itself a compliance-grade audit trail that an underwriter would accept without supplemental email reconstruction?</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end results current -->
+
+<!-- RESULTS REVIEW VISION -->
+<div class="mv vis">
+<div class="prio">
+  <div class="prio-hd">Phase 2 priority improvement areas — Results Review</div>
+  <div class="prc"><h5>Status clarity</h5><div class="prb">Current: one overloaded status field conflates invite, consent, order, and assessment state. 'Pending' means at least three different things.</div><div class="prh">Why highest impact: most common admin confusion and support contact type across the entire product.</div></div>
+  <div class="prc"><h5>Person profile and audit trail</h5><div class="prb">Current: Applicant History shows only profile creation. No event log. No compliance record admissible for insurance review.</div><div class="prh">Why highest impact: direct insurance and compliance liability. Safe Ministry coordinators cannot produce records insurers require.</div></div>
+  <div class="prc"><h5>Assessment experience</h5><div class="prb">Current: same modal title for read-only and edit views, no required note on Escalate, no prior assessment history.</div><div class="prh">Why highest impact: Escalate decisions with no documented reasoning are a compliance risk and a coordination failure.</div></div>
+</div>
+<div class="sb">
+  <div class="sc blue"><h4>What changes</h4><p>One clear lifecycle status per case with descriptive values that cannot be misread. Assessment shown as a distinct secondary label, never conflated with lifecycle status. Action-required rows tinted in the table. Person profile shows a full event log for every case.</p></div>
+  <div class="sc green"><h4>Audit trail</h4><p>Every lifecycle event logged with timestamp and actor: invite generated, email delivered, consent submitted, order placed, report received, assessment recorded, assessment changed. Compliance-ready without supplemental email reconstruction.</p></div>
+  <div class="sc amber"><h4>Status clarity</h4><p>Case lifecycle status uses nine precise values: Consent pending, Awaiting order, Order placed / Processing, Report ready, Cleared, Needs review, Escalated, Expired, Cancelled. 'Pending' is not a value. The status of a case is unambiguous at a glance.</p></div>
+</div>
+<div class="tn-note"><div class="tni">Phase 2 changes addressed: status architecture (PMM-002), audit trail (PMM-005), table filtering (PMM-007), assessment modal (PMM-040), person-centric view (PMM-030), email delivery visibility (PMM-008).</div></div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">Screenings table</span><span class="su">/screenings</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Triage queue</span><span class="su">/screenings (action-required rows)</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Open person profile</span><span class="su">/screenings → person profile panel</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Report + assessment</span><span class="su">Assessment modal</span></td>
+  <td class="cc"><span class="sn">5.</span><span class="st">Record + communicate</span><span class="su">Assessment modal → /screenings</span></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">Admin Experience</span></div></td>
+  <td class="cc">One lifecycle status per case row — Consent pending, Awaiting order, Processing, Report ready, Cleared, Needs review, Escalated, Expired, or Cancelled. Assessment shown as a secondary label when a report has been assessed, at lower visual weight than lifecycle status. Action-required rows tinted amber. Filter by lifecycle status, department, and screening health indicator. Search by name or email.</td>
+  <td class="cc">Action-required rows surface inline actions for common tasks. 'Report ready — make assessment' shows an Assessment button directly in the row. Expiring invites show Resend or Copy link inline. No two-click kebab required for common actions.</td>
+  <td class="cc">Person profile panel opens. Identity block with source chip (Rock CRM / PMM). Lifecycle track: visual timeline of all case events — invite generated, email sent, consent submitted, order placed, report received. Prior cases listed below with type, date, assessment outcome, and view report link.</td>
+  <td class="cc">Modal titled 'Assessment.' Two-panel layout: report PDF left, assessment section right. Three action buttons: Clear / Needs review / Escalate. Notes field always visible. Notes required on Escalate. Prior assessment history shown above new entry if any prior assessment exists.</td>
+  <td class="cc">Assessment logged with timestamp, actor name, outcome, and notes text. Case lifecycle status updates in the table immediately. Department viewer accounts can see assessment outcome under their scoped access. No manual result-forwarding required for in-system team members.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">Sarah opens the Screenings table. Two rows are amber-tinted. She doesn't have to scroll — the tint finds her eye.</td>
+  <td class="cc">The first amber row shows 'Report ready.' An Assessment button sits inline. One click. No kebab menu.</td>
+  <td class="cc">She clicks the row. The profile opens. Lifecycle track: Invite sent Jun 3 · Consent submitted Jun 7 · Order placed Jun 7 · Report received today. Prior cleared check from last year visible below. She routes to Mike.</td>
+  <td class="cc">Mike opens the modal. Titled 'Assessment.' PDF on the left, three buttons on the right. He clicks Escalate. A notes field appears — required. He writes his reasoning and saves.</td>
+  <td class="cc">The case row updates instantly. The event is logged: Mike Reyes · Escalated · Jun 29, 2:14 pm · note attached. Maggie can produce this log for the underwriter without calling anyone.</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep4">😊</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep4">😊</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc">In-app notification when a report arrives — Sarah does not need to check proactively.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Department viewers with scoped access see the assessment outcome directly — no manual forwarding. Compliance team receives a complete logged event for each assessment change.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">Lifecycle status is a typed field with nine enumerated values. No fallback 'Pending.' Assessment stored separately in an assessment_events table — not overwriting the lifecycle status field.</td>
+  <td class="cc">Inline action buttons read from the case lifecycle status. 'Report ready' status triggers Assessment button. No client-side logic guessing what action to surface.</td>
+  <td class="cc">Event log persists all lifecycle events: invite generated, email delivered/bounced, consent submitted, order placed, report received. Each event has actor, timestamp, and event type.</td>
+  <td class="cc">Assessment saved to assessment_events table with actor, timestamp, outcome, and notes. Prior assessment history preserved and queryable. Lifecycle status updated as a side effect of assessment save, not the primary write.</td>
+  <td class="cc">Scoped visibility rules applied on read — department viewers see only their org unit's cases. Assessment event is the audit log entry. No separate audit write needed.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc">Unambiguous lifecycle status values eliminate 'what does Pending mean' support contacts.</td>
+  <td class="cc">Inline Assessment button reachable in one click — eliminates 'how do I get to the assessment' support contacts.</td>
+  <td class="cc">Full event log answers 'when did she submit consent?' directly in the product — eliminates a common support contact.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Assessment history visible in the modal — no support call needed to find prior assessment values.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Lifecycle status written back to host person record on every state change — not just on check completion.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Assessment outcome written back to host person record on assessment save. Host record reflects PMM state in near real-time.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Report fetched from Digital Delve. Assessment modal clearly differentiated from read-only report view by title and layout.</td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rChg">
+  <td class="lc"><div class="li"><span class="licon">✅</span><span class="ltxt">What Changes</span></div></td>
+  <td class="cc"><span class="vtag">RESOLVED</span> One clear lifecycle status per case. No ambiguous 'Pending.' Assessment shown as a distinct secondary label at lower visual weight than lifecycle status. Search and filter available across name, lifecycle status, department, and screening health.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Common actions available inline from the table row. Assessment and re-invite reachable in one click. Kebab menu retained for less frequent actions only.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Full lifecycle event log replaces profile-creation-only history. 'When did she submit consent?' is answerable directly from the person profile. All events timestamped and actor-attributed.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Modal is titled 'Assessment' when action is due, 'Assessment history' in read-only view. Notes field always visible. Escalate requires a note. Prior assessment changes visible as a versioned list.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Every assessment event written to audit log. Scoped visibility for department viewers. Compliance team can produce a dated, attributed event log without supplemental reconstruction.</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end results vision -->
+</div><!-- end results flow -->
+
+<!-- ═══════════ MANUAL ORDER ═══════════ -->
+<div id="manual" class="fp">
+
+<!-- CURRENT STATE -->
+<div class="mv cur visible">
+<div class="ctx">
+  <div class="ctx-label">Context · Manual Order</div>
+  <div class="pg">
+    <div class="pc">
+      <div class="pch"><div class="pav">SW</div><div><div class="pn">Sarah Whitman</div><div class="pr">Background Check Coordinator</div><span class="pb pri">Primary</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Uses manual order when an applicant cannot receive email or has already provided consent offline. Treats it as an exception path. Enters all personal data on the applicant's behalf.</div>
+      <div class="pjtbd"><p>→ When an applicant cannot use the invite flow, I want to place the order myself without navigating a completely different interface.</p></div>
+    </div>
+  </div>
+</div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">Searches</span><span class="su">/user/order/Manual</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Information</span><span class="su">/user/order/Manual</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Billing &amp; Email</span><span class="su">/user/order/Manual</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Review Order</span><span class="su">/user/order/Manual</span></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">User Actions</span></div></td>
+  <td class="cc">Clicks the Manual tab in the New Order flow. Selects package from dropdown — same dropdown as invite flow, no descriptions, no role guidance. Selects state — same purpose ambiguity as in the invite flow.</td>
+  <td class="cc">Enters applicant's full legal name, address history, date of birth, and SSN. All fields entered by the coordinator on the applicant's behalf, typically from a paper consent form.</td>
+  <td class="cc">Confirms billing reference (defaults silently to account default) and email template. Proceeds to next step.</td>
+  <td class="cc">Reads FCRA certification text: "I certify that I have secured authorization and will adhere to these legal requirements." Ticks the checkbox. Submit Order button activates. Clicks it. Sees confirmation. Returns to dashboard.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">Sarah clicks Manual. She selects the same package she used last time — the dropdown has no descriptions to guide her.</td>
+  <td class="cc">She types in the applicant's details from a printed consent form. Name, address, DOB, SSN. Hoping she hasn't misread anything.</td>
+  <td class="cc">Default billing reference. She moves on without checking whether it's correct for this department.</td>
+  <td class="cc">She reads the certification text. 'I certify that I have secured authorization.' Ticks. Clicks Submit Order.</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😕</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😕</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Whether an automated email is sent to the applicant after a manual order and what it contains is not confirmed.<br><span class="nc">Needs clarification: post-submit applicant email</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">Package options fetched from account config. State field loads county options dynamically.</td>
+  <td class="cc">Applicant data entered client-side. Validation runs on Next. SSN collected at this step, before FCRA certification in step 4.<br><span class="nc">FCRA: SSN before certification gate</span></td>
+  <td class="cc">Billing reference and template loaded from account defaults. No prompt if the department's expected code differs from account default.</td>
+  <td class="cc">Order record created on submit. Charge triggered. Digital Delve API called. Applicant record created or updated.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc">Coordinators contact support to ask when Manual vs Invite should be used. The path is not well-signposted in the dashboard.</td>
+  <td class="cc">No in-product way to verify FCRA authorization is properly documented before SSN is collected — a gap coordinators sometimes raise.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Occasional support contact to clarify what 'I have secured authorization' means in the certification context and what documentation must be on file.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Manual order not typically triggered from ChMS host UI — accessed via standalone PMM portal.</td>
+  <td class="cc">If the person exists in the host ChMS, their record will be matched after the check completes. New person created in PMM only.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Results written back to host person record on completion. No interim status sync during manual order processing.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Receives order with coordinator-entered applicant data. Runs searches immediately on submit. Returns report to PMM via standard callback.</td>
+</tr>
+
+<tr class="rPain">
+  <td class="lc"><div class="li"><span class="licon">😤</span><span class="ltxt">Pain Points</span></div></td>
+  <td class="cc">No clear signal in the dashboard distinguishes when Manual Order is the right path. Coordinators may not know this path exists or when to use it versus invite. Same package dropdown with no descriptions — all level-selection pain of the invite flow applies here too.</td>
+  <td class="cc">SSN is collected in step 2, before FCRA certification is confirmed in step 4. The product collects sensitive PII before the authorization gate. This is a compliance risk on the order of operations.<br><span class="nc">FCRA: SSN before consent gate</span></td>
+  <td class="cc">Billing reference defaults silently to the account default. Coordinators who need a different code must know to change it — nothing prompts them.</td>
+  <td class="cc">FCRA certification language is dense legal text. No product mechanism to record, verify, or store the consent document within PMM. No explicit confirmation of what happens to the applicant after submit. No in-product receipt.</td>
+</tr>
+
+<tr class="rOpp">
+  <td class="lc"><div class="li"><span class="licon">💡</span><span class="ltxt">Opportunities</span></div></td>
+  <td class="cc">Surface manual order contextually — when an applicant row has no email address, or as a clearly labeled third option within the same unified wizard. Same platform levels with role-risk context apply equally to manual order.</td>
+  <td class="cc">Gate SSN collection behind an explicit FCRA disclosure confirmation. Confirm that the coordinator has provided the Summary of Rights before sensitive PII is entered.</td>
+  <td class="cc">Prompt for billing reference when the default differs from the applicant's department. Flag the mismatch rather than silently applying it.</td>
+  <td class="cc">Add a mechanism to attach or reference the consent document within PMM. Show a clear post-submit state: what was ordered, what happens next, whether the applicant receives any communication.</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end manual current -->
+
+<!-- MANUAL ORDER VISION -->
+<div class="mv vis">
+<div class="prio">
+  <div class="prio-hd">Phase 2 priority improvement areas — Manual Order</div>
+  <div class="prc"><h5>Flow unification</h5><div class="prb">Current: separate entry point and different stepper from invite flow. Coordinators don't know when to use it.</div><div class="prh">Why highest impact: eliminates a hidden, undiscoverable path. Same wizard, same mental model, consent method chosen at step 3.</div></div>
+  <div class="prc"><h5>FCRA compliance gap</h5><div class="prb">Current: SSN collected before FCRA certification gate. PII entered before authorization is confirmed.</div><div class="prh">Why highest impact: direct compliance risk. SSN collection before authorization confirmation is a potential FCRA violation.</div></div>
+  <div class="prc"><h5>Consent documentation</h5><div class="prb">Current: coordinator certifies consent is on file but there is no product mechanism to record or store that consent.</div><div class="prh">Why highest impact: logged, timestamped consent acknowledgment creates a defensible audit record for insurance and legal review.</div></div>
+</div>
+<div class="sb">
+  <div class="sc blue"><h4>What changes</h4><p>Manual and invite paths are the same 4-step wizard. Consent method is a choice in step 3, not a separate flow accessed from a dropdown. Same person picker, same screening level cards, same review step.</p></div>
+  <div class="sc red"><h4>FCRA compliance</h4><p>SSN is not collected in PMM at all on the manual path. The check is placed via Digital Delve's secure collection. The coordinator's role is to confirm consent was obtained and is stored. This resolves the PII-before-certification sequencing issue.</p></div>
+  <div class="sc green"><h4>Consent acknowledgment</h4><p>Admin selects 'Consent on file' at step 3. Required acknowledgment: "I confirm a valid FCRA consent form and Summary of Rights have been provided to this applicant and are in the organization's records." This event is logged with actor and timestamp.</p></div>
+</div>
+<div class="tn-note"><div class="tni">Phase 2 changes addressed: flow unification (PMM-029), FCRA consent gate (PMM-021), screening levels (PMM-036), commit point clarity (PMM-026).</div></div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">People</span><span class="su">New background check wizard (shared with Invite)</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Screening level</span><span class="su">New background check wizard (shared with Invite)</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Consent on file</span><span class="su">New background check wizard — consent method: manual</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Review &amp; place order</span><span class="su">New background check wizard (shared with Invite)</span></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">Admin Experience</span></div></td>
+  <td class="cc">Same person picker as the invite wizard. Add new inline with serving context and screening status chip. No separate entry point — manual is the same wizard, not a different path accessed from a dropdown.</td>
+  <td class="cc">Same level cards as the invite wizard: platform levels (Basic, Enhanced, Comprehensive) plus custom and add-ons. Risk labels, role examples, 'suited for' notes, expandable search details. No separate or degraded level-selection experience for manual orders.</td>
+  <td class="cc">Method card: 'Consent on file.' Admin selects this and reviews a required acknowledgment: "I confirm that a valid FCRA consent form and the Summary of Rights have been provided to this applicant and are stored in the organization's records." This is logged as a consent acknowledgment event with actor and timestamp. Framed as a deliberate edge case, not a shortcut.</td>
+  <td class="cc">Per-person summary: name, email, level, 'Consent on file — order places immediately.' Commit label: "Placing order now. No invite email will be sent to the applicant." On confirm: order dispatched immediately. Admin confirmation email includes full order summary.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">Same person picker as the invite flow. Sarah finds the applicant, selects. The entry point is the same New background check wizard — not a dropdown branch she had to discover.</td>
+  <td class="cc">Same level cards. Enhanced for this role. Same in-context description. No degraded experience for taking the manual path.</td>
+  <td class="cc">Sarah selects 'Consent on file.' She reads the acknowledgment text carefully. Checks it. The system logs: Sarah Whitman · Consent on file acknowledged · timestamp.</td>
+  <td class="cc">The commit label reads 'Placing order now. No invite email will be sent to the applicant.' She clicks Confirm. Order dispatched. Admin email includes full summary.</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Consent acknowledgment event logged with actor and timestamp — this is the communication record that replaces the unverifiable checkbox in the current flow.</td>
+  <td class="cc">On confirm: no invite email to applicant. Admin confirmation email includes full order summary: level, billing ref, confirmation that consent was on file. No ambiguity about what happened.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">Same person record query as invite wizard. New person created on confirm only.</td>
+  <td class="cc">Same level card hydration as invite wizard. No SSN collected anywhere in PMM on the manual path.</td>
+  <td class="cc">Consent acknowledgment event persisted with actor ID, timestamp, and case ID. This is a first-class event in the event log, not a checkbox field on the order record.</td>
+  <td class="cc">Order dispatched to Digital Delve immediately on confirm. No invite email dispatched. Case created with lifecycle status 'Order placed / Processing.' Admin email sent with full summary.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc">Unified wizard eliminates 'when do I use manual vs invite' support contacts — the decision is made at step 3, not before entering the wizard.</td>
+  <td class="cc">Same in-context level descriptions eliminate package-selection support contacts on the manual path.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Clear commit label and post-confirm admin email eliminate 'did my order go through' contacts on the manual path.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Same person search queries ChMS person records. Serving context pulled from host.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">On confirm, case created in PMM and lifecycle status written back to host person record. Manual orders visible in the host person record alongside invite-based cases.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Receives order on confirm without coordinator-entered SSN. Handles secure collection separately. Returns report to PMM via standard callback.</td>
+</tr>
+
+<tr class="rChg">
+  <td class="lc"><div class="li"><span class="licon">✅</span><span class="ltxt">What Changes</span></div></td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Unified wizard. 'When do I use manual vs invite?' is no longer a flow-level decision made before the wizard opens. The decision is consent method at step 3.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Same level cards with role-risk context. No worse level-selection experience on the manual path.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> FCRA compliance gap closed. No SSN entered in PMM. Consent acknowledgment is an explicit, logged, timestamped event, not a checkbox buried in boilerplate.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Commit label explicitly states no invite email will be sent. Admins know what to expect. Post-confirm email includes full order summary.</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end manual vision -->
+</div><!-- end manual flow -->
+
+<!-- ═══════════ RESCREEN ═══════════ -->
+<div id="rescreen" class="fp">
+
+<!-- CURRENT STATE -->
+<div class="mv cur visible">
+<div class="ctx">
+  <div class="ctx-label">Personas &amp; Context · Rescreen</div>
+  <div class="pg">
+    <div class="pc">
+      <div class="pch"><div class="pav">SW</div><div><div class="pn">Sarah Whitman</div><div class="pr">Background Check Coordinator</div><span class="pb pri">Primary — Steps 1–4, 6</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Monitors which applicants are approaching the 1-year rescreen interval. Works from the dashboard, identifies records marked Due for Rescreen, re-sends the invite. Does not adjudicate the result.</div>
+      <div class="pjtbd"><p>→ Stay ahead of expiring checks without manually tracking dates in a spreadsheet. Know which of 107 flagged applicants to tackle first.</p></div>
+    </div>
+    <div class="pc">
+      <div class="pch"><div class="pav" style="background:#6B6B9A">MR</div><div><div class="pn">Pastor Mike Reyes</div><div class="pr">Lead Pastor / Final Approver</div><span class="pb sec">Secondary — Step 5</span></div></div>
+      <hr class="pdiv">
+      <div class="pbdy">Reviews rescreen result when Sarah routes it to him. Confirms the volunteer can continue serving.</div>
+      <div class="pjtbd"><p>→ Confirm that recurring volunteers still meet safety standards before the rescreen result ages out.</p></div>
+    </div>
+  </div>
+</div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">Recognise rescreen need</span><span class="su">/user/background-checks dashboard</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Filter to rescreen queue</span><span class="su">/user/background-checks</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Open applicant profile</span><span class="su">/user/applicant-profile/{id}?origin=BGCheck</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Select order type &amp; configure</span><span class="su">/user/order/Invite</span></td>
+  <td class="cc"><span class="sn">5.</span><span class="st">Assess result</span><span class="su">/user/report-results/ (Edit Assessment modal)</span></td>
+  <td class="cc"><span class="sn">6.</span><span class="st">Send &amp; confirm</span><span class="su">/user/order/Invite → dashboard</span></td>
+</tr>
+
+<tr class="rPrs">
+  <td class="lc"><div class="li"><span class="licon">👥</span><span class="ltxt">Personas</span></div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+  <td class="cc"><div class="psr">Pastor Mike</div></td>
+  <td class="cc"><div class="psr">Sarah</div></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">User Actions</span></div></td>
+  <td class="cc">Sees 'Due for Rescreen: N' tile on the dashboard. Notes the count. Has no system-generated notification that brought her here — she checks proactively or spots it by chance.</td>
+  <td class="cc">Clicks 'View' on the Due for Rescreen tile. Reviews the filtered list. No sort order by urgency, no days-overdue indicator, no department filter on this view.</td>
+  <td class="cc">Clicks an applicant name. Profile opens with a 'Due for Rescreen' badge and an 'Order Background Check' button. Prior check visible in history.</td>
+  <td class="cc">Clicks 'Order Background Check' dropdown. Chooses Invite Order. Invite wizard opens with applicant pre-filled. Package is not pre-filled from prior check — Sarah must re-select manually. Sets billing and email template.</td>
+  <td class="cc">When result returns, Mike opens the same 'Report Results' modal as the initial order flow. Same pain points: no required note on Escalate, no prior assessment visible.</td>
+  <td class="cc">Reviews order summary. Reads FCRA certification. Sends invite. Applicant moves to Sent status. Sarah continues through the queue one by one.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">Sarah notices 107 applicants flagged. She has no way to know which of those are critical versus routine.</td>
+  <td class="cc">She scans the list, looking for familiar names from the children's ministry to prioritise. There is no sort by overdue date.</td>
+  <td class="cc">She opens the first profile. Confirms the interval is 1 year, set in account settings.</td>
+  <td class="cc">She re-enters the wizard. Package is blank. She picks the same one as last time from memory.</td>
+  <td class="cc">Result comes back two weeks later. Mike reviews it using the same unclear modal he used the first time.</td>
+  <td class="cc">Sarah works through the queue one by one. 107 applicants means 107 separate wizard runs. There is no bulk path.</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😕</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep1">😕</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep2">😐</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc">No proactive notification sent to Sarah or the applicant approaching the rescreen date. Discovery is reactive.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Invite email sent to applicant. Same email as initial order flow.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">Rescreen interval checked against last order date from account-level setting. Records matching interval flagged globally — not per role or department.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Profile loaded with check history. No due-date calculation shown. No days-overdue indicator.</td>
+  <td class="cc">Wizard opens with applicant pre-filled. Package not inferred from prior check. New order record created on commit.</td>
+  <td class="cc">Same assessment flow as initial order. No reference to prior check outcomes in the modal.</td>
+  <td class="cc">Invite email sent. Status set to Sent. No bulk operation available — each must be processed individually.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc">Coordinators call to ask why the rescreen queue is large and how to work through it efficiently.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Questions about whether the prior package should be reused for the rescreen or whether a different level applies.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Rescreen count may surface in the embedded dashboard tile in the host ChMS. Prior check outcome visible on person record in host. No proactive notification from host.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Results written back to host person record on check completion.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Same as initial order once rescreen invite is placed. No continuous monitoring between rescreens.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rPain">
+  <td class="lc"><div class="li"><span class="licon">😤</span><span class="ltxt">Pain Points</span></div></td>
+  <td class="cc">No proactive notification. Sarah discovers the queue reactively. Less than 10% of PMM customers actively rescreen — the product architecture is a direct contributor to this adoption gap.</td>
+  <td class="cc">Due-for-rescreen queue shows a list with no sort by urgency, no days-overdue indicator, no department filter. With 107 applicants, Sarah cannot prioritise without manual cross-referencing.</td>
+  <td class="cc">Profile shows 'Due for Rescreen' badge but does not show the actual due date, how many days overdue, or the prior check type and date in a clear summary.</td>
+  <td class="cc">Package is not pre-filled from prior check. Sarah must remember or look up what level was used last time. One rescreen at a time — no bulk path. Each requires a full wizard run.</td>
+  <td class="cc">Assessment modal on rescreen result shows no reference to prior check outcomes. No way to compare new result to last cleared check. Same unclear modal title and missing required note on Escalate.</td>
+  <td class="cc">No continuous monitoring between rescreens. If a volunteer's record changes between their annual checks, PMM does not know. 107 sequential wizard runs is the only available path.</td>
+</tr>
+
+<tr class="rHmw">
+  <td class="lc"><div class="li"><span class="licon">💭</span><span class="ltxt">How Might We</span></div></td>
+  <td class="cc">How might we notify Sarah proactively when checks are approaching expiry, before they become a compliance gap?</td>
+  <td class="cc">How might we make the rescreen queue prioritised and filterable so Sarah can work through it systematically by urgency and department?</td>
+  <td class="cc">How might we surface the prior check type and date clearly so Sarah can re-order the right level without relying on memory?</td>
+  <td class="cc">How might we enable bulk rescreen so Sarah can process 107 applicants in a single session rather than 107 sequential wizard runs?</td>
+  <td class="cc">How might we show prior assessment outcomes alongside the new result so Mike can compare directly in the modal?</td>
+  <td class="cc">How might we offer continuous monitoring between full rescreens so PMM knows about record changes before the next annual check is even triggered?</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end rescreen current -->
+
+<!-- RESCREEN VISION -->
+<div class="mv vis">
+<div class="prio">
+  <div class="prio-hd">Phase 2 priority improvement areas — Rescreen</div>
+  <div class="prc"><h5>Rescreening adoption gap</h5><div class="prb">Current: less than 10% of PMM customers actively rescreen. Reactive discovery, one-at-a-time wizard, level re-selected from memory.</div><div class="prh">Why highest impact: the product architecture is the primary barrier to a safety-critical practice the product is supposed to enable.</div></div>
+  <div class="prc"><h5>Bulk ordering</h5><div class="prb">Current: 107 applicants due for rescreen requires 107 separate wizard runs. No bulk path exists.</div><div class="prh">Why highest impact: removes the single biggest friction point in the rescreen workflow. Pre-filled levels remove the second biggest.</div></div>
+  <div class="prc"><h5>Proactive notification</h5><div class="prb">Current: Sarah discovers the queue by checking proactively. No system-generated alert before checks expire.</div><div class="prh">Why highest impact: reactive discovery means rescreens are initiated late or not at all. Proactive notification shifts the default from reactive to systematic.</div></div>
+</div>
+<div class="sb">
+  <div class="sc blue"><h4>What changes</h4><p>Proactive notification before checks expire. Named queue sorted by urgency, filterable by department. Bulk selection and batch reorder in one session. Package pre-filled from last cleared check.</p></div>
+  <div class="sc green"><h4>Adoption gap addressed</h4><p>Less than 10% of churches actively rescreen today. The main barrier is effort: discovering who is due, ordering one by one, re-selecting the same level from memory. Bulk ordering with pre-filled levels removes most of that friction.</p></div>
+  <div class="sc amber"><h4>Interval configuration</h4><p>Rescreen interval configurable per role or department (1yr / 2yr / 3yr), not just a single global account setting. Due dates recalculate automatically when a new check clears.</p></div>
+</div>
+<div class="tn-note"><div class="tni">Phase 2 changes addressed: rescreening workflow (PMM-038), screening health indicator (part of PMM-002), bulk order pattern (part of PMM-033), per-role interval configuration.</div></div>
+<div class="tw"><table class="jt"><tbody>
+
+<tr class="rStp">
+  <td class="lc"><div class="li"><span class="licon">📋</span><span class="ltxt">Steps</span></div></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">Notification &amp; queue</span><span class="su">Dashboard / notification</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Prioritised rescreen queue</span><span class="su">/screenings (health: due-for-rescreen)</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Bulk select &amp; configure</span><span class="su">Rescreen wizard</span></td>
+  <td class="cc"><span class="sn">4.</span><span class="st">Cases opened, invites sent</span><span class="su">Rescreen wizard → /screenings</span></td>
+</tr>
+
+<tr class="rUsr">
+  <td class="lc"><div class="li"><span class="licon">🧑</span><span class="ltxt">Admin Experience</span></div></td>
+  <td class="cc">Sarah receives an in-app notification (and configurable email) when people in her org units reach the due-for-rescreen threshold. Dashboard 'Screening health' tile shows a named list, not just a count. She does not need to check proactively.</td>
+  <td class="cc">Due-for-rescreen queue is a filtered view of the main Screenings table. Sorted by most overdue by default. Each row shows: person name, department, last check date, days overdue, last level used. Filterable by department. Bulk selection checkbox on each row. 'Select all in Children's Ministry' affordance.</td>
+  <td class="cc">Selects the batch she wants to process. Rescreen wizard opens with all selected people listed. System pre-fills screening level from each person's last cleared check. Sarah reviews and adjusts per person if needed. Approval gate and expiry inherited from department defaults but overridable. One confirm for the whole batch.</td>
+  <td class="cc">Cases opened for all selected people. Invites sent in one batch. Table updates with new cases highlighted. Due-for-rescreen queue clears those people. When new checks clear, due dates recalculate automatically based on role-level interval configuration. No manual spreadsheet tracking required.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🖥</span><span class="ltxt">Screens</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎬</span><span class="ltxt">Storyboard</span></div></td>
+  <td class="cc">A notification badge appears: '12 rescreens due in Children's Ministry.' Sarah didn't check proactively. The product told her.</td>
+  <td class="cc">She filters by due-for-rescreen. Rows sorted by days overdue. She checks all 12 Children's Ministry rows in one click. Days overdue and last level visible per row.</td>
+  <td class="cc">The rescreen wizard opens with 12 people. Each row shows their last level — pre-filled to Enhanced. She adjusts two, leaves ten as-is. One Confirm.</td>
+  <td class="cc">12 invites sent. The queue clears those names. Due dates recalculate forward automatically. No spreadsheet tracking needed.</td>
+</tr>
+
+<tr class="rEmo">
+  <td class="lc"><div class="li"><span class="licon">❤️</span><span class="ltxt">Emotions</span></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">🙂</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep3">😊</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep4">😊</div></div></td>
+  <td class="cc" style="padding:4px 12px"><div class="et"><div class="el"><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div><div class="eline"></div></div><div class="em ep4">😊</div></div></td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">📧</span><span class="ltxt">Communications</span></div></td>
+  <td class="cc">In-app notification and configurable email when due-for-rescreen threshold is reached. Sarah does not need to check proactively.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Batch invite emails sent to all selected applicants in one dispatch. Same [org_name]@protectmyministry.net sender with working logo. Admin confirmation email includes batch summary: count, levels, expiry dates.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⚙️</span><span class="ltxt">Backend</span></div></td>
+  <td class="cc">Rescreen due date calculated per person based on role-level interval configuration (1yr / 2yr / 3yr), not a single global account setting. Notification triggered when due date minus configured lead time is reached.</td>
+  <td class="cc">Due-for-rescreen queue is a filtered view of the Screenings table using the screening health indicator field. No separate queue endpoint — same table, filtered by health status.</td>
+  <td class="cc">Rescreen wizard accepts a batch of person IDs. Pre-fills screening level from most recent cleared case per person. Overrides stored per-person in the wizard before commit.</td>
+  <td class="cc">Batch order created on confirm. One order record per person. Invite dispatch batched. Due dates recalculate on cleared outcome per person. No manual tracking write required.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🎧</span><span class="ltxt">Support</span></div></td>
+  <td class="cc">Proactive notification eliminates reactive-discovery support contacts about large rescreen queues.</td>
+  <td class="cc">Days-overdue and last level visible per row — eliminates 'which ones are most urgent' and 'what level did I use last time' contacts.</td>
+  <td class="cc">Pre-filled levels eliminate 'should I use the same package for a rescreen' support contacts.</td>
+  <td class="cc">Auto-recalculating due dates eliminate post-rescreen 'how do I update the due date' contacts.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">⛪</span><span class="ltxt">ChMS Host</span></div></td>
+  <td class="cc">Notification visible in embedded dashboard within host ChMS if embedded. Host person record reflects screening health indicator on sync.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">On batch confirm, new cases created in PMM and lifecycle status written back to all host person records. Screening health indicator updated in host on check completion.</td>
+</tr>
+
+<tr class="rSec">
+  <td class="lc"><div class="li"><span class="licon">🔍</span><span class="ltxt">Digital Delve</span></div></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Receives batch order. Generates person-bound registration URLs for all. Sends invite emails in one batch. Returns reports to PMM individually as each completes.</td>
+</tr>
+
+<tr class="rChg">
+  <td class="lc"><div class="li"><span class="licon">✅</span><span class="ltxt">What Changes</span></div></td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Proactive notification replaces reactive discovery. Named queue in dashboard, not just a count. Sarah knows who needs attention before it becomes a gap.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Queue sorted by most overdue. Department filter. Days-overdue and last level visible per row. Sarah can prioritise Children's Ministry first without manual cross-referencing.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Bulk selection: 107 applicants processed in one wizard run, not 107 sequential runs. Screening level pre-filled from last cleared check. One confirm for the whole batch.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Due dates recalculate automatically on cleared outcomes. Rescreen queue self-maintains. No spreadsheet tracking. Interval configurable per role or department, not just globally.</td>
+</tr>
+
+</tbody></table></div>
+</div><!-- end rescreen vision -->
+</div><!-- end rescreen flow -->
+
+<script>
+function showFlow(id, btn) {
+  document.querySelectorAll('.fp').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setMode(mode, btn) {
+  document.querySelectorAll('.mbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mv').forEach(v => v.classList.remove('visible'));
+  document.querySelectorAll('.mv.' + mode).forEach(v => v.classList.add('visible'));
+}
+</script>
+</body>
+</html>
