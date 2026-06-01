@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Oak — Platform Experience</title>
+<style>
+:root {
+  --bg: #FFFFFF;
+  --sb-bg: #F7F7F5;
+  --sb-hover: #EBEBEA;
+  --sb-active: #E3E2E0;
+  --border: #E9E9E8;
+  --border-dark: #D3D1CB;
+  --text: #37352F;
+  --text2: #73726E;
+  --text3: #B0AFAB;
+  --blue: #2383E2;
+  --blue-bg: #EEF4FD;
+  --blue-border: #C8DCF7;
+  --red: #E03E3E;
+  --red-bg: #FBE4E4;
+  --red-border: #F5C6C6;
+  --amber: #B45309;
+  --amber-bg: #FEF3C7;
+  --amber-border: #FCD34D;
+  --green: #0F7B6C;
+  --green-bg: #DDEDEA;
+  --green-border: #A7D7D0;
+  --purple: #6D4CC8;
+  --purple-bg: #EDE9FD;
+  --purple-border: #C4B5FD;
+  --grey-bg: #F1F1EF;
+  --sidebar: 220px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* ─── LAYOUT ────────────────────────────────────────────── */
+.layout { display: flex; height: 100vh; }
+
+/* ─── SIDEBAR ───────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar);
+  flex-shrink: 0;
+  background: var(--sb-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.workspace {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 16px 12px 13px;
+  border-bottom: 1px solid var(--border);
+}
+
+.workspace-icon {
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.workspace-icon svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: white;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workspace-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.nav-section { padding: 14px 8px 6px; }
+
+.nav-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 8px 6px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 5px;
+  text-align: left;
+  line-height: 1.4;
+  transition: background 0.1s;
+}
+.nav-btn:hover { background: var(--sb-hover); }
+.nav-btn.active { background: var(--sb-active); font-weight: 500; }
+
+.nav-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--text2);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 14px;
+  font-size: 11px;
+  color: var(--text3);
+  border-top: 1px solid var(--border);
+}
+
+/* ─── MAIN ──────────────────────────────────────────────── */
+.main { flex: 1; overflow-y: auto; background: var(--bg); }
+.section { display: none; min-height: 100%; }
+.section.active { display: block; }
+
+/* ─── COVER ─────────────────────────────────────────────── */
+.cover-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 72px 48px 80px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  margin-bottom: 28px;
+}
+.eyebrow svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--text3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cover-title {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 22px;
+  color: var(--text);
+}
+.cover-subtitle-inline {
+  display: block;
+  font-size: 0.55em;
+  font-weight: 400;
+  color: var(--text2);
+  margin-top: 8px;
+  letter-spacing: -0.01em;
+}
+
+.cover-para {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.7;
+  max-width: 540px;
+  margin-bottom: 32px;
+}
+
+.meta-block {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.meta-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text3);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.meta-label svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: var(--text3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.meta-value {
+  color: var(--text);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+.in-this-doc-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  margin-bottom: 14px;
+}
+
+.doc-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+.doc-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  transition: background 0.12s;
+  background: var(--bg);
+}
+.doc-card:hover { background: var(--sb-bg); }
+.doc-card-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin-bottom: 10px;
+  fill: none;
+  stroke: var(--text2);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.doc-card-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.doc-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+.doc-card-desc {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+/* ─── PAGE HEADER ───────────────────────────────────────── */
+.page-header {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 28px 14px;
+  z-index: 10;
+}
+.page-header h1 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.page-header p {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 3px;
+}
+
+.section-content { padding: 28px; max-width: 780px; }
+.section-intro { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.7; }
+
+/* ─── CALLOUTS ──────────────────────────────────────────── */
+.callout {
+  background: var(--sb-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-dark);
+  border-radius: 6px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin: 16px 0;
+}
+.callout.blue   { background: var(--blue-bg);   border-color: var(--blue-border);   border-left-color: var(--blue);   color: var(--text); }
+.callout.green  { background: var(--green-bg);  border-color: var(--green-border);  border-left-color: var(--green);  color: var(--text); }
+.callout.amber  { background: var(--amber-bg);  border-color: var(--amber-border);  border-left-color: var(--amber);  color: var(--text); }
+.callout.red    { background: var(--red-bg);    border-color: var(--red-border);    border-left-color: var(--red);    color: var(--text); }
+.callout.purple { background: var(--purple-bg); border-color: var(--purple-border); border-left-color: var(--purple); color: var(--text); }
+
+/* ─── TYPOGRAPHY ────────────────────────────────────────── */
+h2 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 28px 0 12px;
+  color: var(--text);
+}
+.h3-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 22px 0 10px;
+}
+p { font-size: 14px; margin-bottom: 12px; color: var(--text); }
+ul, ol { padding-left: 20px; margin: 6px 0 14px; }
+li { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 3px; }
+.led-by { font-size: 13px; color: var(--text2); font-style: italic; margin-bottom: 12px; }
+
+/* ─── TABLES ────────────────────────────────────────────── */
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: var(--text); }
+thead th {
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 10px 16px;
+  text-align: left;
+}
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover td { background: var(--sb-bg); }
+tbody td { padding: 11px 16px; vertical-align: top; line-height: 1.6; color: var(--text); }
+tbody tr.amber-row td { background: #FFFBEB; }
+tbody tr.amber-row:hover td { background: #FEF3C7; }
+td.metric-label { font-weight: 600; }
+
+/* ─── TRACK CARDS ───────────────────────────────────────── */
+.track-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 20px 0;
+}
+.track-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+}
+.track-card.purple { border-top: 3px solid var(--purple); }
+.track-card.blue   { border-top: 3px solid var(--blue); }
+.track-card.green  { border-top: 3px solid var(--green); }
+.track-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.track-card-lead  { font-size: 11px; color: var(--text3); font-style: italic; margin-bottom: 10px; line-height: 1.5; }
+.track-card-body  { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* ─── ROLE CARDS ────────────────────────────────────────── */
+.role-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 20px 0;
+}
+.role-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+}
+.role-number { font-size: 28px; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: 10px; }
+.role-title  { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.role-desc   { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* ─── RETURN GRID ───────────────────────────────────────── */
+.return-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0;
+}
+.return-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.return-num  { font-size: 20px; font-weight: 700; color: var(--blue); line-height: 1; flex-shrink: 0; min-width: 20px; }
+.return-text { font-size: 13px; color: var(--text); line-height: 1.55; }
+
+/* ─── TAGS ──────────────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.tag.green  { background: var(--green-bg);  color: var(--green);  }
+.tag.blue   { background: var(--blue-bg);   color: var(--blue);   }
+.tag.amber  { background: var(--amber-bg);  color: var(--amber);  }
+.tag.purple { background: var(--purple-bg); color: var(--purple); }
+
+.stop-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  background: var(--amber-bg);
+  color: var(--amber);
+  border: 1px solid var(--amber-border);
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ─── STEP CARDS (Execution Plan) ──────────────────────── */
+.step-cards { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+
+.step-card {
+  display: flex;
+  gap: 22px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  align-items: flex-start;
+}
+.step-card.parallel {
+  background: var(--sb-bg);
+  border-style: dashed;
+}
+
+.step-num {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--blue);
+  opacity: 0.18;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 46px;
+  letter-spacing: -0.04em;
+  padding-top: 2px;
+}
+.step-card.parallel .step-num {
+  opacity: 0.12;
+  color: var(--text);
+}
+
+.step-body { flex: 1; }
+.step-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.step-led   { font-size: 12px; color: var(--text3); font-style: italic; margin-bottom: 12px; }
+.step-body p { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+.step-body li { font-size: 13px; }
+
+/* ─── PHASE ARC ─────────────────────────────────────────── */
+.phase-arc {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0 24px;
+}
+.phase-arc-item {
+  flex: 1;
+  padding: 9px 10px 8px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.phase-arc-item:last-child { border-right: none; }
+.phase-arc-item.build { flex: 3; }
+.arc-month { font-size: 10px; color: var(--text3); font-weight: 500; display: block; }
+.arc-phase { font-size: 11px; font-weight: 700; display: block; margin-top: 2px; letter-spacing: 0.01em; }
+
+.phase-arc-item.foundation { background: color-mix(in srgb, var(--purple-bg) 60%, white); }
+.phase-arc-item.foundation .arc-phase { color: var(--purple); }
+.phase-arc-item.build      { background: color-mix(in srgb, var(--blue-bg) 60%, white); }
+.phase-arc-item.build      .arc-phase { color: var(--blue); }
+.phase-arc-item.integration { background: color-mix(in srgb, var(--green-bg) 60%, white); }
+.phase-arc-item.integration .arc-phase { color: var(--green); }
+.phase-arc-item.qa         { background: color-mix(in srgb, var(--amber-bg) 60%, white); }
+.phase-arc-item.qa         .arc-phase { color: var(--amber); }
+.phase-arc-item.uat        { background: var(--sb-bg); }
+.phase-arc-item.uat        .arc-phase { color: var(--text2); }
+.phase-arc-item.launch     { background: color-mix(in srgb, var(--green-bg) 60%, white); }
+.phase-arc-item.launch     .arc-phase { color: var(--green); }
+
+/* Phase badge in table month cell */
+.phase-badge {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-top: 4px;
+}
+.phase-badge.foundation { color: var(--purple); }
+.phase-badge.build      { color: var(--blue); }
+.phase-badge.integration { color: var(--green); }
+.phase-badge.qa         { color: var(--amber); }
+.phase-badge.uat        { color: var(--text2); }
+.phase-badge.launch     { color: var(--green); }
+
+/* Section divider within execution plan */
+.inner-divider {
+  border: none;
+  border-top: 2px solid var(--border);
+  margin: 40px 0 32px;
+}
+
+/* ─── MISC ──────────────────────────────────────────────── */
+.metrics-footer {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.bold-line { font-weight: 600; color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     SVG ICON SPRITE
+════════════════════════════════════════════════════ -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Oak leaf — workspace icon -->
+  <symbol id="icon-oak-leaf" viewBox="0 0 24 24">
+    <path d="M12 21
+             C10 20 7 18 7 16
+             C5 15 4 13 6 12
+             C4 10 5 8 7 8
+             C7 6 9 5 11 6
+             C11 3 13 3 13 6
+             C15 5 17 6 17 8
+             C19 8 20 10 18 12
+             C20 13 19 15 17 16
+             C17 18 14 20 12 21Z"/>
+    <line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="12" y1="15" x2="12" y2="10"/>
+  </symbol>
+
+  <symbol id="icon-home" viewBox="0 0 24 24">
+    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </symbol>
+  <symbol id="icon-trending-up" viewBox="0 0 24 24">
+    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+    <polyline points="16 7 22 7 22 13"/>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+    <polyline points="2 17 12 22 22 17"/>
+    <polyline points="2 12 12 17 22 12"/>
+  </symbol>
+  <symbol id="icon-calendar" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </symbol>
+  <symbol id="icon-folder" viewBox="0 0 24 24">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+  </symbol>
+  <symbol id="icon-package" viewBox="0 0 24 24">
+    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/>
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+    <line x1="12" y1="22.08" x2="12" y2="12"/>
+  </symbol>
+  <symbol id="icon-map" viewBox="0 0 24 24">
+    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+    <line x1="8" y1="2" x2="8" y2="18"/>
+    <line x1="16" y1="6" x2="16" y2="22"/>
+  </symbol>
+  <symbol id="icon-settings" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </symbol>
+  <symbol id="icon-bar-chart" viewBox="0 0 24 24">
+    <line x1="18" y1="20" x2="18" y2="10"/>
+    <line x1="12" y1="20" x2="12" y2="4"/>
+    <line x1="6" y1="20" x2="6" y2="14"/>
+  </symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </symbol>
+  <symbol id="icon-tag" viewBox="0 0 24 24">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+    <line x1="7" y1="7" x2="7.01" y2="7"/>
+  </symbol>
+  <symbol id="icon-refresh" viewBox="0 0 24 24">
+    <polyline points="23 4 23 10 17 10"/>
+    <polyline points="1 20 1 14 7 14"/>
+    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+  </symbol>
+  <symbol id="icon-activity" viewBox="0 0 24 24">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  </symbol>
+</svg>
+
+<!-- ═══════════════════════════════════════════════════
+     LAYOUT
+════════════════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="workspace">
+      <div class="workspace-icon">
+        <svg viewBox="0 0 24 24"><use href="#icon-oak-leaf"/></svg>
+      </div>
+      <span class="workspace-name">Project Oak</span>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-group-label">Document</div>
+      <button class="nav-btn active" data-target="cover">
+        <svg viewBox="0 0 24 24"><use href="#icon-home"/></svg>
+        Home
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-group-label">Strategy</div>
+      <button class="nav-btn" data-target="business-case">
+        <svg viewBox="0 0 24 24"><use href="#icon-trending-up"/></svg>
+        Business Case
+      </button>
+      <button class="nav-btn" data-target="three-tracks">
+        <svg viewBox="0 0 24 24"><use href="#icon-layers"/></svg>
+        Three Tracks
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-group-label">Execution</div>
+      <button class="nav-btn" data-target="what-ships">
+        <svg viewBox="0 0 24 24"><use href="#icon-package"/></svg>
+        What Ships
+      </button>
+      <button class="nav-btn" data-target="execution-plan">
+        <svg viewBox="0 0 24 24"><use href="#icon-map"/></svg>
+        Execution Plan
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-group-label">Foundation</div>
+      <button class="nav-btn" data-target="whats-required">
+        <svg viewBox="0 0 24 24"><use href="#icon-settings"/></svg>
+        What's Required
+      </button>
+      <button class="nav-btn" data-target="how-we-measure-it">
+        <svg viewBox="0 0 24 24"><use href="#icon-bar-chart"/></svg>
+        How We Measure It
+      </button>
+    </div>
+
+    <div class="sidebar-footer">Platform Experience · Ministry Brands · 2026</div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main-content">
+
+    <!-- ─── COVER ──────────────────────────────────────── -->
+    <div id="cover" class="section active">
+      <div class="cover-content">
+
+        <div class="eyebrow">
+          <svg viewBox="0 0 24 24" width="14" height="14"><use href="#icon-folder"/></svg>
+          Horizon MMB
+        </div>
+
+        <h1 class="cover-title">
+          Project Oak
+          <span class="cover-subtitle-inline">(Platform Experience: February Launch)</span>
+        </h1>
+
+        <p class="cover-para">The business case and execution plan for a successful Rebrand launch in February, built on a scalable design system foundation, with the most pressing usability and experience problems across the product tackled in parallel.</p>
+
+        <div class="meta-block">
+          <div class="meta-label">
+            <svg viewBox="0 0 24 24"><use href="#icon-tag"/></svg>
+            Initiative
+          </div>
+          <div class="meta-value">Project Oak: Ministry Brands Experience Unification &amp; Rebrand</div>
+
+          <div class="meta-label">
+            <svg viewBox="0 0 24 24"><use href="#icon-user"/></svg>
+            Owner
+          </div>
+          <div class="meta-value">Experience Design, Ministry Brands</div>
+
+          <div class="meta-label">
+            <svg viewBox="0 0 24 24"><use href="#icon-activity"/></svg>
+            Phase
+          </div>
+          <div class="meta-value">Business case and programme plan, May 2026</div>
+
+          <div class="meta-label">
+            <svg viewBox="0 0 24 24"><use href="#icon-refresh"/></svg>
+            Updated
+          </div>
+          <div class="meta-value">May 2026</div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="in-this-doc-label">In this document</div>
+        <div class="doc-cards">
+          <div class="doc-card" data-target="business-case">
+            <svg class="doc-card-icon" viewBox="0 0 24 24"><use href="#icon-trending-up"/></svg>
+            <div class="doc-card-label">Strategy</div>
+            <div class="doc-card-title">Business Case</div>
+            <div class="doc-card-desc">Why this matters now and the return on investment.</div>
+          </div>
+          <div class="doc-card" data-target="three-tracks">
+            <svg class="doc-card-icon" viewBox="0 0 24 24"><use href="#icon-layers"/></svg>
+            <div class="doc-card-label">Programme</div>
+            <div class="doc-card-title">Three Tracks</div>
+            <div class="doc-card-desc">Design system, rebrand, and UX improvements running in parallel.</div>
+          </div>
+          <div class="doc-card" data-target="execution-plan">
+            <svg class="doc-card-icon" viewBox="0 0 24 24"><use href="#icon-map"/></svg>
+            <div class="doc-card-label">Execution</div>
+            <div class="doc-card-title">Execution Plan</div>
+            <div class="doc-card-desc">First 30 days, then June through February month by month.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── BUSINESS CASE ──────────────────────────────── -->
+    <div id="business-case" class="section">
+      <div class="page-header">
+        <h1>Business Case</h1>
+        <p>Why this investment is a revenue protection and valuation lever</p>
+      </div>
+      <div class="section-content">
+
+        <div class="callout blue">"The next seven months are about consolidation, focus, and building the foundation that makes NewCo scalable at speed."</div>
+
+        <h2>The return</h2>
+        <div class="return-grid">
+          <div class="return-item">
+            <div class="return-num">1</div>
+            <div class="return-text">ARR protection</div>
+          </div>
+          <div class="return-item">
+            <div class="return-num">2</div>
+            <div class="return-text">Directly reduces engineering cost per feature</div>
+          </div>
+          <div class="return-item">
+            <div class="return-num">3</div>
+            <div class="return-text">Margins improvement through reduced support, design and engineering waste</div>
+          </div>
+          <div class="return-item">
+            <div class="return-num">4</div>
+            <div class="return-text">Stronger competitive position in customer acquisition</div>
+          </div>
+          <div class="return-item">
+            <div class="return-num">5</div>
+            <div class="return-text">Improvement of NRR as module adoption increases</div>
+          </div>
+          <div class="return-item">
+            <div class="return-num">6</div>
+            <div class="return-text">Platform positioned for a higher revenue multiple. At exit, a product with a governed design system, measurable experience quality improvements, and strong NRR commands a meaningfully higher revenue multiple than a fragmented one.</div>
+          </div>
+        </div>
+
+        <h2>Why this matters now</h2>
+
+        <p>The February rebrand is a market moment. For it to land as a product transformation, the experience underneath the new brand has to hold together.</p>
+        <p>Right now it does not. The product is fragmented across modules, every team builds independently, patterns are inconsistent, handoffs are heavy and lossy.</p>
+        <p>Without a shared foundation, the rebrand ships as a coat of paint over a fragmented product. The promise breaks the moment users start clicking and the market moment is wasted.</p>
+        <p>Project Oak builds that foundation. It is a platform infrastructure investment with a measurable business return.</p>
+
+        <h2>Product experience fragmentation is costing us in three measurable ways</h2>
+        <ol>
+          <li>Support ticket volume</li>
+          <li>Engineering duplicate, wasted, and rework cost</li>
+          <li>NRR pressure from customers who adopt fewer modules because the experience does not make expansion feel worth it</li>
+        </ol>
+
+        <div class="callout amber">"The investment is three permanent roles, a tooling upgrade, and activation of existing Value Labs resource. The cost of not investing is compounding fragmentation with every sprint."</div>
+
+        <p class="bold-line">This is a revenue protection and valuation lever.</p>
+
+      </div>
+    </div>
+
+    <!-- ─── THREE TRACKS ───────────────────────────────── -->
+    <div id="three-tracks" class="section">
+      <div class="page-header">
+        <h1>Three Tracks</h1>
+        <p>One programme, running in parallel</p>
+      </div>
+      <div class="section-content">
+
+        <p class="section-intro">Three parallel tracks. One programme. Each depends on the others. Track 1 is the engine that makes tracks 2 and 3 possible.</p>
+
+        <div class="track-cards">
+          <div class="track-card purple">
+            <div class="track-card-title">Track 1: Design System Foundation: Pathway</div>
+            <div class="track-card-lead">Led by: Experience Design Director, Principal Experience Designer, Principal Design System Engineer</div>
+            <div class="track-card-body">The shared component library, token architecture, and governed pipeline that makes the rebrand deployable at scale and gives every tribe a consistent foundation to build from. This is the engine that powers tracks 2 and 3. Without it, both fail.</div>
+          </div>
+          <div class="track-card blue">
+            <div class="track-card-title">Track 2: Rebrand Integration</div>
+            <div class="track-card-lead">Led by: Experience Design Director, Principal Experience Designer, Principal Design System Engineer</div>
+            <div class="track-card-body">The new brand visual language applied consistently across every module through the Pathway token architecture. Because the tokens propagate everywhere from a single source, the rebrand is a coordinated deployment, not a six-month module-by-module rollout. Track 1 makes this possible.</div>
+          </div>
+          <div class="track-card green">
+            <div class="track-card-title">Track 3: Highest Friction UX Improvements</div>
+            <div class="track-card-lead">Led by: Experience Design Director, Director of Product Management</div>
+            <div class="track-card-body">Every product tribe works in parallel with the design system team to identify, prioritise, and tackle the most pressing usability and experience friction points across their flows. The components tribes need most get built first. The result is a product that not only looks different in February but works meaningfully better.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── WHAT SHIPS ─────────────────────────────────── -->
+    <div id="what-ships" class="section">
+      <div class="page-header">
+        <h1>What Ships by February</h1>
+        <p>Working backwards from a February production launch</p>
+      </div>
+      <div class="section-content">
+
+        <p class="section-intro">The following ships alongside the rebrand, provided the programme is resourced and the parallel tracks are activated immediately.</p>
+
+        <div class="h3-label">Navigation</div>
+        <ul>
+          <li>Global navigation shell unified across all modules</li>
+          <li>Module switcher and org switcher revamped</li>
+          <li>Consistent navigation behaviour and state across the product</li>
+        </ul>
+
+        <div class="h3-label">Search</div>
+        <ul>
+          <li>Basic, filtered, and advanced filtered search unified</li>
+          <li>Consistent search and select patterns across all modules</li>
+        </ul>
+
+        <div class="h3-label">Core Tokens</div>
+        <ul>
+          <li>New brand colour, typography, and spacing tokens applied consistently across the product</li>
+          <li>The rebrand landing coherently across every module simultaneously</li>
+          <li>All tribes responsible for grooming their existing screens to align with new brand tokens</li>
+        </ul>
+
+        <div class="h3-label">Core Components</div>
+        <ul>
+          <li>Buttons, inputs, checkboxes, radio buttons, dropdowns, selects, filter chips, badges, tooltips</li>
+          <li>Modals and modal flows</li>
+          <li>KPI tiles, cards, steppers, settings controls</li>
+        </ul>
+
+        <div class="h3-label">Tables and Table Controls</div>
+        <ul>
+          <li>Standard table with sorting, filtering, bulk actions, row actions, empty states</li>
+          <li>Table controls and toolbar patterns</li>
+        </ul>
+
+        <div class="h3-label">Dashboard</div>
+        <ul>
+          <li>Module Dashboard component set and Page template: Page Headings, Section Headings, KPI Tiles, Widgets</li>
+          <li>Dashboard card and KPI tile patterns standardised</li>
+        </ul>
+
+        <div class="h3-label">Highest Friction Flows (sequenced from tribe diagnostics)</div>
+        <ul>
+          <li>Top three highest friction, highest impact UX improvements per module: contained, specific, high-visibility fixes delivered by tribes in parallel, not entire flow redesigns</li>
+          <li>Components that currently diverge the most across modules are prioritised in the design system build</li>
+        </ul>
+
+        <div class="h3-label">Empty and Error States</div>
+        <ul>
+          <li>Applied consistently across new components and highest traffic flows</li>
+        </ul>
+
+        <div class="h3-label" style="margin-top:32px;">What does not make February</div>
+        <div class="callout">
+          The following are real and necessary but require the February foundation to exist first. They form the post-launch roadmap.
+          <ul style="margin-top:10px;">
+            <li>Core Flows system templates: permissions, profiles, account settings, user management, sign in</li>
+            <li>Mobile first optimisation for relevant flows and modules</li>
+            <li>Full WCAG 2.1 AA compliance across the entire product (full compliance only on components delivered by February)</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── EXECUTION PLAN (First 30 Days + Month by Month) ── -->
+    <div id="execution-plan" class="section">
+      <div class="page-header">
+        <h1>Execution Plan</h1>
+        <p>First 30 days, then month by month through February 2027</p>
+      </div>
+      <div class="section-content">
+
+        <!-- ── FIRST 30 DAYS ── -->
+        <h2 style="margin-top:0;">The First 30 Days</h2>
+        <p class="section-intro" style="margin-bottom:20px;">This is the planning foundation for the entire programme. Everything in the month-by-month plan below is sequenced on what comes out of this phase. Two steps, running in parallel with baseline metrics work.</p>
+
+        <div class="step-cards">
+
+          <div class="step-card">
+            <div class="step-num">01</div>
+            <div class="step-body">
+              <div class="step-title">Tribe diagnostic</div>
+              <div class="step-led">Led by: Experience Design Director, Director of Product Management</div>
+              <p>Every designer and PM across all modules produces a short structured report covering:</p>
+              <ol>
+                <li>The top three core flows in their product with the highest user friction.</li>
+                <li>Their top five UX debt items ranked by impact category and priority.</li>
+                <li>Current data gathered with product ops and the Pendo team: NPS, Time on task, Task Completion Rate, Drop Off Rate, Sentiment metrics across core flows.</li>
+              </ol>
+              <div class="callout green" style="margin-top:12px;">"The output gives the design system team a prioritised map of what components and patterns to build first, and gives each tribe a clear brief for their experience improvement work."</div>
+              <p>This data serves two purposes. First, it informs sequencing: with this data in hand, the design system team can optimise component delivery to support tribes in tackling their highest friction, highest traffic, highest impact areas. Second, it establishes the baseline against which all metrics are measured after the February launch. Right now this data is fragmented and inconsistently instrumented across modules. Getting it into a reliable, shared state is a prerequisite for making smart decisions about where to invest.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">02</div>
+            <div class="step-body">
+              <div class="step-title">Sequencing the build</div>
+              <div class="step-led">Led by: Experience Design Director</div>
+              <p>The outputs from Step 1 feed directly into the design system component build plan and the tribe experience roadmaps. The components tribes need most get built first. The flows with the highest friction get addressed first. Everything is sequenced around maximum impact by February.</p>
+            </div>
+          </div>
+
+          <div class="step-card parallel">
+            <div class="step-num">~</div>
+            <div class="step-body">
+              <div class="step-title">In parallel: Design System Baseline Metrics Benchmarking</div>
+              <div class="step-led">Led by: Principal Experience Designer, Principal Design System Engineer</div>
+              <p>Running concurrently with Steps 1 and 2, the design system team establishes baseline performance metrics for the Pathway system itself. This gives the programme a clear before/after picture on platform efficiency and adoption.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <hr class="inner-divider">
+
+        <!-- ── MONTH BY MONTH ── -->
+        <h2>Month by Month</h2>
+        <p class="section-intro" style="margin-bottom:16px;">Working backwards from a February production launch. The December 1st engineering hard stop is non-negotiable. The programme moves through six distinct phases.</p>
+
+        <!-- Phase arc overview -->
+        <div class="phase-arc">
+          <div class="phase-arc-item foundation">
+            <span class="arc-month">Jun</span>
+            <span class="arc-phase">Foundation</span>
+          </div>
+          <div class="phase-arc-item build">
+            <span class="arc-month">Jul — Sep</span>
+            <span class="arc-phase">Build</span>
+          </div>
+          <div class="phase-arc-item integration">
+            <span class="arc-month">Oct</span>
+            <span class="arc-phase">Integration</span>
+          </div>
+          <div class="phase-arc-item qa">
+            <span class="arc-month">Nov</span>
+            <span class="arc-phase">Hard Stop / QA</span>
+          </div>
+          <div class="phase-arc-item uat">
+            <span class="arc-month">Dec</span>
+            <span class="arc-phase">UAT</span>
+          </div>
+          <div class="phase-arc-item launch">
+            <span class="arc-month">Jan — Feb</span>
+            <span class="arc-phase">Launch</span>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:140px;">Month</th>
+                <th>Work being done</th>
+                <th style="width:210px;">Owner and deliverable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>June</strong>
+                  <span class="phase-badge foundation">Foundation</span>
+                </td>
+                <td>Design system infrastructure setup. Figma plan upgraded. Dedicated engineer onboarded. Value Labs briefed and activated on component spec. Tribe diagnostic: all designers and PMs report top three highest friction flows and top five UX debt items. Pendo data gathering begins with product ops support. Baseline metrics established.</td>
+                <td>Experience Design Director leading. Principal designer and engineer onboarding. Value Labs activated.</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>July</strong>
+                  <span class="phase-badge build">Build</span>
+                </td>
+                <td>First components shipping. Navigation and search in design. Value Labs delivering first component batch: buttons, inputs, checkboxes, radio buttons, filter chips, badges, tooltips. Token architecture cleaned up. Storybook live and documented.</td>
+                <td>Principal designer leading component spec and review. Engineer owning pipeline and Storybook. Value Labs shipping.</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>August</strong>
+                  <span class="phase-badge build">Build</span>
+                </td>
+                <td>Core component build accelerating. Tables, table controls, modals, cards, KPI tiles, steppers, settings controls in build through Value Labs. Navigation design complete and moving to engineering. Dashboard rework in design. Brand token branch started in parallel. Tribe UX improvements begin on top three highest friction items per module.</td>
+                <td>Principal designer reviewing and unblocking. Engineer shipping. Tribes working on UX improvements in parallel.</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>September</strong>
+                  <span class="phase-badge build">Build</span>
+                </td>
+                <td>Component library at critical mass. All core components in Pathway. Brand tokens applied across component library. Dashboard and module switcher complete. Tribes continue highest friction UX improvements. Tribes begin grooming existing screens for brand implementation.</td>
+                <td>Full team in parallel. Tribes grooming brand implementation across their modules.</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>October</strong>
+                  <span class="phase-badge integration">Integration</span>
+                </td>
+                <td>Integration, QA preparation, and brand grooming complete. All modules implementing Pathway components and new brand tokens. Tribe UX improvements finalised. Internal QA begins. All remaining inconsistencies flagged and addressed.</td>
+                <td>Engineer and tribes in integration and QA mode. Director and principal designer reviewing quality bar.</td>
+              </tr>
+              <tr class="amber-row">
+                <td>
+                  <strong>November</strong>
+                  <span class="stop-tag">Engineering hard stop: Dec 1</span>
+                  <span class="phase-badge qa">Hard Stop / QA</span>
+                </td>
+                <td>All engineering work complete by December 1st. No new component work. Focus entirely on QA, UAT preparation, and edge case resolution.</td>
+                <td>Full team in QA and UAT preparation.</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>December</strong>
+                  <span class="phase-badge uat">UAT</span>
+                </td>
+                <td>UAT, QA, and commercialisation. Full user acceptance testing. Marketing and communications preparation. Launch readiness review.</td>
+                <td>Experience Design Director coordinating across design, engineering, and marketing.</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Jan to Feb</strong>
+                  <span class="phase-badge launch">Launch</span>
+                </td>
+                <td>Launch. Pathway and rebrand go live together as one coordinated release.</td>
+                <td>All teams.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── WHAT'S REQUIRED ────────────────────────────── -->
+    <div id="whats-required" class="section">
+      <div class="page-header">
+        <h1>What's Required</h1>
+        <p>To succeed and scale at speed</p>
+      </div>
+      <div class="section-content">
+
+        <h2 style="margin-top:0;">Design System Squad: Three permanent roles</h2>
+
+        <div class="role-cards">
+          <div class="role-card">
+            <div class="role-number">1</div>
+            <div class="role-title">Experience Design Director</div>
+            <div class="role-desc">Owning the experience vision, prioritising and partnering strategically with product leadership.</div>
+          </div>
+          <div class="role-card">
+            <div class="role-number">2</div>
+            <div class="role-title">Principal-Level Experience Designer</div>
+            <div class="role-desc">Owning the design system authoring, governance and contribution model, direction, and quality bar. Permanent platform infrastructure ownership, not a project role.</div>
+          </div>
+          <div class="role-card">
+            <div class="role-number">3</div>
+            <div class="role-title">Principal-Level Design Systems Engineer</div>
+            <div class="role-desc">Owning the technical pipeline, governance, token architecture, Storybook, and code connect. Also permanent. The system drifts immediately without continuous engineering ownership.</div>
+          </div>
+        </div>
+
+        <div class="callout purple">"Pathway is a platform layer. It requires permanent ownership. The next seven months deliver the February launch. The permanent roles ensure the platform continues to compound beyond it."</div>
+
+        <div class="callout red">"The Experience Design Director and the principal designer need to be confirmed and in place by June. If either role slips beyond June, the programme loses its two most critical planning and leadership months and the December 1st engineering hard stop becomes very difficult to meet."</div>
+
+        <h2>Figma organisation plan upgrade</h2>
+        <p>Branching, versioning, design system analytics, and full code connect are unavailable on the current plan. Without this, the pipeline cannot function as designed and the rebrand cannot ship consistently. Non-negotiable.</p>
+
+        <h2>Engineering alignment</h2>
+        <p>Front-end engineers across all tribes need to build from Pathway and use Figma dev mode code connect and the Pathway Code Library as the implementation source of truth. Accurate implementation from the first build reduces rework cycles and sprint cost. This requires a clear mandate from engineering leadership.</p>
+
+        <h2>Tribe coordinated participation</h2>
+        <p>Designers and PMs across all modules need protected time in the first 30 days to produce the diagnostic and gather the data. This is the planning foundation for the entire programme. Without it, sequencing is guesswork.</p>
+
+        <h2>How we move at speed</h2>
+        <p>We do not need to wait for new hires to start shipping. The programme activates immediately on existing resources.</p>
+        <p>Value Labs are already engaged on Protections for component delivery. We activate them now as a dedicated component delivery resource under design leadership. The complete spec canonical structure and component build guidelines and handover requirements are defined: Value Labs design and document against that spec. Components are reviewed and pushed through the Pathway pipeline.</p>
+        <p>Value Labs start on: tables, table controls, dashboard KPI tiles, filter chips, search and select, advanced search, steppers and progress indicators, update of existing Input and Select components, cards.</p>
+        <p>Internally, AI-assisted generation using Radix primitives and Pathway tokens further compresses the build timeline for components built by the Design System Team. Complex cross-module components (navigation, global search) stay internal. Everything else accelerates through Value Labs.</p>
+
+      </div>
+    </div>
+
+    <!-- ─── HOW WE MEASURE IT ──────────────────────────── -->
+    <div id="how-we-measure-it" class="section">
+      <div class="page-header">
+        <h1>How We Measure It</h1>
+        <p>Baselines established in month 1, measured at 6 and 12 months post-launch</p>
+      </div>
+      <div class="section-content">
+
+        <p class="section-intro">The baseline is established in month 1 during the tribe diagnostic. Every metric below is measured against that baseline.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:280px;">Metric</th>
+                <th>Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="metric-label">ARR</td>
+                <td><span class="tag blue">Measurable improvement in ARR driven by expansion revenue and reduced churn within 12 months of launch</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">NRR</td>
+                <td><span class="tag blue">Measurable increase in module adoption per customer post-launch</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Churn</td>
+                <td><span class="tag green">Reduction in logo churn within 12 months of launch, measured against baseline</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Adoption</td>
+                <td><span class="tag blue">Measurable increase in active feature and module adoption per customer post-launch</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">NPS</td>
+                <td><span class="tag green">15 point improvement within 12 months of launch</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">CSAT</td>
+                <td><span class="tag green">Measurable improvement in customer satisfaction scores post-launch, measured against baseline established in month 1</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Task completion rate on core flows</td>
+                <td><span class="tag blue">85% and above, measured against baseline established in month 1</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Experience-related support tickets</td>
+                <td><span class="tag green">30 to 40% reduction within 6 months of launch</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Design to development cycles</td>
+                <td><span class="tag green">50% time and effort reduction once Pathway is in production use</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Component reuse rate</td>
+                <td><span class="tag blue">80% of new feature work on Pathway within 12 months</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Capterra and G2</td>
+                <td><span class="tag amber">4.5 and above with higher review volume</span></td>
+              </tr>
+              <tr>
+                <td class="metric-label">Accessibility</td>
+                <td><span class="tag green">WCAG 2.1 AA across all new components. Non-compliance presents a growing business risk for renewal cycles.</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="metrics-footer">Project Oak &middot; Ministry Brands &middot; May 2026</div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  var navBtns     = document.querySelectorAll('.nav-btn');
+  var sections    = document.querySelectorAll('.section');
+  var mainContent = document.getElementById('main-content');
+
+  function navigate(target) {
+    sections.forEach(function (s) { s.classList.remove('active'); });
+    navBtns.forEach(function (b)  { b.classList.remove('active'); });
+    var section = document.getElementById(target);
+    if (section) section.classList.add('active');
+    var btn = document.querySelector('[data-target="' + target + '"]');
+    if (btn) btn.classList.add('active');
+    mainContent.scrollTop = 0;
+  }
+
+  navBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () { navigate(btn.dataset.target); });
+  });
+  document.querySelectorAll('.doc-card').forEach(function (card) {
+    card.addEventListener('click', function () { navigate(card.dataset.target); });
+  });
+}());
+</script>
+
+</body>
+</html>
