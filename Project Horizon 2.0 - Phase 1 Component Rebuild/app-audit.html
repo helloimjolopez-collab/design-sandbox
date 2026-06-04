@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>App Audit — Project Horizon 2.0 Phase 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0F3E80; --blue: #1863cc; --blue-light: #e8f0fb; --blue-mid: #c2d8f8;
+  --orange: #E07B39; --orange-light: #fef3ec; --orange-mid: #f9d4b3;
+  --green: #1a7f4e; --green-light: #e6f4ee; --green-mid: #a8dcc0;
+  --red: #c0392b; --red-light: #fdf0ee; --red-mid: #f0b8b2;
+  --amber: #b45309; --amber-light: #fffbeb; --amber-mid: #fde68a;
+  --grey-50: #f7f7f8; --grey-100: #eeeef0; --grey-200: #d8d8db;
+  --grey-300: #c0c0c5; --grey-500: #767680; --grey-700: #444450;
+  --grey-900: #1a1a24; --white: #ffffff;
+  --radius: 6px; --radius-lg: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Red Hat Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;color:var(--grey-900);background:var(--grey-50)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── Top nav ── */
+.site-nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100}
+.site-nav .brand{color:rgba(255,255,255,0.9);font-size:13px;font-weight:700;padding:14px 20px 14px 0;margin-right:12px;border-right:1px solid rgba(255,255,255,0.15);white-space:nowrap;text-decoration:none}
+.site-nav .brand:hover{text-decoration:none;color:#fff}
+.site-nav a{color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;padding:14px 14px;text-decoration:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.site-nav a:hover{color:rgba(255,255,255,0.9);text-decoration:none}
+.site-nav a.active{color:#fff;border-bottom-color:rgba(255,255,255,0.6)}
+
+/* ── Page header ── */
+.page-header{background:var(--navy);color:#fff;padding:36px 48px 32px}
+.page-header .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
+.page-header h1{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:10px}
+.page-header .desc{font-size:13px;color:rgba(255,255,255,.65);max-width:640px;line-height:1.6}
+
+/* ── Layout ── */
+.page-body{max-width:1040px;margin:0 auto;padding:40px 48px 80px}
+.section{margin-bottom:52px}
+.section + .section{border-top:1px solid var(--grey-100);padding-top:48px}
+
+/* ── Section headers ── */
+.part-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--grey-100)}
+.part-badge{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.part-badge.orange{background:var(--orange)}
+.part-badge.green{background:var(--green)}
+.part-badge.red{background:var(--red)}
+.part-header-text h2{font-size:18px;font-weight:700;color:var(--grey-900);margin-bottom:3px}
+.part-header-text p{font-size:12px;color:var(--grey-500);line-height:1.4}
+h3{font-size:15px;font-weight:700;color:var(--grey-900);margin:28px 0 10px}
+h3:first-child{margin-top:0}
+h4{font-size:13px;font-weight:700;color:var(--grey-700);margin:18px 0 7px}
+p{margin-bottom:10px;color:var(--grey-700)}
+p:last-child{margin-bottom:0}
+ul,ol{padding-left:20px;margin-bottom:10px;color:var(--grey-700)}
+li{margin-bottom:4px;font-size:13px}
+strong{font-weight:600}
+
+/* ── Callouts ── */
+.callout{border-radius:var(--radius);padding:13px 15px;margin:14px 0;font-size:13px;line-height:1.6}
+.callout-title{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.callout.red{background:var(--red-light);border-left:3px solid var(--red);color:var(--grey-900)}
+.callout.red .callout-title{color:var(--red)}
+.callout.amber{background:var(--amber-light);border-left:3px solid var(--amber);color:var(--grey-900)}
+.callout.amber .callout-title{color:var(--amber)}
+.callout.green{background:var(--green-light);border-left:3px solid var(--green);color:var(--grey-900)}
+.callout.green .callout-title{color:var(--green)}
+.callout.blue{background:var(--blue-light);border-left:3px solid var(--blue);color:var(--grey-900)}
+.callout.blue .callout-title{color:var(--blue)}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto;margin:14px 0;border-radius:var(--radius-lg);border:1px solid var(--grey-100);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead tr{background:var(--grey-50)}
+th{padding:9px 14px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey-500);border-bottom:1px solid var(--grey-100)}
+td{padding:9px 14px;border-bottom:1px solid var(--grey-100);color:var(--grey-700);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--grey-50)}
+.pass{color:var(--green);font-weight:700}
+.fail{color:var(--red);font-weight:700}
+.unknown{color:var(--grey-400)}
+.status-complete{background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-gaps{background:var(--amber-light);color:var(--amber);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-inspect{background:var(--blue-light);color:var(--blue);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-missing{background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+
+/* ── Priority list ── */
+.priority-list{display:flex;flex-direction:column;gap:2px;margin-top:16px}
+.priority-item{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;display:grid;grid-template-columns:40px 1fr auto;gap:0 16px;align-items:start;box-shadow:var(--shadow)}
+.priority-item:hover{border-color:var(--blue-mid)}
+.priority-item.prereq-item{border-color:var(--red-mid);background:var(--red-light)}
+.prereq-item .item-num{background:var(--red);color:#fff}
+.item-num{width:32px;height:32px;background:var(--navy);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.item-body{}
+.item-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:4px}
+.item-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--grey-100);color:var(--grey-700)}
+.tag.atom{background:var(--blue-light);color:var(--blue)}
+.tag.molecule{background:#f3e8ff;color:#7c3aed}
+.tag.organism{background:var(--orange-light);color:var(--orange)}
+.tag.foundation{background:var(--red-light);color:var(--red)}
+.tag.complete{background:var(--green-light);color:var(--green)}
+.item-fields{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.item-field{display:grid;grid-template-columns:160px 1fr;gap:8px;font-size:12.5px}
+.item-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.item-field-value{color:var(--grey-700);line-height:1.5}
+.item-effort{font-size:11px;font-weight:700;color:var(--grey-500);text-align:right;padding-top:4px;white-space:nowrap}
+.item-effort .effort-badge{display:block;padding:4px 10px;border-radius:6px;background:var(--grey-100);color:var(--grey-700);font-size:12px;font-weight:700;text-align:center;margin-bottom:4px}
+.item-effort.blocker .effort-badge{background:var(--red-light);color:var(--red)}
+.item-effort.complete .effort-badge{background:var(--green-light);color:var(--green)}
+
+/* ── Criteria cards ── */
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:700px){.criteria-grid{grid-template-columns:1fr}}
+.criterion-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow)}
+.criterion-id{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:.04em}
+.criterion-title{font-size:13px;font-weight:700;color:var(--grey-900);margin-bottom:2px}
+.criterion-sub{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.criterion-desc{font-size:12.5px;color:var(--grey-700);line-height:1.6}
+
+/* ── Effort scale ── */
+.effort-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+@media(max-width:600px){.effort-scale{grid-template-columns:1fr 1fr}}
+.effort-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow)}
+.effort-label{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-size:13px;font-weight:800;margin-bottom:8px}
+.effort-label.S{background:var(--green-light);color:var(--green)}
+.effort-label.M{background:var(--blue-light);color:var(--blue)}
+.effort-label.L{background:var(--amber-light);color:var(--amber)}
+.effort-label.XL{background:var(--red-light);color:var(--red)}
+.effort-card h5{font-size:12px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.effort-card p{font-size:12px;color:var(--grey-700);margin:0}
+
+/* ── Route cards (App audit) ── */
+.route-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.route-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow)}
+.route-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.route-path{font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);background:var(--blue-light);padding:3px 8px;border-radius:4px}
+.route-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--grey-100);color:var(--grey-700)}
+.route-badge.high{background:var(--red-light);color:var(--red)}
+.route-purpose{font-size:13px;color:var(--grey-700);margin-bottom:12px;line-height:1.5}
+.route-fields{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:12.5px}
+.route-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.route-field-value{color:var(--grey-700);line-height:1.5}
+.comp-chips{display:flex;flex-wrap:wrap;gap:4px}
+.comp-chip{background:var(--grey-100);color:var(--grey-700);padding:2px 7px;border-radius:99px;font-size:11px}
+
+/* ── Home page nav cards ── */
+.nav-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+@media(max-width:640px){.nav-cards{grid-template-columns:1fr}}
+.nav-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);text-decoration:none;display:block;transition:all .15s}
+.nav-card:hover{border-color:var(--blue-mid);box-shadow:var(--shadow-md);transform:translateY(-1px);text-decoration:none}
+.nav-card-icon{font-size:22px;margin-bottom:10px}
+.nav-card-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.nav-card-desc{font-size:12.5px;color:var(--grey-500);line-height:1.5}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-box{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-num{font-size:24px;font-weight:800;color:var(--navy);margin-bottom:2px}
+.stat-label{font-size:11px;color:var(--grey-500);font-weight:500}
+
+/* ── Pipeline findings table ── */
+.finding-row td:last-child{font-size:11.5px}
+.ready{color:var(--green)}
+.blocker-text{color:var(--red);font-weight:600}
+.decision{color:var(--amber)}
+
+/* ── Logic table ── */
+.logic-table td:first-child{font-weight:600;color:var(--navy);font-size:12px;white-space:nowrap}
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <a class="brand" href="index.html">Horizon 2.0 · Phase 1</a>
+  <a href="index.html">Overview</a><a href="build-standards.html">Build Standards</a><a href="current-state.html">Current State</a><a href="app-audit.html" class="active">App Audit</a><a href="priority-list.html">Priority Build List</a>
+</nav>
+
+<header class="page-header">
+  <div class="eyebrow">Project Horizon 2.0 · Phase 1 · Part B</div>
+  <h1>Application Audit — PMM Horizon</h1>
+  <p class="desc">Nine routes reviewed in the live production environment (Radzen Blazor). Each route catalogued with dominant UI patterns and design system component requirements.</p>
+</header>
+<div class="page-body">
+
+  <!-- B1 -->
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge">B1</div>
+      <div class="part-header-text"><h2>Screen Inventory</h2><p>Nine routes reviewed in production. Component requirements mapped per screen.</p></div>
+    </div>
+
+    <div class="route-grid">
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/order/Invite</span>
+          <span class="route-badge">Wizard Flow</span>
+        </div>
+        <p class="route-purpose">Multi-step screening invitation creation flow. Guides the user through applicant details, package selection, and delivery options to dispatch a background check invitation.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Dominant Organisms</span>
+          <span class="route-field-value">Multi-Step Wizard · Settings Form Section</span>
+          <span class="route-field-label">Components needed</span>
+          <span class="route-field-value">
+            <div class="comp-chips">
+              <span class="comp-chip">Step Indicator</span><span class="comp-chip">Text Input</span><span class="comp-chip">Dropdown / Select</span><span class="comp-chip">Radio Button</span><span class="comp-chip">Checkbox</span><span class="comp-chip">Button (Primary + Secondary)</span><span class="comp-chip">Card Container</span><span class="comp-chip">Badge / Status Chip</span><span class="comp-chip">Tooltip</span><span class="comp-chip">Validation Error</span>
+            </div>
+          </span>
+          <span class="route-field-label">Notes</span>
+          <span class="route-field-value">Currently implemented in Radzen Blazor with no design system tokens. The wizard organism does not yet exist in the design system.</span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/background-checks</span>
+          <span class="route-badge high">Highest Priority</span>
+        </div>
+        <p class="route-purpose">Primary data view. Lists all background check orders with filtering, search, bulk actions, and per-row detail access. The application's home base for most users.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Dominant Organism</span>
+          <span class="route-field-value">Data Table (Full Organism)</span>
+          <span class="route-field-label">Components needed</span>
+          <span class="route-field-value">
+            <div class="comp-chips">
+              <span class="comp-chip">Table (sortable, selectable)</span><span class="comp-chip">Search Input</span><span class="comp-chip">Filter Dropdowns</span><span class="comp-chip">Bulk Action Toolbar</span><span class="comp-chip">Column Controls</span><span class="comp-chip">Export Menu</span><span class="comp-chip">Pagination</span><span class="comp-chip">Status Badge</span><span class="comp-chip">Row Actions Menu</span><span class="comp-chip">Empty State</span><span class="comp-chip">Loading Skeleton</span><span class="comp-chip">Error State</span><span class="comp-chip">Checkbox (row selection)</span>
+            </div>
+          </span>
+          <span class="route-field-label">Notes</span>
+          <span class="route-field-value">This screen defines the entire scope of the Data Table organism deliverable. Every element listed must be authored as part of a single, coherent organism — not as independent atoms. The single most complex and highest-impact deliverable in Phase 1.</span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/applicant-profile/:id</span>
+          <span class="route-badge">Detail View</span>
+        </div>
+        <p class="route-purpose">Applicant detail record. Personal information, order history, document status, and available actions for a single applicant.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Dominant Patterns</span>
+          <span class="route-field-value">Profile Header · Tab Navigation · Detail Cards</span>
+          <span class="route-field-label">Components needed</span>
+          <span class="route-field-value">
+            <div class="comp-chips">
+              <span class="comp-chip">Avatar</span><span class="comp-chip">Badge / Status Chip</span><span class="comp-chip">Tabs</span><span class="comp-chip">Card Container</span><span class="comp-chip">Key-Value List</span><span class="comp-chip">Status Timeline</span><span class="comp-chip">Button (Primary + Destructive)</span><span class="comp-chip">Breadcrumb</span><span class="comp-chip">Modal / Dialog</span><span class="comp-chip">Tooltip</span>
+            </div>
+          </span>
+          <span class="route-field-label">Notes</span>
+          <span class="route-field-value">Tabs and breadcrumbs needed here but not yet confirmed as authored. The status timeline is a lightweight molecule (icon + label + timestamp) that may need to be authored from scratch.</span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/screening-flows</span>
+          <span class="route-badge">List View</span>
+        </div>
+        <p class="route-purpose">Management view for screening flow configurations. Lists active and inactive flows with status, usage count, and edit/delete actions.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Dominant Organisms</span>
+          <span class="route-field-value">Data Table · Screening Flow Card</span>
+          <span class="route-field-label">Components needed</span>
+          <span class="route-field-value">
+            <div class="comp-chips">
+              <span class="comp-chip">Data Table</span><span class="comp-chip">Search Input</span><span class="comp-chip">Status Badge</span><span class="comp-chip">Action Menu (kebab)</span><span class="comp-chip">Button (Create New)</span><span class="comp-chip">Modal / Dialog (confirm delete)</span><span class="comp-chip">Empty State</span>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/child-safety</span>
+          <span class="route-badge">List View</span>
+        </div>
+        <p class="route-purpose">Child safety screening management. Similar structural pattern to Background Checks — data table with status filtering.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Dominant Organism</span>
+          <span class="route-field-value">Data Table</span>
+          <span class="route-field-label">Notes</span>
+          <span class="route-field-value">Shares the same structural DNA as /user/background-checks. Once the Data Table organism is authored, this screen assembly is largely solved. The key differentiator is the status/compliance badge variants specific to this context.</span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/custom-packages</span>
+          <span class="route-badge">Configuration</span>
+        </div>
+        <p class="route-purpose">Custom screening package creation and management. Card-based layout for package configurations with pricing and check-type selection.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Components needed</span>
+          <span class="route-field-value">
+            <div class="comp-chips">
+              <span class="comp-chip">Card Container</span><span class="comp-chip">Checkbox (multi-select)</span><span class="comp-chip">Radio Button</span><span class="comp-chip">Text Input</span><span class="comp-chip">Badge</span><span class="comp-chip">Button (Primary + Secondary)</span><span class="comp-chip">Empty State</span>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/support</span>
+          <span class="route-badge">Support</span>
+        </div>
+        <p class="route-purpose">Help and support hub. FAQ content, contact form, and links to knowledge base resources.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Components needed</span>
+          <span class="route-field-value">
+            <div class="comp-chips">
+              <span class="comp-chip">Accordion / Disclosure</span><span class="comp-chip">Text Input</span><span class="comp-chip">Textarea</span><span class="comp-chip">Button (Primary)</span><span class="comp-chip">Link</span><span class="comp-chip">Card Container</span>
+            </div>
+          </span>
+          <span class="route-field-label">Notes</span>
+          <span class="route-field-value">Lower design system priority. The Accordion/Disclosure component is not catalogued in the current system and would need to be authored if this screen is in scope for Phase 1.</span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <div class="route-header">
+          <span class="route-path">/user/account-settings</span>
+          <span class="route-badge">Settings</span>
+        </div>
+        <p class="route-purpose">User account configuration. Profile details, notification preferences, password/security settings. Classic settings page structure with section headers and inline form rows.</p>
+        <div class="route-fields">
+          <span class="route-field-label">Dominant Organism</span>
+          <span class="route-field-value">Settings Form Section</span>
+          <span class="route-field-label">Components needed</span>
+          <span class="route-field-value">
+            <div class="comp-chips">
+              <span class="comp-chip">Text Input</span><span class="comp-chip">Toggle / Switch</span><span class="comp-chip">Dropdown / Select</span><span class="comp-chip">Avatar (editable)</span><span class="comp-chip">Button (Primary + Secondary)</span><span class="comp-chip">Section Divider</span><span class="comp-chip">Notification Banner</span>
+            </div>
+          </span>
+          <span class="route-field-label">Notes</span>
+          <span class="route-field-value">The Settings Form Section organism — section header + form row layout + divider + save/cancel footer — is the defining structural pattern here. This organism is not yet authored.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- B2 -->
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge orange">B2</div>
+      <div class="part-header-text"><h2>UI Pattern Catalogue</h2><p>Consolidated view of patterns observed across all screens, grouped by frequency and design system coverage.</p></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Pattern</th><th>Screens present</th><th>In design system</th><th>Priority</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Data Table + Controls</strong><br><span style="font-size:11.5px;color:var(--grey-500)">Table, search, filter, sort, pagination, bulk actions, export</span></td><td>Background Checks, Screening Flows, Child Safety</td><td><span class="status-missing">Not authored</span></td><td>XL</td></tr>
+          <tr><td><strong>Form Fields</strong><br><span style="font-size:11.5px;color:var(--grey-500)">Text input, dropdown, radio, checkbox, toggle</span></td><td>All screens</td><td><span class="status-inspect">Partial / Unconfirmed</span></td><td>M</td></tr>
+          <tr><td><strong>Status Badges</strong><br><span style="font-size:11.5px;color:var(--grey-500)">Semantic colour variants for order/check status</span></td><td>All screens</td><td><span class="status-inspect">Requires Inspection</span></td><td>M</td></tr>
+          <tr><td><strong>Primary / Secondary Buttons</strong></td><td>All screens</td><td><span class="status-gaps">Gaps</span></td><td>S</td></tr>
+          <tr><td><strong>Multi-Step Wizard</strong><br><span style="font-size:11.5px;color:var(--grey-500)">Step indicator, per-step form, nav controls</span></td><td>Invite / Order</td><td><span class="status-missing">Not authored</span></td><td>L</td></tr>
+          <tr><td><strong>Tab Navigation</strong></td><td>Applicant Profile</td><td><span class="status-inspect">Requires Inspection</span></td><td>M</td></tr>
+          <tr><td><strong>Modal / Dialog</strong></td><td>Screening Flows, Background Checks</td><td><span class="status-inspect">Requires Inspection</span></td><td>M</td></tr>
+          <tr><td><strong>Settings Form Section</strong><br><span style="font-size:11.5px;color:var(--grey-500)">Section header + form rows + save footer</span></td><td>Account Settings</td><td><span class="status-missing">Not authored</span></td><td>M</td></tr>
+          <tr><td><strong>Avatar</strong></td><td>Applicant Profile, Account Settings</td><td><span class="status-inspect">Requires Inspection</span></td><td>S</td></tr>
+          <tr><td><strong>Breadcrumb</strong></td><td>Applicant Profile, Screening Flows</td><td><span class="status-inspect">Requires Inspection</span></td><td>S</td></tr>
+          <tr><td><strong>Tooltip</strong></td><td>Invite, Background Checks, Applicant Profile</td><td><span class="status-inspect">Requires Inspection</span></td><td>S</td></tr>
+          <tr><td><strong>Accordion / Disclosure</strong></td><td>Support</td><td><span class="status-missing">Not authored</span></td><td>M (if in scope)</td></tr>
+          <tr><td><strong>Empty State</strong></td><td>Background Checks, Screening Flows, Custom Packages</td><td><span class="status-inspect">Requires Inspection</span></td><td>S</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
