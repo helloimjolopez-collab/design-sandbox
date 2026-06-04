@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Current State — Project Horizon 2.0 Phase 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0F3E80; --blue: #1863cc; --blue-light: #e8f0fb; --blue-mid: #c2d8f8;
+  --orange: #E07B39; --orange-light: #fef3ec; --orange-mid: #f9d4b3;
+  --green: #1a7f4e; --green-light: #e6f4ee; --green-mid: #a8dcc0;
+  --red: #c0392b; --red-light: #fdf0ee; --red-mid: #f0b8b2;
+  --amber: #b45309; --amber-light: #fffbeb; --amber-mid: #fde68a;
+  --grey-50: #f7f7f8; --grey-100: #eeeef0; --grey-200: #d8d8db;
+  --grey-300: #c0c0c5; --grey-500: #767680; --grey-700: #444450;
+  --grey-900: #1a1a24; --white: #ffffff;
+  --radius: 6px; --radius-lg: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Red Hat Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;color:var(--grey-900);background:var(--grey-50)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── Top nav ── */
+.site-nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100}
+.site-nav .brand{color:rgba(255,255,255,0.9);font-size:13px;font-weight:700;padding:14px 20px 14px 0;margin-right:12px;border-right:1px solid rgba(255,255,255,0.15);white-space:nowrap;text-decoration:none}
+.site-nav .brand:hover{text-decoration:none;color:#fff}
+.site-nav a{color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;padding:14px 14px;text-decoration:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.site-nav a:hover{color:rgba(255,255,255,0.9);text-decoration:none}
+.site-nav a.active{color:#fff;border-bottom-color:rgba(255,255,255,0.6)}
+
+/* ── Page header ── */
+.page-header{background:var(--navy);color:#fff;padding:36px 48px 32px}
+.page-header .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
+.page-header h1{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:10px}
+.page-header .desc{font-size:13px;color:rgba(255,255,255,.65);max-width:640px;line-height:1.6}
+
+/* ── Layout ── */
+.page-body{max-width:1040px;margin:0 auto;padding:40px 48px 80px}
+.section{margin-bottom:52px}
+.section + .section{border-top:1px solid var(--grey-100);padding-top:48px}
+
+/* ── Section headers ── */
+.part-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--grey-100)}
+.part-badge{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.part-badge.orange{background:var(--orange)}
+.part-badge.green{background:var(--green)}
+.part-badge.red{background:var(--red)}
+.part-header-text h2{font-size:18px;font-weight:700;color:var(--grey-900);margin-bottom:3px}
+.part-header-text p{font-size:12px;color:var(--grey-500);line-height:1.4}
+h3{font-size:15px;font-weight:700;color:var(--grey-900);margin:28px 0 10px}
+h3:first-child{margin-top:0}
+h4{font-size:13px;font-weight:700;color:var(--grey-700);margin:18px 0 7px}
+p{margin-bottom:10px;color:var(--grey-700)}
+p:last-child{margin-bottom:0}
+ul,ol{padding-left:20px;margin-bottom:10px;color:var(--grey-700)}
+li{margin-bottom:4px;font-size:13px}
+strong{font-weight:600}
+
+/* ── Callouts ── */
+.callout{border-radius:var(--radius);padding:13px 15px;margin:14px 0;font-size:13px;line-height:1.6}
+.callout-title{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.callout.red{background:var(--red-light);border-left:3px solid var(--red);color:var(--grey-900)}
+.callout.red .callout-title{color:var(--red)}
+.callout.amber{background:var(--amber-light);border-left:3px solid var(--amber);color:var(--grey-900)}
+.callout.amber .callout-title{color:var(--amber)}
+.callout.green{background:var(--green-light);border-left:3px solid var(--green);color:var(--grey-900)}
+.callout.green .callout-title{color:var(--green)}
+.callout.blue{background:var(--blue-light);border-left:3px solid var(--blue);color:var(--grey-900)}
+.callout.blue .callout-title{color:var(--blue)}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto;margin:14px 0;border-radius:var(--radius-lg);border:1px solid var(--grey-100);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead tr{background:var(--grey-50)}
+th{padding:9px 14px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey-500);border-bottom:1px solid var(--grey-100)}
+td{padding:9px 14px;border-bottom:1px solid var(--grey-100);color:var(--grey-700);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--grey-50)}
+.pass{color:var(--green);font-weight:700}
+.fail{color:var(--red);font-weight:700}
+.unknown{color:var(--grey-400)}
+.status-complete{background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-gaps{background:var(--amber-light);color:var(--amber);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-inspect{background:var(--blue-light);color:var(--blue);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-missing{background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+
+/* ── Priority list ── */
+.priority-list{display:flex;flex-direction:column;gap:2px;margin-top:16px}
+.priority-item{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;display:grid;grid-template-columns:40px 1fr auto;gap:0 16px;align-items:start;box-shadow:var(--shadow)}
+.priority-item:hover{border-color:var(--blue-mid)}
+.priority-item.prereq-item{border-color:var(--red-mid);background:var(--red-light)}
+.prereq-item .item-num{background:var(--red);color:#fff}
+.item-num{width:32px;height:32px;background:var(--navy);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.item-body{}
+.item-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:4px}
+.item-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--grey-100);color:var(--grey-700)}
+.tag.atom{background:var(--blue-light);color:var(--blue)}
+.tag.molecule{background:#f3e8ff;color:#7c3aed}
+.tag.organism{background:var(--orange-light);color:var(--orange)}
+.tag.foundation{background:var(--red-light);color:var(--red)}
+.tag.complete{background:var(--green-light);color:var(--green)}
+.item-fields{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.item-field{display:grid;grid-template-columns:160px 1fr;gap:8px;font-size:12.5px}
+.item-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.item-field-value{color:var(--grey-700);line-height:1.5}
+.item-effort{font-size:11px;font-weight:700;color:var(--grey-500);text-align:right;padding-top:4px;white-space:nowrap}
+.item-effort .effort-badge{display:block;padding:4px 10px;border-radius:6px;background:var(--grey-100);color:var(--grey-700);font-size:12px;font-weight:700;text-align:center;margin-bottom:4px}
+.item-effort.blocker .effort-badge{background:var(--red-light);color:var(--red)}
+.item-effort.complete .effort-badge{background:var(--green-light);color:var(--green)}
+
+/* ── Criteria cards ── */
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:700px){.criteria-grid{grid-template-columns:1fr}}
+.criterion-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow)}
+.criterion-id{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:.04em}
+.criterion-title{font-size:13px;font-weight:700;color:var(--grey-900);margin-bottom:2px}
+.criterion-sub{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.criterion-desc{font-size:12.5px;color:var(--grey-700);line-height:1.6}
+
+/* ── Effort scale ── */
+.effort-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+@media(max-width:600px){.effort-scale{grid-template-columns:1fr 1fr}}
+.effort-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow)}
+.effort-label{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-size:13px;font-weight:800;margin-bottom:8px}
+.effort-label.S{background:var(--green-light);color:var(--green)}
+.effort-label.M{background:var(--blue-light);color:var(--blue)}
+.effort-label.L{background:var(--amber-light);color:var(--amber)}
+.effort-label.XL{background:var(--red-light);color:var(--red)}
+.effort-card h5{font-size:12px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.effort-card p{font-size:12px;color:var(--grey-700);margin:0}
+
+/* ── Route cards (App audit) ── */
+.route-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.route-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow)}
+.route-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.route-path{font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);background:var(--blue-light);padding:3px 8px;border-radius:4px}
+.route-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--grey-100);color:var(--grey-700)}
+.route-badge.high{background:var(--red-light);color:var(--red)}
+.route-purpose{font-size:13px;color:var(--grey-700);margin-bottom:12px;line-height:1.5}
+.route-fields{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:12.5px}
+.route-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.route-field-value{color:var(--grey-700);line-height:1.5}
+.comp-chips{display:flex;flex-wrap:wrap;gap:4px}
+.comp-chip{background:var(--grey-100);color:var(--grey-700);padding:2px 7px;border-radius:99px;font-size:11px}
+
+/* ── Home page nav cards ── */
+.nav-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+@media(max-width:640px){.nav-cards{grid-template-columns:1fr}}
+.nav-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);text-decoration:none;display:block;transition:all .15s}
+.nav-card:hover{border-color:var(--blue-mid);box-shadow:var(--shadow-md);transform:translateY(-1px);text-decoration:none}
+.nav-card-icon{font-size:22px;margin-bottom:10px}
+.nav-card-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.nav-card-desc{font-size:12.5px;color:var(--grey-500);line-height:1.5}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-box{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-num{font-size:24px;font-weight:800;color:var(--navy);margin-bottom:2px}
+.stat-label{font-size:11px;color:var(--grey-500);font-weight:500}
+
+/* ── Pipeline findings table ── */
+.finding-row td:last-child{font-size:11.5px}
+.ready{color:var(--green)}
+.blocker-text{color:var(--red);font-weight:600}
+.decision{color:var(--amber)}
+
+/* ── Logic table ── */
+.logic-table td:first-child{font-weight:600;color:var(--navy);font-size:12px;white-space:nowrap}
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <a class="brand" href="index.html">Horizon 2.0 · Phase 1</a>
+  <a href="index.html">Overview</a><a href="build-standards.html">Build Standards</a><a href="current-state.html" class="active">Current State</a><a href="app-audit.html">App Audit</a><a href="priority-list.html">Priority Build List</a>
+</nav>
+
+<header class="page-header">
+  <div class="eyebrow">Project Horizon 2.0 · Phase 1 · Part A</div>
+  <h1>Current State — Design System Audit</h1>
+  <p class="desc">Assessment of the Pathway Design System (Figma file: 3sw45aVcngFAmpbP6cfrXP). Token pipeline readiness, token architecture issues, and component library status against all eight completeness criteria.</p>
+</header>
+<div class="page-body">
+
+  <!-- A0 -->
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge red">A0</div>
+      <div class="part-header-text">
+        <h2>Token Pipeline Readiness</h2>
+        <p>Can the current Figma variable file be reliably exported into a stable token pipeline?</p>
+      </div>
+    </div>
+
+    <div class="callout red">
+      <div class="callout-title">🔴 Assessment: Not Pipeline-Ready</div>
+      The current variable file cannot be reliably exported into a stable token pipeline. Attempting to build an extraction and consumption workflow now would produce output that requires significant reworking once the underlying variable issues are resolved. Establishing the pipeline must be sequenced <strong>after</strong> the token architecture clean-up (Item 0 in the Priority Build List) is complete.
+    </div>
+
+    <h3>What "pipeline-ready" means</h3>
+    <p>For variables to be reliably consumed into code, all five of the following conditions must hold:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Condition</th><th>Requirement</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Stable, consistent naming convention</strong></td><td>Token names follow a single predictable pattern (e.g. lowercase slash-separated: <code>color/brand/primary</code>) applied uniformly. Inconsistent casing, mixed separators, or spaces in names produce malformed CSS output.</td></tr>
+          <tr><td><strong>Single source of truth per value type</strong></td><td>One active colour collection, one typography collection, one spacing collection. Multiple active collections for the same type create silent inconsistencies in export.</td></tr>
+          <tr><td><strong>Clean semantic layer over primitives</strong></td><td>Components consume semantic tokens (<code>text/base/primary</code>) not primitives directly (<code>color/black-gray/white</code>). This is what enables theming, dark mode, and brand customisation.</td></tr>
+          <tr><td><strong>Explicit include/exclude decisions per collection</strong></td><td>A clear decision must be made for each collection before the pipeline is configured.</td></tr>
+          <tr><td><strong>No broken references or hardcoded fallbacks</strong></td><td>All variable references must resolve. Hardcoded fallbacks like <code>var(--text-base-primary, #363636)</code> mask broken token paths.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Findings — variables inspected across four component nodes</h3>
+    <p>Variables were extracted directly from four component nodes (Global Navigation, SideNavItem, SideNav.Container, Indicator Stripe).</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variable (as named in Figma)</th><th>Value</th><th>Tier</th><th>Pipeline status</th></tr></thead>
+        <tbody>
+          <tr class="finding-row"><td><code>Surface/Nav/Light</code></td><td>#fafafa</td><td>Semantic</td><td class="ready">✓ Ready — role-based, Title Case</td></tr>
+          <tr class="finding-row"><td><code>Fill/Static/Info/Subtle</code></td><td>#edf0f9</td><td>Semantic</td><td class="ready">✓ Ready — role-based, Title Case</td></tr>
+          <tr class="finding-row"><td><code>Icon/Contextual/NavItem/Base</code></td><td>#4b4b4b</td><td>Component</td><td class="ready">✓ Ready — component-scoped, state-aware</td></tr>
+          <tr class="finding-row"><td><code>Accessibility/Touch Target/Optimal/Size/Width</code></td><td>48</td><td>Accessibility</td><td class="ready">✓ Excellent — encodes WCAG minimum touch target</td></tr>
+          <tr class="finding-row"><td><code>❇️ Label/Menu/Large/Medium</code></td><td>Font() composite</td><td>Typography</td><td class="blocker-text">🔴 Emoji in variable name — CSS custom properties cannot contain emoji. Must be renamed before pipeline can be configured.</td></tr>
+          <tr class="finding-row"><td><code>fill/auxiliary/medium-contrast</code></td><td>#e1e1e1</td><td>Semantic</td><td class="blocker-text">🔴 Lowercase — conflicts with Title Case in same tier. Inconsistent CSS output.</td></tr>
+          <tr class="finding-row"><td><code>color/black-gray/white</code></td><td>#ffffff</td><td>Primitive</td><td class="blocker-text">🔴 Primitive used directly in Global Nav component. Must be replaced with a semantic alias.</td></tr>
+          <tr class="finding-row"><td><code>Brand Colors/Dark Cerulean</code></td><td>#0F3E80</td><td>Colour style (not variable)</td><td class="blocker-text">🔴 Legacy colour style, not a variable. Used directly in Global Nav. Needs to become a semantic variable.</td></tr>
+          <tr class="finding-row"><td><code>Bold/M</code></td><td>SemiBold 14px</td><td>Typography style</td><td class="decision">🟡 Appearance-based naming. Rename to role-based before pipeline export.</td></tr>
+          <tr class="finding-row"><td><code>Component/NavItem/Large/Radius/Radius</code></td><td>8</td><td>Component</td><td class="decision">🟡 Should alias <code>Border Radius/S</code> via variable reference, not carry its own hardcoded value.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Pipeline blockers — summary</h3>
+    <div class="callout red" style="margin-bottom:8px">
+      <div class="callout-title">🔴 Emoji in a variable name: <code>❇️ Label/Menu/Large/Medium</code></div>
+      CSS custom property names cannot contain emoji. Any token pipeline will fail, strip the emoji silently, or produce malformed output. The ❇️ Ready for Dev marker belongs on Figma page names only — not inside variable names.
+    </div>
+    <div class="callout red" style="margin-bottom:8px">
+      <div class="callout-title">🔴 Casing split within the semantic tier</div>
+      <code>fill/auxiliary/medium-contrast</code> (lowercase) and <code>Fill/Static/Info/Subtle</code> (Title Case) are in the same tier. Style Dictionary treats casing as significant — inconsistent output. One convention must be applied uniformly.
+    </div>
+    <div class="callout red" style="margin-bottom:8px">
+      <div class="callout-title">🔴 Two active colour collections: "Color" and "Color 2 wip"</div>
+      Components reference variables from both collections. Migration must complete and the old collection deprecated before any pipeline configuration is meaningful.
+    </div>
+    <div class="callout red" style="margin-bottom:8px">
+      <div class="callout-title">🔴 Variable search returns empty — likely a library publishing gap</div>
+      All variable search queries returned no results despite variables being confirmed present. Verify in Figma: Variables panel → each collection → "Publish to library" toggle.
+    </div>
+    <div class="callout red" style="margin-bottom:8px">
+      <div class="callout-title">🔴 Component token layer not universally applied</div>
+      Side Nav correctly uses component-scoped tokens throughout. Global Navigation uses hardcoded hex values and primitive paths. Until all components reference the component token layer, pipeline output will be inconsistent.
+    </div>
+    <div class="callout amber" style="margin-bottom:8px">
+      <div class="callout-title">🟡 Typography: individual properties vs composite — requires a contract decision</div>
+      Each text style has five individual variable properties plus a composite Font() reference. The pipeline should expose one contract per text style. Decide which consumers (CSS vs Blazor) need which format.
+    </div>
+    <div class="callout amber">
+      <div class="callout-title">🟡 Component radius tokens carrying hardcoded values instead of aliasing global scale</div>
+      <code>Component/NavItem/Large/Radius/Radius = 8</code> should alias <code>Border Radius/S = 8</code>, not carry a standalone value. Changing the global scale will not propagate to component-level radius tokens.
+    </div>
+
+    <h3>Design-only vs code-consumable — decision framework</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Token / Collection</th><th>Decision</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Semantic colour tokens (e.g. <code>text/base/primary</code>, <code>fill/surface/default</code>)</td><td><strong>Code output — primary contract</strong></td><td>These are the tokens that component code should consume. Most important collection to get right.</td></tr>
+          <tr><td>Primitive colour collection (e.g. <code>color/black-gray/white</code>)</td><td><strong>Code output — rename first</strong></td><td>Primitives are needed as the base layer. Current naming is inconsistent; rename before exporting.</td></tr>
+          <tr><td>Typography tokens (e.g. <code>Bold/M</code>)</td><td><strong>Code output — rename first</strong></td><td>Go to code, but appearance-based names must be replaced with role-based names first.</td></tr>
+          <tr><td>Spacing scale, Border radius tokens</td><td><strong>Code output</strong></td><td>All go to code.</td></tr>
+          <tr><td>Accessibility tokens (touch targets, icon sizing)</td><td><strong>Code output</strong></td><td>Well-considered layer — encode WCAG requirements. Keep.</td></tr>
+          <tr><td>Documentation frame artefacts (annotation colours, redlines)</td><td><strong>Design-only</strong></td><td>No counterpart in production UI. Should live in a separate, non-published annotations file.</td></tr>
+          <tr><td>Halo 1/2/3 Test styles</td><td><strong>Remove entirely</strong></td><td>Test/placeholder styles should not exist in a published file.</td></tr>
+          <tr><td>Old/→ Card token</td><td><strong>Deprecate &amp; remove</strong></td><td>Legacy token being migrated. Must be traced and removed after migration.</td></tr>
+          <tr><td>Icon size variants</td><td><strong>Code output</strong></td><td>Map to actual UI size requirements (16px inline, 24px standard, 32px large). All go to code.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-title">✓ What the Side Nav shows is achievable</div>
+      The Side Nav demonstrates the intended architecture working correctly: <code>Surface/Nav/Light</code> (semantic) → <code>Fill/Contextual/NavItem/Base</code> (component) → correct render. The accessibility token layer is well-considered and should absolutely be part of the code output. The architecture is sound — the problem is inconsistent application.
+    </div>
+  </div>
+
+  <!-- A1 -->
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge red">A1</div>
+      <div class="part-header-text">
+        <h2>Token Architecture</h2>
+        <p>Systemic issues that must be resolved before component authoring can proceed.</p>
+      </div>
+    </div>
+
+    <div class="callout red">
+      <div class="callout-title">🔴 Blocking — Token Issues Must Be Resolved First</div>
+      Every component authored before the token architecture is cleaned up will need to be revisited after the migration completes. The token clean-up is the pre-requisite for all other work in this project.
+    </div>
+
+    <p>The Pathway system uses a three-tier token architecture: brand primitives → semantic fill/text/icon/stroke tokens → component-level tokens. This structure is sound. The issues below are not style preferences — they are blockers.</p>
+
+    <div class="callout amber" style="margin-bottom:8px">
+      <div class="callout-title">⚠️ Mid-migration: "Color" and "Color 2 wip" collections coexist</div>
+      Two colour variable collections are active simultaneously. Components may reference either collection — making it impossible to audit tokenisation state accurately. The migration must complete before component work begins.
+    </div>
+    <div class="callout amber" style="margin-bottom:8px">
+      <div class="callout-title">⚠️ Legacy token still active: Old/→ Card</div>
+      This deprecated token is still present in the published file. It is unclear which components still reference it. Needs to be traced and removed.
+    </div>
+    <div class="callout amber" style="margin-bottom:8px">
+      <div class="callout-title">⚠️ Test styles in the published file: Halo 1/2/3 Test</div>
+      Placeholder/test colour styles are visible to all consumers. These should never exist in a published system file. Remove immediately.
+    </div>
+    <div class="callout amber" style="margin-bottom:8px">
+      <div class="callout-title">⚠️ Typography naming is appearance-based, not role-based</div>
+      <code>Bold/M</code> describes what the text looks like, not what it is for. Role-based names such as <code>body/strong</code> or <code>heading/sm</code> are required. Must be resolved as part of the token clean-up.
+    </div>
+    <div class="callout amber" style="margin-bottom:8px">
+      <div class="callout-title">⚠️ Capitalisation inconsistency across token names</div>
+      Token name casing is inconsistent across collections. A naming convention must be established and applied uniformly before pipeline configuration.
+    </div>
+    <div class="callout blue" style="margin-bottom:8px">
+      <div class="callout-title">🔵 Light/Dark mode token decisions unresolved</div>
+      Several components — including Button — have unresolved light/dark mode token states. The component cannot be correctly tokenised until the semantic layer clarifies which colours apply in each mode. This will affect every component with a colour-sensitive state.
+    </div>
+    <div class="callout blue">
+      <div class="callout-title">🔵 Desktop/Mobile multi-mode variables not confirmed</div>
+      Variable modes for responsive contexts have not been confirmed. Retrofitting multi-mode support after authoring is significantly more expensive than building it in from the start. A decision on Phase 1 scope must be made before authoring begins.
+    </div>
+  </div>
+
+  <!-- A2 -->
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge">A2</div>
+      <div class="part-header-text">
+        <h2>Component Library Status</h2>
+        <p>Each component assessed against all eight completeness criteria. "Requires Inspection" = not yet verified, not assumed complete.</p>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:var(--grey-500);margin-bottom:12px"><strong>✓</strong> Confirmed meets criterion &nbsp;·&nbsp; <strong>✗</strong> Confirmed does not meet criterion &nbsp;·&nbsp; <strong>?</strong> Requires Figma inspection to confirm &nbsp;·&nbsp; V = Variant economy · N = Naming · T = Tokenisation · D = Documentation · P = Prototype · A = Accessibility · M = Machine readability · R = Fully authored</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:160px">Component</th><th>Type</th>
+            <th style="text-align:center">V</th><th style="text-align:center">N</th><th style="text-align:center">T</th><th style="text-align:center">D</th><th style="text-align:center">P</th><th style="text-align:center">A</th><th style="text-align:center">M</th><th style="text-align:center">R</th>
+            <th>Overall</th><th style="min-width:280px">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Side Navigation</strong></td><td>Simple Organism</td>
+            <td class="pass" style="text-align:center">✓</td><td class="pass" style="text-align:center">✓</td><td class="pass" style="text-align:center">✓</td><td class="pass" style="text-align:center">✓</td><td class="pass" style="text-align:center">✓</td><td class="pass" style="text-align:center">✓</td><td class="pass" style="text-align:center">✓</td><td class="pass" style="text-align:center">✓</td>
+            <td><span class="status-complete">✓ Complete</span></td>
+            <td>Gold standard reference. All eight criteria confirmed. Use this component's page structure, documentation, and tokenisation as the template for all subsequent work.</td>
+          </tr>
+          <tr>
+            <td><strong>Global Navigation ❇️</strong></td><td>Organism</td>
+            <td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td>
+            <td><span class="status-missing">Rough Draft</span></td>
+            <td>Marked ❇️ but all eight criteria fail on inspection. Background hardcoded <code>#0f3e80</code>. Auto-generated layer names throughout. Dropdown caret is a raw rasterised image. No documentation frame. No prototype. <strong>Needs to be rebuilt, not refined.</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Button ❇️</strong></td><td>Atom</td>
+            <td class="fail" style="text-align:center">✗</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td>
+            <td><span class="status-gaps">Gaps</span></td>
+            <td>V: light mode variant absent; glass button decision unresolved. T: light/dark mode tokens unresolved until Item 0 completes. P: no interactive prototype confirmed.</td>
+          </tr>
+          <tr><td><strong>Radio Button ❇️</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Key open question: is a hover state required for this platform? If not, any hover variant present means V fails.</td></tr>
+          <tr><td><strong>Checkbox</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Indeterminate state (select-all) and disabled state inclusion to be confirmed.</td></tr>
+          <tr><td><strong>Toggle / Switch</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>On/off/disabled states and label alignment variants to be verified.</td></tr>
+          <tr><td><strong>Text Input / Field</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Must cover: default, focus, filled, error, disabled, read-only. Prefix/suffix icon variants.</td></tr>
+          <tr><td><strong>Dropdown / Select</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Closed/open/selected/error/disabled. Multi-select and search-within variants needed.</td></tr>
+          <tr><td><strong>Badge / Status Chip</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Semantic colour variants (pending, active, error, warning, success, neutral) critical for table status column.</td></tr>
+          <tr><td><strong>Avatar</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Image / initials / icon fallback. Sizes. Status indicator overlay.</td></tr>
+          <tr><td><strong>Tooltip</strong></td><td>Atom</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Placement variants (top/right/bottom/left) and max-width behaviour needed.</td></tr>
+          <tr><td><strong>Breadcrumb</strong></td><td>Molecule</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Truncated overflow variant needed for deep navigation paths.</td></tr>
+          <tr><td><strong>Tabs</strong></td><td>Molecule</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Active/inactive/disabled states. Overflow behaviour. Underline vs contained variant.</td></tr>
+          <tr><td><strong>Modal / Dialog</strong></td><td>Molecule</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="unknown" style="text-align:center">?</td><td class="fail" style="text-align:center">✗</td><td><span class="status-inspect">Inspect</span></td><td>Size variants (sm/md/lg), scrollable body, confirmation dialog variant.</td></tr>
+          <tr><td><strong>Data Table</strong></td><td>Organism</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td><span class="status-missing">Not authored</span></td><td>Individual row/cell atoms may exist. The full organism — table + search + filters + bulk actions + pagination + export + all states — does not exist.</td></tr>
+          <tr><td><strong>Multi-Step Wizard</strong></td><td>Organism</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td><span class="status-missing">Not authored</span></td><td>Step indicator, per-step content frame, navigation controls, validation states — none authored as an organism.</td></tr>
+          <tr><td><strong>Settings Form Section</strong></td><td>Organism</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td><span class="status-missing">Not authored</span></td><td>Section header + form row layout + divider + save/cancel footer not authored as a unit.</td></tr>
+          <tr><td><strong>Screening Flow Card</strong></td><td>Molecule</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td class="fail" style="text-align:center">✗</td><td><span class="status-missing">Not authored</span></td><td>Card shell with flow metadata, status badge, and action menu not authored.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout blue" style="margin-top:16px">
+      <div class="callout-title">📋 Next step — Page-by-page Figma inspection</div>
+      Every row marked "Requires Inspection" needs a dedicated page-level review in Figma to confirm variant coverage, tokenisation state, and docs frame presence before work is scoped. This inspection should be completed as the first working session of Phase 1, before any component authoring begins.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
