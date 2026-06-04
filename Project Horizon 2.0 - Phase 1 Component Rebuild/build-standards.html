@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Build Standards — Project Horizon 2.0 Phase 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0F3E80; --blue: #1863cc; --blue-light: #e8f0fb; --blue-mid: #c2d8f8;
+  --orange: #E07B39; --orange-light: #fef3ec; --orange-mid: #f9d4b3;
+  --green: #1a7f4e; --green-light: #e6f4ee; --green-mid: #a8dcc0;
+  --red: #c0392b; --red-light: #fdf0ee; --red-mid: #f0b8b2;
+  --amber: #b45309; --amber-light: #fffbeb; --amber-mid: #fde68a;
+  --grey-50: #f7f7f8; --grey-100: #eeeef0; --grey-200: #d8d8db;
+  --grey-300: #c0c0c5; --grey-500: #767680; --grey-700: #444450;
+  --grey-900: #1a1a24; --white: #ffffff;
+  --radius: 6px; --radius-lg: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Red Hat Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;color:var(--grey-900);background:var(--grey-50)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── Top nav ── */
+.site-nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100}
+.site-nav .brand{color:rgba(255,255,255,0.9);font-size:13px;font-weight:700;padding:14px 20px 14px 0;margin-right:12px;border-right:1px solid rgba(255,255,255,0.15);white-space:nowrap;text-decoration:none}
+.site-nav .brand:hover{text-decoration:none;color:#fff}
+.site-nav a{color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;padding:14px 14px;text-decoration:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.site-nav a:hover{color:rgba(255,255,255,0.9);text-decoration:none}
+.site-nav a.active{color:#fff;border-bottom-color:rgba(255,255,255,0.6)}
+
+/* ── Page header ── */
+.page-header{background:var(--navy);color:#fff;padding:36px 48px 32px}
+.page-header .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
+.page-header h1{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:10px}
+.page-header .desc{font-size:13px;color:rgba(255,255,255,.65);max-width:640px;line-height:1.6}
+
+/* ── Layout ── */
+.page-body{max-width:1040px;margin:0 auto;padding:40px 48px 80px}
+.section{margin-bottom:52px}
+.section + .section{border-top:1px solid var(--grey-100);padding-top:48px}
+
+/* ── Section headers ── */
+.part-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--grey-100)}
+.part-badge{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.part-badge.orange{background:var(--orange)}
+.part-badge.green{background:var(--green)}
+.part-badge.red{background:var(--red)}
+.part-header-text h2{font-size:18px;font-weight:700;color:var(--grey-900);margin-bottom:3px}
+.part-header-text p{font-size:12px;color:var(--grey-500);line-height:1.4}
+h3{font-size:15px;font-weight:700;color:var(--grey-900);margin:28px 0 10px}
+h3:first-child{margin-top:0}
+h4{font-size:13px;font-weight:700;color:var(--grey-700);margin:18px 0 7px}
+p{margin-bottom:10px;color:var(--grey-700)}
+p:last-child{margin-bottom:0}
+ul,ol{padding-left:20px;margin-bottom:10px;color:var(--grey-700)}
+li{margin-bottom:4px;font-size:13px}
+strong{font-weight:600}
+
+/* ── Callouts ── */
+.callout{border-radius:var(--radius);padding:13px 15px;margin:14px 0;font-size:13px;line-height:1.6}
+.callout-title{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.callout.red{background:var(--red-light);border-left:3px solid var(--red);color:var(--grey-900)}
+.callout.red .callout-title{color:var(--red)}
+.callout.amber{background:var(--amber-light);border-left:3px solid var(--amber);color:var(--grey-900)}
+.callout.amber .callout-title{color:var(--amber)}
+.callout.green{background:var(--green-light);border-left:3px solid var(--green);color:var(--grey-900)}
+.callout.green .callout-title{color:var(--green)}
+.callout.blue{background:var(--blue-light);border-left:3px solid var(--blue);color:var(--grey-900)}
+.callout.blue .callout-title{color:var(--blue)}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto;margin:14px 0;border-radius:var(--radius-lg);border:1px solid var(--grey-100);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead tr{background:var(--grey-50)}
+th{padding:9px 14px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey-500);border-bottom:1px solid var(--grey-100)}
+td{padding:9px 14px;border-bottom:1px solid var(--grey-100);color:var(--grey-700);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--grey-50)}
+.pass{color:var(--green);font-weight:700}
+.fail{color:var(--red);font-weight:700}
+.unknown{color:var(--grey-400)}
+.status-complete{background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-gaps{background:var(--amber-light);color:var(--amber);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-inspect{background:var(--blue-light);color:var(--blue);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-missing{background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+
+/* ── Priority list ── */
+.priority-list{display:flex;flex-direction:column;gap:2px;margin-top:16px}
+.priority-item{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;display:grid;grid-template-columns:40px 1fr auto;gap:0 16px;align-items:start;box-shadow:var(--shadow)}
+.priority-item:hover{border-color:var(--blue-mid)}
+.priority-item.prereq-item{border-color:var(--red-mid);background:var(--red-light)}
+.prereq-item .item-num{background:var(--red);color:#fff}
+.item-num{width:32px;height:32px;background:var(--navy);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.item-body{}
+.item-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:4px}
+.item-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--grey-100);color:var(--grey-700)}
+.tag.atom{background:var(--blue-light);color:var(--blue)}
+.tag.molecule{background:#f3e8ff;color:#7c3aed}
+.tag.organism{background:var(--orange-light);color:var(--orange)}
+.tag.foundation{background:var(--red-light);color:var(--red)}
+.tag.complete{background:var(--green-light);color:var(--green)}
+.item-fields{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.item-field{display:grid;grid-template-columns:160px 1fr;gap:8px;font-size:12.5px}
+.item-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.item-field-value{color:var(--grey-700);line-height:1.5}
+.item-effort{font-size:11px;font-weight:700;color:var(--grey-500);text-align:right;padding-top:4px;white-space:nowrap}
+.item-effort .effort-badge{display:block;padding:4px 10px;border-radius:6px;background:var(--grey-100);color:var(--grey-700);font-size:12px;font-weight:700;text-align:center;margin-bottom:4px}
+.item-effort.blocker .effort-badge{background:var(--red-light);color:var(--red)}
+.item-effort.complete .effort-badge{background:var(--green-light);color:var(--green)}
+
+/* ── Criteria cards ── */
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:700px){.criteria-grid{grid-template-columns:1fr}}
+.criterion-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow)}
+.criterion-id{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:.04em}
+.criterion-title{font-size:13px;font-weight:700;color:var(--grey-900);margin-bottom:2px}
+.criterion-sub{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.criterion-desc{font-size:12.5px;color:var(--grey-700);line-height:1.6}
+
+/* ── Effort scale ── */
+.effort-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+@media(max-width:600px){.effort-scale{grid-template-columns:1fr 1fr}}
+.effort-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow)}
+.effort-label{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-size:13px;font-weight:800;margin-bottom:8px}
+.effort-label.S{background:var(--green-light);color:var(--green)}
+.effort-label.M{background:var(--blue-light);color:var(--blue)}
+.effort-label.L{background:var(--amber-light);color:var(--amber)}
+.effort-label.XL{background:var(--red-light);color:var(--red)}
+.effort-card h5{font-size:12px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.effort-card p{font-size:12px;color:var(--grey-700);margin:0}
+
+/* ── Route cards (App audit) ── */
+.route-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.route-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow)}
+.route-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.route-path{font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);background:var(--blue-light);padding:3px 8px;border-radius:4px}
+.route-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--grey-100);color:var(--grey-700)}
+.route-badge.high{background:var(--red-light);color:var(--red)}
+.route-purpose{font-size:13px;color:var(--grey-700);margin-bottom:12px;line-height:1.5}
+.route-fields{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:12.5px}
+.route-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.route-field-value{color:var(--grey-700);line-height:1.5}
+.comp-chips{display:flex;flex-wrap:wrap;gap:4px}
+.comp-chip{background:var(--grey-100);color:var(--grey-700);padding:2px 7px;border-radius:99px;font-size:11px}
+
+/* ── Home page nav cards ── */
+.nav-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+@media(max-width:640px){.nav-cards{grid-template-columns:1fr}}
+.nav-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);text-decoration:none;display:block;transition:all .15s}
+.nav-card:hover{border-color:var(--blue-mid);box-shadow:var(--shadow-md);transform:translateY(-1px);text-decoration:none}
+.nav-card-icon{font-size:22px;margin-bottom:10px}
+.nav-card-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.nav-card-desc{font-size:12.5px;color:var(--grey-500);line-height:1.5}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-box{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-num{font-size:24px;font-weight:800;color:var(--navy);margin-bottom:2px}
+.stat-label{font-size:11px;color:var(--grey-500);font-weight:500}
+
+/* ── Pipeline findings table ── */
+.finding-row td:last-child{font-size:11.5px}
+.ready{color:var(--green)}
+.blocker-text{color:var(--red);font-weight:600}
+.decision{color:var(--amber)}
+
+/* ── Logic table ── */
+.logic-table td:first-child{font-weight:600;color:var(--navy);font-size:12px;white-space:nowrap}
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <a class="brand" href="index.html">Horizon 2.0 · Phase 1</a>
+  <a href="index.html">Overview</a><a href="build-standards.html" class="active">Build Standards</a><a href="current-state.html">Current State</a><a href="app-audit.html">App Audit</a><a href="priority-list.html">Priority Build List</a>
+</nav>
+
+<header class="page-header">
+  <div class="eyebrow">Project Horizon 2.0 · Phase 1</div>
+  <h1>Build Standards</h1>
+  <p class="desc">The eight completeness criteria every component must meet before it is considered done, the effort scale used throughout this audit, and the accessibility baseline required for all Phase 1 work.</p>
+</header>
+<div class="page-body">
+
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge">V–R</div>
+      <div class="part-header-text">
+        <h2>Completeness Criteria</h2>
+        <p>A component is complete only when all eight criteria are met simultaneously. 7 out of 8 is not complete.</p>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-title">⚠ Note on the ❇️ Ready for Dev marker</div>
+      The ❇️ emoji on Figma page names is the "Ready for Dev" marker — it means implementation can begin. It is a starting-point signal, not a quality certification. A component carrying ❇️ may still have gaps against the eight criteria below: missing states, hardcoded values, incomplete documentation, no prototype. The eight criteria define what <strong>fully authored</strong> means.
+    </div>
+
+    <div class="criteria-grid" style="margin-top:20px">
+      <div class="criterion-card">
+        <span class="criterion-id">V · Variant Economy</span>
+        <div class="criterion-title">All required states, and only those</div>
+        <div class="criterion-sub">No speculative or redundant variants</div>
+        <div class="criterion-desc">All interaction states and variant dimensions required by the spec are present, systematically named, and organised. Equally important: no speculative, redundant, or untriggered variants exist. Every variant's presence is justified by a documented interaction requirement. Variant properties are named semantically (e.g. State=Hover, not "blue version").</div>
+      </div>
+      <div class="criterion-card">
+        <span class="criterion-id">N · Naming &amp; Structure</span>
+        <div class="criterion-title">Every layer is descriptively named</div>
+        <div class="criterion-sub">No auto-generated layer names</div>
+        <div class="criterion-desc">No auto-generated layer names ("Frame 633265", "Group 1073714087"). Every layer name reflects what it is conceptually. Library icons used throughout — no raw vectors, no embedded SVGs. Library typography styles and variables referenced directly — no inline font definitions.</div>
+      </div>
+      <div class="criterion-card">
+        <span class="criterion-id">T · Full Tokenisation</span>
+        <div class="criterion-title">Zero hardcoded values, anywhere</div>
+        <div class="criterion-sub">Every property references a Figma variable</div>
+        <div class="criterion-desc">Every fill, stroke, typography property, spacing value, border radius, shadow, and opacity references a Figma variable. No hex values, rgba values, pixel measurements, or font definitions are hardcoded. Variables reference the semantic layer (e.g. <code>text/base/primary</code>), not primitives directly. All variable references resolve — no broken links.</div>
+      </div>
+      <div class="criterion-card">
+        <span class="criterion-id">D · Comprehensive Documentation</span>
+        <div class="criterion-title">Full spec, not just a notes box</div>
+        <div class="criterion-sub">Documentation frame covers all of the below</div>
+        <div class="criterion-desc">A documentation frame exists covering: component purpose + when to use / not use; all variant properties with visual examples; interaction states; responsive behaviour; animation specs; keyboard navigation and focus order; ARIA roles, labels, and state attributes; colour contrast table; implementation notes; known edge cases.</div>
+      </div>
+      <div class="criterion-card">
+        <span class="criterion-id">P · Interactive Prototype</span>
+        <div class="criterion-title">A demo that shows, not describes</div>
+        <div class="criterion-sub">All primary interaction states demonstrated</div>
+        <div class="criterion-desc">A linked Figma prototype exists that demonstrates all primary interaction states (hover, focus, active, disabled, error where applicable). Accessible directly from the component page. Shows responsive behaviour where relevant. Must be usable by a developer as a behavioural reference without needing to read the docs frame.</div>
+      </div>
+      <div class="criterion-card">
+        <span class="criterion-id">A · Accessibility</span>
+        <div class="criterion-title">WCAG 2.2 AA across every variant and state</div>
+        <div class="criterion-sub">Validated per state, not just the default</div>
+        <div class="criterion-desc">All colour combinations in all states pass 4.5:1 contrast (text) and 3:1 (non-text UI). All interactive elements are keyboard-reachable with a visible focus indicator. All controls have correct ARIA roles, labels, and state attributes. Touch targets meet minimum 44×44px. Motion respects <code>prefers-reduced-motion</code>. A contrast table for every combination must exist in the docs frame.</div>
+      </div>
+      <div class="criterion-card">
+        <span class="criterion-id">M · Machine &amp; Agent Readability</span>
+        <div class="criterion-title">Fully consumable by agents and automated tooling</div>
+        <div class="criterion-sub">Structured, not buried in prose</div>
+        <div class="criterion-desc">All interactive elements carry unambiguous, unique accessible names. Semantic HTML roles specified in docs. All states programmatically detectable (aria-expanded, aria-selected, aria-disabled…). Documentation frame includes a structured data specification section: element role, accessible name source, state attributes, keyboard contract, expected DOM structure.</div>
+      </div>
+      <div class="criterion-card">
+        <span class="criterion-id">R · Fully Authored</span>
+        <div class="criterion-title">All seven criteria confirmed, post-review</div>
+        <div class="criterion-sub">Peer design review completed</div>
+        <div class="criterion-desc">The component page has been reviewed against all seven criteria above and a peer design review has been completed. This is the fully-authored standard — distinct from the ❇️ designation, which only means implementation can begin. Criterion R confirms the design work is genuinely complete.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge orange">S–XL</div>
+      <div class="part-header-text">
+        <h2>Effort Scale</h2>
+        <p>Estimates assume a single senior designer in Figma and include authoring, tokenisation, documentation, and review cycles.</p>
+      </div>
+    </div>
+    <div class="effort-scale">
+      <div class="effort-card">
+        <div class="effort-label S">S</div>
+        <h5>Small — ≤ 3 days</h5>
+        <p>Adjusting or filling gaps in an existing component — adding a missing state, resolving a token, updating docs.</p>
+      </div>
+      <div class="effort-card">
+        <div class="effort-label M">M</div>
+        <h5>Medium — 3–7 days</h5>
+        <p>Significant rework of an existing component, or authoring a simple new atom from scratch with full documentation.</p>
+      </div>
+      <div class="effort-card">
+        <div class="effort-label L">L</div>
+        <h5>Large — 1–2 weeks</h5>
+        <p>Complex new component with multiple variants and full documentation, or a simple organism.</p>
+      </div>
+      <div class="effort-card">
+        <div class="effort-label XL">XL</div>
+        <h5>Extra Large — 2–4+ weeks</h5>
+        <p>A full organism (e.g. Data Table with all controls) or a screen template. Should be scoped as its own work item.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge green">A11Y</div>
+      <div class="part-header-text">
+        <h2>Accessibility Baseline — All Phase 1 Components</h2>
+        <p>Non-negotiable requirements applied to every component authored in Phase 1.</p>
+      </div>
+    </div>
+    <p>All components authored in Phase 1 must meet WCAG 2.2 AA as a baseline. Each component's documentation frame must include all four of the following:</p>
+    <ul>
+      <li><strong>Keyboard navigation behaviour</strong> — which keys do what, focus order, trap behaviour for modals</li>
+      <li><strong>Focus indicator specification</strong> — visible focus style, meets 3:1 contrast against adjacent colour</li>
+      <li><strong>Screen reader label / role / state requirements</strong> — ARIA roles, accessible names, state attributes per variant</li>
+      <li><strong>Colour contrast ratios</strong> — documented table covering all colour combinations in all states</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
