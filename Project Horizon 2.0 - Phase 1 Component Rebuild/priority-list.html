@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Priority Build List — Project Horizon 2.0 Phase 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0F3E80; --blue: #1863cc; --blue-light: #e8f0fb; --blue-mid: #c2d8f8;
+  --orange: #E07B39; --orange-light: #fef3ec; --orange-mid: #f9d4b3;
+  --green: #1a7f4e; --green-light: #e6f4ee; --green-mid: #a8dcc0;
+  --red: #c0392b; --red-light: #fdf0ee; --red-mid: #f0b8b2;
+  --amber: #b45309; --amber-light: #fffbeb; --amber-mid: #fde68a;
+  --grey-50: #f7f7f8; --grey-100: #eeeef0; --grey-200: #d8d8db;
+  --grey-300: #c0c0c5; --grey-500: #767680; --grey-700: #444450;
+  --grey-900: #1a1a24; --white: #ffffff;
+  --radius: 6px; --radius-lg: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Red Hat Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;color:var(--grey-900);background:var(--grey-50)}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── Top nav ── */
+.site-nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100}
+.site-nav .brand{color:rgba(255,255,255,0.9);font-size:13px;font-weight:700;padding:14px 20px 14px 0;margin-right:12px;border-right:1px solid rgba(255,255,255,0.15);white-space:nowrap;text-decoration:none}
+.site-nav .brand:hover{text-decoration:none;color:#fff}
+.site-nav a{color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;padding:14px 14px;text-decoration:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.site-nav a:hover{color:rgba(255,255,255,0.9);text-decoration:none}
+.site-nav a.active{color:#fff;border-bottom-color:rgba(255,255,255,0.6)}
+
+/* ── Page header ── */
+.page-header{background:var(--navy);color:#fff;padding:36px 48px 32px}
+.page-header .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
+.page-header h1{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:10px}
+.page-header .desc{font-size:13px;color:rgba(255,255,255,.65);max-width:640px;line-height:1.6}
+
+/* ── Layout ── */
+.page-body{max-width:1040px;margin:0 auto;padding:40px 48px 80px}
+.section{margin-bottom:52px}
+.section + .section{border-top:1px solid var(--grey-100);padding-top:48px}
+
+/* ── Section headers ── */
+.part-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--grey-100)}
+.part-badge{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.part-badge.orange{background:var(--orange)}
+.part-badge.green{background:var(--green)}
+.part-badge.red{background:var(--red)}
+.part-header-text h2{font-size:18px;font-weight:700;color:var(--grey-900);margin-bottom:3px}
+.part-header-text p{font-size:12px;color:var(--grey-500);line-height:1.4}
+h3{font-size:15px;font-weight:700;color:var(--grey-900);margin:28px 0 10px}
+h3:first-child{margin-top:0}
+h4{font-size:13px;font-weight:700;color:var(--grey-700);margin:18px 0 7px}
+p{margin-bottom:10px;color:var(--grey-700)}
+p:last-child{margin-bottom:0}
+ul,ol{padding-left:20px;margin-bottom:10px;color:var(--grey-700)}
+li{margin-bottom:4px;font-size:13px}
+strong{font-weight:600}
+
+/* ── Callouts ── */
+.callout{border-radius:var(--radius);padding:13px 15px;margin:14px 0;font-size:13px;line-height:1.6}
+.callout-title{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.callout.red{background:var(--red-light);border-left:3px solid var(--red);color:var(--grey-900)}
+.callout.red .callout-title{color:var(--red)}
+.callout.amber{background:var(--amber-light);border-left:3px solid var(--amber);color:var(--grey-900)}
+.callout.amber .callout-title{color:var(--amber)}
+.callout.green{background:var(--green-light);border-left:3px solid var(--green);color:var(--grey-900)}
+.callout.green .callout-title{color:var(--green)}
+.callout.blue{background:var(--blue-light);border-left:3px solid var(--blue);color:var(--grey-900)}
+.callout.blue .callout-title{color:var(--blue)}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto;margin:14px 0;border-radius:var(--radius-lg);border:1px solid var(--grey-100);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead tr{background:var(--grey-50)}
+th{padding:9px 14px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey-500);border-bottom:1px solid var(--grey-100)}
+td{padding:9px 14px;border-bottom:1px solid var(--grey-100);color:var(--grey-700);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--grey-50)}
+.pass{color:var(--green);font-weight:700}
+.fail{color:var(--red);font-weight:700}
+.unknown{color:var(--grey-400)}
+.status-complete{background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-gaps{background:var(--amber-light);color:var(--amber);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-inspect{background:var(--blue-light);color:var(--blue);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-missing{background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+
+/* ── Priority list ── */
+.priority-list{display:flex;flex-direction:column;gap:2px;margin-top:16px}
+.priority-item{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;display:grid;grid-template-columns:40px 1fr auto;gap:0 16px;align-items:start;box-shadow:var(--shadow)}
+.priority-item:hover{border-color:var(--blue-mid)}
+.priority-item.prereq-item{border-color:var(--red-mid);background:var(--red-light)}
+.prereq-item .item-num{background:var(--red);color:#fff}
+.item-num{width:32px;height:32px;background:var(--navy);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.item-body{}
+.item-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:4px}
+.item-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--grey-100);color:var(--grey-700)}
+.tag.atom{background:var(--blue-light);color:var(--blue)}
+.tag.molecule{background:#f3e8ff;color:#7c3aed}
+.tag.organism{background:var(--orange-light);color:var(--orange)}
+.tag.foundation{background:var(--red-light);color:var(--red)}
+.tag.complete{background:var(--green-light);color:var(--green)}
+.item-fields{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.item-field{display:grid;grid-template-columns:160px 1fr;gap:8px;font-size:12.5px}
+.item-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.item-field-value{color:var(--grey-700);line-height:1.5}
+.item-effort{font-size:11px;font-weight:700;color:var(--grey-500);text-align:right;padding-top:4px;white-space:nowrap}
+.item-effort .effort-badge{display:block;padding:4px 10px;border-radius:6px;background:var(--grey-100);color:var(--grey-700);font-size:12px;font-weight:700;text-align:center;margin-bottom:4px}
+.item-effort.blocker .effort-badge{background:var(--red-light);color:var(--red)}
+.item-effort.complete .effort-badge{background:var(--green-light);color:var(--green)}
+
+/* ── Criteria cards ── */
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:700px){.criteria-grid{grid-template-columns:1fr}}
+.criterion-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow)}
+.criterion-id{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:.04em}
+.criterion-title{font-size:13px;font-weight:700;color:var(--grey-900);margin-bottom:2px}
+.criterion-sub{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.criterion-desc{font-size:12.5px;color:var(--grey-700);line-height:1.6}
+
+/* ── Effort scale ── */
+.effort-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+@media(max-width:600px){.effort-scale{grid-template-columns:1fr 1fr}}
+.effort-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow)}
+.effort-label{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-size:13px;font-weight:800;margin-bottom:8px}
+.effort-label.S{background:var(--green-light);color:var(--green)}
+.effort-label.M{background:var(--blue-light);color:var(--blue)}
+.effort-label.L{background:var(--amber-light);color:var(--amber)}
+.effort-label.XL{background:var(--red-light);color:var(--red)}
+.effort-card h5{font-size:12px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.effort-card p{font-size:12px;color:var(--grey-700);margin:0}
+
+/* ── Route cards (App audit) ── */
+.route-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.route-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow)}
+.route-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.route-path{font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);background:var(--blue-light);padding:3px 8px;border-radius:4px}
+.route-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--grey-100);color:var(--grey-700)}
+.route-badge.high{background:var(--red-light);color:var(--red)}
+.route-purpose{font-size:13px;color:var(--grey-700);margin-bottom:12px;line-height:1.5}
+.route-fields{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:12.5px}
+.route-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.route-field-value{color:var(--grey-700);line-height:1.5}
+.comp-chips{display:flex;flex-wrap:wrap;gap:4px}
+.comp-chip{background:var(--grey-100);color:var(--grey-700);padding:2px 7px;border-radius:99px;font-size:11px}
+
+/* ── Home page nav cards ── */
+.nav-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+@media(max-width:640px){.nav-cards{grid-template-columns:1fr}}
+.nav-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);text-decoration:none;display:block;transition:all .15s}
+.nav-card:hover{border-color:var(--blue-mid);box-shadow:var(--shadow-md);transform:translateY(-1px);text-decoration:none}
+.nav-card-icon{font-size:22px;margin-bottom:10px}
+.nav-card-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
+.nav-card-desc{font-size:12.5px;color:var(--grey-500);line-height:1.5}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-box{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-num{font-size:24px;font-weight:800;color:var(--navy);margin-bottom:2px}
+.stat-label{font-size:11px;color:var(--grey-500);font-weight:500}
+
+/* ── Pipeline findings table ── */
+.finding-row td:last-child{font-size:11.5px}
+.ready{color:var(--green)}
+.blocker-text{color:var(--red);font-weight:600}
+.decision{color:var(--amber)}
+
+/* ── Logic table ── */
+.logic-table td:first-child{font-weight:600;color:var(--navy);font-size:12px;white-space:nowrap}
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <a class="brand" href="index.html">Horizon 2.0 · Phase 1</a>
+  <a href="index.html">Overview</a><a href="build-standards.html">Build Standards</a><a href="current-state.html">Current State</a><a href="app-audit.html">App Audit</a><a href="priority-list.html" class="active">Priority Build List</a>
+</nav>
+
+<header class="page-header">
+  <div class="eyebrow">Project Horizon 2.0 · Phase 1 · Part C</div>
+  <h1>Priority Build List</h1>
+  <p class="desc">20 items in execution order. Items should not be started out of sequence — each depends on the preceding items being stable. Item 0 is a prerequisite blocker for all component authoring.</p>
+</header>
+<div class="page-body">
+
+  <!-- C0 -->
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge">C0</div>
+      <div class="part-header-text"><h2>Prioritisation Logic</h2><p>The sequencing rationale. Each layer depends on the layer above it being stable.</p></div>
+    </div>
+    <div class="table-wrap">
+      <table class="logic-table">
+        <thead><tr><th>Order</th><th>Layer</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>1st</td><td>Token system clean-up</td><td>Nothing can be authoritatively tokenised until the Color migration is complete, legacy tokens removed, and light/dark mode decisions made. Building on unstable tokens creates rework that multiplies with every component added.</td></tr>
+          <tr><td>2nd</td><td>Existing atoms with known gaps</td><td>Button is already marked ❇️ and partially authored. Closing its gaps is a small effort with high payoff — every screen uses buttons, and they form the baseline confidence signal for the dev team.</td></tr>
+          <tr><td>3rd</td><td>High-frequency form atoms</td><td>Text Input, Dropdown, Checkbox, Radio, Toggle appear on every single screen. These must be complete before any form-heavy screen (Invite, Settings) can be designed or built. They are also the prerequisite for the Wizard organism.</td></tr>
+          <tr><td>4th</td><td>Data Table organism</td><td>The dominant pattern across three primary screens. Authoring this organism is the single highest-impact deliverable — it unlocks Background Checks, Screening Flows, and Child Safety in one shot. Treat as a standalone work stream.</td></tr>
+          <tr><td>5th</td><td>Navigation &amp; utility atoms</td><td>Badge, Tabs, Breadcrumb, Tooltip, Modal, Avatar are needed for Applicant Profile and supporting views. Lower urgency than form atoms — fewer screens depend on them.</td></tr>
+          <tr><td>6th</td><td>Remaining organisms</td><td>Wizard, Settings Form Section, Screening Flow Card can only be correctly authored once their constituent atoms are stable. Sequencing after atoms avoids rework loops.</td></tr>
+          <tr><td>7th</td><td>Screen templates</td><td>Templates are assembled from finished organisms. Fast to produce once atoms and organisms are done — attempting them earlier would require placeholder components and create technical debt.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- C1 -->
+  <div class="section">
+    <div class="part-header">
+      <div class="part-badge green">C1</div>
+      <div class="part-header-text"><h2>Priority Build List</h2><p>20 items in execution order. Do not start an item before the preceding items are stable.</p></div>
+    </div>
+
+    <div class="callout blue" style="margin-bottom:20px">
+      <div class="callout-title">📌 Items Marked "Requires Inspection"</div>
+      Twelve of the nineteen items include components marked "Requires Inspection." Before any of these are started, complete a dedicated Figma inspection session to confirm actual current state. This may reduce some effort estimates significantly.
+    </div>
+
+    <div class="priority-list">
+
+      <div class="priority-item prereq-item">
+        <div class="item-num">0</div>
+        <div class="item-body">
+          <div class="item-title">Token Architecture Clean-Up</div>
+          <div class="item-meta">
+            <span class="tag foundation">Foundation · Pre-Requisite</span>
+            <span class="tag" style="background:var(--red-light);color:var(--red)">BLOCKER</span>
+          </div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Current state</span><span class="item-field-value">Mid-migration. Two colour collections active simultaneously. Legacy tokens and test styles present in published file.</span></div>
+            <div class="item-field"><span class="item-field-label">Specific gaps</span><span class="item-field-value">Complete Color → Color 2 migration · Remove Old/→ Card token · Remove Halo 1/2/3 Test styles · Rename Bold/M to role-based name · Standardise capitalisation · Finalise light/dark mode tokens · Decide Desktop/Mobile multi-mode scope.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Pre-requisite for everything else. No component can be correctly tokenised until this is complete.</span></div>
+          </div>
+        </div>
+        <div class="item-effort blocker"><span class="effort-badge">XL</span>2–4 weeks</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">1</div>
+        <div class="item-body">
+          <div class="item-title">Side Navigation — Reference Standard</div>
+          <div class="item-meta">
+            <span class="tag organism">Simple Organism</span>
+            <span class="tag complete">✓ Complete</span>
+          </div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Current state</span><span class="item-field-value">Ready for Dev. All eight criteria confirmed. Gold standard reference.</span></div>
+            <div class="item-field"><span class="item-field-label">Action required</span><span class="item-field-value">None. Use as the template for all subsequent component pages.</span></div>
+          </div>
+        </div>
+        <div class="item-effort complete"><span class="effort-badge">Done</span></div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">2</div>
+        <div class="item-body">
+          <div class="item-title">Button</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Gap-Fill</span><span class="tag" style="background:var(--amber-light);color:var(--amber)">Gaps</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Current state</span><span class="item-field-value">Marked ❇️. Dark mode variants present; light mode absent. Glass button variant decision unresolved.</span></div>
+            <div class="item-field"><span class="item-field-label">Specific gaps</span><span class="item-field-value">Author light mode variants · Resolve glass button · Finalise token assignments post–Item 0 · Confirm documentation frame.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">S</span>≤ 3 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">3</div>
+        <div class="item-body">
+          <div class="item-title">Text Input / Field</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required states</span><span class="item-field-value">Default · Focus · Filled · Error · Disabled · Read-only · Prefix/suffix icon and text · Label + placeholder + error message + helper text.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Gate to all form work. Must be complete before Dropdown, Wizard, and Settings Form Section can be designed.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">M</span>3–7 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">4</div>
+        <div class="item-body">
+          <div class="item-title">Dropdown / Select</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required states</span><span class="item-field-value">Closed · Open · Selected · Error · Disabled · Multi-select variant · Search-within-dropdown variant · Option list states.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Needed for every filter control across Background Checks, Screening Flows, Child Safety, and the Invite wizard.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">M</span>3–7 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">5</div>
+        <div class="item-body">
+          <div class="item-title">Checkbox</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required states</span><span class="item-field-value">Unchecked · Checked · Indeterminate (select-all) · Disabled · Label right/left · Group layout.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Indeterminate state is critical for Data Table row selection (select-all with mixed state).</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">S–M</span>1–5 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">6</div>
+        <div class="item-body">
+          <div class="item-title">Radio Button</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Gap-Fill or Author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Key decision</span><span class="item-field-value">Confirm whether hover state is required for this platform before authoring.</span></div>
+            <div class="item-field"><span class="item-field-label">Required states</span><span class="item-field-value">Unselected · Selected · Disabled (both) · Label right · Group layout (vertical).</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">S–M</span>1–5 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">7</div>
+        <div class="item-body">
+          <div class="item-title">Toggle / Switch</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required states</span><span class="item-field-value">Off · On · Disabled · Label right/left/none · With description text (settings rows).</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Needed before Settings Form Section organism can be authored.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">S–M</span>1–5 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">8</div>
+        <div class="item-body">
+          <div class="item-title">Badge / Status Chip</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required variants</span><span class="item-field-value">Semantic: pending · active/complete · error/failed · warning · neutral/draft · info · Sizes: sm, md · Icon+label / label-only / icon-only · Outlined and filled.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Semantic colour set must map to the application's order/check status states exactly.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">M</span>3–5 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">9</div>
+        <div class="item-body">
+          <div class="item-title">Tabs</div>
+          <div class="item-meta"><span class="tag molecule">Molecule</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required states</span><span class="item-field-value">Active · Inactive · Disabled · Underline variant · Contained/pill variant · Overflow behaviour · Badge count on tab item.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Needed for Applicant Profile detail view.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">M</span>3–5 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">10</div>
+        <div class="item-body">
+          <div class="item-title">Modal / Dialog</div>
+          <div class="item-meta"><span class="tag molecule">Molecule</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required variants</span><span class="item-field-value">Sizes: sm (confirm) · md (default) · lg (content-heavy) · Header + scrollable body + footer · Backdrop overlay · Confirmation/destructive variant.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Destructive action variant must document correct button variant and copy pattern.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">M</span>3–5 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">11</div>
+        <div class="item-body">
+          <div class="item-title">Avatar</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required variants</span><span class="item-field-value">Image · Initials · Icon fallback · Sizes: sm/md/lg/xl · Status indicator overlay · Editable variant.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Initials generation logic must be documented in the behaviour spec.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">S</span>≤ 3 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">12</div>
+        <div class="item-body">
+          <div class="item-title">Breadcrumb</div>
+          <div class="item-meta"><span class="tag molecule">Molecule</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required variants</span><span class="item-field-value">Default (all crumbs visible) · Truncated (middle crumbs collapsed) · Last-item non-link state · Separator character.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Truncation behaviour and aria-label must be specified in documentation.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">S</span>≤ 3 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">13</div>
+        <div class="item-body">
+          <div class="item-title">Tooltip</div>
+          <div class="item-meta"><span class="tag atom">Atom</span><span class="tag">Inspect then author</span><span class="tag" style="background:var(--blue-light);color:var(--blue)">Requires Inspection</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Required variants</span><span class="item-field-value">Placement: top · right · bottom · left · With/without arrow · Max-width wrapping · Trigger: hover (desktop) / focus (keyboard).</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Used on icon-only buttons and truncated text cells in the Data Table.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">S</span>≤ 2 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">14</div>
+        <div class="item-body">
+          <div class="item-title">Data Table Organism</div>
+          <div class="item-meta"><span class="tag organism">Complex Organism</span><span class="tag">Net New</span><span class="tag" style="background:var(--red-light);color:var(--red)">Not authored</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Constituent parts</span><span class="item-field-value">Header row (sortable, column controls) · Body rows (default/hover/selected) · Row checkbox · Loading skeleton · Empty state · Error state · Search bar · Filter bar · Bulk action toolbar · Column visibility panel · Export menu · Pagination.</span></div>
+            <div class="item-field"><span class="item-field-label">Dependency</span><span class="item-field-value">Items 2–13 must be complete first.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Highest-impact single deliverable. Unlocks three primary screens simultaneously. Treat as a standalone work stream.</span></div>
+          </div>
+        </div>
+        <div class="item-effort blocker"><span class="effort-badge">XL</span>2–4+ weeks</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">15</div>
+        <div class="item-body">
+          <div class="item-title">Multi-Step Wizard</div>
+          <div class="item-meta"><span class="tag organism">Organism</span><span class="tag">Net New</span><span class="tag" style="background:var(--red-light);color:var(--red)">Not authored</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Constituent parts</span><span class="item-field-value">Step indicator (completed/active/upcoming) · Per-step content frame · Back/Next/Submit navigation · Step-level validation error · Progress persistence.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Sequenced after atoms — the wizard's form sections directly compose Text Input, Dropdown, Radio, and Checkbox.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">L</span>1–2 weeks</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">16</div>
+        <div class="item-body">
+          <div class="item-title">Settings Form Section</div>
+          <div class="item-meta"><span class="tag organism">Organism</span><span class="tag">Net New</span><span class="tag" style="background:var(--red-light);color:var(--red)">Not authored</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Constituent parts</span><span class="item-field-value">Section header (title + description) · Form row layout (label + field + help text) · Divider · Section footer (save + cancel).</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Powers the Account Settings screen. Form row layout must handle different field widths with documented column proportions.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">M</span>3–7 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">17</div>
+        <div class="item-body">
+          <div class="item-title">Screening Flow Card</div>
+          <div class="item-meta"><span class="tag molecule">Molecule</span><span class="tag">Net New</span><span class="tag" style="background:var(--red-light);color:var(--red)">Not authored</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Constituent parts</span><span class="item-field-value">Card shell · Flow name + ID · Status badge · Metadata row · Overflow menu (edit/duplicate/delete) · Active/inactive/archived states.</span></div>
+            <div class="item-field"><span class="item-field-label">Notes</span><span class="item-field-value">Author as both card and table-row variants so the screen template can use either pattern.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">M</span>3–5 days</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">18</div>
+        <div class="item-body">
+          <div class="item-title">Background Checks — Screen Template</div>
+          <div class="item-meta"><span class="tag">Screen Template</span><span class="tag" style="background:var(--red-light);color:var(--red)">Not authored</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Dependency</span><span class="item-field-value">Cannot start until Item 14 (Data Table Organism) is complete.</span></div>
+            <div class="item-field"><span class="item-field-label">Scope</span><span class="item-field-value">Full page: Side Nav + page header + Data Table + responsive layout grid. Annotated spec: spacing, breakpoints, all states.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">L</span>1 week</div>
+      </div>
+
+      <div class="priority-item">
+        <div class="item-num">19</div>
+        <div class="item-body">
+          <div class="item-title">Invite / Order Flow — Screen Template</div>
+          <div class="item-meta"><span class="tag">Screen Template</span><span class="tag" style="background:var(--red-light);color:var(--red)">Not authored</span></div>
+          <div class="item-fields">
+            <div class="item-field"><span class="item-field-label">Dependency</span><span class="item-field-value">Cannot start until Item 15 (Multi-Step Wizard Organism) is complete.</span></div>
+            <div class="item-field"><span class="item-field-label">Scope</span><span class="item-field-value">Full flow covering all wizard steps: applicant details, package selection, delivery options, confirmation. Each step as a separate frame.</span></div>
+          </div>
+        </div>
+        <div class="item-effort"><span class="effort-badge">L</span>1 week</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
