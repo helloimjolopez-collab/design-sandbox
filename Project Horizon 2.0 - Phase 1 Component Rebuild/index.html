@@ -2,238 +2,1100 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Overview — Project Horizon 2.0 Phase 1</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pathway Component Build — ValueLabs Brief Hub</title>
 <style>
-:root {
-  --navy: #0F3E80; --blue: #1863cc; --blue-light: #e8f0fb; --blue-mid: #c2d8f8;
-  --orange: #E07B39; --orange-light: #fef3ec; --orange-mid: #f9d4b3;
-  --green: #1a7f4e; --green-light: #e6f4ee; --green-mid: #a8dcc0;
-  --red: #c0392b; --red-light: #fdf0ee; --red-mid: #f0b8b2;
-  --amber: #b45309; --amber-light: #fffbeb; --amber-mid: #fde68a;
-  --grey-50: #f7f7f8; --grey-100: #eeeef0; --grey-200: #d8d8db;
-  --grey-300: #c0c0c5; --grey-500: #767680; --grey-700: #444450;
-  --grey-900: #1a1a24; --white: #ffffff;
-  --radius: 6px; --radius-lg: 10px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --bg:#FFFFFF;
+  --sb-bg:#F7F7F5;
+  --sb-hover:#EBEBEA;
+  --sb-active:#E3E2E0;
+  --border:#E9E9E8;
+  --border-dark:#D3D1CB;
+  --text:#37352F;
+  --text2:#73726E;
+  --text3:#B0AFAB;
+  --blue:#2383E2;
+  --blue-bg:#EEF4FD;
+  --blue-border:#C8DCF7;
+  --red:#E03E3E;
+  --red-bg:#FBE4E4;
+  --red-border:#F5C6C6;
+  --amber:#B45309;
+  --amber-bg:#FEF3C7;
+  --amber-border:#FCD34D;
+  --green:#0F7B6C;
+  --green-bg:#DDEDEA;
+  --green-border:#A7D7D0;
+  --purple:#6D4CC8;
+  --purple-bg:#EDE9FD;
+  --purple-border:#C4B5FD;
+  --grey-bg:#F1F1EF;
+  --sidebar:220px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Red Hat Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.6;color:var(--grey-900);background:var(--grey-50)}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* ── Top nav ── */
-.site-nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100}
-.site-nav .brand{color:rgba(255,255,255,0.9);font-size:13px;font-weight:700;padding:14px 20px 14px 0;margin-right:12px;border-right:1px solid rgba(255,255,255,0.15);white-space:nowrap;text-decoration:none}
-.site-nav .brand:hover{text-decoration:none;color:#fff}
-.site-nav a{color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;padding:14px 14px;text-decoration:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
-.site-nav a:hover{color:rgba(255,255,255,0.9);text-decoration:none}
-.site-nav a.active{color:#fff;border-bottom-color:rgba(255,255,255,0.6)}
-
-/* ── Page header ── */
-.page-header{background:var(--navy);color:#fff;padding:36px 48px 32px}
-.page-header .eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
-.page-header h1{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:10px}
-.page-header .desc{font-size:13px;color:rgba(255,255,255,.65);max-width:640px;line-height:1.6}
 
 /* ── Layout ── */
-.page-body{max-width:1040px;margin:0 auto;padding:40px 48px 80px}
-.section{margin-bottom:52px}
-.section + .section{border-top:1px solid var(--grey-100);padding-top:48px}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);font-size:14px;line-height:1.6;color:var(--text);background:var(--bg);display:flex}
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--sb-bg);display:flex;flex-direction:column;height:100vh;overflow-y:auto;flex-shrink:0;z-index:400;border-right:1px solid var(--border)}
+.main-content{flex:1;overflow-y:auto;height:100vh;position:relative}
+.section{display:none}.section.active{display:block}
 
-/* ── Section headers ── */
-.part-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--grey-100)}
-.part-badge{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.part-badge.orange{background:var(--orange)}
-.part-badge.green{background:var(--green)}
-.part-badge.red{background:var(--red)}
-.part-header-text h2{font-size:18px;font-weight:700;color:var(--grey-900);margin-bottom:3px}
-.part-header-text p{font-size:12px;color:var(--grey-500);line-height:1.4}
-h3{font-size:15px;font-weight:700;color:var(--grey-900);margin:28px 0 10px}
-h3:first-child{margin-top:0}
-h4{font-size:13px;font-weight:700;color:var(--grey-700);margin:18px 0 7px}
-p{margin-bottom:10px;color:var(--grey-700)}
-p:last-child{margin-bottom:0}
-ul,ol{padding-left:20px;margin-bottom:10px;color:var(--grey-700)}
-li{margin-bottom:4px;font-size:13px}
-strong{font-weight:600}
+/* ── Sidebar ── */
+.sb-workspace{padding:14px 12px 10px;display:flex;align-items:center;gap:8px}
+.sb-ws-icon{width:22px;height:22px;background:var(--text);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-ws-name{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-divider{height:1px;background:var(--border);margin:2px 0}
+.sb-nav{padding:4px 0 12px;flex:1}
+.sb-group{font-size:11px;font-weight:500;color:var(--text3);padding:10px 12px 3px;letter-spacing:.02em}
+.sb-btn{display:flex;align-items:center;gap:6px;width:calc(100% - 8px);background:none;border:none;color:var(--text2);padding:5px 10px;font-size:13px;font-family:var(--font);cursor:pointer;text-align:left;transition:background .1s;border-radius:5px;margin:1px 4px}
+.sb-btn:hover{background:var(--sb-hover);color:var(--text)}
+.sb-btn.active{background:var(--sb-active);color:var(--text);font-weight:500}
+.sb-btn .mdi{flex-shrink:0;color:inherit;opacity:.7}
+.sb-btn.active .mdi{opacity:1}
+.sb-btn .sb-badge{margin-left:auto;font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.sb-footer{padding:10px 12px 16px;font-size:11px;color:var(--text3);line-height:1.6;border-top:1px solid var(--border);margin-top:auto}
+
+/* ── SVG icons ── */
+.mdi{display:inline-block;width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.1em;flex-shrink:0;overflow:visible}
+.mdi-16{width:13px;height:13px}
+.mdi-20{width:15px;height:15px}
+
+/* ── Cover ── */
+.cover-wrap{max-width:720px;margin:0 auto;padding:72px 48px 80px}
+.cover-eyebrow{font-size:11px;font-weight:600;letter-spacing:.09em;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.cover-title{font-size:40px;font-weight:700;color:var(--text);letter-spacing:-.025em;line-height:1.1;margin-bottom:12px}
+.cover-sub{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:36px;max-width:560px}
+.cover-props{margin-bottom:36px}
+.cover-prop{display:grid;grid-template-columns:130px 1fr;gap:0 12px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cover-prop:first-child{border-top:1px solid var(--border)}
+.cover-prop-label{color:var(--text3);font-weight:500;display:flex;align-items:center;gap:5px;font-size:12px}
+.cover-prop-val{color:var(--text)}
+.cover-prop-link{color:var(--blue);text-decoration:none}
+.cover-prop-link:hover{text-decoration:underline}
+.cover-divider{height:1px;background:var(--border);margin:32px 0}
+.cover-nav-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:14px}
+.cover-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-items:stretch}
+.cover-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:18px;cursor:pointer;transition:box-shadow .15s,border-color .15s;text-align:left;font-family:var(--font);display:flex;flex-direction:column;width:100%}
+.cover-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.08);border-color:var(--border-dark)}
+.cover-card.amber{background:var(--amber-bg);border-color:var(--amber-border)}
+.cover-card.amber:hover{background:#fde68a}
+.cover-card .cc-icon{display:block;color:var(--text2);margin-bottom:10px}
+.cover-card.amber .cc-icon{color:var(--amber)}
+.cover-card .cc-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px}
+.cover-card.amber .cc-label{color:var(--amber);opacity:.7}
+.cover-card .cc-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.cover-card.amber .cc-name{color:var(--amber)}
+.cover-card .cc-desc{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.4}
+.cover-card.amber .cc-desc{color:var(--amber);opacity:.8}
+
+/* ── Section page header ── */
+.ph{background:var(--bg);color:var(--text);padding:20px 28px 14px;position:sticky;top:0;z-index:300;border-bottom:1px solid var(--border)}
+.ph h1{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.ph p{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* ── Section body ── */
+.sa-wrap{min-height:100%}
+.sa-section{padding:24px 28px 28px}
+.sa-section+.sa-section{border-top:1px solid var(--border)}
+.sa-h2{font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
+.sa-h3{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 8px}
+.sa-h4{font-size:13px;font-weight:600;color:var(--text);margin:16px 0 6px}
+.sa-note{font-size:13px;color:var(--text2);margin-top:4px;line-height:1.6;max-width:760px}
+.sa-p{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:10px;max-width:760px}
 
 /* ── Callouts ── */
-.callout{border-radius:var(--radius);padding:13px 15px;margin:14px 0;font-size:13px;line-height:1.6}
-.callout-title{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
-.callout.red{background:var(--red-light);border-left:3px solid var(--red);color:var(--grey-900)}
-.callout.red .callout-title{color:var(--red)}
-.callout.amber{background:var(--amber-light);border-left:3px solid var(--amber);color:var(--grey-900)}
-.callout.amber .callout-title{color:var(--amber)}
-.callout.green{background:var(--green-light);border-left:3px solid var(--green);color:var(--grey-900)}
-.callout.green .callout-title{color:var(--green)}
-.callout.blue{background:var(--blue-light);border-left:3px solid var(--blue);color:var(--grey-900)}
-.callout.blue .callout-title{color:var(--blue)}
+.sa-callout{background:var(--sb-bg);border:1px solid var(--border);border-left:3px solid var(--border-dark);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text2);line-height:1.6;max-width:760px}
+.sa-callout strong{font-weight:600;display:block;margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text)}
+.sa-callout.amber{background:var(--amber-bg);border-color:var(--amber-border);border-left-color:var(--amber);color:var(--amber)}
+.sa-callout.amber strong{color:var(--amber)}
+.sa-callout.purple{background:var(--purple-bg);border-color:var(--purple-border);border-left-color:var(--purple);color:var(--purple)}
+.sa-callout.purple strong{color:var(--purple)}
+.sa-callout.blue{background:var(--blue-bg);border-color:var(--blue-border);border-left-color:var(--blue);color:var(--blue)}
+.sa-callout.blue strong{color:var(--blue)}
+.sa-callout.green{background:var(--green-bg);border-color:var(--green-border);border-left-color:var(--green);color:var(--green)}
+.sa-callout.green strong{color:var(--green)}
+.sa-callout.red{background:var(--red-bg);border-color:var(--red-border);border-left-color:var(--red);color:var(--red)}
+.sa-callout.red strong{color:var(--red)}
 
 /* ── Tables ── */
-.table-wrap{overflow-x:auto;margin:14px 0;border-radius:var(--radius-lg);border:1px solid var(--grey-100);background:#fff}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-thead tr{background:var(--grey-50)}
-th{padding:9px 14px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey-500);border-bottom:1px solid var(--grey-100)}
-td{padding:9px 14px;border-bottom:1px solid var(--grey-100);color:var(--grey-700);vertical-align:top;line-height:1.5}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--grey-50)}
-.pass{color:var(--green);font-weight:700}
-.fail{color:var(--red);font-weight:700}
-.unknown{color:var(--grey-400)}
-.status-complete{background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
-.status-gaps{background:var(--amber-light);color:var(--amber);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
-.status-inspect{background:var(--blue-light);color:var(--blue);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
-.status-missing{background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.sa-tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0 16px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+table.sa-tbl{width:100%;border-collapse:collapse;font-size:13px}
+table.sa-tbl th{background:var(--text);color:#fff;padding:9px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+table.sa-tbl td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;color:var(--text)}
+table.sa-tbl tr:last-child td{border-bottom:none}
+table.sa-tbl tr:hover td{background:var(--sb-bg)}
+.sa-tbl th.light{background:var(--grey-bg);color:var(--text2)}
 
-/* ── Priority list ── */
-.priority-list{display:flex;flex-direction:column;gap:2px;margin-top:16px}
-.priority-item{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;display:grid;grid-template-columns:40px 1fr auto;gap:0 16px;align-items:start;box-shadow:var(--shadow)}
-.priority-item:hover{border-color:var(--blue-mid)}
-.priority-item.prereq-item{border-color:var(--red-mid);background:var(--red-light)}
-.prereq-item .item-num{background:var(--red);color:#fff}
-.item-num{width:32px;height:32px;background:var(--navy);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.item-body{}
-.item-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:4px}
-.item-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--grey-100);color:var(--grey-700)}
-.tag.atom{background:var(--blue-light);color:var(--blue)}
-.tag.molecule{background:#f3e8ff;color:#7c3aed}
-.tag.organism{background:var(--orange-light);color:var(--orange)}
-.tag.foundation{background:var(--red-light);color:var(--red)}
-.tag.complete{background:var(--green-light);color:var(--green)}
-.item-fields{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-.item-field{display:grid;grid-template-columns:160px 1fr;gap:8px;font-size:12.5px}
-.item-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
-.item-field-value{color:var(--grey-700);line-height:1.5}
-.item-effort{font-size:11px;font-weight:700;color:var(--grey-500);text-align:right;padding-top:4px;white-space:nowrap}
-.item-effort .effort-badge{display:block;padding:4px 10px;border-radius:6px;background:var(--grey-100);color:var(--grey-700);font-size:12px;font-weight:700;text-align:center;margin-bottom:4px}
-.item-effort.blocker .effort-badge{background:var(--red-light);color:var(--red)}
-.item-effort.complete .effort-badge{background:var(--green-light);color:var(--green)}
+/* ── Badges ── */
+.sa-badge{display:inline-flex;align-items:center;gap:4px;border-radius:5px;padding:2px 8px;font-size:11.5px;font-weight:500;white-space:nowrap;line-height:1.4}
+.sa-badge.blue{background:var(--blue-bg);color:var(--blue)}
+.sa-badge.amber{background:var(--amber-bg);color:var(--amber)}
+.sa-badge.green{background:var(--green-bg);color:var(--green)}
+.sa-badge.red{background:var(--red-bg);color:var(--red)}
+.sa-badge.grey{background:var(--grey-bg);color:var(--text2)}
+.sa-badge.purple{background:var(--purple-bg);color:var(--purple)}
 
-/* ── Criteria cards ── */
-.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-@media(max-width:700px){.criteria-grid{grid-template-columns:1fr}}
-.criterion-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow)}
-.criterion-id{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:.04em}
-.criterion-title{font-size:13px;font-weight:700;color:var(--grey-900);margin-bottom:2px}
-.criterion-sub{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.criterion-desc{font-size:12.5px;color:var(--grey-700);line-height:1.6}
+/* ── Links section ── */
+.ep-links-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;border-top:1px solid var(--border);padding-top:16px;margin-top:20px}
+.ep-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--blue);text-decoration:none;padding:3px 0;font-family:var(--font);background:none;border:none;cursor:pointer;text-align:left;margin-right:18px}
+.ep-link:hover{text-decoration:underline}
 
-/* ── Effort scale ── */
-.effort-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-@media(max-width:600px){.effort-scale{grid-template-columns:1fr 1fr}}
-.effort-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow)}
-.effort-label{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-size:13px;font-weight:800;margin-bottom:8px}
-.effort-label.S{background:var(--green-light);color:var(--green)}
-.effort-label.M{background:var(--blue-light);color:var(--blue)}
-.effort-label.L{background:var(--amber-light);color:var(--amber)}
-.effort-label.XL{background:var(--red-light);color:var(--red)}
-.effort-card h5{font-size:12px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
-.effort-card p{font-size:12px;color:var(--grey-700);margin:0}
+/* ── Two-col grid ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 16px;max-width:760px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0 16px;max-width:760px}
 
-/* ── Route cards (App audit) ── */
-.route-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
-.route-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow)}
-.route-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
-.route-path{font-family:monospace;font-size:12px;font-weight:700;color:var(--navy);background:var(--blue-light);padding:3px 8px;border-radius:4px}
-.route-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--grey-100);color:var(--grey-700)}
-.route-badge.high{background:var(--red-light);color:var(--red)}
-.route-purpose{font-size:13px;color:var(--grey-700);margin-bottom:12px;line-height:1.5}
-.route-fields{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:12.5px}
-.route-field-label{font-weight:600;color:var(--grey-500);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
-.route-field-value{color:var(--grey-700);line-height:1.5}
-.comp-chips{display:flex;flex-wrap:wrap;gap:4px}
-.comp-chip{background:var(--grey-100);color:var(--grey-700);padding:2px 7px;border-radius:99px;font-size:11px}
+/* ── Cards (generic) ── */
+.card{border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.card h4{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px}
+.card p,.card li{font-size:12px;color:var(--text2);line-height:1.55}
+.card ul{padding-left:14px}
+.card.amber{background:var(--amber-bg);border-color:var(--amber-border)}
+.card.amber h4{color:var(--amber)}
+.card.green{background:var(--green-bg);border-color:var(--green-border)}
+.card.green h4{color:var(--green)}
+.card.red{background:var(--red-bg);border-color:var(--red-border)}
+.card.red h4{color:var(--red)}
+.card.purple{background:var(--purple-bg);border-color:var(--purple-border)}
+.card.purple h4{color:var(--purple)}
+.card.blue{background:var(--blue-bg);border-color:var(--blue-border)}
+.card.blue h4{color:var(--blue)}
+.card.grey{background:var(--grey-bg);border-color:var(--border)}
 
-/* ── Home page nav cards ── */
-.nav-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
-@media(max-width:640px){.nav-cards{grid-template-columns:1fr}}
-.nav-card{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);text-decoration:none;display:block;transition:all .15s}
-.nav-card:hover{border-color:var(--blue-mid);box-shadow:var(--shadow-md);transform:translateY(-1px);text-decoration:none}
-.nav-card-icon{font-size:22px;margin-bottom:10px}
-.nav-card-title{font-size:14px;font-weight:700;color:var(--grey-900);margin-bottom:5px}
-.nav-card-desc{font-size:12.5px;color:var(--grey-500);line-height:1.5}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}
-@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}}
-.stat-box{background:#fff;border:1px solid var(--grey-100);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
-.stat-num{font-size:24px;font-weight:800;color:var(--navy);margin-bottom:2px}
-.stat-label{font-size:11px;color:var(--grey-500);font-weight:500}
+/* ── Deliverable pair ── */
+.deliverable-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0;max-width:760px}
+.d-card{border:1px solid var(--border);border-radius:8px;padding:16px}
+.d-card .d-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px}
+.d-card h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px}
+.d-card p{font-size:12px;color:var(--text2);line-height:1.55}
 
-/* ── Pipeline findings table ── */
-.finding-row td:last-child{font-size:11.5px}
-.ready{color:var(--green)}
-.blocker-text{color:var(--red);font-weight:600}
-.decision{color:var(--amber)}
+/* ── Gate decision cards ── */
+.gate-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0 16px;max-width:760px}
+.gate-card{border-radius:8px;padding:14px 16px;border:1px solid}
+.gate-card .g-dot{font-size:14px;margin-bottom:6px;display:block}
+.gate-card h4{font-size:13px;font-weight:600;margin-bottom:5px}
+.gate-card p{font-size:12px;line-height:1.5}
+.gate-card.green{background:var(--green-bg);border-color:var(--green-border)}
+.gate-card.green h4{color:var(--green)}
+.gate-card.amber{background:var(--amber-bg);border-color:var(--amber-border)}
+.gate-card.amber h4{color:var(--amber)}
+.gate-card.red{background:var(--red-bg);border-color:var(--red-border)}
+.gate-card.red h4{color:var(--red)}
 
-/* ── Logic table ── */
-.logic-table td:first-child{font-weight:600;color:var(--navy);font-size:12px;white-space:nowrap}
+/* ── Criteria list ── */
+.criteria-list{list-style:none;padding:0;max-width:760px;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:10px 0}
+.criteria-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;font-size:13px;line-height:1.5;border-bottom:1px solid var(--border)}
+.criteria-list li:last-child{border-bottom:none}
+.ci-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.ci-dot.green{background:var(--green)}.ci-dot.blue{background:var(--blue)}.ci-dot.amber{background:var(--amber)}
+
+/* ── Checklist ── */
+.checklist-block{background:var(--grey-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:10px 0;max-width:760px}
+.checklist-block h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:10px}
+.cl-list{list-style:none;padding:0}
+.cl-list li{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12px;line-height:1.5;color:var(--text);border-bottom:1px solid var(--border)}
+.cl-list li:last-child{border-bottom:none}
+.cl-box{width:13px;height:13px;border:1.5px solid var(--border-dark);border-radius:2px;flex-shrink:0;margin-top:2px;background:var(--bg)}
+
+/* ── Pre/code ── */
+pre{background:var(--grey-bg);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:11.5px;font-family:'Menlo','Monaco','Consolas',monospace;overflow-x:auto;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:10px 0;color:var(--text);max-width:760px}
+code.inline{background:var(--grey-bg);padding:1px 5px;border-radius:3px;font-size:11.5px;font-family:'Menlo','Monaco','Consolas',monospace;color:var(--text)}
+
+/* ── UL/OL ── */
+.sa-ul,.sa-ol{padding-left:18px;margin:6px 0 10px;font-size:13px;line-height:1.7;color:var(--text);max-width:740px}
+.sa-ul li,.sa-ol li{margin-bottom:2px}
+
+/* ── Intro band (purple) ── */
+.intro-band{background:var(--purple-bg);border-bottom:1px solid var(--purple-border);padding:16px 28px}
+.intro-band-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--purple);text-transform:uppercase;margin-bottom:6px}
+.intro-band p{font-size:13px;color:var(--text);line-height:1.7;max-width:760px}
+
+/* ── Access table ── */
+.access-row{display:grid;grid-template-columns:200px 100px 1fr;gap:0;border-bottom:1px solid var(--border);font-size:13px;padding:9px 14px;align-items:start}
+.access-table-wrap{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:10px 0;max-width:760px}
+.access-header{display:grid;grid-template-columns:200px 100px 1fr;gap:0;background:var(--text);padding:8px 14px}
+.access-header span{font-size:11px;font-weight:600;letter-spacing:.04em;color:#fff;text-transform:uppercase}
+.access-row:last-child{border-bottom:none}
+.access-row:hover{background:var(--sb-bg)}
+
+/* ── Divider ── */
+.hdiv{height:1px;background:var(--border);margin:22px 0;max-width:760px}
+
+/* ── Sortable component table ── */
+.sort-th{cursor:pointer;user-select:none}
+.sort-th:hover{background:rgba(255,255,255,.1)}
+.sort-arr{font-size:10px;margin-left:4px;opacity:.4}
+.sort-arr.on{opacity:1}
+
+/* ── Mobile ── */
+#hamburger{display:none;position:fixed;top:10px;left:10px;z-index:500;background:var(--bg);border:1px solid var(--border);border-radius:6px;width:34px;height:34px;align-items:center;justify-content:center;cursor:pointer}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:350}
+
+@media(max-width:640px){
+  #hamburger{display:flex}
+  .sidebar{position:fixed;top:0;left:-240px;height:100%;z-index:400;transition:left .2s ease}
+  .sidebar.open{left:0}
+  .sb-overlay.open{display:block}
+  .cover-wrap{padding:52px 20px 60px}
+  .cover-cards{grid-template-columns:1fr}
+  .sa-section{padding:18px 20px 20px}
+  .ph{padding:14px 20px 10px}
+  .two-col,.deliverable-pair,.gate-row,.three-col{grid-template-columns:1fr}
+  .cover-title{font-size:28px}
+  .intro-band{padding:14px 20px}
+}
 </style>
 </head>
 <body>
-<nav class="site-nav">
-  <a class="brand" href="index.html">Horizon 2.0 · Phase 1</a>
-  <a href="index.html" class="active">Overview</a><a href="build-standards.html">Build Standards</a><a href="current-state.html">Current State</a><a href="app-audit.html">App Audit</a><a href="priority-list.html">Priority Build List</a>
-</nav>
 
-<header class="page-header">
-  <div class="eyebrow">Project Horizon 2.0 · Phase 1 Component Rebuild</div>
-  <h1>Design System &amp; Application Audit — 2.1</h1>
-  <p class="desc">A baseline audit of the Pathway Design System (Figma) and the PMM Horizon live application, establishing the shared foundation for all Phase 1 component authoring work. Audited April 2026.</p>
-</header>
-<div class="page-body">
+<!-- SVG sprite -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="mi-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+  <symbol id="mi-person" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="mi-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+  <symbol id="mi-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="mi-list" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+  <symbol id="mi-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></symbol>
+  <symbol id="mi-apps" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></symbol>
+  <symbol id="mi-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="mi-article" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+  <symbol id="mi-update" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+  <symbol id="mi-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="mi-table" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></symbol>
+  <symbol id="mi-checklist" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></symbol>
+</svg>
 
-  <div class="stats-row">
-    <div class="stat-box"><div class="stat-num">20</div><div class="stat-label">Components to build</div></div>
-    <div class="stat-box"><div class="stat-num">9</div><div class="stat-label">App screens audited</div></div>
-    <div class="stat-box"><div class="stat-num">1</div><div class="stat-label">Component complete (SideNav)</div></div>
-    <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Token pipeline blockers</div></div>
+<!-- mobile -->
+<button id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sb-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-workspace">
+    <div class="sb-ws-icon">
+      <svg class="mdi mdi-16" style="stroke:#fff" aria-hidden="true"><use href="#mi-apps"/></svg>
+    </div>
+    <div class="sb-ws-name">Pathway Design System</div>
+  </div>
+  <div class="sb-divider"></div>
+  <nav class="sb-nav">
+    <button class="sb-btn active" data-sec="cover" onclick="nav('cover',this)">
+      <svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-home"/></svg> Overview
+    </button>
+    <div class="sb-group">Sections</div>
+    <button class="sb-btn" data-sec="s1" onclick="nav('s1',this)">
+      <svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-person"/></svg> Track 1 Overview
+    </button>
+    <button class="sb-btn" data-sec="s2" onclick="nav('s2',this)">
+      <svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-book"/></svg> Build Standards
+    </button>
+    <button class="sb-btn" data-sec="s3" onclick="nav('s3',this)">
+      <svg class="mdi mdi-20" style="color:var(--amber)" aria-hidden="true"><use href="#mi-alert"/></svg> Table: Pilot
+      <span class="sb-badge">Gate</span>
+    </button>
+    <button class="sb-btn" data-sec="s4" onclick="nav('s4',this)">
+      <svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-list"/></svg> Component List
+    </button>
+    <button class="sb-btn" data-sec="s5" onclick="nav('s5',this)">
+      <svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-monitor"/></svg> Application Audit
+    </button>
+  </nav>
+  <div class="sb-footer">Pathway Design System<br>Ministry Brands · 2026</div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main-content">
+
+<!-- ══════════════════════════════ COVER ══════════════════════════════ -->
+<div id="cover" class="section active">
+<div class="cover-wrap">
+  <div class="cover-eyebrow">
+    <svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-folder"/></svg>
+    Project Horizon 2.0 — Track 1
+  </div>
+  <h1 class="cover-title">Pathway Component Build</h1>
+  <p class="cover-sub">The complete working reference for ValueLabs designers building Pathway components. Everything you need to know about what to build, how to build it, and what Ministry Brands will review you against.</p>
+
+  <div class="cover-props">
+    <div class="cover-prop">
+      <span class="cover-prop-label"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-apps"/></svg> Product</span>
+      <span class="cover-prop-val">Pathway Design System / Horizon PMM</span>
+    </div>
+    <div class="cover-prop">
+      <span class="cover-prop-label"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-list"/></svg> Track</span>
+      <span class="cover-prop-val">Track 1 — ValueLabs Component Build Acceleration</span>
+    </div>
+    <div class="cover-prop">
+      <span class="cover-prop-label"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-person"/></svg> Owners</span>
+      <span class="cover-prop-val">Jo Lopez (Design Systems Lead), Ministry Brands</span>
+    </div>
+    <div class="cover-prop">
+      <span class="cover-prop-label"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-person"/></svg> Vendor</span>
+      <span class="cover-prop-val">ValueLabs</span>
+    </div>
+    <div class="cover-prop">
+      <span class="cover-prop-label"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-article"/></svg> PIO</span>
+      <span class="cover-prop-val"><a class="cover-prop-link" href="#" target="_blank">Track 1 PIO ↗</a></span>
+    </div>
+    <div class="cover-prop">
+      <span class="cover-prop-label"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-update"/></svg> Updated</span>
+      <span class="cover-prop-val">June 2026</span>
+    </div>
   </div>
 
-  <div class="section" style="margin-top:36px">
-    <div class="part-header">
-      <div class="part-header-text"><h2>What this is</h2><p>How to use this site</p></div>
+  <div class="cover-divider"></div>
+  <div class="cover-nav-title">In this document</div>
+  <div class="cover-cards">
+    <button class="cover-card" onclick="nav('s1',document.querySelector('[data-sec=s1]'))">
+      <div class="cc-icon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-person"/></svg></div>
+      <div class="cc-label">Section 1</div>
+      <div class="cc-name">Track 1 Overview</div>
+      <div class="cc-desc">What VL is building, the ownership model, and access constraints</div>
+    </button>
+    <button class="cover-card" onclick="nav('s2',document.querySelector('[data-sec=s2]'))">
+      <div class="cc-icon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-book"/></svg></div>
+      <div class="cc-label">Section 2</div>
+      <div class="cc-name">Build Standards</div>
+      <div class="cc-desc">The complete spec for every component VL delivers — Figma, spec template, handoff</div>
+    </button>
+    <button class="cover-card amber" onclick="nav('s3',document.querySelector('[data-sec=s3]'))">
+      <div class="cc-icon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-alert"/></svg></div>
+      <div class="cc-label">Section 3 · Gate</div>
+      <div class="cc-name">Table: Pilot Component</div>
+      <div class="cc-desc">The first build. The guardrail for the whole engagement</div>
+    </button>
+    <button class="cover-card" onclick="nav('s4',document.querySelector('[data-sec=s4]'))">
+      <div class="cc-icon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-list"/></svg></div>
+      <div class="cc-label">Section 4</div>
+      <div class="cc-name">Component List</div>
+      <div class="cc-desc">15 components in priority order with Figma state and effort estimates</div>
+    </button>
+  </div>
+
+  <div class="ep-links-label" style="margin-top:28px;border-top:1px solid var(--border);padding-top:16px">Quick links</div>
+  <div style="display:flex;flex-wrap:wrap;gap:0">
+    <a class="ep-link" href="https://www.figma.com/design/3sw45aVcngFAmpbP6cfrXP/" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Pathway Figma</a>
+    <a class="ep-link" href="https://helloimjolopez-collab.github.io/pathway-ds/storybook/" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Storybook</a>
+    <a class="ep-link" href="https://www.figma.com/design/g2elaNII7uzXayveYuoyOp/Material-Symbols-3---Icon-Pack--Community-?node-id=2-6" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Material Symbols</a>
+    <a class="ep-link" href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> ARIA Patterns</a>
+    <a class="ep-link" href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> WCAG 2.2</a>
+    <a class="ep-link" href="https://webaim.org/resources/contrastchecker/" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Contrast Checker</a>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════ S1: TRACK 1 OVERVIEW ══════════════════════════════ -->
+<div id="s1" class="section">
+<div class="ph"><h1>Track 1 Overview</h1><p>What ValueLabs is building and how Ministry Brands owns the output.</p></div>
+<div class="sa-wrap">
+
+  <div class="intro-band">
+    <div class="intro-band-label">The model in one line</div>
+    <p>MB designs → MB specifies → <strong>VL builds to spec in Figma + writes the spec doc</strong> → MB reviews → MB ships. VL does not make design decisions, does not touch the repository, does not deploy.</p>
+  </div>
+
+  <div class="sa-section">
+    <h2 class="sa-h2">What this engagement is</h2>
+    <p class="sa-note">ValueLabs is a <strong>component build accelerator</strong>. Ministry Brands owns the design system, the standards, the Figma library, the code repository, and all deployment decisions. VL builds components to MB spec and returns them for review — nothing more.</p>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">What VL delivers per component</h2>
+    <div class="deliverable-pair">
+      <div class="d-card">
+        <div class="d-num">Deliverable 1</div>
+        <h4>Figma Component</h4>
+        <p>A fully built component on a dedicated page in the Pathway master Figma file. Five required Figma Sections, all variants, all states, all fills and strokes bound to Pathway Variables library tokens.</p>
+      </div>
+      <div class="d-card">
+        <div class="d-num">Deliverable 2</div>
+        <h4>Component Spec (.md)</h4>
+        <p>A completed 18-section Markdown file. All sections filled in, no placeholders, every token name verified against the Pathway Variables library. Status must remain <code class="inline">PENDING HUMAN REVIEW</code>.</p>
+      </div>
     </div>
-    <p>This site documents three interconnected deliverables produced in April 2026:</p>
-    <ul style="margin:10px 0 10px 20px">
-      <li><strong>An honest audit of the Pathway Design System</strong> as it exists in Figma today — token pipeline readiness, token architecture issues, and per-component completeness against eight criteria.</li>
-      <li><strong>A full inventory of the PMM Horizon application</strong> — nine routes reviewed in production, UI patterns catalogued and mapped to design system components.</li>
-      <li><strong>A prioritised, effort-estimated build list</strong> that bridges the two — 20 items in sequenced execution order.</li>
+    <div class="sa-callout"><strong>Both deliverables are required.</strong> A Figma component without a spec — or a spec without a complete Figma component — will be returned without review.</div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">What VL is NOT responsible for</h2>
+    <p class="sa-p" style="margin-bottom:8px">MB handles all of the following after VL handoff. VL does not write, configure, or deploy any of these:</p>
+    <ul class="sa-ul">
+      <li>Code (React components, TypeScript, CSS)</li>
+      <li>Storybook stories or the Storybook deployment</li>
+      <li>HTML demos or interactive previews</li>
+      <li>Figma Code Connect linking</li>
+      <li>Motion / animation implementation</li>
+      <li>Token pipeline configuration (Style Dictionary, CSS custom property export)</li>
+      <li>Token architecture changes or new token creation</li>
+      <li>Governance documentation or design system policy co-authorship</li>
     </ul>
-    <p>The <strong>Side Navigation</strong> component — fully authored and verified — is the reference standard throughout. Every other component is assessed against the same eight criteria used to confirm SideNav is complete.</p>
-    <div class="callout blue">
-      <div class="callout-title">📌 How to read execution order</div>
-      Items in the Priority Build List are numbered and must be worked in sequence. Each item depends on the items above it being stable. Do not start item 3 before item 2 is done, and do not start any component authoring before item 0 (Token Architecture Clean-Up) is complete.
-    </div>
-  </div>
 
-  <div class="nav-cards">
-    <a class="nav-card" href="build-standards.html">
-      <div class="nav-card-icon">📐</div>
-      <div class="nav-card-title">Build Standards</div>
-      <div class="nav-card-desc">The eight completeness criteria every component must meet, the effort scale used in estimates, and the accessibility baseline.</div>
-    </a>
-    <a class="nav-card" href="current-state.html">
-      <div class="nav-card-icon">🔍</div>
-      <div class="nav-card-title">Current State — Design System Audit</div>
-      <div class="nav-card-desc">Token pipeline readiness, token architecture blockers, and a component-by-component status table against all eight criteria.</div>
-    </a>
-    <a class="nav-card" href="app-audit.html">
-      <div class="nav-card-icon">📱</div>
-      <div class="nav-card-title">Application Audit</div>
-      <div class="nav-card-desc">Nine PMM Horizon routes reviewed in production. Screen-by-screen component requirements and a consolidated UI pattern catalogue.</div>
-    </a>
-    <a class="nav-card" href="priority-list.html">
-      <div class="nav-card-icon">✅</div>
-      <div class="nav-card-title">Priority Build List</div>
-      <div class="nav-card-desc">20 items in execution order. Sequencing logic, current Figma state, specific gaps, effort estimates, and dependencies for each.</div>
-    </a>
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">Access</h2>
+    <div class="access-table-wrap">
+      <div class="access-header">
+        <span>Resource</span><span>VL access</span><span>Notes</span>
+      </div>
+      <div class="access-row">
+        <strong style="font-size:13px">Pathway Figma master file</strong>
+        <span class="sa-badge green">Edit</span>
+        <span style="font-size:12px;color:var(--text2)">Component pages only. Builds directly inside the file.</span>
+      </div>
+      <div class="access-row">
+        <strong style="font-size:13px">Pathway Variables library</strong>
+        <span class="sa-badge blue">Read only</span>
+        <span style="font-size:12px;color:var(--text2)">Apply tokens from it. Do not modify or add to it.</span>
+      </div>
+      <div class="access-row">
+        <strong style="font-size:13px">Material Symbols Figma library</strong>
+        <span class="sa-badge blue">Read only</span>
+        <span style="font-size:12px;color:var(--text2)">Source all icons as instances. No custom SVGs.</span>
+      </div>
+      <div class="access-row">
+        <strong style="font-size:13px">Pathway code repository</strong>
+        <span class="sa-badge red">No access</span>
+        <span style="font-size:12px;color:var(--text2)">VL has no repo access at any point in the engagement.</span>
+      </div>
+      <div class="access-row">
+        <strong style="font-size:13px">Pathway Storybook</strong>
+        <span class="sa-badge grey">Reference only</span>
+        <span style="font-size:12px;color:var(--text2)">VL does not deploy or update Storybook.</span>
+      </div>
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">Constraints</h2>
+    <div class="sa-callout amber">
+      <strong>⚠ VL may not do the following</strong>
+      Modify the Pathway Variables library · Add new token variables to Figma · Create pages, sections, or frames outside the assigned component page · Apply raw hex values without flagging them in spec Section 17 · Make design decisions without consulting MB first · Co-author governance frameworks or design system policy
+    </div>
+    <p class="sa-p">If a token you need does not exist in the Variables library: use a raw value as a temporary stand-in, annotate it in Figma, document it in spec Section 17, and contact the DS team. Do not invent tokens.</p>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">The reference standard</h2>
+    <div class="sa-callout purple">
+      <strong>Side Navigation — study this before building anything</strong>
+      The Side Navigation component (<code class="inline">❇️ ↳ Local Navigation</code>) is the only fully authored component in the system. Its page structure, five Figma Sections, documentation frame, variant organisation, and tokenisation are the reference standard for everything VL builds. Study it first.
+    </div>
+
+    <div class="ep-links-label">Links</div>
+    <div>
+      <a class="ep-link" href="https://www.figma.com/design/3sw45aVcngFAmpbP6cfrXP/%E2%9D%87%EF%B8%8F--Pathway-Design-System--Master-File--MB-2.0-?node-id=40006978-23158" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Pathway Figma Master File</a>
+      <a class="ep-link" href="https://helloimjolopez-collab.github.io/pathway-ds/storybook/" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Pathway Storybook (reference only)</a>
+      <a class="ep-link" href="https://www.figma.com/design/g2elaNII7uzXayveYuoyOp/Material-Symbols-3---Icon-Pack--Community-?node-id=2-6" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Material Symbols Library</a>
+    </div>
   </div>
 
 </div>
+</div>
 
+<!-- ══════════════════════════════ S2: BUILD STANDARDS ══════════════════════════════ -->
+<div id="s2" class="section">
+<div class="ph"><h1>Build Standards</h1><p>The complete specification for what every component must include. These standards apply without exception.</p></div>
+<div class="sa-wrap">
+
+  <div class="intro-band">
+    <div class="intro-band-label">Pathway Design System — Component Build Standards · Version 1.0 · Ministry Brands DS Team · Active</div>
+    <p>This document defines the standards you must meet for every component you build. It covers what must be in your Figma component and what must be documented in your spec. <strong>Read it before starting.</strong> Both deliverables are required for every component.</p>
+  </div>
+
+  <div class="sa-section">
+    <h2 class="sa-h2">1. Your Access and Constraints</h2>
+    <p class="sa-p">You have: <strong>Edit access</strong> to the Pathway Figma master file — build components directly inside it. <strong>Read access</strong> to the Pathway Variables library in Figma — apply tokens from it; do not modify or add to it. You do not have access to the Pathway code repository.</p>
+    <div class="sa-callout amber">
+      <strong>⚠ What you may NOT do</strong>
+      Modify the Pathway Variables library · Add new token variables to Figma · Create pages, sections, or frames outside the component page you are assigned.<br><br>
+      If you find that a token you need does not exist in the Variables library, <strong>do not create one</strong>. Use a raw value, flag it clearly in spec Section 17 and Figma annotations, and contact the DS team so we can add the missing token while you are in the build phase.
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">2. Your Deliverables</h2>
+    <div class="deliverable-pair">
+      <div class="d-card">
+        <div class="d-num">Deliverable 1</div>
+        <h4>The Figma Component</h4>
+        <p>A fully built component on a dedicated page in the Pathway master Figma file, built to the structural and token standards in Section 4 of this document.</p>
+      </div>
+      <div class="d-card">
+        <div class="d-num">Deliverable 2</div>
+        <h4>The Component Spec</h4>
+        <p>A completed Markdown file documenting the component to the 18-section standard. All sections complete. No <code class="inline">[fill in]</code> placeholders. Status: <code class="inline">PENDING HUMAN REVIEW</code>.</p>
+      </div>
+    </div>
+    <div class="sa-callout grey"><strong>Not your responsibility:</strong> code, HTML demos, Storybook stories, Code Connect linking, motion implementation, token pipeline configuration. The DS team handles all of that after your handoff.</div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">3. Design Standards</h2>
+
+    <h3 class="sa-h3">3.1 Tokens — the absolute rule</h3>
+    <div class="sa-callout purple">
+      <strong>Critical rule</strong>
+      Every colour, typography style, border-radius, and shadow you apply to a component must come from the Pathway Variables library in Figma. Never apply a raw hex value, raw font size, raw weight, or raw radius to any layer intended to represent the production component.
+    </div>
+    <p class="sa-p">If you cannot find a token that fits:</p>
+    <ol class="sa-ol">
+      <li>Use a raw value as a temporary stand-in</li>
+      <li>Annotate in Figma where you used a raw value and why</li>
+      <li>Document it in spec Section 17 with a proposed token name and priority</li>
+      <li>Contact the DS team — we will add the missing token while you are in the build phase</li>
+    </ol>
+
+    <h3 class="sa-h3">3.2 Icons — one library only</h3>
+    <p class="sa-p">Pathway uses <strong>Material Symbols Rounded</strong> for all icons. No other icon library, icon set, or custom SVG is permitted. Icons are sourced from the Material Symbols Figma library — use instances from this library, never embedded SVGs. The icon name in the library (e.g. <code class="inline">arrow_forward</code>, <code class="inline">close</code>) is the exact name to reference in your spec's icon table.</p>
+
+    <h3 class="sa-h3">3.3 Typography</h3>
+    <p class="sa-p">All type styles must use a Pathway typographic style from the Figma library. Never set raw font size, raw font weight, or raw line-height on any layer.</p>
+
+    <h3 class="sa-h3">3.4 Accessibility — non-negotiable baseline</h3>
+    <div class="sa-callout blue"><strong>Required for every interactive component</strong>Visible focus ring on keyboard navigation (must be in Figma as a Focus state variant) · Minimum 48×48 px touch target on all interactive elements · Colour contrast ≥ 4.5:1 for text, ≥ 3:1 for non-text UI elements · ARIA pattern documented in spec Section 13.0 · Full keyboard interaction in spec Section 13.3 · Screen reader announcements in spec Section 13.5</div>
+
+    <h3 class="sa-h3">3.5 Responsiveness — four breakpoints</h3>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>Breakpoint</th><th>Width</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Mobile</td><td>393 px</td><td></td></tr>
+          <tr><td>Tablet</td><td>768 px</td><td></td></tr>
+          <tr><td>Small Desktop</td><td>1024 px</td><td></td></tr>
+          <tr><td><strong>Desktop</strong></td><td><strong>1440 px</strong></td><td><strong>Primary design canvas</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">4. How to Build the Figma Component</h2>
+
+    <h3 class="sa-h3">4.1 The component page</h3>
+    <p class="sa-p">Every component lives on its own dedicated page in the Pathway master Figma file. Match the naming convention exactly, including the emoji prefix and arrow format (e.g. <code class="inline">❇️ ↳ Local Navigation</code>). Do not add components to existing pages.</p>
+
+    <h3 class="sa-h3">4.2 Five required Figma Sections — names must be exact</h3>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>#</th><th>Section name (exact)</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><code class="inline">&lt;Name&gt; Instances - Interaction</code></td><td>Live interactive examples showing every documented state</td></tr>
+          <tr><td>2</td><td><code class="inline">&lt;Name&gt; Components</code></td><td>The master component and all variants, laid out for inspection</td></tr>
+          <tr><td>3</td><td><code class="inline">&lt;Name&gt; Documentation</code></td><td>Visual summary of what the component is and how to use it</td></tr>
+          <tr><td>4</td><td><code class="inline">&lt;Name&gt; Governance</code></td><td>Who owns what, and where to go to change things</td></tr>
+          <tr><td>5</td><td><code class="inline">&lt;Name&gt; Responsiveness</code></td><td>How the component looks and behaves at each breakpoint</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sa-callout amber"><strong>⚠ Section names must be exact</strong>Including the space and dash in "Instances - Interaction". They are matched by string by tooling. Replace &lt;Name&gt; with the component's PascalCase name (e.g. <code class="inline">DataTable</code>, <code class="inline">Stepper</code>).</div>
+
+    <h3 class="sa-h3">4.3 Building the master component</h3>
+    <p class="sa-p">Inside <code class="inline">&lt;Name&gt; Components</code>, create the master component frame named exactly <code class="inline">&lt;Name&gt;</code> in PascalCase. Enable auto-layout. Spacing values must use Pathway spacing tokens where they exist.</p>
+
+    <h4 class="sa-h4">Variant property types</h4>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>When to use</th><th>Property type</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Mutually exclusive states</td><td>Variant</td><td><code class="inline">State: Base / Hover / Active / Disabled</code></td></tr>
+          <tr><td>Two-way toggle</td><td>Boolean</td><td><code class="inline">Disabled: true / false</code></td></tr>
+          <tr><td>Swappable slot</td><td>Instance Swap</td><td><code class="inline">LeadingIcon</code></td></tr>
+          <tr><td>Free-form text content</td><td>Text</td><td><code class="inline">Label</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="sa-h4">Layer naming — parsed by tooling</h4>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>What it is</th><th>Name format</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Master component</td><td><code class="inline">&lt;Name&gt;</code> PascalCase</td><td><code class="inline">DataTable</code></td></tr>
+          <tr><td>Sub-component</td><td><code class="inline">&lt;Name&gt;.&lt;SubComponent&gt;</code></td><td><code class="inline">DataTable.Row</code>, <code class="inline">DataTable.HeaderCell</code></td></tr>
+          <tr><td>Anatomy primitive</td><td>descriptive lowercase</td><td><code class="inline">text.label</code>, <code class="inline">icon.leading</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sa-callout red"><strong>Common mistakes that break extraction</strong>Auto-generated names (<code class="inline">Frame 47</code>, <code class="inline">Group 12</code>, <code class="inline">Rectangle 3</code>) · Casing drift between layers of the same type · Spaces where dots are required (<code class="inline">DataTable Row</code> instead of <code class="inline">DataTable.Row</code>)<br><br>Rename every layer before submitting.</div>
+
+    <h4 class="sa-h4">Token binding</h4>
+    <p class="sa-p">For every fill, stroke, text colour, border-radius, and shadow: open the Fill/Stroke/Effects panel, click the variable icon (the small diamond next to the value), and apply the correct token from Pathway Variables. Verify the swatch shows a variable reference, not a raw hex value.</p>
+
+    <h3 class="sa-h3">4.4 Section content requirements</h3>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>Section</th><th>Key requirement</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Instances - Interaction</strong></td><td>One labeled instance per documented state. Labels match exact state names in spec Section 6.</td></tr>
+          <tr><td><strong>Documentation</strong></td><td>Source-of-truth note at top. 200–400 word summary: what it is, when to use, when not, key anatomy.</td></tr>
+          <tr><td><strong>Governance</strong></td><td>Ownership table from spec Section 1.1. Source-of-truth note at top.</td></tr>
+          <tr><td><strong>Responsiveness</strong></td><td>Required even if component barely changes. All four breakpoints addressed. Source-of-truth note at top.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sa-h3">4.5 Reference frame dimensions</h3>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>Section</th><th>Reference width</th></tr></thead>
+        <tbody>
+          <tr><td>Documentation</td><td>~2311 px</td></tr>
+          <tr><td>Governance</td><td>~2311 px</td></tr>
+          <tr><td>Responsiveness</td><td>~4202 px</td></tr>
+          <tr><td>Components</td><td>~3649 px</td></tr>
+          <tr><td>Instances - Interaction</td><td>~4269 px</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">5. How to Write the Spec</h2>
+    <div class="sa-callout grey">
+      <strong>Key rules</strong>
+      Every section must be complete — no <code class="inline">[fill in]</code> placeholders · Every token name must be a real token visible in Pathway Variables (verify before writing) · No raw hex values in token tables (hex belongs in Section 17 only) · Status must remain <code class="inline">PENDING HUMAN REVIEW</code> · Section 17 is for gaps: use it for every raw value, missing token, or unanswered question. Flag each with HIGH / MEDIUM / LOW priority.
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">6. The 18 Required Spec Sections</h2>
+    <p class="sa-p" style="margin-bottom:10px">All 18 sections must be present and complete in every submitted spec:</p>
+    <ol class="sa-ol">
+      <li><strong>Component Overview</strong> — what it is, what it's not, where it fits in Pathway</li>
+      <li><strong>1.1 Governance table</strong> — who owns what and where to change it</li>
+      <li><strong>Component Anatomy</strong> — ASCII layer tree, every layer labeled with nesting</li>
+      <li><strong>Design Tokens</strong> (3.1 Surface · 3.2 Fill · 3.3 Text · 3.4 Icon · 3.5 Geometry · 3.6 Typography)</li>
+      <li><strong>Layout and Spacing</strong> — every spacing value, token referenced where it exists</li>
+      <li><strong>Variant Structure</strong> — every variant, what differs from default, must match Figma exactly</li>
+      <li><strong>State Matrix</strong> — one row per state, tokens for every property</li>
+      <li><strong>Sub-components and Decorations</strong></li>
+      <li><strong>Container and Surface</strong> — surface, border, shadow, dimensions, padding</li>
+      <li><strong>Interaction and Behaviour</strong> — click, hover, keyboard, data states</li>
+      <li><strong>Collapsed / Compact / Alternate Modes</strong></li>
+      <li><strong>Iconography</strong> — every icon with Material Symbols Rounded name verified</li>
+      <li><strong>Interaction Patterns</strong> — hover-safe bridges, debounce, sequenced behaviours</li>
+      <li><strong>Accessibility (13.0–13.6)</strong> — ARIA pattern, touch targets, ARIA markup, keyboard table, focus ring spec, screen reader strings, contrast ratios. <em>Section 13 must be fully complete — incomplete Section 13 will result in the component being returned.</em></li>
+      <li><strong>Motion</strong> — animation intent in plain language</li>
+      <li><strong>Responsiveness</strong> — all four breakpoints described</li>
+      <li><strong>What Engineering Needs</strong> — example data, icon names, component-specific inputs</li>
+      <li><strong>Gaps and Deferred Decisions</strong> — every raw value with proposed token name and priority</li>
+      <li><strong>Storybook</strong> — reference note only: "Storybook page will be created by DS team after handoff."</li>
+    </ol>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">7. Spec template</h2>
+    <p class="sa-p">Copy the block below for each component. Fill in every section. Delete all instructional text before submitting.</p>
+    <pre># {Component} — Pathway Design System Component Spec
+
+**Status:** `PENDING HUMAN REVIEW`
+
+---
+
+## Links
+| Artefact | URL |
+|---|---|
+| Figma | https://www.figma.com/design/3sw45aVcngFAmpbP6cfrXP/...?node-id=&lt;nodeId&gt; |
+
+## Authorship
+Design owns: variants, states, token reference, anatomy, Figma build, accessibility intent, usage rules, responsiveness.
+Engineering owns: prop types, ARIA implementation in code, browser-specific behaviour.
+
+---
+
+## 1. Component Overview
+## 1.1 Governance: where things live
+| To change... | Owner | Where |
+|---|---|---|
+| Colours and token bindings | Design | Variables panel, Pathway Figma file |
+| Layout, spacing, variants | Design | &lt;Name&gt; Components section |
+| Behaviour rules | This spec | Section 9 |
+| Accessibility | This spec | Section 13 |
+| State definitions | This spec | Section 6 |
+
+## 2. Component Anatomy
+## 3. Design Tokens (3.1–3.6)
+## 4. Layout and Spacing
+## 5. Variant Structure
+## 6. State Matrix
+| State | Background | Text | Icon | Border | Notes |
+|---|---|---|---|---|---|
+| Base | | | | | |
+| Hover | | | | | |
+| Active | | | | | |
+| Focus | | | | | Focus ring — see §13.4 |
+| Disabled | | | | | cursor: not-allowed |
+
+## 7. Sub-components and Decorations
+## 8. Container and Surface
+## 9. Interaction and Behaviour
+## 10. Collapsed, Compact, and Alternate Modes
+## 11. Iconography
+| Icon | Material Symbols Rounded name | Where used | Size | Meaning |
+|---|---|---|---|---|
+
+## 12. Interaction Patterns
+## 13. Accessibility
+### 13.0 ARIA pattern  [Name + link to w3.org/WAI/ARIA/apg/patterns/]
+### 13.1 Touch and pointer targets  [min 48×48 px]
+### 13.2 ARIA markup  [HTML example with correct ARIA attributes]
+### 13.3 Keyboard interaction
+| Key | Behaviour | Standard |
+|---|---|---|
+| Tab | Move focus | WCAG 2.1.1 |
+| Enter / Space | Activate | WAI-ARIA |
+| Arrow keys | Navigate | WAI-ARIA |
+| Escape | Dismiss | WAI-ARIA |
+### 13.4 Focus styles  [outline: 2px solid [focus ring token], offset: 2px]
+### 13.5 Screen reader announcements
+### 13.6 Colour contrast
+| Element | Text token | Background token | Ratio | WCAG AA |
+|---|---|---|---|---|
+
+## 14. Motion
+## 15. Responsiveness
+| Viewport | Width | Component behaviour |
+|---|---|---|
+| Mobile | 393 px | |
+| Tablet | 768 px | |
+| Small Desktop | 1024 px | |
+| Desktop | 1440 px | Default |
+
+## 16. What Engineering Needs
+## 17. Gaps and Deferred Decisions
+| Gap | Priority | Notes |
+|---|---|---|
+
+## 18. Storybook
+Storybook page will be created by DS team after handoff.
+Expected URL: https://helloimjolopez-collab.github.io/pathway-ds/storybook/?path=/docs/library-&lt;name&gt;--docs</pre>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">8. Handoff Checklist</h2>
+    <p class="sa-p">Run through both checklists before submitting. If any item is unchecked, do not submit yet.</p>
+    <div class="two-col" style="max-width:none">
+      <div class="checklist-block">
+        <h4>Figma checklist</h4>
+        <ul class="cl-list">
+          <li><span class="cl-box"></span> Component page created with correct name format</li>
+          <li><span class="cl-box"></span> All five Figma Sections present, in order, named exactly</li>
+          <li><span class="cl-box"></span> Master component named &lt;Name&gt; in PascalCase</li>
+          <li><span class="cl-box"></span> All sub-components named &lt;Name&gt;.&lt;SubComponent&gt;</li>
+          <li><span class="cl-box"></span> No auto-generated layer names remain</li>
+          <li><span class="cl-box"></span> Every fill, stroke, text colour, radius bound to a Pathway variable</li>
+          <li><span class="cl-box"></span> No raw hex values on any production layer</li>
+          <li><span class="cl-box"></span> Raw values (where unavoidable) annotated in Figma</li>
+          <li><span class="cl-box"></span> All required state variants built (incl. Focus)</li>
+          <li><span class="cl-box"></span> Instances section: one labeled instance per state</li>
+          <li><span class="cl-box"></span> Documentation section: source-of-truth note + 200–400 word summary</li>
+          <li><span class="cl-box"></span> Governance section: ownership table + source-of-truth note</li>
+          <li><span class="cl-box"></span> Responsiveness section: all four breakpoints addressed</li>
+          <li><span class="cl-box"></span> All icons are instances from Material Symbols library</li>
+          <li><span class="cl-box"></span> Auto-layout enabled on master component frame</li>
+        </ul>
+      </div>
+      <div class="checklist-block">
+        <h4>Spec checklist</h4>
+        <ul class="cl-list">
+          <li><span class="cl-box"></span> All 18 sections present and complete</li>
+          <li><span class="cl-box"></span> Figma node ID filled in the Links section</li>
+          <li><span class="cl-box"></span> Every token name verified against Pathway Variables</li>
+          <li><span class="cl-box"></span> No raw hex values in token tables</li>
+          <li><span class="cl-box"></span> Section 6 State Matrix matches every Figma variant exactly</li>
+          <li><span class="cl-box"></span> Section 11 icon names verified in Material Symbols Rounded</li>
+          <li><span class="cl-box"></span> §13.0 ARIA pattern named and linked</li>
+          <li><span class="cl-box"></span> §13.2 ARIA markup example written</li>
+          <li><span class="cl-box"></span> §13.3 Keyboard interaction table complete</li>
+          <li><span class="cl-box"></span> §13.4 Focus ring specification written</li>
+          <li><span class="cl-box"></span> §13.5 Screen reader announcement strings written</li>
+          <li><span class="cl-box"></span> §13.6 Contrast ratios verified for all combinations</li>
+          <li><span class="cl-box"></span> §15 Responsiveness covers all four breakpoints</li>
+          <li><span class="cl-box"></span> §17 Gaps lists every raw value with proposed token names</li>
+          <li><span class="cl-box"></span> Status: PENDING HUMAN REVIEW (unchanged)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">9. Reference Links</h2>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>Resource</th><th>URL</th></tr></thead>
+        <tbody>
+          <tr><td>Pathway Figma master file</td><td><a href="https://www.figma.com/design/3sw45aVcngFAmpbP6cfrXP/%E2%9D%87%EF%B8%8F--Pathway-Design-System--Master-File--MB-2.0-?node-id=40006978-23158" target="_blank" rel="noopener" style="color:var(--blue)">Open in Figma ↗</a></td></tr>
+          <tr><td>Material Symbols Figma library</td><td><a href="https://www.figma.com/design/g2elaNII7uzXayveYuoyOp/Material-Symbols-3---Icon-Pack--Community-?node-id=2-6" target="_blank" rel="noopener" style="color:var(--blue)">Open in Figma ↗</a></td></tr>
+          <tr><td>Pathway Storybook (reference only)</td><td><a href="https://helloimjolopez-collab.github.io/pathway-ds/storybook/" target="_blank" rel="noopener" style="color:var(--blue)">Open ↗</a></td></tr>
+          <tr><td>WAI-ARIA patterns reference</td><td><a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" rel="noopener" style="color:var(--blue)">w3.org ↗</a></td></tr>
+          <tr><td>WCAG 2.2 quick reference</td><td><a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener" style="color:var(--blue)">w3.org ↗</a></td></tr>
+          <tr><td>Colour contrast checker</td><td><a href="https://webaim.org/resources/contrastchecker/" target="_blank" rel="noopener" style="color:var(--blue)">webaim.org ↗</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sa-callout grey">Questions before or during the build: contact the DS team. <strong>Do not guess and flag it later if it's a question you can ask now.</strong></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════ S3: PILOT ══════════════════════════════ -->
+<div id="s3" class="section">
+<div class="ph"><h1>Table: Pilot Component</h1><p>The first component VL builds. The gate for the entire engagement.</p></div>
+<div class="sa-wrap">
+
+  <div class="intro-band" style="background:var(--amber-bg);border-bottom-color:var(--amber-border)">
+    <div class="intro-band-label" style="color:var(--amber)">⚠ Engagement gate</div>
+    <p>The Data Table is the <strong>first and only component VL builds before the full component list begins.</strong> It gates everything. No other component starts until the Table pilot has been reviewed and a Green / Amber / Red decision is documented in writing by the MB design lead.</p>
+  </div>
+
+  <div class="sa-section">
+    <h2 class="sa-h2">Why the Table is the pilot</h2>
+    <div class="sa-callout purple">
+      <strong>Rationale</strong>
+      It is the most complex component in scope — widest variant surface, most extensive accessibility requirements, most token touch-points · It has the highest number of real product instances in the current Horizon application (Background Checks, Screening Flows, Child Safety) · If VL can deliver the Table to standard, the engagement has demonstrated the capability to deliver the full scope · If the Table reveals gaps, they surface at the lowest possible cost — before significant investment in the remaining 15 components
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">Gate decision framework</h2>
+    <div class="gate-row">
+      <div class="gate-card green">
+        <span class="g-dot">🟢</span>
+        <h4>Green — Proceed as planned</h4>
+        <p>Table meets full standard against all criteria. Full 15-component scope begins immediately.</p>
+      </div>
+      <div class="gate-card amber">
+        <span class="g-dot">🟡</span>
+        <h4>Amber — Proceed with adjusted model</h4>
+        <p>Specific gaps documented. MB and VL agree on adjustments before the component list begins.</p>
+      </div>
+      <div class="gate-card red">
+        <span class="g-dot">🔴</span>
+        <h4>Red — Renegotiate or redirect</h4>
+        <p>Structural capability gap. MB assesses whether to restructure, pause, or bring work in-house.</p>
+      </div>
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">Review criteria</h2>
+    <p class="sa-p" style="margin-bottom:8px">All six criteria must pass for a Green decision.</p>
+    <ul class="criteria-list">
+      <li><span class="ci-dot green"></span><div><strong>Spec fidelity</strong><br><span style="font-size:12px;color:var(--text2)">All variants and states per MB design, correct across all product instances in the Horizon application.</span></div></li>
+      <li><span class="ci-dot green"></span><div><strong>Accessibility</strong><br><span style="font-size:12px;color:var(--text2)">WCAG 2.2 AA: zero critical/serious violations in automated testing. Manual keyboard + screen reader tested. ARIA correct.</span></div></li>
+      <li><span class="ci-dot green"></span><div><strong>Token fidelity</strong><br><span style="font-size:12px;color:var(--text2)">All visual properties applied via correct semantic tokens. No hardcoded values on production layers.</span></div></li>
+      <li><span class="ci-dot green"></span><div><strong>Documentation standard</strong><br><span style="font-size:12px;color:var(--text2)">All 18 spec sections complete. No placeholders. Machine-readable and unambiguous.</span></div></li>
+      <li><span class="ci-dot blue"></span><div><strong>Storybook readiness</strong><br><span style="font-size:12px;color:var(--text2)">All variants + breakpoints + a11y addon covered in spec. <em>MB deploys Storybook after review — not a VL deliverable.</em></span></div></li>
+      <li><span class="ci-dot blue"></span><div><strong>Figma Code Connect readiness</strong><br><span style="font-size:12px;color:var(--text2)">Component structure supports Code Connect linking. <em>MB links Code Connect after review — not a VL deliverable.</em></span></div></li>
+    </ul>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">What the Table organism must include</h2>
+    <div class="sa-callout red"><strong>Do not submit a partial table</strong>The Data Table must be delivered as a single, complete organism. Submitting the base table rows without toolbar, empty states, or pagination will be returned.</div>
+    <div class="two-col">
+      <div class="card">
+        <h4>Core table structure</h4>
+        <ul><li>Header row (sortable columns, column controls)</li><li>Body rows (Default / Hover / Selected)</li><li>Row checkbox with <strong>indeterminate state</strong> — critical for select-all</li></ul>
+      </div>
+      <div class="card">
+        <h4>Data states</h4>
+        <ul><li>Loading skeleton</li><li>Empty state</li><li>Error state</li></ul>
+      </div>
+      <div class="card">
+        <h4>Table controls</h4>
+        <ul><li>Search bar</li><li>Filter bar</li><li>Bulk action toolbar</li><li>Column visibility panel</li><li>Export menu</li></ul>
+      </div>
+      <div class="card">
+        <h4>Navigation</h4>
+        <ul><li>Pagination</li></ul>
+      </div>
+    </div>
+    <div class="sa-callout amber"><strong>Dependency note</strong>Before starting the Table organism, atoms 1–7 in the component list (Button, Text Input, Dropdown, Checkbox, Radio, Toggle, Badge) should be stable — these are the atoms the Table directly composes.</div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════ S4: COMPONENT LIST ══════════════════════════════ -->
+<div id="s4" class="section">
+<div class="ph"><h1>Component List</h1><p>15 components in priority order. Do not start a component until all components above it are complete.</p></div>
+<div class="sa-wrap">
+
+  <div class="intro-band">
+    <div class="intro-band-label">Sequencing is intentional</div>
+    <p>Atoms must be built before organisms. The Data Table is <strong>not in this list</strong> — it is built first as the pilot, separately. This list begins only after the Table pilot has a written Green or Amber gate decision from MB.</p>
+  </div>
+
+  <div class="sa-section">
+    <div class="sa-callout green"><strong>✓ Reference standard: Side Navigation (complete)</strong>The Side Navigation component is the only fully authored component. Study its page structure, five Figma Sections, documentation frame, variant organisation, and tokenisation before building anything else.</div>
+
+    <div class="sa-tbl-wrap" style="margin-top:16px">
+      <table class="sa-tbl" id="comp-tbl">
+        <thead>
+          <tr>
+            <th class="sort-th" onclick="sortComp(0)"># <span class="sort-arr on" id="arr0">↑</span></th>
+            <th class="sort-th" onclick="sortComp(1)">Component <span class="sort-arr" id="arr1">↕</span></th>
+            <th class="sort-th" onclick="sortComp(2)">Type <span class="sort-arr" id="arr2">↕</span></th>
+            <th class="sort-th" onclick="sortComp(3)">Figma state <span class="sort-arr" id="arr3">↕</span></th>
+            <th class="sort-th" onclick="sortComp(4)">Effort <span class="sort-arr" id="arr4">↕</span></th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="comp-tbody">
+          <tr><td>1</td><td><strong>Button</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Gap-fill</span></td><td style="white-space:nowrap">S &lt;3d</td><td style="font-size:12px;color:var(--text2)">Dark mode variants present; light mode absent. Resolve glass button decision. Finalise tokens post–Token Architecture clean-up.</td></tr>
+          <tr><td>2</td><td><strong>Text Input / Field</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">M 3–7d</td><td style="font-size:12px;color:var(--text2)">Gate to all form work. Must be complete before Dropdown, Wizard, and Settings Form Section.</td></tr>
+          <tr><td>3</td><td><strong>Dropdown / Select</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">M 3–7d</td><td style="font-size:12px;color:var(--text2)">Required for every filter control in Background Checks, Screening Flows, Child Safety, and the Invite wizard.</td></tr>
+          <tr><td>4</td><td><strong>Checkbox</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">S–M 1–5d</td><td style="font-size:12px;color:var(--text2)">Indeterminate state is critical for Data Table row selection (select-all with mixed state).</td></tr>
+          <tr><td>5</td><td><strong>Radio Button</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">S–M 1–5d</td><td style="font-size:12px;color:var(--text2)">Confirm whether hover state is required for this platform before authoring.</td></tr>
+          <tr><td>6</td><td><strong>Toggle / Switch</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">S–M 1–5d</td><td style="font-size:12px;color:var(--text2)">Needed before Settings Form Section organism can be authored.</td></tr>
+          <tr><td>7</td><td><strong>Badge / Status Chip</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">M 3–5d</td><td style="font-size:12px;color:var(--text2)">Semantic colours must map to application's order/check status states exactly: pending, active/complete, error/failed, warning, neutral/draft, info.</td></tr>
+          <tr><td>8</td><td><strong>Tabs</strong></td><td><span class="sa-badge purple">Molecule</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">M 3–5d</td><td style="font-size:12px;color:var(--text2)">Needed for Applicant Profile detail view. Include overflow behaviour and badge count on tab item.</td></tr>
+          <tr><td>9</td><td><strong>Modal / Dialog</strong></td><td><span class="sa-badge purple">Molecule</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">M 3–5d</td><td style="font-size:12px;color:var(--text2)">Destructive variant must document correct button variant and copy pattern. Sizes: sm / md / lg.</td></tr>
+          <tr><td>10</td><td><strong>Avatar</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">S &lt;3d</td><td style="font-size:12px;color:var(--text2)">Image, initials, icon fallback. Sizes sm/md/lg/xl. Status indicator overlay. Editable variant. Initials generation logic must be documented.</td></tr>
+          <tr><td>11</td><td><strong>Breadcrumb</strong></td><td><span class="sa-badge purple">Molecule</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">S &lt;3d</td><td style="font-size:12px;color:var(--text2)">Truncation behaviour and aria-label for collapsed state must be specified in documentation.</td></tr>
+          <tr><td>12</td><td><strong>Tooltip</strong></td><td><span class="sa-badge blue">Atom</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td style="white-space:nowrap">S &lt;2d</td><td style="font-size:12px;color:var(--text2)">Placement: top / right / bottom / left. Trigger: hover (desktop) / focus (keyboard). Used on icon-only buttons and truncated table cells.</td></tr>
+          <tr><td>13</td><td><strong>Multi-Step Wizard</strong></td><td><span class="sa-badge grey">Organism</span></td><td><span class="sa-badge red">Net new</span></td><td style="white-space:nowrap">L 1–2w</td><td style="font-size:12px;color:var(--text2)">Step indicator (completed/active/upcoming), per-step frame, Back/Next/Submit, step-level validation error. Cannot start until items 1–8 are complete.</td></tr>
+          <tr><td>14</td><td><strong>Settings Form Section</strong></td><td><span class="sa-badge grey">Organism</span></td><td><span class="sa-badge red">Net new</span></td><td style="white-space:nowrap">M 3–7d</td><td style="font-size:12px;color:var(--text2)">Section header + form row layout + divider + save/cancel footer. Form row must handle different field widths with documented column proportions.</td></tr>
+          <tr><td>15</td><td><strong>Screening Flow Card</strong></td><td><span class="sa-badge purple">Molecule</span></td><td><span class="sa-badge red">Net new</span></td><td style="white-space:nowrap">M 3–5d</td><td style="font-size:12px;color:var(--text2)">Author as both card and table-row variants. Card shell, flow name + ID, status badge, metadata row, overflow menu, active/inactive/archived states.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sa-callout grey"><strong>"Needs inspection"</strong> means the component page exists in Figma but has not been reviewed against all eight completeness criteria. VL must inspect and confirm actual current state before estimating or beginning. <strong>Do not assume a component is complete because a page exists.</strong></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════ S5: APP AUDIT ══════════════════════════════ -->
+<div id="s5" class="section">
+<div class="ph"><h1>Application Audit</h1><p>What is currently in the live Horizon application and what each screen requires.</p></div>
+<div class="sa-wrap">
+
+  <div class="intro-band" style="background:var(--amber-bg);border-bottom-color:var(--amber-border)">
+    <div class="intro-band-label" style="color:var(--amber)">⚠ Scope clarification — read before using this audit</div>
+    <p>This audit was produced when VL's engagement included design system governance and token pipeline work. <strong>That scope no longer applies.</strong> Excluded from VL scope: Token Architecture Clean-Up (Item 0) · Token pipeline work (Style Dictionary, CSS custom property export) · Governance documentation · Screen Templates (original Items 18–19).<br><br>VL scope is precisely: <strong>build Figma components to MB spec + produce the 18-section markdown spec for each.</strong> Use this audit as a reference for component requirements only.</p>
+  </div>
+
+  <div class="sa-section">
+    <h2 class="sa-h2">B1 — Screen Inventory</h2>
+    <p class="sa-note" style="margin-bottom:12px">Nine routes reviewed in the live production environment (Radzen Blazor). Component requirements mapped per screen.</p>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>Route</th><th>Purpose</th><th>Dominant organism</th><th>Key component requirements</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/background-checks</code><br><span class="sa-badge red" style="margin-top:5px;display:inline-flex">Highest priority</span></td>
+            <td style="font-size:12px">Primary data view. All background check orders with filtering, search, bulk actions, per-row detail access.</td>
+            <td style="font-size:12px">Data Table (full organism)</td>
+            <td style="font-size:12px">Table (sortable, selectable) · Search Input · Filter Dropdowns · Bulk Action Toolbar · Column Controls · Export Menu · Pagination · Status Badge · Row Actions Menu · Empty State · Loading Skeleton · Error State · Checkbox (row selection)</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/order/</code></td>
+            <td style="font-size:12px">Multi-step screening invitation. Applicant details, package selection, delivery options.</td>
+            <td style="font-size:12px">Multi-Step Wizard · Settings Form Section</td>
+            <td style="font-size:12px">Step Indicator · Text Input · Dropdown · Radio Button · Checkbox · Button · Card · Badge · Tooltip · Validation Error</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/applicant-profile/:id</code></td>
+            <td style="font-size:12px">Applicant detail record. Personal info, order history, document status, available actions.</td>
+            <td style="font-size:12px">Profile Header · Tab Navigation · Detail Cards</td>
+            <td style="font-size:12px">Avatar · Badge · Tabs · Card · Key-Value List · Status Timeline · Button · Breadcrumb · Modal / Dialog · Tooltip</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/screening-flows</code></td>
+            <td style="font-size:12px">Management view for screening flow configs. Status, usage count, edit/delete.</td>
+            <td style="font-size:12px">Data Table · Screening Flow Card</td>
+            <td style="font-size:12px">Data Table · Search · Status Badge · Action Menu · Button · Modal (confirm delete) · Empty State</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/child-safety</code></td>
+            <td style="font-size:12px">Child safety screening management. Similar pattern to Background Checks.</td>
+            <td style="font-size:12px">Data Table</td>
+            <td style="font-size:12px">Shares structural DNA with /user/background-checks. Key differentiator: compliance-specific status/badge variants.</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/custom-packages</code></td>
+            <td style="font-size:12px">Custom screening package creation. Card-based with pricing and check-type selection.</td>
+            <td style="font-size:12px">Card grid</td>
+            <td style="font-size:12px">Card · Checkbox · Radio Button · Text Input · Badge · Button · Empty State</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/account-settings</code></td>
+            <td style="font-size:12px">User account configuration. Profile, notification preferences, password/security.</td>
+            <td style="font-size:12px">Settings Form Section</td>
+            <td style="font-size:12px">Text Input · Toggle / Switch · Dropdown · Avatar (editable) · Button · Section Divider · Notification Banner</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/support</code></td>
+            <td style="font-size:12px">Help and support hub. FAQ, contact form, knowledge base links.</td>
+            <td style="font-size:12px">Accordion / Disclosure</td>
+            <td style="font-size:12px">Accordion/Disclosure (not in system) · Text Input · Textarea · Button · Link · Card</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">B2 — UI Pattern Catalogue</h2>
+    <p class="sa-note" style="margin-bottom:12px">Consolidated view of patterns across all screens, grouped by frequency and design system coverage.</p>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>Pattern</th><th>Screens present</th><th>DS coverage</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Data Table + Controls</strong><br><span style="font-size:11px;color:var(--text2)">Table, search, filter, sort, pagination, bulk actions, export</span></td><td style="font-size:12px">Background Checks, Screening Flows, Child Safety</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">XL</span></td></tr>
+          <tr><td><strong>Form Fields</strong><br><span style="font-size:11px;color:var(--text2)">Text input, dropdown, radio, checkbox, toggle</span></td><td style="font-size:12px">All screens</td><td><span class="sa-badge amber">Partial / Unconfirmed</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Status Badges</strong></td><td style="font-size:12px">All screens</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Primary / Secondary Buttons</strong></td><td style="font-size:12px">All screens</td><td><span class="sa-badge amber">Gaps</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Multi-Step Wizard</strong></td><td style="font-size:12px">Invite / Order</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">L</span></td></tr>
+          <tr><td><strong>Tab Navigation</strong></td><td style="font-size:12px">Applicant Profile</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Modal / Dialog</strong></td><td style="font-size:12px">Screening Flows, Background Checks</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Settings Form Section</strong></td><td style="font-size:12px">Account Settings</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Avatar</strong></td><td style="font-size:12px">Applicant Profile, Account Settings</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Breadcrumb</strong></td><td style="font-size:12px">Applicant Profile, Screening Flows</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Tooltip</strong></td><td style="font-size:12px">Invite, Background Checks, Applicant Profile</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Empty State</strong></td><td style="font-size:12px">Background Checks, Screening Flows, Custom Packages</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Accordion / Disclosure</strong></td><td style="font-size:12px">Support</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M (if in scope)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ep-links-label">Source</div>
+    <div>
+      <a class="ep-link" href="https://helloimjolopez-collab.github.io/design-sandbox/Project%20Horizon%202.0%20-%20Phase%201%20Component%20Rebuild/app-audit.html" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Full audit source ↗</a>
+      <a class="ep-link" href="https://helloimjolopez-collab.github.io/design-sandbox/Project%20Horizon%202.0%20-%20Phase%201%20Component%20Rebuild/index.html" target="_blank" rel="noopener"><svg class="mdi mdi-16" aria-hidden="true"><use href="#mi-link"/></svg> Project Horizon 2.0 Hub ↗</a>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</div><!-- /main-content -->
+
+<script>
+function nav(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  const sec = document.getElementById(id);
+  if (sec) sec.classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.querySelector('.main-content').scrollTo(0, 0);
+  if (window.innerWidth <= 640) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+let sortCol = 0, sortAsc = true;
+function sortComp(col) {
+  const tbody = document.getElementById('comp-tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  sortAsc = (sortCol === col) ? !sortAsc : true;
+  sortCol = col;
+  document.querySelectorAll('.sort-arr').forEach((a, i) => { a.classList.remove('on'); a.textContent = '↕'; });
+  const arr = document.getElementById('arr' + col);
+  if (arr) { arr.classList.add('on'); arr.textContent = sortAsc ? '↑' : '↓'; }
+  rows.sort((a, b) => {
+    const at = a.cells[col] ? a.cells[col].textContent.trim() : '';
+    const bt = b.cells[col] ? b.cells[col].textContent.trim() : '';
+    const an = parseFloat(at), bn = parseFloat(bt);
+    if (!isNaN(an) && !isNaN(bn)) return sortAsc ? an - bn : bn - an;
+    return sortAsc ? at.localeCompare(bt) : bt.localeCompare(at);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+</script>
 </body>
 </html>
