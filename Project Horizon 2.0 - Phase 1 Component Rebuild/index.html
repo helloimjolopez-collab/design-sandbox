@@ -943,93 +943,139 @@ selected/expanded state, item position if applicable.]
 
 <!-- ══════════════════════════════ S5: APP AUDIT ══════════════════════════════ -->
 <div id="s5" class="section">
-<div class="ph"><h1>Application Audit</h1><p>What is currently in the live Horizon application and what each screen requires.</p></div>
+<div class="ph"><h1>Application Audit</h1><p>Completeness criteria, screen inventory, and UI pattern catalogue for the live Horizon application.</p></div>
 <div class="sa-wrap">
 
-  <div class="intro-band" style="background:var(--amber-bg);border-bottom-color:var(--amber-border)">
-    <div class="intro-band-label" style="color:var(--amber)">⚠ Scope clarification -read before using this audit</div>
-    <p>This audit was produced when VL's engagement included design system governance and token pipeline work. <strong>That scope no longer applies.</strong> Excluded from VL scope: Token Architecture Clean-Up (Item 0) · Token pipeline work (Style Dictionary, CSS custom property export) · Governance documentation · Screen Templates (original Items 18–19).<br><br>VL scope is precisely: <strong>build Figma components to MB spec + produce the 18-section markdown spec for each.</strong> Use this audit as a reference for component requirements only.</p>
+  <div class="intro-band">
+    <div class="intro-band-label">What this section is for</div>
+    <p>This section defines what "done" means for a component, maps every screen in the live Horizon application to its component requirements, and shows the full UI pattern catalogue with priorities mapped to the component build list. Use the screen inventory and pattern catalogue to understand why components are sequenced the way they are and what each one must cover.</p>
   </div>
 
   <div class="sa-section">
-    <h2 class="sa-h2">B1 -Screen Inventory</h2>
-    <p class="sa-note" style="margin-bottom:12px">Nine routes reviewed in the live production environment (Radzen Blazor). Component requirements mapped per screen.</p>
+    <h2 class="sa-h2">Completeness criteria</h2>
+    <p class="sa-note" style="margin-bottom:14px">A component is complete only when all six criteria are met simultaneously. Meeting five out of six is not complete. These are the criteria referenced throughout this hub when a component is described as "needs inspection" or "ready for review."</p>
+
     <div class="sa-tbl-wrap">
       <table class="sa-tbl">
-        <thead><tr><th>Route</th><th>Purpose</th><th>Dominant organism</th><th>Key component requirements</th></tr></thead>
+        <thead><tr><th>Criterion</th><th>What it means</th><th>How to verify</th></tr></thead>
         <tbody>
           <tr>
-            <td><code class="inline" style="font-size:11px">/user/background-checks</code><br><span class="sa-badge red" style="margin-top:5px;display:inline-flex">Highest priority</span></td>
-            <td style="font-size:12px">Primary data view. All background check orders with filtering, search, bulk actions, per-row detail access.</td>
-            <td style="font-size:12px">Data Table (full organism)</td>
-            <td style="font-size:12px">Table (sortable, selectable) · Search Input · Filter Dropdowns · Bulk Action Toolbar · Column Controls · Export Menu · Pagination · Status Badge · Row Actions Menu · Empty State · Loading Skeleton · Error State · Checkbox (row selection)</td>
+            <td><span class="sa-badge blue" style="font-size:12px;font-weight:700">V</span> <strong>Variant economy</strong></td>
+            <td style="font-size:12px">All required states and only those. Every variant is justified by a real interaction requirement. No speculative, redundant, or untriggered variants. Variants are named semantically (e.g. State=Hover, not "blue version").</td>
+            <td style="font-size:12px">Open the component in Figma and check that every variant maps to a documented state in the spec.</td>
           </tr>
           <tr>
-            <td><code class="inline" style="font-size:11px">/user/order/</code></td>
-            <td style="font-size:12px">Multi-step screening invitation. Applicant details, package selection, delivery options.</td>
-            <td style="font-size:12px">Multi-Step Wizard · Settings Form Section</td>
-            <td style="font-size:12px">Step Indicator · Text Input · Dropdown · Radio Button · Checkbox · Button · Card · Badge · Tooltip · Validation Error</td>
+            <td><span class="sa-badge blue" style="font-size:12px;font-weight:700">N</span> <strong>Naming and structure</strong></td>
+            <td style="font-size:12px">No auto-generated layer names anywhere in the component. Every layer name describes what it is and where it sits. Naming is consistent and hierarchical throughout.</td>
+            <td style="font-size:12px">Scan every layer in the Figma file. Zero instances of Frame 47, Group 12, Rectangle 3, or similar.</td>
           </tr>
           <tr>
-            <td><code class="inline" style="font-size:11px">/user/applicant-profile/:id</code></td>
-            <td style="font-size:12px">Applicant detail record. Personal info, order history, document status, available actions.</td>
-            <td style="font-size:12px">Profile Header · Tab Navigation · Detail Cards</td>
-            <td style="font-size:12px">Avatar · Badge · Tabs · Card · Key-Value List · Status Timeline · Button · Breadcrumb · Modal / Dialog · Tooltip</td>
+            <td><span class="sa-badge blue" style="font-size:12px;font-weight:700">T</span> <strong>Full tokenisation</strong></td>
+            <td style="font-size:12px">Every fill, stroke, type style, border radius, and spacing value references a Pathway Variable. No raw hex values, raw pixel sizes, or hardcoded styles on any production layer. Where a token is missing, the raw value is annotated in Figma and flagged in the spec.</td>
+            <td style="font-size:12px">Select each layer and confirm every style property shows a variable reference (diamond icon), not a raw value.</td>
           </tr>
           <tr>
-            <td><code class="inline" style="font-size:11px">/user/screening-flows</code></td>
-            <td style="font-size:12px">Management view for screening flow configs. Status, usage count, edit/delete.</td>
-            <td style="font-size:12px">Data Table · Screening Flow Card</td>
-            <td style="font-size:12px">Data Table · Search · Status Badge · Action Menu · Button · Modal (confirm delete) · Empty State</td>
+            <td><span class="sa-badge blue" style="font-size:12px;font-weight:700">D</span> <strong>Documentation</strong></td>
+            <td style="font-size:12px">The full spec is delivered alongside the Figma component. All 7 required spec sections are complete with no placeholder text. The Documentation section of the Figma page contains the full spec.</td>
+            <td style="font-size:12px">Open the spec file and confirm all sections are filled in. Open the Documentation section in Figma and confirm it matches.</td>
           </tr>
           <tr>
-            <td><code class="inline" style="font-size:11px">/user/child-safety</code></td>
-            <td style="font-size:12px">Child safety screening management. Similar pattern to Background Checks.</td>
-            <td style="font-size:12px">Data Table</td>
-            <td style="font-size:12px">Shares structural DNA with /user/background-checks. Key differentiator: compliance-specific status/badge variants.</td>
+            <td><span class="sa-badge blue" style="font-size:12px;font-weight:700">A</span> <strong>Accessibility</strong></td>
+            <td style="font-size:12px">A Focus state variant exists for every interactive component. The accessibility annotations section of the spec is complete: ARIA pattern named and linked, keyboard navigation documented, screen reader announcements written.</td>
+            <td style="font-size:12px">Check the Focus variant exists in Figma. Check spec section 4 is fully filled in.</td>
           </tr>
           <tr>
-            <td><code class="inline" style="font-size:11px">/user/custom-packages</code></td>
-            <td style="font-size:12px">Custom screening package creation. Card-based with pricing and check-type selection.</td>
-            <td style="font-size:12px">Card grid</td>
-            <td style="font-size:12px">Card · Checkbox · Radio Button · Text Input · Badge · Button · Empty State</td>
-          </tr>
-          <tr>
-            <td><code class="inline" style="font-size:11px">/user/account-settings</code></td>
-            <td style="font-size:12px">User account configuration. Profile, notification preferences, password/security.</td>
-            <td style="font-size:12px">Settings Form Section</td>
-            <td style="font-size:12px">Text Input · Toggle / Switch · Dropdown · Avatar (editable) · Button · Section Divider · Notification Banner</td>
-          </tr>
-          <tr>
-            <td><code class="inline" style="font-size:11px">/user/support</code></td>
-            <td style="font-size:12px">Help and support hub. FAQ, contact form, knowledge base links.</td>
-            <td style="font-size:12px">Accordion / Disclosure</td>
-            <td style="font-size:12px">Accordion/Disclosure (not in system) · Text Input · Textarea · Button · Link · Card</td>
+            <td><span class="sa-badge green" style="font-size:12px;font-weight:700">R</span> <strong>Fully authored</strong></td>
+            <td style="font-size:12px">All five criteria above confirmed. The component has been self-reviewed by the VL designer against this checklist before submission. MB design reviews and signs off before the component moves to the pipeline.</td>
+            <td style="font-size:12px">VL: run the handoff checklist in Build Standards. MB: review the component against all five criteria above.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="hdiv"></div>
-    <h2 class="sa-h2">B2 -UI Pattern Catalogue</h2>
-    <p class="sa-note" style="margin-bottom:12px">Consolidated view of patterns across all screens, grouped by frequency and design system coverage.</p>
+    <h2 class="sa-h2">Screen inventory</h2>
+    <p class="sa-note" style="margin-bottom:12px">Eight routes reviewed in the live production environment (Radzen Blazor). Component requirements mapped to the current build list where applicable.</p>
     <div class="sa-tbl-wrap">
       <table class="sa-tbl">
-        <thead><tr><th>Pattern</th><th>Screens present</th><th>DS coverage</th><th>Priority</th></tr></thead>
+        <thead><tr><th>Route</th><th>Purpose</th><th>Dominant pattern</th><th>Component requirements (mapped to build list)</th></tr></thead>
         <tbody>
-          <tr><td><strong>Data Table + Controls</strong><br><span style="font-size:11px;color:var(--text2)">Table, search, filter, sort, pagination, bulk actions, export</span></td><td style="font-size:12px">Background Checks, Screening Flows, Child Safety</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">XL</span></td></tr>
-          <tr><td><strong>Form Fields</strong><br><span style="font-size:11px;color:var(--text2)">Text input, dropdown, radio, checkbox, toggle</span></td><td style="font-size:12px">All screens</td><td><span class="sa-badge amber">Partial / Unconfirmed</span></td><td><span class="sa-badge grey">M</span></td></tr>
-          <tr><td><strong>Status Badges</strong></td><td style="font-size:12px">All screens</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
-          <tr><td><strong>Primary / Secondary Buttons</strong></td><td style="font-size:12px">All screens</td><td><span class="sa-badge amber">Gaps</span></td><td><span class="sa-badge grey">S</span></td></tr>
-          <tr><td><strong>Multi-Step Wizard</strong></td><td style="font-size:12px">Invite / Order</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">L</span></td></tr>
-          <tr><td><strong>Tab Navigation</strong></td><td style="font-size:12px">Applicant Profile</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
-          <tr><td><strong>Modal / Dialog</strong></td><td style="font-size:12px">Screening Flows, Background Checks</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
-          <tr><td><strong>Settings Form Section</strong></td><td style="font-size:12px">Account Settings</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
-          <tr><td><strong>Avatar</strong></td><td style="font-size:12px">Applicant Profile, Account Settings</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
-          <tr><td><strong>Breadcrumb</strong></td><td style="font-size:12px">Applicant Profile, Screening Flows</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
-          <tr><td><strong>Tooltip</strong></td><td style="font-size:12px">Invite, Background Checks, Applicant Profile</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
-          <tr><td><strong>Empty State</strong></td><td style="font-size:12px">Background Checks, Screening Flows, Custom Packages</td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
-          <tr><td><strong>Accordion / Disclosure</strong></td><td style="font-size:12px">Support</td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M (if in scope)</span></td></tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/background-checks</code><br><span class="sa-badge red" style="margin-top:5px;display:inline-flex">Highest priority</span></td>
+            <td style="font-size:12px">Primary data view. All background check orders with filtering, search, bulk actions, and per-row detail access. Most complex screen in the application.</td>
+            <td style="font-size:12px">Table &amp; Table Controls (build #16)</td>
+            <td style="font-size:12px">Table &amp; Table Controls (#16) · Search &amp; Select (#2) · Badge / Status Chip (#4) · Tooltip (#5) · Menu Items (#6) · Menus &amp; Dropdowns (#9) · Progress Indicators (#7) · Alert Dialogs (#11) · Breadcrumb (#12) · Modal / Dialog (#13)</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/order/</code></td>
+            <td style="font-size:12px">Multi-step screening invitation creation. Guides user through applicant details, package selection, and delivery options.</td>
+            <td style="font-size:12px">Steppers (#15) · Input Groups (#8)</td>
+            <td style="font-size:12px">Steppers (#15) · Inputs (#1) · Search &amp; Select (#2) · Input Groups (#8) · Toggle (#3) · Badge (#4) · Tooltip (#5) · Cards (#14) · Alert Dialogs (#11)</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/applicant-profile/:id</code></td>
+            <td style="font-size:12px">Applicant detail record. Personal info, order history, document status, and available actions for a single applicant.</td>
+            <td style="font-size:12px">Cards (#14) · Breadcrumb (#12)</td>
+            <td style="font-size:12px">Cards (#14) · Badge / Status Chip (#4) · Breadcrumb (#12) · Modal / Dialog (#13) · Menus &amp; Dropdowns (#9) · Tooltip (#5) · Alert Dialogs (#11) · Progress Indicators (#7)</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/screening-flows</code></td>
+            <td style="font-size:12px">Management view for screening flow configurations. Lists active/inactive flows with status, usage, and edit/delete actions.</td>
+            <td style="font-size:12px">Table (#16) · Screening Flow Card (#17)</td>
+            <td style="font-size:12px">Table &amp; Table Controls (#16) · Screening Flow Card (#17) · Search &amp; Select (#2) · Badge (#4) · Menus &amp; Dropdowns (#9) · Modal / Dialog (#13) · Alert Dialogs (#11)</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/child-safety</code></td>
+            <td style="font-size:12px">Child safety screening management. Structurally identical to Background Checks with compliance-specific status variants.</td>
+            <td style="font-size:12px">Table &amp; Table Controls (build #16)</td>
+            <td style="font-size:12px">Same component requirements as /user/background-checks. Key differentiator: compliance-specific Badge / Status Chip variants (#4).</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/custom-packages</code></td>
+            <td style="font-size:12px">Custom screening package creation and management. Card-based layout with pricing and check-type selection.</td>
+            <td style="font-size:12px">Cards &amp; KPI Tiles (#14)</td>
+            <td style="font-size:12px">Cards &amp; KPI Tiles (#14) · Inputs (#1) · Search &amp; Select (#2) · Badge (#4) · Alert Dialogs (#11)</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/account-settings</code></td>
+            <td style="font-size:12px">User account configuration. Profile details, notification preferences, security settings. Classic settings page structure.</td>
+            <td style="font-size:12px">Input Groups / Form Groups (#8)</td>
+            <td style="font-size:12px">Input Groups (#8) · Inputs (#1) · Toggle / Switch (#3) · Search &amp; Select (#2) · Menus &amp; Dropdowns (#9) · Alert Dialogs (#11) · Breadcrumb (#12)</td>
+          </tr>
+          <tr>
+            <td><code class="inline" style="font-size:11px">/user/support</code></td>
+            <td style="font-size:12px">Help and support hub. FAQ content, contact form, and links to knowledge base resources.</td>
+            <td style="font-size:12px">Accordions (#10)</td>
+            <td style="font-size:12px">Accordions (#10) · Inputs (#1) · Input Groups (#8) · Cards (#14) · Alert Dialogs (#11)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hdiv"></div>
+    <h2 class="sa-h2">UI pattern catalogue</h2>
+    <p class="sa-note" style="margin-bottom:12px">All UI patterns observed across the live application, with current design system coverage and the corresponding build list item. Priorities drove the sequencing of the component list.</p>
+    <div class="sa-tbl-wrap">
+      <table class="sa-tbl">
+        <thead><tr><th>Pattern</th><th>Screens</th><th>Build list item</th><th>DS coverage</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Table &amp; Table Controls</strong><br><span style="font-size:11px;color:var(--text2)">Sortable table, search, filter, bulk actions, export, pagination</span></td><td style="font-size:12px">Background Checks, Screening Flows, Child Safety</td><td><span class="sa-badge blue">#16 - Pilot</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">XL</span></td></tr>
+          <tr><td><strong>Inputs</strong><br><span style="font-size:11px;color:var(--text2)">Text, textarea, number, password, prefix/suffix</span></td><td style="font-size:12px">All screens</td><td><span class="sa-badge blue">#1</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Search &amp; Select</strong><br><span style="font-size:11px;color:var(--text2)">Search input, combobox, single/multi-select</span></td><td style="font-size:12px">All screens</td><td><span class="sa-badge blue">#2</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Badge / Status Chip</strong><br><span style="font-size:11px;color:var(--text2)">Semantic status colours for order/check states</span></td><td style="font-size:12px">All screens</td><td><span class="sa-badge blue">#4</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Menus &amp; Dropdown Menus</strong><br><span style="font-size:11px;color:var(--text2)">Context menus, overflow (kebab), action menus</span></td><td style="font-size:12px">Background Checks, Screening Flows, Applicant Profile</td><td><span class="sa-badge blue">#9</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Input Groups / Form Groups</strong><br><span style="font-size:11px;color:var(--text2)">Label + input + helper text + error message</span></td><td style="font-size:12px">Order flow, Account Settings</td><td><span class="sa-badge blue">#8</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Steppers</strong><br><span style="font-size:11px;color:var(--text2)">Multi-step wizard with step indicator and navigation</span></td><td style="font-size:12px">Invite / Order</td><td><span class="sa-badge blue">#15</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">L</span></td></tr>
+          <tr><td><strong>Modal / Dialog</strong></td><td style="font-size:12px">Screening Flows, Background Checks</td><td><span class="sa-badge blue">#13</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Alert Dialogs</strong><br><span style="font-size:11px;color:var(--text2)">Inline alerts, toast banners, notification strips</span></td><td style="font-size:12px">All screens</td><td><span class="sa-badge blue">#11</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Cards &amp; KPI Tiles</strong></td><td style="font-size:12px">Custom Packages, Applicant Profile, Dashboard template</td><td><span class="sa-badge blue">#14</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Toggle / Switch</strong></td><td style="font-size:12px">Account Settings</td><td><span class="sa-badge blue">#3</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Tooltip</strong></td><td style="font-size:12px">Invite, Background Checks, Applicant Profile</td><td><span class="sa-badge blue">#5</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Breadcrumb</strong></td><td style="font-size:12px">Applicant Profile, Screening Flows</td><td><span class="sa-badge blue">#12</span></td><td><span class="sa-badge amber">Needs inspection</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Accordions</strong></td><td style="font-size:12px">Support</td><td><span class="sa-badge blue">#10</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
+          <tr><td><strong>Progress Indicators</strong><br><span style="font-size:11px;color:var(--text2)">Linear bar, circular spinner, loading skeleton</span></td><td style="font-size:12px">Background Checks, Order flow</td><td><span class="sa-badge blue">#7</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Menu Items</strong><br><span style="font-size:11px;color:var(--text2)">Individual menu item atoms used within menus</span></td><td style="font-size:12px">All screens with menus</td><td><span class="sa-badge blue">#6</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">S</span></td></tr>
+          <tr><td><strong>Screening Flow Card</strong></td><td style="font-size:12px">Screening Flows</td><td><span class="sa-badge blue">#17</span></td><td><span class="sa-badge red">Not authored</span></td><td><span class="sa-badge grey">M</span></td></tr>
         </tbody>
       </table>
     </div>
