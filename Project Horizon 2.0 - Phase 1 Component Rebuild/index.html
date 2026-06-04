@@ -585,241 +585,176 @@ code.inline{background:var(--grey-bg);padding:1px 5px;border-radius:3px;font-siz
     <h3 class="sa-h3">4.1 The component page</h3>
     <p class="sa-p">Every component lives on its own dedicated page in the Pathway master Figma file. Match the naming convention exactly, including the emoji prefix and arrow format (e.g. <code class="inline">❇️ ↳ Local Navigation</code>). Do not add components to existing pages.</p>
 
-    <h3 class="sa-h3">4.2 Five required Figma Sections -names must be exact</h3>
+    <h3 class="sa-h3">4.2 Three required Figma sections</h3>
+    <p class="sa-p">Every component page must contain three Figma sections, in this order:</p>
     <div class="sa-tbl-wrap">
       <table class="sa-tbl">
-        <thead><tr><th>#</th><th>Section name (exact)</th><th>Purpose</th></tr></thead>
+        <thead><tr><th>Section</th><th>What goes in it</th></tr></thead>
         <tbody>
-          <tr><td>1</td><td><code class="inline">&lt;Name&gt; Instances - Interaction</code></td><td>Live interactive examples showing every documented state</td></tr>
-          <tr><td>2</td><td><code class="inline">&lt;Name&gt; Components</code></td><td>The master component and all variants, laid out for inspection</td></tr>
-          <tr><td>3</td><td><code class="inline">&lt;Name&gt; Documentation</code></td><td>Visual summary of what the component is and how to use it</td></tr>
-          <tr><td>4</td><td><code class="inline">&lt;Name&gt; Governance</code></td><td>Who owns what, and where to go to change things</td></tr>
-          <tr><td>5</td><td><code class="inline">&lt;Name&gt; Responsiveness</code></td><td>How the component looks and behaves at each breakpoint</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="sa-callout amber"><strong>⚠ Section names must be exact</strong>Including the space and dash in "Instances - Interaction". They are matched by string by tooling. Replace &lt;Name&gt; with the component's PascalCase name (e.g. <code class="inline">DataTable</code>, <code class="inline">Stepper</code>).</div>
-
-    <h3 class="sa-h3">4.3 Building the master component</h3>
-    <p class="sa-p">Inside <code class="inline">&lt;Name&gt; Components</code>, create the master component frame named exactly <code class="inline">&lt;Name&gt;</code> in PascalCase. Enable auto-layout. Spacing values must use Pathway spacing tokens where they exist.</p>
-
-    <h4 class="sa-h4">Variant property types</h4>
-    <div class="sa-tbl-wrap">
-      <table class="sa-tbl">
-        <thead><tr><th>When to use</th><th>Property type</th><th>Example</th></tr></thead>
-        <tbody>
-          <tr><td>Mutually exclusive states</td><td>Variant</td><td><code class="inline">State: Base / Hover / Active / Disabled</code></td></tr>
-          <tr><td>Two-way toggle</td><td>Boolean</td><td><code class="inline">Disabled: true / false</code></td></tr>
-          <tr><td>Swappable slot</td><td>Instance Swap</td><td><code class="inline">LeadingIcon</code></td></tr>
-          <tr><td>Free-form text content</td><td>Text</td><td><code class="inline">Label</code></td></tr>
+          <tr>
+            <td><strong>Components</strong></td>
+            <td>The building blocks and main component — all states, sizes, styles, and any other necessary variants organised for inspection.</td>
+          </tr>
+          <tr>
+            <td><strong>Instances and Interaction</strong></td>
+            <td>The different documented instances and interactions as needed — showing how the component is used and how it behaves in context.</td>
+          </tr>
+          <tr>
+            <td><strong>Documentation</strong></td>
+            <td>The full component spec (see Section 6 of this document). Responsiveness, motion, accessibility, and all other spec content lives here — not in separate Figma sections.</td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <h4 class="sa-h4">Layer naming -parsed by tooling</h4>
-    <div class="sa-tbl-wrap">
-      <table class="sa-tbl">
-        <thead><tr><th>What it is</th><th>Name format</th><th>Example</th></tr></thead>
-        <tbody>
-          <tr><td>Master component</td><td><code class="inline">&lt;Name&gt;</code> PascalCase</td><td><code class="inline">DataTable</code></td></tr>
-          <tr><td>Sub-component</td><td><code class="inline">&lt;Name&gt;.&lt;SubComponent&gt;</code></td><td><code class="inline">DataTable.Row</code>, <code class="inline">DataTable.HeaderCell</code></td></tr>
-          <tr><td>Anatomy primitive</td><td>descriptive lowercase</td><td><code class="inline">text.label</code>, <code class="inline">icon.leading</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="sa-callout red"><strong>Common mistakes that break extraction</strong>Auto-generated names (<code class="inline">Frame 47</code>, <code class="inline">Group 12</code>, <code class="inline">Rectangle 3</code>) · Casing drift between layers of the same type · Spaces where dots are required (<code class="inline">DataTable Row</code> instead of <code class="inline">DataTable.Row</code>)<br><br>Rename every layer before submitting.</div>
+    <h3 class="sa-h3">4.3 Building the component</h3>
+    <p class="sa-p">Apply <strong>auto-layout</strong> throughout — every frame, every container, every nested group. Use <strong>variants</strong> to cover the full range of states, sizes, and styles the component needs. Where a part of the component can swap between different elements (an icon, a thumbnail, a leading element), use <strong>instance swaps</strong> or nested component instances. Where content is changeable or slot-based — like in cards, KPI tiles, or list items — use <strong>slots</strong> so the component stays flexible without breaking.</p>
+    <p class="sa-p">Apply all colours, type styles, border radii, and spacing values from the <strong>Pathway Variables library</strong>. Every visual property should reference a token. If a token does not exist for what you need, use a raw value, flag it clearly in Figma with an annotation, and note it in your spec so the MB DS team can add it.</p>
 
-    <h4 class="sa-h4">Token binding</h4>
-    <p class="sa-p">For every fill, stroke, text colour, border-radius, and shadow: open the Fill/Stroke/Effects panel, click the variable icon (the small diamond next to the value), and apply the correct token from Pathway Variables. Verify the swatch shows a variable reference, not a raw hex value.</p>
-
-    <h3 class="sa-h3">4.4 Section content requirements</h3>
-    <div class="sa-tbl-wrap">
-      <table class="sa-tbl">
-        <thead><tr><th>Section</th><th>Key requirement</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Instances - Interaction</strong></td><td>One labeled instance per documented state. Labels match exact state names in spec Section 6.</td></tr>
-          <tr><td><strong>Documentation</strong></td><td>Source-of-truth note at top. 200–400 word summary: what it is, when to use, when not, key anatomy.</td></tr>
-          <tr><td><strong>Governance</strong></td><td>Ownership table from spec Section 1.1. Source-of-truth note at top.</td></tr>
-          <tr><td><strong>Responsiveness</strong></td><td>Required even if component barely changes. All four breakpoints addressed. Source-of-truth note at top.</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3 class="sa-h3">4.5 Reference frame dimensions</h3>
-    <div class="sa-tbl-wrap">
-      <table class="sa-tbl">
-        <thead><tr><th>Section</th><th>Reference width</th></tr></thead>
-        <tbody>
-          <tr><td>Documentation</td><td>~2311 px</td></tr>
-          <tr><td>Governance</td><td>~2311 px</td></tr>
-          <tr><td>Responsiveness</td><td>~4202 px</td></tr>
-          <tr><td>Components</td><td>~3649 px</td></tr>
-          <tr><td>Instances - Interaction</td><td>~4269 px</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h3 class="sa-h3">4.4 Layer naming</h3>
+    <p class="sa-p">Every frame, group, and layer must have a proper descriptive name — no auto-generated names like <code class="inline">Frame 47</code>, <code class="inline">Group 3</code>, or <code class="inline">Rectangle 12</code>. Names should clearly describe what the element is and where it sits in the component. Use a consistent naming pattern throughout, for example:</p>
+    <ul class="sa-ul">
+      <li><code class="inline">DataTable</code> — the root component</li>
+      <li><code class="inline">DataTable.Row</code>, <code class="inline">DataTable.RowStart</code>, <code class="inline">DataTable.RowEnd</code> — sub-components</li>
+      <li><code class="inline">Container.LeadingIcon</code>, <code class="inline">Container.TrailingIcon</code> — named containers</li>
+      <li><code class="inline">KPITile.Value</code>, <code class="inline">KPITile.Label</code>, <code class="inline">KPITile.TrendBadge</code> — content slots</li>
+    </ul>
+    <p class="sa-p">The rule is simple: anyone opening the file should be able to understand the structure immediately from the layer names alone.</p>
 
     <div class="hdiv"></div>
     <h2 class="sa-h2">5. How to Write the Spec</h2>
-    <div class="sa-callout grey">
-      <strong>Key rules</strong>
-      Every section must be complete -no <code class="inline">[fill in]</code> placeholders · Every token name must be a real token visible in Pathway Variables (verify before writing) · No raw hex values in token tables (hex belongs in Section 17 only) · Status must remain <code class="inline">PENDING HUMAN REVIEW</code> · Section 17 is for gaps: use it for every raw value, missing token, or unanswered question. Flag each with HIGH / MEDIUM / LOW priority.
-    </div>
+    <p class="sa-p">The spec is a Markdown <code class="inline">.md</code> file. Think of it as the written specification that would otherwise exist as scattered annotations across Figma — it captures interaction behaviour, content rules, flow logic, accessibility requirements, responsiveness, and motion intent in one place. It does not duplicate what is already visible in Figma (tokens, layout, variant structure, state matrix). Every section must be complete with no placeholder text before submitting.</p>
 
     <div class="hdiv"></div>
-    <h2 class="sa-h2">6. The 18 Required Spec Sections</h2>
-    <p class="sa-p" style="margin-bottom:10px">All 18 sections must be present and complete in every submitted spec:</p>
+    <h2 class="sa-h2">6. Spec sections</h2>
+    <p class="sa-p" style="margin-bottom:10px">Each spec contains these 8 sections. All must be present and complete:</p>
     <ol class="sa-ol">
-      <li><strong>Component Overview</strong> -what it is, what it's not, where it fits in Pathway</li>
-      <li><strong>1.1 Governance table</strong> -who owns what and where to change it</li>
-      <li><strong>Component Anatomy</strong> -ASCII layer tree, every layer labeled with nesting</li>
-      <li><strong>Design Tokens</strong> (3.1 Surface · 3.2 Fill · 3.3 Text · 3.4 Icon · 3.5 Geometry · 3.6 Typography)</li>
-      <li><strong>Layout and Spacing</strong> -every spacing value, token referenced where it exists</li>
-      <li><strong>Variant Structure</strong> -every variant, what differs from default, must match Figma exactly</li>
-      <li><strong>State Matrix</strong> -one row per state, tokens for every property</li>
-      <li><strong>Sub-components and Decorations</strong></li>
-      <li><strong>Container and Surface</strong> -surface, border, shadow, dimensions, padding</li>
-      <li><strong>Interaction and Behaviour</strong> -click, hover, keyboard, data states</li>
-      <li><strong>Collapsed / Compact / Alternate Modes</strong></li>
-      <li><strong>Iconography</strong> -every icon with Material Symbols Rounded name verified</li>
-      <li><strong>Interaction Patterns</strong> -hover-safe bridges, debounce, sequenced behaviours</li>
-      <li><strong>Accessibility (13.0–13.6)</strong> -ARIA pattern, touch targets, ARIA markup, keyboard table, focus ring spec, screen reader strings, contrast ratios. <em>Section 13 must be fully complete -incomplete Section 13 will result in the component being returned.</em></li>
-      <li><strong>Motion</strong> -animation intent in plain language</li>
-      <li><strong>Responsiveness</strong> -all four breakpoints described</li>
-      <li><strong>What Engineering Needs</strong> -example data, icon names, component-specific inputs</li>
-      <li><strong>Gaps and Deferred Decisions</strong> -every raw value with proposed token name and priority</li>
-      <li><strong>Storybook</strong> -reference note only: "Storybook page will be created by DS team after handoff."</li>
+      <li><strong>Component Overview</strong> — what this component is, what problem it solves, when to use it and when not to. Include the Figma link to the component page.</li>
+      <li><strong>Interaction and Behaviour</strong> — how the component works: click and tap behaviour, hover states, keyboard interactions, how it responds to different data states (loading, empty, error), any content rules or conditional logic, multi-step flows where applicable.</li>
+      <li><strong>Content and Alternate States</strong> — collapsed, compact, read-only, or any other structural mode the component can appear in. What changes, what stays the same, and any rules governing when each mode applies.</li>
+      <li><strong>Iconography</strong> — every icon used in the component, its Material Symbols Rounded name, where it appears, and what it means. Verify every name in the <a href="https://www.figma.com/design/g2elaNII7uzXayveYuoyOp/Material-Symbols-3---Icon-Pack--Community-?node-id=2-6" target="_blank" rel="noopener" style="color:var(--blue)">Material Symbols Figma library ↗</a>.</li>
+      <li><strong>Accessibility</strong> — the ARIA pattern the component maps to (with link to <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" rel="noopener" style="color:var(--blue)">WAI-ARIA APG ↗</a>), keyboard interaction table, focus style specification, screen reader announcement intent for each key state, and colour contrast ratios for all text-on-background combinations (minimum 4.5:1 for text, 3:1 for non-text UI).</li>
+      <li><strong>Motion</strong> — the animation intent for every transition or state change in the component. Plain language is fine — describe what moves, in which direction, triggered by what. MB engineering handles implementation.</li>
+      <li><strong>Responsiveness</strong> — how the component behaves at each of the four Pathway breakpoints: Mobile (393 px), Tablet (768 px), Small Desktop (1024 px), Desktop (1440 px). Be specific about what changes — layout, visibility, behaviour, sizing.</li>
+      <li><strong>What Engineering Needs</strong> — anything beyond the Figma file and this spec that engineering will need to implement the component: example data sets, edge case content, specific icon names, or known implementation considerations.</li>
     </ol>
+    <div class="sa-callout grey"><strong>Storybook:</strong> Add a note at the end of the spec: "Storybook page will be created by the MB DS team after handoff." VL does not create or deploy Storybook stories.</div>
 
     <div class="hdiv"></div>
     <h2 class="sa-h2">7. Spec template</h2>
-    <p class="sa-p">Copy the block below for each component. Fill in every section. Delete all instructional text before submitting.</p>
-    <pre># {Component} -Pathway Design System Component Spec
+    <p class="sa-p">Use this template for every component. Fill in every section. Remove all instructional notes before submitting.</p>
+    <pre># {ComponentName} — Component Spec
 
-**Status:** `PENDING HUMAN REVIEW`
-
----
-
-## Links
-| Artefact | URL |
-|---|---|
-| Figma | https://www.figma.com/design/3sw45aVcngFAmpbP6cfrXP/...?node-id=&lt;nodeId&gt; |
-
-## Authorship
-Design owns: variants, states, token reference, anatomy, Figma build, accessibility intent, usage rules, responsiveness.
-Engineering owns: prop types, ARIA implementation in code, browser-specific behaviour.
+**Figma:** [Open in Figma](https://www.figma.com/design/3sw45aVcngFAmpbP6cfrXP/...?node-id=&lt;nodeId&gt;)
 
 ---
 
 ## 1. Component Overview
-## 1.1 Governance: where things live
-| To change... | Owner | Where |
-|---|---|---|
-| Colours and token bindings | Design | Variables panel, Pathway Figma file |
-| Layout, spacing, variants | Design | &lt;Name&gt; Components section |
-| Behaviour rules | This spec | Section 9 |
-| Accessibility | This spec | Section 13 |
-| State definitions | This spec | Section 6 |
+[What this component is and what it does. When to use it. When not to use it.]
 
-## 2. Component Anatomy
-## 3. Design Tokens (3.1–3.6)
-## 4. Layout and Spacing
-## 5. Variant Structure
-## 6. State Matrix
-| State | Background | Text | Icon | Border | Notes |
-|---|---|---|---|---|---|
-| Base | | | | | |
-| Hover | | | | | |
-| Active | | | | | |
-| Focus | | | | | Focus ring -see §13.4 |
-| Disabled | | | | | cursor: not-allowed |
+---
 
-## 7. Sub-components and Decorations
-## 8. Container and Surface
-## 9. Interaction and Behaviour
-## 10. Collapsed, Compact, and Alternate Modes
-## 11. Iconography
+## 2. Interaction and Behaviour
+[How the component works — click/tap, hover, keyboard, content rules, conditional logic,
+data states (loading / empty / error), multi-step flows where applicable.]
+
+---
+
+## 3. Content and Alternate States
+[Collapsed, compact, read-only, or any other structural mode. What changes, what stays
+the same, and when each mode applies.]
+
+---
+
+## 4. Iconography
 | Icon | Material Symbols Rounded name | Where used | Size | Meaning |
 |---|---|---|---|---|
+| [icon] | [exact name from library] | [where] | [px] | [what it communicates] |
 
-## 12. Interaction Patterns
-## 13. Accessibility
-### 13.0 ARIA pattern  [Name + link to w3.org/WAI/ARIA/apg/patterns/]
-### 13.1 Touch and pointer targets  [min 48×48 px]
-### 13.2 ARIA markup  [HTML example with correct ARIA attributes]
-### 13.3 Keyboard interaction
-| Key | Behaviour | Standard |
-|---|---|---|
-| Tab | Move focus | WCAG 2.1.1 |
-| Enter / Space | Activate | WAI-ARIA |
-| Arrow keys | Navigate | WAI-ARIA |
-| Escape | Dismiss | WAI-ARIA |
-### 13.4 Focus styles  [outline: 2px solid [focus ring token], offset: 2px]
-### 13.5 Screen reader announcements
-### 13.6 Colour contrast
-| Element | Text token | Background token | Ratio | WCAG AA |
-|---|---|---|---|---|
+---
 
-## 14. Motion
-## 15. Responsiveness
-| Viewport | Width | Component behaviour |
+## 5. Accessibility
+### ARIA pattern
+[Name the WAI-ARIA pattern and link to it — https://www.w3.org/WAI/ARIA/apg/patterns/]
+
+### Keyboard interaction
+| Key | Behaviour |
+|---|---|
+| Tab | Move focus to the component |
+| Enter / Space | Activate focused element |
+| Arrow keys | Navigate within component |
+| Escape | Dismiss / close (if applicable) |
+
+### Focus style
+[Describe the visible focus indicator — outline weight, colour token, offset.]
+
+### Screen reader announcements
+[Approximate what a screen reader should announce for each key state.]
+
+### Colour contrast
+| Element | Ratio | WCAG AA |
 |---|---|---|
-| Mobile | 393 px | |
-| Tablet | 768 px | |
-| Small Desktop | 1024 px | |
+| [label on background] | [N]:1 | Pass / Fail |
+
+---
+
+## 6. Motion
+| What animates | Trigger | Intent |
+|---|---|---|
+| [element] | [on X] | [describe the feel and direction] |
+
+---
+
+## 7. Responsiveness
+| Viewport | Width | Behaviour |
+|---|---|---|
+| Mobile | 393 px | [describe] |
+| Tablet | 768 px | [describe] |
+| Small Desktop | 1024 px | [describe] |
 | Desktop | 1440 px | Default |
 
-## 16. What Engineering Needs
-## 17. Gaps and Deferred Decisions
-| Gap | Priority | Notes |
-|---|---|---|
+---
 
-## 18. Storybook
-Storybook page will be created by DS team after handoff.
-Expected URL: https://helloimjolopez-collab.github.io/pathway-ds/storybook/?path=/docs/library-&lt;name&gt;--docs</pre>
+## 8. What Engineering Needs
+[Example data, edge case content, icon names, implementation notes.]
+
+---
+
+*Storybook page will be created by the MB DS team after handoff.*</pre>
 
     <div class="hdiv"></div>
     <h2 class="sa-h2">8. Handoff Checklist</h2>
-    <p class="sa-p">Run through both checklists before submitting. If any item is unchecked, do not submit yet.</p>
+    <p class="sa-p">Check both lists before submitting. Do not submit if anything is unchecked.</p>
     <div class="two-col" style="max-width:none">
       <div class="checklist-block">
         <h4>Figma checklist</h4>
         <ul class="cl-list">
-          <li><span class="cl-box"></span> Component page created with correct name format</li>
-          <li><span class="cl-box"></span> All five Figma Sections present, in order, named exactly</li>
-          <li><span class="cl-box"></span> Master component named &lt;Name&gt; in PascalCase</li>
-          <li><span class="cl-box"></span> All sub-components named &lt;Name&gt;.&lt;SubComponent&gt;</li>
-          <li><span class="cl-box"></span> No auto-generated layer names remain</li>
-          <li><span class="cl-box"></span> Every fill, stroke, text colour, radius bound to a Pathway variable</li>
-          <li><span class="cl-box"></span> No raw hex values on any production layer</li>
+          <li><span class="cl-box"></span> Component page created and named correctly</li>
+          <li><span class="cl-box"></span> Three sections present: Components, Instances and Interaction, Documentation</li>
+          <li><span class="cl-box"></span> Auto-layout applied throughout</li>
+          <li><span class="cl-box"></span> All states, sizes, and styles covered as variants</li>
+          <li><span class="cl-box"></span> Instance swaps and slots used wherever content is variable</li>
+          <li><span class="cl-box"></span> All visual properties bound to Pathway Variables tokens</li>
           <li><span class="cl-box"></span> Raw values (where unavoidable) annotated in Figma</li>
-          <li><span class="cl-box"></span> All required state variants built (incl. Focus)</li>
-          <li><span class="cl-box"></span> Instances section: one labeled instance per state</li>
-          <li><span class="cl-box"></span> Documentation section: source-of-truth note + 200–400 word summary</li>
-          <li><span class="cl-box"></span> Governance section: ownership table + source-of-truth note</li>
-          <li><span class="cl-box"></span> Responsiveness section: all four breakpoints addressed</li>
-          <li><span class="cl-box"></span> All icons are instances from Material Symbols library</li>
-          <li><span class="cl-box"></span> Auto-layout enabled on master component frame</li>
+          <li><span class="cl-box"></span> Every layer has a descriptive name — no auto-generated names remain</li>
+          <li><span class="cl-box"></span> All icons are instances from the Material Symbols Figma library</li>
+          <li><span class="cl-box"></span> Focus state variant included for all interactive components</li>
+          <li><span class="cl-box"></span> Instances and Interaction section documents key usage and behaviour</li>
+          <li><span class="cl-box"></span> Documentation section contains the complete spec</li>
         </ul>
       </div>
       <div class="checklist-block">
         <h4>Spec checklist</h4>
         <ul class="cl-list">
-          <li><span class="cl-box"></span> All 18 sections present and complete</li>
-          <li><span class="cl-box"></span> Figma node ID filled in the Links section</li>
-          <li><span class="cl-box"></span> Every token name verified against Pathway Variables</li>
-          <li><span class="cl-box"></span> No raw hex values in token tables</li>
-          <li><span class="cl-box"></span> Section 6 State Matrix matches every Figma variant exactly</li>
-          <li><span class="cl-box"></span> Section 11 icon names verified in Material Symbols Rounded</li>
-          <li><span class="cl-box"></span> §13.0 ARIA pattern named and linked</li>
-          <li><span class="cl-box"></span> §13.2 ARIA markup example written</li>
-          <li><span class="cl-box"></span> §13.3 Keyboard interaction table complete</li>
-          <li><span class="cl-box"></span> §13.4 Focus ring specification written</li>
-          <li><span class="cl-box"></span> §13.5 Screen reader announcement strings written</li>
-          <li><span class="cl-box"></span> §13.6 Contrast ratios verified for all combinations</li>
-          <li><span class="cl-box"></span> §15 Responsiveness covers all four breakpoints</li>
-          <li><span class="cl-box"></span> §17 Gaps lists every raw value with proposed token names</li>
-          <li><span class="cl-box"></span> Status: PENDING HUMAN REVIEW (unchanged)</li>
+          <li><span class="cl-box"></span> Figma link filled in at the top of the spec</li>
+          <li><span class="cl-box"></span> All 8 sections present and complete — no placeholder text remaining</li>
+          <li><span class="cl-box"></span> Section 2 covers all interaction states, content rules, and data states</li>
+          <li><span class="cl-box"></span> Section 4 icon names verified in the Material Symbols Figma library</li>
+          <li><span class="cl-box"></span> Section 5 ARIA pattern named and linked</li>
+          <li><span class="cl-box"></span> Section 5 keyboard interaction table complete</li>
+          <li><span class="cl-box"></span> Section 5 contrast ratios verified for all text-on-background combinations</li>
+          <li><span class="cl-box"></span> Section 7 covers all four breakpoints</li>
+          <li><span class="cl-box"></span> Storybook note included at the end</li>
         </ul>
       </div>
     </div>
