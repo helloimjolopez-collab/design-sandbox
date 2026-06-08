@@ -830,18 +830,26 @@ tbody tr:hover .row-act-btn{opacity:1}
 /* Assessment provenance row in history */
 .assess-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--fill-static-neutral-subtle);border-radius:var(--r6);margin-top:8px}
 .assess-actor{font-size:11px;color:var(--fg3);margin-top:2px}
-/* Screening history item */
-.hist-item{border:1px solid var(--stroke-static-neutral-subtle);border-radius:var(--r8);overflow:hidden;margin-bottom:8px}
-.hist-item:last-child{margin-bottom:0}
-.hist-item-hd{padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--fill-static-neutral-subtle);transition:background 80ms}
-.hist-item-hd:hover{background:var(--fill-static-neutral-base)}
-.hist-item-body{padding:12px;border-top:1px solid var(--stroke-static-neutral-subtle);display:none}
-.hist-item-body.open{display:block}
-/* Collapse toggle */
-.case-log-toggle{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--brand);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:8px;font-family:inherit}
-.case-log-toggle:hover{text-decoration:underline}
+/* Screening history item — defined in second block below (kept here as placeholder) */
+/* Collapse toggle — muted, not primary */
+.case-log-toggle{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--fg2);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:8px;font-family:inherit}
+.case-log-toggle:hover{color:var(--ink)}
 .case-log-wrap{display:none;margin-top:8px}
 .case-log-wrap.open{display:block}
+/* Link management — light info tint to differentiate from identity fields */
+.link-mgmt{background:var(--fill-static-info-light);border:1px solid var(--stroke-static-brand-base);border-radius:var(--r8);padding:12px 14px;margin-top:12px}
+/* Badge size lock — all badges in the panel should be the same size */
+.pnl-card .badge{font-size:12px!important;padding:3px 10px 3px 8px!important}
+.pnl-card .badge .bic{width:13px!important;height:13px!important}
+/* Current case card — slightly elevated vs history */
+.pnl-card.current-case-card{box-shadow:0 2px 8px rgba(0,0,0,.1),0 0 0 1px rgba(52,84,153,.15)}
+/* History items — compact and muted */
+.hist-item{border:1px solid var(--stroke-static-neutral-subtle);border-radius:var(--r8);overflow:hidden;margin-bottom:7px;background:#fff}
+.hist-item:last-child{margin-bottom:0}
+.hist-item-hd{padding:9px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--fill-static-neutral-subtle);transition:background 80ms}
+.hist-item-hd:hover{background:var(--fill-static-neutral-base)}
+.hist-item-body{padding:10px 12px;border-top:1px solid var(--stroke-static-neutral-subtle);display:none}
+.hist-item-body.open{display:block}
 /* legacy — keep for any lingering refs */
 .pnl-sec-block{border-bottom:1px solid var(--stroke-static-neutral-subtle)}
 .pnl-sec-block:last-child{border-bottom:none}
@@ -1456,14 +1464,36 @@ const PEOPLE = [
     {type:'done',title:'Consent signed',date:'22.03.2026',time:'11:30 AM',by:'Applicant'},
     {type:'done',title:'Order submitted',date:'22.03.2026',time:'11:31 AM',by:'Auto'},
     {type:'done',title:'Screening in progress',date:'23.03.2026',time:'8:00 AM',by:'Digital Delve'},
-  ]}
+  ]},
+  {id:'c2h1',checkType:'Standard',dateInitiated:'2024-08-10',via:'flow',status:'cleared',position:'Small Group Leader',team:'Student Ministry',assessment:{outcome:'Cleared',date:'22.08.2024',author:'Admin'},
+  events:[
+    {type:'done',title:'Consent signed',date:'12.08.2024',time:'10:15 AM',by:'Applicant'},
+    {type:'done',title:'Order submitted',date:'12.08.2024',time:'10:16 AM',by:'Auto'},
+    {type:'done',title:'Report received — no records found',date:'20.08.2024',time:'9:00 AM',by:'Digital Delve'},
+    {type:'done',title:'Assessment: Complete: Cleared',date:'22.08.2024',time:'3:00 PM',by:'Admin'},
+  ]},
+  {id:'c2h2',checkType:'Essential',dateInitiated:'2022-05-01',via:'invite',status:'cleared',position:'Greeter Volunteer',team:'Student Ministry',assessment:{outcome:'Cleared',date:'14.05.2022',author:'Admin'},
+  events:[
+    {type:'done',title:'Case completed — Cleared',date:'14.05.2022',time:'11:00 AM',by:'Admin'},
+  ]},
 ]},
 {id:'p3',name:'Sarah Park',fullLegal:'Sarah Park',email:'sarah.park@gracechurch.org',phone:'(555) 487-2211',position:'Driver Volunteer',team:'Operations',source:'PMM',dob:'08 Nov 1995',preferredName:'Sarah',orgStatus:'Active',rescreenDue:null,cst:{status:'cst-na',type:null},tags:['Driver'],cases:[
   {id:'c3',checkType:'Standard plus MVR',dateInitiated:'2026-04-01',via:'invite',status:'invite-expiring',inviteExpiry:'2026-05-14',report:null,
   events:[
     {type:'done',title:'Invite link created',date:'01.04.2026',time:'2:00 PM',by:'Admin'},
     {type:'done',title:'Invite email sent',date:'01.04.2026',time:'2:01 PM',by:'PMM'},
-  ]}
+  ]},
+  {id:'c3h1',checkType:'Standard plus MVR',dateInitiated:'2024-01-15',via:'invite',status:'cleared',position:'Driver Volunteer',team:'Operations',assessment:{outcome:'Cleared',date:'28.01.2024',author:'Admin'},
+  events:[
+    {type:'done',title:'Consent signed',date:'18.01.2024',time:'2:00 PM',by:'Applicant'},
+    {type:'done',title:'Order submitted',date:'18.01.2024',time:'2:01 PM',by:'Auto'},
+    {type:'done',title:'Report received — no records found',date:'26.01.2024',time:'9:00 AM',by:'Digital Delve'},
+    {type:'done',title:'Assessment: Complete: Cleared',date:'28.01.2024',time:'11:30 AM',by:'Admin'},
+  ]},
+  {id:'c3h2',checkType:'Essential',dateInitiated:'2022-03-10',via:'invite',status:'cleared',position:'Usher',team:'Operations',assessment:{outcome:'Cleared',date:'20.03.2022',author:'Admin'},
+  events:[
+    {type:'done',title:'Case completed — Cleared',date:'20.03.2022',time:'10:00 AM',by:'Admin'},
+  ]},
 ]},
 {id:'p4',name:'David Thompson',fullLegal:'David Thompson',email:'d.thompson@gracechurch.org',phone:'(555) 663-9988',position:'Sunday School Teacher',team:"Children's Ministry",source:'PMM',dob:'30 Apr 1975',preferredName:'Dave',orgStatus:'Active',rescreenDue:'05 Jul 2026',cst:{status:'cst-certified',type:'d2l',completedDate:'10 Jun 2023'},tags:['Long-term volunteer'],cases:[
   {id:'c4',checkType:'Enhanced',dateInitiated:'2023-06-15',via:'invite',status:'due-rescreening',assessment:{outcome:'Cleared',date:'05.07.2023',author:'Admin'},
@@ -1493,7 +1523,18 @@ const PEOPLE = [
   events:[
     {type:'done',title:'Invite link created',date:'07.05.2026',time:'10:00 AM',by:'Admin'},
     {type:'done',title:'Invite email sent',date:'07.05.2026',time:'10:01 AM',by:'PMM'},
-  ]}
+  ]},
+  {id:'c6h1',checkType:'Standard',dateInitiated:'2024-02-20',via:'invite',status:'cleared',position:'Worship Volunteer',team:'Worship Team',assessment:{outcome:'Cleared',date:'05.03.2024',author:'Admin'},
+  events:[
+    {type:'done',title:'Consent signed',date:'23.02.2024',time:'7:45 PM',by:'Applicant'},
+    {type:'done',title:'Order submitted',date:'23.02.2024',time:'7:46 PM',by:'Auto'},
+    {type:'done',title:'Report received — no records found',date:'03.03.2024',time:'8:00 AM',by:'Digital Delve'},
+    {type:'done',title:'Assessment: Complete: Cleared',date:'05.03.2024',time:'2:15 PM',by:'Admin'},
+  ]},
+  {id:'c6h2',checkType:'Essential',dateInitiated:'2020-09-01',via:'invite',status:'cleared',position:'Kitchen Helper',team:'Worship Team',assessment:{outcome:'Cleared',date:'10.09.2020',author:'Admin'},
+  events:[
+    {type:'done',title:'Case completed — Cleared',date:'10.09.2020',time:'10:00 AM',by:'Admin'},
+  ]},
 ]},
 {id:'p7',name:'Anna Chen',fullLegal:'Anna Chen',email:'anna.chen@gracechurch.org',phone:'(555) 943-1127',position:'Youth Small Group Leader',team:'Student Ministry',source:'Rock CRM',dob:'19 Jun 1991',preferredName:'Anna',orgStatus:'Active',rescreenDue:null,cst:{status:'cst-certified',type:'ms',completedDate:'10 Oct 2023'},tags:['Rock CRM'],cases:[
   {id:'c7',checkType:'Standard',dateInitiated:'2025-10-01',via:'integration',status:'cleared',assessment:{outcome:'Cleared',date:'15.03.2026',author:'Admin'},
@@ -1510,7 +1551,18 @@ const PEOPLE = [
     {type:'done',title:'Invite link created',date:'10.01.2026',time:'11:00 AM',by:'Admin'},
     {type:'done',title:'Invite email sent',date:'10.01.2026',time:'11:01 AM',by:'PMM'},
     {type:'err',title:'Invite link expired — no response',date:'10.02.2026',time:'11:01 AM',by:'System'},
-  ]}
+  ]},
+  {id:'c8h1',checkType:'Preferred',dateInitiated:'2024-06-01',via:'invite',status:'needs-review',position:'Sunday School Teacher',team:"Children's Ministry",assessment:{outcome:'Needs Review',date:'20.06.2024',author:'Admin',notes:'Minor record found — supervisor reviewed and approved to proceed.'},report:{refId:'DD-2024-4417',receivedDate:'18.06.2024',hits:'1 minor record found'},
+  events:[
+    {type:'done',title:'Consent signed',date:'03.06.2024',time:'6:00 PM',by:'Applicant'},
+    {type:'done',title:'Order submitted',date:'03.06.2024',time:'6:01 PM',by:'Auto'},
+    {type:'done',title:'Report received — 1 record found',date:'18.06.2024',time:'9:00 AM',by:'Digital Delve'},
+    {type:'warn',title:'Assessment: Needs Review — approved to proceed',date:'20.06.2024',time:'10:30 AM',by:'Admin'},
+  ]},
+  {id:'c8h2',checkType:'Essential',dateInitiated:'2021-08-15',via:'invite',status:'cleared',position:'Administrative Volunteer',team:"Children's Ministry",assessment:{outcome:'Cleared',date:'25.08.2021',author:'Admin'},
+  events:[
+    {type:'done',title:'Case completed — Cleared',date:'25.08.2021',time:'2:00 PM',by:'Admin'},
+  ]},
 ]}
 ];
 
@@ -2518,9 +2570,18 @@ function renderViaBadge(c, person){
   return `<span class="chip" style="gap:5px"><svg width="12" height="12" viewBox="0 0 20 20" style="flex-shrink:0;color:var(--fg3)"><use href="#${icon}"/></svg>${esc(label)}</span>`;
 }
 
+// ── Cancel case eligibility ──────────────────────────────────────────────
+function canCancelCase(c){
+  // Can cancel only before order is triggered
+  // Not cancellable once: order submitted, processing, report received, assessed
+  const locked = ['order-submitted','screening-progress','screening-error','order-failed','awaiting-assessment','cleared','needs-review','escalated'];
+  return !locked.includes(c.status);
+}
+
 // ── Current case section ─────────────────────────────────────────────────
 function renderCurrentCase(person, c){
   const showLink = ['invite-created','invite-sent','invite-expiring','email-bounced','invite-cancelled'].includes(c.status);
+  const cancellable = canCancelCase(c) && c.status !== 'case-cancelled';
   const logId = `case-log-${c.id}`;
   const logToggleId = `case-log-toggle-${c.id}`;
 
@@ -2595,46 +2656,54 @@ function renderCurrentCase(person, c){
     </button>
     <div class="case-log-wrap" id="${logId}">
       <div class="elog" style="margin-top:2px">${eventsHtml}</div>
+    </div>` : ''}
+
+    ${cancellable ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--stroke-static-neutral-subtle)">
+      <button class="btn btn-ghost btn-sm" style="color:var(--red);padding:0" onclick="cancelCase('${person.id}','${c.id}')">Cancel this case</button>
+      <div style="font-size:11px;color:var(--fg4);margin-top:3px">Only available before the background check order is placed.</div>
     </div>` : ''}`;
 }
 
 // ── Screening history section ────────────────────────────────────────────
-// Shows ALL cases — current case first (current state), then past cases.
-// Each case is a collapsible item with role, tags, assessment provenance.
+// Shows ONLY past cases (cases[1+]). All past cases are terminal.
+// Compact, muted — each is a collapsible row.
 function renderScreeningHistory(person){
-  if(!person.cases.length) return `<div style="font-size:13px;color:var(--fg4)">No screening cases on file.</div>`;
+  const past = person.cases.slice(1);
+  if(!past.length) return `<div style="font-size:13px;color:var(--fg4)">No previous screenings on file.</div>`;
 
-  return person.cases.map((c, i)=>{
-    const isCurrent = i === 0;
+  return past.map(c=>{
     const s = STATUS[c.status];
-    const badgeHtml = renderBadge(c.status);
     const itemId = `hist-body-${c.id}`;
     const chevId = `hist-chev-${c.id}`;
+    // Use the case-level position/team if stored, else fall back to person's current
+    const roleAtTime = c.position || person.position;
+    const teamAtTime = c.team || person.team;
 
-    // Assessment provenance block
+    // Outcome pill (compact, not full badge — just colored dot + text)
+    const outColor = c.assessment
+      ? (c.assessment.outcome==='Complete: Cleared'||c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Complete: Escalated'||c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)')
+      : 'var(--fg4)';
+    const outcomeLabel = c.assessment ? c.assessment.outcome : (s ? s.label : c.status);
+
+    // Assessment provenance
     let assessHtml = '';
     if(c.assessment){
-      const outColor = c.assessment.outcome==='Complete: Cleared'||c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Complete: Escalated'||c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)';
-      const isSystemAssessment = c.assessment.author === 'Auto' || c.assessment.author === 'System';
-      assessHtml = `<div style="padding:10px 12px;background:var(--fill-static-neutral-subtle);border:1px solid var(--stroke-static-neutral-subtle);border-radius:var(--r8);margin-top:10px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--fg4);margin-bottom:6px">Assessment</div>
-        <div style="display:flex;align-items:flex-start;gap:8px">
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:700;color:${outColor}">${esc(c.assessment.outcome)}</div>
-            ${c.assessment.notes?`<div style="font-size:12px;color:var(--fg2);margin-top:2px;line-height:1.4">"${esc(c.assessment.notes)}"</div>`:''}
+      const isSystem = c.assessment.author==='Auto'||c.assessment.author==='System';
+      assessHtml = `<div style="margin-top:8px;padding:9px 11px;background:var(--fill-static-neutral-subtle);border-radius:var(--r6);border:1px solid var(--stroke-static-neutral-subtle)">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:${outColor}">${esc(c.assessment.outcome)}</div>
+            ${c.assessment.notes?`<div style="font-size:12px;color:var(--fg2);margin-top:2px;line-height:1.4;font-style:italic">"${esc(c.assessment.notes)}"</div>`:''}
           </div>
-          <div style="text-align:right;flex-shrink:0">
+          <div style="text-align:right;white-space:nowrap;flex-shrink:0">
             <div style="font-size:11px;color:var(--fg3)">${esc(c.assessment.date)}</div>
-            <div style="font-size:11px;color:var(--fg4);margin-top:1px">
-              ${isSystemAssessment ? '⚙ System' : `👤 ${esc(c.assessment.author)}`}
-            </div>
+            <div style="font-size:11px;color:var(--fg4);margin-top:1px">${isSystem?'System':'By '+esc(c.assessment.author)}</div>
           </div>
         </div>
-        ${c.report ? `<button class="btn btn-xs btn-secondary" style="margin-top:8px" data-open-report="${c.id}">View report</button>` : ''}
+        ${c.report?`<button class="btn btn-xs btn-secondary" style="margin-top:7px" data-open-report="${c.id}">View report</button>`:''}
       </div>`;
     }
 
-    // Event log (collapsed)
     const eventsHtml = (c.events||[]).map(ev=>`
       <div class="ev-row">
         <div class="ev-dot ${ev.type}"></div>
@@ -2647,22 +2716,19 @@ function renderScreeningHistory(person){
     const logId = `hist-log-${c.id}`;
     const logTogId = `hist-log-tog-${c.id}`;
 
-    return `<div class="hist-item${isCurrent?' hist-item-current':''}">
+    return `<div class="hist-item">
       <div class="hist-item-hd" onclick="toggleHistItem('${itemId}','${chevId}')">
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            ${renderCheckTypeChip(c.checkType)}
-            ${isCurrent ? `<span style="font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;background:var(--fill-static-info-light);color:var(--blue)">Current</span>` : ''}
+            <span style="font-size:12px;font-weight:600;color:var(--ink)">${esc(c.checkType)}</span>
+            <span style="font-size:11px;color:var(--fg4)">·</span>
+            <span style="font-size:11px;color:var(--fg3)">${fmtShort(c.dateInitiated)}</span>
           </div>
-          <div style="font-size:12px;color:var(--fg3);margin-top:4px">
-            Started ${fmtShort(c.dateInitiated)}
-            ${c.assessment ? ` · ${esc(c.assessment.date)}` : ''}
-            · ${esc(person.position)} · ${esc(person.team)}
-          </div>
+          <div style="font-size:11px;color:var(--fg4);margin-top:3px">${esc(roleAtTime)} · ${esc(teamAtTime)}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          ${badgeHtml}
-          <svg id="${chevId}" width="14" height="14" viewBox="0 0 20 20" fill="none" style="transition:transform 150ms;flex-shrink:0;color:var(--fg4)"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div style="display:flex;align-items:center;gap:7px;flex-shrink:0">
+          <span style="font-size:11px;font-weight:600;color:${outColor}">${esc(outcomeLabel)}</span>
+          <svg id="${chevId}" width="13" height="13" viewBox="0 0 20 20" fill="none" style="transition:transform 150ms;flex-shrink:0;color:var(--fg4)"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </div>
       <div class="hist-item-body" id="${itemId}">
@@ -2688,19 +2754,19 @@ function renderCSTCompact(person){
   }
   const t = WZ_CST_TYPES ? WZ_CST_TYPES.find(x=>x.id===cst.type) : null;
   const trainingName = t ? t.name : 'Child safety training';
-  const isCom = cst.status==='cst-completed';
-  const isInv = cst.status==='cst-invited';
-  // invite-sent = blue (in-progress/info), not amber — amber would imply a warning
-  const statusLabel = isCom ? 'Completed' : isInv ? 'Invite sent' : 'Not sent yet';
-  const statusColor = isCom ? 'var(--green)' : isInv ? '#2d6be4' : 'var(--fg4)';
-  const dateLabel = isCom && cst.completedDate ? `Completed ${cst.completedDate}`
+  const cs = CST_STATUS_LABELS[cst.status] || {label:cst.status,cls:'b-neutral',icon:'ms-schedule',tip:''};
+  const isCom = cst.status==='cst-completed' || cst.status==='cst-certified';
+  const isInv = cst.status==='cst-invited' || cst.status==='cst-invite-sent';
+  const dateLabel = isCom && cst.completedDate ? `Certified ${cst.completedDate}`
     : isInv && cst.inviteSentDate ? `Invite sent ${cst.inviteSentDate}` : null;
 
+  const statusBadge = `<span class="badge ${cs.cls}" style="cursor:default;font-size:12px">
+    <svg class="bic" viewBox="0 0 24 24"><use href="#${cs.icon||'ms-schedule'}"/></svg>${esc(cs.label)}
+  </span>`;
+
   return `<div>
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:${dateLabel?'4px':'10px'}">
-      <div style="font-size:13px;font-weight:600;color:var(--ink);line-height:1.3">${esc(trainingName)}</div>
-      <span style="font-size:12px;font-weight:600;color:${statusColor};white-space:nowrap;flex-shrink:0">${esc(statusLabel)}</span>
-    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px">${esc(trainingName)}</div>
+    <div style="margin-bottom:${dateLabel?'8px':'10px'}">${statusBadge}</div>
     ${dateLabel ? `<div style="font-size:12px;color:var(--fg3);margin-bottom:10px">${esc(dateLabel)}</div>` : ''}
     ${!isCom ? `<button class="btn btn-xs btn-secondary" onclick="toast('CST invite sent')">${isInv ? 'Resend invite' : 'Send invite'}</button>` : ''}
   </div>`;
@@ -2713,56 +2779,69 @@ function renderLinkManagement(person, c){
   const isExpiring = c.status === 'invite-expiring';
   const isCancelled = c.status === 'invite-cancelled';
   const isEmailInvite = c.via === 'invite';
+  const lmMenuId = `lm-menu-${c.id}`;
 
   let deliveredVia = 'Person-bound link';
   if(c.via==='invite') deliveredVia = 'Email invite';
   else if(c.via==='flow') deliveredVia = 'Screening flow';
   else if(c.via==='integration') deliveredVia = person.source && person.source!=='PMM' ? person.source : 'CRM integration';
 
-  // Bounce alert at top
+  const expiryColor = isExpiring ? 'var(--amber)' : 'var(--fg3)';
+  const expiryWeight = isExpiring ? '600' : '400';
+
   const bounceAlert = isBounced ? `
-    <div style="display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--fill-static-negative-subtle);border:1px solid var(--stroke-static-negative-base);border-radius:var(--r8);margin-bottom:10px">
-      <svg width="15" height="15" style="color:var(--red);flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><use href="#ms-error-outline"/></svg>
-      <div>
-        <div style="font-size:13px;font-weight:600;color:var(--red)">Email not delivered</div>
-        <div style="font-size:12px;color:var(--fg2);margin-top:2px">Sent to <strong>${esc(person.email)}</strong> — fix the address then resend, or share the link directly.</div>
-        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--fill-static-negative-subtle);border:1px solid var(--stroke-static-negative-base);border-radius:var(--r6);margin-bottom:10px">
+      <svg width="14" height="14" style="color:var(--red);flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><use href="#ms-error-outline"/></svg>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:var(--red)">Email not delivered to ${esc(person.email)}</div>
+        <div style="margin-top:7px;display:flex;gap:5px;flex-wrap:wrap">
           <button class="btn btn-sm btn-primary" onclick="toast('Opening email editor…')">Fix address &amp; resend</button>
-          <button class="btn btn-sm btn-secondary" onclick="toast('Link copied')">Copy link instead</button>
         </div>
       </div>
     </div>` : '';
 
-  const expiryColor = isExpiring ? 'var(--amber)' : 'var(--fg2)';
+  const moreMenu = !isCancelled ? `
+    <div style="position:relative;display:inline-block">
+      <button class="btn btn-secondary btn-xs" onclick="toggleLmMenu('${lmMenuId}',event)" style="gap:3px">
+        More
+        <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <div class="drop-menu" id="${lmMenuId}" style="right:0;left:auto;min-width:180px">
+        <div class="drop-item" onclick="toast('Link copied to clipboard');closeAllMenus()">
+          <svg width="13" height="13" viewBox="0 0 20 20"><use href="#ic-link"/></svg>Copy link
+        </div>
+        ${isEmailInvite ? `<div class="drop-item" onclick="toast('Invite resent to ${esc(person.email)}');closeAllMenus()">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#ms-mail"/></svg>Resend email
+        </div>` : ''}
+        <div class="drop-item" onclick="toast('Expiry extended by 30 days');closeAllMenus()">
+          <svg width="13" height="13" viewBox="0 0 20 20"><use href="#ic-clock"/></svg>Extend expiry
+        </div>
+        <div class="drop-sep"></div>
+        <div class="drop-item danger" onclick="toast('Invite cancelled');closeAllMenus()">
+          <svg width="13" height="13" viewBox="0 0 24 24"><use href="#ms-cancel"/></svg>Cancel invite
+        </div>
+      </div>
+    </div>` : '';
 
   return `
     <div class="link-mgmt">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--fg4);margin-bottom:10px">Invite link</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--fg4);margin-bottom:8px">Invite link</div>
       ${bounceAlert}
-      <div class="link-mgmt-url">
-        <span class="link-mgmt-code">${esc(fakeLink)}</span>
-        <button class="link-mgmt-copy" onclick="toast('Link copied to clipboard')">Copy</button>
+      <!-- URL field with inline copy icon -->
+      <div style="display:flex;align-items:center;border:1px solid var(--stroke-static-neutral-base);border-radius:var(--r6);background:#fff;overflow:hidden;margin-bottom:8px">
+        <span style="flex:1;font-size:11.5px;color:var(--fg2);padding:6px 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'SF Mono','Fira Code',monospace;min-width:0">${esc(fakeLink)}</span>
+        <button title="Copy link" onclick="toast('Link copied to clipboard')" style="flex-shrink:0;width:32px;height:30px;display:flex;align-items:center;justify-content:center;border:none;border-left:1px solid var(--stroke-static-neutral-subtle);background:var(--fill-static-neutral-subtle);cursor:pointer;color:var(--fg2);transition:background 100ms" onmouseover="this.style.background='var(--fill-static-neutral-base)'" onmouseout="this.style.background='var(--fill-static-neutral-subtle)'">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="10" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M4 13H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
       </div>
-      <div class="link-mgmt-meta">
-        <span>Via: <strong style="color:var(--fg2)">${esc(deliveredVia)}</strong></span>
-        <span style="color:var(--stroke-static-neutral-bold)">·</span>
-        <span style="color:${expiryColor}">Expires: <strong style="color:${expiryColor}">${esc(expiryDate)}</strong>${isExpiring?' <span style="font-weight:600;color:var(--amber)">(3 days)</span>':''}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:12px;color:var(--fg3)">
+          ${esc(deliveredVia)} &nbsp;·&nbsp;
+          <span style="color:${expiryColor};font-weight:${expiryWeight}">Expires ${esc(expiryDate)}${isExpiring?' (3 days)':''}</span>
+        </div>
+        ${moreMenu}
       </div>
-      ${!isBounced && !isCancelled ? `<div class="link-mgmt-actions">
-        ${isEmailInvite ? `<button class="btn btn-secondary btn-xs" onclick="toast('Invite resent to ${esc(person.email)}')">
-          <svg width="11" height="11" viewBox="0 0 24 24"><use href="#ms-mail"/></svg>Resend email
-        </button>` : ''}
-        <button class="btn btn-secondary btn-xs" onclick="toast('Link copied to clipboard')">
-          <svg width="11" height="11" viewBox="0 0 20 20"><use href="#ic-link"/></svg>Copy link
-        </button>
-        <button class="btn btn-secondary btn-xs" onclick="toast('Expiry extended 30 days')">
-          <svg width="11" height="11" viewBox="0 0 20 20"><use href="#ic-clock"/></svg>Extend expiry
-        </button>
-        <button class="btn btn-secondary btn-xs" onclick="toast('Link expired — applicant can no longer submit')">
-          <svg width="11" height="11" viewBox="0 0 24 24"><use href="#ms-link-off"/></svg>Expire now
-        </button>
-        <button class="btn btn-ghost btn-xs" style="color:var(--red)" onclick="toast('Invite cancelled')">Cancel invite</button>
-      </div>` : isCancelled ? `<div style="font-size:12px;color:var(--fg4);font-style:italic">This link has been cancelled. Issue a new invite to restart consent collection.</div>` : ''}
+      ${isCancelled ? `<div style="font-size:12px;color:var(--fg4);margin-top:8px;font-style:italic">This link has been cancelled. Issue a new invite to restart.</div>` : ''}
     </div>`;
 }
 
@@ -2784,8 +2863,8 @@ function renderPanelBody(person, targetCaseId){
       <div class="pnl-card-body">${renderIdentityCompact(person)}</div>
     </div>
 
-    <!-- Current case card -->
-    <div class="pnl-card">
+    <!-- Current case card — more prominent -->
+    <div class="pnl-card current-case-card">
       <div class="pnl-card-hd">
         <span class="pnl-card-title">Current case</span>
       </div>
@@ -2796,7 +2875,7 @@ function renderPanelBody(person, targetCaseId){
     <div class="pnl-card">
       <div class="pnl-card-hd">
         <span class="pnl-card-title">Screening history</span>
-        <span style="font-size:12px;color:var(--fg4)">${person.cases.length} case${person.cases.length!==1?'s':''} total</span>
+        ${person.cases.length > 1 ? `<span style="font-size:12px;color:var(--fg4)">${person.cases.length - 1} previous case${person.cases.length-1!==1?'s':''}</span>` : ''}
       </div>
       <div class="pnl-card-body">${renderScreeningHistory(person)}</div>
     </div>
@@ -3084,6 +3163,15 @@ function closeReport(){document.getElementById('rpt-wrap').classList.remove('ope
 document.getElementById('rpt-close').onclick = closeReport;
 document.getElementById('rpt-cancel-btn').onclick = closeReport;
 document.getElementById('rpt-wrap').addEventListener('click',e=>{if(e.target===document.getElementById('rpt-wrap'))closeReport()});
+
+function toggleLmMenu(menuId, e){
+  e.stopPropagation();
+  const menu = document.getElementById(menuId);
+  if(!menu) return;
+  const wasOpen = menu.classList.contains('open');
+  closeAllMenus();
+  if(!wasOpen) menu.classList.add('open');
+}
 
 function toggleCaseLog(logId, toggleId){
   const log = document.getElementById(logId);
