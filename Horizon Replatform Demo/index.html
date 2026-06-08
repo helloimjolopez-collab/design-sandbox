@@ -2817,15 +2817,9 @@ function renderPanelBody(person, targetCaseId){
   pb.querySelectorAll('[data-open-report]').forEach(btn=>{
     btn.addEventListener('click',e=>{e.stopPropagation();openReport(btn.dataset.openReport,e)});
   });
-  pb.querySelectorAll('.hist-row').forEach(row=>{
-    row.addEventListener('click',()=>{
-      const det = row.nextElementSibling;
-      const chev = row.querySelector('.hist-chevron');
-      if(det && det.classList.contains('hist-detail')){
-        det.classList.toggle('open');
-        if(chev) chev.classList.toggle('open');
-      }
-    });
+  // Badge clicks in panel should not try to open another panel
+  pb.querySelectorAll('.badge').forEach(b=>{
+    b.addEventListener('click',e=>e.stopPropagation());
   });
 }
 
