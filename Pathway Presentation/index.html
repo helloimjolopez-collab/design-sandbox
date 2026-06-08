@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pathway: Platform Presentation</title>
+<title>Pathway: An organizational capability. Not a design file.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -24,406 +24,282 @@
   }
 
   html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #111;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--ink);
+    width: 100%; height: 100%; overflow: hidden;
+    background: #111; font-family: 'DM Sans', sans-serif; color: var(--ink);
   }
 
   .deck { width: 100%; height: 100%; position: relative; }
 
   /* ── Base slide ── */
   .slide {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: flex-start; align-items: flex-start;
     padding: 7vh 8vw calc(6vh + var(--nav-h)) 8vw;
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0; pointer-events: none;
     transition: opacity 0.45s ease;
-    background: var(--cream);
-    overflow: hidden;
+    background: var(--cream); overflow: hidden;
   }
 
   .slide.active { opacity: 1; pointer-events: all; }
   .slide.dark { background: var(--ink); color: var(--cream); }
 
-  /* ── Typography ── */
+  /* ── Shared typography ── */
   .eyebrow {
     font-family: 'DM Mono', monospace;
-    font-size: clamp(9px, 0.8vw, 11px);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    margin-bottom: 1.4vw;
-    flex-shrink: 0;
+    font-size: clamp(8px, 0.72vw, 10px);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-light); margin-bottom: 1.4vw; flex-shrink: 0;
   }
 
   .slide.dark .eyebrow { color: var(--violet-mid); }
 
-  .border-bar {
-    width: 48px;
-    height: 2px;
-    background: var(--violet);
-    margin-bottom: 2vw;
-    flex-shrink: 0;
-  }
+  .border-bar { width: 48px; height: 2px; background: var(--violet); margin-bottom: 2vw; flex-shrink: 0; }
 
   .display {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(26px, 4.2vw, 60px);
-    line-height: 1.1;
-    color: var(--ink);
-    margin-bottom: 2vw;
-    max-width: 78%;
-    flex-shrink: 0;
+    font-size: clamp(26px, 4.2vw, 60px); line-height: 1.1;
+    color: var(--ink); margin-bottom: 2vw; max-width: 78%;
   }
 
-  .display.small {
-    font-size: clamp(20px, 2.8vw, 40px);
-    max-width: 80%;
-  }
-
+  .display.small { font-size: clamp(20px, 2.8vw, 40px); max-width: 80%; }
   .display em { font-style: italic; color: var(--violet); }
   .slide.dark .display { color: var(--cream); }
 
   .body-text {
-    font-size: clamp(13px, 1.15vw, 16px);
-    line-height: 1.75;
-    color: var(--ink-mid);
-    max-width: 64%;
-    font-weight: 300;
+    font-size: clamp(13px, 1.15vw, 16px); line-height: 1.75;
+    color: var(--ink-mid); max-width: 64%; font-weight: 300;
   }
 
   .slide.dark .body-text { color: #C8C0B4; }
 
-  /* ── Two-column layout ── */
+  /* ── SLIDE 1: Title specifics ── */
+  .slide-title { justify-content: flex-end; padding-bottom: calc(8vh + var(--nav-h)); }
+
+  .vertical-rule {
+    position: absolute; left: 8vw; top: 0; bottom: 0;
+    width: 1px; background: var(--border); opacity: 0.5;
+  }
+
+  .title-mbrand {
+    font-family: 'DM Mono', monospace; font-size: clamp(8px, 0.75vw, 10px);
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--ink-light); margin-bottom: 3vw;
+  }
+
+  .pathway-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(56px, 9vw, 128px); line-height: 0.95;
+    color: var(--ink); margin-bottom: 2.5vw;
+  }
+
+  .title-rule { width: 60px; height: 2px; background: var(--violet); margin-bottom: 2vw; }
+
+  .title-sub {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: clamp(14px, 1.4vw, 20px); color: var(--ink-mid);
+    font-weight: 400; max-width: 52%; line-height: 1.5;
+  }
+
+  /* ── SLIDES 2, 5, 6, 15: Statement slides ── */
+  .slide.statement { justify-content: center; }
+
+  .stmt-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5.5vw, 80px); line-height: 1.05;
+    color: var(--cream); max-width: 85%; margin-bottom: 0;
+  }
+
+  .stmt-headline.muted { color: #5A5248; }
+  .stmt-headline.accent { color: var(--cream); margin-top: 1.5vw; }
+
+  .stmt-rule { width: 60px; height: 2px; background: var(--violet); margin: 2.5vw 0; flex-shrink: 0; }
+
+  .stmt-subs {
+    display: flex; flex-direction: column; gap: 0.6vw;
+    margin-top: 3vw;
+  }
+
+  .stmt-sub {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: clamp(14px, 1.4vw, 20px); color: #5A5248;
+    font-weight: 400; line-height: 1.4;
+  }
+
+  .stmt-body {
+    font-size: clamp(13px, 1.2vw, 17px); color: #6A6260;
+    font-weight: 300; line-height: 1.7; margin-top: 2vw; max-width: 70%;
+  }
+
+  /* ── SLIDE 3: Fragmentation visual ── */
   .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5vw;
-    width: 100%;
-    align-items: start;
-    flex: 1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5vw;
+    width: 100%; align-items: center; flex: 1;
   }
 
-  /* ── Repo anatomy list (slide 3 right col) ── */
-  .repo-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2vw;
-    padding-top: 1vw;
+  .drift-visual {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 0.8vw; align-items: end; height: 18vw;
+    padding-top: 2vw;
   }
 
-  .repo-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.2vw;
-    padding: 1.2vw 1.5vw;
-    background: var(--warm-white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
+  .drift-bar { border-radius: 3px 3px 0 0; width: 100%; }
+
+  .drift-caption {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: clamp(12px, 1.1vw, 15px); color: var(--ink-light);
+    margin-top: 1.5vw; text-align: center; max-width: 80%; margin-left: auto; margin-right: auto;
   }
 
-  .repo-item-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(7px, 0.65vw, 9px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--violet);
-    width: 72px;
-    flex-shrink: 0;
-    padding-top: 1px;
-  }
+  /* ── SLIDE 4: Cost grid ── */
+  .cost-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5vw; width: 100%; margin-top: 1.5vw; }
 
-  .repo-item-body {
-    font-size: clamp(11px, 0.95vw, 13px);
-    color: var(--ink-mid);
-    font-weight: 300;
-    line-height: 1.5;
-  }
-
-  /* ── Cost grid ── */
-  .cost-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5vw;
-    width: 100%;
-    margin-top: 1.5vw;
-  }
-
-  .cost-item {
-    padding: 2vw;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--warm-white);
-  }
+  .cost-item { padding: 2vw; border: 1px solid var(--border); border-radius: 4px; background: var(--warm-white); }
 
   .cost-stat {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(22px, 3vw, 44px);
-    color: var(--violet);
-    line-height: 1;
-    margin-bottom: 0.6vw;
+    font-size: clamp(22px, 3vw, 44px); color: var(--violet); line-height: 1; margin-bottom: 0.6vw;
   }
 
-  .cost-label {
-    font-size: clamp(11px, 0.95vw, 13px);
-    color: var(--ink-mid);
-    font-weight: 300;
-    line-height: 1.55;
+  .cost-label { font-size: clamp(11px, 0.95vw, 13px); color: var(--ink-mid); font-weight: 300; line-height: 1.55; }
+
+  /* ── SLIDE 7: Six-box system grid ── */
+  .six-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5vw; width: 100%; margin-top: 2vw; flex: 1;
   }
 
-  /* ── Skill cards (slide 7) ── */
+  .six-card {
+    background: var(--warm-white); border: 1px solid var(--border);
+    border-left: 3px solid var(--violet); border-radius: 4px; padding: 1.8vw 2vw;
+  }
+
+  .six-title {
+    font-size: clamp(13px, 1.2vw, 16px); font-weight: 500;
+    color: var(--ink); margin-bottom: 0.8vw;
+  }
+
+  .six-body { font-size: clamp(11px, 0.9vw, 13px); color: var(--ink-mid); font-weight: 300; line-height: 1.6; }
+
+  /* ── SLIDES 8/9: Skill cards & screenshots ── */
   .skill-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0;
-    width: 100%;
-    margin-top: 2vw;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    flex-shrink: 0;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 0; width: 100%; margin-top: 2vw;
+    border: 1px solid var(--border); border-radius: 4px; overflow: hidden; flex-shrink: 0;
   }
 
-  .skill-cell {
-    padding: 2vw 2.5vw;
-    border-right: 1px solid var(--border);
-  }
-
+  .skill-cell { padding: 2vw 2.5vw; border-right: 1px solid var(--border); }
   .skill-cell:last-child { border-right: none; }
 
   .skill-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(7px, 0.65vw, 9px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--violet);
-    margin-bottom: 0.8vw;
+    font-family: 'DM Mono', monospace; font-size: clamp(7px, 0.65vw, 9px);
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.8vw;
   }
 
   .skill-name {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(14px, 1.6vw, 22px);
-    color: var(--ink);
-    line-height: 1.2;
-    margin-bottom: 0.9vw;
-  }
-
-  .skill-body {
-    font-size: clamp(10px, 0.9vw, 13px);
-    color: var(--ink-mid);
-    font-weight: 300;
-    line-height: 1.65;
-    margin-bottom: 1.2vw;
-  }
-
-  .skill-produces {
-    padding-top: 1.2vw;
-    border-top: 1px solid var(--border);
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.72vw, 10px);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    line-height: 1.7;
-  }
-
-  .skill-produces span {
-    display: block;
-    color: var(--ink-mid);
-    font-family: 'DM Sans', sans-serif;
-    font-size: clamp(10px, 0.88vw, 12px);
-    letter-spacing: 0;
-    text-transform: none;
-    font-weight: 300;
-    margin-top: 0.4vw;
+    font-size: clamp(14px, 1.6vw, 22px); color: var(--ink); line-height: 1.2; margin-bottom: 0.9vw;
   }
 
   .skill-screenshot {
-    margin-top: 1.2vw;
-    width: 100%;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.12);
-    flex-shrink: 0;
+    margin-top: 1.2vw; width: 100%; border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.12); flex-shrink: 0;
   }
 
-  .skill-screenshot img {
-    width: 100%;
-    display: block;
-    object-fit: cover;
-    object-position: top;
-    max-height: 22vh;
+  .skill-screenshot img { width: 100%; display: block; object-fit: cover; object-position: top; max-height: 22vh; }
+
+  .skill-produces {
+    padding-top: 1.2vw; margin-top: 1.2vw; border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; font-size: clamp(8px, 0.72vw, 10px);
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); line-height: 1.7;
   }
 
-  /* ── In-action grid (slide 8) ── */
+  .skill-produces span {
+    display: block; color: var(--ink-mid); font-family: 'DM Sans', sans-serif;
+    font-size: clamp(10px, 0.88vw, 12px); letter-spacing: 0; text-transform: none;
+    font-weight: 300; margin-top: 0.4vw;
+  }
+
   .action-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5vw;
-    width: 100%;
-    margin-top: 1.5vw;
-    flex: 1;
-    min-height: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5vw;
+    width: 100%; margin-top: 1.5vw; flex: 1; min-height: 0;
   }
 
-  .action-shot {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6vw;
-    min-height: 0;
-    overflow: hidden;
-  }
+  .action-shot { display: flex; flex-direction: column; gap: 0.6vw; min-height: 0; overflow: hidden; }
 
   .action-shot img {
-    width: 100%;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    object-fit: cover;
-    object-position: top;
-    flex: 1;
-    min-height: 0;
-    display: block;
+    width: 100%; border-radius: 4px; border: 1px solid var(--border);
+    object-fit: cover; object-position: top; flex: 1; min-height: 0; display: block;
   }
 
   .shot-caption {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.68vw, 10px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    flex-shrink: 0;
+    font-family: 'DM Mono', monospace; font-size: clamp(8px, 0.68vw, 10px);
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-light); flex-shrink: 0;
   }
 
-  /* ── Pipeline flow (slide 9) ── */
-  .flow-section {
-    width: 100%;
-    margin-top: 1.5vw;
+  /* ── SLIDE 10: Pathway Kit ── */
+  .kit-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; width: 100%; align-items: start; }
+
+  /* ── SLIDE 11: Industry grid ── */
+  .industry-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5vw; width: 100%; margin-top: 1.5vw;
   }
 
-  .flow-row-label {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(7px, 0.65vw, 9px);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    margin-bottom: 0.8vw;
+  .industry-card {
+    background: var(--warm-white); border: 1px solid var(--border);
+    border-radius: 4px; padding: 1.5vw 2vw;
   }
 
-  .flow-row {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 2vw;
+  .ind-name { font-size: clamp(13px, 1.2vw, 16px); font-weight: 500; color: var(--ink); margin-bottom: 0.5vw; }
+
+  .ind-system {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: clamp(11px, 0.95vw, 13px); color: var(--violet);
   }
 
-  .flow-box {
-    background: var(--warm-white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.1vw 1.5vw;
-    flex-shrink: 0;
+  .industry-footer {
+    margin-top: 1.5vw; padding: 1.2vw 2vw; background: var(--ink); border-radius: 3px;
+    font-size: clamp(11px, 0.9vw, 13px); color: #8A8078; text-align: center; font-weight: 300;
   }
 
-  .flow-box.source {
-    background: var(--violet-light);
-    border-color: var(--violet);
+  /* ── SLIDE 12: Stat trio + metrics ── */
+  .stat-trio {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 3vw; width: 100%; margin-top: 2vw;
   }
 
-  .flow-box.destination {
-    background: var(--cream-dark);
+  .trio-n {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 56px); color: var(--violet); line-height: 1; margin-bottom: 0.6vw;
   }
 
-  .flow-box-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(6px, 0.6vw, 8px);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    margin-bottom: 0.3vw;
+  .trio-label { font-size: clamp(12px, 1.05vw, 14px); font-weight: 500; color: var(--ink); margin-bottom: 0.4vw; }
+  .trio-body { font-size: clamp(10px, 0.9vw, 12px); color: var(--ink-mid); font-weight: 300; line-height: 1.5; margin-bottom: 0.5vw; }
+
+  .trio-source {
+    font-family: 'DM Mono', monospace; font-size: clamp(7px, 0.65vw, 9px);
+    letter-spacing: 0.1em; color: var(--ink-light); text-transform: uppercase;
   }
 
-  .flow-box.source .flow-box-tag { color: var(--violet); }
+  .metrics-divider { width: 100%; height: 1px; background: var(--border); margin: 2vw 0 1vw; }
 
-  .flow-box-name {
-    font-size: clamp(11px, 1vw, 14px);
-    font-weight: 500;
-    color: var(--ink);
-    line-height: 1.2;
+  .metric-trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5vw; width: 100%; }
+
+  .mtrio-card { padding: 1.2vw 1.5vw; background: var(--warm-white); border: 1px solid var(--border); border-radius: 4px; }
+
+  .mtrio-label {
+    font-family: 'DM Mono', monospace; font-size: clamp(7px, 0.65vw, 9px);
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 0.4vw;
   }
 
-  .flow-arrow {
-    font-size: clamp(12px, 1.2vw, 18px);
-    color: var(--border);
-    padding: 0 0.8vw;
-    flex-shrink: 0;
-  }
+  .mtrio-val { font-size: clamp(12px, 1.1vw, 15px); font-weight: 500; color: var(--ink); margin-bottom: 0.3vw; }
+  .mtrio-body { font-size: clamp(10px, 0.85vw, 12px); color: var(--ink-mid); font-weight: 300; line-height: 1.5; }
 
-  .flow-cluster {
-    display: flex;
-    gap: 0.6vw;
-    flex-shrink: 0;
-  }
-
-  .flow-chip {
-    background: var(--cream-dark);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 0.7vw 1.1vw;
-    font-size: clamp(10px, 0.88vw, 12px);
-    font-weight: 500;
-    color: var(--ink-mid);
-    line-height: 1.2;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .flow-divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-    margin: 0.5vw 0 2vw;
-  }
-
-  .gate-note {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6vw;
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.72vw, 10px);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--violet);
-    margin-top: 1vw;
-  }
-
-  .gate-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--violet);
-    flex-shrink: 0;
-  }
-
-  /* ── Stage diagram ── */
+  /* ── SLIDE 13: Stage diagram ── */
   .stage-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    width: 100%;
-    margin-top: 2vw;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    flex-shrink: 0;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; width: 100%; margin-top: 2vw;
+    border: 1px solid var(--border); border-radius: 4px; overflow: hidden; flex-shrink: 0;
   }
 
   .stage-cell { padding: 2vw 2.5vw; border-right: 1px solid var(--border); }
@@ -431,225 +307,67 @@
   .stage-cell.active-stage { background: var(--violet-light); }
 
   .stage-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.7vw, 10px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--violet);
-    margin-bottom: 0.8vw;
+    font-family: 'DM Mono', monospace; font-size: clamp(8px, 0.7vw, 10px);
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.8vw;
   }
 
   .stage-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(15px, 1.7vw, 24px);
-    color: var(--ink);
-    margin-bottom: 0.8vw;
-    line-height: 1.2;
+    font-size: clamp(15px, 1.7vw, 24px); color: var(--ink); margin-bottom: 0.8vw; line-height: 1.2;
   }
 
-  .stage-body {
-    font-size: clamp(11px, 0.9vw, 13px);
-    color: var(--ink-mid);
-    font-weight: 300;
-    line-height: 1.6;
-  }
+  .stage-body { font-size: clamp(11px, 0.9vw, 13px); color: var(--ink-mid); font-weight: 300; line-height: 1.6; }
 
   .stage-return {
-    margin-top: 1.2vw;
-    padding-top: 1.2vw;
-    border-top: 1px solid var(--border);
-    font-size: clamp(10px, 0.8vw, 12px);
-    color: var(--violet);
-    font-weight: 500;
-    line-height: 1.5;
+    margin-top: 1.2vw; padding-top: 1.2vw; border-top: 1px solid var(--border);
+    font-size: clamp(10px, 0.8vw, 12px); color: var(--violet); font-weight: 500; line-height: 1.5;
   }
 
-  /* ── Metric rows ── */
-  .metric-row {
-    display: flex;
-    align-items: baseline;
-    gap: 2vw;
-    padding: 0.9vw 0;
-    border-bottom: 1px solid var(--border);
-    width: 100%;
-  }
-
-  .metric-row:last-child { border-bottom: none; }
-
-  .metric-name {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.75vw, 10px);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    width: 28%;
-    flex-shrink: 0;
-  }
-
-  .metric-target {
-    font-size: clamp(12px, 1.05vw, 15px);
-    color: var(--ink);
-    font-weight: 500;
-    width: 20%;
-    flex-shrink: 0;
-  }
-
-  .metric-why {
-    font-size: clamp(10px, 0.88vw, 12px);
-    color: var(--ink-mid);
-    font-weight: 300;
-    line-height: 1.5;
-  }
-
-  /* ── Cards ── */
-  .card-pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2vw;
-    width: 100%;
-    margin-top: 2vw;
-  }
-
-  .col-card {
-    background: var(--warm-white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2vw;
-  }
-
-  .card-label {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.72vw, 10px);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    margin-bottom: 1vw;
-  }
-
-  .card-body {
-    font-size: clamp(11px, 0.95vw, 13px);
-    line-height: 1.65;
-    color: var(--ink-mid);
-    font-weight: 300;
-  }
-
-  /* ── Ask items ── */
-  .ask-item {
-    display: flex;
-    gap: 2.5vw;
-    align-items: flex-start;
-    margin-bottom: 2.5vw;
-  }
+  /* ── SLIDE 14: Ask items ── */
+  .ask-item { display: flex; gap: 2.5vw; align-items: flex-start; margin-bottom: 2.5vw; }
 
   .ask-number {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(32px, 4.5vw, 64px);
-    color: var(--violet);
-    line-height: 0.9;
-    flex-shrink: 0;
-    width: 5vw;
-    text-align: right;
+    font-size: clamp(32px, 4.5vw, 64px); color: var(--violet); line-height: 0.9;
+    flex-shrink: 0; width: 5vw; text-align: right;
   }
 
-  .ask-title {
-    font-size: clamp(13px, 1.2vw, 17px);
-    font-weight: 500;
-    color: var(--cream);
-    margin-bottom: 0.5vw;
-    line-height: 1.35;
-  }
+  .ask-title { font-size: clamp(13px, 1.2vw, 17px); font-weight: 500; color: var(--ink); margin-bottom: 0.5vw; line-height: 1.35; }
+  .ask-body { font-size: clamp(11px, 0.95vw, 13px); color: var(--ink-mid); font-weight: 300; line-height: 1.6; }
 
-  .ask-body {
-    font-size: clamp(11px, 0.95vw, 13px);
-    color: #C8C0B4;
-    font-weight: 300;
-    line-height: 1.6;
-  }
-
-  /* ── Slide 1 specifics ── */
-  .slide-title {
-    justify-content: flex-end;
-    padding-bottom: calc(8vh + var(--nav-h));
-  }
-
-  .vertical-rule {
-    position: absolute;
-    left: 8vw;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--border);
-    opacity: 0.5;
-  }
-
-  .pathway-name {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(56px, 9vw, 128px);
-    line-height: 0.95;
-    color: var(--ink);
-    margin-bottom: 2.5vw;
-  }
-
-  .title-sub {
-    font-size: clamp(13px, 1.2vw, 17px);
-    color: var(--ink-mid);
-    font-weight: 300;
-    max-width: 52%;
-    line-height: 1.65;
+  /* ── SLIDE 15: Close ── */
+  .close-mbrand {
+    position: absolute; bottom: calc(var(--nav-h) + 3vh); left: 8vw;
+    font-family: 'DM Mono', monospace; font-size: clamp(8px, 0.72vw, 10px);
+    letter-spacing: 0.2em; text-transform: uppercase; color: #3A3530;
   }
 
   /* ── Navigation bar ── */
   .nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: var(--nav-h);
-    background: rgba(17, 15, 13, 0.95);
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2.5vw;
-    z-index: 200;
-    border-top: 1px solid #2A2520;
+    position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h);
+    background: rgba(17, 15, 13, 0.95); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    gap: 2.5vw; z-index: 200; border-top: 1px solid #2A2520;
   }
 
   .nav-btn {
-    background: none;
-    border: 1px solid #3A3530;
-    border-radius: 2px;
-    padding: 6px 22px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #A09890;
-    cursor: pointer;
-    transition: all 0.15s;
+    background: none; border: 1px solid #3A3530; border-radius: 2px; padding: 6px 22px;
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #A09890; cursor: pointer; transition: all 0.15s;
   }
 
   .nav-btn:hover { background: var(--violet); border-color: var(--violet); color: #fff; }
 
   .slide-counter {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    color: #5A5248;
-    min-width: 52px;
-    text-align: center;
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em;
+    color: #5A5248; min-width: 52px; text-align: center;
   }
 
   .dots { display: flex; gap: 7px; align-items: center; }
 
   .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #3A3530;
-    cursor: pointer;
-    transition: all 0.2s;
-    flex-shrink: 0;
+    width: 5px; height: 5px; border-radius: 50%; background: #3A3530;
+    cursor: pointer; transition: all 0.2s; flex-shrink: 0;
   }
 
   .dot.active { background: var(--violet-mid); width: 7px; height: 7px; }
@@ -663,48 +381,43 @@
   <div class="slide slide-title active" data-slide="1">
     <div class="vertical-rule"></div>
     <div>
-      <div class="eyebrow">Project Oak · Ministry Brands · May 2026</div>
+      <div class="title-mbrand">Ministry Brands · Project Oak · 2026</div>
       <div class="pathway-name">Pathway.</div>
-      <div class="title-sub">The platform layer that makes the February rebrand possible, and compounds beyond it.</div>
+      <div class="title-rule"></div>
+      <div class="title-sub">An organizational capability. Not a design file.</div>
     </div>
   </div>
 
-  <!-- SLIDE 2: The problem -->
-  <div class="slide" data-slide="2">
-    <div class="border-bar"></div>
-    <div class="eyebrow">The problem</div>
-    <div class="display">Every module built separately.<br>Every team solving the same<br><em>problems differently.</em></div>
-    <div class="body-text">Every new feature makes it worse. This is what generates engineering rework, support tickets, and an inconsistent product experience across every module. Every sprint, teams reimpliment things that already exist elsewhere. Every release adds new inconsistency.</div>
+  <!-- SLIDE 2: The hidden tax -->
+  <div class="slide dark statement" data-slide="2">
+    <div class="eyebrow">Act I · The Problem</div>
+    <div class="stmt-headline">There is a hidden tax<br>on every product<br>we ship.</div>
+    <div class="stmt-subs">
+      <div class="stmt-sub">It doesn't appear in any budget.</div>
+      <div class="stmt-sub">It doesn't show up in any roadmap.</div>
+      <div class="stmt-sub" style="color: var(--cream); font-style: normal; font-family: 'DM Sans', sans-serif; font-size: clamp(14px, 1.3vw, 18px); font-weight: 300; margin-top: 0.5vw;">But every team pays it. Every sprint.</div>
+    </div>
   </div>
 
-  <!-- SLIDE 3: What Pathway is -->
+  <!-- SLIDE 3: Design drift -->
   <div class="slide" data-slide="3">
-    <div class="two-col">
+    <div class="two-col" style="align-items: start;">
       <div>
         <div class="border-bar"></div>
-        <div class="eyebrow">What Pathway is</div>
-        <div class="display">Platform infrastructure.<br>Not a design project.</div>
-        <div class="body-text">The same way a shared API or database architecture enables every team to build on a common foundation, Pathway enables every front-end team to build from a shared, governed component library.<br><br>One source of truth. One token architecture. One component library. Every team builds from it.</div>
+        <div class="eyebrow">Act I · The Problem</div>
+        <div class="display">Design drift<br>had become<br><em>invisible.</em></div>
+        <div class="body-text">Every module building independently. Every team solving the same layout, spacing, and interaction problems from scratch. Every sprint adding inconsistency to a product that was already inconsistent.</div>
       </div>
       <div>
-        <div class="repo-list">
-          <div class="repo-item">
-            <div class="repo-item-tag">Tokens</div>
-            <div class="repo-item-body">Design tokens as CSS custom properties and JSON. One change here propagates to every component across every module.</div>
-          </div>
-          <div class="repo-item">
-            <div class="repo-item-tag">Components</div>
-            <div class="repo-item-body">React component library built on token foundations. Versioned, documented, and testable.</div>
-          </div>
-          <div class="repo-item">
-            <div class="repo-item-tag">Storybook</div>
-            <div class="repo-item-body">Living component documentation. Engineers reference this, not Figma annotations or PDFs.</div>
-          </div>
-          <div class="repo-item">
-            <div class="repo-item-tag">Governance</div>
-            <div class="repo-item-body">Contribution model, review gates, and versioning. The system stays coherent as it grows.</div>
-          </div>
+        <div class="drift-visual">
+          <div><div class="drift-bar" style="height: 72%; background: #C8C4BC;"></div></div>
+          <div><div class="drift-bar" style="height: 55%; background: #B8B4AC;"></div></div>
+          <div><div class="drift-bar" style="height: 88%; background: #D4D0C8;"></div></div>
+          <div><div class="drift-bar" style="height: 48%; background: #A8A49C;"></div></div>
+          <div><div class="drift-bar" style="height: 78%; background: #BCBCB4;"></div></div>
+          <div><div class="drift-bar" style="height: 62%; background: #C4C0B8;"></div></div>
         </div>
+        <div class="drift-caption">6 modules. 6 interpretations of the same product.</div>
       </div>
     </div>
   </div>
@@ -712,8 +425,8 @@
   <!-- SLIDE 4: The cost -->
   <div class="slide" data-slide="4">
     <div class="border-bar"></div>
-    <div class="eyebrow">The cost of the current state</div>
-    <div class="display small">What fragmentation costs us every sprint.</div>
+    <div class="eyebrow">Act I · The Problem</div>
+    <div class="display small">What fragmentation costs us<br>every sprint.</div>
     <div class="cost-grid">
       <div class="cost-item">
         <div class="cost-stat">20-35%</div>
@@ -734,26 +447,62 @@
     </div>
   </div>
 
-  <!-- SLIDE 5: What exists today -->
-  <div class="slide" data-slide="5">
-    <div class="border-bar"></div>
-    <div class="eyebrow">What exists today</div>
-    <div class="display small">The system is built<br>and <em>working.</em></div>
-    <div class="body-text" style="max-width: 70%;">A pilot repo is live with a governed token architecture, a Storybook component library, and a contribution pipeline connecting Figma to the codebase. Three AI-powered skills accelerate every stage of that workflow.<br><br>What is missing is the organisational commitment to make it the production standard.</div>
+  <!-- SLIDE 5: The insight -->
+  <div class="slide dark statement" data-slide="5">
+    <div class="eyebrow">Act II · The Insight</div>
+    <div class="stmt-headline muted">The issue wasn't creativity.</div>
+    <div class="stmt-headline accent">The issue was coherence.</div>
+    <div class="stmt-rule"></div>
+    <div class="stmt-body">Talented teams. Misaligned systems. Duplicated effort. Inconsistent outcomes.<br><br>Fragmentation is an engineering problem. Not a design problem.<br>Systems thinking is how the best organizations build at scale.</div>
   </div>
 
-  <!-- SLIDE 6: Pathway Kit V1 -->
-  <div class="slide" data-slide="6">
-    <div class="border-bar"></div>
-    <div class="eyebrow">Pathway Kit V1</div>
-    <div class="display small">Prototype in the<br><em>product design language.</em></div>
-    <div class="body-text" style="max-width: 70%;">Designers and product managers prototype using real Pathway components with AI tools. The output looks like the product, not a generic wireframe that has to be rebuilt before it means anything to engineering.<br><br>This is V1. The principle is proven. Every component we add makes it more powerful.</div>
+  <!-- SLIDE 6: The reveal -->
+  <div class="slide dark statement" data-slide="6">
+    <div class="eyebrow">Act III · The Reveal</div>
+    <div class="stmt-headline muted">Not a Figma file.</div>
+    <div class="stmt-headline muted" style="margin-top: 0.5vw;">Not a component library.</div>
+    <div class="stmt-rule"></div>
+    <div class="stmt-headline accent" style="font-size: clamp(22px, 3.5vw, 52px); max-width: 90%;">Pathway is the operating system<br>for how Ministry Brands builds products.</div>
+    <div class="stmt-body" style="margin-top: 1.5vw;">Infrastructure. Platform. Shared language. Organizational capability.</div>
   </div>
 
-  <!-- SLIDE 7: Three AI skills -->
+  <!-- SLIDE 7: One system, everything inside it -->
   <div class="slide" data-slide="7">
     <div class="border-bar"></div>
-    <div class="eyebrow">The AI-assisted pipeline</div>
+    <div class="eyebrow">Act III · The Reveal</div>
+    <div class="display small">One system.<br>Everything inside it.</div>
+    <div class="six-grid">
+      <div class="six-card">
+        <div class="six-title">Design Tokens</div>
+        <div class="six-body">Color, type, spacing, elevation encoded once. One change propagates to every component, every module.</div>
+      </div>
+      <div class="six-card">
+        <div class="six-title">Components</div>
+        <div class="six-body">Accessible, tested UI building blocks. Built once. Used by all. Engineers reference Storybook, not Figma annotations.</div>
+      </div>
+      <div class="six-card">
+        <div class="six-title">Foundations</div>
+        <div class="six-body">Typography, iconography, motion, and brand standards at source. Single source of truth.</div>
+      </div>
+      <div class="six-card">
+        <div class="six-title">Accessibility</div>
+        <div class="six-body">WCAG 2.1 AA compliance built in, not bolted on. A procurement requirement, not a design preference.</div>
+      </div>
+      <div class="six-card">
+        <div class="six-title">Governance</div>
+        <div class="six-body">Versioning, contribution model, review gates. The system stays coherent as it grows.</div>
+      </div>
+      <div class="six-card" style="border-left-color: var(--violet-mid); background: var(--violet-light);">
+        <div class="six-title">AI Skills</div>
+        <div class="six-body">Three Claude agents that build components, ship to production, and sync tokens automatically. A governed pipeline no other product org has.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Three AI skills -->
+  <div class="slide" data-slide="8">
+    <div class="border-bar"></div>
+    <div class="eyebrow">Act III · The Reveal</div>
     <div class="display small">Three skills. One governed loop.</div>
     <div class="skill-row">
       <div class="skill-cell">
@@ -762,10 +511,7 @@
         <div class="skill-screenshot">
           <img src="skill-studio.png" alt="Component Studio skill card">
         </div>
-        <div class="skill-produces">
-          Produces
-          <span>Figma component + full handoff spec ready for the pipeline</span>
-        </div>
+        <div class="skill-produces">Produces<span>Figma component + full handoff spec</span></div>
       </div>
       <div class="skill-cell">
         <div class="skill-tag">/ component-pipeline</div>
@@ -773,10 +519,7 @@
         <div class="skill-screenshot">
           <img src="skill-pipeline.png" alt="Component Pipeline skill card">
         </div>
-        <div class="skill-produces">
-          Produces
-          <span>React component + Storybook stories + MDX docs + PR</span>
-        </div>
+        <div class="skill-produces">Produces<span>React + Storybook stories + MDX docs + PR</span></div>
       </div>
       <div class="skill-cell">
         <div class="skill-tag">/ token-sync</div>
@@ -784,26 +527,23 @@
         <div class="skill-screenshot">
           <img src="skill-token-sync.png" alt="Token Sync skill card">
         </div>
-        <div class="skill-produces">
-          Produces
-          <span>Updated tokens in repo + Storybook rebuild + npm publish</span>
-        </div>
+        <div class="skill-produces">Produces<span>Updated tokens in repo + Storybook + npm</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 8: Component Studio in action -->
-  <div class="slide" data-slide="8">
+  <!-- SLIDE 9: Component Studio in action -->
+  <div class="slide" data-slide="9">
     <div class="border-bar"></div>
-    <div class="eyebrow">Component Studio in action</div>
+    <div class="eyebrow">Act III · The Proof</div>
     <div class="display small">A designer invokes the skill.<br>The agent does the rest.</div>
     <div class="action-grid">
       <div class="action-shot">
-        <img src="studio-prompt.png" alt="Invoking Component Studio with a Figma link">
+        <img src="studio-prompt.png" alt="Skill invoked with a Figma link">
         <div class="shot-caption">Skill invoked with a Figma link</div>
       </div>
       <div class="action-shot">
-        <img src="studio-figma-finding.png" alt="Agent locating the Cards page in Figma">
+        <img src="studio-figma-finding.png" alt="Agent locates the Cards page">
         <div class="shot-caption">Agent locates the Cards page in Figma</div>
       </div>
       <div class="action-shot">
@@ -811,97 +551,115 @@
         <div class="shot-caption">5 states built, specified, and verified</div>
       </div>
       <div class="action-shot">
-        <img src="studio-figma-output.png" alt="Figma output: card component set with all states">
+        <img src="studio-figma-output.png" alt="Figma output: card component set">
         <div class="shot-caption">Figma output: card component set, all states</div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 9: Pipeline flow -->
-  <div class="slide" data-slide="9">
+  <!-- SLIDE 10: Pathway Kit V1 -->
+  <div class="slide" data-slide="10">
     <div class="border-bar"></div>
-    <div class="eyebrow">How it connects</div>
-    <div class="display small">From Figma to production.<br>Governed at every gate.</div>
+    <div class="eyebrow">Act III · The Proof</div>
+    <div class="display small">Prototype in the<br><em>product design language.</em></div>
+    <div class="body-text" style="max-width: 70%;">Designers and product managers prototype using real Pathway components with AI tools. The output looks like the product, not a generic wireframe that has to be rebuilt before it means anything to engineering.<br><br>This is V1. The principle is proven. Every component we add makes it more powerful. The AI skills and Pathway Kit are already in use today.</div>
+  </div>
 
-    <div class="flow-section">
-      <div class="flow-row-label">Token pipeline</div>
-      <div class="flow-row">
-        <div class="flow-box source">
-          <div class="flow-box-tag">Figma</div>
-          <div class="flow-box-name">Variable export JSON</div>
-        </div>
-        <div class="flow-arrow">&#8594;</div>
-        <div class="flow-box">
-          <div class="flow-box-tag">Skill</div>
-          <div class="flow-box-name">Token Sync</div>
-        </div>
-        <div class="flow-arrow">&#8594;</div>
-        <div class="flow-box">
-          <div class="flow-box-tag">Transform</div>
-          <div class="flow-box-name">Style Dictionary</div>
-        </div>
-        <div class="flow-arrow">&#8594;</div>
-        <div class="flow-cluster">
-          <div class="flow-chip">Repo</div>
-          <div class="flow-chip">Storybook</div>
-          <div class="flow-chip">npm</div>
-        </div>
+  <!-- SLIDE 11: Every design-driven org has built this -->
+  <div class="slide" data-slide="11">
+    <div class="border-bar"></div>
+    <div class="eyebrow">Act IV · The Context</div>
+    <div class="display small">Every design-driven organization<br>has built this.</div>
+    <div class="industry-grid">
+      <div class="industry-card">
+        <div class="ind-name">Apple</div>
+        <div class="ind-system">Human Interface Guidelines</div>
       </div>
-
-      <div class="flow-divider"></div>
-
-      <div class="flow-row-label">Component pipeline</div>
-      <div class="flow-row">
-        <div class="flow-box source">
-          <div class="flow-box-tag">Figma</div>
-          <div class="flow-box-name">Component design</div>
-        </div>
-        <div class="flow-arrow">&#8594;</div>
-        <div class="flow-box">
-          <div class="flow-box-tag">Skill</div>
-          <div class="flow-box-name">Component Studio</div>
-        </div>
-        <div class="flow-arrow">&#8594;</div>
-        <div class="flow-box">
-          <div class="flow-box-tag">Reviewed spec</div>
-          <div class="flow-box-name">SPECTOREVIEW handoff</div>
-        </div>
-        <div class="flow-arrow">&#8594;</div>
-        <div class="flow-box">
-          <div class="flow-box-tag">Skill</div>
-          <div class="flow-box-name">Component Pipeline</div>
-        </div>
-        <div class="flow-arrow">&#8594;</div>
-        <div class="flow-cluster">
-          <div class="flow-chip">React</div>
-          <div class="flow-chip">Storybook</div>
-          <div class="flow-chip">PR</div>
-        </div>
+      <div class="industry-card">
+        <div class="ind-name">Shopify</div>
+        <div class="ind-system">Polaris</div>
       </div>
+      <div class="industry-card">
+        <div class="ind-name">Salesforce</div>
+        <div class="ind-system">Lightning Design System</div>
+      </div>
+      <div class="industry-card">
+        <div class="ind-name">Planning Center</div>
+        <div class="ind-system">Project Phoenix</div>
+      </div>
+      <div class="industry-card">
+        <div class="ind-name">Rock RMS</div>
+        <div class="ind-system">Obsidian</div>
+      </div>
+      <div class="industry-card" style="border-left: 3px solid var(--violet); background: var(--violet-light);">
+        <div class="ind-name">Ministry Brands</div>
+        <div class="ind-system">Pathway</div>
+      </div>
+    </div>
+    <div class="industry-footer">Pathway places Ministry Brands in the company of the world's most well-designed technology organizations.</div>
+  </div>
 
-      <div class="gate-note">
-        <div class="gate-dot"></div>
-        Human review required at every gate. No phase advances without explicit approval.
+  <!-- SLIDE 12: What systems actually do -->
+  <div class="slide" data-slide="12">
+    <div class="border-bar"></div>
+    <div class="eyebrow">Act IV · The Return</div>
+    <div class="display small">What systems actually do.</div>
+    <div class="stat-trio">
+      <div>
+        <div class="trio-n">50%</div>
+        <div class="trio-label">Reduction in UI redundancy</div>
+        <div class="trio-body">In teams with mature design systems. Engineering budget redirected from maintenance to features.</div>
+        <div class="trio-source">Forrester Research</div>
+      </div>
+      <div>
+        <div class="trio-n">47%</div>
+        <div class="trio-label">Faster time-to-market</div>
+        <div class="trio-body">For teams using shared component libraries. Velocity becomes the default state.</div>
+        <div class="trio-source">Nielsen Norman Group</div>
+      </div>
+      <div>
+        <div class="trio-n">3x</div>
+        <div class="trio-label">Higher accessibility compliance</div>
+        <div class="trio-body">In systemized product organizations. Compliance built in, not retrofitted.</div>
+        <div class="trio-source">WebAIM Survey</div>
+      </div>
+    </div>
+    <div class="metrics-divider"></div>
+    <div class="metric-trio">
+      <div class="mtrio-card">
+        <div class="mtrio-label">NRR</div>
+        <div class="mtrio-val">Measurable lift</div>
+        <div class="mtrio-body">A coherent product drives module adoption. Module adoption drives expansion revenue above 100%.</div>
+      </div>
+      <div class="mtrio-card">
+        <div class="mtrio-label">Exit multiple</div>
+        <div class="mtrio-val">Higher</div>
+        <div class="mtrio-body">A unified platform with a governed design system commands a higher revenue multiple than a fragmented one.</div>
+      </div>
+      <div class="mtrio-card">
+        <div class="mtrio-label">February rebrand</div>
+        <div class="mtrio-val">One deployment</div>
+        <div class="mtrio-body">Single token swap ships consistently across all modules simultaneously. Not six months of inconsistent rollout.</div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 10: Three stage evolution -->
-  <div class="slide" data-slide="10">
+  <!-- SLIDE 13: Platform not a project -->
+  <div class="slide" data-slide="13">
     <div class="border-bar"></div>
-    <div class="eyebrow">The evolution</div>
-    <div class="display small">A compounding platform asset.<br>Each stage unlocks the next.</div>
+    <div class="eyebrow">Act V · The Future</div>
+    <div class="display small">Pathway is a platform,<br>not a project.</div>
     <div class="stage-row">
       <div class="stage-cell active-stage">
         <div class="stage-tag">Stage 1: Now</div>
-        <div class="stage-title">AI-assisted prototyping</div>
-        <div class="stage-body">Designers and PMs prototype in the product design language using the Pathway Kit. Ideation without rework. Available today.</div>
-        <div class="stage-return">Return: immediate velocity gain. Ideation cost drops.</div>
+        <div class="stage-title">AI-assisted pipeline</div>
+        <div class="stage-body">Pathway Kit enables AI prototyping in the product design language. Three skills run the design-to-production workflow. Available today.</div>
+        <div class="stage-return">Return: immediate velocity gain. Ideation and shipping costs drop.</div>
       </div>
       <div class="stage-cell">
         <div class="stage-tag">Stage 2: February</div>
         <div class="stage-title">Figma meets production</div>
-        <div class="stage-body">Code connect bridges Figma and the codebase. Engineers pull production components directly. The handoff is a map, not a file to interpret. Rework drops 50%.</div>
+        <div class="stage-body">Code connect bridges Figma and the codebase. Engineers pull production components directly. The handoff becomes a map, not a file to interpret. Rework drops 50%.</div>
         <div class="stage-return">Return: 50% rework reduction. Sprint velocity improves.</div>
       </div>
       <div class="stage-cell">
@@ -913,87 +671,11 @@
     </div>
   </div>
 
-  <!-- SLIDE 11: Business return -->
-  <div class="slide" data-slide="11">
+  <!-- SLIDE 14: What we're asking -->
+  <div class="slide" data-slide="14">
     <div class="border-bar"></div>
-    <div class="eyebrow">The business return</div>
-    <div class="display small">Measurable at every stage.</div>
-    <div class="metric-row">
-      <div class="metric-name">Engineering rework</div>
-      <div class="metric-target">50% reduction</div>
-      <div class="metric-why">Once Pathway is the production standard. Direct engineering cost saving from shared component foundation eliminating duplicate work across all tribes.</div>
-    </div>
-    <div class="metric-row">
-      <div class="metric-name">Feature build time</div>
-      <div class="metric-target">20-35% faster</div>
-      <div class="metric-why">Industry benchmark for mature design systems applied to our engineering headcount. Significant annual saving.</div>
-    </div>
-    <div class="metric-row">
-      <div class="metric-name">Support tickets</div>
-      <div class="metric-target">30-40% reduction</div>
-      <div class="metric-why">Experience-related tickets within 6 months of launch. Direct operational cost saving measurable against current support volume.</div>
-    </div>
-    <div class="metric-row">
-      <div class="metric-name">NRR</div>
-      <div class="metric-target">Measurable lift</div>
-      <div class="metric-why">A coherent product drives module adoption. Module adoption drives expansion revenue. Expansion revenue drives NRR above 100%.</div>
-    </div>
-    <div class="metric-row">
-      <div class="metric-name">February rebrand</div>
-      <div class="metric-target">One deployment</div>
-      <div class="metric-why">Single token swap ships consistently across all modules simultaneously. Six-month inconsistent rollout becomes a single market moment.</div>
-    </div>
-    <div class="metric-row">
-      <div class="metric-name">Exit multiple</div>
-      <div class="metric-target">Higher</div>
-      <div class="metric-why">A unified platform with a governed design system commands a higher revenue multiple than a fragmented one. This is the return that matters most.</div>
-    </div>
-    <div class="metric-row">
-      <div class="metric-name">Accessibility</div>
-      <div class="metric-target">WCAG 2.1 AA</div>
-      <div class="metric-why">Procurement requirement. Customers with accessibility compliance checklists cannot renew or expand without it. Non-compliance is a revenue risk.</div>
-    </div>
-  </div>
-
-  <!-- SLIDE 12: What is missing -->
-  <div class="slide" data-slide="12">
-    <div class="border-bar"></div>
-    <div class="eyebrow">What is missing</div>
-    <div class="display small">The system exists.<br>What it needs is <em>proper ownership.</em></div>
-    <div class="body-text" style="max-width: 65%; margin-bottom: 2.5vw;">Pathway is a platform layer. It requires a dedicated team assigned to it permanently, the same way any critical platform infrastructure has dedicated ownership. Not two people running it as a side initiative. A properly resourced team with allocated time, clear mandate, and the engineering and design capacity to build, govern, and evolve the system continuously.</div>
-    <div class="card-pair" style="max-width: 75%; margin-top: 0;">
-      <div class="col-card">
-        <div class="card-label">Principal Experience Designer</div>
-        <div class="card-body">Owns the system vision, direction, and quality bar. Permanent. Platform infrastructure ownership, not a project role that hands off at launch.</div>
-      </div>
-      <div class="col-card">
-        <div class="card-label">Dedicated Design System Engineer</div>
-        <div class="card-body">Owns the pipeline, governance, token architecture, Storybook, and code connect. Also permanent. The system drifts immediately without continuous engineering ownership.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 13: Two additional asks -->
-  <div class="slide" data-slide="13">
-    <div class="border-bar"></div>
-    <div class="eyebrow">Two additional asks</div>
-    <div class="display small">Tooling and alignment.</div>
-    <div class="card-pair" style="max-width: 80%;">
-      <div class="col-card">
-        <div class="card-label">Figma Organisation plan upgrade</div>
-        <div class="card-body">Branching, versioning, design system analytics, and full code connect are unavailable on the current plan. These are not optional features. They are the technical mechanisms that make the pipeline work and connect Figma to the production codebase. The upgrade cost is negligible relative to the engineering hours currently lost working around its absence.</div>
-      </div>
-      <div class="col-card">
-        <div class="card-label">Engineering mandate across all tribes</div>
-        <div class="card-body">Front-end engineers across all modules need to build from the Pathway repo and use Figma dev mode as the implementation reference. A clear expectation from engineering leadership, a one-time alignment session, and accountability for implementation accuracy. This is what turns the infrastructure investment into product reality.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 14: The ask -->
-  <div class="slide dark" data-slide="14">
-    <div class="eyebrow">The ask</div>
-    <div class="display">Three things.</div>
+    <div class="eyebrow">Act V · The Ask</div>
+    <div class="display small">What we're asking<br>of leadership.</div>
     <div class="ask-item">
       <div class="ask-number">1</div>
       <div>
@@ -1017,19 +699,30 @@
     </div>
   </div>
 
+  <!-- SLIDE 15: Close -->
+  <div class="slide dark statement" data-slide="15">
+    <div class="stmt-headline muted">We didn't build a library.</div>
+    <div class="stmt-headline accent" style="margin-top: 0.8vw;">We built a foundation.</div>
+    <div class="stmt-rule"></div>
+    <div class="stmt-body" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(15px, 1.5vw, 22px); color: #7A7268; font-weight: 400;">
+      Pathway is not just how we design.<br>It is how we scale.
+    </div>
+    <div class="close-mbrand">Ministry Brands · Pathway Design System · 2026</div>
+  </div>
+
 </div>
 
 <!-- Navigation bar -->
 <div class="nav">
   <button class="nav-btn" onclick="prev()">&#8592; Prev</button>
   <div class="dots" id="dots"></div>
-  <span class="slide-counter" id="counter">1 / 14</span>
+  <span class="slide-counter" id="counter">1 / 15</span>
   <button class="nav-btn" onclick="next()">Next &#8594;</button>
 </div>
 
 <script>
   var current = 1;
-  var total = 14;
+  var total = 15;
 
   function buildDots() {
     var c = document.getElementById('dots');
