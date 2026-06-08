@@ -2599,39 +2599,84 @@ function renderCurrentCase(person, c){
 }
 
 // ── Screening history section ────────────────────────────────────────────
-// Shows ONLY past cases (cases[1+]). Date is the primary anchor, not check type.
+// Shows ALL cases — current case first (current state), then past cases.
+// Each case is a collapsible item with role, tags, assessment provenance.
 function renderScreeningHistory(person){
-  const past = person.cases.slice(1);
-  if(!past.length) return `<div style="font-size:13px;color:var(--fg4)">No previous checks on file.</div>`;
+  if(!person.cases.length) return `<div style="font-size:13px;color:var(--fg4)">No screening cases on file.</div>`;
 
-  return past.map(c=>{
+  return person.cases.map((c, i)=>{
+    const isCurrent = i === 0;
     const s = STATUS[c.status];
-    const outcomeLabel = c.assessment ? c.assessment.outcome : (s ? s.label : c.status);
-    const outColor = c.assessment
-      ? (c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)')
-      : (s ? s.cls.replace('b-','') : '');
     const badgeHtml = renderBadge(c.status);
-    const eventsHtml = c.events.map(ev=>`
+    const itemId = `hist-body-${c.id}`;
+    const chevId = `hist-chev-${c.id}`;
+
+    // Assessment provenance block
+    let assessHtml = '';
+    if(c.assessment){
+      const outColor = c.assessment.outcome==='Complete: Cleared'||c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Complete: Escalated'||c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)';
+      const isSystemAssessment = c.assessment.author === 'Auto' || c.assessment.author === 'System';
+      assessHtml = `<div style="padding:10px 12px;background:var(--fill-static-neutral-subtle);border:1px solid var(--stroke-static-neutral-subtle);border-radius:var(--r8);margin-top:10px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--fg4);margin-bottom:6px">Assessment</div>
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700;color:${outColor}">${esc(c.assessment.outcome)}</div>
+            ${c.assessment.notes?`<div style="font-size:12px;color:var(--fg2);margin-top:2px;line-height:1.4">"${esc(c.assessment.notes)}"</div>`:''}
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:11px;color:var(--fg3)">${esc(c.assessment.date)}</div>
+            <div style="font-size:11px;color:var(--fg4);margin-top:1px">
+              ${isSystemAssessment ? '⚙ System' : `👤 ${esc(c.assessment.author)}`}
+            </div>
+          </div>
+        </div>
+        ${c.report ? `<button class="btn btn-xs btn-secondary" style="margin-top:8px" data-open-report="${c.id}">View report</button>` : ''}
+      </div>`;
+    }
+
+    // Event log (collapsed)
+    const eventsHtml = (c.events||[]).map(ev=>`
       <div class="ev-row">
         <div class="ev-dot ${ev.type}"></div>
         <div class="ev-content">
           <div class="ev-title">${esc(ev.title)}</div>
-          <div class="ev-time">${esc(ev.date)} · ${esc(ev.time)} · ${esc(ev.by)}</div>
+          <div class="ev-time">${esc(ev.date)}${ev.time?' · '+esc(ev.time):''}${ev.by?' · '+esc(ev.by):''}</div>
         </div>
       </div>`).join('');
-    const extra = caseExtraBlocks(c, person);
 
-    return `<div class="hist-row" data-case-id="${c.id}">
-      <div class="hist-row-main">
-        <div style="font-size:13px;font-weight:700;color:var(--ink)">${fmtShort(c.dateInitiated)}</div>
-        <div style="font-size:12px;color:var(--fg3);margin-top:1px">${esc(c.checkType)}</div>
+    const logId = `hist-log-${c.id}`;
+    const logTogId = `hist-log-tog-${c.id}`;
+
+    return `<div class="hist-item${isCurrent?' hist-item-current':''}">
+      <div class="hist-item-hd" onclick="toggleHistItem('${itemId}','${chevId}')">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${renderCheckTypeChip(c.checkType)}
+            ${isCurrent ? `<span style="font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;background:var(--fill-static-info-light);color:var(--blue)">Current</span>` : ''}
+          </div>
+          <div style="font-size:12px;color:var(--fg3);margin-top:4px">
+            Started ${fmtShort(c.dateInitiated)}
+            ${c.assessment ? ` · ${esc(c.assessment.date)}` : ''}
+            · ${esc(person.position)} · ${esc(person.team)}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          ${badgeHtml}
+          <svg id="${chevId}" width="14" height="14" viewBox="0 0 20 20" fill="none" style="transition:transform 150ms;flex-shrink:0;color:var(--fg4)"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
       </div>
-      ${badgeHtml}
-      <svg class="hist-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <div class="hist-detail">
-      <div class="elog">${eventsHtml}</div>
-      ${extra}
+      <div class="hist-item-body" id="${itemId}">
+        ${assessHtml}
+        ${eventsHtml ? `
+        <button class="case-log-toggle" id="${logTogId}" onclick="toggleCaseLog('${logId}','${logTogId}')">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><use href="#ic-clock"/></svg>
+          View case timeline
+          <svg width="11" height="11" viewBox="0 0 20 20" fill="none" id="${logTogId}-chev"><use href="#ic-chevdown"/></svg>
+        </button>
+        <div class="case-log-wrap" id="${logId}">
+          <div class="elog" style="margin-top:4px">${eventsHtml}</div>
+        </div>` : ''}
+      </div>
     </div>`;
   }).join('');
 }
