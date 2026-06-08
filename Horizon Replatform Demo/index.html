@@ -2663,57 +2663,62 @@ function renderCSTCompact(person){
 
 function renderLinkManagement(person, c){
   const fakeLink = `https://pmm.ministrybrands.com/consent/${person.id.substring(1)}a4f9c`;
-  const expiryDate = c.inviteExpiry ? fmtTableDate(c.inviteExpiry) : '14 Jun 2026';
+  const expiryDate = c.inviteExpiry ? fmtTableDate(c.inviteExpiry) : 'Jun 14, 2026';
   const isBounced = c.status === 'email-bounced';
   const isExpiring = c.status === 'invite-expiring';
-  // Resolve delivery method label — use actual integration name if available
+  const isCancelled = c.status === 'invite-cancelled';
+  const isEmailInvite = c.via === 'invite';
+
   let deliveredVia = 'Person-bound link';
   if(c.via==='invite') deliveredVia = 'Email invite';
-  else if(c.via==='flow') deliveredVia = 'Screening flow (Rock CRM)';
-  else if(c.via==='integration') deliveredVia = person.source && person.source!=='PMM' ? `${person.source} integration` : 'CRM integration';
+  else if(c.via==='flow') deliveredVia = 'Screening flow';
+  else if(c.via==='integration') deliveredVia = person.source && person.source!=='PMM' ? person.source : 'CRM integration';
 
-  const bounceBanner = isBounced ? `
-    <div style="background:var(--fill-static-negative-subtle);border:1px solid var(--stroke-static-negative-base);border-radius:var(--r8);padding:12px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px">
-      <svg width="16" height="16" style="color:var(--red);flex-shrink:0;margin-top:1px"><use href="#ic-warning"/></svg>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:3px">Email bounced — not delivered</div>
-        <div style="font-size:12px;color:var(--fg2);margin-bottom:10px">The invite to <strong>${esc(person.email)}</strong> failed to deliver. Fix the address and resend, or copy the link to share another way.</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" onclick="toast('Opening email editor…')">
-            <svg width="12" height="12"><use href="#ic-edit"/></svg>Fix email and resend
-          </button>
-          <button class="btn btn-secondary btn-sm" onclick="toast('Link copied to clipboard')">
-            <svg width="12" height="12"><use href="#ic-link"/></svg>Copy link instead
-          </button>
+  // Bounce alert at top
+  const bounceAlert = isBounced ? `
+    <div style="display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--fill-static-negative-subtle);border:1px solid var(--stroke-static-negative-base);border-radius:var(--r8);margin-bottom:10px">
+      <svg width="15" height="15" style="color:var(--red);flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><use href="#ms-error-outline"/></svg>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--red)">Email not delivered</div>
+        <div style="font-size:12px;color:var(--fg2);margin-top:2px">Sent to <strong>${esc(person.email)}</strong> — fix the address then resend, or share the link directly.</div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-primary" onclick="toast('Opening email editor…')">Fix address &amp; resend</button>
+          <button class="btn btn-sm btn-secondary" onclick="toast('Link copied')">Copy link instead</button>
         </div>
       </div>
     </div>` : '';
 
-  return `${bounceBanner}
-    <div style="background:var(--fill-static-neutral-subtle);border:1px solid var(--border);border-radius:var(--r8);padding:12px 14px;margin-bottom:10px;${isBounced?'opacity:.6':''}">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-        <svg width="13" height="13" style="color:var(--fg3);flex-shrink:0"><use href="#ic-link"/></svg>
-        <code style="font-size:12px;color:var(--fg2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(fakeLink)}</code>
-        <button class="btn btn-xs btn-secondary" onclick="toast('Link copied to clipboard')">Copy</button>
+  const expiryColor = isExpiring ? 'var(--amber)' : 'var(--fg2)';
+
+  return `
+    <div class="link-mgmt">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--fg4);margin-bottom:10px">Invite link</div>
+      ${bounceAlert}
+      <div class="link-mgmt-url">
+        <span class="link-mgmt-code">${esc(fakeLink)}</span>
+        <button class="link-mgmt-copy" onclick="toast('Link copied to clipboard')">Copy</button>
       </div>
-      <div style="font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span>Sent via: <strong style="color:var(--fg2)">${esc(deliveredVia)}</strong></span>
-        <span>·</span>
-        <span style="color:${isExpiring?'var(--amber)':'var(--fg3)'}">Expires: <strong style="color:${isExpiring?'var(--amber)':'var(--fg2)'}">${esc(expiryDate)}</strong>${isExpiring?' (3 days)':''}</span>
+      <div class="link-mgmt-meta">
+        <span>Via: <strong style="color:var(--fg2)">${esc(deliveredVia)}</strong></span>
+        <span style="color:var(--stroke-static-neutral-bold)">·</span>
+        <span style="color:${expiryColor}">Expires: <strong style="color:${expiryColor}">${esc(expiryDate)}</strong>${isExpiring?' <span style="font-weight:600;color:var(--amber)">(3 days)</span>':''}</span>
       </div>
-    </div>
-    ${!isBounced ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">
-      <button class="btn btn-secondary btn-sm" onclick="toast('Invite resent to ${esc(person.email)}')">
-        <svg width="12" height="12"><use href="#ic-send"/></svg>Resend invite
-      </button>
-      <button class="btn btn-secondary btn-sm" onclick="toast('Link copied to clipboard')">
-        <svg width="12" height="12"><use href="#ic-link"/></svg>Copy link
-      </button>
-      <button class="btn btn-secondary btn-sm" onclick="toast('Invite expiry extended by 30 days')">
-        <svg width="12" height="12"><use href="#ic-clock"/></svg>Extend expiry
-      </button>
-      <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="toast('Invite cancelled')">Cancel invite</button>
-    </div>` : ''}`;
+      ${!isBounced && !isCancelled ? `<div class="link-mgmt-actions">
+        ${isEmailInvite ? `<button class="btn btn-secondary btn-xs" onclick="toast('Invite resent to ${esc(person.email)}')">
+          <svg width="11" height="11" viewBox="0 0 24 24"><use href="#ms-mail"/></svg>Resend email
+        </button>` : ''}
+        <button class="btn btn-secondary btn-xs" onclick="toast('Link copied to clipboard')">
+          <svg width="11" height="11" viewBox="0 0 20 20"><use href="#ic-link"/></svg>Copy link
+        </button>
+        <button class="btn btn-secondary btn-xs" onclick="toast('Expiry extended 30 days')">
+          <svg width="11" height="11" viewBox="0 0 20 20"><use href="#ic-clock"/></svg>Extend expiry
+        </button>
+        <button class="btn btn-secondary btn-xs" onclick="toast('Link expired — applicant can no longer submit')">
+          <svg width="11" height="11" viewBox="0 0 24 24"><use href="#ms-link-off"/></svg>Expire now
+        </button>
+        <button class="btn btn-ghost btn-xs" style="color:var(--red)" onclick="toast('Invite cancelled')">Cancel invite</button>
+      </div>` : isCancelled ? `<div style="font-size:12px;color:var(--fg4);font-style:italic">This link has been cancelled. Issue a new invite to restart consent collection.</div>` : ''}
+    </div>`;
 }
 
 function renderPanelBody(person, targetCaseId){
