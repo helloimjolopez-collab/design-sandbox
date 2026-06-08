@@ -3091,6 +3091,24 @@ document.getElementById('rpt-close').onclick = closeReport;
 document.getElementById('rpt-cancel-btn').onclick = closeReport;
 document.getElementById('rpt-wrap').addEventListener('click',e=>{if(e.target===document.getElementById('rpt-wrap'))closeReport()});
 
+function toggleCaseLog(logId, toggleId){
+  const log = document.getElementById(logId);
+  const tog = document.getElementById(toggleId);
+  const chev = document.getElementById(toggleId + '-chev');
+  if(!log) return;
+  const open = log.classList.toggle('open');
+  if(tog) tog.innerHTML = tog.innerHTML.replace(open ? 'View case timeline' : 'Hide timeline', open ? 'Hide timeline' : 'View case timeline');
+  if(chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function toggleHistItem(bodyId, chevId){
+  const body = document.getElementById(bodyId);
+  const chev = document.getElementById(chevId);
+  if(!body) return;
+  const open = body.classList.toggle('open');
+  if(chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
 function closePanel(){
   document.getElementById('panel').classList.remove('open');
   document.getElementById('scrim').classList.remove('open');
