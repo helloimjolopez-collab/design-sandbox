@@ -32,11 +32,7 @@
     color: var(--ink);
   }
 
-  .deck {
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
+  .deck { width: 100%; height: 100%; position: relative; }
 
   /* ── Base slide ── */
   .slide {
@@ -48,7 +44,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    padding: 7vh 8vw calc(7vh + var(--nav-h)) 8vw;
+    padding: 7vh 8vw calc(6vh + var(--nav-h)) 8vw;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.45s ease;
@@ -56,15 +52,8 @@
     overflow: hidden;
   }
 
-  .slide.active {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .slide.dark {
-    background: var(--ink);
-    color: var(--cream);
-  }
+  .slide.active { opacity: 1; pointer-events: all; }
+  .slide.dark { background: var(--ink); color: var(--cream); }
 
   /* ── Typography ── */
   .eyebrow {
@@ -74,6 +63,7 @@
     text-transform: uppercase;
     color: var(--ink-light);
     margin-bottom: 1.4vw;
+    flex-shrink: 0;
   }
 
   .slide.dark .eyebrow { color: var(--violet-mid); }
@@ -93,6 +83,7 @@
     color: var(--ink);
     margin-bottom: 2vw;
     max-width: 78%;
+    flex-shrink: 0;
   }
 
   .display.small {
@@ -107,7 +98,7 @@
     font-size: clamp(13px, 1.15vw, 16px);
     line-height: 1.75;
     color: var(--ink-mid);
-    max-width: 62%;
+    max-width: 64%;
     font-weight: 300;
   }
 
@@ -117,50 +108,46 @@
   .two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4vw;
+    gap: 5vw;
     width: 100%;
-    align-items: center;
+    align-items: start;
     flex: 1;
   }
 
-  /* ── Placeholder frames ── */
-  .frame {
-    width: 100%;
-    background: var(--cream-dark);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 16/9;
-  }
-
-  .frame.ratio-4-3 { aspect-ratio: 4/3; }
-  .frame.ratio-4-5 { aspect-ratio: 4/5; }
-  .frame.ratio-wide { aspect-ratio: 16/7; }
-
-  .frame-label {
-    font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.72vw, 10px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-  }
-
-  .split-frames {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2vw;
-    width: 100%;
-    margin-top: 2vw;
-  }
-
-  .stack-frames {
+  /* ── Repo anatomy list (slide 3 right col) ── */
+  .repo-list {
     display: flex;
     flex-direction: column;
-    gap: 1.5vw;
-    height: 100%;
-    justify-content: center;
+    gap: 1.2vw;
+    padding-top: 1vw;
+  }
+
+  .repo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2vw;
+    padding: 1.2vw 1.5vw;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .repo-item-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(7px, 0.65vw, 9px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--violet);
+    width: 72px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+
+  .repo-item-body {
+    font-size: clamp(11px, 0.95vw, 13px);
+    color: var(--ink-mid);
+    font-weight: 300;
+    line-height: 1.5;
   }
 
   /* ── Cost grid ── */
@@ -194,6 +181,183 @@
     line-height: 1.55;
   }
 
+  /* ── Skill cards (slide 7) ── */
+  .skill-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    width: 100%;
+    margin-top: 2vw;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .skill-cell {
+    padding: 2vw 2.5vw;
+    border-right: 1px solid var(--border);
+  }
+
+  .skill-cell:last-child { border-right: none; }
+
+  .skill-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(7px, 0.65vw, 9px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 0.8vw;
+  }
+
+  .skill-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 1.6vw, 22px);
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 0.9vw;
+  }
+
+  .skill-body {
+    font-size: clamp(10px, 0.9vw, 13px);
+    color: var(--ink-mid);
+    font-weight: 300;
+    line-height: 1.65;
+    margin-bottom: 1.2vw;
+  }
+
+  .skill-produces {
+    padding-top: 1.2vw;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(8px, 0.72vw, 10px);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    line-height: 1.7;
+  }
+
+  .skill-produces span {
+    display: block;
+    color: var(--ink-mid);
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(10px, 0.88vw, 12px);
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 300;
+    margin-top: 0.4vw;
+  }
+
+  /* ── Pipeline flow (slide 8) ── */
+  .flow-section {
+    width: 100%;
+    margin-top: 1.5vw;
+  }
+
+  .flow-row-label {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(7px, 0.65vw, 9px);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.8vw;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 2vw;
+  }
+
+  .flow-box {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.1vw 1.5vw;
+    flex-shrink: 0;
+  }
+
+  .flow-box.source {
+    background: var(--violet-light);
+    border-color: var(--violet);
+  }
+
+  .flow-box.destination {
+    background: var(--cream-dark);
+  }
+
+  .flow-box-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(6px, 0.6vw, 8px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.3vw;
+  }
+
+  .flow-box.source .flow-box-tag { color: var(--violet); }
+
+  .flow-box-name {
+    font-size: clamp(11px, 1vw, 14px);
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .flow-arrow {
+    font-size: clamp(12px, 1.2vw, 18px);
+    color: var(--border);
+    padding: 0 0.8vw;
+    flex-shrink: 0;
+  }
+
+  .flow-cluster {
+    display: flex;
+    gap: 0.6vw;
+    flex-shrink: 0;
+  }
+
+  .flow-chip {
+    background: var(--cream-dark);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.7vw 1.1vw;
+    font-size: clamp(10px, 0.88vw, 12px);
+    font-weight: 500;
+    color: var(--ink-mid);
+    line-height: 1.2;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .flow-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 0.5vw 0 2vw;
+  }
+
+  .gate-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6vw;
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(8px, 0.72vw, 10px);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-top: 1vw;
+  }
+
+  .gate-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--violet);
+    flex-shrink: 0;
+  }
+
   /* ── Stage diagram ── */
   .stage-row {
     display: grid;
@@ -206,17 +370,13 @@
     flex-shrink: 0;
   }
 
-  .stage-cell {
-    padding: 2vw 2.5vw;
-    border-right: 1px solid var(--border);
-  }
-
+  .stage-cell { padding: 2vw 2.5vw; border-right: 1px solid var(--border); }
   .stage-cell:last-child { border-right: none; }
   .stage-cell.active-stage { background: var(--violet-light); }
 
   .stage-tag {
     font-family: 'DM Mono', monospace;
-    font-size: clamp(8px, 0.68vw, 9px);
+    font-size: clamp(8px, 0.7vw, 10px);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--violet);
@@ -225,14 +385,14 @@
 
   .stage-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(14px, 1.6vw, 22px);
+    font-size: clamp(15px, 1.7vw, 24px);
     color: var(--ink);
     margin-bottom: 0.8vw;
     line-height: 1.2;
   }
 
   .stage-body {
-    font-size: clamp(10px, 0.88vw, 13px);
+    font-size: clamp(11px, 0.9vw, 13px);
     color: var(--ink-mid);
     font-weight: 300;
     line-height: 1.6;
@@ -242,7 +402,7 @@
     margin-top: 1.2vw;
     padding-top: 1.2vw;
     border-top: 1px solid var(--border);
-    font-size: clamp(9px, 0.78vw, 11px);
+    font-size: clamp(10px, 0.8vw, 12px);
     color: var(--violet);
     font-weight: 500;
     line-height: 1.5;
@@ -413,11 +573,7 @@
     transition: all 0.15s;
   }
 
-  .nav-btn:hover {
-    background: var(--violet);
-    border-color: var(--violet);
-    color: #fff;
-  }
+  .nav-btn:hover { background: var(--violet); border-color: var(--violet); color: #fff; }
 
   .slide-counter {
     font-family: 'DM Mono', monospace;
@@ -428,11 +584,7 @@
     text-align: center;
   }
 
-  .dots {
-    display: flex;
-    gap: 7px;
-    align-items: center;
-  }
+  .dots { display: flex; gap: 7px; align-items: center; }
 
   .dot {
     width: 5px;
@@ -444,17 +596,11 @@
     flex-shrink: 0;
   }
 
-  .dot.active {
-    background: var(--violet-mid);
-    width: 7px;
-    height: 7px;
-  }
-
+  .dot.active { background: var(--violet-mid); width: 7px; height: 7px; }
   .dot:hover { background: #6A6260; }
 </style>
 </head>
 <body>
-
 <div class="deck" id="deck">
 
   <!-- SLIDE 1: Title -->
@@ -472,11 +618,7 @@
     <div class="border-bar"></div>
     <div class="eyebrow">The problem</div>
     <div class="display">Every module built separately.<br>Every team solving the same<br><em>problems differently.</em></div>
-    <div class="body-text" style="margin-bottom: 2.5vw;">Every new feature makes it worse. This is what generates engineering rework, support tickets, and an inconsistent product experience across every module.</div>
-    <div class="split-frames">
-      <div class="frame"><div class="frame-label">Amplify Module A: Live browser</div></div>
-      <div class="frame"><div class="frame-label">Amplify Module B: Live browser</div></div>
-    </div>
+    <div class="body-text">Every new feature makes it worse. This is what generates engineering rework, support tickets, and an inconsistent product experience across every module. Every sprint, teams reimpliment things that already exist elsewhere. Every release adds new inconsistency.</div>
   </div>
 
   <!-- SLIDE 3: What Pathway is -->
@@ -489,7 +631,24 @@
         <div class="body-text">The same way a shared API or database architecture enables every team to build on a common foundation, Pathway enables every front-end team to build from a shared, governed component library.<br><br>One source of truth. One token architecture. One component library. Every team builds from it.</div>
       </div>
       <div>
-        <div class="frame ratio-4-3"><div class="frame-label">GitHub repo: live screen share</div></div>
+        <div class="repo-list">
+          <div class="repo-item">
+            <div class="repo-item-tag">Tokens</div>
+            <div class="repo-item-body">Design tokens as CSS custom properties and JSON. One change here propagates to every component across every module.</div>
+          </div>
+          <div class="repo-item">
+            <div class="repo-item-tag">Components</div>
+            <div class="repo-item-body">React component library built on token foundations. Versioned, documented, and testable.</div>
+          </div>
+          <div class="repo-item">
+            <div class="repo-item-tag">Storybook</div>
+            <div class="repo-item-body">Living component documentation. Engineers reference this, not Figma annotations or PDFs.</div>
+          </div>
+          <div class="repo-item">
+            <div class="repo-item-tag">Governance</div>
+            <div class="repo-item-body">Contribution model, review gates, and versioning. The system stays coherent as it grows.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -521,37 +680,127 @@
 
   <!-- SLIDE 5: What exists today -->
   <div class="slide" data-slide="5">
-    <div class="two-col">
-      <div>
-        <div class="border-bar"></div>
-        <div class="eyebrow">What exists today</div>
-        <div class="display small">The system is built<br>and <em>working.</em></div>
-        <div class="body-text">A parallel GitHub repo. A governed token architecture. A Storybook component library. Three AI-powered skills that accelerate the workflow.<br><br>What is missing is the organisational commitment to make it the production standard.</div>
-      </div>
-      <div class="stack-frames">
-        <div class="frame ratio-wide"><div class="frame-label">Storybook: live screen share</div></div>
-        <div class="frame ratio-wide"><div class="frame-label">Claude skills workflow: live demo</div></div>
-      </div>
-    </div>
+    <div class="border-bar"></div>
+    <div class="eyebrow">What exists today</div>
+    <div class="display small">The system is built<br>and <em>working.</em></div>
+    <div class="body-text" style="max-width: 70%;">A pilot repo is live with a governed token architecture, a Storybook component library, and a contribution pipeline connecting Figma to the codebase. Three AI-powered skills accelerate every stage of that workflow.<br><br>What is missing is the organisational commitment to make it the production standard.</div>
   </div>
 
-  <!-- SLIDE 6: Pathway Kit -->
+  <!-- SLIDE 6: Pathway Kit V1 -->
   <div class="slide" data-slide="6">
-    <div class="two-col">
-      <div>
-        <div class="border-bar"></div>
-        <div class="eyebrow">Pathway Kit V1</div>
-        <div class="display small">Prototype in the<br><em>product design language.</em></div>
-        <div class="body-text">Designers and product managers prototype using real Pathway components with AI tools. The output looks like the product, not a generic wireframe that has to be rebuilt before it means anything to engineering.<br><br>This is V1. The principle is proven. Every component we add makes it more powerful.</div>
+    <div class="border-bar"></div>
+    <div class="eyebrow">Pathway Kit V1</div>
+    <div class="display small">Prototype in the<br><em>product design language.</em></div>
+    <div class="body-text" style="max-width: 70%;">Designers and product managers prototype using real Pathway components with AI tools. The output looks like the product, not a generic wireframe that has to be rebuilt before it means anything to engineering.<br><br>This is V1. The principle is proven. Every component we add makes it more powerful.</div>
+  </div>
+
+  <!-- SLIDE 7: Three AI skills -->
+  <div class="slide" data-slide="7">
+    <div class="border-bar"></div>
+    <div class="eyebrow">The AI-assisted pipeline</div>
+    <div class="display small">Three skills. One governed loop.</div>
+    <div class="skill-row">
+      <div class="skill-cell">
+        <div class="skill-tag">/ component-studio</div>
+        <div class="skill-name">Component Studio</div>
+        <div class="skill-body">Coaches a designer through building or auditing any Pathway component. Starts with one question: what are we building today? Guides through the full spec, builds in Figma, and produces a complete SPECTOREVIEW handoff document. Also runs deep audits of existing components against Figma, the repo, and Storybook.</div>
+        <div class="skill-produces">
+          Produces
+          <span>Figma component + full handoff spec ready for the pipeline</span>
+        </div>
       </div>
-      <div>
-        <div class="frame ratio-4-5"><div class="frame-label">Pathway Kit demo: Claude design live</div></div>
+      <div class="skill-cell">
+        <div class="skill-tag">/ component-pipeline</div>
+        <div class="skill-name">Component Pipeline</div>
+        <div class="skill-body">Takes a reviewed spec from Component Studio, audits it against every Pathway standard, generates the React module, Storybook stories with controls, MDX docs page, and manifest entry, then opens a feature-branch PR. Refuses to run on any spec not marked REVIEWED. Every phase requires explicit human approval before advancing.</div>
+        <div class="skill-produces">
+          Produces
+          <span>React component + Storybook stories + MDX docs + PR</span>
+        </div>
+      </div>
+      <div class="skill-cell">
+        <div class="skill-tag">/ token-sync</div>
+        <div class="skill-name">Token Sync</div>
+        <div class="skill-body">Detects changes to the Figma variable export JSON, runs the export through Style Dictionary, and syncs automatically to the repo, Storybook, and npm package. Brand token changes in Figma propagate to every component without manual intervention. Human review required at every destructive gate.</div>
+        <div class="skill-produces">
+          Produces
+          <span>Updated tokens in repo + Storybook rebuild + npm publish</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 7: Three stage evolution -->
-  <div class="slide" data-slide="7">
+  <!-- SLIDE 8: Pipeline flow -->
+  <div class="slide" data-slide="8">
+    <div class="border-bar"></div>
+    <div class="eyebrow">How it connects</div>
+    <div class="display small">From Figma to production.<br>Governed at every gate.</div>
+
+    <div class="flow-section">
+      <div class="flow-row-label">Token pipeline</div>
+      <div class="flow-row">
+        <div class="flow-box source">
+          <div class="flow-box-tag">Figma</div>
+          <div class="flow-box-name">Variable export JSON</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-box">
+          <div class="flow-box-tag">Skill</div>
+          <div class="flow-box-name">Token Sync</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-box">
+          <div class="flow-box-tag">Transform</div>
+          <div class="flow-box-name">Style Dictionary</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-cluster">
+          <div class="flow-chip">Repo</div>
+          <div class="flow-chip">Storybook</div>
+          <div class="flow-chip">npm</div>
+        </div>
+      </div>
+
+      <div class="flow-divider"></div>
+
+      <div class="flow-row-label">Component pipeline</div>
+      <div class="flow-row">
+        <div class="flow-box source">
+          <div class="flow-box-tag">Figma</div>
+          <div class="flow-box-name">Component design</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-box">
+          <div class="flow-box-tag">Skill</div>
+          <div class="flow-box-name">Component Studio</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-box">
+          <div class="flow-box-tag">Reviewed spec</div>
+          <div class="flow-box-name">SPECTOREVIEW handoff</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-box">
+          <div class="flow-box-tag">Skill</div>
+          <div class="flow-box-name">Component Pipeline</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-cluster">
+          <div class="flow-chip">React</div>
+          <div class="flow-chip">Storybook</div>
+          <div class="flow-chip">PR</div>
+        </div>
+      </div>
+
+      <div class="gate-note">
+        <div class="gate-dot"></div>
+        Human review required at every gate. No phase advances without explicit approval.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Three stage evolution -->
+  <div class="slide" data-slide="9">
     <div class="border-bar"></div>
     <div class="eyebrow">The evolution</div>
     <div class="display small">A compounding platform asset.<br>Each stage unlocks the next.</div>
@@ -577,8 +826,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 8: Business return -->
-  <div class="slide" data-slide="8">
+  <!-- SLIDE 10: Business return -->
+  <div class="slide" data-slide="10">
     <div class="border-bar"></div>
     <div class="eyebrow">The business return</div>
     <div class="display small">Measurable at every stage.</div>
@@ -619,8 +868,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 9: What is missing -->
-  <div class="slide" data-slide="9">
+  <!-- SLIDE 11: What is missing -->
+  <div class="slide" data-slide="11">
     <div class="border-bar"></div>
     <div class="eyebrow">What is missing</div>
     <div class="display small">The system exists.<br>What it needs is <em>proper ownership.</em></div>
@@ -637,8 +886,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 10: Two additional asks -->
-  <div class="slide" data-slide="10">
+  <!-- SLIDE 12: Two additional asks -->
+  <div class="slide" data-slide="12">
     <div class="border-bar"></div>
     <div class="eyebrow">Two additional asks</div>
     <div class="display small">Tooling and alignment.</div>
@@ -654,8 +903,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 11: The ask -->
-  <div class="slide dark" data-slide="11">
+  <!-- SLIDE 13: The ask -->
+  <div class="slide dark" data-slide="13">
     <div class="eyebrow">The ask</div>
     <div class="display">Three things.</div>
     <div class="ask-item">
@@ -687,20 +936,19 @@
 <div class="nav">
   <button class="nav-btn" onclick="prev()">&#8592; Prev</button>
   <div class="dots" id="dots"></div>
-  <span class="slide-counter" id="counter">1 / 11</span>
+  <span class="slide-counter" id="counter">1 / 13</span>
   <button class="nav-btn" onclick="next()">Next &#8594;</button>
 </div>
 
 <script>
   var current = 1;
-  var total = 11;
+  var total = 13;
 
   function buildDots() {
     var c = document.getElementById('dots');
     for (var i = 1; i <= total; i++) {
       var d = document.createElement('div');
       d.className = 'dot' + (i === 1 ? ' active' : '');
-      d.setAttribute('data-n', i);
       d.onclick = (function(n){ return function(){ show(n); }; })(i);
       c.appendChild(d);
     }
