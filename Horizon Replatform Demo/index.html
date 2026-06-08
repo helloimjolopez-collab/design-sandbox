@@ -1374,30 +1374,31 @@ function fmtDate(d){const dt=new Date(d);return `${String(dt.getDate()).padStart
 function fmtShort(d){const dt=new Date(d);const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${dt.getDate()} ${m[dt.getMonth()]} ${dt.getFullYear()}`}
 
 const STATUS = {
-  // Consent collection phase
-  'invite-created':       {label:'Invite link created',      cls:'b-neutral', icon:'ms-link',           action:false, tip:'An invite link has been generated. No email has been sent yet.'},
-  'invite-sent':          {label:'Invite sent',               cls:'b-indigo',  icon:'ms-mail',           action:false, tip:'Invite email sent. Waiting for the applicant to complete their consent form.'},
-  'invite-expiring':      {label:'Invite expiring soon',      cls:'b-warn',    icon:'ms-schedule',       action:false, tip:'The invite expires in 3 days. The applicant has not yet submitted their consent form.'},
-  'invite-expired':       {label:'Invite expired',            cls:'b-warn',    icon:'ms-link-off',       action:true,  tip:'The invite expired with no consent form submitted. Re-invite to restart.'},
-  'email-bounced':        {label:'Email bounced',             cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'The invite email failed to deliver. Correct the email address and resend.'},
-  'invite-cancelled':     {label:'Invite cancelled',          cls:'b-orange',  icon:'ms-cancel',         action:false, tip:'The invite was cancelled by an admin. The case is still open — you can generate a new invite.'},
-  'case-cancelled':       {label:'Case cancelled',            cls:'b-danger',  icon:'ms-cancel',         action:false, tip:'This case was cancelled by an admin. The person record is retained. Open a new case to restart screening.'},
-  // Consent received / approval
-  'consent-signed-action':{label:'Pending approval',          cls:'b-warn',    icon:'ms-pending',        action:true,  tip:'Consent received. Approval is required before the order can be placed — check for name mismatch or approval gate.'},
+  // Consent collection phase — V1 labels
+  'invite-created':       {label:'Invite Link Created',                   cls:'b-neutral', icon:'ms-link',           action:false, tip:'A person-bound invite link has been generated. No email has been sent yet. Admin holds the link and will send it through their own channel.'},
+  'invite-sent':          {label:'Invite Link Sent',                      cls:'b-indigo',  icon:'ms-mail',           action:false, tip:'PMM sent an invite email to the applicant. Waiting for the applicant to submit their consent form.'},
+  'invite-expiring':      {label:'Invite Link Expiring',                  cls:'b-warn',    icon:'ms-schedule',       action:false, tip:'The invite link is approaching its expiry date. Applicant has not yet submitted consent. Resend or extend before the link dies.'},
+  'invite-expired':       {label:'Invite Link Expired',                   cls:'b-warn',    icon:'ms-link-off',       action:true,  tip:'The invite link reached its expiry date with no consent submitted. Re-invite to restart or cancel the case.'},
+  'email-bounced':        {label:'Invite Email Bounced',                  cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'The invite email could not be delivered. Correct the email address and resend, or switch to a generated link.'},
+  'invite-cancelled':     {label:'Invite Link Cancelled',                 cls:'b-orange',  icon:'ms-cancel',         action:false, tip:'Admin cancelled this invite link. The case stays open — you can issue a new link.'},
+  'case-cancelled':       {label:'Case Cancelled',                        cls:'b-danger',  icon:'ms-cancel',         action:false, tip:'Admin cancelled the entire case. No check will be ordered. Case record is retained for audit history.'},
+  // Consent received
+  'consent-received':     {label:'Consent Received',                      cls:'b-progress',icon:'ms-sync',           action:false, tip:'Applicant submitted their consent form. No approval gate — order will be placed automatically.'},
+  'consent-signed-action':{label:'Consent Received — Awaiting Approval',  cls:'b-warn',    icon:'ms-pending',        action:true,  tip:'Applicant submitted their consent form. An admin must approve before the order is placed. Check for any name mismatch.'},
   // Processing
-  'order-submitted':      {label:'Order submitted',           cls:'b-progress',icon:'ms-sync',           action:false, tip:'Background check order submitted to the provider.'},
-  'order-failed':         {label:'Order failed',              cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'Order submission failed. Retry or contact support.'},
-  'screening-progress':   {label:'Screening in progress',     cls:'b-progress',icon:'ms-sync',           action:false, tip:'The background check is being processed by the provider.'},
-  'screening-error':      {label:'Screening error',           cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'An error occurred during processing. Contact support.'},
-  // Report complete — filled icons for these three only
-  'awaiting-assessment':  {label:'Awaiting assessment',       cls:'b-pending', icon:'ms-hourglass-fill', action:true,  tip:'Report received. Review the report and record your assessment to close this case.'},
-  'cleared':              {label:'Cleared',                   cls:'b-positive',icon:'ms-thumb-up-fill',  action:false, tip:'Reviewed and cleared for this role.'},
-  'escalated':            {label:'Escalated',                 cls:'b-danger',  icon:'ms-block-fill',     action:true,  tip:'Escalated — do not activate. FCRA adverse action process may be required.'},
+  'order-submitted':      {label:'Order Processing',                      cls:'b-progress',icon:'ms-sync',           action:false, tip:'Background check order has been submitted to Digital Delve and is actively being processed.'},
+  'order-failed':         {label:'Order Failed',                          cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'The order could not be submitted to or processed by the provider. Retry or contact support.'},
+  'screening-progress':   {label:'Order Processing',                      cls:'b-progress',icon:'ms-sync',           action:false, tip:'Background check order has been submitted to Digital Delve and is actively being processed.'},
+  'screening-error':      {label:'Order Failed',                          cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'An error occurred during processing. Contact support.'},
+  // Report complete — filled icons only for these three
+  'awaiting-assessment':  {label:'Report Complete — Awaiting Review',     cls:'b-pending', icon:'ms-hourglass-fill', action:true,  tip:'Digital Delve returned the completed report. Review it and record an outcome to close this case.'},
+  'cleared':              {label:'Complete: Cleared',                     cls:'b-positive',icon:'ms-thumb-up-fill',  action:false, tip:'Admin reviewed the report and cleared this person for the role. No disqualifying findings.'},
+  'needs-review':         {label:'Complete: Needs Review',                cls:'b-orange',  icon:'ms-flag',           action:true,  tip:'Admin flagged this case for further review. A follow-up decision is required before the person is placed.'},
+  'escalated':            {label:'Complete: Escalated',                   cls:'b-danger',  icon:'ms-block-fill',     action:true,  tip:'Admin reviewed the report and escalated. This person must not be placed in the role. FCRA adverse action process may apply.'},
   // Rescreening health
-  'due-rescreening':      {label:'Rescreen due soon',         cls:'b-warn',    icon:'ms-schedule',       action:true,  tip:'Rescreen date is approaching. Current check is still valid — start a new check soon.'},
-  'screening-overdue':    {label:'Check out of date',         cls:'b-danger',  icon:'ms-event-busy',     action:true,  tip:'Rescreen date has passed. This check is no longer current. A new background check is required.'},
-  'needs-review':         {label:'Needs review',              cls:'b-orange',  icon:'ms-flag',           action:true,  tip:'Flagged for further review. Follow-up decision required.'},
-  'bg-expired':           {label:'Check expired',             cls:'b-warn',    icon:'ms-link-off',       action:false, tip:'Background check has expired.'},
+  'due-rescreening':      {label:'Rescreen Due',                          cls:'b-warn',    icon:'ms-schedule',       action:true,  tip:'The rescreening date is approaching. Current check is still valid — start a new screening case soon.'},
+  'screening-overdue':    {label:'Screening Expired',                     cls:'b-danger',  icon:'ms-event-busy',     action:true,  tip:'The rescreen due date has passed. This person\'s screening is no longer current. A new background check is required.'},
+  'bg-expired':           {label:'Screening Expired',                     cls:'b-warn',    icon:'ms-link-off',       action:false, tip:'Background check has expired.'},
 };
 
 const PEOPLE = [
