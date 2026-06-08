@@ -2544,35 +2544,47 @@ function renderPanelBody(person, targetCaseId){
   const c = currentCase(person);
   const pb = document.getElementById('panel-body');
   const hasPastCases = person.cases.length > 1;
+  const actionHtml = renderPanelAction(person, c);
 
   pb.innerHTML = `
-    <div style="padding:16px 20px 0">
-      ${renderPanelAction(person, c)}
-      <div class="pnl-sec" style="padding-top:0">
-        <div class="pnl-sec-title"><span>Identity</span></div>
+    ${actionHtml ? `<div class="pnl-action-zone">${actionHtml}</div>` : ''}
+
+    <div class="pnl-sec-block">
+      <div class="pnl-sec-hd">Identity</div>
+      <div class="pnl-sec-content">
         ${renderIdentityCompact(person)}
       </div>
-      <div class="pnl-divider"></div>
-      <div class="pnl-sec">
-        <div class="pnl-sec-title"><span>Current case</span></div>
+    </div>
+
+    <div class="pnl-sec-block">
+      <div class="pnl-sec-hd">Current case</div>
+      <div class="pnl-sec-content">
         ${renderCurrentCase(person, c)}
       </div>
-      ${hasPastCases ? `<div class="pnl-divider"></div>
-      <div class="pnl-sec">
-        <div class="pnl-sec-title"><span>Screening history</span></div>
+    </div>
+
+    ${hasPastCases ? `
+    <div class="pnl-sec-block">
+      <div class="pnl-sec-hd">Screening history</div>
+      <div class="pnl-sec-content">
         ${renderScreeningHistory(person)}
-      </div>` : ''}
-      <div class="pnl-divider"></div>
-      <div class="pnl-sec">
-        <div class="pnl-sec-title"><span>Child safety training</span></div>
+      </div>
+    </div>` : ''}
+
+    <div class="pnl-sec-block">
+      <div class="pnl-sec-hd">Child safety training</div>
+      <div class="pnl-sec-content">
         ${renderCSTCompact(person)}
       </div>
-      <div class="pnl-divider"></div>
-      <div class="pnl-sec">
-        <div class="pnl-sec-title"><span>Documents</span></div>
+    </div>
+
+    <div class="pnl-sec-block">
+      <div class="pnl-sec-hd">Documents</div>
+      <div class="pnl-sec-content">
         ${renderDocuments(person)}
       </div>
-    </div>`;
+    </div>
+  `;
 
   pb.querySelectorAll('[data-open-report]').forEach(btn=>{
     btn.addEventListener('click',e=>{e.stopPropagation();openReport(btn.dataset.openReport,e)});
