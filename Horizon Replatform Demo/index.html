@@ -2658,45 +2658,47 @@ function renderPanelBody(person, targetCaseId){
   const hasPastCases = person.cases.length > 1;
   const actionHtml = renderPanelAction(person, c);
 
-  pb.innerHTML = `
-    ${actionHtml ? `<div class="pnl-action-zone">${actionHtml}</div>` : ''}
+  pb.innerHTML = `<div class="pnl-cards">
+    ${actionHtml ? `<div class="pnl-action-card">${actionHtml}</div>` : ''}
 
-    <div class="pnl-sec-block">
-      <div class="pnl-sec-hd">Identity</div>
-      <div class="pnl-sec-content">
-        ${renderIdentityCompact(person)}
+    <!-- Identity card -->
+    <div class="pnl-card">
+      <div class="pnl-card-hd">
+        <span class="pnl-card-title">Identity</span>
+        ${person.source && person.source !== 'PMM' ? `<span class="source-chip rock" style="font-size:10px">${esc(person.source)}</span>` : `<span class="source-chip pmm" style="font-size:10px">PMM</span>`}
       </div>
+      <div class="pnl-card-body">${renderIdentityCompact(person)}</div>
     </div>
 
-    <div class="pnl-sec-block">
-      <div class="pnl-sec-hd">Current case</div>
-      <div class="pnl-sec-content">
-        ${renderCurrentCase(person, c)}
+    <!-- Current case card -->
+    <div class="pnl-card">
+      <div class="pnl-card-hd">
+        <span class="pnl-card-title">Current case</span>
       </div>
+      <div class="pnl-card-body">${renderCurrentCase(person, c)}</div>
     </div>
 
-    ${hasPastCases ? `
-    <div class="pnl-sec-block">
-      <div class="pnl-sec-hd">Screening history</div>
-      <div class="pnl-sec-content">
-        ${renderScreeningHistory(person)}
+    <!-- Screening history card -->
+    <div class="pnl-card">
+      <div class="pnl-card-hd">
+        <span class="pnl-card-title">Screening history</span>
+        <span style="font-size:12px;color:var(--fg4)">${person.cases.length} case${person.cases.length!==1?'s':''} total</span>
       </div>
-    </div>` : ''}
-
-    <div class="pnl-sec-block">
-      <div class="pnl-sec-hd">Child safety training</div>
-      <div class="pnl-sec-content">
-        ${renderCSTCompact(person)}
-      </div>
+      <div class="pnl-card-body">${renderScreeningHistory(person)}</div>
     </div>
 
-    <div class="pnl-sec-block">
-      <div class="pnl-sec-hd">Documents</div>
-      <div class="pnl-sec-content">
-        ${renderDocuments(person)}
-      </div>
+    <!-- CST card -->
+    <div class="pnl-card">
+      <div class="pnl-card-hd"><span class="pnl-card-title">Child safety training</span></div>
+      <div class="pnl-card-body">${renderCSTCompact(person)}</div>
     </div>
-  `;
+
+    <!-- Documents card -->
+    <div class="pnl-card">
+      <div class="pnl-card-hd"><span class="pnl-card-title">Documents</span></div>
+      <div class="pnl-card-body">${renderDocuments(person)}</div>
+    </div>
+  </div>`;
 
   pb.querySelectorAll('[data-open-report]').forEach(btn=>{
     btn.addEventListener('click',e=>{e.stopPropagation();openReport(btn.dataset.openReport,e)});
