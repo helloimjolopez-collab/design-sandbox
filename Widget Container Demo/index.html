@@ -189,7 +189,7 @@
   .dep-chead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 16px 5px;border-bottom:1px solid var(--stroke-widget);}
   .dep-chead-title{font-weight:600;font-size:14px;color:var(--txt-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .dep-chead-total{font-family:'Red Hat Display',sans-serif;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;flex:0 0 auto;}
-  .trend-range{display:inline-flex;align-items:center;font-family:inherit;font-size:12px;font-weight:600;color:var(--txt-subtle);background:transparent;border:0;border-radius:6px;padding:1px 2px 1px 5px;cursor:pointer;vertical-align:middle;}
+  .trend-range{display:inline-flex;align-items:center;gap:1px;font-family:inherit;font-size:12px;font-weight:600;color:var(--txt-subtle);background:transparent;border:0;border-radius:7px;padding:4px 5px 4px 8px;min-height:28px;cursor:pointer;vertical-align:middle;}
   .trend-range:hover{background:var(--wn-200);color:var(--txt-primary);}
   .trend-range .material-symbols-rounded{font-size:16px;}
   .delta-ref{color:var(--txt-subtle);font-weight:500;}
@@ -329,7 +329,7 @@
   var RANGE_X={W:["Mon","Sun"],M:["Wk1","Wk4"],Q:["Jan","Mar"],F:["P1","P12"],Y:["Jan","Dec"]};
   function rangeTabs(w){var r=w.range||"Q";return '<div class="tabs" role="tablist">'+["W","M","Q","Y"].map(function(t){return '<button role="tab" class="tab" aria-selected="'+(r===t)+'" data-action="range-set" data-id="'+w.id+'" data-r="'+t+'">'+t+'</button>';}).join("")+'</div>';}
   var SPARK='<div class="spark"><svg viewBox="0 0 300 50" preserveAspectRatio="none"><path d="M0,40 C40,36 60,16 100,18 C140,20 160,36 200,30 C240,24 270,10 300,14 L300,50 L0,50 Z" fill="rgba(45,72,137,.10)"/><path d="M0,40 C40,36 60,16 100,18 C140,20 160,36 200,30 C240,24 270,10 300,14" fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round"/></svg></div>';
-  var SPARKMINI='<div class="kpi-spark"><svg viewBox="0 0 120 40" preserveAspectRatio="none"><path d="M0,32 C16,28 24,12 40,14 C56,16 64,28 80,24 C96,20 108,8 120,11" fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round"/></svg></div>';
+  function sparkMini(tip){return '<div class="kpi-spark"'+(tip?' tabindex="0" data-tip="'+String(tip).replace(/"/g,"&quot;")+'"':'')+'><svg viewBox="0 0 120 40" preserveAspectRatio="none"><path d="M0,32 C16,28 24,12 40,14 C56,16 64,28 80,24 C96,20 108,8 120,11" fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round"/><circle cx="120" cy="11" r="2.6" fill="var(--brand-fill)"/></svg></div>';}
   function trendRangeBtn(w){return '<button class="trend-range" data-action="rangemenu" data-id="'+w.id+'">vs '+periodLbl(w)+ICON("expand_more")+'</button>';}
   function glance(value,delta,w){var ref=w?' '+trendRangeBtn(w):'';return '<div class="kpi-row"><div class="kpi-num"><div class="metric-value">'+value+'</div><div class="metric-delta">'+ICON("trending_up")+' '+delta+ref+'</div></div>'+SPARKMINI+'</div>';}
   function barChart(w){var r=(w&&w.range)||"Q",bars=RANGE_BARS[r],x=RANGE_X[r];return '<div class="chartwrap"><div class="yaxis"><span>Hi</span><span></span><span>0</span></div><div class="plot"><div class="bars">'+bars.map(function(v){return '<span class="bar" style="height:'+v+'%"></span>';}).join("")+'</div><div class="xaxis"><span>'+x[0]+'</span><span>'+x[1]+'</span></div></div></div>';}
