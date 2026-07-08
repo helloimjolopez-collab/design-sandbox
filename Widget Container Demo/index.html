@@ -325,7 +325,14 @@
   function cur(){for(var i=0;i<dashboards.length;i++)if(dashboards[i].id===currentId)return dashboards[i];return dashboards[0];}
   function isSystem(){return !cur().custom;}
   function find(id){var ws=cur().widgets;for(var i=0;i<ws.length;i++)if(ws[i].id===id)return ws[i];}
-  var manage=false,pop=null,renaming=null,dragId=null,addCount=0,timers={},focusDash=false,dashRenaming=false;
+  var manage=false,pop=null,renaming=null,dragId=null,addCount=0,timers={},focusDash=false,dashRenaming=false,infoTimer=null;
+  var ABOUT={
+    dep:{h:"Deposit Accounts",b:"Your organisation's bank accounts — checking, savings and money-market — as tracked in the general ledger. The figure is the combined balance across them; the trend shows how it's moving versus the period you choose."},
+    cash:{h:"Cash on hand",b:"Money available right now across your operating accounts."},
+    pmt:{h:"Payments over time",b:"Total payments issued to vendors over the selected period."},
+    fund:{h:"Spend by fund",b:"How spending breaks down across your restricted and unrestricted funds."}
+  };
+  function aboutOf(w){return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
   function setStatus(s){document.getElementById("status").textContent=s;}
 
   /* generic content */
@@ -386,7 +393,8 @@
     return "";
   }
 
-  function titleHTML(w){var esc=w.title.replace(/"/g,"&quot;");if(renaming===w.id)return '<input class="wtitle-input" id="rn-'+w.id+'" maxlength="40" value="'+esc+'" data-id="'+w.id+'">';if(manage)return '<h3 class="wtitle wtitle--edit" tabindex="0" role="button" data-action="rename" data-id="'+w.id+'" title="Click to rename">'+w.title+'</h3>';return '<h3 class="wtitle link-title" tabindex="0" role="link" data-action="open-report" data-id="'+w.id+'" title="Open full report">'+w.title+'</h3>';}
+  function titleHTML(w){var esc=w.title.replace(/"/g,"&quot;");if(renaming===w.id)return '<input class="wtitle-input" id="rn-'+w.id+'" maxlength="40" value="'+esc+'" data-id="'+w.id+'">';if(manage)return '<h3 class="wtitle wtitle--edit" tabindex="0" role="button" data-action="rename" data-id="'+w.id+'" title="Click to rename">'+w.title+'</h3>';return '<h3 class="wtitle" title="'+esc+'">'+w.title+'</h3>';}
+  function hoverIconsHTML(w){var goto=(w.goto===false)?'':'<button class="wmini" data-action="open-report" data-id="'+w.id+'" title="Go to '+w.title+'" aria-label="Go to '+w.title+'">'+ICON("arrow_outward")+'</button>';var info='<button class="wmini" data-action="winfo" data-id="'+w.id+'" aria-haspopup="dialog" aria-label="About this widget">'+ICON("info")+'</button>';return '<div class="whover">'+info+goto+'</div>';}
   function actionsHTML(w){
     if(manage) return '<button class="iconbtn" data-action="wsize" data-id="'+w.id+'" aria-label="Resize">'+ICON("aspect_ratio")+'</button><button class="iconbtn" data-action="duplicate" data-id="'+w.id+'" aria-label="Duplicate">'+ICON("content_copy")+'</button><button class="iconbtn danger" data-action="remove" data-id="'+w.id+'" aria-label="Remove">'+ICON("delete")+'</button>';
     var out='<button class="iconbtn" data-action="refresh" data-id="'+w.id+'" title="Updated '+w.updated+'" aria-label="Refresh, updated '+w.updated+'">'+ICON("refresh")+'</button>';
