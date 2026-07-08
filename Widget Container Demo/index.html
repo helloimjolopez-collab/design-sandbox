@@ -63,13 +63,13 @@
   .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;flex-wrap:wrap;margin-bottom:14px;}
   .tb-left{display:flex;align-items:center;min-width:0;}
   /* dashboard selector: name (rename) + chevron (menu) as two distinct areas; text edge aligns to the page */
-  .dash-select{display:inline-flex;align-items:center;gap:0;border-radius:10px;padding:2px;margin-left:-8px;}
+  .dash-select{display:inline-flex;align-items:center;gap:2px;border-radius:10px;padding:2px;margin-left:-6px;}
   .dash-select:hover{background:var(--wn-200);}
-  .dash-name{font-family:'Red Hat Text',sans-serif;font-weight:500;font-size:24px;line-height:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt-primary);border-radius:6px;padding:2px 2px 2px 6px;cursor:text;}
+  .dash-name{font-family:'Red Hat Text',sans-serif;font-weight:500;font-size:20px;line-height:26px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt-primary);border-radius:6px;padding:2px 3px 2px 4px;cursor:text;}
   .dash-name:hover{background:var(--wn-300);}
-  .dash-caret{display:inline-flex;align-items:center;justify-content:center;width:28px;height:34px;border:0;background:transparent;color:var(--txt-subtle);border-radius:8px;cursor:pointer;}
-  .dash-caret:hover{background:var(--wn-300);}.dash-caret .material-symbols-rounded{font-size:22px;}
-  .dash-name-input{font-family:'Red Hat Text',sans-serif;font-weight:500;font-size:24px;line-height:30px;border:1px solid var(--focus);border-radius:8px;padding:0 8px;margin-left:-1px;background:#fff;color:var(--txt-primary);}
+  .dash-caret{display:inline-flex;align-items:center;justify-content:center;width:24px;height:28px;border:0;background:transparent;color:var(--txt-subtle);border-radius:8px;cursor:pointer;}
+  .dash-caret:hover{background:var(--wn-300);}.dash-caret .material-symbols-rounded{font-size:20px;}
+  .dash-name-input{font-family:'Red Hat Text',sans-serif;font-weight:500;font-size:20px;line-height:26px;border:1px solid var(--focus);border-radius:8px;padding:0 8px;margin-left:-1px;background:#fff;color:var(--txt-primary);}
   .dep-left{display:flex;align-items:center;gap:8px;min-width:0;}
   .dep-right{display:flex;align-items:center;gap:8px;}
   .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--wn-200);color:var(--txt-subtle);border:1px solid var(--stroke-widget);margin-left:6px;}
@@ -361,7 +361,7 @@
   function depToggle(w){var v=w.view||"table";return '<div class="vtoggle" role="group" aria-label="View as"><button class="vt'+(v==="table"?" on":"")+'" data-action="dep-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'">List</button><button class="vt'+(v==="chart"?" on":"")+'" data-action="dep-view" data-id="'+w.id+'" data-v="chart" aria-pressed="'+(v==="chart")+'">Distribution</button></div>';}
   function overflowBtn(w){return (w.actions&&w.actions.length)?'<button class="iconbtn" data-action="cmenu" data-id="'+w.id+'" aria-label="More actions">'+ICON("more_vert")+'</button>':'';}
   function depContent(w){
-    if(w.size==="kpi") return glance(money(DEP_TOTAL),"2.1%","vs last quarter");
+    if(w.size==="kpi") return glance(money(DEP_TOTAL),"2.1%",w);
     // Explore (wide, 2 internal columns): metric summary (number + trend, type as eyebrow) + one view; distribution = donut left, legend right
     if(w.size==="wide") return depTop(w,{toggle:true})+summaryStrip(w)+((w.view||"table")==="chart"?pie(depRows(w),118,"row"):tableHTML(depRows(w),"Net",true));
     // Detail (large square, 1 column): total strip (heading) + one view; distribution stacks
