@@ -508,7 +508,15 @@
   document.addEventListener("dragover",function(e){if(manage&&e.target.closest&&e.target.closest(".widget"))e.preventDefault();});
   document.addEventListener("drop",function(e){if(!manage)return;var s=e.target.closest&&e.target.closest(".widget");if(!s||!dragId)return;e.preventDefault();var ws=cur().widgets,tid=s.getAttribute("data-id"),f=ws.findIndex(function(x){return x.id===dragId;}),to=ws.findIndex(function(x){return x.id===tid;});if(f>-1&&to>-1&&f!==to){var m=ws.splice(f,1)[0];ws.splice(to,0,m);}dragId=null;render();});
   document.addEventListener("dragend",function(){dragId=null;render();});
-  window.addEventListener("scroll",function(){if(pop){pop=null;render();}},true);
+  /* styled label tooltips for [data-tip] elements (refresh, resize, go-to, etc.) */
+  var tipEl=null,tipTimer=null;
+  function hideTip(){clearTimeout(tipTimer);if(tipEl){tipEl.remove();tipEl=null;}}
+  function showTip(trg){if(!trg||!trg.isConnected)return;var txt=trg.getAttribute("data-tip");if(!txt)return;hideTip();tipEl=document.createElement("div");tipEl.className="tip";tipEl.textContent=txt;document.body.appendChild(tipEl);var r=trg.getBoundingClientRect(),M=8,tw=tipEl.offsetWidth,th=tipEl.offsetHeight;var left=r.left+r.width/2-tw/2;if(left<M)left=M;if(left+tw>innerWidth-M)left=innerWidth-M-tw;var flipped=false,top=r.bottom+7;if(top+th>innerHeight-M){var up=r.top-th-7;if(up>=M){top=up;flipped=true;}}var cx=(r.left+r.width/2)-left;cx=Math.max(12,Math.min(tw-12,cx));tipEl.style.setProperty("--caret-x",cx+"px");tipEl.setAttribute("data-dir",flipped?"down":"up");tipEl.style.left=left+"px";tipEl.style.top=top+"px";}
+  document.addEventListener("mouseover",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(!t)return;clearTimeout(tipTimer);tipTimer=setTimeout(function(){showTip(t);},300);});
+  document.addEventListener("mouseout",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)hideTip();});
+  document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)showTip(t);});
+  document.addEventListener("focusout",hideTip);
+  window.addEventListener("scroll",function(){hideTip();if(pop){pop=null;render();}},true);
   window.addEventListener("resize",function(){if(pop)renderOverlay();});
   render();
 })();
