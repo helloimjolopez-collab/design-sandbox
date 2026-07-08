@@ -365,9 +365,9 @@
     // Explore (wide, 2 internal columns): metric summary (number + trend, type as eyebrow) + one view; distribution = donut left, legend right
     if(w.size==="wide") return depTop(w,{toggle:true})+(w.topMetric?summaryStrip(w):"")+((w.view||"table")==="chart"?pie(depRows(w),140,"row"):tableHTML(depRows(w),"Net",true));
     // Detail (large square, 1 column): total strip (heading) + one view; distribution stacks
-    if(w.size==="large") return depTop(w,{toggle:true})+summaryStrip(w)+((w.view||"table")==="chart"?pie(depRows(w),170,"col"):tableHTML(depRows(w),"Net",false));
+    if(w.size==="large") return depTop(w,{toggle:true})+(w.topMetric?summaryStrip(w):"")+((w.view||"table")==="chart"?pie(depRows(w),170,"col"):tableHTML(depRows(w),"Net",false));
     // Full (x-wide, 2 columns): total strip + table | distribution side by side
-    return depTop(w)+summaryStrip(w)+sideBySide(depRows(w),"Net","Accounts");
+    return depTop(w)+(w.topMetric?summaryStrip(w):"")+sideBySide(depRows(w),"Net","Accounts");
   }
   function fundContent(w){
     return '<div class="dep-controls"><div class="dep-left"><span class="dep-col-h" style="padding:2px 0">Funds</span></div><div class="dep-right">'+depToggle(w)+overflowBtn(w)+'</div></div>'+((w.view||"table")==="chart"?pie(FUND,w.size==="large"?170:140,w.size==="large"?"col":"row"):tableHTML(FUND,"Amount",w.size==="wide"));
