@@ -363,7 +363,7 @@
   function depContent(w){
     if(w.size==="kpi") return glance(money(DEP_TOTAL),"2.1%",w);
     // Explore (wide, 2 internal columns): metric summary (number + trend, type as eyebrow) + one view; distribution = donut left, legend right
-    if(w.size==="wide") return depTop(w,{toggle:true})+summaryStrip(w)+((w.view||"table")==="chart"?pie(depRows(w),118,"row"):tableHTML(depRows(w),"Net",true));
+    if(w.size==="wide") return depTop(w,{toggle:true})+(w.topMetric?summaryStrip(w):"")+((w.view||"table")==="chart"?pie(depRows(w),140,"row"):tableHTML(depRows(w),"Net",true));
     // Detail (large square, 1 column): total strip (heading) + one view; distribution stacks
     if(w.size==="large") return depTop(w,{toggle:true})+summaryStrip(w)+((w.view||"table")==="chart"?pie(depRows(w),170,"col"):tableHTML(depRows(w),"Net",false));
     // Full (x-wide, 2 columns): total strip + table | distribution side by side
