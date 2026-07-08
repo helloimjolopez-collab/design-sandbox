@@ -216,7 +216,10 @@
   .widget[data-manage="true"] .wdrag{display:inline-flex;}
   .widget[data-dragging="true"]{opacity:.5;}
 
-  .pop{position:fixed;z-index:1000;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:10px;box-shadow:0 8px 28px rgba(41,39,36,.18);padding:6px;min-width:210px;max-width:calc(100vw - 16px);animation:pop var(--dur2) var(--dec);}
+  .pop{position:fixed;z-index:1000;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:10px;box-shadow:0 14px 36px rgba(41,39,36,.24),0 3px 10px rgba(41,39,36,.14);padding:6px;min-width:210px;max-width:calc(100vw - 16px);animation:pop var(--dur2) var(--dec);}
+  .pop::before{content:"";position:absolute;left:var(--caret-x,20px);width:11px;height:11px;background:var(--surface-widget);border:1px solid var(--stroke-widget);transform:translateX(-50%) rotate(45deg);}
+  .pop[data-dir="up"]::before{top:-6px;border-right:0;border-bottom:0;}
+  .pop[data-dir="down"]::before{bottom:-6px;border-left:0;border-top:0;}
   @keyframes pop{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
   @media(prefers-reduced-motion:reduce){.pop,.sk{animation:none!important;}}
   .mi{display:flex;align-items:center;gap:10px;width:100%;border:none;background:transparent;font-family:inherit;font-size:13px;text-align:left;padding:9px 10px;border-radius:7px;cursor:pointer;color:var(--txt-primary);}
@@ -331,7 +334,8 @@
     dep:{h:"Deposit Accounts",b:"Your organisation's bank accounts — checking, savings and money-market — as tracked in the general ledger. The figure is the combined balance across them; the trend shows how it's moving versus the period you choose."},
     cash:{h:"Cash on hand",b:"Money available right now across your operating accounts."},
     pmt:{h:"Payments over time",b:"Total payments issued to vendors over the selected period."},
-    fund:{h:"Spend by fund",b:"How spending breaks down across your restricted and unrestricted funds."}
+    fund:{h:"Spend by fund",b:"How spending breaks down across your restricted and unrestricted funds."},
+    signups:{h:"New sign-ups",b:"People who recently joined a group or ministry. The number is the total for the period you choose; the list shows the most recent sign-ups regardless of period."}
   };
   function aboutOf(w){return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
   function setStatus(s){document.getElementById("status").textContent=s;}
