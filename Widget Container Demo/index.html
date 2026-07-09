@@ -400,8 +400,17 @@
     return cmp+'<div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:2px 16px 12px"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;flex:1;min-height:0" aria-hidden="true">'+lines+'</svg>'+legend+'</div>';}
   function depFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div><div class="dep-col"><div class="dep-col-h">By account type</div>'+pie(depByType(),150,"col")+'</div></div>';}
   function overflowBtn(w){return (w.actions&&w.actions.length)?'<button class="iconbtn" data-action="cmenu" data-id="'+w.id+'" aria-label="More actions">'+ICON("more_vert")+'</button>':'';}
+  /* Glance spark = total deposits over the chosen window; hovering scrubs the KPI number to that point in time */
+  function depSeries(range){var n={W:5,M:4,Q:3,F:6,Y:12}[range]||3;var end=DEP_TOTAL,ratio={W:.99,M:.965,Q:.90,F:.82,Y:.75}[range]||.9,start=end*ratio,a=[];for(var i=0;i<n;i++){var t=n>1?i/(n-1):1;a.push(Math.round(start+(end-start)*t+Math.sin(i*1.7)*end*0.012));}a[n-1]=end;return a;}
+  function depGlance(w){var range=w.range||"Q",s=depSeries(range),latest=s[s.length-1],first=s[0],delta=(((latest-first)/(first||1))*100).toFixed(1);
+    var W=120,H=40,pad=3,mx=Math.max.apply(null,s),mn=Math.min.apply(null,s),rng=(mx-mn)||1;
+    var pts=s.map(function(v,i){return [pad+i*(W-2*pad)/((s.length-1)||1),H-pad-((v-mn)/rng)*(H-2*pad)];});
+    var poly=pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');
+    var ptsAttr=pts.map(function(p){return p[0].toFixed(1)+':'+p[1].toFixed(1);}).join(';');
+    return '<div class="kpi-row"><div class="kpi-num"><div class="metric-value" id="depnum" data-latest="'+money(latest)+'">'+money(latest)+'</div><div class="metric-delta">'+ICON("trending_up")+' '+delta+'% '+trendRangeBtn(w)+'</div></div>'+
+    '<div class="kpi-spark dep-spark" data-series="'+s.join(',')+'" data-pts="'+ptsAttr+'" aria-label="Total deposits over the selected window; hover to read a point"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polyline fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round" points="'+poly+'"/><circle class="dep-dot" r="3.2" fill="var(--brand-fill)" style="opacity:0"/></svg></div></div>';}
   function depContent(w){
-    if(w.size==="kpi") return glance(money(DEP_TOTAL),"2.1%",w); // Glance = total balance across all active accounts
+    if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
     var v=w.view||"table";
     // Explore: one compact view (table / by-type pie / trend) via toggle
     if(w.size==="wide") return depTop(w,{toggle:true})+(v==="trend"?depTrend(w,false):v==="pie"?pie(depByType(),130,"row"):depTable(w,false));
