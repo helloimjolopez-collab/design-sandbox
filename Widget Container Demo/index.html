@@ -225,10 +225,11 @@
   .wmini{width:24px;height:24px;border:0;background:transparent;color:var(--txt-subtle);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .12s;flex:0 0 auto;}
   .wmini:hover{background:var(--wn-200);color:var(--brand-400);}
   .wmini .material-symbols-rounded{font-size:16px;}
-  @media(hover:hover){.widget:hover .wmini{opacity:1;pointer-events:auto;}}
+  /* reveal only when the HEADER is hovered — hovering content (e.g. the mini chart) must not toggle them */
+  @media(hover:hover){.whead:hover .wmini{opacity:1;pointer-events:auto;}}
   @media(hover:none){.wmini{opacity:1;pointer-events:auto;}}
-  /* a11y: hover-reveal icons must also appear on keyboard focus, not hover only */
-  .widget:focus-within .wmini{opacity:1;pointer-events:auto;}
+  /* a11y: also reveal on keyboard focus within the header */
+  .whead:focus-within .wmini{opacity:1;pointer-events:auto;}
   .wmini:focus-visible{opacity:1;pointer-events:auto;}
   .wtip-h{font-weight:600;font-size:13px;color:var(--txt-primary);padding:5px 9px 2px;}
   .wtip-b{font-size:12px;line-height:1.45;color:var(--txt-secondary);padding:0 9px 6px;max-width:264px;}
