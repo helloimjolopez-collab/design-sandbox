@@ -405,9 +405,9 @@
   /* helpers for working charts */
   function fmtAxis(v){if(v>=1e6)return "$"+(v/1e6).toFixed(1).replace(/\.0$/,"")+"M";if(v>=1e3)return "$"+Math.round(v/1e3)+"k";return "$"+v;}
   function topN(arr,n){var s=arr.slice().sort(function(a,b){return b.net-a.net;});if(s.length<=n)return s;var top=s.slice(0,n-1),rest=s.slice(n-1).reduce(function(x,a){return x+a.net;},0);top.push({name:"Others",net:rest,others:true});return top;}
-  function depScope(w){var f=w.filter||"All types";return DEP.filter(function(a){return f.indexOf("All")===0||a.type===f;});}
-  function depDist(w){var f=w.filter||"All types",N={wide:6,large:8,xwide:10}[w.size]||8;
-    if(f.indexOf("All")===0){if(w.dist==="accounts"){var all=DEP.map(function(a){return {name:a.name,net:a.net};});return {by:"account",segs:topN(all,N),total:all.length};}var ty=depByType();return {by:"type",segs:topN(ty,N),total:ty.length};}
+  function depScope(w){var f=w.filter||"All types";return depData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;});}
+  function depDist(w){var f=w.filter||"All types",N={wide:5,large:6,xwide:8}[w.size]||6;
+    if(f.indexOf("All")===0){if(w.dist==="accounts"){var all=depData(w).map(function(a){return {name:a.name,net:a.net};});return {by:"account",segs:topN(all,N),total:all.length};}var ty=depByType(w);return {by:"type",segs:topN(ty,N),total:ty.length};}
     var ac=depScope(w).map(function(a){return {name:a.name,net:a.net};});return {by:"account",segs:topN(ac,N),total:ac.length};}
   function acctSeries(a,range){var n={W:6,M:5,Q:6,F:6,Y:12}[range]||6,end=a.net,slope={up:0.74,flat:0.97,down:1.22}[a.trend||"up"],start=end*slope,arr=[];for(var i=0;i<n;i++){var t=n>1?i/(n-1):1,wob=Math.sin((i+a.name.length)*0.9)*end*0.02;arr.push(Math.round(start+(end-start)*t+wob));}arr[n-1]=end;return arr;}
   function rangeMonths(range,n){var lab={W:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],M:["Wk1","Wk2","Wk3","Wk4","Wk5"],Q:["Jan","Feb","Mar","Apr","May","Jun"],F:["P1","P3","P5","P7","P9","P11"],Y:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}[range]||[];var out=[];for(var i=0;i<n;i++)out.push(lab[i]||("T"+(i+1)));return out;}
