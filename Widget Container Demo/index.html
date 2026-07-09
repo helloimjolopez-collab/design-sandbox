@@ -439,15 +439,21 @@
     return head+'<div class="pie-wrap '+(big?"col":"row")+'"><svg class="donut" viewBox="0 0 140 140" width="'+(big?170:128)+'" height="'+(big?170:128)+'" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="85" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend">'+legend+'</div></div>';}
   function depFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div><div class="dep-col">'+donutChart(w,true)+'</div></div>';}
   function overflowBtn(w){return (w.actions&&w.actions.length)?'<button class="iconbtn" data-action="cmenu" data-id="'+w.id+'" aria-label="More actions">'+ICON("more_vert")+'</button>':'';}
-  /* Glance spark = total deposits over the chosen window; hovering scrubs the KPI number to that point in time */
-  function depSeries(range){var n={W:5,M:4,Q:3,F:6,Y:12}[range]||3;var end=DEP_TOTAL,ratio={W:.99,M:.965,Q:.90,F:.82,Y:.75}[range]||.9,start=end*ratio,a=[];for(var i=0;i<n;i++){var t=n>1?i/(n-1):1;a.push(Math.round(start+(end-start)*t+Math.sin(i*1.7)*end*0.012));}a[n-1]=end;return a;}
-  function depGlance(w){var range=w.range||"Q",s=depSeries(range),latest=s[s.length-1],first=s[0],delta=(((latest-first)/(first||1))*100).toFixed(1);
-    var W=120,H=40,pad=3,mx=Math.max.apply(null,s),mn=Math.min.apply(null,s),rng=(mx-mn)||1;
-    var pts=s.map(function(v,i){return [pad+i*(W-2*pad)/((s.length-1)||1),H-pad-((v-mn)/rng)*(H-2*pad)];});
-    var poly=pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');
-    var ptsAttr=pts.map(function(p){return p[0].toFixed(1)+':'+p[1].toFixed(1);}).join(';');
+  /* Glance spark = total deposits over the chosen window. No axes (it's a sparkline); hover reveals the point's period + value and scrubs the KPI number — standard sparkline behaviour. */
+  function depSeriesN(range,n){var end=DEP_TOTAL,ratio={W:.99,M:.965,Q:.94,F:.86,Y:.75}[range]||.9,start=end*ratio,a=[];for(var i=0;i<n;i++){var t=n>1?i/(n-1):1;a.push(Math.round(start+(end-start)*t+Math.sin(i*1.3)*end*0.008));}a[n-1]=end;return a;}
+  function sparkLabels(range,n){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],out=[],i;
+    if(range==="W"){for(i=0;i<n;i++)out.push(i===n-1?"Today":(n-1-i)+"d ago");}
+    else if(range==="M"){for(i=0;i<n;i++)out.push(i===n-1?"This week":(n-1-i)+"w ago");}
+    else{var now=6;for(i=n-1;i>=0;i--)out.push(M[(((now-i)%12)+12)%12]);}
+    return out;}
+  function smoothPath(xs,ys){var d="M"+xs[0].toFixed(1)+","+ys[0].toFixed(1),i;for(i=0;i<xs.length-1;i++){var x0=xs[i>0?i-1:0],y0=ys[i>0?i-1:0],x1=xs[i],y1=ys[i],x2=xs[i+1],y2=ys[i+1],j=i+2<xs.length?i+2:i+1,x3=xs[j],y3=ys[j],c1x=x1+(x2-x0)/6,c1y=y1+(y2-y0)/6,c2x=x2-(x3-x1)/6,c2y=y2-(y3-y1)/6;d+=" C"+c1x.toFixed(1)+","+c1y.toFixed(1)+" "+c2x.toFixed(1)+","+c2y.toFixed(1)+" "+x2.toFixed(1)+","+y2.toFixed(1);}return d;}
+  function depGlance(w){var range=w.range||"Q",n={W:7,M:5,Q:4,F:9,Y:12}[range]||6,s=depSeriesN(range,n),labs=sparkLabels(range,n),latest=s[s.length-1],first=s[0],delta=(((latest-first)/(first||1))*100).toFixed(1);
+    var W=120,H=44,pad=4,mx=Math.max.apply(null,s),mn=Math.min.apply(null,s),rng=(mx-mn)||1;
+    var xs=s.map(function(v,i){return pad+i*(W-2*pad)/((s.length-1)||1);}),ys=s.map(function(v){return H-pad-((v-mn)/rng)*(H-2*pad);});
+    var line=smoothPath(xs,ys),area=line+" L"+xs[xs.length-1].toFixed(1)+","+H+" L"+xs[0].toFixed(1)+","+H+" Z";
+    var xp=xs.map(function(x){return (x/W*100).toFixed(2);}).join(","),yp=ys.map(function(y){return (y/H*100).toFixed(2);}).join(",");
     return '<div class="kpi-row"><div class="kpi-num"><div class="metric-value" id="depnum" data-latest="'+money(latest)+'">'+money(latest)+'</div><div class="metric-delta">'+ICON("trending_up")+' '+delta+'% '+trendRangeBtn(w)+'</div></div>'+
-    '<div class="kpi-spark dep-spark" data-series="'+s.join(',')+'" data-pts="'+ptsAttr+'" aria-label="Total deposits over the selected window; hover to read a point"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><polyline fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round" points="'+poly+'"/><circle class="dep-dot" r="3.2" fill="var(--brand-fill)" style="opacity:0"/></svg></div></div>';}
+    '<div class="kpi-spark dep-spark" data-series="'+s.join(',')+'" data-labels="'+labs.join("|")+'" data-xp="'+xp+'" data-yp="'+yp+'" tabindex="0" aria-label="Total deposits over the selected window — hover to read a point"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><path d="'+area+'" fill="rgba(45,72,137,.10)"/><path d="'+line+'" fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-hair"></div><div class="ds-dot"></div></div></div>';}
   function depContent(w){
     if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
     var v=w.view||"table";
