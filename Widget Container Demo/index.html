@@ -455,7 +455,8 @@
     else if(range==="M"){for(i=0;i<n;i++)out.push(i===n-1?"This week":(n-1-i)+"w ago");}
     else{var now=6;for(i=n-1;i>=0;i--)out.push(M[(((now-i)%12)+12)%12]);}
     return out;}
-  function smoothPath(xs,ys){var d="M"+xs[0].toFixed(1)+","+ys[0].toFixed(1),i;for(i=0;i<xs.length-1;i++){var x0=xs[i>0?i-1:0],y0=ys[i>0?i-1:0],x1=xs[i],y1=ys[i],x2=xs[i+1],y2=ys[i+1],j=i+2<xs.length?i+2:i+1,x3=xs[j],y3=ys[j],c1x=x1+(x2-x0)/6,c1y=y1+(y2-y0)/6,c2x=x2-(x3-x1)/6,c2y=y2-(y3-y1)/6;d+=" C"+c1x.toFixed(1)+","+c1y.toFixed(1)+" "+c2x.toFixed(1)+","+c2y.toFixed(1)+" "+x2.toFixed(1)+","+y2.toFixed(1);}return d;}
+  /* gentle midpoint smoothing — stays inside the data envelope, no overshoot */
+  function smoothPath(xs,ys){if(xs.length<2)return "M"+xs[0].toFixed(1)+","+ys[0].toFixed(1);var d="M"+xs[0].toFixed(1)+","+ys[0].toFixed(1);for(var i=1;i<xs.length;i++){var xc=((xs[i-1]+xs[i])/2).toFixed(1),yc=((ys[i-1]+ys[i])/2).toFixed(1);d+=" Q"+xs[i-1].toFixed(1)+","+ys[i-1].toFixed(1)+" "+xc+","+yc;}d+=" L"+xs[xs.length-1].toFixed(1)+","+ys[xs.length-1].toFixed(1);return d;}
   function depGlance(w){var range=w.range||"Q",n={W:7,M:5,Q:4,F:9,Y:12}[range]||6,s=depSeriesN(range,n),labs=sparkLabels(range,n),latest=s[s.length-1],first=s[0],delta=(((latest-first)/(first||1))*100).toFixed(1);
     var W=120,H=44,pad=4,mx=Math.max.apply(null,s),mn=Math.min.apply(null,s),rng=(mx-mn)||1;
     var xs=s.map(function(v,i){return pad+i*(W-2*pad)/((s.length-1)||1);}),ys=s.map(function(v){return H-pad-((v-mn)/rng)*(H-2*pad);});
