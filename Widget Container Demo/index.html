@@ -323,18 +323,12 @@
   var SIZE_LABEL={kpi:"Glance",wide:"Explore",large:"Detail",xwide:"Full"};
   var DEPTH_LABEL={kpi:"Glance",wide:"Explore",large:"Detail",xwide:"Full"};
 
-  var DEP=[
-    {name:"General Operating",type:"Checking",incept:"Mar 2016",acct:"••4021",net:1240500,trend:"up"},
-    {name:"Payroll",type:"Checking",incept:"Jan 2018",acct:"••7745",net:382000,trend:"flat"},
-    {name:"Ministry Operations",type:"Checking",incept:"Aug 2017",acct:"••3390",net:214600,trend:"up"},
-    {name:"Youth Program",type:"Checking",incept:"May 2021",acct:"••8123",net:96400,trend:"up"},
-    {name:"Building Fund",type:"Savings",incept:"Jun 2014",acct:"••1180",net:1650000,trend:"up"},
-    {name:"Missions Reserve",type:"Savings",incept:"Sep 2019",acct:"••3362",net:540000,trend:"down"},
-    {name:"Endowment",type:"Savings",incept:"Jan 2012",acct:"••2045",net:820000,trend:"flat"},
-    {name:"Benevolence",type:"Money Market",incept:"Feb 2020",acct:"••9014",net:610400,trend:"up"},
-    {name:"Capital Campaign",type:"Money Market",incept:"Nov 2021",acct:"••5507",net:399000,trend:"up"},
-    {name:"Rainy Day",type:"Money Market",incept:"Jul 2018",acct:"••6672",net:275000,trend:"flat"}
-  ];
+  var DEP_TYPES=["Checking","Savings","Money Market","Certificate of Deposit","Escrow","Restricted Funds","Endowment","Trust Accounts","Operating Reserve","Payroll Clearing","Grant Funds","Building Fund"];
+  var DEP=(function(){var out=[],seed=42;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
+    var big={"Restricted Funds":16,"Grant Funds":9,"Trust Accounts":7};
+    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Facilities","Worship","Children","Fellowship"];
+    var inc=["Jan 2012","Jun 2014","Mar 2016","Aug 2018","Feb 2020","Nov 2022"],trs=["up","up","flat","down"];
+    DEP_TYPES.forEach(function(t){var c=big[t]||(2+Math.floor(r()*3));for(var i=0;i<c;i++){out.push({name:(c>4?(t+" "+("0"+(i+1)).slice(-2)):(suf[i%suf.length]+" "+t)),type:t,incept:inc[Math.floor(r()*6)],acct:"••"+(1000+Math.floor(r()*8999)),net:Math.round(25000+r()*1650000),trend:trs[Math.floor(r()*4)]});}});return out;})();
   var DEP_TOTAL=DEP.reduce(function(s,a){return s+a.net;},0);
   function money(n){return "$"+n.toLocaleString();}
 
