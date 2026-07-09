@@ -364,7 +364,9 @@
   var TYPES=["All types","Checking","Savings","Money Market"];
   var FUND=[{name:"General",net:12400},{name:"Building",net:6200},{name:"Missions",net:3100},{name:"Payroll",net:8800},{name:"Utilities",net:1450},{name:"Software",net:980}];
   var PIE_COLORS=["#2d4889","#4b6ec3","#6e8bd4","#345499","#a9bce6","#8aa2dd"];
-  function depRows(w){var f=w.filter||"All types";var rows=DEP.filter(function(a){return f.indexOf("All")===0||a.type===f;});var s=w.sort||"net-desc";return rows.slice().sort(function(a,b){if(s==="net-asc")return a.net-b.net;if(s==="name")return a.name.localeCompare(b.name);return b.net-a.net;});}
+  /* filter narrows the TABLE only; sort is FIXED (Name, then Inception) — Oisin's rules */
+  function depRows(w){var f=w.filter||"All types";return DEP.filter(function(a){return f.indexOf("All")===0||a.type===f;}).slice().sort(function(a,b){return a.name.localeCompare(b.name);});}
+  function depByType(){var m={},order=[];DEP.forEach(function(a){if(m[a.type]===undefined){m[a.type]=0;order.push(a.type);}m[a.type]+=a.net;});return order.map(function(t){return {name:t,net:m[t]};});}
   function filterBtn(w){var f=w.filter||"All types";return '<button class="filter-chip" data-action="depfilter" data-id="'+w.id+'"><span class="fc-label">Account Type: '+(f.indexOf("All")===0?"All":f)+'</span>'+ICON("expand_more")+'</button>';}
   function typeLabel(w){var f=w.filter||"All types";return f.indexOf("All")===0?"All account types":(f+" accounts");}
   function periodLbl(w){return {W:"week",M:"month",Q:"quarter",F:"fiscal year",Y:"calendar year"}[w.range||"Q"];}
