@@ -399,9 +399,11 @@
   var TYPES=["All types"].concat(DEP_TYPES);
   var FUND=[{name:"General",net:12400},{name:"Building",net:6200},{name:"Missions",net:3100},{name:"Payroll",net:8800},{name:"Utilities",net:1450},{name:"Software",net:980}];
   /* single-hue blue ramp, dark→light, evenly stepped so slices read at a glance (biggest = darkest). Red is reserved for negative/declining only. */
-  /* single-hue blue ramp with strong lightness steps; slices sorted big→small + gaps between arcs so each reads at a glance. Red reserved for negative/declining. */
-  var PIE_COLORS=["#0b2c66","#164293","#2159bd","#3477d1","#5195dd","#77b0e8","#a1c9f1","#cbe2fa"];
-  var OTHERS_COLOR="#b9c4d6";
+  /* professional sequential blue ramp (ColorBrewer "Blues"), slices sorted big→small, contiguous arcs (no gaps). Red reserved for negative/declining. */
+  var PIE_COLORS=["#08306b","#08519c","#2171b5","#4292c6","#6baed6","#9ecae1","#c6dbef","#deebf7"];
+  var OTHERS_COLOR="#cdd2d9";
+  /* darker blues for trend lines (the light ramp steps are invisible as strokes) */
+  var LINE_COLORS=["#08306b","#2171b5","#4292c6","#5b9bd5","#0b4f9c","#7badd6"];
   /* filter narrows the TABLE only; default sort = Name, Balance column is sortable (desc/asc) */
   function depRows(w){var f=w.filter||"All types";var rows=depData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;}).slice();var bs=w.balSort;if(bs==="desc")rows.sort(function(a,b){return b.net-a.net;});else if(bs==="asc")rows.sort(function(a,b){return a.net-b.net;});else rows.sort(function(a,b){return a.name.localeCompare(b.name);});return rows;}
   function depByType(w){var m={},order=[];depData(w).forEach(function(a){if(m[a.type]===undefined){m[a.type]=0;order.push(a.type);}m[a.type]+=a.net;});return order.map(function(t){return {name:t,net:m[t]};});}
