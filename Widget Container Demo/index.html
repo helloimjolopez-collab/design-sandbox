@@ -474,7 +474,7 @@
     return out;}
   /* gentle midpoint smoothing — stays inside the data envelope, no overshoot */
   function smoothPath(xs,ys){if(xs.length<2)return "M"+xs[0].toFixed(1)+","+ys[0].toFixed(1);var d="M"+xs[0].toFixed(1)+","+ys[0].toFixed(1);for(var i=1;i<xs.length;i++){var xc=((xs[i-1]+xs[i])/2).toFixed(1),yc=((ys[i-1]+ys[i])/2).toFixed(1);d+=" Q"+xs[i-1].toFixed(1)+","+ys[i-1].toFixed(1)+" "+xc+","+yc;}d+=" L"+xs[xs.length-1].toFixed(1)+","+ys[xs.length-1].toFixed(1);return d;}
-  function depGlance(w){var range=w.range||"Q",n={W:7,M:5,Q:4,F:9,Y:12}[range]||6,s=depSeriesN(range,n),labs=sparkLabels(range,n),latest=s[s.length-1],first=s[0],delta=(((latest-first)/(first||1))*100).toFixed(1);
+  function depGlance(w){var range=w.range||"Q",n={W:7,M:5,Q:4,F:9,Y:12}[range]||6,total=depData(w).reduce(function(x,a){return x+a.net;},0),s=depSeriesN(range,n,total),labs=sparkLabels(range,n),latest=s[s.length-1],first=s[0],delta=(((latest-first)/(first||1))*100).toFixed(1);
     var W=120,H=44,pad=4,mx=Math.max.apply(null,s),mn=Math.min.apply(null,s),rng=(mx-mn)||1;
     var xs=s.map(function(v,i){return pad+i*(W-2*pad)/((s.length-1)||1);}),ys=s.map(function(v){return H-pad-((v-mn)/rng)*(H-2*pad);});
     var line=smoothPath(xs,ys),area=line+" L"+xs[xs.length-1].toFixed(1)+","+H+" L"+xs[0].toFixed(1)+","+H+" Z";
