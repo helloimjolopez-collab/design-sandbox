@@ -603,7 +603,9 @@
     if(a==="remove"){var dr=cur();dr.widgets=dr.widgets.filter(function(x){return x.id!==id;});pop=null;render();return;}
   });
   document.addEventListener("dblclick",function(e){var b=e.target.closest&&e.target.closest('[data-action="switcher"]');if(!b)return;dashRenaming=true;focusDash=true;pop=null;setStatus("Rename the dashboard — type and press Enter.");render();});
-  document.addEventListener("mouseover",function(e){var el=e.target.closest&&e.target.closest("[data-seg]");if(!el)return;var pw=el.closest(".pie-wrap");if(!pw)return;pw.classList.add("dim");var m=pw.querySelectorAll('[data-seg="'+el.getAttribute("data-seg")+'"]');for(var k=0;k<m.length;k++)m[k].classList.add("hi");});
+  document.addEventListener("mouseover",function(e){var el=e.target.closest&&e.target.closest("[data-seg]");if(!el)return;var pw=el.closest(".pie-wrap");if(!pw)return;pw.classList.add("dim");var sg=el.getAttribute("data-seg"),m=pw.querySelectorAll('[data-seg="'+sg+'"]');for(var k=0;k<m.length;k++)m[k].classList.add("hi");
+    /* auto-scroll the legend so the matching item is visible even if it's below the fold */
+    var lg=pw.querySelector(".legend"),item=pw.querySelector('.legend .leg[data-seg="'+sg+'"]');if(lg&&item){var lt=item.offsetTop,lb=lt+item.offsetHeight;if(lt<lg.scrollTop)lg.scrollTop=lt;else if(lb>lg.scrollTop+lg.clientHeight)lg.scrollTop=lb-lg.clientHeight;}});
   document.addEventListener("mouseout",function(e){var el=e.target.closest&&e.target.closest("[data-seg]");if(!el)return;var pw=el.closest(".pie-wrap");if(!pw)return;pw.classList.remove("dim");var m=pw.querySelectorAll(".hi");for(var k=0;k<m.length;k++)m[k].classList.remove("hi");});
   /* info icon: open tooltip on hover, keep open while hovering the bubble */
   document.addEventListener("mouseover",function(e){if(!e.target.closest)return;var ic=e.target.closest('[data-action="winfo"]');if(ic){var id=ic.getAttribute("data-id");clearTimeout(infoTimer);if(!(pop&&pop.type==="winfo"&&pop.id===id)){pop={type:"winfo",id:id};render();}return;}if(pop&&pop.type==="winfo"&&e.target.closest("#overlay .pop")){clearTimeout(infoTimer);}});
