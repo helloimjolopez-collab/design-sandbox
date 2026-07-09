@@ -370,9 +370,16 @@
   var TYPES=["All types","Checking","Savings","Money Market"];
   var FUND=[{name:"General",net:12400},{name:"Building",net:6200},{name:"Missions",net:3100},{name:"Payroll",net:8800},{name:"Utilities",net:1450},{name:"Software",net:980}];
   var PIE_COLORS=["#2d4889","#4b6ec3","#6e8bd4","#345499","#a9bce6","#8aa2dd"];
-  /* filter narrows the TABLE only; sort is FIXED (Name, then Inception) — Oisin's rules */
-  function depRows(w){var f=w.filter||"All types";return DEP.filter(function(a){return f.indexOf("All")===0||a.type===f;}).slice().sort(function(a,b){return a.name.localeCompare(b.name);});}
+  /* filter narrows the TABLE only; default sort = Name, Balance column is sortable (desc/asc) */
+  function depRows(w){var f=w.filter||"All types";var rows=DEP.filter(function(a){return f.indexOf("All")===0||a.type===f;}).slice();var bs=w.balSort;if(bs==="desc")rows.sort(function(a,b){return b.net-a.net;});else if(bs==="asc")rows.sort(function(a,b){return a.net-b.net;});else rows.sort(function(a,b){return a.name.localeCompare(b.name);});return rows;}
   function depByType(){var m={},order=[];DEP.forEach(function(a){if(m[a.type]===undefined){m[a.type]=0;order.push(a.type);}m[a.type]+=a.net;});return order.map(function(t){return {name:t,net:m[t]};});}
+  /* helpers for working charts */
+  function fmtAxis(v){if(v>=1e6)return "$"+(v/1e6).toFixed(1).replace(/\.0$/,"")+"M";if(v>=1e3)return "$"+Math.round(v/1e3)+"k";return "$"+v;}
+  function topN(arr,n){var s=arr.slice().sort(function(a,b){return b.net-a.net;});if(s.length<=n)return s;var top=s.slice(0,n-1),rest=s.slice(n-1).reduce(function(x,a){return x+a.net;},0);top.push({name:"Others",net:rest,others:true});return top;}
+  function depScope(w){var f=w.filter||"All types";return DEP.filter(function(a){return f.indexOf("All")===0||a.type===f;});}
+  function depDist(w){var f=w.filter||"All types";if(f.indexOf("All")===0){if(w.dist==="accounts")return {by:"account",segs:topN(DEP.map(function(a){return {name:a.name,net:a.net};}),6)};return {by:"type",segs:depByType()};}return {by:"account",segs:topN(depScope(w).map(function(a){return {name:a.name,net:a.net};}),6)};}
+  function acctSeries(a,range){var n={W:6,M:5,Q:6,F:6,Y:12}[range]||6,end=a.net,slope={up:0.74,flat:0.97,down:1.22}[a.trend||"up"],start=end*slope,arr=[];for(var i=0;i<n;i++){var t=n>1?i/(n-1):1,wob=Math.sin((i+a.name.length)*0.9)*end*0.02;arr.push(Math.round(start+(end-start)*t+wob));}arr[n-1]=end;return arr;}
+  function rangeMonths(range,n){var lab={W:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],M:["Wk1","Wk2","Wk3","Wk4","Wk5"],Q:["Jan","Feb","Mar","Apr","May","Jun"],F:["P1","P3","P5","P7","P9","P11"],Y:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}[range]||[];var out=[];for(var i=0;i<n;i++)out.push(lab[i]||("T"+(i+1)));return out;}
   function filterBtn(w){var f=w.filter||"All types";return '<button class="filter-chip" data-action="depfilter" data-id="'+w.id+'"><span class="fc-label">Account Type: '+(f.indexOf("All")===0?"All":f)+'</span>'+ICON("expand_more")+'</button>';}
   function typeLabel(w){var f=w.filter||"All types";return f.indexOf("All")===0?"All account types":(f+" accounts");}
   function periodLbl(w){return {W:"week",M:"month",Q:"quarter",F:"fiscal year",Y:"calendar year"}[w.range||"Q"];}
