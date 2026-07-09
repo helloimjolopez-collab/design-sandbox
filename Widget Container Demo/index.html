@@ -350,7 +350,9 @@
 
   var dashboards=[
     {id:"d1",name:"Dashboard",custom:true,widgets:[
-      {id:"dep",title:"Deposit Accounts",kind:"deposits",size:"kpi",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",actions:[{icon:"download",label:"Export as"},{icon:"ios_share",label:"Share"}]},
+      {id:"dep",title:"Deposit Accounts",kind:"deposits",size:"large",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"dep2",title:"Deposit Accounts — edge cases (120 accounts)",kind:"deposits",size:"large",dataset:"big",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"dist",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"dep3",title:"Deposit Accounts — no data",kind:"deposits",size:"large",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",state:"empty",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"}]},
       {id:"cash",title:"Cash on hand",kind:"metric",size:"kpi",tiers:["kpi","wide"],range:"Q"},
       {id:"pmt",title:"Payments over time",kind:"chart",size:"wide",tiers:["kpi","wide","large"],range:"Q"},
       {id:"fund",title:"Spend by fund",kind:"table",size:"wide",tiers:["wide","large"]},
@@ -582,6 +584,7 @@
     if(a==="pick-size"){var w=find(id);if(w)w.size=t.getAttribute("data-size");pop=null;setStatus("“"+w.title+"” → "+DEPTH_LABEL[w.size]+".");render();return;}
     if(a==="depfilter"){pop=(pop&&pop.type==="depfilter"&&pop.id===id)?null:{type:"depfilter",id:id};render();return;}
     if(a==="cmenu"){pop=(pop&&pop.type==="cmenu"&&pop.id===id)?null:{type:"cmenu",id:id};render();return;}
+    if(a==="export"){setStatus("Exported the current Deposit Accounts view as "+t.getAttribute("data-fmt")+".");pop=null;render();return;}
     if(a==="set-depfilter"){var wsf=find(id);if(wsf)wsf.filter=t.getAttribute("data-f");pop=null;render();return;}
     if(a==="advfilter"){pop=(pop&&pop.type==="advfilter"&&pop.id===id)?null:{type:"advfilter",id:id};render();return;}
     if(a==="set-sort"){var wss=find(id);if(wss)wss.sort=t.getAttribute("data-s");pop=null;setStatus("Sorted by "+t.textContent.trim().toLowerCase()+".");render();return;}
