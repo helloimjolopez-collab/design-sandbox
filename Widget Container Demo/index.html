@@ -442,9 +442,9 @@
     if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
     var v=w.view||"table";
     // Explore: one compact view (table / by-type pie / trend) via toggle
-    if(w.size==="wide") return depTop(w,{toggle:true})+(v==="trend"?depTrend(w,false):v==="pie"?pie(depByType(),130,"row"):depTable(w,false));
-    // Detail: one taller view (full-column table / stacked by-type pie / trend + legend)
-    if(w.size==="large") return depTop(w,{toggle:true})+(v==="trend"?depTrend(w,true):v==="pie"?pie(depByType(),170,"col"):depTable(w,true));
+    if(w.size==="wide") return depTop(w,{toggle:true})+(v==="trend"?depTrend(w,false):v==="dist"?donutChart(w,false):depTable(w,false));
+    // Detail: one taller view (full-column table / distribution / trend + legend)
+    if(w.size==="large") return depTop(w,{toggle:true})+(v==="trend"?depTrend(w,true):v==="dist"?donutChart(w,true):depTable(w,true));
     // Full: Balances = table | by-type pie side by side; toggle to Trend = full-width
     return depTop(w,{toggle:true})+(v==="trend"?depTrend(w,true):depFull(w));
   }
