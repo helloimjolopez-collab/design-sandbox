@@ -545,6 +545,10 @@
     if(a==="toggle-advf"){var wtf=find(id);if(wtf){var kk="f_"+t.getAttribute("data-k");wtf[kk]=!wtf[kk];}render();return;}
     if(a==="clear-advf"){var wcf=find(id);if(wcf){wcf.sort="net-desc";wcf.f_active=false;wcf.f_funded=false;}pop=null;setStatus("Filters & sort cleared.");render();return;}
     if(a==="dep-view"){var wv=find(id);if(wv)wv.view=t.getAttribute("data-v");render();return;}
+    if(a==="sort-bal"){var wsb=find(id);if(wsb)wsb.balSort=(wsb.balSort==="desc")?"asc":"desc";render();return;}
+    if(a==="set-dist"){var wds=find(id);if(wds)wds.dist=t.getAttribute("data-d");render();return;}
+    if(a==="dist-drill"){var wdr=find(id),by=t.getAttribute("data-by"),val=t.getAttribute("data-val");if(by==="type"&&wdr){wdr.filter=val;setStatus("Filtered to "+val+" — distribution now breaks down by individual account.");}else{setStatus("Would open “"+val+"” account detail.");}pop=null;render();return;}
+    if(a==="open-account"){setStatus("Would open “"+t.getAttribute("data-acct")+"” account detail.");pop=null;render();return;}
     if(a==="rangemenu"){pop=(pop&&pop.type==="rangemenu"&&pop.id===id)?null:{type:"rangemenu",id:id};render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
