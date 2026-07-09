@@ -338,6 +338,13 @@
     var inc=["Jan 2012","Jun 2014","Mar 2016","Aug 2018","Feb 2020","Nov 2022"],trs=["up","up","flat","down"];
     DEP_TYPES.forEach(function(t){var c=big[t]||(2+Math.floor(r()*3));for(var i=0;i<c;i++){out.push({name:(c>4?(t+" "+("0"+(i+1)).slice(-2)):(suf[i%suf.length]+" "+t)),type:t,incept:inc[Math.floor(r()*6)],acct:"••"+(1000+Math.floor(r()*8999)),net:Math.round(25000+r()*1650000),trend:trs[Math.floor(r()*4)]});}});return out;})();
   var DEP_TOTAL=DEP.reduce(function(s,a){return s+a.net;},0);
+  /* large dataset for the edge-case instance: ~120 accounts across ~20 types, some types with 20–33 accounts */
+  var DEP_BIG=(function(){var out=[],seed=99;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
+    var types=DEP_TYPES.concat(["Sweep Account","Lockbox","Investment Pool","Foundation Fund","Scholarship Fund","Cemetery Trust","Debt Service","Capital Reserve"]);
+    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Facilities","Worship"];
+    types.forEach(function(t,ti){var c=(ti%5===0)?(20+Math.floor(r()*14)):(3+Math.floor(r()*6));for(var i=0;i<c;i++){out.push({name:(c>4?(t+" "+("0"+(i+1)).slice(-2)):(suf[i%suf.length]+" "+t)),type:t,incept:["Jan 2012","Jun 2014","Mar 2016","Aug 2018","Feb 2020","Nov 2022"][Math.floor(r()*6)],acct:"••"+(1000+Math.floor(r()*8999)),net:Math.round(15000+r()*1650000),trend:["up","up","flat","down"][Math.floor(r()*4)]});}});return out;})();
+  function depData(w){return (w&&w.dataset==="big")?DEP_BIG:DEP;}
+  function depTypes(w){var seen={},out=["All types"];depData(w).forEach(function(a){if(!seen[a.type]){seen[a.type]=1;out.push(a.type);}});return out;}
   function money(n){return "$"+n.toLocaleString();}
 
   var dashboards=[
