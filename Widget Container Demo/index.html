@@ -702,6 +702,7 @@
     if(a==="refresh"){pop=null;refresh(id);return;}
     if(a==="retry"){refresh(id);return;}
     if(a==="rename"){renaming=id;pop=null;render();return;}
+    if(a==="about"){var wab=find(id);if(wab){var ab=aboutOf(wab);showModal(ab.h,ab.b);}return;}
     if(a==="duplicate"){var dd=cur(),s=find(id),ix=dd.widgets.findIndex(function(x){return x.id===id;});if(s)dd.widgets.splice(ix+1,0,Object.assign({},s,{id:id+"-"+Date.now()}));pop=null;render();return;}
     if(a==="remove"){var dr=cur();dr.widgets=dr.widgets.filter(function(x){return x.id!==id;});pop=null;render();return;}
   });
