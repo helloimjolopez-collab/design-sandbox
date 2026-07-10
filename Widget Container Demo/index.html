@@ -262,8 +262,9 @@
   .delta-ref{color:var(--txt-subtle);font-weight:500;}
   .dep-full{flex:1;min-height:0;display:flex;gap:12px;padding:12px 14px;}
   .menu-scroll{max-height:240px;overflow-y:auto;}
-  .filter-chip{display:inline-flex;align-items:center;gap:2px;font-family:inherit;font-size:12px;font-weight:500;color:var(--txt-secondary);background:transparent;border:1px solid var(--stroke-widget);border-radius:8px;padding:4px 6px 4px 10px;cursor:pointer;max-width:240px;}
+  .filter-chip{display:inline-flex;align-items:center;gap:2px;font-family:inherit;font-size:13px;font-weight:500;color:var(--txt-primary);background:transparent;border:1px solid var(--stroke-widget);border-radius:8px;padding:4px 6px 4px 10px;cursor:pointer;max-width:260px;}
   .fc-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .fc-strong{font-weight:700;}
   .filter-chip:hover{background:var(--wn-200);color:var(--txt-primary);}
   .filter-chip .material-symbols-rounded{font-size:16px;}
   .whover{display:inline-flex;align-items:center;gap:0;flex:0 0 auto;margin-left:3px;}
@@ -479,7 +480,7 @@
     var ac=depScope(w).map(function(a){return {name:a.name,net:a.net};});return {by:"account",segs:topN(ac,N),total:ac.length};}
   function acctSeries(a,range){var n={W:6,M:5,Q:6,F:6,Y:12}[range]||6,end=a.net,slope={up:0.74,flat:0.97,down:1.22}[a.trend||"up"],start=end*slope,arr=[];for(var i=0;i<n;i++){var t=n>1?i/(n-1):1,wob=Math.sin((i+a.name.length)*0.9)*end*0.02;arr.push(Math.round(start+(end-start)*t+wob));}arr[n-1]=end;return arr;}
   function rangeMonths(range,n){var lab={W:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],M:["Wk1","Wk2","Wk3","Wk4","Wk5"],Q:["Jan","Feb","Mar","Apr","May","Jun"],F:["P1","P3","P5","P7","P9","P11"],Y:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}[range]||[];var out=[];for(var i=0;i<n;i++)out.push(lab[i]||("T"+(i+1)));return out;}
-  function filterBtn(w){var f=w.filter||"All types";return '<button class="filter-chip" data-action="depfilter" data-id="'+w.id+'"><span class="fc-label">Account Type: '+(f.indexOf("All")===0?"All":f)+'</span>'+ICON("expand_more")+'</button>';}
+  function filterBtn(w){var f=w.filter||"All types",allT=f.indexOf("All")===0;return '<button class="filter-chip" data-action="depfilter" data-id="'+w.id+'">'+(allT?'<span class="fc-label">All account types</span>':'<span class="fc-label"><span class="fc-strong">'+f+'</span> accounts</span>')+ICON("expand_more")+'</button>';}
   function typeLabel(w){var f=w.filter||"All types";return f.indexOf("All")===0?"All account types":(f+" accounts");}
   function periodLbl(w){return {W:"week",M:"month",Q:"quarter",F:"fiscal year",Y:"calendar year"}[w.range||"Q"];}
   function secHead(t){return '<div class="dep-col-h" style="padding:8px 16px 4px">'+t+'</div>';}
