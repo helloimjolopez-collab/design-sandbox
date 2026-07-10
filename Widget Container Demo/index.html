@@ -502,27 +502,31 @@
     var range=w.range||"Q",f=w.filter||"All types",allT=f.indexOf("All")===0,tmode=w.tmode||"total";
     var scopeAll=depScope(w),agg=null;scopeAll.forEach(function(a){var s=acctSeries(a,range);if(!agg)agg=s.slice();else s.forEach(function(v,j){agg[j]+=v;});});agg=agg||[0];
     var atot=agg[agg.length-1],af=agg[0],ad=af?(((atot-af)/af)*100):0,neg=ad<0;
-    var CAP=({wide:4,large:7,xwide:10})[w.size]||5,extra=0,total=0,set;
-    if(tmode==="breakdown"){var fullset=trendSet(w,range);total=fullset.length;if(total>CAP)extra=total-CAP;set=fullset.slice(0,CAP);}
-    else{set=[{name:(allT?"All accounts":f),series:agg}];}
-    var brk=(tmode==="breakdown"),n=(set[0]&&set[0].series)?set[0].series.length:0,ramp=blueRamp(Math.max(1,set.length));
-    var lo=Infinity,hi=-Infinity;set.forEach(function(x){x.series.forEach(function(v){if(v<lo)lo=v;if(v>hi)hi=v;});});
-    if(!isFinite(lo)){lo=0;hi=1;}var span=(hi-lo)||Math.abs(hi)||1;lo=Math.max(0,lo-span*0.18);hi=hi+span*0.18;var dom=(hi-lo)||1;
+    var multi=(tmode==="breakdown");
+    var fullSet=multi?trendSet(w,range):[{name:(allT?"All accounts":f),series:agg}];
+    var names=fullSet.map(function(x){return x.name;}),ramp=blueRamp(Math.max(1,fullSet.length));
+    var isoName=(multi&&w.trIso&&names.indexOf(w.trIso)>-1)?w.trIso:null;
+    var plotted=isoName?fullSet.filter(function(x){return x.name===isoName;}):fullSet;
+    var n=(fullSet[0]&&fullSet[0].series)?fullSet[0].series.length:0;
+    var lo=Infinity,hi=-Infinity;plotted.forEach(function(x){x.series.forEach(function(v){if(v<lo)lo=v;if(v>hi)hi=v;});});
+    if(!isFinite(lo)){lo=0;hi=1;}var sp=(hi-lo)||Math.abs(hi)||1;lo=Math.max(0,lo-sp*0.18);hi=hi+sp*0.18;var dom=(hi-lo)||1;
     function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
     var grid="";[0,50,100].forEach(function(gy){grid+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="var(--stroke-widget)" stroke-width="1" vector-effect="non-scaling-stroke"'+(gy===100?'':' stroke-dasharray="2 4" opacity="0.5"')+'/>';});
-    var lines="";set.forEach(function(x,i){var p=x.series.map(function(v,j){return px(j).toFixed(2)+','+py(v).toFixed(2);}).join(" ");lines+='<polyline fill="none" stroke="'+ramp[i]+'" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+p+'"/>';});
+    var lines=plotted.map(function(x){var idx=names.indexOf(x.name),p=x.series.map(function(v,j){return px(j).toFixed(2)+','+py(v).toFixed(2);}).join(" ");return '<polyline class="tl" data-idx="'+idx+'" fill="none" stroke="'+ramp[idx]+'" stroke-width="1.7" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+p+'"/>';}).join("");
     var svg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none">'+grid+lines+'</svg>';
     var yl='<span style="top:0%">'+fmtAxis(hi)+'</span><span style="top:50%">'+fmtAxis((hi+lo)/2)+'</span><span style="top:100%">'+fmtAxis(lo)+'</span>';
     var months=rangeMonths(range,n),tk=(n<=1)?[0]:(n<=3)?[0,n-1]:[0,Math.round((n-1)/3),Math.round((n-1)*2/3),n-1];tk=tk.filter(function(v,i,a){return a.indexOf(v)===i;});
     var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
-    var ends="";if(brk){var lbls=set.map(function(x,i){return {y:py(x.series[x.series.length-1]),name:x.name,c:ramp[i]};}).sort(function(a,b){return a.y-b.y;});for(var q=1;q<lbls.length;q++){if(lbls[q].y-lbls[q-1].y<9)lbls[q].y=lbls[q-1].y+9;}lbls.forEach(function(lb){var yy=Math.max(2,Math.min(98,lb.y));ends+='<div class="te" style="top:'+yy+'%"><span class="te-dot" style="background:'+lb.c+'"></span><span class="te-nm">'+lb.name+'</span></div>';});}
-    var blob=set.map(function(x,i){return x.name+"|"+ramp[i]+"|"+x.series.join(",");}).join(";");
-    var plot='<div class="tr-plot'+(brk?" brk":"")+'"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-blob="'+blob+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div>'+(brk?'<div class="tr-ends">'+ends+'</div>':'')+'<div class="tr-xax">'+xl+'</div></div>';
+    var legend="";if(multi){legend='<div class="tr-legend scroll">'+fullSet.map(function(x){var idx=names.indexOf(x.name),last=x.series[x.series.length-1];return '<div class="tr-lg-row'+(isoName===x.name?" sel":"")+'" data-idx="'+idx+'" data-action="tr-iso" data-id="'+w.id+'" data-name="'+x.name.replace(/"/g,"&quot;")+'" title="'+x.name.replace(/"/g,"&quot;")+'"><span class="tr-lg-sw" style="background:'+ramp[idx]+'"></span><span class="tr-lg-nm">'+x.name+'</span><span class="tr-lg-v">'+fmtAxis(last)+'</span></div>';}).join("")+'</div>';}
+    var blob=plotted.map(function(x){var idx=names.indexOf(x.name);return x.name+"|"+ramp[idx]+"|"+idx+"|"+x.series.join(",");}).join(";");
+    var plot='<div class="tr-plot'+(multi?" multi":"")+'"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-id="'+w.id+'" data-multi="'+(multi?1:0)+'" data-blob="'+blob.replace(/"/g,"&quot;")+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div><div class="tr-xax">'+xl+'</div>'+legend+'</div>';
     var bLabel=allT?"By type":"By account";
-    var toggle='<div class="vtoggle" role="group" aria-label="Trend breakdown"><button class="vt'+(tmode==="total"?" on":"")+'" data-action="tmode" data-id="'+w.id+'" data-m="total" aria-pressed="'+(tmode==="total")+'">Total</button><button class="vt'+(brk?" on":"")+'" data-action="tmode" data-id="'+w.id+'" data-m="breakdown" aria-pressed="'+brk+'">'+bLabel+'</button></div>';
-    var head='<div class="tr-head"><div class="tr-metric"><span class="tr-lbl">Total balance'+(allT?"":" · "+f)+'</span><span class="tr-val">'+money(atot)+'</span><span class="trend'+(neg?" neg":"")+'">'+ICON(neg?"trending_down":"trending_up")+ad.toFixed(1)+'%</span><button class="trend-range" data-action="rangemenu" data-id="'+w.id+'">vs '+periodLbl(w)+ICON("expand_more")+'</button></div>'+toggle+'</div>';
-    var more="";if(brk&&extra>0){more=allT?('<button class="ln-more" data-action="wsize" data-id="'+w.id+'">Showing the top '+CAP+' of '+total+' types — resize this widget for more</button>'):('<button class="ln-more" data-action="dep-view" data-id="'+w.id+'" data-v="table">Showing the top '+CAP+' of '+total+' accounts — open the Table for the full list</button>');}
-    return head+plot+more;}
+    var toggle='<div class="vtoggle" role="group" aria-label="Trend breakdown"><button class="vt'+(tmode==="total"?" on":"")+'" data-action="tmode" data-id="'+w.id+'" data-m="total" aria-pressed="'+(tmode==="total")+'">Total</button><button class="vt'+(multi?" on":"")+'" data-action="tmode" data-id="'+w.id+'" data-m="breakdown" aria-pressed="'+multi+'">'+bLabel+'</button></div>';
+    var left;
+    if(isoName){left='<button class="tr-back" data-action="tr-iso-clear" data-id="'+w.id+'">'+ICON("arrow_back")+'All '+(allT?"types":"accounts")+'</button><span class="tr-iso-nm">'+isoName+'</span>';}
+    else{left='<span class="tr-lbl">Total balance'+(allT?"":" · "+f)+'</span><span class="tr-val">'+money(atot)+'</span><span class="trend'+(neg?" neg":"")+'">'+ICON(neg?"trending_down":"trending_up")+ad.toFixed(1)+'%</span><button class="trend-range" data-action="rangemenu" data-id="'+w.id+'">vs '+periodLbl(w)+ICON("expand_more")+'</button>';}
+    var head='<div class="tr-head"><div class="tr-metric">'+left+'</div>'+toggle+'</div>';
+    return head+plot;}
   function donutChart(w,big){var d=depDist(w),segs=d.segs,tot=segs.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",shownReal=segs.filter(function(a){return !a.others;}).length,ramp=blueRamp(shownReal),grouped=(d.total||shownReal)-shownReal;
     segs.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=a.others?OTHERS_COLOR:ramp[i];var drill=a.others?(' data-action="others" data-id="'+w.id+'" data-n="'+grouped+'" data-kind="'+d.by+'"'):(' data-action="dist-drill" data-id="'+w.id+'" data-by="'+d.by+'" data-val="'+a.name+'"');arcs+='<circle class="seg" data-seg="'+i+'"'+drill+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;legend+='<div class="leg" data-seg="'+i+'"'+drill+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
     var allT=(w.filter||"All types").indexOf("All")===0,shown=segs.filter(function(a){return !a.others;}).length;
