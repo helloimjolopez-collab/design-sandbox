@@ -543,10 +543,9 @@
     return head+plot;}
   function donutChart(w,big){var d=depDist(w),segs=d.segs,tot=segs.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",shownReal=segs.filter(function(a){return !a.others;}).length,ramp=blueRamp(shownReal),grouped=(d.total||shownReal)-shownReal;
     segs.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=a.others?OTHERS_COLOR:ramp[i];var drill=a.others?(' data-action="others" data-id="'+w.id+'" data-n="'+grouped+'" data-kind="'+d.by+'"'):(' data-action="dist-drill" data-id="'+w.id+'" data-by="'+d.by+'" data-val="'+a.name+'"');arcs+='<circle class="seg" data-seg="'+i+'"'+drill+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;legend+='<div class="leg" data-seg="'+i+'"'+drill+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
-    var allT=(w.filter||"All types").indexOf("All")===0,shown=segs.filter(function(a){return !a.others;}).length;
-    var base=(d.by==="type"?"By account type":"Top accounts"+(allT?"":" · "+w.filter));
-    var note=(d.total&&shown<d.total)?' · top '+shown+' of '+d.total:"";
-    var head='<div class="dep-chead" style="border:0;padding:6px 14px 2px"><span class="dep-chead-title">'+base+note+'</span>'+(allT?tog2([["type","By type"],["accounts","Top accounts"]],(w.dist==="accounts"?"accounts":"type"),w):"")+'</div>';
+    var allT=(w.filter||"All types").indexOf("All")===0;
+    var base=(d.by==="type"?"By account type":"By individual account"+(allT?"":" · "+w.filter));
+    var head='<div class="dep-chead" style="border:0;padding:6px 14px 2px"><span class="dep-chead-title">'+base+'</span>'+(allT?tog2([["type","Account types"],["accounts","Individual accounts"]],(w.dist==="accounts"?"accounts":"type"),w):"")+'</div>';
     var DS=({wide:150,large:250,xwide:210})[w.size]||(big?186:150);
     return head+'<div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+fmtAxis(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend">'+legend+'</div></div>';}
   function depFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div><div class="dep-col">'+donutChart(w,true)+'</div></div>';}
