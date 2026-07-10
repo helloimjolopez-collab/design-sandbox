@@ -679,7 +679,9 @@
     if(a==="export"){var we=find(id);setStatus("Exported the current “"+(we?we.title:"")+"” view as "+t.getAttribute("data-fmt")+".");pop=null;render();return;}
     if(a==="company-dd"){companyQuery="";pop={type:"companydd",id:id};render();return;}
     if(a==="set-company"){var wsc=find(id);if(wsc)wsc.company=t.getAttribute("data-co");companyQuery="";pop={type:"cmenu",id:id};render();return;}
-    if(a==="set-depfilter"){var wsf=find(id);if(wsf)wsf.filter=t.getAttribute("data-f");pop=null;render();return;}
+    if(a==="set-depfilter"){var wsf=find(id);if(wsf){wsf.filter=t.getAttribute("data-f");wsf.trIso=null;}pop=null;render();return;}
+    if(a==="tr-iso"){var wti=find(id);if(wti)wti.trIso=t.getAttribute("data-name");render();return;}
+    if(a==="tr-iso-clear"){var wtc=find(id);if(wtc)wtc.trIso=null;render();return;}
     if(a==="advfilter"){pop=(pop&&pop.type==="advfilter"&&pop.id===id)?null:{type:"advfilter",id:id};render();return;}
     if(a==="set-sort"){var wss=find(id);if(wss)wss.sort=t.getAttribute("data-s");pop=null;setStatus("Sorted by "+t.textContent.trim().toLowerCase()+".");render();return;}
     if(a==="toggle-advf"){var wtf=find(id);if(wtf){var kk="f_"+t.getAttribute("data-k");wtf[kk]=!wtf[kk];}render();return;}
