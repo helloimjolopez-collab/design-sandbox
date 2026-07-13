@@ -171,7 +171,7 @@
   .wt-row .dt-tr{flex:0 0 76px;text-align:right;overflow:visible;}
   .rtrend{display:inline-flex;align-items:center;gap:1px;justify-content:flex-end;font-weight:600;color:var(--txt-pos);font-variant-numeric:tabular-nums;}
   .rtrend.neg{color:var(--red-100);}
-  .rtrend .material-symbols-rounded{font-size:15px;font-weight:700;font-variation-settings:'wght' 700;}
+  .rtrend .material-symbols-rounded{font-size:14px;font-variation-settings:'wght' 500;}
   .dep-mhead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:12px 16px 8px;}
   .dmh-lbl{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-subtle);}
   .dmh-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -565,8 +565,8 @@
     rows.sort(function(a,b){if(key==="name")return dir*a.name.localeCompare(b.name);if(key==="type")return dir*a.type.localeCompare(b.type);if(key==="trend")return dir*(trendPct(a)-trendPct(b));return dir*(a.net-b.net);});
     var tot=rows.reduce(function(s,a){return s+a.net;},0);
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="tsort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
-    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Name")+'</span><span class="dt-c">'+sb("type","Type")+'</span><span class="dt-c dt-tr">'+sb("trend","Trend")+'</span><span class="wt-c2">'+sb("net","Balance")+'</span></div>';
-    var body=rows.map(function(a){var tp=trendPct(a),tn=tp<0,esc=a.type.replace(/"/g,"&quot;");return '<div class="wt-row" data-action="open-account" data-id="'+w.id+'" data-acct="'+a.name+'"><span class="lr-main">'+a.name+'</span><span class="dt-c"><span class="type-badge" data-action="dist-drill" data-id="'+w.id+'" data-by="type" data-val="'+esc+'" title="Show '+esc+'">'+a.type+'</span></span><span class="dt-c dt-tr"><span class="rtrend'+(tn?" neg":"")+'">'+ICON(tn?"south_east":"north_east")+Math.abs(tp).toFixed(1)+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Name")+'</span><span class="dt-c dt-type">'+sb("type","Type")+'</span><span class="dt-c dt-tr">'+sb("trend","Trend")+'</span><span class="wt-c2">'+sb("net","Balance")+'</span></div>';
+    var body=rows.map(function(a){var tp=trendPct(a),tn=tp<0,esc=a.type.replace(/"/g,"&quot;");return '<div class="wt-row" data-action="open-account" data-id="'+w.id+'" data-acct="'+a.name+'"><span class="lr-main">'+a.name+'</span><span class="dt-c dt-type"><span class="type-badge" data-action="dist-drill" data-id="'+w.id+'" data-by="type" data-val="'+esc+'" title="Show '+esc+'">'+a.type+'</span></span><span class="dt-c dt-tr"><span class="rtrend'+(tn?" neg":"")+'"><span class="material-symbols-rounded">'+(tn?"arrow_drop_down":"arrow_drop_up")+'</span>'+Math.abs(tp).toFixed(1)+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
   /* Balance Trend — a line per account over trailing months; a declining account is flagged (demo: Missions Reserve). Compare-To = the range control. */
   /* Trend dimension follows the filter: All types → one line per account TYPE; a specific type → one line per ACCOUNT in it */
