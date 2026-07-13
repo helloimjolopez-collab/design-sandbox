@@ -546,7 +546,8 @@
     var rng=w.range||"Q";
     var head='<div class="wt-row wt-head"><span class="lr-main">Name</span><span class="dt-c">Inception</span><span class="dt-c">Account #</span><span class="dt-c dt-tr">Trend</span><span class="wt-c2">'+balHead(w)+'</span></div>';
     var body=rows.map(function(a){var ser=acctSeries(a,rng),tp=((ser[ser.length-1]-ser[0])/(ser[0]||1))*100,tn=tp<0;return '<div class="wt-row" data-action="open-account" data-id="'+w.id+'" data-acct="'+a.name+'"><span class="lr-main">'+a.name+'</span><span class="dt-c">'+a.incept+'</span><span class="dt-c">'+a.acct+'</span><span class="dt-c dt-tr"><span class="rtrend'+(tn?" neg":"")+'">'+ICON(tn?"arrow_downward":"arrow_upward")+Math.abs(tp).toFixed(1)+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
-    return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+rows.length+' accounts</span><span>'+money(tot)+'</span></div>';}
+    var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
+    return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+rows.length+' accounts</span><span>'+money(tot)+'</span></div>';}
   /* Balance Trend — a line per account over trailing months; a declining account is flagged (demo: Missions Reserve). Compare-To = the range control. */
   /* Trend dimension follows the filter: All types → one line per account TYPE; a specific type → one line per ACCOUNT in it */
   function trendSet(w,range,by){
