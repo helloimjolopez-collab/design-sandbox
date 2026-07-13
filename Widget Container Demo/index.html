@@ -657,10 +657,21 @@
     '<div class="metric-value" id="depnum" data-latest="'+money(p.latest)+'">'+money(p.latest)+'</div>'+
     '<div class="gl-sub">'+depDelta(p)+depRangeBtn(w)+'</div>'+
     '</div>'+depSparkHTML(p)+'</div>';}
+  function depScopeBadge(w){var f=w.filter||"All types",allT=f.indexOf("All")===0,mode=w.trmode||"total";if(!allT&&mode==="type")mode="total";if(w.acct)mode="total";
+    var iso=(w.view==="trend"&&w.trIso&&mode!=="total")?w.trIso:null,g,nm;
+    if(w.acct){g="account_balance_wallet";nm=w.acct;}
+    else if(iso){g=(mode==="type")?"category":"account_balance_wallet";nm=iso;}
+    else if(!allT){g="category";nm=f;}
+    else{g="";nm="All Accounts";}
+    return '<span class="type-badge tb-static">'+(g?'<span class="tb-ic material-symbols-rounded">'+g+'</span>':'')+'<span class="tb-nm">'+nm+'</span></span>';}
   function depHeaderBlock(w){var p=depMetricParts(w);
+    var kpi='<span class="metric-value">'+money(p.latest)+'</span>',dl='<span class="delta-grp">'+depDelta(p)+depRangeBtn(w)+'</span>';
+    var numInner=(w.view==="trend")
+      ?'<div class="kpi-badge-row"><div class="kpi-stack">'+kpi+dl+'</div><div class="tvf"><span class="tvf-lbl">Viewing data for:</span>'+depScopeBadge(w)+'</div></div>'
+      :'<div class="dep-hd-kpigrp">'+kpi+dl+'</div>';
     return '<div class="dep-hd">'+
     '<div class="dep-hd-top">'+scopeChip(w)+'<div class="dep-hd-toggle">'+depToggle(w)+'</div></div>'+
-    '<div class="dep-hd-num"><div class="dep-hd-kpigrp"><span class="metric-value">'+money(p.latest)+'</span><span class="delta-grp">'+depDelta(p)+depRangeBtn(w)+'</span></div><div class="dep-hd-r">'+depBreakToggle(w)+'</div></div>'+
+    '<div class="dep-hd-num">'+numInner+'<div class="dep-hd-r">'+depBreakToggle(w)+'</div></div>'+
     '</div>';}
   function depContent(w){
     if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
