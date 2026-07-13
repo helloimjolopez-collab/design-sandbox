@@ -542,7 +542,7 @@
   function acctSeries(a,range){var n={W:8,M:9,Q:9,F:12,Y:12}[range]||9,slope={up:0.72,flat:0.98,down:1.24}[a.trend||"up"];return walk(a.name+"|"+range,n,a.net,slope,0.17,0.05);}
   function rangeMonths(range,n){var lab={W:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],M:["Wk1","Wk2","Wk3","Wk4","Wk5"],Q:["Jan","Feb","Mar","Apr","May","Jun"],F:["P1","P3","P5","P7","P9","P11"],Y:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}[range]||[];var out=[];for(var i=0;i<n;i++)out.push(lab[i]||("T"+(i+1)));return out;}
   function filterBtn(w){var f=w.filter||"All types",allT=f.indexOf("All")===0;return '<button class="filter-chip" data-action="depfilter" data-id="'+w.id+'"><span class="fc-label">'+(allT?"All account types":f)+'</span>'+ICON("expand_more")+'</button>';}
-  function typeLabel(w){var f=w.filter||"All types";return f.indexOf("All")===0?"All Accounts":f;}
+  function typeLabel(w){if(w.acct)return w.acct;var f=w.filter||"All types";return f.indexOf("All")===0?"All Accounts":f;}
   function scopeChip(w){return '<button class="scope-chip" data-action="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Account type — tap to change"><span class="material-symbols-rounded sc-ic">category</span><span class="sc-nm">'+typeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
   function periodLbl(w){return {W:"week",M:"month",Q:"quarter",F:"fiscal year",Y:"calendar year"}[w.range||"Q"];}
   function secHead(t){return '<div class="dep-col-h" style="padding:8px 16px 4px">'+t+'</div>';}
