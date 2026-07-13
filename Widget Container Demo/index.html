@@ -480,7 +480,7 @@
   /* single-hue blue ramp, dark→light, evenly stepped so slices read at a glance (biggest = darkest). Red is reserved for negative/declining only. */
   /* brand-blue ramp, dark→light (8 steps); slices sorted big→small, contiguous arcs (no gaps). Red reserved for negative/declining. */
   var PIE_COLORS=["#22376b","#2d4889","#3a5aaa","#4b6ec3","#6e8bd4","#8fa9de","#b0c4ea","#d3e0f6"];
-  var OTHERS_COLOR="#d6d1ec";
+  var OTHERS_COLOR="#c8cdd7";
   var LINE_COLORS=["#2d4889","#4b6ec3","#6e8bd4","#3a5aaa","#5475c6","#8aa2dd"];
   /* real blue scale: hold hue+saturation constant, step the LIGHTNESS (HSL) so every step stays a saturated blue and never fades to grey. Sized to the slice count so steps are always well spread. */
   function blueRamp(n){var H=249,S=40,Lmin=34,Lmax=76,out=[];for(var i=0;i<n;i++){out.push('hsl('+H+','+S+'%,'+Math.round(Lmin+(Lmax-Lmin)*(n>1?i/(n-1):0))+'%)');}return out;}
@@ -560,8 +560,7 @@
     var head='<div class="tr-head">'+metric+toggle+'</div>';
     return head+plot;}
   function donutChart(w,big){var d=depDist(w),segs=d.segs,tot=segs.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",shownReal=segs.filter(function(a){return !a.others;}).length,ramp=blueRamp(shownReal),grouped=(d.total||shownReal)-shownReal;
-    var GAP=(segs.length>1)?20:0,SW=16;
-    segs.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=a.others?OTHERS_COLOR:ramp[i];var drawn=Math.max(1.5,len-GAP);var drill=a.others?(' data-action="others" data-id="'+w.id+'" data-n="'+grouped+'" data-kind="'+d.by+'"'):(' data-action="dist-drill" data-id="'+w.id+'" data-by="'+d.by+'" data-val="'+a.name+'"');arcs+='<circle class="seg" data-seg="'+i+'"'+drill+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="'+SW+'" stroke-linecap="round" stroke-dasharray="'+drawn.toFixed(2)+' '+(C-drawn).toFixed(2)+'" stroke-dashoffset="'+(-(off+(len-drawn)/2)).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;legend+='<div class="leg" data-seg="'+i+'"'+drill+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
+    segs.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=a.others?OTHERS_COLOR:ramp[i];var drill=a.others?(' data-action="others" data-id="'+w.id+'" data-n="'+grouped+'" data-kind="'+d.by+'"'):(' data-action="dist-drill" data-id="'+w.id+'" data-by="'+d.by+'" data-val="'+a.name+'"');arcs+='<circle class="seg" data-seg="'+i+'"'+drill+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;legend+='<div class="leg" data-seg="'+i+'"'+drill+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
     var allT=(w.filter||"All types").indexOf("All")===0;
     var base=(d.by==="type"?"By account type":"By individual account"+(allT?"":" · "+w.filter));
     var head='<div class="dep-chead" style="border:0;padding:6px 14px 2px"><span class="dep-chead-title">'+base+'</span>'+(allT?tog2([["type","Account types"],["accounts","Individual accounts"]],(w.dist==="accounts"?"accounts":"type"),w):"")+'</div>';
