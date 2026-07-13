@@ -286,11 +286,9 @@
   .pie-wrap.row .donut{align-self:flex-start;}
   .dist-wrap{flex:1;min-height:0;display:flex;flex-direction:column;}
   .chart-title{font-size:12px;font-weight:400;color:var(--txt-secondary);padding:8px 16px 4px;}
-  .modal.modal-wide{max-width:880px;}
-  .acctm{display:flex;flex-direction:column;gap:16px;width:100%;}
-  .acctm-kpi{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-  .acctm-kpi .metric-value{font-size:30px;line-height:1.1;}
-  .acctm-chart{height:300px;padding:0;}
+  .modal.modal-wide{max-width:1080px;width:94vw;height:84vh;display:flex;flex-direction:column;}
+  .modal.modal-wide .modal-b{flex:1;min-height:0;display:flex;padding:0 18px 4px;}
+  .acct-mw{flex:1;min-height:0;display:flex;flex-direction:column;}
   .acctm .trend-range.static{cursor:default;pointer-events:none;}
   .kpi-lead{display:flex;flex-direction:column;gap:3px;min-width:0;}
   .kpi-line{display:flex;align-items:center;gap:12px;min-width:0;flex-wrap:wrap;}
@@ -800,7 +798,7 @@
   document.addEventListener("input",function(e){var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
   var modal=null;
   function showModal(t,b){modal={t:t,b:b};pop=null;render();}
-  function renderModal(){var mr=document.getElementById("modalRoot");mr.innerHTML="";if(!modal)return;mr.innerHTML='<div class="modal-backdrop" data-action="modal-close"><div class="modal'+(modal.wallet?" modal-wide":"")+'" data-action="stop" role="dialog" aria-modal="true" aria-label="'+modal.t+'"><div class="modal-h"><span class="modal-title">'+(modal.wallet?'<span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">account_balance_wallet</span>':'')+modal.t+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b">'+(modal.acct?acctModalBody(modal):modal.b)+'</div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">'+(modal.acct?"Done":"Got it")+'</button></div></div></div>';}
+  function renderModal(){var mr=document.getElementById("modalRoot");mr.innerHTML="";if(!modal)return;mr.innerHTML='<div class="modal-backdrop" data-action="modal-close"><div class="modal'+(modal.wallet?" modal-wide":"")+'" data-action="stop" role="dialog" aria-modal="true" aria-label="'+modal.t+'"><div class="modal-h"><span class="modal-title">'+(modal.wallet?'<span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">account_balance_wallet</span>':'')+modal.t+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b">'+(modal.acct?'<div class="wcontent acct-mw">'+depContent(modal.mw)+'</div>':modal.b)+'</div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">'+(modal.acct?"Done":"Got it")+'</button></div></div></div>';}
   function refresh(id){var w=find(id);if(!w)return;w.state="loading";render();clearTimeout(timers[id]);timers[id]=setTimeout(function(){w.state="ready";w.updated="just now";render();},1100);}
 
   document.addEventListener("click",function(e){
