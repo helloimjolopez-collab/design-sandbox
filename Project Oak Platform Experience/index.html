@@ -982,66 +982,62 @@ td.metric-label { font-weight: 600; }
     <div id="execution-plan" class="section">
       <div class="page-header">
         <h1>Execution Plan</h1>
-        <p>First 30 days, then month by month through February 2027</p>
+        <p>Pre-start blockers, then month by month through February 2027</p>
       </div>
       <div class="section-content">
 
-        <!-- ── FIRST 30 DAYS ── -->
-        <h2 style="margin-top:0;">The First 30 Days</h2>
-        <p class="section-intro" style="margin-bottom:20px;">This is the planning foundation for the entire programme. Everything in the month-by-month plan below is sequenced on what comes out of this phase. Two steps, running in parallel with baseline metrics work.</p>
+        <!-- ── PRE-START BLOCKERS ── -->
+        <div class="callout red" style="margin-top:0;">
+          <strong>Hard blockers before anything starts.</strong> The token library cannot be built until brand guidelines and final color, typography, and spacing specs are signed off by Product Marketing. This is the single hardest dependency in the programme. Everything downstream waits on it. The DS Squad also needs to be confirmed and in place before June or the planning months are lost.
+        </div>
+
+        <h2 style="margin-top:24px;">Before June: what must be in place</h2>
 
         <div class="step-cards">
-
           <div class="step-card">
             <div class="step-num">01</div>
             <div class="step-body">
-              <div class="step-title">Tribe diagnostic</div>
-              <div class="step-led">Led by: Experience Design Director, Director of Product Management</div>
-              <p>Every designer and PM across all modules produces a short structured report covering:</p>
-              <ol>
-                <li>The top three core flows in their product with the highest user friction.</li>
-                <li>Their top five UX debt items ranked by impact category and priority.</li>
-                <li>Current data gathered with product ops and the Pendo team: NPS, Time on task, Task Completion Rate, Drop Off Rate, Sentiment metrics across core flows.</li>
-              </ol>
-              <div class="callout green" style="margin-top:12px;">"The output gives the design system team a prioritised map of what components and patterns to build first, and gives each tribe a clear brief for their experience improvement work."</div>
-              <p>This data serves two purposes. First, it informs sequencing: with this data in hand, the design system team can optimise component delivery to support tribes in tackling their highest friction, highest traffic, highest impact areas. Second, it establishes the baseline against which all metrics are measured after the February launch. Right now this data is fragmented and inconsistently instrumented across modules. Getting it into a reliable, shared state is a prerequisite for making smart decisions about where to invest.</p>
+              <div class="step-title">Brand guidelines confirmed</div>
+              <div class="step-led">Owner: Product Marketing</div>
+              <p>Final brand color palette, typography, spacing, and any brand motion or illustration guidelines signed off and handed to the DS Squad. Without this, the Figma variable library cannot be updated and the token npm package cannot be published. This is a hard blocker on everything.</p>
             </div>
           </div>
-
           <div class="step-card">
             <div class="step-num">02</div>
             <div class="step-body">
-              <div class="step-title">Sequencing the build</div>
-              <div class="step-led">Led by: Experience Design Director</div>
-              <p>The outputs from Step 1 feed directly into the design system component build plan and the tribe experience roadmaps. The components tribes need most get built first. The flows with the highest friction get addressed first. Everything is sequenced around maximum impact by February.</p>
+              <div class="step-title">DS Squad confirmed and in place</div>
+              <div class="step-led">Owner: Experience Design Director, Engineering Leadership</div>
+              <p>Experience Design Director, Principal Experience Designer, and Principal Design Systems Engineer confirmed and starting by June. Value Labs briefed and scoped. Private npm repository provisioned and access granted. Figma Organisation plan upgraded.</p>
             </div>
           </div>
-
-          <div class="step-card parallel">
-            <div class="step-num">~</div>
+          <div class="step-card">
+            <div class="step-num">03</div>
             <div class="step-body">
-              <div class="step-title">In parallel: Design System Baseline Metrics Benchmarking</div>
-              <div class="step-led">Led by: Principal Experience Designer, Principal Design System Engineer</div>
-              <p>Running concurrently with Steps 1 and 2, the design system team establishes baseline performance metrics for the Pathway system itself. This gives the programme a clear before/after picture on platform efficiency and adoption.</p>
+              <div class="step-title">Executive sponsorship and programme sign-off</div>
+              <div class="step-led">Owner: SVP / CPO</div>
+              <p>Project Oak formally approved. Owner assigned. Resourcing committed. Tribes informed that they will be allocating design and engineering time for batch implementation starting in August. Tribe designers and PMs should be aware that they need to factor this into their sprint planning from July onward.</p>
             </div>
           </div>
-
         </div>
 
         <hr class="inner-divider">
 
-        <!-- ── MONTH BY MONTH ── -->
-        <h2>Month by Month</h2>
-        <p class="section-intro" style="margin-bottom:16px;">Working backwards from a February production launch. The December 1st engineering hard stop is non-negotiable. The programme moves through six distinct phases.</p>
+        <!-- ── HOW IT WORKS ── -->
+        <h2>How the delivery model works</h2>
+        <p class="section-intro">The DS Squad builds one batch ahead of the tribes. Tribes implement the previous batch in Figma and in production code the following month. The token library ships first and is independent of components — tribes can consume brand CSS from the npm package immediately once it is published in June, before a single component is built.</p>
+
+        <div class="callout blue">
+          <strong>Tokens first.</strong> The fastest win is publishing <code style="font-family:monospace;font-size:12px;background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px;">@mb/tokens</code> to the private npm registry in June. Every tribe's CSS can point to this package immediately. This alone brings brand consistency to every module before any component is touched.
+        </div>
 
         <!-- Phase arc overview -->
-        <div class="phase-arc">
+        <div class="phase-arc" style="margin-top:20px;">
           <div class="phase-arc-item foundation">
             <span class="arc-month">Jun</span>
             <span class="arc-phase">Foundation</span>
           </div>
           <div class="phase-arc-item build">
-            <span class="arc-month">Jul — Sep</span>
+            <span class="arc-month">Jul &ndash; Sep</span>
             <span class="arc-phase">Build</span>
           </div>
           <div class="phase-arc-item integration">
@@ -1050,25 +1046,27 @@ td.metric-label { font-weight: 600; }
           </div>
           <div class="phase-arc-item qa">
             <span class="arc-month">Nov</span>
-            <span class="arc-phase">Hard Stop / QA</span>
+            <span class="arc-phase">Hard Stop</span>
           </div>
           <div class="phase-arc-item uat">
             <span class="arc-month">Dec</span>
             <span class="arc-phase">UAT</span>
           </div>
           <div class="phase-arc-item launch">
-            <span class="arc-month">Jan — Feb</span>
+            <span class="arc-month">Jan &ndash; Feb</span>
             <span class="arc-phase">Launch</span>
           </div>
         </div>
 
+        <!-- ── MONTH BY MONTH ── -->
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th style="width:140px;">Month</th>
-                <th>Work being done</th>
-                <th style="width:210px;">Owner and deliverable</th>
+                <th style="width:130px;">Month</th>
+                <th style="width:260px;">DS Squad ships</th>
+                <th style="width:235px;">Tribes do</th>
+                <th>Artifact published</th>
               </tr>
             </thead>
             <tbody>
@@ -1077,65 +1075,121 @@ td.metric-label { font-weight: 600; }
                   <strong>June</strong>
                   <span class="phase-badge foundation">Foundation</span>
                 </td>
-                <td>Design system infrastructure setup. Figma plan upgraded. Dedicated engineer onboarded. Value Labs briefed and activated on component spec. Tribe diagnostic: all designers and PMs report top three highest friction flows and top five UX debt items. Pendo data gathering begins with product ops support. Baseline metrics established.</td>
-                <td>Experience Design Director leading. Principal designer and engineer onboarding. Value Labs activated.</td>
+                <td>
+                  Update Figma variable library with confirmed brand colors, typography, and spacing. Document full token architecture. Scaffold Storybook. Provision private npm repo. Facilitate tribe diagnostic brief.
+                </td>
+                <td>
+                  Each designer + PM pair submits top 5 UX friction points and top 3 high-friction flows per product. Pendo baseline metrics identified and logged.
+                </td>
+                <td>
+                  <span class="tag purple" style="white-space:nowrap;">@mb/tokens v0.1</span> published to private npm. All tribes can now consume brand CSS from this package.
+                </td>
               </tr>
               <tr>
                 <td>
                   <strong>July</strong>
-                  <span class="phase-badge build">Build</span>
+                  <span class="phase-badge build">Build · Batch 1</span>
                 </td>
-                <td>First components shipping. Navigation and search in design. Value Labs delivering first component batch: buttons, inputs, checkboxes, radio buttons, filter chips, badges, tooltips. Token architecture cleaned up. Storybook live and documented.</td>
-                <td>Principal designer leading component spec and review. Engineer owning pipeline and Storybook. Value Labs shipping.</td>
+                <td>
+                  Design all atoms in Figma against token library: button, input, checkbox, radio, toggle, badge, tag, tooltip, spinner, full icon library, avatar, link. Spec and hand to Value Labs. QA output. Publish to Storybook with docs.
+                </td>
+                <td>
+                  Review Batch 1 release notes. Begin updating Figma files: replace all local button, input, checkbox, radio, toggle, badge, tag, tooltip, and icon instances with Pathway components. Brief dev leads on incoming npm package.
+                </td>
+                <td>
+                  <span class="tag blue" style="white-space:nowrap;">@mb/pathway Batch 1</span> published. All atoms available for tribes to consume in code.
+                </td>
               </tr>
               <tr>
                 <td>
                   <strong>August</strong>
-                  <span class="phase-badge build">Build</span>
+                  <span class="phase-badge build">Build · Batch 2</span>
                 </td>
-                <td>Core component build accelerating. Tables, table controls, modals, cards, KPI tiles, steppers, settings controls in build through Value Labs. Navigation design complete and moving to engineering. Dashboard rework in design. Brand token branch started in parallel. Tribe UX improvements begin on top three highest friction items per module.</td>
-                <td>Principal designer reviewing and unblocking. Engineer shipping. Tribes working on UX improvements in parallel.</td>
+                <td>
+                  Design all molecules: select, multi-select, filter chip, search field, date picker, date range picker, modal, inline alert, toast, empty state, error state, form group, inline confirmation. Hand to Value Labs. QA. Publish.
+                </td>
+                <td>
+                  Implement Batch 1 in production code across all screens. Dev teams update CSS to consume <code style="font-family:monospace;font-size:11px;">@mb/tokens</code> and <code style="font-family:monospace;font-size:11px;">@mb/pathway</code> Batch 1. Begin highest-priority UX friction fixes from June diagnostic.
+                </td>
+                <td>
+                  <span class="tag blue" style="white-space:nowrap;">@mb/pathway Batch 2</span> published. Molecules available for tribes.
+                </td>
               </tr>
               <tr>
                 <td>
                   <strong>September</strong>
-                  <span class="phase-badge build">Build</span>
+                  <span class="phase-badge build">Build · Batch 3 + 4</span>
                 </td>
-                <td>Component library at critical mass. All core components in Pathway. Brand tokens applied across component library. Dashboard and module switcher complete. Tribes continue highest friction UX improvements. Tribes begin grooming existing screens for brand implementation.</td>
-                <td>Full team in parallel. Tribes grooming brand implementation across their modules.</td>
+                <td>
+                  Design and build Batch 3 (tables, cards, KPI tiles, tabs, drawers, pagination, stepper) and Batch 4 (top nav shell, module switcher, org switcher, global search, side nav, notification centre) in parallel. Apply brand tokens across full component library. Publish both batches.
+                </td>
+                <td>
+                  Implement Batch 2 in production. Begin brand token grooming: audit all Figma screens and code, replace hardcoded values with tokens from <code style="font-family:monospace;font-size:11px;">@mb/tokens</code>. Continue UX friction improvements.
+                </td>
+                <td>
+                  <span class="tag green" style="white-space:nowrap;">@mb/pathway Batch 3 + 4</span> published. <span class="tag amber" style="white-space:nowrap;">@mb/tokens v1.0</span> with full brand applied across library.
+                </td>
               </tr>
               <tr>
                 <td>
                   <strong>October</strong>
                   <span class="phase-badge integration">Integration</span>
                 </td>
-                <td>Integration, QA preparation, and brand grooming complete. All modules implementing Pathway components and new brand tokens. Tribe UX improvements finalised. Internal QA begins. All remaining inconsistencies flagged and addressed.</td>
-                <td>Engineer and tribes in integration and QA mode. Director and principal designer reviewing quality bar.</td>
+                <td>
+                  Support tribe integration across all modules. Dedicated office hours. Cross-module QA pass. Resolve inconsistencies. Scope Batch 5 templates for post-launch.
+                </td>
+                <td>
+                  Implement Batch 3 + 4 in Figma and production code. Complete brand token rollout across all screens. Finalise all UX friction improvements. Begin internal QA. Screen-by-screen component swap with dev leads.
+                </td>
+                <td>
+                  All modules consuming <code style="font-family:monospace;font-size:11px;">@mb/tokens</code> and <code style="font-family:monospace;font-size:11px;">@mb/pathway</code> in production CSS. Brand tokens live across the platform.
+                </td>
               </tr>
               <tr class="amber-row">
                 <td>
                   <strong>November</strong>
-                  <span class="stop-tag">Engineering hard stop: Dec 1</span>
-                  <span class="phase-badge qa">Hard Stop / QA</span>
+                  <span class="stop-tag">Hard stop: Dec 1</span>
+                  <span class="phase-badge qa">QA</span>
                 </td>
-                <td>All engineering work complete by December 1st. No new component work. Focus entirely on QA, UAT preparation, and edge case resolution.</td>
-                <td>Full team in QA and UAT preparation.</td>
+                <td>
+                  Engineering complete by December 1. Full QA pass across all components in Storybook and in product. UAT preparation. Triage edge cases. No new scope accepted.
+                </td>
+                <td>
+                  Full QA of all implemented components across all modules. Raise final blockers. UAT preparation. Engineering hard stop for all tribes.
+                </td>
+                <td>
+                  QA sign-off. UAT-ready build.
+                </td>
               </tr>
               <tr>
                 <td>
                   <strong>December</strong>
                   <span class="phase-badge uat">UAT</span>
                 </td>
-                <td>UAT, QA, and commercialisation. Full user acceptance testing. Marketing and communications preparation. Launch readiness review.</td>
-                <td>Experience Design Director coordinating across design, engineering, and marketing.</td>
+                <td>
+                  Support UAT. Address critical findings. Finalise launch preparation and comms plan.
+                </td>
+                <td>
+                  User acceptance testing. Marketing and comms preparation. Final sign-off from all product owners.
+                </td>
+                <td>
+                  Launch-ready build signed off.
+                </td>
               </tr>
               <tr>
                 <td>
-                  <strong>Jan to Feb</strong>
+                  <strong>Jan &ndash; Feb</strong>
                   <span class="phase-badge launch">Launch</span>
                 </td>
-                <td>Launch. Pathway and rebrand go live together as one coordinated release.</td>
-                <td>All teams.</td>
+                <td>
+                  Co-ordinated launch. Pathway design system and full rebrand go live across all modules simultaneously.
+                </td>
+                <td>
+                  All modules go live. Monitor for issues. Begin Batch 5 template work once baseline is stable.
+                </td>
+                <td>
+                  Pathway + rebrand live in production.
+                </td>
               </tr>
             </tbody>
           </table>
