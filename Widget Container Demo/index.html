@@ -706,7 +706,7 @@
     if(a==="rename-dash"||a==="dash-rename-inline"){dashRenaming=true;focusDash=true;pop=null;setStatus("Rename the dashboard — type and press Enter.");render();return;}
     if(a==="delete-dash"){if(isSystem()){pop=null;render();return;}var dn=cur().name;dashboards=dashboards.filter(function(d){return d.id!==currentId;});if(defaultId===currentId)defaultId="sys";currentId=defaultId;manage=false;pop=null;setStatus("Deleted “"+dn+"”.");render();return;}
     if(a==="new-dash"){addCount++;var nw={id:"nd"+Date.now(),name:"New dashboard "+addCount,custom:true,widgets:[]};dashboards.push(nw);currentId=nw.id;manage=true;focusDash=true;pop=null;setStatus("New dashboard created.");render();return;}
-    if(a==="add-widget"){var da=cur();addCount++;da.widgets.push({id:"n"+addCount,title:"New widget "+addCount,kind:"metric",size:"kpi",tiers:["kpi","wide","large"],state:"ready",updated:"just now"});manage=true;pop=null;setStatus("Widget added.");render();return;}
+    if(a==="add-widget"){var da=cur();addCount++;da.widgets.push({id:"n"+addCount,title:"New widget "+addCount,kind:"metric",size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now"});manage=true;pop=null;setStatus("Widget added.");render();return;}
     if(a==="wmenu"){pop=(pop&&pop.type==="wmenu"&&pop.id===id)?null:{type:"wmenu",id:id};render();return;}
     if(a==="expmenu"){pop=(pop&&pop.type==="expmenu"&&pop.id===id)?null:{type:"expmenu",id:id};render();return;}
     if(a==="export-do"){var wex=find(id);showModal("Export "+t.getAttribute("data-fmt"),"This would export the current view of <b>"+(wex?wex.title:"")+"</b> as <b>"+t.getAttribute("data-fmt")+"</b>.");return;}
