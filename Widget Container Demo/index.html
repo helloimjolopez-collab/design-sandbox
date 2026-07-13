@@ -815,7 +815,7 @@
     if(a==="pick-size"){var w=find(id);if(w)w.size=t.getAttribute("data-size");pop=null;setStatus("“"+w.title+"” → "+DEPTH_LABEL[w.size]+".");render();return;}
     if(a==="depfilter"){filterQuery="";pop=(pop&&pop.type==="depfilter"&&pop.id===id)?null:{type:"depfilter",id:id};render();return;}
     if(a==="set-scope"){var wsc2=find(id),mode=t.getAttribute("data-mode"),val=t.getAttribute("data-v");if(wsc2){if(mode==="account"){openAcct(wsc2,val,t.getAttribute("data-type"));return;}if(mode==="all")wsc2.filter="All types";else if(mode==="type")wsc2.filter=val;wsc2.acct=null;wsc2.acctType=null;wsc2.trIso=null;}pop=null;render();return;}
-    if(a==="pick-acct"){var wpa=find(id);if(wpa)openAcct(wpa,t.getAttribute("data-v"),t.getAttribute("data-type"));return;}
+    if(a==="pick-acct"){var wpa=find(id);if(wpa){wpa.acct=t.getAttribute("data-v");wpa.acctType=t.getAttribute("data-type");wpa.trIso=null;}render();return;}
     if(a==="cmenu"){pop=(pop&&pop.type==="cmenu"&&pop.id===id)?null:{type:"cmenu",id:id};render();return;}
     if(a==="export"){var we=find(id);setStatus("Exported the current “"+(we?we.title:"")+"” view as "+t.getAttribute("data-fmt")+".");pop=null;render();return;}
     if(a==="company-dd"){companyQuery="";pop={type:"companydd",id:id};render();return;}
