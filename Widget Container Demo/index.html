@@ -566,7 +566,7 @@
     return '<div class="kpi-row"><div class="kpi-num"><button class="scope-chip" data-action="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Account type — tap to change">'+typeLabel(w)+ICON("expand_more")+'</button><div class="metric-value" id="depnum" data-latest="'+money(latest)+'">'+money(latest)+'</div><div class="metric-delta">'+ICON("trending_up")+' '+delta+'% '+trendRangeBtn(w)+'</div></div>'+
     '<div class="kpi-spark dep-spark" data-series="'+s.join(',')+'" data-labels="'+labs.join("|")+'" data-xp="'+xp+'" data-yp="'+yp+'" tabindex="0" aria-label="Total deposits over the selected window — hover to read a point"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="dsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--brand-fill)" stop-opacity="0.20"/><stop offset="100%" stop-color="var(--brand-fill)" stop-opacity="0"/></linearGradient></defs><path d="'+area+'" fill="url(#dsg)"/><path d="'+line+'" fill="none" stroke="var(--brand-fill)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-end" style="left:'+xp.split(",").pop()+'%;top:'+yp.split(",").pop()+'%"></div><div class="ds-hair"></div><div class="ds-dot"></div></div></div>';}
   function depContent(w){
-    if(w.size==="kpi"||w.size==="card") return depGlance(w); // Glance/Card = total balance across all active accounts, scrubbable
+    if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
     var v=w.view||"table";
     if(v==="summary") return depTop(w,{toggle:true})+depGlance(w);
     // Explore: one compact view (table / by-type pie / trend) via toggle
