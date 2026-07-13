@@ -647,24 +647,34 @@
     var lgSearch=(d.by==="account"&&shownReal>9)?'<div class="tr-lg-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div>':'';
     return '<div class="dist-wrap">'+title+'<div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+fmtAxis(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head">'+lgHead+'</div>'+lgSearch+'<div class="legend">'+legend+'</div></div></div></div>';}
   function depFull(w){if(w.acct)return '<div class="dep-full one"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div></div>';return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div><div class="dep-col">'+donutChart(w,true)+'</div></div>';}
-  function acctModalBody(w,a){var range=w.range||"Q";var s=acctSeries(a,range),n=s.length;
+  function acctModalBody(m){var w=find(m.wid);if(!w)return "";var a=depData(w).filter(function(x){return x.name===m.aname&&(!m.atype||x.type===m.atype);})[0];if(!a)return "";
+    var range=w.range||"Q",mv=m.mview||"trend";var s=acctSeries(a,range),n=s.length;
     var latest=s[n-1],first=s[0],dpct=((latest-first)/(first||1))*100,neg=dpct<0;
-    var lo=Math.min.apply(null,s),hi=Math.max.apply(null,s),sp=(hi-lo)||Math.abs(hi)||1;lo=Math.max(0,lo-sp*0.18);hi=hi+sp*0.18;var dom=(hi-lo)||1;
-    function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
-    var pts=s.map(function(v,i){return px(i).toFixed(2)+','+py(v).toFixed(2);}).join(" ");
-    var grid="";[0,50,100].forEach(function(gy){grid+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="var(--stroke-widget)" stroke-width="1" vector-effect="non-scaling-stroke"'+(gy===100?'':' stroke-dasharray="2 4" opacity="0.5"')+'/>';});
-    var area='<polygon fill="url(#tafm)" points="0,100 '+pts+' 100,100"/>';
-    var line='<polyline fill="none" stroke="var(--chart)" stroke-width="1.7" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+pts+'"/>';
-    var svg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><linearGradient id="tafm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.16"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs>'+grid+area+line+'</svg>';
-    var yl='<span style="top:0%">'+fmtAxis(hi)+'</span><span style="top:50%">'+fmtAxis((hi+lo)/2)+'</span><span style="top:100%">'+fmtAxis(lo)+'</span>';
-    var months=rangeMonths(range,n),tk=(n<=1)?[0]:(n<=3)?[0,n-1]:[0,Math.round((n-1)/3),Math.round((n-1)*2/3),n-1];tk=tk.filter(function(v,i,arr){return arr.indexOf(v)===i;});
-    var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
-    return '<div class="acctm">'
-      +'<div class="acctm-sub"><span class="type-badge tb-static"><span class="tb-ic material-symbols-rounded">category</span><span class="tb-nm">'+a.type+'</span></span></div>'
-      +'<div class="acctm-kpi"><span class="metric-value">'+money(latest)+'</span><span class="delta-grp">'+depDelta({dpct:dpct,neg:neg})+'<span class="trend-range static">vs '+periodLbl(w)+'</span></span></div>'
-      +'<div class="acctm-chart tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'</div><div class="tr-xax">'+xl+'</div></div>'
-      +'</div>';}
-  function openAcct(w,name,type){var a=depData(w).filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;modal={t:name,b:acctModalBody(w,a),wallet:true};pop=null;render();}
+    var toggle='<div class="vtoggle" role="group" aria-label="View">'
+      +'<button class="vt'+(mv==="trend"?" on":"")+'" data-action="acct-view" data-v="trend" aria-pressed="'+(mv==="trend")+'">'+ICON("show_chart")+'Trend</button>'
+      +'<button class="vt'+(mv==="table"?" on":"")+'" data-action="acct-view" data-v="table" aria-pressed="'+(mv==="table")+'">'+ICON("table_rows")+'Table</button></div>';
+    var head='<div class="acctm-bar"><span class="type-badge tb-static"><span class="tb-ic material-symbols-rounded">category</span><span class="tb-nm">'+a.type+'</span></span>'+toggle+'</div>'
+      +'<div class="acctm-kpi"><span class="metric-value">'+money(latest)+'</span><span class="delta-grp">'+depDelta({dpct:dpct,neg:neg})+'<span class="trend-range static">vs '+periodLbl(w)+'</span></span></div>';
+    var content;
+    if(mv==="table"){var tp=dpct,tn=neg;
+      content='<div class="acctm-tbl"><div class="wt-row wt-head"><span class="lr-main">Name</span><span class="dt-c dt-type">Type</span><span class="dt-c dt-tr">Trend</span><span class="wt-c2">Balance</span></div>'
+        +'<div class="wt-row"><span class="lr-main">'+a.name+'</span><span class="dt-c dt-type"><span class="type-badge"><span class="material-symbols-rounded tb-ic">category</span><span class="tb-nm">'+a.type+'</span></span></span><span class="dt-c dt-tr"><span class="rtrend'+(tn?" neg":"")+'"><span class="material-symbols-rounded">'+(tn?"arrow_drop_down":"arrow_drop_up")+'</span>'+Math.abs(tp).toFixed(1)+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>'
+        +'<div class="dep-total"><span>Total</span><span>'+money(a.net)+'</span></div></div>';
+    }else{
+      var lo=Math.min.apply(null,s),hi=Math.max.apply(null,s),sp=(hi-lo)||Math.abs(hi)||1;lo=Math.max(0,lo-sp*0.18);hi=hi+sp*0.18;var dom=(hi-lo)||1;
+      function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
+      var pts=s.map(function(v,i){return px(i).toFixed(2)+','+py(v).toFixed(2);}).join(" ");
+      var grid="";[0,50,100].forEach(function(gy){grid+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="var(--stroke-widget)" stroke-width="1" vector-effect="non-scaling-stroke"'+(gy===100?'':' stroke-dasharray="2 4" opacity="0.5"')+'/>';});
+      var area='<polygon fill="url(#tafm)" points="0,100 '+pts+' 100,100"/>';
+      var line='<polyline fill="none" stroke="var(--chart)" stroke-width="1.7" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+pts+'"/>';
+      var svg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><linearGradient id="tafm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.16"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs>'+grid+area+line+'</svg>';
+      var yl='<span style="top:0%">'+fmtAxis(hi)+'</span><span style="top:50%">'+fmtAxis((hi+lo)/2)+'</span><span style="top:100%">'+fmtAxis(lo)+'</span>';
+      var months=rangeMonths(range,n),tk=(n<=1)?[0]:(n<=3)?[0,n-1]:[0,Math.round((n-1)/3),Math.round((n-1)*2/3),n-1];tk=tk.filter(function(v,i,arr){return arr.indexOf(v)===i;});
+      var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
+      content='<div class="acctm-chart tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'</div><div class="tr-xax">'+xl+'</div></div>';
+    }
+    return '<div class="acctm">'+head+content+'</div>';}
+  function openAcct(w,name,type){var a=depData(w).filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;modal={t:name,wallet:true,acct:true,wid:w.id,aname:name,atype:type,mview:"trend"};pop=null;render();}
   function overflowBtn(w){return "";}
   /* Glance spark = total deposits over the chosen window. No axes (it's a sparkline); hover reveals the point's period + value and scrubs the KPI number — standard sparkline behaviour. */
   function depSeriesN(range,n,end){var ratio={W:.98,M:.95,Q:.9,F:.82,Y:.72}[range]||.88;return walk("total|"+range,n,end,ratio,0.13,0.06);}
