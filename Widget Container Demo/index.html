@@ -585,7 +585,7 @@
   function advFilterBtn(w){var open=!!(pop&&pop.type==="advfilter"&&pop.id===w.id);var dirty=(w.sort&&w.sort!=="net-desc")||w.f_active||w.f_funded;return '<button class="iconbtn'+(dirty?" on":"")+'" data-action="advfilter" data-id="'+w.id+'" aria-haspopup="menu" aria-expanded="'+open+'" aria-label="Filter and sort"><span class="material-symbols-rounded">'+(dirty?"filter_alt":"filter_list")+'</span></button>';}
   function tog(opts,cur,w){return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="dep-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+(o[2]?ICON(o[2]):"")+o[1]+'</button>';}).join("")+'</div>';}
   function simpleToggle(w){var v=w.view||"table";return tog([["table","List"],["chart","Distribution"]],v,w);}
-  function depToggle(w){var v=w.view||"table";if(w.size==="xwide")return tog([["balances","Balances","table_rows"],["trend","Trend","show_chart"]],(v==="trend"?"trend":"balances"),w);var opts=[["table","Table","table_rows"]];if(!w.acct)opts.push(["dist","Distribution","donut_small"]);opts.push(["trend","Trend","show_chart"]);return tog(opts,v,w);}
+  function depToggle(w){var v=w.view||"table";if(w.size==="xwide")return tog([["balances","Balances","table_rows"],["trend","Trend","show_chart"]],(v==="trend"?"trend":"balances"),w);return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"],["trend","Trend","show_chart"]],v,w);}
   function depBreakToggle(w){var v=w.view||"table",allT=(w.filter||"All types").indexOf("All")===0;
     if(v==="dist"){return (allT&&!w.acct)?tog2([["type","Account Types","category"],["accounts","Accounts","account_balance_wallet"]],(w.dist==="accounts"?"accounts":"type"),w):"";}
     if(v==="trend"){if(w.acct)return "";var mode=w.trmode||"total";if(!allT&&mode==="type")mode="total";var tb=function(m,l){return '<button class="vt'+(mode===m?" on":"")+'" data-action="trmode" data-id="'+w.id+'" data-m="'+m+'" aria-pressed="'+(mode===m)+'">'+l+'</button>';};return '<div class="vtoggle" role="group" aria-label="Trend breakdown">'+tb("total","Total")+(allT?tb("type","By Account Type"):"")+tb("account","By Account")+'</div>';}
@@ -688,7 +688,6 @@
     '</div>';}
   function depContent(w){
     if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
-    if(w.acct&&w.view==="dist")w.view="trend";
     var v=w.view||"table";
     var mh=depHeaderBlock(w); // line 1: account type + download · line 2: eyebrow/KPI/badge/timeline + view toggle
     // Explore: one compact view (table / trend / distribution) via toggle
