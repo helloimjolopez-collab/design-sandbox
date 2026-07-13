@@ -624,10 +624,10 @@
     '</div>'+depSparkHTML(p)+'</div>';}
   function depHeaderBlock(w){var p=depMetricParts(w),v=w.view||"table",allT=(w.filter||"All types").indexOf("All")===0,trMode=w.trmode||"total";if(!allT&&trMode==="type")trMode="total";
     var hasList=(v==="table")||(v==="trend"&&trMode!=="total");
-    var searchEl=hasList?'<div class="dep-search dep-search-inline"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search account types or accounts" aria-label="Search account types or accounts"></div>':'';
+    var searchEl=hasList?'<div class="dep-search dep-search-inline"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div>':'';
     return '<div class="dep-hd">'+
     '<div class="dep-hd-top"><button class="scope-chip" data-action="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Account type — tap to change">'+typeLabel(w)+ICON("expand_more")+'</button><div class="dep-hd-toggle">'+depToggle(w)+'</div></div>'+
-    '<div class="dep-hd-num"><div class="dep-hd-kpigrp"><span class="metric-value">'+money(p.latest)+'</span>'+depDelta(p)+depRangeBtn(w)+'</div><div class="dep-hd-r">'+searchEl+depBreakToggle(w)+'</div></div>'+
+    '<div class="dep-hd-num"><div class="dep-hd-kpigrp"><span class="metric-value">'+money(p.latest)+'</span><span class="delta-grp">'+depDelta(p)+depRangeBtn(w)+'</span></div><div class="dep-hd-r">'+searchEl+depBreakToggle(w)+'</div></div>'+
     '</div>';}
   function depContent(w){
     if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
