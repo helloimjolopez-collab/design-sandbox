@@ -177,6 +177,8 @@
   .dep-hd{display:flex;flex-direction:column;gap:6px;padding:12px 16px 8px;}
   .dep-hd-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .dep-hd-toggle{flex:0 0 auto;}
+  .tbl-search{display:flex;justify-content:flex-end;padding:2px 14px 8px;}
+  .tbl-search .dep-search{flex:0 0 auto;width:230px;max-width:60%;}
   .dep-search{flex:1 1 auto;min-width:70px;max-width:240px;display:flex;align-items:center;gap:5px;border:1px solid var(--stroke-widget);border-radius:8px;padding:4px 8px;background:var(--surface-widget);}
   .dep-search .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
   .dep-q{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:12px;color:var(--txt-primary);outline:none;}
@@ -538,7 +540,7 @@
   function advFilterBtn(w){var open=!!(pop&&pop.type==="advfilter"&&pop.id===w.id);var dirty=(w.sort&&w.sort!=="net-desc")||w.f_active||w.f_funded;return '<button class="iconbtn'+(dirty?" on":"")+'" data-action="advfilter" data-id="'+w.id+'" aria-haspopup="menu" aria-expanded="'+open+'" aria-label="Filter and sort"><span class="material-symbols-rounded">'+(dirty?"filter_alt":"filter_list")+'</span></button>';}
   function tog(opts,cur,w){return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="dep-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+o[1]+'</button>';}).join("")+'</div>';}
   function simpleToggle(w){var v=w.view||"table";return tog([["table","List"],["chart","Distribution"]],v,w);}
-  function depToggle(w){var v=w.view||"table";if(w.size==="xwide")return tog([["balances","Balances"],["trend","Trend"]],(v==="trend"?"trend":"balances"),w);return tog([["table","Table"],["trend","Trend"],["dist","Distribution"]],v,w);}
+  function depToggle(w){var v=w.view||"table";if(w.size==="xwide")return tog([["balances","Balances"],["trend","Trend"]],(v==="trend"?"trend":"balances"),w);return tog([["table","Table"],["dist","Distribution"],["trend","Trend"]],v,w);}
   function tog2(opts,cur,w){return '<div class="vtoggle" role="group" aria-label="Break down by">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="set-dist" data-id="'+w.id+'" data-d="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+o[1]+'</button>';}).join("")+'</div>';}
   /* Deposit table — Oisin columns; full = Name·Inception·Account#·Balance, compact = Name·Balance; totals = account count + combined */
   function balHead(w){var bs=w.balSort,ic=bs==="desc"?"arrow_downward":bs==="asc"?"arrow_upward":"unfold_more";return '<button class="wt-sort'+(bs?" on":"")+'" data-action="sort-bal" data-id="'+w.id+'" aria-label="Sort by balance"'+(bs?' aria-sort="'+(bs==="desc"?"descending":"ascending")+'"':'')+'>Balance <span class="material-symbols-rounded">'+ic+'</span></button>';}
