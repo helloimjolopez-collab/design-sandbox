@@ -470,7 +470,7 @@
   var OTHERS_COLOR="#c8cdd7";
   var LINE_COLORS=["#2d4889","#4b6ec3","#6e8bd4","#3a5aaa","#5475c6","#8aa2dd"];
   /* real blue scale: hold hue+saturation constant, step the LIGHTNESS (HSL) so every step stays a saturated blue and never fades to grey. Sized to the slice count so steps are always well spread. */
-  function blueRamp(n){var H=222,S=58,Lmin=27,Lmax=80,out=[];for(var i=0;i<n;i++){out.push('hsl('+H+','+S+'%,'+Math.round(Lmin+(Lmax-Lmin)*(n>1?i/(n-1):0))+'%)');}return out;}
+  function blueRamp(n){var H=249,S=40,Lmin=34,Lmax=76,out=[];for(var i=0;i<n;i++){out.push('hsl('+H+','+S+'%,'+Math.round(Lmin+(Lmax-Lmin)*(n>1?i/(n-1):0))+'%)');}return out;}
   /* filter narrows the TABLE only; default sort = Name, Balance column is sortable (desc/asc) */
   function depRows(w){var f=w.filter||"All types";var rows=depData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;}).slice();var bs=w.balSort;if(bs==="desc")rows.sort(function(a,b){return b.net-a.net;});else if(bs==="asc")rows.sort(function(a,b){return a.net-b.net;});else rows.sort(function(a,b){return a.name.localeCompare(b.name);});return rows;}
   function depByType(w){var m={},order=[];depData(w).forEach(function(a){if(m[a.type]===undefined){m[a.type]=0;order.push(a.type);}m[a.type]+=a.net;});return order.map(function(t){return {name:t,net:m[t]};});}
