@@ -460,7 +460,7 @@
       {id:"s2",title:"Cash on hand",kind:"metric",size:"kpi",tiers:["kpi"]}
     ]}
   ];
-  dashboards.forEach(function(d){d.widgets.forEach(function(w){if(!w.tiers)w.tiers=[w.size];w.tiers=w.tiers.filter(function(t){return t!=="card";});if(w.size==="card"||w.size==="standard")w.size="wide";if(!w.state)w.state="ready";if(!w.updated)w.updated="14 min ago";});});
+  dashboards.forEach(function(d){d.widgets.forEach(function(w){if(!w.tiers)w.tiers=[w.size];w.tiers=w.tiers.filter(function(t){return t!=="card"&&t!=="large"&&t!=="standard";});if(w.size==="card"||w.size==="standard"||w.size==="large")w.size="wide";if(!w.state)w.state="ready";if(!w.updated)w.updated="14 min ago";});});
   var currentId="d1",defaultId="d1";
   function cur(){for(var i=0;i<dashboards.length;i++)if(dashboards[i].id===currentId)return dashboards[i];return dashboards[0];}
   function isSystem(){return !cur().custom;}
