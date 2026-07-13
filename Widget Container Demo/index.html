@@ -675,7 +675,7 @@
       content='<div class="acctm-chart tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'</div><div class="tr-xax">'+xl+'</div></div>';
     }
     return '<div class="acctm">'+head+content+'</div>';}
-  function openAcct(w,name,type){var a=depData(w).filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;modal={t:name,wallet:true,acct:true,wid:w.id,aname:name,atype:type,mview:"trend"};pop=null;render();}
+  function openAcct(w,name,type){var a=depData(w).filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;var mw=Object.assign({},w,{id:"__acctmodal",acct:name,acctType:type,size:"wide",view:"trend",trIso:null,state:"ready"});modal={t:name,wallet:true,acct:true,mw:mw};pop=null;render();}
   function overflowBtn(w){return "";}
   /* Glance spark = total deposits over the chosen window. No axes (it's a sparkline); hover reveals the point's period + value and scrubs the KPI number — standard sparkline behaviour. */
   function depSeriesN(range,n,end){var ratio={W:.98,M:.95,Q:.9,F:.82,Y:.72}[range]||.88;return walk("total|"+range,n,end,ratio,0.13,0.06);}
