@@ -607,11 +607,11 @@
   function depContent(w){
     if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
     var v=w.view||"table";
-    var mh=depMetricHead(w); // KPI number + % badge + top-right toolbar
-    // Explore: one compact view (table / by-type pie / trend) via toggle
-    if(w.size==="wide") return mh+depTop(w,{toggle:true})+(v==="trend"?depTrend(w,false):v==="dist"?donutChart(w,false):depTable(w,false));
+    var mh=depHeaderBlock(w); // line 1: account type + download · line 2: eyebrow/KPI/badge/timeline + view toggle
+    // Explore: one compact view (table / trend / distribution) via toggle
+    if(w.size==="wide") return mh+(v==="trend"?depTrend(w,false):v==="dist"?donutChart(w,false):depTable(w,false));
     // Detail (full width): Balances = table | by-type pie side by side; toggle to Trend = full-width
-    return mh+depTop(w,{toggle:true})+(v==="trend"?depTrend(w,true):depFull(w));
+    return mh+(v==="trend"?depTrend(w,true):depFull(w));
   }
   function fundContent(w){
     return '<div class="dep-controls"><div class="dep-left"><span class="dep-col-h" style="padding:2px 0">Funds</span></div><div class="dep-right">'+simpleToggle(w)+overflowBtn(w)+'</div></div>'+((w.view||"table")==="chart"?pie(FUND,w.size==="large"?170:140,w.size==="large"?"col":"row"):tableHTML(FUND,"Amount",w.size==="wide"));
