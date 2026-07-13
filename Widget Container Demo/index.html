@@ -286,6 +286,11 @@
   .pie-wrap.row .donut{align-self:flex-start;}
   .dist-wrap{flex:1;min-height:0;display:flex;flex-direction:column;}
   .chart-title{font-size:12px;font-weight:400;color:var(--txt-secondary);padding:8px 16px 4px;}
+  .acctm{display:flex;flex-direction:column;gap:14px;width:min(480px,78vw);}
+  .acctm-kpi{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .acctm-kpi .metric-value{font-size:26px;line-height:1.1;}
+  .acctm-chart{height:200px;padding:0;}
+  .acctm .trend-range.static{cursor:default;pointer-events:none;}
   .kpi-lead{display:flex;flex-direction:column;gap:3px;min-width:0;}
   .kpi-line{display:flex;align-items:center;gap:12px;min-width:0;flex-wrap:wrap;}
   .kpi-line .kpi-badge{flex:0 0 auto;}
@@ -814,7 +819,7 @@
     if(a==="company-dd"){companyQuery="";pop={type:"companydd",id:id};render();return;}
     if(a==="set-company"){var wsc=find(id);if(wsc)wsc.company=t.getAttribute("data-co");companyQuery="";pop={type:"cmenu",id:id};render();return;}
     if(a==="set-depfilter"){var wsf=find(id);if(wsf){wsf.filter=t.getAttribute("data-f");wsf.trIso=null;}pop=null;render();return;}
-    if(a==="tr-iso"){var wti=find(id);if(wti){var nm=t.getAttribute("data-name");wti.trIso=(wti.trIso===nm)?null:nm;}render();return;}
+    if(a==="tr-iso"){var wti=find(id);if(wti){var nm=t.getAttribute("data-name"),kind=t.getAttribute("data-kind");if(kind==="account"){openAcct(wti,nm,t.getAttribute("data-type"));return;}wti.filter=nm;wti.trmode="total";wti.acct=null;wti.acctType=null;wti.trIso=null;}render();return;}
     if(a==="tr-iso-clear"){var wtc=find(id);if(wtc)wtc.trIso=null;render();return;}
     if(a==="advfilter"){pop=(pop&&pop.type==="advfilter"&&pop.id===id)?null:{type:"advfilter",id:id};render();return;}
     if(a==="set-sort"){var wss=find(id);if(wss)wss.sort=t.getAttribute("data-s");pop=null;setStatus("Sorted by "+t.textContent.trim().toLowerCase()+".");render();return;}
