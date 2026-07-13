@@ -694,7 +694,7 @@
     '</div>';}
   function depContent(w){
     if(w.size==="kpi") return depGlance(w); // Glance = total balance across all active accounts, scrubbable
-    var v=w.view||"table";
+    var v=w.view||"table";if(w.acct&&v==="dist")v="trend";
     var mh=depHeaderBlock(w); // line 1: account type + download · line 2: eyebrow/KPI/badge/timeline + view toggle
     // Explore: one compact view (table / trend / distribution) via toggle
     if(w.size==="wide") return mh+(v==="trend"?depTrend(w,false):v==="dist"?donutChart(w,false):depTable(w,false));
