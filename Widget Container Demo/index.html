@@ -551,7 +551,7 @@
   function fmtAxis(v){if(v>=1e6)return "$"+(v/1e6).toFixed(1).replace(/\.0$/,"")+"M";if(v>=1e3)return "$"+Math.round(v/1e3)+"k";return "$"+v;}
   /* show the slices that cover ~80% of the total (so the chart is mostly "in use"), capped at maxN for legibility; bucket only the small tail into Others */
   function topN(arr,maxN){var s=arr.slice().sort(function(a,b){return b.net-a.net;});if(s.length<=maxN)return s;var tot=s.reduce(function(x,a){return x+a.net;},0)||1,shown=[],cum=0;for(var i=0;i<s.length&&shown.length<maxN;i++){shown.push(s[i]);cum+=s[i].net;if(cum/tot>=0.80&&shown.length>=4)break;}if(shown.length<s.length){shown.push({name:"Others",net:s.slice(shown.length).reduce(function(x,a){return x+a.net;},0),others:true});}return shown;}
-  function depScope(w){if(w.acct){return depData(w).filter(function(a){return a.name===w.acct;});}var f=w.filter||"All types";return depData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;});}
+  function depScope(w){if(w.acct){return depData(w).filter(function(a){return a.name===w.acct&&(!w.acctType||a.type===w.acctType);});}var f=w.filter||"All types";return depData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;});}
   function depDist(w){var N={wide:8,large:12,xwide:14}[w.size]||10;
     if(w.acct){var mine=depData(w).filter(function(a){return a.name===w.acct;})[0];var tName=mine?mine.type:"";var inT=depData(w).filter(function(a){return a.type===tName;}).map(function(a){return {name:a.name,net:a.net};});return {by:"account",segs:topN(inT,N),total:inT.length,scopeType:tName,legendLabel:"Accounts"};}
     var f=w.filter||"All types";
