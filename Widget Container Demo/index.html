@@ -313,7 +313,7 @@
   .donut-c2{font-family:'Red Hat Text',sans-serif;font-weight:500;font-size:10px;fill:var(--txt-subtle);}
   .legend{display:flex;min-width:0;}
   .pie-wrap.col .legend{flex-wrap:wrap;justify-content:center;gap:4px 12px;max-width:100%;}
-  .pie-wrap.row .legend{flex-direction:column;gap:1px;align-items:stretch;max-height:100%;overflow-y:auto;flex:1;min-width:0;scrollbar-width:thin;}
+  .pie-wrap.row .legend{flex-direction:column;gap:1px;align-items:stretch;overflow-y:auto;overscroll-behavior:contain;flex:0 1 auto;min-width:0;scrollbar-width:thin;}
   .pie-wrap.row .leg{width:100%;}
   .pie-wrap.row .leg .lg-main{flex:0 1 auto;min-width:0;}
   .leg{display:inline-flex;align-items:center;gap:7px;font-size:12px;padding:3px 6px;border-radius:6px;cursor:pointer;}
@@ -831,7 +831,7 @@
     if(a==="pick-size"){var w=find(id);if(w)w.size=t.getAttribute("data-size");pop=null;setStatus("“"+w.title+"” → "+DEPTH_LABEL[w.size]+".");render();return;}
     if(a==="depfilter"){filterQuery="";pop=(pop&&pop.type==="depfilter"&&pop.id===id)?null:{type:"depfilter",id:id};render();return;}
     if(a==="set-scope"){var wsc2=find(id),mode=t.getAttribute("data-mode"),val=t.getAttribute("data-v");if(wsc2){if(mode==="account"){wsc2.acct=val;wsc2.acctType=t.getAttribute("data-type");}else{if(mode==="all")wsc2.filter="All types";else if(mode==="type")wsc2.filter=val;wsc2.acct=null;wsc2.acctType=null;}wsc2.trIso=null;}pop=null;render();return;}
-    if(a==="pick-acct"){var wpa=find(id);if(wpa){wpa.acct=t.getAttribute("data-v");wpa.acctType=t.getAttribute("data-type");wpa.trIso=null;}render();return;}
+    if(a==="pick-acct"){var wpa=find(id);if(wpa)openAcct(wpa,t.getAttribute("data-v"),t.getAttribute("data-type"));return;}
     if(a==="cmenu"){pop=(pop&&pop.type==="cmenu"&&pop.id===id)?null:{type:"cmenu",id:id};render();return;}
     if(a==="export"){var we=find(id);setStatus("Exported the current “"+(we?we.title:"")+"” view as "+t.getAttribute("data-fmt")+".");pop=null;render();return;}
     if(a==="company-dd"){companyQuery="";pop={type:"companydd",id:id};render();return;}
