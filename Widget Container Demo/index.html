@@ -286,8 +286,10 @@
   .pie-wrap.row .donut{align-self:flex-start;}
   .dist-wrap{flex:1;min-height:0;display:flex;flex-direction:column;}
   .chart-title{font-size:12px;font-weight:400;color:var(--txt-secondary);padding:8px 16px 4px;}
-  .tr-view-for{display:flex;align-items:center;gap:8px;padding:0 16px 10px;}
-  .tr-view-for .tvf-lbl{font-size:11px;font-weight:500;color:var(--txt-subtle);}
+  .kpi-badge-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;min-width:0;}
+  .kpi-stack{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .tvf{display:flex;align-items:center;gap:8px;min-width:0;}
+  .tvf .tvf-lbl{font-size:11px;font-weight:500;color:var(--txt-subtle);white-space:nowrap;}
   .legend-col{flex:1;min-width:0;min-height:0;align-self:stretch;display:flex;flex-direction:column;}
   .legend-hd{font-size:11px;font-weight:600;color:var(--txt-secondary);padding:1px 0 6px;}
   .dist-lg-title{padding:0 0 6px;}
@@ -578,7 +580,7 @@
   function simpleToggle(w){var v=w.view||"table";return tog([["table","List"],["chart","Distribution"]],v,w);}
   function depToggle(w){var v=w.view||"table";if(w.size==="xwide")return tog([["balances","Balances","table_rows"],["trend","Trend","show_chart"]],(v==="trend"?"trend":"balances"),w);return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"],["trend","Trend","show_chart"]],v,w);}
   function depBreakToggle(w){var v=w.view||"table",allT=(w.filter||"All types").indexOf("All")===0;
-    if(v==="dist"){return (allT&&!w.acct)?tog2([["type","By Account Type"],["accounts","By Account"]],(w.dist==="accounts"?"accounts":"type"),w):"";}
+    if(v==="dist"){return (allT&&!w.acct)?tog2([["type","Account Types"],["accounts","Accounts"]],(w.dist==="accounts"?"accounts":"type"),w):"";}
     if(v==="trend"){if(w.acct)return "";var mode=w.trmode||"total";if(!allT&&mode==="type")mode="total";var tb=function(m,l){return '<button class="vt'+(mode===m?" on":"")+'" data-action="trmode" data-id="'+w.id+'" data-m="'+m+'" aria-pressed="'+(mode===m)+'">'+l+'</button>';};return '<div class="vtoggle" role="group" aria-label="Trend breakdown">'+tb("total","Total")+(allT?tb("type","By Account Type"):"")+tb("account","By Account")+'</div>';}
     return "";}
   function tog2(opts,cur,w){return '<div class="vtoggle" role="group" aria-label="Break down by">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="set-dist" data-id="'+w.id+'" data-d="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+o[1]+'</button>';}).join("")+'</div>';}
