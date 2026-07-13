@@ -582,10 +582,11 @@
     var xs=s.map(function(v,i){return pad+i*(W-2*pad)/((s.length-1)||1);}),ys=s.map(function(v){return H-pad-((v-mn)/rng)*(H-2*pad);});
     var line=smoothPath(xs,ys),area=line+" L"+xs[xs.length-1].toFixed(1)+","+H+" L"+xs[0].toFixed(1)+","+H+" Z";
     var xp=xs.map(function(x){return (x/W*100).toFixed(2);}).join(","),yp=ys.map(function(y){return (y/H*100).toFixed(2);}).join(",");
-    return '<div class="glance">'+
+    return '<div class="kpi-row"><div class="kpi-num">'+
     '<button class="scope-chip" data-action="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Account type — tap to change">'+typeLabel(w)+ICON("expand_more")+'</button>'+
     '<div class="gl-metric"><span class="metric-value" id="depnum" data-latest="'+money(latest)+'">'+money(latest)+'</span><span class="delta-pill'+(neg?" neg":"")+'">'+ICON(neg?"arrow_downward":"arrow_upward")+Math.abs(dpct).toFixed(1)+'%</span></div>'+
-    '<div class="gl-sub">'+(neg?"−":"+")+money(Math.abs(latest-first))+' vs last '+periodLbl(w)+'</div>'+
+    '<div class="gl-sub"><span class="gl-abs">'+(neg?"−":"+")+money(Math.abs(latest-first))+'</span>'+trendRangeBtn(w)+'</div>'+
+    '</div>'+
     '<div class="kpi-spark dep-spark" data-series="'+s.join(',')+'" data-labels="'+labs.join("|")+'" data-xp="'+xp+'" data-yp="'+yp+'" tabindex="0" aria-label="Total deposits over the selected window — hover to read a point"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="dsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.22"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs><path d="'+area+'" fill="url(#dsg)"/><path d="'+line+'" fill="none" stroke="var(--chart)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-end" style="left:'+xp.split(",").pop()+'%;top:'+yp.split(",").pop()+'%"></div><div class="ds-hair"></div><div class="ds-dot"></div></div>'+
     '</div>';}
   function depContent(w){
