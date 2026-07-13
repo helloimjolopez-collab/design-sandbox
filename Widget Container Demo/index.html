@@ -600,7 +600,7 @@
   /* Trend dimension follows the filter: All types → one line per account TYPE; a specific type → one line per ACCOUNT in it */
   function trendSet(w,range,by){
     if(by==="type"){return depByType(w).map(function(t){var accts=depData(w).filter(function(a){return a.type===t.name;}),agg=null;accts.forEach(function(a){var s=acctSeries(a,range);if(!agg)agg=s.slice();else s.forEach(function(v,j){agg[j]+=v;});});return {name:t.name,series:agg||[],net:t.net,down:!!(agg&&agg[agg.length-1]<agg[0])};}).sort(function(a,b){return b.net-a.net;});}
-    return depScope(w).map(function(a){return {name:a.name,series:acctSeries(a,range),net:a.net,down:a.trend==="down"};}).sort(function(a,b){return b.net-a.net;});}
+    return depScope(w).map(function(a){return {name:a.name,series:acctSeries(a,range),net:a.net,down:a.trend==="down",type:a.type};}).sort(function(a,b){return b.net-a.net;});}
   function depTrend(w,big){
     var range=w.range||"Q",f=w.filter||"All types",allT=f.indexOf("All")===0,mode=w.trmode||"total";if(!allT&&mode==="type")mode="total";if(w.acct)mode="total";
     var scopeAll=depScope(w),agg=null;scopeAll.forEach(function(a){var s=acctSeries(a,range);if(!agg)agg=s.slice();else s.forEach(function(v,j){agg[j]+=v;});});agg=agg||[0];
