@@ -983,7 +983,7 @@ td.metric-label { font-weight: 600; }
     <div id="execution-plan" class="section">
       <div class="page-header">
         <h1>Execution Plan</h1>
-        <p>Starting July 2026, hard stop December 1, launch February 2027</p>
+        <p>Month-by-month delivery schedule — who does what, and when. For what is in each batch and why, see <button class="nav-btn inline-nav-link" data-target="component-plan" style="background:none;border:none;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:inherit;">Component Plan.</button></p>
       </div>
       <div class="section-content">
 
@@ -1363,126 +1363,115 @@ td.metric-label { font-weight: 600; }
     <div id="component-plan" class="section">
       <div class="page-header">
         <h1>Component Plan</h1>
-        <p>Delivery batches, squad &amp; tribe responsibilities, and full component audit</p>
+        <p>What is in each batch and why, in what order. For the month-by-month delivery schedule, see <button class="nav-btn inline-nav-link" data-target="execution-plan" style="background:none;border:none;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:inherit;">Execution Plan.</button></p>
       </div>
 
       <div class="section-content">
 
-        <div class="callout amber">
-          <strong>Note:</strong> Priority ratings below reflect programme analysis. Validate and update the Priority column against Amplify friction data once available. Populate Designer and PM owner columns once tribe assignments are confirmed.
+        <div class="callout blue" style="margin-bottom:24px;">
+          <strong>This section vs. Execution Plan.</strong> The <strong>Execution Plan</strong> shows when each team does each task — the month-by-month delivery schedule. This section shows <strong>what gets built, in what batches, in what order, and why.</strong> These two sections work together; use the Execution Plan for timing and this section for content.
         </div>
 
-        <h2>Squad &amp; tribe responsibilities — month by month</h2>
-        <p class="section-intro">The design system squad builds one batch ahead of the tribes. Tribes implement the preceding batch each month in both Figma and production code.</p>
+        <h2 style="margin-top:0;">Existing components: no design work needed</h2>
+        <p class="section-intro">The following components already exist in the repository. They do not need to be designed. In July, the DS Squad dev reviews each one, runs a QA pass, wires brand tokens, adds Code Connect mappings, and publishes to Storybook so any team can import directly into their code.</p>
 
-        <div class="table-wrap">
+        <div class="table-wrap" style="margin-bottom:28px;">
           <table>
             <thead>
               <tr>
-                <th style="width:130px;">Month</th>
-                <th>Design System Squad</th>
-                <th>All Tribes</th>
+                <th>Component</th>
+                <th>July work required (DS Squad engineer + principal designer)</th>
+                <th>Tribes: when to implement</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>July</strong><span class="phase-badge foundation">Foundation</span></td>
-                <td>DS Squad set up and system foundations: Figma plan upgraded, operating model defined, governance tidied, repositories consolidated and secured, token architecture reviewed, existing components documented and Code Connected, new brand token branch created and merged, <code style="font-family:monospace;font-size:11px;">@mb/tokens v0.1</code> published. Programme starts July 13: foundation phase is compressed.</td>
-                <td>Each designer submits top 5 UI friction items (component-level: inaccessible interactions, broken states, unusable elements — not flows or IA issues) to the All Products UX Friction Log. These adjust the component build priority list. Each tribe's <strong>designer + PM pair</strong> captures their product's <a href="#pendo-baseline" onclick="document.getElementById('how-we-measure-it').scrollIntoView({behavior:'smooth'});document.getElementById('pendo-baseline').style.outline='2px solid var(--accent)';setTimeout(()=>document.getElementById('pendo-baseline').style.outline='',2000);return false;" style="color:var(--accent);text-decoration:underline;">Pendo baseline metrics</a> — task completion rates, feature adoption, drop-off points — and submits the export by end of July. No implementation expected — input and data capture only.</td>
-              </tr>
-              <tr>
-                <td><strong>August</strong><span class="phase-badge build">Build · Batch 1</span></td>
-                <td>Design, spec, build, and QA Batch 1: all foundation tokens plus all atoms (button, input, checkbox, radio, toggle, badge, tag, tooltip, spinner, icon library, avatar, link). Publish Batch 1 to Storybook and Figma library with release notes.</td>
-                <td>Receive Batch 1 release notes. Begin updating Figma files: replace local buttons, inputs, checkboxes, radio buttons, toggles, badges, tags, tooltips, icons throughout all screens. Walk through spec with dev leads per tribe.</td>
-              </tr>
-              <tr>
-                <td><strong>September</strong><span class="phase-badge build">Build · Batch 2</span></td>
-                <td>Design, spec, build, and QA Batch 2: selects, date pickers, modals, alerts, toasts, empty and error states, form groups, filter chips. Release Batch 1 formally for production implementation. QA Batch 1 Figma integration with tribes.</td>
-                <td>Implement Batch 1 in production code across all screens. Raise edge cases and gaps with DS squad. Implementing new Pathway components directly resolves the component-level friction items logged in July — no separate fix track needed.</td>
-              </tr>
-              <tr>
-                <td><strong>October</strong><span class="phase-badge build">Build · Batch 3 + 4</span></td>
-                <td>Design, spec, and hand off Batch 3 (tables, cards, KPI tiles, tabs, drawers) and Batch 4 (navigation shell, module switcher, global search) in parallel. Apply brand tokens across the full component library. Release Batch 2.</td>
-                <td>Implement Batch 2 in production. Begin brand token grooming: audit all Figma screens and code, start replacing hardcoded values with tokens from <code style="font-family:monospace;font-size:11px;">@mb/tokens</code>. Implementing new Pathway components continues resolving logged UI friction items.</td>
-              </tr>
-              <tr>
-                <td><strong>November</strong><span class="phase-badge integration">Integration</span></td>
-                <td>Release Batch 3 + 4. Support tribe integration across all modules — dedicated office hours. QA pass across modules. Flag and resolve cross-module inconsistencies. Scope Batch 5 templates for post-launch.</td>
-                <td>Implement Batch 3 + 4 in Figma and production. Complete brand token rollout across all screens. All logged UI friction items should be resolved through component implementation by this point. Begin internal QA. Raise remaining issues with DS squad.</td>
-              </tr>
-              <tr class="amber-row">
-                <td><strong>December</strong><span class="phase-badge qa">Hard Stop</span></td>
-                <td>Engineering complete by 1 December. Full QA pass across all components in Storybook and product. UAT preparation. Triage edge cases. No new scope accepted after this month.</td>
-                <td>Full QA of all implemented components across all modules. UAT preparation. Surface final issues — last chance to raise blockers. Engineering hard stop for all tribes.</td>
-              </tr>
-              <tr>
-                <td><strong>January</strong><span class="phase-badge uat">UAT</span></td>
-                <td>Support UAT. Address critical QA findings. Finalise launch preparation and comms plan.</td>
-                <td>User acceptance testing with key internal and external stakeholders. Marketing and comms preparation. Final sign-off from all product owners.</td>
-              </tr>
-              <tr>
-                <td><strong>February</strong><span class="phase-badge launch">Launch</span></td>
-                <td>Co-ordinated launch: Pathway design system and full rebrand live across all modules. Monitor, respond, and iterate.</td>
-                <td>All modules go live simultaneously. Monitor for issues. Begin Batch 5 template work post-launch once baseline is stable.</td>
-              </tr>
+              <tr><td class="metric-label">Button</td><td>Dev review, token wiring, WCAG 2.1 AA a11y pass (focus states, disabled state, loading state), Code Connect, Storybook docs</td><td>August (code dev)</td></tr>
+              <tr><td class="metric-label">Input / text field</td><td>Dev review, token wiring, a11y pass (error state, focus ring, label association), Code Connect, Storybook docs</td><td>August</td></tr>
+              <tr><td class="metric-label">Checkbox</td><td>Dev review, token wiring, a11y pass (indeterminate state, focus), Code Connect, Storybook docs</td><td>August</td></tr>
+              <tr><td class="metric-label">Radio button</td><td>Dev review, token wiring, a11y pass (group role, keyboard nav), Code Connect, Storybook docs</td><td>August</td></tr>
+              <tr><td class="metric-label">Badge</td><td>Dev review, token wiring, variant audit (status / numeric / dot), Code Connect, Storybook docs</td><td>August</td></tr>
+              <tr><td class="metric-label">Spinner / loader</td><td>Dev review, token wiring, a11y pass (aria-live, role), Code Connect, Storybook docs</td><td>August</td></tr>
+              <tr><td class="metric-label">Side nav</td><td>Dev review, token wiring, a11y pass (landmarks, aria-current, keyboard nav), Code Connect, Storybook docs</td><td>November (with Batch 4)</td></tr>
+              <tr><td class="metric-label">Top nav</td><td>Dev review, token wiring, a11y pass (skip link, focus management), Code Connect, Storybook docs</td><td>November (with Batch 4)</td></tr>
+              <tr><td class="metric-label">Page template / shell</td><td>Dev review, token wiring, slot architecture documented, Code Connect, Storybook docs</td><td>November (with Batch 4)</td></tr>
             </tbody>
           </table>
         </div>
 
-        <hr class="inner-divider"/>
+        <h2>Batch order and rationale</h2>
+        <p class="section-intro">Each batch depends on the previous one. Atoms must exist before molecules can be built. Molecules before organisms. Navigation and organisms can run in parallel because they have different owners within the DS squad and no shared dependencies.</p>
+
+        <div class="callout" style="background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.08);margin-bottom:24px;">
+          <strong>Foundation (July)</strong> — Tokens and existing components packaged. No new design. Tribes unblock immediately: apply brand CSS tokens from npm on day 1. Existing components (button, input, checkbox, radio, badge, spinner, side nav, top nav, page shell) are dev reviewed, token wired, and published for import.<br><br>
+          <strong>Batch 1 — Atoms (August)</strong> — Net-new atoms plus a11y + token pass on Foundation atoms. Why first: every molecule, organism, and template composes atoms. Building molecules before atoms are stable creates rework.<br><br>
+          <strong>Batch 2 — Molecules (September)</strong> — Molecules compose atoms. Why second: selects, date pickers, modals, and form groups all use buttons, inputs, checkboxes, and icons internally. The atom layer must be published and stable.<br><br>
+          <strong>Batch 3 — Organisms (October)</strong> — Complex components that compose molecules + atoms. Tables, cards, drawers, and tabs are the highest-frequency, highest-pain surfaces across all modules. Why October: needs the full molecule layer stable. Tables alone represent the single largest cross-module fragmentation point.<br><br>
+          <strong>Batch 4 — Navigation (October, parallel)</strong> — Global navigation shell. Runs in parallel with Batch 3 because navigation is a separate workstream owned by the principal engineer and does not compose organisms. Existing top nav and side nav get token wiring, global search, module switcher, and notification centre added.<br><br>
+          <strong>Batch 5 — Templates (Post-launch)</strong> — Page-level layout templates. Why post-launch: templates compose the entire component library. They cannot be properly specified until the full atom-to-organism stack is stable and tested in production.
+        </div>
 
         <h2>Component delivery batches</h2>
-        <p class="section-intro">The design system squad builds each batch one month ahead. Tribes implement the batch the following month — first in Figma, then in production with their dev leads.</p>
+        <p class="section-intro">DS Squad publishes at end of month. Tribes groom in Figma the same month, implement in code the following month.</p>
 
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th style="width:170px;">Batch</th>
-                <th style="width:165px;">DS Squad builds</th>
-                <th style="width:165px;">Tribes implement</th>
-                <th>Components included</th>
+                <th style="width:200px;">Batch</th>
+                <th style="width:155px;">DS Squad: July work</th>
+                <th style="width:155px;">Tribes: implement</th>
+                <th>Components</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><span class="tag purple">Foundation — Tokens</span></td>
-                <td>July</td>
-                <td>—</td>
-                <td>Color tokens, typography tokens, spacing tokens, border radius tokens, shadow / elevation tokens, motion / animation tokens</td>
+                <td>July — publish</td>
+                <td>July (CSS only)</td>
+                <td>Color, typography, spacing, border-radius, shadow/elevation, motion tokens</td>
               </tr>
               <tr>
-                <td><span class="tag blue">Batch 1 — Atoms</span></td>
-                <td>August</td>
-                <td>September</td>
-                <td>Button, input / text field, checkbox, radio button, toggle / switch, badge, tag / chip, tooltip, loading spinner, icon library, avatar, link / text link</td>
+                <td><span class="tag purple">Foundation — Existing components</span><br><small style="color:var(--text-secondary);font-weight:400;">Dev review + QA + Code Connect only. No design needed.</small></td>
+                <td>July — review, QA, token wire, publish</td>
+                <td>August (Figma groom) → September (code)</td>
+                <td>Button, input, checkbox, radio, badge, spinner — plus side nav, top nav, page template, page shell (these implement with Batch 4 in November)</td>
               </tr>
               <tr>
-                <td><span class="tag blue">Batch 2 — Molecules</span></td>
-                <td>September</td>
-                <td>October</td>
-                <td>Select / dropdown, multi-select, filter chip, search field, date picker, date range picker, modal / dialog, inline alert, toast / notification, empty state, error state, form group, inline confirmation</td>
+                <td><span class="tag blue">Batch 1 — Atoms</span><br><small style="color:var(--text-secondary);font-weight:400;">Net-new design + build</small></td>
+                <td>August — design, build, publish</td>
+                <td>September (Figma) → October (code)</td>
+                <td>Toggle/switch, tag/chip, tooltip, link/text link, avatar, full icon library. A11y + token pass on all Foundation atoms.</td>
               </tr>
               <tr>
-                <td><span class="tag green">Batch 3 — Organisms</span></td>
-                <td>October</td>
-                <td>November</td>
-                <td>Table (sortable), table with bulk actions, table toolbar, pagination, card, KPI tile, status indicator row, stepper / progress, tabs, accordion, drawer / side panel</td>
+                <td><span class="tag blue">Batch 2 — Molecules</span><br><small style="color:var(--text-secondary);font-weight:400;">Net-new design + build</small></td>
+                <td>September — design, build, publish</td>
+                <td>October (Figma) → November (code)</td>
+                <td>Select/dropdown, multi-select, filter chip, search field, date picker, date range picker, modal/dialog, inline alert, toast, empty state, error state, form group, inline confirmation</td>
               </tr>
               <tr>
-                <td><span class="tag green">Batch 4 — Navigation</span></td>
-                <td>October (parallel)</td>
-                <td>November</td>
-                <td>Top navigation shell, module switcher, org / account switcher, user / profile menu, global search, side navigation, notification centre</td>
+                <td><span class="tag green">Batch 3 — Organisms</span><br><small style="color:var(--text-secondary);font-weight:400;">Net-new design + build</small></td>
+                <td>October — design, build, publish</td>
+                <td>November (Figma) → November (code)</td>
+                <td>Table (sortable, filterable, bulk + row actions), table toolbar, pagination, card, KPI tile, status row, tabs, stepper/progress, accordion, drawer/side panel</td>
               </tr>
               <tr>
-                <td><span class="tag amber">Batch 5 — Templates</span></td>
+                <td><span class="tag green">Batch 4 — Navigation</span><br><small style="color:var(--text-secondary);font-weight:400;">Existing nav refined + new additions</small></td>
+                <td>October (parallel) — token wire + new additions, publish</td>
+                <td>November (Figma) → November (code)</td>
+                <td>Global search, module switcher, org/account switcher, notification centre. Token wiring + Code Connect refinement on existing top nav and side nav.</td>
+              </tr>
+              <tr>
+                <td><span class="tag amber">Batch 5 — Templates</span><br><small style="color:var(--text-secondary);font-weight:400;">Post-launch</small></td>
                 <td>Post-launch</td>
                 <td>Post-launch</td>
-                <td>Dashboard page template, page header template, list / index page template, settings page template, record detail / profile template, command palette, file upload, rich text editor</td>
+                <td>Dashboard page template, page header, list/index page, settings page, record detail/profile, command palette, file upload, rich text editor</td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div class="callout amber" style="margin-top:20px;">
+          <strong>Note:</strong> Priority ratings in the audit table below reflect programme analysis. Validate against Amplify friction data once available. Populate Designer and PM owner columns once tribe assignments are confirmed.
         </div>
 
       </div><!-- /section-content -->
