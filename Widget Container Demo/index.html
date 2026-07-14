@@ -650,7 +650,7 @@
       :'<div class="legend-hd">'+d.legendLabel+'</div>';
     var lgSearch='';
     return '<div class="dist-wrap">'+title+'<div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+fmtAxis(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head">'+lgHead+'</div>'+lgSearch+'<div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
-  function depFull(w){if(w.acct)return '<div class="dep-full one"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div></div>';return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div><div class="dep-col">'+donutChart(w,true)+'</div></div>';}
+  function depFull(w){if(w.acct)return '<div class="dep-full one"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div></div>';return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+depTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Distribution</div>'+donutChart(w,true)+'</div></div>';}
   function acctModalBody(m){var w=find(m.wid);if(!w)return "";var a=depData(w).filter(function(x){return x.name===m.aname&&(!m.atype||x.type===m.atype);})[0];if(!a)return "";
     var range=w.range||"Q",mv=m.mview||"trend";var s=acctSeries(a,range),n=s.length;
     var latest=s[n-1],first=s[0],dpct=((latest-first)/(first||1))*100,neg=dpct<0;
