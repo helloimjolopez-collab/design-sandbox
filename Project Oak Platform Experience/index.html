@@ -1060,14 +1060,18 @@ td.metric-label { font-weight: 600; }
         </div>
 
         <!-- ── MONTH BY MONTH ── -->
-        <div class="table-wrap">
-          <table>
+        <div class="callout" style="margin-bottom:20px;background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.1);">
+          <strong>How to read this table.</strong> The DS Squad and tribe tracks run in parallel on a one-month offset. DS publishes a batch at the end of the month. Tribes groom that batch in Figma during the same month it is published. Tribes implement it in production code the following month. The "code dev" column always shows the previous month's batch.
+        </div>
+        <div class="table-scroll-outer">
+          <table style="min-width:1200px;">
             <thead>
               <tr>
-                <th style="width:130px;">Month</th>
-                <th style="width:260px;">DS Squad ships</th>
-                <th style="width:235px;">Tribes do</th>
-                <th>Artifact published</th>
+                <th style="width:110px;">Month</th>
+                <th style="width:240px;">DS Squad builds + publishes</th>
+                <th style="width:220px;">Tribes: Figma grooming</th>
+                <th style="width:220px;">Tribes: code dev</th>
+                <th>Published</th>
               </tr>
             </thead>
             <tbody>
@@ -1077,72 +1081,70 @@ td.metric-label { font-weight: 600; }
                   <span class="phase-badge foundation">Foundation</span>
                 </td>
                 <td>
-                  <strong>DS Squad setup and system foundations:</strong>
-                  <ul style="margin:8px 0 0 0;padding-left:18px;line-height:1.7;">
-                    <li>Upgrade Figma plan to Organisation (enables branching, versioning, Code Connect, and design system analytics)</li>
-                    <li>Stand up DS Squad formally: define operating model, sprint cadence, review process, and what the squad owns</li>
-                    <li>Tidy up design system governance: ownership model, component lifecycle, contribution rules, decision rights</li>
-                    <li>Consolidate and secure repositories: migrate pilot repo into Unity repo (or properly scaffold it) with QA integration, access controls, and branch strategy</li>
-                    <li>Consolidate DS AI-assisted skills and plugins (Component Studio, Issue Friction Logger, etc.) so updates propagate to all users</li>
-                    <li>Review token architecture: naming convention, tier structure, semantic vs. primitive tokens</li>
-                    <li>Scale up, secure, and document the existing component library and Storybook</li>
-                    <li>Workshop Code Connect: principal engineer and principal designer pilot Code Connect on existing components (side nav, top nav, button, checkbox, input, spinner, radios, widgets)</li>
-                    <li>Prepare those existing components for dev consumption: register to Storybook, write Code Connect mappings</li>
-                    <li>Principal designer creates new Figma variable panel branch with confirmed brand colors and typography tokens, reviews with team, merges to main</li>
-                    <li>Provision private npm repo and publish <code style="font-family:monospace;font-size:11px;">@mb/tokens v0.1</code></li>
-                    <li>Facilitate tribe friction brief</li>
-                  </ul>
+                  System foundations — full list in pre-start section above. Key outputs: repo secured and scaffolded, Code Connect workshopped and piloted, Figma variable library updated with new brand tokens, existing components (button, input, checkbox, radio, badge, spinner, side nav, top nav, page shell, page template) dev reviewed, QA'd, Code Connected, and published to Storybook. <code style="font-family:monospace;font-size:11px;">@mb/tokens v0.1</code> published to npm.
+                </td>
+                <td style="color:var(--text-secondary);font-style:italic;">
+                  No Figma grooming yet — diagnostic phase only. Submit top 5 UI friction items to the friction log. Capture Pendo baselines.
                 </td>
                 <td>
-                  Each designer submits their <strong>top 5 UI friction items</strong> from their product to the All Products UX Friction Log. These are component-level, interaction-level issues: inaccessible elements, broken states, unusable interactions, inconsistent component behaviour. <em>Not flows, not IA issues, not feature requests</em> — those belong to a separate programme. Each tribe's <strong>designer + PM pair</strong> captures and logs their product's <a href="#pendo-baseline" onclick="document.getElementById('how-we-measure-it').scrollIntoView({behavior:'smooth'});document.getElementById('pendo-baseline').style.outline='2px solid var(--accent)';setTimeout(()=>document.getElementById('pendo-baseline').style.outline='',2000);return false;" style="color:var(--accent);text-decoration:underline;">Pendo baseline metrics</a> — task completion rates, feature adoption, and drop-off points — by end of July. See How We Measure It for the full baseline brief.
+                  As soon as <code style="font-family:monospace;font-size:11px;">@mb/tokens</code> is published: update your product's CSS to consume the npm package. Swap all hardcoded brand colour, typography, and spacing values for CSS variables. No component swaps yet.
                 </td>
                 <td>
-                  <span class="tag purple" style="white-space:nowrap;">@mb/tokens v0.1</span> published to private npm. All tribes can now consume brand CSS from this package.
+                  <span class="tag purple" style="white-space:nowrap;">@mb/tokens v0.1</span> published.<br>Foundation components (button, input, checkbox, radio, badge, spinner, side nav, top nav, page shell) live in Storybook + npm.
                 </td>
               </tr>
               <tr>
                 <td>
                   <strong>August</strong>
-                  <span class="phase-badge build">Build · Batch 1</span>
+                  <span class="phase-badge build">Batch 1</span>
                 </td>
                 <td>
-                  Design all atoms in Figma against token library: button, input, checkbox, radio, toggle, badge, tag, tooltip, spinner, full icon library, avatar, link. Build, QA, and publish to Storybook with docs.
+                  Design, build, QA, and publish Batch 1 — <em>net new atoms only</em>: toggle, tag, tooltip, link, avatar, full icon library. Accessibility and token wiring pass on all Foundation atoms (button, input, checkbox, radio, badge, spinner) to meet WCAG 2.1 AA and apply new brand tokens. Publish full atom layer to Storybook with docs and Code Connect.
                 </td>
                 <td>
-                  Review Batch 1 release notes. Begin updating Figma files: replace all local button, input, checkbox, radio, toggle, badge, tag, tooltip, and icon instances with Pathway components. Brief dev leads on incoming npm package.
+                  <strong>Groom Foundation release in Figma.</strong> Screen by screen: apply the Pathway token library. Replace all local Foundation component instances — button, input, checkbox, radio, badge, spinner, side nav, top nav — with Pathway versions. Log any gaps or edge cases with DS squad. Tribes brief their dev leads on the Foundation npm package.
                 </td>
                 <td>
-                  <span class="tag blue" style="white-space:nowrap;">@mb/pathway Batch 1</span> published. All atoms available for tribes to consume in code.
+                  Implement Foundation components in production code: replace local button, input, checkbox, radio, badge, and spinner implementations with <code style="font-family:monospace;font-size:11px;">@mb/pathway</code> npm imports. Use Code Connect output as implementation source of truth.
+                </td>
+                <td>
+                  <span class="tag blue" style="white-space:nowrap;">@mb/pathway Batch 1</span> published. Full atom layer available.
                 </td>
               </tr>
               <tr>
                 <td>
                   <strong>September</strong>
-                  <span class="phase-badge build">Build · Batch 2</span>
+                  <span class="phase-badge build">Batch 2</span>
                 </td>
                 <td>
-                  Design all molecules: select, multi-select, filter chip, search field, date picker, date range picker, modal, inline alert, toast, empty state, error state, form group, inline confirmation. Build, QA, and publish.
+                  Design, build, QA, and publish Batch 2 — molecules: select, multi-select, filter chip, search field, date picker, date range picker, modal, inline alert, toast, empty state, error state, form group, inline confirmation. Publish to Storybook with docs.
                 </td>
                 <td>
-                  Implement Batch 1 in production code across all screens. Dev teams update CSS to consume <code style="font-family:monospace;font-size:11px;">@mb/tokens</code> and <code style="font-family:monospace;font-size:11px;">@mb/pathway</code> Batch 1. Implementing Pathway components directly resolves the component-level UI friction items logged in July.
+                  <strong>Groom Batch 1 in Figma.</strong> Replace all local toggle, tag, tooltip, link, avatar, and icon instances with Pathway Batch 1 atoms. Complete the full atom layer across your Figma files. Attend 60-min grooming session with DS squad to walk through output and raise gaps before dev starts.
                 </td>
                 <td>
-                  <span class="tag blue" style="white-space:nowrap;">@mb/pathway Batch 2</span> published. Molecules available for tribes.
+                  Implement Batch 1 atoms in production code: toggle, tag, tooltip, avatar, full icon library. Complete atom layer live from npm.
+                </td>
+                <td>
+                  <span class="tag blue" style="white-space:nowrap;">@mb/pathway Batch 2</span> published. Molecules available.
                 </td>
               </tr>
               <tr>
                 <td>
                   <strong>October</strong>
-                  <span class="phase-badge build">Build · Batch 3 + 4</span>
+                  <span class="phase-badge build">Batch 3 + 4</span>
                 </td>
                 <td>
-                  Design and build Batch 3 (tables, cards, KPI tiles, tabs, drawers, pagination, stepper) and Batch 4 (top nav shell, module switcher, org switcher, global search, side nav, notification centre) in parallel. Apply brand tokens across full component library. Publish both batches.
+                  Build Batch 3 and Batch 4 in <strong>parallel</strong> — two workstreams within DS squad.<br><strong>Batch 3 — organisms:</strong> table (sortable, filterable, bulk + row actions), card, KPI tile, tab bar, drawer, pagination, stepper, settings control, accordion.<br><strong>Batch 4 — navigation:</strong> global search, module switcher, org switcher, notification centre. Token wiring and Code Connect refinement on existing top nav and side nav. (These already exist in repo — no redesign needed, just brand token application.)
                 </td>
                 <td>
-                  Implement Batch 2 in production. Begin brand token grooming: audit all Figma screens and code, replace hardcoded values with tokens from <code style="font-family:monospace;font-size:11px;">@mb/tokens</code>. UI friction logged in July continues resolving through Pathway component implementation.
+                  <strong>Groom Batch 2 in Figma.</strong> Replace all local molecule instances — select, date picker, modal, alert, toast, empty states, form groups — with Pathway Batch 2 components. Attend grooming session with DS squad to confirm before dev starts.
                 </td>
                 <td>
-                  <span class="tag green" style="white-space:nowrap;">@mb/pathway Batch 3 + 4</span> published. <span class="tag amber" style="white-space:nowrap;">@mb/tokens v1.0</span> with full brand applied across library.
+                  Implement Batch 2 molecules in production code. Begin brand token grooming: audit all screens in code, replace remaining hardcoded values with <code style="font-family:monospace;font-size:11px;">@mb/tokens</code> CSS variables.
+                </td>
+                <td>
+                  <span class="tag green" style="white-space:nowrap;">@mb/pathway Batch 3 + 4</span> published.<br><span class="tag amber" style="white-space:nowrap;">@mb/tokens v1.0</span> full brand applied.
                 </td>
               </tr>
               <tr>
@@ -1151,13 +1153,16 @@ td.metric-label { font-weight: 600; }
                   <span class="phase-badge integration">Integration</span>
                 </td>
                 <td>
-                  Support tribe integration across all modules. Dedicated office hours. Cross-module QA pass. Resolve inconsistencies. Scope Batch 5 templates for post-launch.
+                  Integration support: dedicated office hours per tribe, cross-module QA pass, resolve inconsistencies. Scope Batch 5 templates for post-launch.
                 </td>
                 <td>
-                  Implement Batch 3 + 4 in Figma and production code. Complete brand token rollout across all screens. All logged UI friction items should be resolved through component implementation. Begin internal QA. Screen-by-screen component swap with dev leads.
+                  <strong>Groom Batch 3 + 4 in Figma.</strong> Replace all local organism and navigation instances with Pathway components. Final screen-by-screen pass — 100% Pathway coverage in Figma, zero local components remaining. Raise edge cases with DS squad.
                 </td>
                 <td>
-                  All modules consuming <code style="font-family:monospace;font-size:11px;">@mb/tokens</code> and <code style="font-family:monospace;font-size:11px;">@mb/pathway</code> in production CSS. Brand tokens live across the platform.
+                  Implement Batch 3 + 4 in production code — organisms and navigation shell. Complete brand token rollout: all hardcoded values replaced across all screens. All logged UI friction items resolved through component implementation.
+                </td>
+                <td>
+                  All modules consuming <code style="font-family:monospace;font-size:11px;">@mb/tokens</code> + <code style="font-family:monospace;font-size:11px;">@mb/pathway</code> in production. Brand tokens live.
                 </td>
               </tr>
               <tr class="amber-row">
@@ -1167,10 +1172,13 @@ td.metric-label { font-weight: 600; }
                   <span class="phase-badge qa">QA</span>
                 </td>
                 <td>
-                  Engineering complete by December 1. Full QA pass across all components in Storybook and in product. UAT preparation. Triage edge cases. No new scope accepted.
+                  Engineering complete by Dec 1. Full QA across all components in Storybook and in product. UAT preparation. No new scope.
                 </td>
                 <td>
-                  Full QA of all implemented components across all modules. Raise final blockers. UAT preparation. Engineering hard stop for all tribes.
+                  Final Figma QA — confirm 100% Pathway coverage across all screens. No local components remaining.
+                </td>
+                <td>
+                  Full QA of all implemented components across all modules. Raise final blockers. Engineering hard stop.
                 </td>
                 <td>
                   QA sign-off. UAT-ready build.
@@ -1184,7 +1192,7 @@ td.metric-label { font-weight: 600; }
                 <td>
                   Support UAT. Address critical findings. Finalise launch preparation and comms plan.
                 </td>
-                <td>
+                <td colspan="2">
                   User acceptance testing. Marketing and comms preparation. Final sign-off from all product owners.
                 </td>
                 <td>
@@ -1197,17 +1205,19 @@ td.metric-label { font-weight: 600; }
                   <span class="phase-badge launch">Launch</span>
                 </td>
                 <td>
-                  Co-ordinated launch. Pathway design system and full rebrand go live across all modules simultaneously.
+                  Coordinated launch. Pathway design system and full rebrand live across all modules simultaneously.
+                </td>
+                <td colspan="2">
+                  All modules go live. Monitor for issues. Begin Batch 5 templates once baseline is stable.
                 </td>
                 <td>
-                  All modules go live. Monitor for issues. Begin Batch 5 template work once baseline is stable.
-                </td>
-                <td>
-                  Pathway + rebrand live in production.
+                  Pathway + rebrand live.
                 </td>
               </tr>
             </tbody>
           </table>
+        </div>
+
         </div>
 
       </div>
