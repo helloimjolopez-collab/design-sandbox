@@ -740,9 +740,10 @@
 
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
-    if(w.state==="empty")return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No deposit accounts</div><div class="state-sub">There are no deposit accounts to show here yet.</div><button class="btn outlined" data-action="add-acct" data-id="'+w.id+'">'+ICON("add")+'Add account</button></div>';
-    if(w.state==="error")return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">Couldn’t load balances</div><div class="state-sub">Something went wrong fetching account data.</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';
+    if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
+    if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
     if(w.kind==="deposits")return depContent(w);
+    if(w.kind==="payroll")return prContent(w);
     if(w.kind==="metric")return metricHTML(w);
     if(w.kind==="chart")return chartHTML(w);
     if(w.kind==="table")return fundContent(w);
