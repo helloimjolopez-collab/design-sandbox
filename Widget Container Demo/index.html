@@ -951,6 +951,10 @@
     if(a==="others"){var on=t.getAttribute("data-n"),ok=t.getAttribute("data-kind")==="type"?"account types":"accounts";showModal("“Others”","This groups the <b>"+on+"</b> smaller "+ok+" that don't have room to show individually here. Tapping it would open the full ranked list of "+ok+", where you can see and search every one.");return;}
     if(a==="add-acct"){showModal("Add a deposit account","Tapping this would take you to the <b>New deposit account</b> form in the Deposits module.");return;}
     if(a==="rangemenu"){pop=(pop&&pop.type==="rangemenu"&&pop.id===id)?null:{type:"rangemenu",id:id};render();return;}
+    if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
+    if(a==="pr-range-set"){var wprr=find(id);if(wprr)wprr.range=t.getAttribute("data-r");if(t.getAttribute("data-r")!=="C")pop=null;render();return;}
+    if(a==="pr-drill"){var wpd=find(id),cat=t.getAttribute("data-cat");if(wpd)showModal(cat,prCategoryModalBody(cat));return;}
+    if(a==="pr-show-last"){var wsl=find(id);if(wsl){wsl.range="R";wsl.state="ready";}render();return;}
     if(a==="trmode"){var wtm=find(id);if(wtm){wtm.trmode=t.getAttribute("data-m");wtm.trIso=null;}render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
