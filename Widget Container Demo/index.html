@@ -738,6 +738,80 @@
     return head+(w.topMetric?signupsMetric(w):"")+signupsList();
   }
 
+  /* ---- Payroll Distributions ---- */
+  /* Categories are org-configured in real life (CompensationDistributionID/Name) — this fixed demo list stands in for that; never hardcode assumptions about count or names beyond what's rendered. */
+  var PR_CATS=["Salary","Hourly","Benefits","Housing Allowance","Overtime"];
+  var PR_RUNS=(function(){
+    var runs=[],seed=17;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
+    var base={Salary:68000,Hourly:34000,Benefits:21000,"Housing Allowance":9000,Overtime:6000};
+    var end=new Date(2026,6,15); // "today" in this demo — Jul 15, 2026, matches biweekly pay runs
+    for(var i=11;i>=0;i--){
+      var d=new Date(end.getTime());d.setDate(d.getDate()-i*14);
+      var byCat={};PR_CATS.forEach(function(c){var drift=1+(11-i)*0.006,noise=0.9+r()*0.2;byCat[c]=Math.round(base[c]*drift*noise);});
+      runs.push({date:d,byCat:byCat});
+    }
+    return runs;
+  })();
+  function prFmtDate(d){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return M[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
+  function prMonthKey(d){return d.getFullYear()+"-"+d.getMonth();}
+  /* period-scoped: the whole view re-scopes to the chosen period (shell §0.1) */
+  function prRunsInRange(w){var r=w.range||"R";
+    if(r==="R")return [PR_RUNS[PR_RUNS.length-1]];
+    if(r==="TM"){var now=PR_RUNS[PR_RUNS.length-1].date;return PR_RUNS.filter(function(x){return prMonthKey(x.date)===prMonthKey(now);});}
+    if(r==="LM"){var now2=PR_RUNS[PR_RUNS.length-1].date,lm=new Date(now2.getFullYear(),now2.getMonth()-1,1);return PR_RUNS.filter(function(x){return prMonthKey(x.date)===prMonthKey(lm);});}
+    if(r==="C"){var b=w.begin?new Date(w.begin):null,e=w.end?new Date(w.end):null;return PR_RUNS.filter(function(x){return (!b||x.date>=b)&&(!e||x.date<=e);});}
+    return [PR_RUNS[PR_RUNS.length-1]];}
+  /* comparisons are run-aligned or calendar-period-aligned — never a rolling day-count window (resolves F3) */
+  function prPriorRunsInRange(w){var r=w.range||"R";
+    if(r==="R"){var i=PR_RUNS.length-2;return i>=0?[PR_RUNS[i]]:[];}
+    var cur=prRunsInRange(w);if(!cur.length)return[];var first=cur[0].date;
+    if(r==="TM"||r==="LM"){var pm=new Date(first.getFullYear(),first.getMonth()-1,1);return PR_RUNS.filter(function(x){return prMonthKey(x.date)===prMonthKey(pm);});}
+    return []; // custom range: no auto comparison, rather than fake a day-count delta
+  }
+  function prRowsFor(runsArr){var m={};PR_CATS.forEach(function(c){m[c]=0;});runsArr.forEach(function(run){PR_CATS.forEach(function(c){m[c]+=(run.byCat[c]||0);});});
+    var rows=PR_CATS.map(function(c){return {name:c,net:m[c]};});rows.sort(function(a,b){return b.net-a.net;});return rows;} // default sort amount-desc (resolves F6)
+  function prTotal(rows){return rows.reduce(function(s,a){return s+a.net;},0);}
+  function prDelta(w){var cur=prTotal(prRowsFor(prRunsInRange(w))),prior=prTotal(prRowsFor(prPriorRunsInRange(w)));if(!prior)return null;var d=((cur-prior)/prior)*100;return {dpct:d,neg:d<0};}
+  function prRowsWithDelta(w){var cur=prRowsFor(prRunsInRange(w)),tot=prTotal(cur);var priorRows=prRowsFor(prPriorRunsInRange(w)),priorHas=prPriorRunsInRange(w).length>0;var pm={};priorRows.forEach(function(r){pm[r.name]=r.net;});
+    return cur.map(function(a){var p=pm[a.name]||0,d=(priorHas&&p)?((a.net-p)/p*100):null;return {name:a.name,net:a.net,pct:tot?(a.net/tot*100):0,dpct:d,neg:d!==null&&d<0};});}
+  function prPeriodLabel(w){var r=w.range||"R";if(r==="R")return "Last pay run: "+prFmtDate(PR_RUNS[PR_RUNS.length-1].date);if(r==="TM")return "This month";if(r==="LM")return "Last month";if(r==="C")return "Custom range";return "Last pay run";}
+  function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pay period — tap to change" title="'+lb.replace(/"/g,"&quot;")+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);} // reuses the generic dep-view action, kind-agnostic
+  function prTableHTML(w){var rows=prRowsWithDelta(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
+    var head='<div class="wt-row wt-head"><span class="lr-main">Category</span><span class="dt-c dt-tr">Δ vs prior</span><span class="wt-c2">% of total</span><span class="wt-c2">Amount</span></div>';
+    var body=rows.map(function(a){var trHTML=(a.dpct===null)?'<span class="lr-meta">—</span>':('<span class="rtrend'+(a.neg?" neg":"")+'"><span class="material-symbols-rounded">'+(a.neg?"arrow_drop_down":"arrow_drop_up")+'</span>'+Math.abs(a.dpct).toFixed(1)+'%</span>');
+      return '<div class="wt-row wt-rowh"><span class="lr-main lr-link" data-action="pr-drill" data-id="'+w.id+'" data-cat="'+a.name+'" tabindex="0" role="button">'+a.name+'</span><span class="dt-c dt-tr">'+trHTML+'</span><span class="wt-c2">'+Math.round(a.pct)+'%</span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+    return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
+  function prDonut(w){var rows=prRowsWithDelta(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length);
+    rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i],drill=' data-action="pr-drill" data-id="'+w.id+'" data-cat="'+a.name+'"';
+      arcs+='<circle class="seg" data-seg="'+i+'"'+drill+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      legend+='<div class="leg" data-seg="'+i+'"'+drill+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
+    var DS={wide:250,xwide:280}[w.size]||190;
+    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">Compensation Categories</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
+  function prGlance(w){var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows),d=prDelta(w);
+    var s=PR_RUNS.map(function(run){return PR_CATS.reduce(function(sum,c){return sum+run.byCat[c];},0);}),labs=PR_RUNS.map(function(run){return prFmtDate(run.date);});
+    var p={total:tot,s:s,labs:labs,latest:tot,dpct:d?d.dpct:0,neg:d?d.neg:false};
+    return '<div class="kpi-row"><div class="kpi-num">'+prPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div><div class="gl-sub">'+(d?depDelta(d):'<span class="lr-meta">No prior period</span>')+'<span class="trend-range static">vs prior run</span></div></div>'+depSparkHTML(p)+'</div>';}
+  function prHeaderBlock(w){var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows),d=prDelta(w),showTotalStrip=(w.size==="xwide");
+    var numInner=showTotalStrip?('<div class="dep-hd-kpigrp"><span class="metric-value">'+money(tot)+'</span><span class="delta-grp">'+(d?depDelta(d):'<span class="lr-meta">No prior period</span>')+'<span class="trend-range static">vs prior run</span></span></div>'):"";
+    return '<div class="dep-hd"><div class="dep-hd-top">'+prPeriodChip(w)+'<div class="dep-hd-toggle">'+prToggle(w)+'</div></div>'+(showTotalStrip?'<div class="dep-hd-num">'+numInner+'</div>':'')+'</div>';}
+  function prContent(w){if(w.size==="kpi")return prGlance(w);var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
+  /* Focus overlay: a scoped, in-widget modal re-rendering this widget's own data for one category — not a link to an unconfirmed external destination (resolves F8) */
+  function prCatSeries(cat){return PR_RUNS.map(function(run){return run.byCat[cat]||0;});}
+  function prCategoryModalBody(catName){var s=prCatSeries(catName),n=s.length,latest=s[n-1],prior=s[n-2],dpct=prior?((latest-prior)/prior*100):0,neg=dpct<0;
+    var head='<div class="acctm-kpi"><span class="metric-value">'+money(latest)+'</span><span class="delta-grp">'+depDelta({dpct:dpct,neg:neg})+'<span class="trend-range static">vs prior run</span></span></div>';
+    var lo=Math.min.apply(null,s),hi=Math.max.apply(null,s),sp=(hi-lo)||Math.abs(hi)||1;lo=Math.max(0,lo-sp*0.18);hi=hi+sp*0.18;var dom=(hi-lo)||1;
+    function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
+    var pts=s.map(function(v,i){return px(i).toFixed(2)+','+py(v).toFixed(2);}).join(" ");
+    var grid="";[0,50,100].forEach(function(gy){grid+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="var(--stroke-widget)" stroke-width="1" vector-effect="non-scaling-stroke"'+(gy===100?'':' stroke-dasharray="2 4" opacity="0.5"')+'/>';});
+    var area='<polygon fill="url(#tafpr)" points="0,100 '+pts+' 100,100"/>',line='<polyline fill="none" stroke="var(--chart)" stroke-width="1.7" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+pts+'"/>';
+    var svg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><linearGradient id="tafpr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.16"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs>'+grid+area+line+'</svg>';
+    var yl='<span style="top:0%">'+fmtAxis(hi)+'</span><span style="top:50%">'+fmtAxis((hi+lo)/2)+'</span><span style="top:100%">'+fmtAxis(lo)+'</span>';
+    var tk=[0,Math.round((n-1)/2),n-1].filter(function(v,i,a){return a.indexOf(v)===i;});
+    var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+prFmtDate(PR_RUNS[i].date)+'</span>';}).join("");
+    var content='<div class="acctm-chart tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'</div><div class="tr-xax">'+xl+'</div></div>';
+    return '<div class="acctm">'+head+content+'</div>';}
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
