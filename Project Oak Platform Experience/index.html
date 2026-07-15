@@ -2422,7 +2422,61 @@ td.metric-label { font-weight: 600; }
               </tr>
 
               <!-- A11y -->
-              <tr class="h-group-row a11y"><td colspan="4">Accessibility &nbsp;&middot;&nbsp; WCAG 2.1 &nbsp;&middot;&nbsp; Directly-observed violations only. Color contrast, heading hierarchy, ARIA structure, and focus management were not tested this session.</td></tr>
+              <tr class="h-group-row a11y"><td colspan="4">Accessibility &nbsp;&middot;&nbsp; WCAG 2.1 AA &nbsp;&middot;&nbsp; Full automated audit (axe-core 4.9.1) + manual DOM inspection on Amplify Home and Auth0 login. Directly observed violations in People and Service Planning.</td></tr>
+              <tr>
+                <td><span class="mod-chip">Platform-wide</span></td>
+                <td>CSS <code style="font-family:monospace;font-size:11px;">outline: none</code> is applied globally to all interactive elements, removing all keyboard focus indicators across the entire platform. Keyboard users cannot see which element has focus at any time. Fails WCAG 2.4.7 Focus Visible (AA). Affects every module.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag red">Critical</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Platform-wide</span></td>
+                <td>No skip navigation link exists anywhere in the platform. Keyboard users must tab through all sidebar navigation items (14+) on every page load before reaching main content. Fails WCAG 2.4.1 Bypass Blocks (AA).</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag red">Critical</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Amplify Home</span></td>
+                <td>No <code style="font-family:monospace;font-size:11px;">&lt;main&gt;</code> landmark exists anywhere in the application shell. All page content sits outside landmark regions, making it impossible for screen reader users to navigate directly to the main content area. Fails WCAG 1.3.6 Identify Purpose.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag red">Critical</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Amplify Home</span></td>
+                <td>Sidebar navigation is not wrapped in a <code style="font-family:monospace;font-size:11px;">&lt;nav&gt;</code> landmark element. Screen reader users cannot jump directly to navigation using landmark shortcuts. Fails WCAG 1.3.6.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Amplify Home</span></td>
+                <td>Heading hierarchy is broken: DOM order is H2 &gt; H2 &gt; H1 &gt; H4 &gt; H4 &gt; H3. The page's first H1 is the third heading encountered; heading levels skip from H1 directly to H4 with no H2 or H3 in between. Screen reader users relying on heading navigation encounter an incoherent document structure. Fails WCAG 1.3.1 Info and Relationships.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Amplify Home</span></td>
+                <td>Two <code style="font-family:monospace;font-size:11px;">role="progressbar"</code> elements (profile completion indicators) are missing all required ARIA attributes: <code style="font-family:monospace;font-size:11px;">aria-label</code>, <code style="font-family:monospace;font-size:11px;">aria-valuenow</code>, and <code style="font-family:monospace;font-size:11px;">aria-valuemax</code>. Screen readers cannot announce their current value or purpose. Fails WCAG 4.1.2 Name, Role, Value.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Amplify Home</span></td>
+                <td>Active sidebar nav item has no <code style="font-family:monospace;font-size:11px;">aria-current="page"</code> attribute. Screen reader users cannot determine which section is currently active without visually scanning the highlighted item. Fails WCAG 4.1.2.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Amplify Home</span></td>
+                <td>Locked nav item decorative lock icons carry <code style="font-family:monospace;font-size:11px;">alt="Click to learn more or upgrade"</code>. This alt text is concatenated into the button's accessible name, producing misleading announcements such as "Websites Click to learn more or upgrade" for screen reader users.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag blue">Minor</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Auth0 Login</span></td>
+                <td>Login page has no <code style="font-family:monospace;font-size:11px;">&lt;main&gt;</code> landmark, no H1 heading, and 7 content nodes sitting outside any landmark region. Screen readers have no structural entry point into the page. Fails WCAG 1.3.6 and 1.3.1.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
+              </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>Five icon-only action buttons on the person detail page (share, document, chat, download, edit) have no visible text labels. Accessible names cannot be determined without hovering. Fails WCAG 4.1.2 Name, Role, Value.</td>
