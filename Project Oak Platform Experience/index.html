@@ -641,6 +641,19 @@ td.metric-label { font-weight: 600; }
   color: var(--text);
 }
 .h-callout strong { color: var(--amber); }
+
+/* ── Heuristics audit additions ────────────────────────── */
+.audit-framework { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; margin: 12px 0 16px; }
+.af-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); padding: 2px 0; }
+.af-tag { min-width: 32px; text-align: center; flex-shrink: 0; font-size: 11px; }
+.severity-key { font-size: 12px; color: var(--text3); margin: 4px 0 0; }
+.cov-status { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green); margin-bottom: 4px; }
+.cov-module { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.cov-note { font-size: 12px; color: var(--text3); line-height: 1.5; }
+.pending-areas { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 28px; }
+.pending-chip { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 12px; background: var(--sb-active); color: var(--text2); border: 1px solid var(--border); }
+.h-group-row.a11y td { background: var(--purple-bg) !important; color: var(--purple) !important; border-bottom-color: var(--purple-border) !important; }
+.h-group-row.a11y:hover td { background: var(--purple-bg) !important; }
 </style>
 </head>
 <body>
@@ -2094,429 +2107,322 @@ td.metric-label { font-weight: 600; }
 
     <!-- ─── HEURISTICS AUDIT ─────────────────────────────── -->
     <div id="heuristics-audit" class="section">
-      <div class="section-inner">
-
+      <div class="page-header">
         <h1>Heuristics Audit</h1>
-        <p class="section-intro">Nielsen's 10 usability heuristics applied to Amplify across all accessible modules. Conducted July 2026 via live session observation. Use this as the DS-level reference to compare against per-module designer self-reports.</p>
+        <p>Nielsen's 10 usability heuristics + directly-observed WCAG 2.1 issues across Amplify modules &nbsp;&middot;&nbsp; July 2026</p>
+      </div>
+      <div class="section-content">
 
-        <!-- Heuristics tag for friction log -->
-        <h2>Adding heuristics to the friction log</h2>
-        <div class="h-callout">
-          <strong>Recommendation:</strong> Add an optional <strong>H# tag</strong> to friction log items alongside the existing DS / Flow / System type tag. The type tag tells you who owns the fix. The heuristic tag tells you which usability principle was violated. These are orthogonal dimensions - a single item can carry both.<br><br>
-          Example: a flow with no back button = <strong>Type: Flow</strong> (an IA person fixes it) + <strong>H3</strong> (User control and freedom was violated). That's the kind of "in between" case you described - heuristics give it a home without muddying the ownership taxonomy.
+        <h2>Framework</h2>
+        <div class="audit-framework">
+          <div class="af-row"><span class="tag blue af-tag">H1</span> Visibility of system status</div>
+          <div class="af-row"><span class="tag blue af-tag">H2</span> Match between system and real world</div>
+          <div class="af-row"><span class="tag blue af-tag">H3</span> User control and freedom</div>
+          <div class="af-row"><span class="tag blue af-tag">H4</span> Consistency and standards</div>
+          <div class="af-row"><span class="tag blue af-tag">H5</span> Error prevention</div>
+          <div class="af-row"><span class="tag blue af-tag">H6</span> Recognition rather than recall</div>
+          <div class="af-row"><span class="tag blue af-tag">H7</span> Flexibility and efficiency of use</div>
+          <div class="af-row"><span class="tag blue af-tag">H8</span> Aesthetic and minimalist design</div>
+          <div class="af-row"><span class="tag blue af-tag">H9</span> Help users recognize, diagnose, and recover from errors</div>
+          <div class="af-row"><span class="tag blue af-tag">H10</span> Help and documentation</div>
+          <div class="af-row"><span class="tag purple af-tag">A11y</span> WCAG 2.1 - directly-observed violations only</div>
         </div>
+        <p class="severity-key">Severity: <span class="tag red">Critical</span> blocks primary task &nbsp;&middot;&nbsp; <span class="tag amber">Major</span> significant friction or likely errors &nbsp;&middot;&nbsp; <span class="tag blue">Minor</span> reduces quality, does not block</p>
 
-        <!-- Audit coverage -->
         <h2>Audit coverage</h2>
-        <p>Three modules were accessed and observed in depth during this session. Three were not accessible due to session expiry before navigation. Designer self-reports for those modules are especially important to fill in.</p>
-        <div class="coverage-grid">
+        <div class="coverage-grid" style="grid-template-columns: repeat(3, 1fr);">
           <div class="coverage-card assessed">
-            <div class="coverage-status">Assessed</div>
-            <div class="coverage-module">Service Planning</div>
-            <div class="coverage-note">Dashboard, Events, Schedules, People/Roles pages observed. Profile wizard, empty states, nav patterns.</div>
-          </div>
-          <div class="coverage-card assessed">
-            <div class="coverage-status">Assessed</div>
-            <div class="coverage-module">Giving Admin</div>
-            <div class="coverage-note">Dashboard, Donors list, Donor detail page observed.</div>
+            <div class="cov-status">Assessed</div>
+            <div class="cov-module">Service Planning</div>
+            <div class="cov-note">Dashboard, Events, Schedules, People/Roles pages. Profile wizard, empty states, nav patterns.</div>
           </div>
           <div class="coverage-card assessed">
-            <div class="coverage-status">Assessed</div>
-            <div class="coverage-module">People</div>
-            <div class="coverage-note">Individuals Search, search results, person profile observed.</div>
+            <div class="cov-status">Assessed</div>
+            <div class="cov-module">Giving Admin</div>
+            <div class="cov-note">Dashboard, Donors list, Donor detail page.</div>
           </div>
-          <div class="coverage-card pending">
-            <div class="coverage-status">Not assessed this session</div>
-            <div class="coverage-module">Accounting</div>
-            <div class="coverage-note">Session expired before navigation. ASP.NET WebForms (Shelby). Designer self-report essential.</div>
-          </div>
-          <div class="coverage-card pending">
-            <div class="coverage-status">Not assessed this session</div>
-            <div class="coverage-module">Media</div>
-            <div class="coverage-note">Session expired before navigation. Designer self-report essential.</div>
-          </div>
-          <div class="coverage-card pending">
-            <div class="coverage-status">Not assessed this session</div>
-            <div class="coverage-module">Safety</div>
-            <div class="coverage-note">SSL certificate error in prior session - module inaccessible. Designer self-report essential.</div>
+          <div class="coverage-card assessed">
+            <div class="cov-status">Assessed</div>
+            <div class="cov-module">People</div>
+            <div class="cov-note">Individuals search, search results, person profile.</div>
           </div>
         </div>
+        <div class="h3-label">Not yet assessed</div>
+        <div class="pending-areas">
+          <span class="pending-chip">Accounting</span>
+          <span class="pending-chip">Media</span>
+          <span class="pending-chip">Amplify Home</span>
+          <span class="pending-chip">Amplify Settings</span>
+          <span class="pending-chip">User profile settings</span>
+          <span class="pending-chip">Permissions settings</span>
+          <span class="pending-chip">Admin areas (all modules)</span>
+          <span class="pending-chip">Form Builder (Giving Admin)</span>
+          <span class="pending-chip">Workflow Builder (People)</span>
+          <span class="pending-chip">People: Groups, Mass Contact, Interactions, Giving, Attendance, Reports, Calendar</span>
+          <span class="pending-chip">Giving: Reports, Fund Management, Engagement</span>
+        </div>
 
-        <!-- DS Audit findings table -->
-        <h2>DS audit findings</h2>
-        <p>Severity key: <span class="tag red" style="margin-right:4px;">Critical</span> blocks primary task completion &nbsp;·&nbsp; <span class="tag amber" style="margin-right:4px;">Major</span> significant friction, likely to cause errors or abandonment &nbsp;·&nbsp; <span class="tag blue">Minor</span> reduces quality, does not block tasks</p>
-
-        <div class="table-wrap" style="margin-top:16px;">
+        <h2>Findings</h2>
+        <div class="table-wrap" style="margin-top: 12px;">
           <table>
             <thead>
               <tr>
-                <th style="min-width:120px;">Module</th>
+                <th style="min-width: 120px;">Module</th>
                 <th>Observed violation</th>
-                <th style="min-width:80px;">Severity</th>
+                <th style="min-width: 52px;">Cat.</th>
+                <th style="min-width: 80px;">Severity</th>
               </tr>
             </thead>
             <tbody>
 
               <!-- H1 -->
-              <tr class="h-group-row"><td colspan="3">H1 &nbsp;·&nbsp; Visibility of system status &nbsp;·&nbsp; Users should always know what is going on via appropriate feedback within reasonable time</td></tr>
+              <tr class="h-group-row"><td colspan="4">H1 &nbsp;&middot;&nbsp; Visibility of system status &nbsp;&middot;&nbsp; Users should always know what is going on via appropriate feedback within reasonable time</td></tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>"My Teams" right panel shows "Loading Teams" with an indefinite spinner on the Schedules page - no timeout, no failure state, no retry affordance ever appears</td>
+                <td><span class="tag blue">H1</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Schedules main content area goes completely blank while loading - no skeleton, no loading indicator, no feedback that data is being fetched</td>
+                <td><span class="tag blue">H1</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Giving Admin</span></td>
                 <td>"Giving Overview" chart section on the dashboard renders as a blank white area - no chart, no empty state message, no loading indicator</td>
+                <td><span class="tag blue">H1</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
 
               <!-- H2 -->
-              <tr class="h-group-row"><td colspan="3">H2 &nbsp;·&nbsp; Match between system and the real world &nbsp;·&nbsp; Use words, phrases, and concepts familiar to the user, not internal system terminology</td></tr>
+              <tr class="h-group-row"><td colspan="4">H2 &nbsp;&middot;&nbsp; Match between system and the real world &nbsp;&middot;&nbsp; Use words, phrases, and concepts familiar to the user, not internal system terminology</td></tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Page title heading renders "Schedules [No Locations Defined]" - raw system configuration state embedded directly in a UI heading</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
-                <td>Empty state reads "There are no services scheduled in Planning" - "in Planning" references the module product name as a location, ambiguous to users who do not know this is called the Planning module</td>
+                <td>Empty state reads "There are no services scheduled in Planning" - "in Planning" references the module product name as a location, ambiguous to users unfamiliar with module naming</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Profile wizard step 2 is titled "Please update your information" but contains only the text "Introducing...Your Dashboard!!!" - the title directly contradicts the content</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Giving Admin</span></td>
                 <td>"COLLAPSE" rendered as a left nav item alongside navigation links - a UI toggle control presented as if it were a navigation destination</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Giving Admin</span></td>
                 <td>"Env #" field label on donor detail - unexplained abbreviation for "Envelope Number", a church-specific financial concept with no tooltip or glossary</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Giving Admin</span></td>
                 <td>Filter chip shows date range in ISO 8601 format ("2026-06-17 to 2026-07-15") - not a natural date format for US users who expect Jun 17, 2026</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>"ChMS Profiles" tab label - "ChMS" is an internal industry acronym (Church Management Software) not appropriate as end-user UI copy</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>"Badge Note" section heading on person profile - church-specific term with no label, tooltip, or explanation for users unfamiliar with the concept</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>Search results count reads "1 Results" - grammatically incorrect singular/plural</td>
+                <td><span class="tag blue">H2</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
 
               <!-- H3 -->
-              <tr class="h-group-row"><td colspan="3">H3 &nbsp;·&nbsp; User control and freedom &nbsp;·&nbsp; Users often choose functions by mistake and need a clearly marked "emergency exit"</td></tr>
+              <tr class="h-group-row"><td colspan="4">H3 &nbsp;&middot;&nbsp; User control and freedom &nbsp;&middot;&nbsp; Users often choose functions by mistake and need a clearly marked "emergency exit"</td></tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Profile update wizard fires on every dashboard load and blocks all page content with no dismiss, skip, or close option - user must complete the full 2-step wizard before accessing any functionality</td>
+                <td><span class="tag blue">H3</span></td>
                 <td><span class="tag red">Critical</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Pressing Escape on the wizard navigated the browser to /events/index.cfm which displayed a raw server error ("Missing Template!") - a standard keyboard shortcut triggered unintended destructive navigation with no recovery path</td>
+                <td><span class="tag blue">H3</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>Person detail page has no back button, breadcrumb, or visible navigation path to return to the search results page - the only exit is browser back</td>
+                <td><span class="tag blue">H3</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
 
               <!-- H4 -->
-              <tr class="h-group-row"><td colspan="3">H4 &nbsp;·&nbsp; Consistency and standards &nbsp;·&nbsp; Users should not have to wonder whether different words, situations, or actions mean the same thing</td></tr>
+              <tr class="h-group-row"><td colspan="4">H4 &nbsp;&middot;&nbsp; Consistency and standards &nbsp;&middot;&nbsp; Users should not have to wonder whether different words, situations, or actions mean the same thing</td></tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Wizard "Next (1/2)" progress button is positioned in the top-right corner of the viewport - standard form progression controls belong inline at the bottom of the form</td>
+                <td><span class="tag blue">H4</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
-                <td>Two simultaneous search inputs are visible at the same time: global search bar in the top nav ("Search for a person by name") and a second in-page search field - both serving the same lookup function</td>
+                <td>Two simultaneous search inputs visible at the same time: global search bar in the top nav ("Search for a person by name") and a second in-page search field - both serving the same lookup function</td>
+                <td><span class="tag blue">H4</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Cross-module</span></td>
                 <td>Top nav composition differs significantly across modules - Giving Admin has no search bar; People has a prominent global search plus a filter icon; Service Planning has a minimal nav with no search</td>
+                <td><span class="tag blue">H4</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
 
               <!-- H5 -->
-              <tr class="h-group-row"><td colspan="3">H5 &nbsp;·&nbsp; Error prevention &nbsp;·&nbsp; Carefully designed systems prevent problems from occurring in the first place</td></tr>
+              <tr class="h-group-row"><td colspan="4">H5 &nbsp;&middot;&nbsp; Error prevention &nbsp;&middot;&nbsp; Carefully designed systems prevent problems from occurring in the first place</td></tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>On the Schedules page, an inline empty state and an unsolicited guidance modal appear simultaneously, each suggesting a different next step ("Click here to create one" vs "Go to Teams") - conflicting guidance fires before any user action</td>
+                <td><span class="tag blue">H5</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>The empty state tells users to "Please adjust the location filter above" - no location filter is visible on screen; the real problem is a system configuration gap, not a user filter selection error</td>
+                <td><span class="tag blue">H5</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>"Order Background Check" button is prominently surfaced on every person detail view regardless of user role or workflow context - a sensitive, consequential action with no contextual gate</td>
+                <td><span class="tag blue">H5</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
 
               <!-- H6 -->
-              <tr class="h-group-row"><td colspan="3">H6 &nbsp;·&nbsp; Recognition rather than recall &nbsp;·&nbsp; Minimize the user's memory load by making objects, actions, and options visible</td></tr>
+              <tr class="h-group-row"><td colspan="4">H6 &nbsp;&middot;&nbsp; Recognition rather than recall &nbsp;&middot;&nbsp; Minimize the user's memory load by making objects, actions, and options visible</td></tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>Five action buttons on the person detail page top-right are unlabeled icons - function is not discoverable at default state and requires hover to reveal tooltips (share, document, chat, download, edit)</td>
+                <td><span class="tag blue">H6</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
 
               <!-- H7 -->
-              <tr class="h-group-row"><td colspan="3">H7 &nbsp;·&nbsp; Flexibility and efficiency of use &nbsp;·&nbsp; Accelerators - unseen by novice users - may speed up interaction for expert users</td></tr>
+              <tr class="h-group-row"><td colspan="4">H7 &nbsp;&middot;&nbsp; Flexibility and efficiency of use &nbsp;&middot;&nbsp; Accelerators - unseen by novice users - may speed up interaction for expert users</td></tr>
               <tr>
                 <td><span class="mod-chip">Giving Admin</span></td>
                 <td>Donor list table column headers are not sortable - no click affordance or sort direction indicator</td>
+                <td><span class="tag blue">H7</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Cross-module</span></td>
                 <td>No keyboard shortcuts, command palette, or bulk selection actions observed in any of the three assessed modules</td>
+                <td><span class="tag blue">H7</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
 
               <!-- H8 -->
-              <tr class="h-group-row"><td colspan="3">H8 &nbsp;·&nbsp; Aesthetic and minimalist design &nbsp;·&nbsp; Interfaces should not contain irrelevant or rarely needed information that competes with relevant information</td></tr>
+              <tr class="h-group-row"><td colspan="4">H8 &nbsp;&middot;&nbsp; Aesthetic and minimalist design &nbsp;&middot;&nbsp; Interfaces should not contain irrelevant or rarely needed information that competes with relevant information</td></tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Profile wizard step 2 contains only the heading "Introducing...Your Dashboard!!!" with three exclamation marks and no other content - decorative text with zero informational value occupies a full modal step</td>
+                <td><span class="tag blue">H8</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Inline empty state is rendered behind a simultaneously triggered guidance modal on the Schedules page - two competing feedback mechanisms on the same screen at the same time</td>
+                <td><span class="tag blue">H8</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Giving Admin</span></td>
                 <td>Address column in the donor list table is almost entirely empty across all visible rows, consuming approximately 15% of table width with near-zero data density</td>
+                <td><span class="tag blue">H8</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Giving Admin</span></td>
                 <td>Dashboard displays three separate stat card sections (top header row, "All Time", "Last 30 Days") using similar but not identical card patterns - increased cognitive load without proportional clarity gain</td>
+                <td><span class="tag blue">H8</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">People</span></td>
                 <td>Person profile Details section shows field label stubs with empty values - Address renders as "," (bare comma), Location and Last Login show as label-only rows - ghost fields increase vertical noise</td>
+                <td><span class="tag blue">H8</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
 
               <!-- H9 -->
-              <tr class="h-group-row"><td colspan="3">H9 &nbsp;·&nbsp; Help users recognize, diagnose, and recover from errors &nbsp;·&nbsp; Error messages should be in plain language, indicate the problem, and suggest a solution</td></tr>
+              <tr class="h-group-row"><td colspan="4">H9 &nbsp;&middot;&nbsp; Help users recognize, diagnose, and recover from errors &nbsp;&middot;&nbsp; Error messages should be in plain language, indicate the problem, and suggest a solution</td></tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>Pressing Escape on the dashboard wizard navigated to /events/index.cfm which returned a raw server error exposing an internal file path: "Missing Template! /events/index.cfm Missing Template! /home/web_admin/sites/wp6/v/current/events/index.cfm"</td>
+                <td><span class="tag blue">H9</span></td>
                 <td><span class="tag red">Critical</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>The Schedules empty state recovery instruction - "Please adjust the location filter above" - directs users to take an action that is impossible because the control does not exist on screen</td>
+                <td><span class="tag blue">H9</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
 
               <!-- H10 -->
-              <tr class="h-group-row"><td colspan="3">H10 &nbsp;·&nbsp; Help and documentation &nbsp;·&nbsp; Even if the system can be used without documentation, it may be necessary to provide help users can search</td></tr>
+              <tr class="h-group-row"><td colspan="4">H10 &nbsp;&middot;&nbsp; Help and documentation &nbsp;&middot;&nbsp; Even if the system can be used without documentation, it may be necessary to provide help users can search</td></tr>
               <tr>
                 <td><span class="mod-chip">Cross-module</span></td>
                 <td>A help (?) icon is present in the top nav across all assessed modules but no inline tooltips, contextual help text, or glossary exist for jargon-heavy labels such as "ChMS Profiles", "Env #", "Badge Note", and "COLLAPSE"</td>
+                <td><span class="tag blue">H10</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
               <tr>
                 <td><span class="mod-chip">Service Planning</span></td>
                 <td>"Before you schedule anyone to serve..." guidance modal provides useful onboarding context but fires unsolicited on every navigation to the Schedules area with no "don't show again" option - guidance functions as repeated friction rather than targeted help</td>
+                <td><span class="tag blue">H10</span></td>
                 <td><span class="tag blue">Minor</span></td>
               </tr>
 
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Designer self-reports -->
-        <h2 style="margin-top:40px;">Designer self-reports</h2>
-        <p class="section-intro">Each module's designer should complete the table below for their product, applying Nielsen's 10 heuristics from direct observation. Severity: <strong>Critical</strong> = blocks task, <strong>Major</strong> = likely errors or abandonment, <strong>Minor</strong> = friction, does not block. Compare your findings to the DS audit above - differences reveal what each perspective misses.</p>
-
-        <!-- Service Planning -->
-        <div class="h3-label" style="margin-top:28px;">Service Planning &nbsp;·&nbsp; Designer Self-Report</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
+              <!-- A11y -->
+              <tr class="h-group-row a11y"><td colspan="4">Accessibility &nbsp;&middot;&nbsp; WCAG 2.1 &nbsp;&middot;&nbsp; Directly-observed violations only. Color contrast, heading hierarchy, ARIA structure, and focus management were not tested this session.</td></tr>
               <tr>
-                <th style="min-width:200px;">Heuristic</th>
-                <th>Finding (describe the specific observed violation)</th>
-                <th style="min-width:80px;">Severity</th>
+                <td><span class="mod-chip">People</span></td>
+                <td>Five icon-only action buttons on the person detail page (share, document, chat, download, edit) have no visible text labels. Accessible names cannot be determined without hovering. Fails WCAG 4.1.2 Name, Role, Value.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
               </tr>
-            </thead>
-            <tbody>
-              <tr class="sr-empty"><td>H1 - Visibility of system status</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H2 - Match between system and real world</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H3 - User control and freedom</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H4 - Consistency and standards</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H5 - Error prevention</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H6 - Recognition rather than recall</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H7 - Flexibility and efficiency of use</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H8 - Aesthetic and minimalist design</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H9 - Help users recognize, diagnose, and recover from errors</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H10 - Help and documentation</td><td>--</td><td>--</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Giving Admin -->
-        <div class="h3-label" style="margin-top:28px;">Giving Admin &nbsp;·&nbsp; Designer Self-Report</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
               <tr>
-                <th style="min-width:200px;">Heuristic</th>
-                <th>Finding (describe the specific observed violation)</th>
-                <th style="min-width:80px;">Severity</th>
+                <td><span class="mod-chip">Service Planning</span></td>
+                <td>Profile setup wizard fires on dashboard load, blocks all content, and cannot be closed via keyboard without triggering unintended browser navigation (Escape navigates to /events/index.cfm). Keyboard-dependent users are fully trapped. Fails WCAG 2.1.2 No Keyboard Trap.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag red">Critical</span></td>
               </tr>
-            </thead>
-            <tbody>
-              <tr class="sr-empty"><td>H1 - Visibility of system status</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H2 - Match between system and real world</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H3 - User control and freedom</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H4 - Consistency and standards</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H5 - Error prevention</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H6 - Recognition rather than recall</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H7 - Flexibility and efficiency of use</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H8 - Aesthetic and minimalist design</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H9 - Help users recognize, diagnose, and recover from errors</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H10 - Help and documentation</td><td>--</td><td>--</td></tr>
+
             </tbody>
           </table>
         </div>
 
-        <!-- People -->
-        <div class="h3-label" style="margin-top:28px;">People &nbsp;·&nbsp; Designer Self-Report</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="min-width:200px;">Heuristic</th>
-                <th>Finding (describe the specific observed violation)</th>
-                <th style="min-width:80px;">Severity</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="sr-empty"><td>H1 - Visibility of system status</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H2 - Match between system and real world</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H3 - User control and freedom</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H4 - Consistency and standards</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H5 - Error prevention</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H6 - Recognition rather than recall</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H7 - Flexibility and efficiency of use</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H8 - Aesthetic and minimalist design</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H9 - Help users recognize, diagnose, and recover from errors</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H10 - Help and documentation</td><td>--</td><td>--</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Accounting -->
-        <div class="h3-label" style="margin-top:28px;">Accounting &nbsp;·&nbsp; Designer Self-Report &nbsp;<span class="stop-tag">DS Audit Pending</span></div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="min-width:200px;">Heuristic</th>
-                <th>Finding (describe the specific observed violation)</th>
-                <th style="min-width:80px;">Severity</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="sr-empty"><td>H1 - Visibility of system status</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H2 - Match between system and real world</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H3 - User control and freedom</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H4 - Consistency and standards</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H5 - Error prevention</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H6 - Recognition rather than recall</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H7 - Flexibility and efficiency of use</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H8 - Aesthetic and minimalist design</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H9 - Help users recognize, diagnose, and recover from errors</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H10 - Help and documentation</td><td>--</td><td>--</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Media -->
-        <div class="h3-label" style="margin-top:28px;">Media &nbsp;·&nbsp; Designer Self-Report &nbsp;<span class="stop-tag">DS Audit Pending</span></div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="min-width:200px;">Heuristic</th>
-                <th>Finding (describe the specific observed violation)</th>
-                <th style="min-width:80px;">Severity</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="sr-empty"><td>H1 - Visibility of system status</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H2 - Match between system and real world</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H3 - User control and freedom</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H4 - Consistency and standards</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H5 - Error prevention</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H6 - Recognition rather than recall</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H7 - Flexibility and efficiency of use</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H8 - Aesthetic and minimalist design</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H9 - Help users recognize, diagnose, and recover from errors</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H10 - Help and documentation</td><td>--</td><td>--</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Safety -->
-        <div class="h3-label" style="margin-top:28px;">Safety &nbsp;·&nbsp; Designer Self-Report &nbsp;<span class="stop-tag">DS Audit Pending</span></div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="min-width:200px;">Heuristic</th>
-                <th>Finding (describe the specific observed violation)</th>
-                <th style="min-width:80px;">Severity</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="sr-empty"><td>H1 - Visibility of system status</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H2 - Match between system and real world</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H3 - User control and freedom</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H4 - Consistency and standards</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H5 - Error prevention</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H6 - Recognition rather than recall</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H7 - Flexibility and efficiency of use</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H8 - Aesthetic and minimalist design</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H9 - Help users recognize, diagnose, and recover from errors</td><td>--</td><td>--</td></tr>
-              <tr class="sr-empty"><td>H10 - Help and documentation</td><td>--</td><td>--</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div><!-- /section-inner -->
+      </div><!-- /section-content -->
     </div><!-- /heuristics-audit -->
 
   </main>
