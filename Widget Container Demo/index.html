@@ -767,15 +767,8 @@
   })();
   function prFmtDate(d){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return M[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
   var PR_TODAY=new Date(2026,6,15); // "today" in this demo
-  /* Begin/End are always the source of truth — mirrors production, which shows Begin/Ending pickers directly with zero gating clicks (Confluence §3), and the SME's hard requirement that a specific date range is never an extra step (§8b, §10.1: "custom range must always be available"). There is no separate "custom mode" to switch into. The four quick-period buttons (§10.2) are a shortcut that fills these same fields — never a replacement for them. */
+  /* Begin/End are always the source of truth, always visible, always editable — no popover, no mode switch. Mirrors production's Begin/Ending pickers exactly (Confluence §3), and the SME's hard requirement that a specific date range is never an extra step (§8b, §10.1). One control, one job. */
   function prPeriodBounds(w){var t=PR_TODAY,b=w.begin?new Date(w.begin):new Date(t.getFullYear(),0,1),e=w.end?new Date(w.end):t;return {start:b,end:e};}
-  function prPresetRange(code){var t=PR_TODAY;
-    if(code==="TQ"){var q=Math.floor(t.getMonth()/3);return {begin:prISO(new Date(t.getFullYear(),q*3,1)),end:prISO(t)};}
-    if(code==="YTD")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)};
-    if(code==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(new Date(t.getFullYear(),11,31))};
-    return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)}; // TM
-  }
-  function prISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
   function prRunsInRange(w){var b=prPeriodBounds(w);return PR_RUNS.filter(function(x){return x.date>=b.start&&x.date<=b.end;});}
   function prRowsFor(runsArr){var m={};PR_CATS.forEach(function(c){m[c]=0;});runsArr.forEach(function(run){PR_CATS.forEach(function(c){m[c]+=(run.byCat[c]||0);});});
     var rows=PR_CATS.map(function(c){return {name:c,net:m[c]};});rows.sort(function(a,b){return b.net-a.net;});return rows;} // default sort amount-desc (resolves F6)
