@@ -847,12 +847,7 @@
       return '<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="coq" placeholder="Search companies" value="'+companyQuery.replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="menu-scroll" role="listbox">'+(list.length?list.map(function(co){return '<button class="mi'+(cur2===co?" check":"")+'" role="option" aria-selected="'+(cur2===co)+'" data-action="set-company" data-id="'+wdd.id+'" data-co="'+co+'">'+(cur2===co?ICON("check"):'<span class="mi-gap"></span>')+co+'</button>';}).join(""):'<div class="mi-note" style="color:var(--txt-subtle)">No companies match "'+companyQuery+'"</div>')+'</div>';}
     if(pop.type==="rangemenu"){var wr=find(pop.id),r=wr.range||"Q";return '<div class="cap">Compare to</div>'+[["W","Previous week"],["M","Previous month"],["Q","Previous quarter"],["F","Previous fiscal year"],["Y","Previous calendar year"]].map(function(o){return '<button class="mi'+(r===o[0]?" check":"")+'" data-action="range-set" data-id="'+wr.id+'" data-r="'+o[0]+'">'+(r===o[0]?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");}
     if(pop.type==="prperiod"){var wp=find(pop.id),pr=wp.range||"TM";
-      var out=[["TM","This month"],["TQ","This quarter"],["YTD","Year to date"],["TY","This year"],["C","Custom range"]].map(function(o){return '<button class="mi'+(pr===o[0]?" check":"")+'" data-action="pr-range-set" data-id="'+wp.id+'" data-r="'+o[0]+'">'+(pr===o[0]?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");
-      if(pr==="C")out+='<div class="sep"></div><div class="cap">Custom range</div><div style="display:flex;gap:8px;padding:2px 12px 10px">'+
-        '<label style="display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--txt-subtle)">From<input type="date" class="pr-date-input" data-id="'+wp.id+'" data-which="begin" value="'+(wp.begin||"")+'" style="font:inherit;padding:4px 6px;border:1px solid var(--stroke-widget);border-radius:6px"></label>'+
-        '<label style="display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--txt-subtle)">To<input type="date" class="pr-date-input" data-id="'+wp.id+'" data-which="end" value="'+(wp.end||"")+'" style="font:inherit;padding:4px 6px;border:1px solid var(--stroke-widget);border-radius:6px"></label>'+
-        '</div>';
-      return out;}
+      return [["TM","This month"],["TQ","This quarter"],["YTD","Year to date"],["TY","This year"],["C","Custom range"]].map(function(o){return '<button class="mi'+(pr===o[0]?" check":"")+'" data-action="pr-range-set" data-id="'+wp.id+'" data-r="'+o[0]+'">'+(pr===o[0]?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");}
     if(pop.type==="depfilter"){var wdf=find(pop.id),q=(filterQuery||"").toLowerCase();
       var allSel=(!wdf.acct)&&(wdf.filter||"All types").indexOf("All")===0;
       var types=depByType(wdf).map(function(t){return t.name;});
@@ -939,7 +934,7 @@
     if(a==="add-acct"){showModal("Add a deposit account","Tapping this would take you to the <b>New deposit account</b> form in the Deposits module.");return;}
     if(a==="rangemenu"){pop=(pop&&pop.type==="rangemenu"&&pop.id===id)?null:{type:"rangemenu",id:id};render();return;}
     if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
-    if(a==="pr-range-set"){var wprr=find(id);if(wprr)wprr.range=t.getAttribute("data-r");if(t.getAttribute("data-r")!=="C")pop=null;render();return;}
+    if(a==="pr-range-set"){var wprr=find(id);if(wprr)wprr.range=t.getAttribute("data-r");pop=null;render();return;}
     if(a==="pr-drill"){var wpd=find(id),cat=t.getAttribute("data-cat");if(wpd)showModal(cat,prCategoryModalBody(cat,wpd));return;}
     if(a==="pr-show-last"){var wsl=find(id);if(wsl){wsl.range="TM";wsl.state="ready";}render();return;}
     if(a==="trmode"){var wtm=find(id);if(wtm){wtm.trmode=t.getAttribute("data-m");wtm.trIso=null;}render();return;}
