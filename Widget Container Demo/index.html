@@ -936,7 +936,7 @@
     if(a==="add-acct"){showModal("Add a deposit account","Tapping this would take you to the <b>New deposit account</b> form in the Deposits module.");return;}
     if(a==="rangemenu"){pop=(pop&&pop.type==="rangemenu"&&pop.id===id)?null:{type:"rangemenu",id:id};render();return;}
     if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
-    if(a==="pr-range-set"){var wprr=find(id);if(wprr)wprr.range=t.getAttribute("data-r");pop=null;render();return;}
+    if(a==="pr-range-set"){var wprr=find(id);if(wprr){wprr.range=t.getAttribute("data-r");if(wprr.range==="C"&&!wprr.begin&&!wprr.end){wprr.begin="2026-01-01";wprr.end="2026-07-15";}}pop=null;render();return;}
     if(a==="pr-drill"){var wpd=find(id),cat=t.getAttribute("data-cat");if(wpd)showModal(cat,prCategoryModalBody(cat,wpd));return;}
     if(a==="pr-show-last"){var wsl=find(id);if(wsl){wsl.range="TM";wsl.state="ready";}render();return;}
     if(a==="trmode"){var wtm=find(id);if(wtm){wtm.trmode=t.getAttribute("data-m");wtm.trIso=null;}render();return;}
