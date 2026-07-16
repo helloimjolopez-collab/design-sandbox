@@ -557,7 +557,7 @@
     fund:{h:"Spend by fund",b:"How spending breaks down across your restricted and unrestricted funds."},
     signups:{h:"New sign-ups",b:"People who recently joined a group or ministry. The number is the total for the period you choose; the list shows the most recent sign-ups regardless of period."}
   };
-  function aboutOf(w){if(w.kind==="deposits")return {h:w.title,b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."};if(w.kind==="payroll")return {h:w.title,b:"How payroll spend for the selected pay period splits across compensation categories — salary, hourly, benefits, overtime, and similar."};return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
+  function aboutOf(w){if(w.kind==="deposits")return {h:w.title,b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."};if(w.kind==="payroll")return {h:w.title,b:"How payroll spend for the selected pay period splits across compensation categories: salary, hourly, benefits, overtime, and similar."};return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
   var EMPTY_COPY={deposits:{title:"No deposit accounts",sub:"There are no deposit accounts to show here yet.",cta:"Add account",action:"add-acct"},payroll:{title:"No payroll runs in this range",sub:"There's no payroll history for the selected period yet.",cta:"Show this month",action:"pr-show-last",showZero:true}};
   var ERROR_COPY={deposits:{title:"Couldn’t load balances",sub:"Something went wrong fetching account data."},payroll:{title:"Couldn’t load payroll data",sub:"Something went wrong fetching payroll history."}};
   function setStatus(s){document.getElementById("status").textContent=s;}
@@ -817,7 +817,7 @@
     var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
   /* Focus overlay (§10.6): stays inside the widget, no link to Earnings Inquiry (it's per-employee, not per-distribution — F8). Not a trend view — §10.3 rejects trend/comparison at every size, so this shows the category's amount for the current period only, with an honest placeholder for the checks/employees-behind-it expansion (§12, Bundle — not yet built). */
   function prCategoryModalBody(catName,w){var rows=prRowsFor(prRunsInRange(w||{})),row=null;for(var i=0;i<rows.length;i++)if(rows[i].name===catName)row=rows[i];var amt=row?row.net:0;
-    return '<div class="acctm"><div class="acctm-kpi"><span class="metric-value">'+money(amt)+'</span></div><div style="padding:10px 2px 2px;color:var(--txt-subtle);font-size:13px;line-height:1.5">This would expand to show the individual checks or employees behind <b>'+catName+'</b> for the selected period — not yet available (bundled improvement, Confluence §10.6/§12).</div></div>';}
+    return '<div class="acctm"><div class="acctm-kpi"><span class="metric-value">'+money(amt)+'</span></div><div style="padding:10px 2px 2px;color:var(--txt-subtle);font-size:13px;line-height:1.5">This would expand to show the individual checks or employees behind <b>'+catName+'</b> for the selected period. Not yet available (bundled improvement, Confluence §10.6/§12).</div></div>';}
 
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
