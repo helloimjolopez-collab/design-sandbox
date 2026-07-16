@@ -769,7 +769,7 @@
   var PR_TODAY=new Date(2026,6,15); // "today" in this demo
   function prISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
   /* Named periods, in display order — Custom is handled separately (§10.2/§10.1: custom must always be reachable, never a second click deep). Default is "This year" (w.range="TY" if unset). */
-  var PR_PRESETS=[["TM","This month"],["TQ","This quarter"],["YTD","Year to date"],["ALL","All time"],["TY","This year"]];
+  var PR_PRESETS=[["TM","This month"],["TQ","This quarter"],["ALL","All time"],["TY","This year"]]; // "Year to date" dropped — "This year" now means Jan 1 through today, so it was an exact duplicate
   function prRangeBoundsFor(r,w){var t=PR_TODAY;
     if(r==="TM")return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)};
     if(r==="TQ"){var q=Math.floor(t.getMonth()/3);return {begin:prISO(new Date(t.getFullYear(),q*3,1)),end:prISO(t)};}
