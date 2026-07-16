@@ -775,6 +775,9 @@
     return cur.map(function(a){return {name:a.name,net:a.net,pct:tot?(a.net/tot*100):0};});}
   function prPeriodLabel(w){var r=w.range||"TM";if(r==="TQ")return "This quarter";if(r==="YTD")return "Year to date";if(r==="TY")return "This year";if(r==="C")return "Custom range";return "This month";}
   function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period — tap to change" title="'+lb.replace(/"/g,"&quot;")+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  /* Always-present when range==="C" — real DOM in the widget header, not popover content, so clicking/typing into it can never be mistaken for an outside click that closes a menu. Mirrors the always-visible Begin/Ending pickers already live in production (Confluence §3) and the SME's hard requirement that custom/specific dates are never an extra step (§8b). */
+  function prCustomDates(w){var bId="prb-"+w.id,eId="pre-"+w.id;
+    return '<div class="pr-custom-dates"><label for="'+bId+'">From<input type="date" id="'+bId+'" class="pr-date-input" data-id="'+w.id+'" data-which="begin" value="'+(w.begin||"")+'"></label><label for="'+eId+'">To<input type="date" id="'+eId+'" class="pr-date-input" data-id="'+w.id+'" data-which="end" value="'+(w.end||"")+'"></label></div>';}
   function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);} // reuses the generic dep-view action, kind-agnostic
   function prTableHTML(w){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
     var head='<div class="wt-row wt-head"><span class="lr-main">Category</span><span class="wt-c2">% of total</span><span class="wt-c2">Amount</span></div>';
