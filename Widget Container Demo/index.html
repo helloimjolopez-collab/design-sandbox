@@ -792,8 +792,8 @@
     return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">Compensation Categories</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
   /* Glance (§10.8): grand total for the selected period + the period control. No trend, no comparison, no mini-chart-over-time (§10.3 rejects these at every size). */
   function prGlance(w){var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows);
-    return '<div class="kpi-row"><div class="kpi-num">'+prPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div></div></div>';}
-  function prHeaderBlock(w){return '<div class="dep-hd"><div class="dep-hd-top">'+prPeriodChip(w)+'<div class="dep-hd-toggle">'+prToggle(w)+'</div></div></div>';}
+    return '<div class="kpi-row"><div class="kpi-num">'+prPeriodChip(w)+(w.range==="C"?prCustomDates(w):"")+'<div class="metric-value">'+money(tot)+'</div></div></div>';}
+  function prHeaderBlock(w){return '<div class="dep-hd"><div class="dep-hd-top">'+prPeriodChip(w)+(w.range==="C"?prCustomDates(w):"")+'<div class="dep-hd-toggle">'+prToggle(w)+'</div></div></div>';}
   function prContent(w){if(w.size==="kpi")return prGlance(w);var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
   /* Focus overlay (§10.6): stays inside the widget, no link to Earnings Inquiry (it's per-employee, not per-distribution — F8). Not a trend view — §10.3 rejects trend/comparison at every size, so this shows the category's amount for the current period only, with an honest placeholder for the checks/employees-behind-it expansion (§12, Bundle — not yet built). */
   function prCategoryModalBody(catName,w){var rows=prRowsFor(prRunsInRange(w||{})),row=null;for(var i=0;i<rows.length;i++)if(rows[i].name===catName)row=rows[i];var amt=row?row.net:0;
