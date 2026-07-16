@@ -773,9 +773,8 @@
   function prRangeBoundsFor(r,w){var t=PR_TODAY;
     if(r==="TM")return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)};
     if(r==="TQ"){var q=Math.floor(t.getMonth()/3);return {begin:prISO(new Date(t.getFullYear(),q*3,1)),end:prISO(t)};}
-    if(r==="YTD")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)};
     if(r==="ALL")return {begin:prISO(PR_RUNS[0].date),end:prISO(t)};
-    if(r==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(new Date(t.getFullYear(),11,31))};
+    if(r==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)}; // "this year" = Jan 1 through today, not through Dec 31 — matches how people actually mean it
     return {begin:w.begin||prISO(t),end:w.end||prISO(t)}; // CUSTOM — whatever's already in the fields
   }
   function prPeriodBounds(w){var b=prRangeBoundsFor(w.range||"TY",w);return {start:new Date(b.begin),end:new Date(b.end)};}
