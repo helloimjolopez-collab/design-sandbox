@@ -808,10 +808,15 @@
   /* Glance (§10.8): grand total for the selected period + the period control. No trend, no comparison, no mini-chart-over-time (§10.3 rejects these at every size). */
   function prGlance(w){var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows);
     return '<div class="kpi-row"><div class="kpi-num">'+prPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div></div></div>';}
-  function prHeaderBlock(w,hideToggle){var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows);
-    return '<div class="dep-hd"><div class="dep-hd-top">'+prPeriodChip(w)+(hideToggle?"":'<div class="dep-hd-toggle">'+prToggle(w)+'</div>')+'</div><div class="dep-hd-num"><span class="metric-value">'+money(tot)+'</span></div></div>';}
+  function prHeaderBlock(w,hideToggle,noTotal){var top='<div class="dep-hd-top">'+prPeriodChip(w)+(hideToggle?"":'<div class="dep-hd-toggle">'+prToggle(w)+'</div>')+'</div>';
+    if(noTotal)return '<div class="dep-hd">'+top+'</div>'; // no runs in range: there's nothing to total, so we show no figure at all rather than a misleading "$0" (a real zero total and "no data" are two different situations)
+    var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows);
+    return '<div class="dep-hd">'+top+'<div class="dep-hd-num"><span class="metric-value">'+money(tot)+'</span></div></div>';}
   /* Largest size: table and donut shown together, side by side — there's room for both, so the Table/Distribution toggle (a choice that only exists because smaller sizes can't fit both) is pointless here and removed. */
   function prContent(w){
+    if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
+      // the toolbar (period chip + Table/Distribution toggle) always stays — an empty result for the chosen period is not a reason to take away the controls that got you here
+      return prHeaderBlock(w,w.size==="xwide",true)+body;}
     if(w.size==="kpi")return prGlance(w);
     if(w.size==="xwide")return prHeaderBlock(w,true)+'<div class="pr-split"><div class="pr-split-table">'+prTableHTML(w)+'</div><div class="pr-split-chart">'+prDonut(w,196)+'</div></div>';
     var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
