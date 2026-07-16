@@ -3167,6 +3167,36 @@ td.metric-label { font-weight: 600; }
                 <td><span class="tag purple">A11y</span></td>
                 <td><span class="tag amber">Major</span></td>
               </tr>
+              <tr>
+                <td><span class="mod-chip">Media</span></td>
+                <td>The entire content grid (library items, Designer cards, logo upload slots) uses AngularJS custom elements <code style="font-family:monospace;font-size:11px;">&lt;cmg-thumb on-click="$ctrl.launchBlank"&gt;</code> for click handling. The <code style="font-family:monospace;font-size:11px;">&lt;a&gt;</code> elements inside each card have no <code style="font-family:monospace;font-size:11px;">href</code> attribute and no <code style="font-family:monospace;font-size:11px;">tabindex</code>, making them non-focusable by keyboard. No item in the entire browse or designer grid can be activated without a mouse. Fails WCAG 2.1.1 Keyboard and 4.1.2 Name, Role, Value.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag red">Critical</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Media</span></td>
+                <td>The content preview modal has no <code style="font-family:monospace;font-size:11px;">role="dialog"</code>, no <code style="font-family:monospace;font-size:11px;">aria-label</code>, and no <code style="font-family:monospace;font-size:11px;">aria-labelledby</code>. Screen readers do not announce it as a dialog when it opens and cannot identify its purpose. Confirmed via DOM inspection: root element is <code style="font-family:monospace;font-size:11px;">ng-app="cmgShop"</code> with <code style="font-family:monospace;font-size:11px;">class="ng-scope modal-open"</code> only. Fails WCAG 4.1.2 Name, Role, Value.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag red">Critical</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Media</span></td>
+                <td>Focus is not trapped inside the content preview modal. The modal's focusable element count is 269 - the entire page remains reachable while the modal is open. Keyboard users can tab outside the modal to the obscured background content with no visual indicator of context loss. Fails WCAG 2.4.3 Focus Order.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag red">Critical</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Media</span></td>
+                <td>The AngularJS application renders multiple simultaneous duplicate heading trees during state transitions. The DOM simultaneously contains 3+ copies of H1 "Summer Breeze Fresh", H3 "ATTRIBUTES", H3 "Categories", and H3 "Tags" while the content preview modal opens. Screen readers navigating by heading encounter repeated identical headings pointing to redundant content. Confirmed via <code style="font-family:monospace;font-size:11px;">document.querySelectorAll('h1,h2,h3')</code> inspection. Fails WCAG 4.1.1 Parsing.</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
+              </tr>
+              <tr>
+                <td><span class="mod-chip">Media</span></td>
+                <td>The Browse Media and Browse Kids dropdown menus contain four navigation links each labeled "Spanish" (pointing to <code style="font-family:monospace;font-size:11px;">/library/spanish-motion-title</code>, <code style="font-family:monospace;font-size:11px;">/library/spanish-still-title</code>, <code style="font-family:monospace;font-size:11px;">/library/spanish-pro-title</code>, <code style="font-family:monospace;font-size:11px;">/library/spanish-bible-videos</code>). All four share identical link text with no contextual disambiguation. Screen reader users navigating by links cannot distinguish among them. Fails WCAG 2.4.4 Link Purpose (In Context).</td>
+                <td><span class="tag purple">A11y</span></td>
+                <td><span class="tag amber">Major</span></td>
+              </tr>
 
             </tbody>
           </table>
