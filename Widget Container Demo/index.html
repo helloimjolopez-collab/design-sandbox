@@ -784,12 +784,10 @@
     return cur.map(function(a){return {name:a.name,net:a.net,pct:tot?(a.net/tot*100):0};});}
   /* The whole period control is ONE compact row: the two date fields (always live, always editable, never gated behind a click) plus a small shortcut button for the four presets. Not a mode switch — selecting a preset just writes into the same visible fields. */
   function prPeriodChip(w){var bId="prb-"+w.id,eId="pre-"+w.id;
-    return '<span class="pr-period-row"><span class="pr-range-chip">'+
+    return '<span class="pr-range-chip">'+
       '<input type="date" id="'+bId+'" class="pr-date-input" data-id="'+w.id+'" data-which="begin" value="'+(w.begin||"")+'" aria-label="Period start date">'+
       '<span class="pr-range-sep">–</span>'+
       '<input type="date" id="'+eId+'" class="pr-date-input" data-id="'+w.id+'" data-which="end" value="'+(w.end||"")+'" aria-label="Period end date">'+
-      '</span>'+
-      '<button class="scope-chip pr-quick-btn" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Quick periods">'+ICON("bolt")+ICON("expand_more")+'</button>'+
       '</span>';}
   function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);} // reuses the generic dep-view action, kind-agnostic
   function prTableHTML(w){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
