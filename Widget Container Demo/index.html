@@ -247,6 +247,11 @@
   .scope-chip:hover{background:var(--wn-200);color:var(--txt-primary);}
   .scope-chip .fc-label,.scope-chip>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .scope-chip .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
+  /* Custom-range date editor: persistent widget-header chrome, never inside a popover that a click can dismiss (resolves the "hidden behind a click" / not-interactable issue) */
+  .pr-custom-dates{display:inline-flex;align-items:center;gap:6px;flex:0 1 auto;min-width:0;}
+  .pr-custom-dates label{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--txt-secondary);border:1px solid var(--stroke-widget);border-radius:8px;padding:3px 8px 3px 10px;white-space:nowrap;}
+  .pr-custom-dates input.pr-date-input{font:inherit;font-size:12px;color:var(--txt-primary);border:none;background:transparent;padding:2px 0;min-width:104px;}
+  .pr-custom-dates input.pr-date-input:focus{outline:2px solid var(--focus-ring,#2563eb);outline-offset:1px;border-radius:4px;}
   .glance{display:flex;flex-direction:column;height:100%;min-height:0;padding:12px 16px 12px;}
   .glance .scope-chip{align-self:flex-start;margin:0 0 8px;}
   .gl-metric{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -932,8 +937,8 @@
     if(a==="rangemenu"){pop=(pop&&pop.type==="rangemenu"&&pop.id===id)?null:{type:"rangemenu",id:id};render();return;}
     if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
     if(a==="pr-range-set"){var wprr=find(id);if(wprr)wprr.range=t.getAttribute("data-r");if(t.getAttribute("data-r")!=="C")pop=null;render();return;}
-    if(a==="pr-drill"){var wpd=find(id),cat=t.getAttribute("data-cat");if(wpd)showModal(cat,prCategoryModalBody(cat));return;}
-    if(a==="pr-show-last"){var wsl=find(id);if(wsl){wsl.range="R";wsl.state="ready";}render();return;}
+    if(a==="pr-drill"){var wpd=find(id),cat=t.getAttribute("data-cat");if(wpd)showModal(cat,prCategoryModalBody(cat,wpd));return;}
+    if(a==="pr-show-last"){var wsl=find(id);if(wsl){wsl.range="TM";wsl.state="ready";}render();return;}
     if(a==="trmode"){var wtm=find(id);if(wtm){wtm.trmode=t.getAttribute("data-m");wtm.trIso=null;}render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
