@@ -771,31 +771,26 @@
   })();
   function prFmtDate(d){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return M[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
   var PR_TODAY=new Date(2026,6,15); // "today" in this demo
-  /* Begin/End are always the source of truth, always visible, always editable — no popover, no mode switch. Mirrors production's Begin/Ending pickers exactly (Confluence §3), and the SME's hard requirement that a specific date range is never an extra step (§8b, §10.1). One control, one job. */
-  function prPeriodBounds(w){var t=PR_TODAY,b=w.begin?new Date(w.begin):new Date(t.getFullYear(),0,1),e=w.end?new Date(w.end):t;return {start:b,end:e};}
+  function prISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+  /* Named periods, in display order — Custom is handled separately (§10.2/§10.1: custom must always be reachable, never a second click deep). Default is "This year" (w.range="TY" if unset). */
+  var PR_PRESETS=[["TM","This month"],["TQ","This quarter"],["YTD","Year to date"],["ALL","All time"],["TY","This year"]];
+  function prRangeBoundsFor(r,w){var t=PR_TODAY;
+    if(r==="TM")return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)};
+    if(r==="TQ"){var q=Math.floor(t.getMonth()/3);return {begin:prISO(new Date(t.getFullYear(),q*3,1)),end:prISO(t)};}
+    if(r==="YTD")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)};
+    if(r==="ALL")return {begin:prISO(PR_RUNS[0].date),end:prISO(t)};
+    if(r==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(new Date(t.getFullYear(),11,31))};
+    return {begin:w.begin||prISO(t),end:w.end||prISO(t)}; // CUSTOM — whatever's already in the fields
+  }
+  function prPeriodBounds(w){var b=prRangeBoundsFor(w.range||"TY",w);return {start:new Date(b.begin),end:new Date(b.end)};}
   function prRunsInRange(w){var b=prPeriodBounds(w);return PR_RUNS.filter(function(x){return x.date>=b.start&&x.date<=b.end;});}
   function prRowsFor(runsArr){var m={};PR_CATS.forEach(function(c){m[c]=0;});runsArr.forEach(function(run){PR_CATS.forEach(function(c){m[c]+=(run.byCat[c]||0);});});
     var rows=PR_CATS.map(function(c){return {name:c,net:m[c]};});rows.sort(function(a,b){return b.net-a.net;});return rows;} // default sort amount-desc (resolves F6)
   function prTotal(rows){return rows.reduce(function(s,a){return s+a.net;},0);}
   function prRowsWithShare(w){var cur=prRowsFor(prRunsInRange(w)),tot=prTotal(cur);
     return cur.map(function(a){return {name:a.name,net:a.net,pct:tot?(a.net/tot*100):0};});}
-  function prISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
-  var PR_PRESETS=[["TM","This month"],["TQ","This quarter"],["YTD","Year to date"],["TY","This year"]];
-  function prPresetBounds(code){var t=PR_TODAY;
-    if(code==="TQ"){var q=Math.floor(t.getMonth()/3);return {begin:prISO(new Date(t.getFullYear(),q*3,1)),end:prISO(t)};}
-    if(code==="YTD")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)};
-    if(code==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(new Date(t.getFullYear(),11,31))};
-    return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)}; // TM
-  }
-  /* No dropdown, no computed "which preset is this" readout to reconcile against the fields — just two plain labeled fields, and a row of plain-text shortcuts that fill them. Nothing to keep in sync because there's no second piece of state. */
-  function prPeriodChip(w){var bId="prb-"+w.id,eId="pre-"+w.id;
-    return '<div class="pr-range-block">'+
-      '<div class="pr-range-row">'+
-        '<span class="pr-range-field"><span class="pr-range-lbl">From</span><input type="date" id="'+bId+'" class="pr-date-input" data-id="'+w.id+'" data-which="begin" value="'+(w.begin||"")+'"></span>'+
-        '<span class="pr-range-field"><span class="pr-range-lbl">To</span><input type="date" id="'+eId+'" class="pr-date-input" data-id="'+w.id+'" data-which="end" value="'+(w.end||"")+'"></span>'+
-      '</div>'+
-      '<div class="pr-quick-links">'+PR_PRESETS.map(function(o,i){return (i?'<span class="pr-quick-sep">·</span>':"")+'<button class="pr-quick-link" data-action="pr-range-set" data-id="'+w.id+'" data-r="'+o[0]+'">'+o[1]+'</button>';}).join("")+'</div>'+
-      '</div>';}
+  function prPeriodLabel(w){var r=w.range||"TY";if(r==="CUSTOM")return "Custom";var m=PR_PRESETS.filter(function(o){return o[0]===r;})[0];return m?m[1]:"This year";}
+  function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period — tap to change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
   function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);} // reuses the generic dep-view action, kind-agnostic
   function prTableHTML(w){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
     var head='<div class="wt-row wt-head"><span class="lr-main">Category</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">Amount</span></div>';
