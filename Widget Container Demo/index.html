@@ -924,6 +924,7 @@
     mr.innerHTML='<div class="modal-backdrop" data-action="modal-close"><div class="modal'+(modal.scoped?" modal-wide":"")+'" data-action="stop" role="dialog" aria-modal="true" aria-label="'+modal.t+'"><div class="modal-h"><span class="modal-title">'+(modal.glyph?'<span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">'+modal.glyph+'</span>':'')+modal.t+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b">'+body+'</div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">'+(modal.scoped?"Done":"Got it")+'</button></div></div></div>';
     modalMounted=true;}
   function refresh(id){var w=find(id);if(!w)return;w.state="loading";render();clearTimeout(timers[id]);timers[id]=setTimeout(function(){w.state="ready";w.updated="just now";render();},1100);}
+  function refreshAll(){var d=cur();d.widgets.forEach(function(w){if(w.state!=="empty")w.state="loading";});render();clearTimeout(timers["__all"]);timers["__all"]=setTimeout(function(){d.widgets.forEach(function(w){if(w.state==="loading"){w.state="ready";w.updated="just now";}});d.updated="just now";render();},1100);}
 
   document.addEventListener("click",function(e){
     var t=e.target.closest("[data-action]");
