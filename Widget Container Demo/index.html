@@ -772,13 +772,22 @@
   function prTotal(rows){return rows.reduce(function(s,a){return s+a.net;},0);}
   function prRowsWithShare(w){var cur=prRowsFor(prRunsInRange(w)),tot=prTotal(cur);
     return cur.map(function(a){return {name:a.name,net:a.net,pct:tot?(a.net/tot*100):0};});}
-  /* The whole period control is ONE compact row: the two date fields (always live, always editable, never gated behind a click) plus a small shortcut button for the four presets. Not a mode switch — selecting a preset just writes into the same visible fields. */
-  function prPeriodChip(w){var bId="prb-"+w.id,eId="pre-"+w.id;
-    return '<span class="pr-range-chip">'+
-      '<input type="date" id="'+bId+'" class="pr-date-input" data-id="'+w.id+'" data-which="begin" value="'+(w.begin||"")+'" aria-label="Period start date">'+
-      '<span class="pr-range-sep">–</span>'+
-      '<input type="date" id="'+eId+'" class="pr-date-input" data-id="'+w.id+'" data-which="end" value="'+(w.end||"")+'" aria-label="Period end date">'+
-      '</span>';}
+  function prISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+  var PR_PRESETS=[["TM","This month"],["TQ","This quarter"],["YTD","Year to date"],["TY","This year"]];
+  function prPresetBounds(code){var t=PR_TODAY;
+    if(code==="TQ"){var q=Math.floor(t.getMonth()/3);return {begin:prISO(new Date(t.getFullYear(),q*3,1)),end:prISO(t)};}
+    if(code==="YTD")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)};
+    if(code==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(new Date(t.getFullYear(),11,31))};
+    return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)}; // TM
+  }
+  /* The named-period label is a computed readout of begin/end, not a separate selector — it always reflects what's actually in the two fields, and falls back to "Custom" the moment they don't match a known preset. One state, one control. */
+  function prPresetMatch(w){for(var i=0;i<PR_PRESETS.length;i++){var b=prPresetBounds(PR_PRESETS[i][0]);if(w.begin===b.begin&&w.end===b.end)return PR_PRESETS[i][1];}return "Custom";}
+  function prPeriodChip(w){var bId="prb-"+w.id,eId="pre-"+w.id,lb=prPresetMatch(w);
+    return '<div class="pr-range-group">'+
+      '<span class="pr-range-field"><label for="'+bId+'">Beginning</label><input type="date" id="'+bId+'" class="pr-date-input" data-id="'+w.id+'" data-which="begin" value="'+(w.begin||"")+'"></span>'+
+      '<span class="pr-range-field"><label for="'+eId+'">Ending</label><input type="date" id="'+eId+'" class="pr-date-input" data-id="'+w.id+'" data-which="end" value="'+(w.end||"")+'"></span>'+
+      '<button class="scope-chip pr-period-label" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Named period — tap to jump to a preset"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>'+
+      '</div>';}
   function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);} // reuses the generic dep-view action, kind-agnostic
   function prTableHTML(w){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
     var head='<div class="wt-row wt-head"><span class="lr-main">Category</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">Amount</span></div>';
