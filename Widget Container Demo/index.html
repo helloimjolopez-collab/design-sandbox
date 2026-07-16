@@ -247,11 +247,13 @@
   .scope-chip:hover{background:var(--wn-200);color:var(--txt-primary);}
   .scope-chip .fc-label,.scope-chip>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .scope-chip .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
-  /* Period control: ONE element, always live, zero clicks to reach the dates — matches production's always-visible Begin/Ending pickers exactly (§3/§8b). No popover, no second mechanism. */
-  .pr-range-chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--stroke-widget);border-radius:8px;padding:3px 9px;white-space:nowrap;}
-  .pr-range-chip input.pr-date-input{font:inherit;font-size:12px;color:var(--txt-primary);border:none;background:transparent;padding:1px 0;width:96px;}
-  .pr-range-chip input.pr-date-input:focus-visible{outline:2px solid var(--focus-ring,#2563eb);outline-offset:1px;border-radius:4px;}
-  .pr-range-sep{color:var(--txt-subtle);font-size:12px;}
+  /* Period control: labeled Beginning/Ending fields, always live, zero clicks — matches production's always-visible Begin/Ending pickers exactly (§3/§8b). The trailing chip is a computed readout of those same two fields (a known preset name, or "Custom"), and doubles as a shortcut to jump to a preset — one piece of state, one control, not two competing ones. */
+  .pr-range-group{display:inline-flex;align-items:flex-end;gap:10px;flex-wrap:wrap;}
+  .pr-range-field{display:flex;flex-direction:column;gap:2px;}
+  .pr-range-field label{font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--txt-subtle);}
+  .pr-range-field input.pr-date-input{font:inherit;font-size:12px;color:var(--txt-primary);border:1px solid var(--stroke-widget);border-radius:6px;padding:3px 7px;background:transparent;}
+  .pr-range-field input.pr-date-input:focus-visible{outline:2px solid var(--focus-ring,#2563eb);outline-offset:1px;}
+  .pr-period-label{margin-bottom:1px;}
   /* Table "% of total" — a visible bar alongside the text figure (proportion stays in-scope per §10.3; amounts/percentages stay real text, never chart-only, per the accessibility constraint) */
   .wt-pctcol{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;}
   .pct-bar{width:56px;height:6px;border-radius:3px;background:var(--wn-200);overflow:hidden;flex:0 0 auto;}
