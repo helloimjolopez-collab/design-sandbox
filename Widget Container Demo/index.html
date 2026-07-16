@@ -856,6 +856,9 @@
     var of='<button class="iconbtn" data-action="wmenu" data-id="'+w.id+'" aria-haspopup="menu" data-tip="More" aria-label="More actions">'+ICON("more_vert")+'</button>';
     return refresh+size+of;
   }
+  /* Widget-shaped "Add widget" tile — appears in the grid itself whenever the dashboard has 0 or 1 real widgets (an empty or near-empty dashboard shouldn't rely on the toolbar button alone to make "add a widget" obvious). */
+  function addWidgetPlaceholderHTML(){
+    return '<section class="widget widget-add" data-size="kpi"><button class="widget-add-btn" data-action="add-widget" aria-label="Add widget">'+ICON("add")+'<span>Add widget</span></button></section>';}
   function widgetHTML(w){
     return '<section class="widget" data-id="'+w.id+'" data-size="'+w.size+'" data-manage="'+manage+'" data-dragging="'+(dragId===w.id)+'"'+(manage?' draggable="true"':'')+'>'+
       '<div class="whead"><span class="wdrag">'+ICON("drag_indicator")+'</span>'+titleHTML(w)+(manage?'':hoverIconsHTML(w))+'<span class="wspace"></span><div class="wactions">'+actionsHTML(w)+'</div></div><div class="wcontent">'+contentHTML(w)+'</div></section>';
