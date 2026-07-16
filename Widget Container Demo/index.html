@@ -249,8 +249,8 @@
   .scope-chip .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
   /* Period control: a single named-period chip (default "This year"), opening one popover. Custom time span is the FIRST row in that popover, with its own From/To fields right there — never a second click deeper than any other option. Clicking inside the popover (including the date fields) never closes it — see data-action="stop" on .pop in renderOverlay(). */
   .pr-pop-dates{display:flex;gap:10px;padding:2px 10px 8px 34px;}
-  .pr-pop-dates label{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--txt-secondary);}
-  .pr-pop-dates input.pr-date-input{font:inherit;font-size:12px;color:var(--txt-primary);border:1px solid var(--stroke-widget);border-radius:6px;padding:3px 6px;background:transparent;}
+  .pr-pop-dates label{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--txt-secondary);flex:1 1 0;}
+  .pr-pop-dates input.pr-date-input{font:inherit;font-size:12px;color:var(--txt-primary);border:1px solid var(--stroke-widget);border-radius:6px;padding:3px 6px;background:transparent;width:100%;box-sizing:border-box;}
   .pr-pop-dates input.pr-date-input:focus-visible{outline:2px solid var(--focus-ring,#2563eb);outline-offset:1px;}
   /* Table "% of total" — a visible bar alongside the text figure (proportion stays in-scope per §10.3; amounts/percentages stay real text, never chart-only, per the accessibility constraint) */
   .wt-pctcol{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;}
@@ -576,8 +576,8 @@
   var OTHERS_COLOR="#c8cdd7";
   var LINE_COLORS=["#2d4889","#4b6ec3","#6e8bd4","#3a5aaa","#5475c6","#8aa2dd"];
   /* real blue scale: hold hue+saturation constant, step the LIGHTNESS (HSL) so every step stays a saturated blue and never fades to grey. Sized to the slice count so steps are always well spread. */
-  /* Steps differ in hue AND lightness, not lightness alone — a single-hue, 40%-sat, 34–76% ramp reads as one washed-out blue once you're past 3-4 segments. Widening saturation/lightness range and drifting hue across the ramp keeps every step in the "blue" family (on brand) while making adjacent steps actually distinguishable. */
-  function blueRamp(n){var H0=250,H1=222,S=58,Lmin=28,Lmax=80,out=[];for(var i=0;i<n;i++){var t=(n>1?i/(n-1):0),h=Math.round(H0+(H1-H0)*t),l=Math.round(Lmin+(Lmax-Lmin)*t);out.push('hsl('+h+','+S+'%,'+l+'%)');}return out;}
+  /* Same single hue as before (not a different color) — just wider saturation/lightness range so adjacent steps in the same blue actually read as distinct once you're past 3-4 segments. */
+  function blueRamp(n){var H=249,S=55,Lmin=22,Lmax=84,out=[];for(var i=0;i<n;i++){out.push('hsl('+H+','+S+'%,'+Math.round(Lmin+(Lmax-Lmin)*(n>1?i/(n-1):0))+'%)');}return out;}
   /* filter narrows the TABLE only; default sort = Name, Balance column is sortable (desc/asc) */
   function depRows(w){var f=w.filter||"All types";var rows=depData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;}).slice();var bs=w.balSort;if(bs==="desc")rows.sort(function(a,b){return b.net-a.net;});else if(bs==="asc")rows.sort(function(a,b){return a.net-b.net;});else rows.sort(function(a,b){return a.name.localeCompare(b.name);});return rows;}
   function depByType(w){var m={},order=[];depData(w).forEach(function(a){if(m[a.type]===undefined){m[a.type]=0;order.push(a.type);}m[a.type]+=a.net;});return order.map(function(t){return {name:t,net:m[t]};});}
