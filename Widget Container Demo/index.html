@@ -816,7 +816,7 @@
   function prContent(w){
     if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
       // the toolbar (period chip + Table/Distribution toggle) always stays — an empty result for the chosen period is not a reason to take away the controls that got you here
-      return prHeaderBlock(w,w.size==="xwide",true)+body;}
+      return prHeaderBlock(w,(w.size==="xwide"||w.size==="kpi"),true)+body;}
     if(w.size==="kpi")return prGlance(w);
     if(w.size==="xwide")return prHeaderBlock(w,true)+'<div class="pr-split"><div class="pr-split-table">'+prTableHTML(w)+'</div><div class="pr-split-chart">'+prDonut(w,196)+'</div></div>';
     var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
