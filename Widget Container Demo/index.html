@@ -783,13 +783,14 @@
     if(code==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(new Date(t.getFullYear(),11,31))};
     return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)}; // TM
   }
-  /* The named-period label is a computed readout of begin/end, not a separate selector — it always reflects what's actually in the two fields, and falls back to "Custom" the moment they don't match a known preset. One state, one control. */
-  function prPresetMatch(w){for(var i=0;i<PR_PRESETS.length;i++){var b=prPresetBounds(PR_PRESETS[i][0]);if(w.begin===b.begin&&w.end===b.end)return PR_PRESETS[i][1];}return "Custom";}
-  function prPeriodChip(w){var bId="prb-"+w.id,eId="pre-"+w.id,lb=prPresetMatch(w);
-    return '<div class="pr-range-group">'+
-      '<span class="pr-range-field"><label for="'+bId+'">Beginning</label><input type="date" id="'+bId+'" class="pr-date-input" data-id="'+w.id+'" data-which="begin" value="'+(w.begin||"")+'"></span>'+
-      '<span class="pr-range-field"><label for="'+eId+'">Ending</label><input type="date" id="'+eId+'" class="pr-date-input" data-id="'+w.id+'" data-which="end" value="'+(w.end||"")+'"></span>'+
-      '<button class="scope-chip pr-period-label" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Named period — tap to jump to a preset"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>'+
+  /* No dropdown, no computed "which preset is this" readout to reconcile against the fields — just two plain labeled fields, and a row of plain-text shortcuts that fill them. Nothing to keep in sync because there's no second piece of state. */
+  function prPeriodChip(w){var bId="prb-"+w.id,eId="pre-"+w.id;
+    return '<div class="pr-range-block">'+
+      '<div class="pr-range-row">'+
+        '<span class="pr-range-field"><span class="pr-range-lbl">From</span><input type="date" id="'+bId+'" class="pr-date-input" data-id="'+w.id+'" data-which="begin" value="'+(w.begin||"")+'"></span>'+
+        '<span class="pr-range-field"><span class="pr-range-lbl">To</span><input type="date" id="'+eId+'" class="pr-date-input" data-id="'+w.id+'" data-which="end" value="'+(w.end||"")+'"></span>'+
+      '</div>'+
+      '<div class="pr-quick-links">'+PR_PRESETS.map(function(o,i){return (i?'<span class="pr-quick-sep">·</span>':"")+'<button class="pr-quick-link" data-action="pr-range-set" data-id="'+w.id+'" data-r="'+o[0]+'">'+o[1]+'</button>';}).join("")+'</div>'+
       '</div>';}
   function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);} // reuses the generic dep-view action, kind-agnostic
   function prTableHTML(w){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
