@@ -806,7 +806,7 @@
   function prTableHTML(w){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
     var head='<div class="wt-row wt-head"><span class="lr-main">Category</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">Amount</span></div>';
     var body=rows.map(function(a){var pctR=Math.round(a.pct);
-      return '<div class="wt-row wt-rowh"><span class="lr-main lr-link" data-action="pr-drill" data-id="'+w.id+'" data-cat="'+a.name+'" tabindex="0" role="button">'+a.name+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+      return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.name+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
   function prDonut(w,forceSize){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length);
     rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i],drill=' data-action="pr-drill" data-id="'+w.id+'" data-cat="'+a.name+'"';
