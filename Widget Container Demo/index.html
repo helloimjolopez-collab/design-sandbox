@@ -829,9 +829,7 @@
     if(w.size==="kpi")return prGlance(w);
     if(w.size==="xwide")return prHeaderBlock(w,true)+'<div class="pr-split"><div class="pr-split-table">'+prTableHTML(w)+'</div><div class="pr-split-chart">'+prDonut(w,196)+'</div></div>';
     var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
-  /* Focus overlay (§10.6): stays inside the widget, no link to Earnings Inquiry (it's per-employee, not per-distribution — F8). Not a trend view — §10.3 rejects trend/comparison at every size, so this shows the category's amount for the current period only, with an honest placeholder for the checks/employees-behind-it expansion (§12, Bundle — not yet built). */
-  function prCategoryModalBody(catName,w){var rows=prRowsFor(prRunsInRange(w||{})),row=null;for(var i=0;i<rows.length;i++)if(rows[i].name===catName)row=rows[i];var amt=row?row.net:0;
-    return '<div class="acctm"><div class="acctm-kpi"><span class="metric-value">'+money(amt)+'</span></div><div style="padding:10px 2px 2px;color:var(--txt-subtle);font-size:13px;line-height:1.5">This would expand to show the individual checks or employees behind <b>'+catName+'</b> for the selected period. Not yet available (bundled improvement, Confluence §10.6/§12).</div></div>';}
+  /* No drill-down from category rows/segments: Confluence §10.6/§10.8/§12 mark detail-behind-a-category as explicitly out of scope for this iteration (Bundle, "not in scope"), not something to build a placeholder for. */
 
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
