@@ -1381,22 +1381,21 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
   );
 }
 
-function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, railCollapsed, moduleId, onSwitchModule, onExpandRail }) {
+function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, moduleId, onSwitchModule }) {
   const midnight = mode === "midnight";
   return (
     <header className="spd-topnav" role="banner">
-      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
         <button className="spd-topnav__iconbtn spd-topnav__hamburger" onClick={onOpenMobileNav} aria-label="Open navigation">
           <Icon name="menu" />
         </button>
-        {/* Logo is a real control now — click it to go Home. */}
-        <span className="spd-topnav__brand"><PressableMark size={22} withWordmark pad={6} onClick={onGoHome} title="Home" /></span>
+        {/* Small, quiet brand mark → Home. No wordmark, no heavy press. */}
+        <button className="spd-topnav__logo" onClick={onGoHome} aria-label="Home" title="Home">
+          <SpiredMark size={22} />
+        </button>
+        {/* Module switcher — the single, compact way to change modules. */}
+        <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
         <span className="spd-topnav__brandsep" aria-hidden="true" />
-        {/* When the module rail is collapsed, the switcher folds up here. */}
-        {railCollapsed && (
-          <TopModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} onExpand={onExpandRail} />
-        )}
-        {/* Org switcher restored to its expected spot, top-left by the logo. */}
         <button className="spd-topnav__org">
           <span className="spd-topnav__orgname">Grace Community Church</span>
           <Icon name="expand_more" size={16} />
@@ -1417,9 +1416,7 @@ function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, railCollapsed, 
           <Icon name="notifications" />
           <span style={{ position: "absolute", top: 6, right: 7, width: 7, height: 7, borderRadius: "50%", background: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)", boxShadow: "0 0 0 2px var(--semantic-color-light-mode-surface-nav-light)" }} />
         </button>
-        <span style={{ width: 32, height: 32, borderRadius: "50%", marginLeft: 6, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--semantic-color-light-mode-fill-contextual-avatar-base)", color: "var(--semantic-color-light-mode-text-contextual-avatar-base)", fontSize: 11, fontWeight: 600 }}>
-          JL
-        </span>
+        <AccountMenu />
       </div>
     </header>
   );
