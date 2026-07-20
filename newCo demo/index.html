@@ -2297,13 +2297,117 @@ function InfoArchitecturePage() {
 
 /* ═══ Placeholder — modules not yet captured from the live product ═══ */
 
-function Placeholder({ label }) {
+/* ═══ Giving Admin — a second fleshed-out module (Overview section) ═══ */
+function GivingOverviewPage() {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { const t = setTimeout(() => setLoading(false), 1000); return () => clearTimeout(t); }, []);
+
+  const stats = [
+    { label: "Received this month", value: "$48,920", sub: "+6.2% vs. June", icon: "trending_up", tone: "var(--semantic-color-light-mode-fill-static-accent-jade-base)" },
+    { label: "Gifts logged", value: "312", sub: "Across 4 funds", icon: "receipt_long", tone: "var(--semantic-color-light-mode-fill-static-accent-seabreeze-base)" },
+    { label: "Active funds", value: "4", sub: "1 designated", icon: "savings", tone: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+  ];
+  const gifts = [
+    { donor: "Feargal Phelan", fund: "General Fund", method: "Card", amount: "$250.00", date: "7/18/2026", status: "Cleared" },
+    { donor: "Yu-Jay Harris", fund: "Building Fund", method: "ACH", amount: "$1,000.00", date: "7/17/2026", status: "Cleared" },
+    { donor: "Kunal Mehta", fund: "Missions", method: "Card", amount: "$75.00", date: "7/16/2026", status: "Pending" },
+    { donor: "Krupa Nair", fund: "General Fund", method: "Cash", amount: "$40.00", date: "7/15/2026", status: "Cleared" },
+    { donor: "Oisin Curran", fund: "Youth", method: "Card", amount: "$120.00", date: "7/15/2026", status: "Cleared" },
+  ];
+
   return (
-    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12, padding: 40, textAlign: "center" }}>
-      <SpiredMark size={30} mono="var(--semantic-color-light-mode-stroke-action-secondary-inverse-base)" />
-      <p style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", maxWidth: 440 }}>
-        {label} isn't built in this concept. Home and People show the product; the Concept section is where the design-system standards live.
-      </p>
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 1120 }}>
+        <div className="spd-fade-in" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24, gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <p style={{ fontSize: 24, fontWeight: 600, lineHeight: "30px" }}>Overview</p>
+            <p style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", marginTop: 4 }}>Giving Admin · July 2026</p>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button className="spd-btn spd-btn--ghost"><Icon name="download" size={18} /> Export</button>
+            <button className="spd-btn spd-btn--primary"><Icon name="add" size={18} /> New Batch</button>
+          </div>
+        </div>
+
+        <div className="spd-fade-in spd-giving-stats">
+          {stats.map((s) => (
+            <div key={s.label} className="spd-card" style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+              <span className="spd-navitem__chip" style={{ width: 36, height: 36, borderRadius: 11, background: `color-mix(in srgb, ${s.tone} 13%, transparent)` }}>
+                <Icon name={s.icon} filled size={20} style={{ color: s.tone }} />
+              </span>
+              <div>
+                <p style={{ fontSize: 26, fontWeight: 600, lineHeight: "30px", color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>{s.value}</p>
+                <p style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-base)", marginTop: 2 }}>{s.label}</p>
+                <p style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 4 }}>{s.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="spd-card spd-fade-in" style={{ overflow: "hidden", marginTop: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" }}>
+            <p style={{ fontSize: 15, fontWeight: 600 }}>Recent gifts</p>
+            <button className="spd-btn spd-btn--ghost" style={{ height: 32, fontSize: 12.5 }}>View all</button>
+          </div>
+          {loading ? (
+            <div>{[0, 1, 2, 3, 4].map((i) => <SkeletonRow key={i} />)}</div>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table className="spd-table">
+                <thead>
+                  <tr><th>Donor</th><th>Fund</th><th>Method</th><th>Amount</th><th>Date</th><th>Status</th></tr>
+                </thead>
+                <tbody className="spd-stagger">
+                  {gifts.map((g, i) => (
+                    <tr key={g.donor + i}>
+                      <td style={{ fontSize: 15, fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-primary-base)", whiteSpace: "nowrap" }}>{g.donor}</td>
+                      <td style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)", fontSize: 14.5, whiteSpace: "nowrap" }}>{g.fund}</td>
+                      <td style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)", fontSize: 14.5 }}>{g.method}</td>
+                      <td style={{ fontSize: 14.5, fontWeight: 500, whiteSpace: "nowrap" }}>{g.amount}</td>
+                      <td style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", fontSize: 14, whiteSpace: "nowrap" }}>{g.date}</td>
+                      <td>
+                        {g.status === "Cleared" ? (
+                          <span className="spd-pill" style={{ background: "var(--spd-badge-positive-bg)", color: "var(--spd-badge-positive-fg)" }}>
+                            <span className="spd-pill__dot" style={{ background: "var(--spd-badge-positive-dot)", opacity: 1 }} /> Cleared
+                          </span>
+                        ) : (
+                          <span className="spd-pill" style={{ background: "var(--spd-badge-role-bg)", border: "0.5px solid var(--spd-badge-role-stroke)", color: "var(--spd-badge-role-fg)" }}>
+                            <span className="spd-pill__dot" style={{ background: "var(--spd-badge-role-dot)", opacity: 1 }} /> Pending
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* In-module placeholder — reinforces which module/section you're in for the
+   sections not fleshed out in this concept. */
+function ModulePlaceholder({ mod, item }) {
+  const section = (mod.nav || []).find((n) => n.id === item);
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner">
+        <div className="spd-fade-in" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, minHeight: "58vh", textAlign: "center" }}>
+          <span className="spd-navitem__chip" style={{ width: 56, height: 56, borderRadius: 18, background: `color-mix(in srgb, ${mod.color} 12%, transparent)` }}>
+            <Icon name={section ? section.icon : mod.icon} filled size={26} style={{ color: mod.color }} />
+          </span>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>{mod.name}</p>
+            <p style={{ fontSize: 22, fontWeight: 600, marginTop: 4 }}>{section ? section.label : mod.name}</p>
+          </div>
+          <p style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", maxWidth: 470, lineHeight: 1.55 }}>
+            This section isn't built out in the concept — it's here to show the information architecture. Notice the switcher up top and this module's own rail on the left. <strong style={{ fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>People → Directory</strong> and <strong style={{ fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>Giving Admin → Overview</strong> are the fleshed-out examples.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
