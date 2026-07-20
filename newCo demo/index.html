@@ -522,67 +522,76 @@
      tiles: transparent by default, module-tinted only when active. */
   .spd-navitem__chip--fn { border-radius: 9px; }
 
-  /* ── Module switcher (top-left, persistent) ───────────────────────────── */
-  .spd-modsw { position: relative; }
-  .spd-modsw__trigger {
-    display: flex; align-items: center; gap: 9px; height: 38px; padding: 0 10px 0 6px;
-    border-radius: 12px; background: transparent; border: none; cursor: pointer;
-    font-family: inherit; max-width: 240px;
+  /* ── Global rail — the one persistent nav surface, at the left edge ────── */
+  .spd-grail {
+    width: 88px; flex-shrink: 0; display: flex; flex-direction: column;
+    justify-content: space-between; padding: 10px 0 14px;
+    overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .spd-grail::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  .spd-grail__group { display: flex; flex-direction: column; gap: 4px; padding: 0 10px; }
+  .spd-grail__item {
+    position: relative; width: 100%; display: flex; flex-direction: column;
+    align-items: center; gap: 5px; padding: 9px 2px 7px; border-radius: 14px;
+    background: transparent; border: none; cursor: pointer; font-family: inherit;
     transition: background var(--motion-duration-2) var(--motion-easing-standard),
                 transform var(--motion-duration-3) var(--motion-easing-spring);
   }
-  .spd-modsw__trigger:hover { background: rgba(41,39,36,0.06); }
-  .spd-modsw__trigger:active { transform: scale(0.98); }
-  .spd-modsw__trigger.is-open { background: rgba(41,39,36,0.06); }
-  .spd-modsw__chip {
-    width: 28px; height: 28px; border-radius: 9px; flex-shrink: 0;
+  .spd-grail__item:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  .spd-grail__item:active { transform: scale(0.95); }
+  .spd-grail__item.is-active { background: var(--semantic-color-light-mode-fill-contextual-navitem-active); }
+  .spd-grail__indicator {
+    position: absolute; left: -10px; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 22px; border-radius: 2px;
+    background: var(--semantic-color-light-mode-fill-action-primary-base);
+  }
+  .spd-grail__chip {
+    width: 40px; height: 40px; border-radius: 13px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
+    transition: background var(--motion-duration-3) var(--motion-easing-standard);
   }
-  .spd-modsw__name {
-    font-size: 14px; font-weight: 600; letter-spacing: -0.1px;
-    color: var(--semantic-color-light-mode-text-static-primary-base);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  .spd-grail__label {
+    font-size: 10.5px; line-height: 1.15; font-weight: 500; text-align: center;
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .spd-modsw__menu {
-    position: absolute; top: calc(100% + 8px); left: 0; z-index: 60;
-    width: 288px; padding: 7px; border-radius: 16px;
-    background: var(--semantic-color-light-mode-surface-sheet-base);
-    border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
-    box-shadow: var(--spd-elevation-sheet);
-  }
-  .spd-modsw__menuhead {
-    font-size: 10.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-    color: var(--semantic-color-light-mode-text-static-tertiary-base);
-    padding: 8px 10px 6px;
-  }
-  .spd-modsw__opt {
-    width: 100%; display: flex; align-items: center; gap: 11px; padding: 8px 10px;
-    border-radius: 11px; background: transparent; border: none; cursor: pointer;
-    text-align: left; font-family: inherit;
-    transition: background var(--motion-duration-2) var(--motion-easing-standard);
-  }
-  .spd-modsw__opt:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
-  .spd-modsw__opt.is-current { background: var(--semantic-color-light-mode-fill-contextual-navitem-active); }
-  .spd-modsw__optname {
-    flex: 1; display: flex; align-items: center; gap: 8px;
-    font-size: 13.5px; font-weight: 500;
-    color: var(--semantic-color-light-mode-text-static-primary-base);
-  }
-  .spd-modsw__tag {
-    font-size: 9.5px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
-    padding: 2px 6px; border-radius: 6px;
-    background: color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-amethyst-base) 14%, transparent);
-    color: var(--semantic-color-light-mode-fill-static-accent-amethyst-base);
+  .spd-grail__item.is-active .spd-grail__label {
+    font-weight: 600; color: var(--semantic-color-light-mode-text-static-primary-base);
   }
 
-  /* Org control, now on the right; brand mark + separator on the left. */
+  /* ── Module section nav — labelled panel beside the rail ──────────────── */
+  .spd-modnav {
+    width: 224px; flex-shrink: 0; display: flex; flex-direction: column;
+    padding: 18px 12px 20px; overflow-y: auto;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .spd-modnav::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  .spd-modnav__head { display: flex; align-items: center; gap: 9px; padding: 4px 12px 14px; }
+  .spd-modnav__title {
+    font-size: 15px; font-weight: 600; letter-spacing: -0.1px;
+    color: var(--semantic-color-light-mode-text-static-primary-base);
+  }
+  .spd-modnav__list { display: flex; flex-direction: column; gap: 4px; }
+
+  /* Logo is now interactive (→ Home) + org control, both top-left. */
+  .spd-topnav__brand { display: inline-flex; }
   .spd-topnav__brandsep {
     width: 1px; height: 22px; flex-shrink: 0;
     background: var(--semantic-color-light-mode-stroke-static-neutral-light);
   }
-  .spd-topnav__org--right { max-width: 240px; }
-  .spd-topnav__orgname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .spd-topnav__orgname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
   .spd-topnav__hamburger { display: none; }
+
+  /* Mobile drawer — modules + current sections in one sheet. */
+  .spd-drawer {
+    position: fixed; top: 60px; left: 0; bottom: 0; z-index: 50; width: 280px;
+    display: flex; flex-direction: column; gap: 4px; padding: 16px 12px 20px;
+    overflow-y: auto; background: var(--semantic-color-light-mode-surface-nav-light);
+    border-right: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
+    transform: translateX(-102%);
+    transition: transform var(--motion-duration-6) var(--motion-easing-emphasized);
+  }
+  .spd-drawer.is-open { transform: translateX(0); box-shadow: 0 24px 60px -20px rgba(20,18,30,0.4); }
 
   /* Giving Overview stat row. */
   .spd-giving-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
