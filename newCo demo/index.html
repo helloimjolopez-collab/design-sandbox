@@ -1169,18 +1169,23 @@ function ModuleRail({ moduleId, item, onSelectItem, onSwitchModule, collapsed, o
   );
 }
 
-function TopNav({ mode, onToggleMode }) {
+function TopNav({ mode, onToggleMode, moduleId, onSwitchModule, onOpenMobileNav }) {
   const midnight = mode === "midnight";
   return (
     <header className="spd-topnav" role="banner">
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <PressableMark size={22} withWordmark pad={6} />
-        <button className="spd-topnav__org">
-          Grace Community Church
-          <Icon name="expand_more" size={16} />
+      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+        <button className="spd-topnav__iconbtn spd-topnav__hamburger" onClick={onOpenMobileNav} aria-label="Open navigation">
+          <Icon name="menu" />
         </button>
+        <span className="spd-topnav__brand"><PressableMark size={22} withWordmark pad={6} /></span>
+        <span className="spd-topnav__brandsep" aria-hidden="true" />
+        <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <button className="spd-topnav__org spd-topnav__org--right">
+          <span className="spd-topnav__orgname">Grace Community Church</span>
+          <Icon name="expand_more" size={16} />
+        </button>
         <button
           className="spd-topnav__iconbtn"
           onClick={onToggleMode}
