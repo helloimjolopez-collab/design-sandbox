@@ -2568,21 +2568,14 @@ function App() {
       <TopNav
         mode={mode}
         onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
-        moduleId={moduleId}
-        onSwitchModule={goModule}
+        onGoHome={() => goModule("home")}
         onOpenMobileNav={() => setMobileNav(true)}
       />
       <div className="spd-body">
-        <ModuleRail
-          moduleId={moduleId}
-          item={item}
-          onSelectItem={goItem}
-          onSwitchModule={goModule}
-          collapsed={collapsed}
-          onToggleCollapse={() => setCollapsed((c) => !c)}
-          mobileOpen={mobileNav}
-          onCloseMobile={() => setMobileNav(false)}
-        />
+        {/* Persistent global rail — always here, at the left edge. */}
+        <GlobalRail moduleId={moduleId} onSwitch={goModule} />
+        {/* The current module's own section nav sits beside it (none on Home). */}
+        <ModuleNav mod={mod} item={item} onSelectItem={goItem} />
         <main className="spd-sheet">
           {/* keyed on module+section — a mode toggle re-themes in place, it
               never reloads content */}
@@ -2591,6 +2584,15 @@ function App() {
           </div>
         </main>
       </div>
+      {/* Mobile: one drawer with modules + current sections. */}
+      <MobileNavDrawer
+        moduleId={moduleId}
+        item={item}
+        onSwitchModule={goModule}
+        onSelectItem={goItem}
+        open={mobileNav}
+        onClose={() => setMobileNav(false)}
+      />
     </div>
   );
 }
