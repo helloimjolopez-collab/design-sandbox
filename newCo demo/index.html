@@ -1318,7 +1318,7 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
   );
 }
 
-function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav }) {
+function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, railCollapsed, moduleId, onSwitchModule, onExpandRail }) {
   const midnight = mode === "midnight";
   return (
     <header className="spd-topnav" role="banner">
@@ -1329,6 +1329,10 @@ function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav }) {
         {/* Logo is a real control now — click it to go Home. */}
         <span className="spd-topnav__brand"><PressableMark size={22} withWordmark pad={6} onClick={onGoHome} title="Home" /></span>
         <span className="spd-topnav__brandsep" aria-hidden="true" />
+        {/* When the module rail is collapsed, the switcher folds up here. */}
+        {railCollapsed && (
+          <TopModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} onExpand={onExpandRail} />
+        )}
         {/* Org switcher restored to its expected spot, top-left by the logo. */}
         <button className="spd-topnav__org">
           <span className="spd-topnav__orgname">Grace Community Church</span>
