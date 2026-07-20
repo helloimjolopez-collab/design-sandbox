@@ -2310,10 +2310,19 @@ function Placeholder({ label }) {
 
 /* ═══ App shell ═══ */
 
+const CONCEPT_PAGES = {
+  motion: MotionPage, loading: LoadingStatesPage, errors: ErrorStatesPage,
+  validation: ValidationStatesPage, states: ComponentStatesPage,
+  feedback: SystemFeedbackPage, ia: InfoArchitecturePage,
+};
+
 function App() {
   const [booting, setBooting] = useState(true);
-  const [active, setActive] = useState("home");
   const [mode, setMode] = useState("light");
+  const [moduleId, setModuleId] = useState("home");
+  const [itemByModule, setItemByModule] = useState({}); // remembers last section per module
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileNav, setMobileNav] = useState(false);
 
   useEffect(() => { const t = setTimeout(() => setBooting(false), 900); return () => clearTimeout(t); }, []);
   useEffect(() => { document.documentElement.dataset.spdMode = mode; }, [mode]);
@@ -2326,27 +2335,45 @@ function App() {
     );
   }
 
-  const activeLabel = (ALL_NAV_ITEMS.find((i) => i.id === active) || {}).label || "Home";
+  const mod = MODULE_MAP[moduleId];
+  const item = itemByModule[moduleId] ?? firstItemOf(moduleId);
+
+  const goModule = (id) => { setModuleId(id); setMobileNav(false); };
+  const goItem = (id) => { setItemByModule((s) => ({ ...s, [moduleId]: id })); setMobileNav(false); };
+
+  const renderPage = () => {
+    if (moduleId === "home") return <HomePage onOpenModule={goModule} />;
+    if (moduleId === "people") return item === "directory" ? <PeoplePage /> : <ModulePlaceholder mod={mod} item={item} />;
+    if (moduleId === "giving") return item === "overview" ? <GivingOverviewPage /> : <ModulePlaceholder mod={mod} item={item} />;
+    if (moduleId === "concept") { const P = CONCEPT_PAGES[item]; return P ? <P /> : <ModulePlaceholder mod={mod} item={item} />; }
+    return <ModulePlaceholder mod={mod} item={item} />;
+  };
 
   return (
     <div className="spd-shell spd-fade-in">
-      <TopNav mode={mode} onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")} />
+      <TopNav
+        mode={mode}
+        onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
+        moduleId={moduleId}
+        onSwitchModule={goModule}
+        onOpenMobileNav={() => setMobileNav(true)}
+      />
       <div className="spd-body">
-        <SideNav active={active} onSelect={setActive} />
+        <ModuleRail
+          moduleId={moduleId}
+          item={item}
+          onSelectItem={goItem}
+          onSwitchModule={goModule}
+          collapsed={collapsed}
+          onToggleCollapse={() => setCollapsed((c) => !c)}
+          mobileOpen={mobileNav}
+          onCloseMobile={() => setMobileNav(false)}
+        />
         <main className="spd-sheet">
-          {/* keyed on page only — a mode toggle re-themes in place, it never
-              reloads content */}
-          <div key={active} className="spd-fade-in" style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
-            {active === "home" ? <HomePage />
-              : active === "people" ? <PeoplePage />
-              : active === "motion" ? <MotionPage />
-              : active === "loading" ? <LoadingStatesPage />
-              : active === "errors" ? <ErrorStatesPage />
-              : active === "validation" ? <ValidationStatesPage />
-              : active === "states" ? <ComponentStatesPage />
-              : active === "feedback" ? <SystemFeedbackPage />
-              : active === "ia" ? <InfoArchitecturePage />
-              : <Placeholder label={activeLabel} />}
+          {/* keyed on module+section — a mode toggle re-themes in place, it
+              never reloads content */}
+          <div key={moduleId + ":" + item} className="spd-fade-in" style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
+            {renderPage()}
           </div>
         </main>
       </div>
