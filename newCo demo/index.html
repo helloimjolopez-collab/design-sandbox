@@ -1181,88 +1181,70 @@ function GlobalRail({ moduleId, onSwitch }) {
   );
 }
 
-/* Left rail = the current module's own navigation. On Home it's a launcher of
-   modules (one click each) + Admin & Settings; elsewhere it's that module's
-   functional sections. Collapses to an icon rail; on mobile it's a drawer. */
-function ModuleRail({ moduleId, item, onSelectItem, onSwitchModule, collapsed, onToggleCollapse, mobileOpen, onCloseMobile }) {
+/* A single section-nav item (labelled list style) — used by both the module
+   section panel and the mobile drawer. */
+function SectionItem({ icon, label, color, active, onClick }) {
+  return (
+    <button
+      className={"spd-navitem" + (active ? " is-active" : "")}
+      onClick={onClick}
+      aria-current={active ? "page" : undefined}
+      aria-label={label}
+    >
+      {active && <span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} />}
+      <span className="spd-navitem__chip spd-navitem__chip--fn" style={{ background: active ? `color-mix(in srgb, ${color} 14%, transparent)` : "transparent" }}>
+        <Icon name={icon} filled={active} size={19} style={{ color: active ? color : "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
+      </span>
+      <span className="spd-navitem__label">{label}</span>
+    </button>
+  );
+}
+
+/* The current module's OWN navigation — a labelled section panel that sits
+   beside the global rail. Only shown for modules that have sections; Home has
+   none (its dashboard fills the width). Its header names the module so you
+   always know where you are. */
+function ModuleNav({ mod, item, onSelectItem }) {
+  if (!mod.nav || !mod.nav.length) return null;
+  return (
+    <nav className="spd-modnav" aria-label={mod.name + " navigation"}>
+      <div className="spd-modnav__head">
+        <Icon name={mod.icon} filled size={17} style={{ color: mod.color }} />
+        <span className="spd-modnav__title">{mod.name}</span>
+      </div>
+      <div className="spd-modnav__list spd-stagger">
+        {mod.nav.map((n) => (
+          <SectionItem key={n.id} icon={n.icon} label={n.label} color={mod.color} active={item === n.id} onClick={() => onSelectItem(n.id)} />
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+/* Mobile: one drawer holds everything — the module list (how you switch /
+   go Home) then, when inside a module, that module's own sections. Same
+   information as the desktop rail + panel, stacked into a single sheet. */
+function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, onClose }) {
   const mod = MODULE_MAP[moduleId];
-  const isLauncher = mod.kind === "launcher";
-
-  const renderItem = (opts) => {
-    const { key, icon, label, color, active, decorative, onClick } = opts;
-    return (
-      <button
-        key={key}
-        className={"spd-navitem" + (active ? " is-active" : "")}
-        onClick={onClick}
-        aria-current={active ? "page" : undefined}
-        aria-label={label}
-        title={collapsed ? label : undefined}
-      >
-        {active && <span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} />}
-        {decorative ? (
-          <span className="spd-navitem__chip" style={{ background: active ? color : `color-mix(in srgb, ${color} 10%, transparent)` }}>
-            <Icon name={icon} filled={active} size={16} style={{ color: active ? "var(--semantic-color-light-mode-icon-contextual-navitem-oncolor)" : color }} />
-          </span>
-        ) : (
-          <span className="spd-navitem__chip spd-navitem__chip--fn" style={{ background: active ? `color-mix(in srgb, ${color} 14%, transparent)` : "transparent" }}>
-            <Icon name={icon} filled={active} size={19} style={{ color: active ? color : "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
-          </span>
-        )}
-        <span className="spd-navitem__label">{label}</span>
-        {decorative && !collapsed && <Icon name="chevron_right" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />}
-      </button>
-    );
-  };
-
   return (
     <React.Fragment>
-      <div className={"spd-navscrim" + (mobileOpen ? " is-open" : "")} onClick={onCloseMobile} aria-hidden="true" />
-      <nav
-        aria-label={mod.name + " navigation"}
-        className={"spd-sidenav" + (collapsed ? " is-collapsed" : "") + (mobileOpen ? " is-mobile-open" : "")}
-      >
-        <div className="spd-sidenav__header">
-          {!collapsed && (
-            <span className="spd-sidenav__module">
-              <Icon name={mod.icon} filled size={18} style={{ color: mod.color }} />
-              <span className="spd-sidenav__module-name">{mod.name}</span>
-            </span>
-          )}
-          <button
-            className="spd-topnav__iconbtn spd-sidenav__collapse"
-            onClick={onToggleCollapse}
-            aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
-            aria-expanded={!collapsed}
-            title={collapsed ? "Expand" : "Collapse"}
-          >
-            <Icon name={collapsed ? "left_panel_open" : "left_panel_close"} size={18} />
-          </button>
+      <div className={"spd-navscrim" + (open ? " is-open" : "")} onClick={onClose} aria-hidden="true" />
+      <nav className={"spd-drawer" + (open ? " is-open" : "")} aria-label="Navigation">
+        <div className="spd-modnav__list spd-stagger">
+          <p className="spd-sidenav__section-label">Modules</p>
+          {[...RAIL_TOP, "admin"].map((id) => {
+            const m = MODULE_MAP[id];
+            return <SectionItem key={id} icon={m.icon} label={m.name} color={m.color} active={id === moduleId} onClick={() => onSwitchModule(id)} />;
+          })}
         </div>
-
-        <div className="spd-sidenav__scroll">
-          {isLauncher ? (
-            <React.Fragment>
-              <div className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <p className="spd-sidenav__section-label">Modules</p>
-                {LAUNCHER_ORDER.map((id) => {
-                  const m = MODULE_MAP[id];
-                  return renderItem({ key: id, icon: m.icon, label: m.name, color: m.color, decorative: true, active: false, onClick: () => onSwitchModule(id) });
-                })}
-              </div>
-              <div className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <p className="spd-sidenav__section-label">Administration</p>
-                {renderItem({ key: "admin", icon: MODULE_MAP.admin.icon, label: MODULE_MAP.admin.name, color: MODULE_MAP.admin.color, decorative: true, active: false, onClick: () => onSwitchModule("admin") })}
-              </div>
-            </React.Fragment>
-          ) : (
-            <div className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {mod.nav.map((n) =>
-                renderItem({ key: n.id, icon: n.icon, label: n.label, color: mod.color, decorative: false, active: item === n.id, onClick: () => onSelectItem(n.id) })
-              )}
-            </div>
-          )}
-        </div>
+        {mod.nav && mod.nav.length > 0 && (
+          <div className="spd-modnav__list spd-stagger" style={{ marginTop: 8 }}>
+            <p className="spd-sidenav__section-label">{mod.name}</p>
+            {mod.nav.map((n) => (
+              <SectionItem key={n.id} icon={n.icon} label={n.label} color={mod.color} active={item === n.id} onClick={() => onSelectItem(n.id)} />
+            ))}
+          </div>
+        )}
       </nav>
     </React.Fragment>
   );
