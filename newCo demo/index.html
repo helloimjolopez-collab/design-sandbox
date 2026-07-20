@@ -439,24 +439,38 @@
 
   .spd-body { flex: 1; display: flex; overflow: hidden; padding-top: 16px; }
 
-  /* SideNav collapse (nav-shell-spec §5/§8): expanded 244px ↔ collapsed 76px
-     rail. Width animates on the emphasized curve; labels and meta icons fade
-     out (opacity, never display:none) so focus order survives. */
+  /* SideNav: expanded 256px ↔ collapsed 84px rail. A pinned header holds the
+     collapse toggle; the nav list scrolls beneath it with an invisible
+     (overlay) scrollbar. In the rail, each item stacks its icon over a small
+     centred label — the industry-standard rail pattern. */
   .spd-sidenav {
-    width: 256px; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
-    padding: 16px 16px 20px 20px;
-    display: flex; flex-direction: column;
-    transition: width var(--motion-duration-6) var(--motion-easing-emphasized),
-                padding var(--motion-duration-6) var(--motion-easing-emphasized);
+    width: 256px; flex-shrink: 0;
+    display: flex; flex-direction: column; overflow: hidden;
+    transition: width var(--motion-duration-6) var(--motion-easing-emphasized);
   }
-  .spd-sidenav.is-collapsed { width: 76px; padding-left: 14px; padding-right: 14px; }
-  .spd-sidenav.is-collapsed .spd-navitem { padding-left: 0; padding-right: 0; justify-content: center; gap: 0; }
-  .spd-sidenav.is-collapsed .spd-navitem__label { opacity: 0; flex: 0 0 0px; width: 0; }
-  .spd-sidenav.is-collapsed .spd-navitem__meta { opacity: 0; width: 0; }
-  .spd-sidenav.is-collapsed .spd-sidenav__section-label { opacity: 0; height: 14px; padding-top: 10px; padding-bottom: 0; }
-  .spd-navitem__meta { display: inline-flex; overflow: hidden; transition: opacity var(--motion-duration-3) var(--motion-easing-standard); }
-  .spd-sidenav__footer { margin-top: auto; padding-top: 12px; display: flex; justify-content: flex-end; }
-  .spd-sidenav.is-collapsed .spd-sidenav__footer { justify-content: center; }
+  .spd-sidenav.is-collapsed { width: 84px; }
+  .spd-sidenav__header {
+    flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end;
+    padding: 12px 14px 6px 20px;
+  }
+  .spd-sidenav.is-collapsed .spd-sidenav__header { justify-content: center; padding-left: 14px; padding-right: 14px; }
+  .spd-sidenav__scroll {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: 2px 12px 20px 20px;
+    scrollbar-width: none; -ms-overflow-style: none;
+    transition: padding var(--motion-duration-6) var(--motion-easing-emphasized);
+  }
+  .spd-sidenav__scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  .spd-sidenav.is-collapsed .spd-sidenav__scroll { padding-left: 12px; padding-right: 12px; }
+  /* Rail item — icon over a small centred label. */
+  .spd-sidenav.is-collapsed .spd-navitem { flex-direction: column; height: auto; gap: 5px; padding: 8px 2px; justify-content: center; }
+  .spd-sidenav.is-collapsed .spd-navitem__indicator { display: none; }
+  .spd-sidenav.is-collapsed .spd-navitem__label {
+    flex: none; width: 100%; opacity: 1; font-size: 10px; line-height: 1.15;
+    text-align: center; white-space: normal;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .spd-sidenav.is-collapsed .spd-sidenav__section-label { opacity: 0; height: 10px; padding: 8px 0 0; }
   .spd-sidenav__section-label {
     font-size: 10.5px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
     color: var(--semantic-color-light-mode-text-static-tertiary-base);
