@@ -518,6 +518,83 @@
     font-weight: 500; color: var(--semantic-color-light-mode-text-contextual-navitem-active);
   }
 
+  /* Functional (in-module) rail chip — quieter than the launcher's coloured
+     tiles: transparent by default, module-tinted only when active. */
+  .spd-navitem__chip--fn { border-radius: 9px; }
+
+  /* ── Module switcher (top-left, persistent) ───────────────────────────── */
+  .spd-modsw { position: relative; }
+  .spd-modsw__trigger {
+    display: flex; align-items: center; gap: 9px; height: 38px; padding: 0 10px 0 6px;
+    border-radius: 12px; background: transparent; border: none; cursor: pointer;
+    font-family: inherit; max-width: 240px;
+    transition: background var(--motion-duration-2) var(--motion-easing-standard),
+                transform var(--motion-duration-3) var(--motion-easing-spring);
+  }
+  .spd-modsw__trigger:hover { background: rgba(41,39,36,0.06); }
+  .spd-modsw__trigger:active { transform: scale(0.98); }
+  .spd-modsw__trigger.is-open { background: rgba(41,39,36,0.06); }
+  .spd-modsw__chip {
+    width: 28px; height: 28px; border-radius: 9px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .spd-modsw__name {
+    font-size: 14px; font-weight: 600; letter-spacing: -0.1px;
+    color: var(--semantic-color-light-mode-text-static-primary-base);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .spd-modsw__menu {
+    position: absolute; top: calc(100% + 8px); left: 0; z-index: 60;
+    width: 288px; padding: 7px; border-radius: 16px;
+    background: var(--semantic-color-light-mode-surface-sheet-base);
+    border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
+    box-shadow: var(--spd-elevation-sheet);
+  }
+  .spd-modsw__menuhead {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--semantic-color-light-mode-text-static-tertiary-base);
+    padding: 8px 10px 6px;
+  }
+  .spd-modsw__opt {
+    width: 100%; display: flex; align-items: center; gap: 11px; padding: 8px 10px;
+    border-radius: 11px; background: transparent; border: none; cursor: pointer;
+    text-align: left; font-family: inherit;
+    transition: background var(--motion-duration-2) var(--motion-easing-standard);
+  }
+  .spd-modsw__opt:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  .spd-modsw__opt.is-current { background: var(--semantic-color-light-mode-fill-contextual-navitem-active); }
+  .spd-modsw__optname {
+    flex: 1; display: flex; align-items: center; gap: 8px;
+    font-size: 13.5px; font-weight: 500;
+    color: var(--semantic-color-light-mode-text-static-primary-base);
+  }
+  .spd-modsw__tag {
+    font-size: 9.5px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 6px;
+    background: color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-amethyst-base) 14%, transparent);
+    color: var(--semantic-color-light-mode-fill-static-accent-amethyst-base);
+  }
+
+  /* Org control, now on the right; brand mark + separator on the left. */
+  .spd-topnav__brandsep {
+    width: 1px; height: 22px; flex-shrink: 0;
+    background: var(--semantic-color-light-mode-stroke-static-neutral-light);
+  }
+  .spd-topnav__org--right { max-width: 240px; }
+  .spd-topnav__orgname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .spd-topnav__hamburger { display: none; }
+
+  /* Giving Overview stat row. */
+  .spd-giving-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* Mobile drawer scrim (hidden until the rail opens on small screens). */
+  .spd-scrim {
+    position: fixed; inset: 0; z-index: 40; background: rgba(20,18,30,0.34);
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--motion-duration-4) var(--motion-easing-standard);
+  }
+  .spd-scrim.is-open { opacity: 1; pointer-events: auto; }
+
   /* The content sheet — rounded top corners, flush right/bottom (Figma
      40006833-27620). Depth from one luminance step + soft ambient shadow. */
   .spd-sheet {
