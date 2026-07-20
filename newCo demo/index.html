@@ -2336,17 +2336,17 @@ function InfoArchitecturePage() {
           <PrincipleCard icon="admin_panel_settings" title="Admin → its own governed area" body="User management, roles, and permissions are a distinct administrative area, access-gated — never scattered inside unrelated modules." />
         </div>
 
-        <ShowcaseLabel>Problem 1 — Home's rail vs. a module's rail look identical</ShowcaseLabel>
+        <ShowcaseLabel>Problem 1 — each module is a separate app; there's no way to switch or stay oriented</ShowcaseLabel>
         <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", margin: "0 0 12px", lineHeight: 1.5 }}>
-          In Amplify today, Spired Home shows a left rail that is really a <em>module switcher</em>. Enter a module and the left rail looks nearly the same — but now it's <em>module-specific</em> navigation, while the module switcher jumps to the top-left. Same visual, two different jobs: users can't tell whether the rail switches products or navigates within one.
+          In Amplify today, every module is a different application on its own subdomain — Home is on <code>account.</code>, People hard-navigates out to <code>people.</code>, Giving redirects through a numbered module gateway, and so on. There's <em>no persistent module switcher</em>: to change modules you go back to the Home rail, and each app renders its own navigation chrome. The shell changes under you, so you lose your place and can't tell which module you're in.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-          <IAFrame label="Today — ambiguous" tone="bad">
-            <p style={{ fontSize: 11, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginBottom: 8 }}>Inside People — but the rail looks like the Home switcher</p>
-            <MiniNavItem icon="group" label="People" active />
-            <MiniNavItem icon="volunteer_activism" label="Giving" />
-            <MiniNavItem icon="calculate" label="Accounting" />
-            <p style={{ fontSize: 11, color: "#B0473F", marginTop: 8 }}>Is this switching modules, or navigating People? Both patterns share one look.</p>
+          <IAFrame label="Today — you leave the app to switch" tone="bad">
+            <p style={{ fontSize: 11, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginBottom: 8 }}>Three modules, three separate apps, no shared switcher</p>
+            <MiniNavItem icon="home" label="account.  ·  Home rail" active />
+            <MiniNavItem icon="open_in_new" label="people.  ·  People app" muted />
+            <MiniNavItem icon="open_in_new" label="giving.  ·  Giving app" muted />
+            <p style={{ fontSize: 11, color: "#B0473F", marginTop: 8 }}>Switching = a full cross-app redirect back through Home. Nothing tells you where you are.</p>
           </IAFrame>
           <IAFrame label="Spired — distinct roles" tone="good">
             <p style={{ fontSize: 11, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginBottom: 8 }}>Module switcher (top-left) + area nav (rail) look and behave differently</p>
