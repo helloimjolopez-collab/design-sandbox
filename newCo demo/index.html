@@ -1259,12 +1259,14 @@ function SectionItem({ icon, label, color, active, onClick }) {
   );
 }
 
-/* The current module's OWN navigation — a labelled section panel that sits
-   beside the global rail. Only shown for modules that have sections; Home has
-   none (its dashboard fills the width). Its header names the module so you
-   always know where you are. */
+/* The current module's OWN navigation — a labelled section panel beside the
+   global rail. Its header names the module so you always know where you are.
+   Home's panel is the hub (Dashboard + Administration + Discover groups);
+   other modules list their functional sections. Renders a group label
+   whenever an item's `group` changes. */
 function ModuleNav({ mod, item, onSelectItem }) {
   if (!mod.nav || !mod.nav.length) return null;
+  let lastGroup = null;
   return (
     <nav className="spd-modnav" aria-label={mod.name + " navigation"}>
       <div className="spd-modnav__head">
@@ -1272,9 +1274,16 @@ function ModuleNav({ mod, item, onSelectItem }) {
         <span className="spd-modnav__title">{mod.name}</span>
       </div>
       <div className="spd-modnav__list spd-stagger">
-        {mod.nav.map((n) => (
-          <SectionItem key={n.id} icon={n.icon} label={n.label} color={mod.color} active={item === n.id} onClick={() => onSelectItem(n.id)} />
-        ))}
+        {mod.nav.map((n) => {
+          const showGroup = n.group && n.group !== lastGroup;
+          lastGroup = n.group || lastGroup;
+          return (
+            <React.Fragment key={n.id}>
+              {showGroup && <p className="spd-modnav__group">{n.group}</p>}
+              <SectionItem icon={n.icon} label={n.label} color={mod.color} active={item === n.id} onClick={() => onSelectItem(n.id)} />
+            </React.Fragment>
+          );
+        })}
       </div>
     </nav>
   );
