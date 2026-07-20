@@ -1038,6 +1038,28 @@ function SpiredLoader({ label, size = 56, mono }) {
   );
 }
 
+/* Boot logo — a one-off, only for the full-app load. Not a "loading" spinner:
+   a little story. The three strokes of the mark rise and stack bottom-to-top
+   with the brand's gentle woop, then the wordmark whispers in beside them —
+   the spark becoming Spired — and the settled logo breathes softly. Small and
+   quiet by design. */
+function BootLogo() {
+  const height = 32;
+  const w = height * (705.2 / 189.9);
+  return (
+    <svg width={w} height={height} viewBox={LOGO_VB} fill="none" aria-hidden="true" className="spd-boot__svg">
+      {LOGO_MARK_PATHS.map((p, i) => (
+        <g key={i} className="spd-boot-bar" style={{ animationDelay: (i * 0.13) + "s" }}>
+          <path d={p.d} fill={p.fill} />
+        </g>
+      ))}
+      <g className="spd-boot-word">
+        {LOGO_WORD_PATHS.map((d, i) => <path key={i} d={d} fill="var(--spd-logo-word)" />)}
+      </g>
+    </svg>
+  );
+}
+
 /* Ring loader — the mark's DNA (one long, one medium, one short pill)
    arranged in a turning ring. For buttons and tight spots. */
 function RingLoader({ size = 18, mono, strokeWidth = 2.5 }) {
