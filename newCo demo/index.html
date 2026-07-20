@@ -1141,60 +1141,43 @@ function firstItemOf(id) {
   return m && m.nav && m.nav.length ? m.nav[0].id : null;
 }
 
-/* Persistent module switcher — lives top-left, always visible incl. mobile.
-   Shows the current module and opens a menu of every module. */
-function ModuleSwitcher({ moduleId, onSwitch }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-  const mod = MODULE_MAP[moduleId];
-  useEffect(() => {
-    if (!open) return;
-    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
-    document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onKey);
-    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
-  }, [open]);
-  return (
-    <div className="spd-modsw" ref={ref}>
+/* Persistent global rail — the ONE place navigation lives, at the left edge,
+   identical on Home and inside every module. A slim vertical rail of module
+   icons (Home first) with Admin pinned at the bottom. Switching a module and
+   going Home are the same gesture, in the same place, every time. It's visibly
+   a different surface from a module's own section nav beside it (icons-over-
+   labels vs. a labelled list), so the two are never confused. */
+const RAIL_TOP = ["home", "people", "giving", "accounting", "media", "safety", "concept"];
+
+function GlobalRail({ moduleId, onSwitch }) {
+  const railItem = (m) => {
+    const active = m.id === moduleId;
+    return (
       <button
-        className={"spd-modsw__trigger" + (open ? " is-open" : "")}
-        onClick={() => setOpen((o) => !o)}
-        aria-haspopup="menu" aria-expanded={open}
-        title="Switch module"
+        key={m.id}
+        className={"spd-grail__item" + (active ? " is-active" : "")}
+        onClick={() => onSwitch(m.id)}
+        aria-current={active ? "page" : undefined}
+        aria-label={m.name}
+        title={m.name}
       >
-        <span className="spd-modsw__chip" style={{ background: `color-mix(in srgb, ${mod.color} 15%, transparent)` }}>
-          <Icon name={mod.icon} filled size={17} style={{ color: mod.color }} />
+        {active && <span className="spd-grail__indicator" />}
+        <span className="spd-grail__chip" style={{ background: active ? `color-mix(in srgb, ${m.color} 16%, transparent)` : "transparent" }}>
+          <Icon name={m.icon} filled={active} size={22} style={{ color: active ? m.color : "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
         </span>
-        <span className="spd-modsw__name">{mod.name}</span>
-        <Icon name="unfold_more" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }} />
+        <span className="spd-grail__label">{m.short}</span>
       </button>
-      {open && (
-        <div className="spd-modsw__menu spd-fade-in" role="menu" aria-label="Modules">
-          <p className="spd-modsw__menuhead">Switch module</p>
-          {MODULES.map((m) => {
-            const current = m.id === moduleId;
-            return (
-              <button
-                key={m.id}
-                role="menuitemradio" aria-checked={current}
-                className={"spd-modsw__opt" + (current ? " is-current" : "")}
-                onClick={() => { onSwitch(m.id); setOpen(false); }}
-              >
-                <span className="spd-modsw__chip" style={{ background: `color-mix(in srgb, ${m.color} 15%, transparent)` }}>
-                  <Icon name={m.icon} filled size={16} style={{ color: m.color }} />
-                </span>
-                <span className="spd-modsw__optname">
-                  {m.name}
-                  {m.demo && <span className="spd-modsw__tag">Demo</span>}
-                </span>
-                {current && <Icon name="check" size={16} style={{ color: m.color }} />}
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </div>
+    );
+  };
+  return (
+    <nav className="spd-grail" aria-label="Modules">
+      <div className="spd-grail__group">
+        {RAIL_TOP.map((id) => railItem(MODULE_MAP[id]))}
+      </div>
+      <div className="spd-grail__group spd-grail__group--bottom">
+        {railItem(MODULE_MAP.admin)}
+      </div>
+    </nav>
   );
 }
 
