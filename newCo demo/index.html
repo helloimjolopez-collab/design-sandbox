@@ -329,25 +329,18 @@
     animation-delay: -1.1s;
   }
 
-  /* The loading glyph is the REAL mark, sitting solid. A soft light sweeps up
-     through it — bottom-left to top-right, the brand's ascension — over a
-     gentle breath. No bouncing bars: elegant, calm, unmistakably rising. */
-  @keyframes spd-mark-breath { 0%, 100% { opacity: 0.80; } 50% { opacity: 1; } }
-  @keyframes spd-mark-sheen  { 0% { background-position: 0% 100%; } 60%, 100% { background-position: 100% 0%; } }
-  .spd-markloader { position: relative; display: block; }
-  .spd-markloader__base { display: block; animation: spd-mark-breath 2.8s var(--motion-easing-breath) infinite; }
-  .spd-markloader__sheen {
-    position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(48deg, rgba(255,255,255,0) 42%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0) 58%);
-    background-size: 260% 260%;
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-size: contain; mask-size: contain;
-    -webkit-mask-position: center; mask-position: center;
-    animation: spd-mark-sheen 2.8s var(--motion-easing-breath) infinite;
+  /* The loading glyph is the REAL mark, breathing as one piece: it gently
+     lifts and settles — the brand's ascension — with a soft opacity ease.
+     No bouncing bars, no light sweeping over it. Calm and alive. */
+  @keyframes spd-mark-pulse {
+    0%   { transform: translateY(3px) scale(0.93); opacity: 0.70; }
+    50%  { transform: translateY(0)   scale(1);    opacity: 1; }
+    100% { transform: translateY(3px) scale(0.93); opacity: 0.70; }
   }
+  .spd-markloader { display: block; }
+  .spd-markloader__base { display: block; transform-origin: 50% 55%; animation: spd-mark-pulse 1.9s var(--motion-easing-breath) infinite; will-change: transform, opacity; }
   @media (prefers-reduced-motion: reduce) {
     .spd-markloader__base { animation: none; opacity: 1; }
-    .spd-markloader__sheen { animation: none; opacity: 0; }
   }
 
   /* Ring loader — the mark's DNA (one long, one medium, one short pill)
