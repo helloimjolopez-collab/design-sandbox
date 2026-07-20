@@ -950,83 +950,222 @@ function SkeletonRow() {
 
 /* ═══ Nav structure — mirrors the live product sidenav (captured 2026-07-16) ═══ */
 
-const NAV_SECTIONS = [
-  { label: null, items: [
-    { id: "home", label: "Home", icon: "home", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-    { id: "people", label: "People", icon: "group", color: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)" },
-    { id: "giving", label: "Giving Admin", icon: "volunteer_activism", color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)" },
-    { id: "accounting", label: "Accounting", icon: "calculate", color: "var(--semantic-color-light-mode-fill-static-accent-navy-base)" },
-    { id: "safety", label: "Safety", icon: "health_and_safety", color: "var(--semantic-color-light-mode-fill-static-accent-sunrise-bold)" },
-  ]},
-  /* Demo-only — the design-system concept showcase, promoted up under the
-     core modules so it's the star of this demo. Not part of the product nav. */
-  { label: "Concept", items: [
-    { id: "motion", label: "Motion", icon: "animation", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-    { id: "loading", label: "Loading States", icon: "sync", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-    { id: "errors", label: "Error States", icon: "error", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-    { id: "validation", label: "Validation States", icon: "rule", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-    { id: "states", label: "Component States", icon: "touch_app", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-    { id: "feedback", label: "System Feedback", icon: "campaign", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-    { id: "ia", label: "Information Architecture", icon: "account_tree", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
-  ]},
-  { label: "More modules", items: [
-    { id: "media", label: "Media", icon: "photo_library", color: "var(--semantic-color-light-mode-fill-static-accent-mauve-base)" },
-    { id: "planning", label: "Service Planning", icon: "event_available", color: "var(--semantic-color-light-mode-fill-static-accent-sunrise-base)" },
-  ]},
-  { label: "Trials", items: [
-    { id: "mobile", label: "Mobile App", icon: "smartphone", color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)", trailing: "schedule" },
-    { id: "websites", label: "Websites", icon: "language", color: "var(--semantic-color-light-mode-fill-static-accent-seabreeze-base)", trailing: "schedule" },
-    { id: "streaming", label: "Streaming", icon: "podcasts", color: "var(--semantic-color-light-mode-fill-static-accent-sunrise-base)", trailing: "schedule" },
-  ]},
-  { label: null, items: [
-    { id: "partners", label: "Partners", icon: "handshake", color: "var(--semantic-color-light-mode-fill-static-accent-navy-bold)" },
-    { id: "settings", label: "Settings", icon: "settings", color: "var(--semantic-color-light-mode-fill-static-accent-taupe-base)" },
-  ]},
-];
-const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap((s) => s.items);
+/* ═══ Modules & IA ═══════════════════════════════════════════════════════
+   Each product area is a MODULE. A persistent Module Switcher (top-left)
+   changes which module you're in; the left rail then shows THAT module's own
+   navigation, with functional icons. Spired Home is a launcher: its rail lists
+   the modules as one-click destinations plus Admin & Settings. Module→module
+   is always two clicks (switcher → target); Home→module is one. ═══ */
+const MODULES = [
+  { id: "home", name: "Spired Home", icon: "home",
+    color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)", kind: "launcher" },
 
-function SideNav({ active, onSelect }) {
-  const [collapsed, setCollapsed] = useState(false);
+  { id: "people", name: "People", icon: "group",
+    color: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)", nav: [
+      { id: "directory", label: "Directory", icon: "contacts" },
+      { id: "groups", label: "Groups", icon: "groups" },
+      { id: "communications", label: "Communications", icon: "forum" },
+      { id: "roles", label: "Roles & Access", icon: "badge" },
+    ]},
+
+  { id: "giving", name: "Giving Admin", icon: "volunteer_activism",
+    color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)", nav: [
+      { id: "overview", label: "Overview", icon: "dashboard" },
+      { id: "batches", label: "Batches", icon: "receipt_long" },
+      { id: "funds", label: "Funds", icon: "savings" },
+      { id: "statements", label: "Statements", icon: "description" },
+    ]},
+
+  { id: "accounting", name: "Accounting", icon: "calculate",
+    color: "var(--semantic-color-light-mode-fill-static-accent-navy-base)", nav: [
+      { id: "ledger", label: "General Ledger", icon: "account_balance" },
+      { id: "budgets", label: "Budgets", icon: "savings" },
+      { id: "reports", label: "Reports", icon: "summarize" },
+    ]},
+
+  { id: "media", name: "Media", icon: "photo_library",
+    color: "var(--semantic-color-light-mode-fill-static-accent-mauve-base)", nav: [
+      { id: "library", label: "Library", icon: "perm_media" },
+      { id: "series", label: "Series", icon: "video_library" },
+    ]},
+
+  { id: "safety", name: "Safety", icon: "health_and_safety",
+    color: "var(--semantic-color-light-mode-fill-static-accent-sunrise-bold)", nav: [
+      { id: "checkin", label: "Check-In", icon: "how_to_reg" },
+      { id: "background", label: "Background Checks", icon: "verified_user" },
+    ]},
+
+  /* Demo-only — the design-system concept showcase, surfaced as its own module
+     so it's always one switcher-hop away. Not a real product area. */
+  { id: "concept", name: "Design Concept", icon: "palette", demo: true,
+    color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)", nav: [
+      { id: "motion", label: "Motion", icon: "animation" },
+      { id: "loading", label: "Loading States", icon: "sync" },
+      { id: "errors", label: "Error States", icon: "error" },
+      { id: "validation", label: "Validation States", icon: "rule" },
+      { id: "states", label: "Component States", icon: "touch_app" },
+      { id: "feedback", label: "System Feedback", icon: "campaign" },
+      { id: "ia", label: "Information Architecture", icon: "account_tree" },
+    ]},
+
+  { id: "admin", name: "Admin & Settings", icon: "settings",
+    color: "var(--semantic-color-light-mode-fill-static-accent-taupe-base)", nav: [
+      { id: "account", label: "Church Account", icon: "business" },
+      { id: "users", label: "Users & Permissions", icon: "manage_accounts" },
+      { id: "billing", label: "Billing & Plans", icon: "credit_card" },
+      { id: "integrations", label: "Integrations", icon: "extension" },
+    ]},
+];
+const MODULE_MAP = Object.fromEntries(MODULES.map((m) => [m.id, m]));
+/* Order shown in the Home launcher rail (Admin is pinned separately below). */
+const LAUNCHER_ORDER = ["people", "giving", "accounting", "media", "safety", "concept"];
+
+function firstItemOf(id) {
+  const m = MODULE_MAP[id];
+  return m && m.nav && m.nav.length ? m.nav[0].id : null;
+}
+
+/* Persistent module switcher — lives top-left, always visible incl. mobile.
+   Shows the current module and opens a menu of every module. */
+function ModuleSwitcher({ moduleId, onSwitch }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const mod = MODULE_MAP[moduleId];
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, [open]);
   return (
-    <nav aria-label="Module navigation" className={"spd-sidenav" + (collapsed ? " is-collapsed" : "")}>
-      <div className="spd-sidenav__header">
-        <button
-          className="spd-topnav__iconbtn"
-          onClick={() => setCollapsed((c) => !c)}
-          aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
-          aria-expanded={!collapsed}
-          title={collapsed ? "Expand" : "Collapse"}
-        >
-          <Icon name={collapsed ? "left_panel_open" : "left_panel_close"} size={18} />
-        </button>
-      </div>
-      <div className="spd-sidenav__scroll">
-      {NAV_SECTIONS.map((section, si) => (
-        <div key={si} className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          {section.label && <p className="spd-sidenav__section-label">{section.label}</p>}
-          {section.items.map((item) => {
-            const isActive = active === item.id;
+    <div className="spd-modsw" ref={ref}>
+      <button
+        className={"spd-modsw__trigger" + (open ? " is-open" : "")}
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu" aria-expanded={open}
+        title="Switch module"
+      >
+        <span className="spd-modsw__chip" style={{ background: `color-mix(in srgb, ${mod.color} 15%, transparent)` }}>
+          <Icon name={mod.icon} filled size={17} style={{ color: mod.color }} />
+        </span>
+        <span className="spd-modsw__name">{mod.name}</span>
+        <Icon name="unfold_more" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }} />
+      </button>
+      {open && (
+        <div className="spd-modsw__menu spd-fade-in" role="menu" aria-label="Modules">
+          <p className="spd-modsw__menuhead">Switch module</p>
+          {MODULES.map((m) => {
+            const current = m.id === moduleId;
             return (
               <button
-                key={item.id}
-                className={"spd-navitem" + (isActive ? " is-active" : "") + (item.trailing === "lock" ? " is-locked" : "")}
-                onClick={() => onSelect(item.id)}
-                aria-current={isActive ? "page" : undefined}
-                aria-label={item.label}
-                title={collapsed ? item.label : undefined}
+                key={m.id}
+                role="menuitemradio" aria-checked={current}
+                className={"spd-modsw__opt" + (current ? " is-current" : "")}
+                onClick={() => { onSwitch(m.id); setOpen(false); }}
               >
-                {isActive && <span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} />}
-                <span className="spd-navitem__chip" style={{ background: isActive ? item.color : `color-mix(in srgb, ${item.color} 10%, transparent)` }}>
-                  <Icon name={item.icon} filled={isActive} size={16} style={{ color: isActive ? "var(--semantic-color-light-mode-icon-contextual-navitem-oncolor)" : item.color }} />
+                <span className="spd-modsw__chip" style={{ background: `color-mix(in srgb, ${m.color} 15%, transparent)` }}>
+                  <Icon name={m.icon} filled size={16} style={{ color: m.color }} />
                 </span>
-                <span className="spd-navitem__label">{item.label}</span>
+                <span className="spd-modsw__optname">
+                  {m.name}
+                  {m.demo && <span className="spd-modsw__tag">Demo</span>}
+                </span>
+                {current && <Icon name="check" size={16} style={{ color: m.color }} />}
               </button>
             );
           })}
         </div>
-      ))}
-      </div>
-    </nav>
+      )}
+    </div>
+  );
+}
+
+/* Left rail = the current module's own navigation. On Home it's a launcher of
+   modules (one click each) + Admin & Settings; elsewhere it's that module's
+   functional sections. Collapses to an icon rail; on mobile it's a drawer. */
+function ModuleRail({ moduleId, item, onSelectItem, onSwitchModule, collapsed, onToggleCollapse, mobileOpen, onCloseMobile }) {
+  const mod = MODULE_MAP[moduleId];
+  const isLauncher = mod.kind === "launcher";
+
+  const renderItem = (opts) => {
+    const { key, icon, label, color, active, decorative, onClick } = opts;
+    return (
+      <button
+        key={key}
+        className={"spd-navitem" + (active ? " is-active" : "")}
+        onClick={onClick}
+        aria-current={active ? "page" : undefined}
+        aria-label={label}
+        title={collapsed ? label : undefined}
+      >
+        {active && <span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} />}
+        {decorative ? (
+          <span className="spd-navitem__chip" style={{ background: active ? color : `color-mix(in srgb, ${color} 10%, transparent)` }}>
+            <Icon name={icon} filled={active} size={16} style={{ color: active ? "var(--semantic-color-light-mode-icon-contextual-navitem-oncolor)" : color }} />
+          </span>
+        ) : (
+          <span className="spd-navitem__chip spd-navitem__chip--fn" style={{ background: active ? `color-mix(in srgb, ${color} 14%, transparent)` : "transparent" }}>
+            <Icon name={icon} filled={active} size={19} style={{ color: active ? color : "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
+          </span>
+        )}
+        <span className="spd-navitem__label">{label}</span>
+        {decorative && !collapsed && <Icon name="chevron_right" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />}
+      </button>
+    );
+  };
+
+  return (
+    <React.Fragment>
+      <div className={"spd-scrim" + (mobileOpen ? " is-open" : "")} onClick={onCloseMobile} aria-hidden="true" />
+      <nav
+        aria-label={mod.name + " navigation"}
+        className={"spd-sidenav" + (collapsed ? " is-collapsed" : "") + (mobileOpen ? " is-mobile-open" : "")}
+      >
+        <div className="spd-sidenav__header">
+          {!collapsed && (
+            <span className="spd-sidenav__module">
+              <Icon name={mod.icon} filled size={18} style={{ color: mod.color }} />
+              <span className="spd-sidenav__module-name">{mod.name}</span>
+            </span>
+          )}
+          <button
+            className="spd-topnav__iconbtn spd-sidenav__collapse"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
+            aria-expanded={!collapsed}
+            title={collapsed ? "Expand" : "Collapse"}
+          >
+            <Icon name={collapsed ? "left_panel_open" : "left_panel_close"} size={18} />
+          </button>
+        </div>
+
+        <div className="spd-sidenav__scroll">
+          {isLauncher ? (
+            <React.Fragment>
+              <div className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <p className="spd-sidenav__section-label">Modules</p>
+                {LAUNCHER_ORDER.map((id) => {
+                  const m = MODULE_MAP[id];
+                  return renderItem({ key: id, icon: m.icon, label: m.name, color: m.color, decorative: true, active: false, onClick: () => onSwitchModule(id) });
+                })}
+              </div>
+              <div className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <p className="spd-sidenav__section-label">Administration</p>
+                {renderItem({ key: "admin", icon: MODULE_MAP.admin.icon, label: MODULE_MAP.admin.name, color: MODULE_MAP.admin.color, decorative: true, active: false, onClick: () => onSwitchModule("admin") })}
+              </div>
+            </React.Fragment>
+          ) : (
+            <div className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {mod.nav.map((n) =>
+                renderItem({ key: n.id, icon: n.icon, label: n.label, color: mod.color, decorative: false, active: item === n.id, onClick: () => onSelectItem(n.id) })
+              )}
+            </div>
+          )}
+        </div>
+      </nav>
+    </React.Fragment>
   );
 }
 
