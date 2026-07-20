@@ -587,13 +587,15 @@
   /* Giving Overview stat row. */
   .spd-giving-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-  /* Mobile drawer scrim (hidden until the rail opens on small screens). */
-  .spd-scrim {
+  /* Mobile drawer scrim (hidden until the rail opens on small screens).
+     NOTE: distinct class from the dialog backdrop .spd-scrim — reusing that
+     name pulled in its fade-to-opacity:1 animation and veiled the whole app. */
+  .spd-navscrim {
     position: fixed; inset: 0; z-index: 40; background: rgba(20,18,30,0.34);
     opacity: 0; pointer-events: none;
     transition: opacity var(--motion-duration-4) var(--motion-easing-standard);
   }
-  .spd-scrim.is-open { opacity: 1; pointer-events: auto; }
+  .spd-navscrim.is-open { opacity: 1; pointer-events: auto; }
 
   /* The content sheet — rounded top corners, flush right/bottom (Figma
      40006833-27620). Depth from one luminance step + soft ambient shadow. */
