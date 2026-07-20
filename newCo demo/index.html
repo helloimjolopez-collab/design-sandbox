@@ -629,32 +629,20 @@
   .spd-body { min-width: 0; }
   .spd-sheet { min-width: 560px; }
 
-  /* ── Mobile: rail becomes a drawer, module switcher stays put ─────────── */
+  /* ── Mobile: rail + panel collapse into a hamburger drawer ────────────── */
   @media (max-width: 768px) {
     .spd-topnav { padding: 0 14px; }
     .spd-topnav__hamburger { display: flex; }
-    .spd-topnav__brand, .spd-topnav__brandsep { display: none; }
-    .spd-topnav__org--right { display: none; }
-    /* Keep the bar breathable on a phone: switcher stays, but the two
-       least-essential globals (search, help) fold away — mode toggle,
-       notifications and account remain. */
+    /* Keep the bar breathable on a phone: logo→Home + org stay; the two
+       least-essential globals (search, help) fold away. */
     .spd-topnav [aria-label="Search"], .spd-topnav [aria-label="Help"] { display: none; }
-    .spd-modsw__trigger { max-width: 168px; }
+    .spd-topnav__orgname { max-width: 150px; }
+
+    /* The persistent desktop rail + panel give way to the drawer. */
+    .spd-grail, .spd-modnav { display: none; }
 
     .spd-body { padding-top: 0; }
     .spd-sheet { min-width: 0; margin-right: 0; border-radius: 0; }
-
-    .spd-sidenav, .spd-sidenav.is-collapsed {
-      position: fixed; top: 60px; left: 0; bottom: 0; z-index: 50; width: 272px;
-      background: var(--semantic-color-light-mode-surface-nav-light);
-      border-right: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
-      transform: translateX(-102%);
-      transition: transform var(--motion-duration-6) var(--motion-easing-emphasized);
-    }
-    .spd-sidenav.is-mobile-open { transform: translateX(0); box-shadow: 0 24px 60px -20px rgba(20,18,30,0.4); }
-    .spd-sidenav__collapse { display: none; }
-    .spd-sidenav.is-collapsed .spd-navitem { flex-direction: row; height: 42px; gap: 11px; padding: 7px 10px 7px 14px; justify-content: flex-start; }
-    .spd-sidenav.is-collapsed .spd-navitem__label { font-size: 13px; text-align: left; -webkit-line-clamp: 1; }
 
     .spd-giving-stats { grid-template-columns: 1fr; }
   }
