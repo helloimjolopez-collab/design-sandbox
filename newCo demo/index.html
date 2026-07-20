@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spired Rebrand Concept — Amplify on Pathway architecture</title>
+<!--
+  SOURCES (only these):
+  · Pathway repo (pathway-ds) — token architecture + naming, NavShell spec §4/§5/§11,
+    Material Symbols Rounded mandate (CLAUDE.md §12), self-contained demo convention
+    (components/sidenav/sidenav.html).
+  · Live product (account.test1.myamplify.io/dashboard, captured 2026-07-16) — all
+    page content and nav structure.
+  · Spired_Brand_Guidelines.pdf — palette, Google Sans Flex, gradients, ascension motif.
+  · Figma node 40006833-27620 — sheet-over-canvas layout (rounded top corners) +
+    People screen content.
+  · Figma node 40010650-164495 — warm-neutral surface direction: greige canvas,
+    neutral text, purple reserved for accents (not Planning-Center-purple-everywhere).
+  · Widget Container sandbox demo (helloimjolopez-collab.github.io/design-sandbox/
+    Widget%20Container%20Demo) + Figma node 40009622-39702 — widget container
+    structure and behaviour (warm header strip, hover-reveal refresh, inner
+    content sheet). No charts here — production content only.
+
+  ARCHITECTURE — why the rebrand is "mostly a token swap":
+  Components below consume ONLY Pathway semantic token names (pathway-ds
+  CLAUDE.md §6). Spired = new values behind those same contracts. Midnight
+  Mode = a second value set behind the same names. In production: add a
+  "Midnight" mode to the Figma variable collection → sync-tokens →
+  Style Dictionary emits `--semantic-color-midnight-mode-*` (same shape as
+  the existing 452 `--semantic-color-dark-mode-*` vars in tokens.css) and
+  the app's theme switch re-points the aliases. Zero component changes.
+-->
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* ── PRIMITIVES — Spired brand palette (Spired_Brand_Guidelines.pdf) ──── */
+    --primitive-color-purple-100: #9691F5;
+    --primitive-color-purple-300: #6E64BE;
+    --primitive-color-purple-600: #41377D;
+    --primitive-color-purple-900: #19143C;
+    --primitive-color-purple-950: #131120;  /* PROPOSED: midnight canvas — desaturated deep indigo, a starry night sky, not neon */
+    --primitive-color-yellow-300: #FFC864;
+    --primitive-color-orange-300: #FF8C50;
+    --primitive-color-orange-500: #CF775B;
+    --primitive-color-magenta-500: #9B0078;
+    --primitive-color-magenta-700: #7A0569;
+    --primitive-color-blue-300: #508CFF;
+    --primitive-color-blue-500: #35509E;
+    --primitive-color-blue-700: #27326D;
+    --primitive-color-green-300: #14C382;
+    --primitive-color-green-700: #166C5F;
+    --primitive-color-teal-900: #18404E;
+    --primitive-color-mauve-500: #714C72;
+    --primitive-color-taupe-600: #6F677A;
+    --primitive-color-neutral-0: #FFFFFF;
+    --primitive-color-neutral-50: #F5F5F5;
+    --primitive-color-neutral-100: #E6E6E6;
+    --primitive-color-neutral-200: #D2D2D2;
+    --primitive-color-neutral-300: #B4B4B4;
+    --primitive-color-neutral-600: #5A5A5A;
+    --primitive-color-neutral-900: #1E1E1E;
+    /* Warm neutrals — surface family from the Widget Container sandbox demo
+       and Figma 40010650-164495. Purple stays an accent; it no longer tints
+       every surface. */
+    --primitive-color-warm-0: #FEFEFD;
+    --primitive-color-warm-100: #FBFAF8;
+    --primitive-color-warm-200: #F7F5F3;
+    --primitive-color-warm-250: #F3F0EC;
+    --primitive-color-warm-300: #EEEBE6;
+    --primitive-color-warm-400: #D4CFC8;
+    --primitive-color-warm-750: #87827B;
+    --primitive-color-warm-950: #292724;
+
+    /* ── SEMANTICS · LIGHT MODE — real Pathway token names, Spired values.
+       Neutrals are WARM (Figma 40010650-164495): greige surfaces, neutral
+       text. Purple appears only where the brand should speak — actions,
+       links, active states, the mark. ── */
+    --semantic-color-light-mode-surface-canvas-light: var(--primitive-color-warm-250);
+    --semantic-color-light-mode-surface-nav-light: var(--primitive-color-warm-250);
+    --semantic-color-light-mode-surface-sheet-base: var(--primitive-color-warm-0); /* PROPOSED */
+    --semantic-color-light-mode-surface-widget-header: var(--primitive-color-warm-100); /* PROPOSED — one whisper below the content surface */
+    --semantic-color-light-mode-surface-widget-base: var(--primitive-color-warm-0); /* PROPOSED */
+    --semantic-color-light-mode-fill-static-neutral-light: var(--primitive-color-warm-0);
+    --semantic-color-light-mode-fill-static-neutral-subtle: var(--primitive-color-warm-250);
+    --semantic-color-light-mode-fill-static-brand-base: var(--primitive-color-purple-600);
+    --semantic-color-light-mode-fill-static-brand-bold: var(--primitive-color-purple-900);
+    --semantic-color-light-mode-fill-static-brand-light: #F1EFFC;
+    /* Four text tiers, used deliberately: primary for content, secondary for
+       labels, subtle for supporting, tertiary for timestamps/captions —
+       hierarchy through shade, not weight. */
+    --semantic-color-light-mode-text-static-primary-base: #202020;
+    --semantic-color-light-mode-text-static-secondary-base: #484848;
+    --semantic-color-light-mode-text-static-secondary-subtle: #606060;
+    --semantic-color-light-mode-text-static-tertiary-base: #94908A; /* PROPOSED */
+    --semantic-color-light-mode-text-static-positive-base: var(--primitive-color-green-700);
+    --semantic-color-light-mode-fill-static-positive-light: #EDF6F0;
+    --semantic-color-light-mode-stroke-static-neutral-light: var(--primitive-color-warm-300);
+    --semantic-color-light-mode-stroke-static-neutral-faint: rgba(41,39,36,0.045); /* PROPOSED — dividers whisper */
+    --semantic-color-light-mode-stroke-action-secondary-inverse-base: var(--primitive-color-warm-400);
+    --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(41,39,36,0.05);
+    /* Active nav: translucent amethyst tint (Pathway's alpha-tint recipe) —
+       reads clearly against the warm sand canvas, unlike a flat pale fill. */
+    --semantic-color-light-mode-fill-contextual-navitem-active: rgba(110,100,184,0.14);
+    --semantic-color-light-mode-text-contextual-navitem-base: #484848;
+    --semantic-color-light-mode-text-contextual-navitem-active: #202020;
+    --semantic-color-light-mode-icon-contextual-navitem-oncolor: #FFFFFF; /* PROPOSED — glyph on the active module chip */
+    /* Action primary = Jo's chosen value, read from the Figma node itself
+       (Add Person → bg #6E64BE, full pill, white label). Links use the
+       amethyst contrast (#5951A0) bound in the same screen. */
+    --semantic-color-light-mode-fill-action-primary-base: #6E64BE;
+    --semantic-color-light-mode-fill-action-primary-hover: #7B72C9;
+    --semantic-color-light-mode-text-action-primary-base: #5951A0;
+    /* Secondary action = quiet warm fill, no border (Figma Export button). */
+    --semantic-color-light-mode-fill-action-secondary-base: #F7F5F3;
+    --semantic-color-light-mode-fill-action-secondary-hover: #F0EDE9;
+    --semantic-color-light-mode-text-action-secondary-base: #292724;
+    --spd-logo-word: #19143C;
+    /* Badge palette — recipe read from Figma: soft translucent tint + deep
+       ink text + 11px leading dot. */
+    --spd-badge-plum-bg: rgba(237,224,224,0.58);   --spd-badge-plum-fg: #5B0C49;
+    --spd-badge-navy-bg: rgba(223,229,240,0.60);   --spd-badge-navy-fg: #27326D;
+    --spd-badge-orchid-bg: rgba(235,224,240,0.60); --spd-badge-orchid-fg: #4C2260;
+    --spd-badge-teal-bg: rgba(222,233,236,0.62);   --spd-badge-teal-fg: #193640;
+    --spd-badge-amber-bg: rgba(240,231,221,0.62);  --spd-badge-amber-fg: #6B4423;
+    --spd-badge-positive-bg: #E5F2ED;              --spd-badge-positive-fg: #193640; --spd-badge-positive-dot: #2F8A62;
+    --spd-badge-rose-bg: rgba(240,226,231,0.62);   --spd-badge-rose-fg: #5B1F33;
+    --spd-badge-role-bg: #F4F2FA; --spd-badge-role-fg: #221E3F; --spd-badge-role-stroke: #DCD9EF; --spd-badge-role-dot: #5951A0;
+    /* Accent UI variants are DESATURATED versions of the brand secondaries —
+       full-saturation primitives stay reserved for marketing/hero moments.
+       In-product color should murmur, not shout (and never clash). */
+    --semantic-color-light-mode-fill-static-accent-amethyst-base: #6E64B8; /* amethyst-90, Jo's pipeline */
+    --semantic-color-light-mode-fill-static-accent-amethyst-light: #F4F2FA; /* amethyst-10 */
+    --semantic-color-light-mode-fill-static-accent-jade-base: #4CA57E;
+    --semantic-color-light-mode-fill-static-accent-jade-light: #EAF4EE;
+    --semantic-color-light-mode-fill-static-accent-seabreeze-base: #7291C7;
+    --semantic-color-light-mode-fill-static-accent-seabreeze-light: #EDF1F8;
+
+    /* PROPOSED accent families for Spired's wider secondary palette — named
+       by the existing grammar so they can be added in Figma and synced. */
+    --semantic-color-light-mode-fill-static-accent-magenta-base: #A2568F;
+    --semantic-color-light-mode-fill-static-accent-magenta-bold: #8A4E7E;
+    --semantic-color-light-mode-fill-static-accent-magenta-light: #F8EFF5;
+    --semantic-color-light-mode-fill-static-accent-sunrise-base: #D98F63;
+    --semantic-color-light-mode-fill-static-accent-sunrise-bold: #C07B5D;
+    --semantic-color-light-mode-fill-static-accent-sunrise-light: #F9F0EA;
+    --semantic-color-light-mode-fill-static-accent-gold-base: var(--primitive-color-yellow-300);
+    --semantic-color-light-mode-fill-static-accent-teal-base: #48707D;
+    --semantic-color-light-mode-fill-static-accent-teal-light: #EAF1F3;
+    --semantic-color-light-mode-fill-static-accent-mauve-base: #8A6E8B;
+    --semantic-color-light-mode-fill-static-accent-taupe-base: var(--primitive-color-taupe-600);
+    --semantic-color-light-mode-fill-static-accent-navy-base: #56679C;
+    --semantic-color-light-mode-fill-static-accent-navy-bold: #47547F;
+
+    /* Avatar — exact from the Figma table cell: muted mauve-gray tint at 74%,
+       near-black initials. 28px, one shade everywhere. */
+    --semantic-color-light-mode-fill-contextual-avatar-base: rgba(207,197,206,0.74);
+    --semantic-color-light-mode-text-contextual-avatar-base: #1E1E1E;
+
+    /* ── LAYOUT — Pathway contextual tokens (nav-shell-spec §4) ──────────── */
+    --semantic-layout-units-contextual-card-cornerradius-cornerradius: 16px;
+    --semantic-layout-units-contextual-card-border-width-base-base: 0.5px; /* true hairline (Pathway card spec) */
+    --semantic-layout-units-contextual-page-padding-horizontal: 48px;
+    --semantic-layout-units-contextual-page-padding-top: 44px;
+    --semantic-layout-units-contextual-page-padding-bottom: 56px;
+    --semantic-layout-units-contextual-sheet-cornerradius: 28px; /* PROPOSED */
+    --semantic-layout-units-cornerradius-full: 999px;
+
+    /* ── MOTION — Pathway names + values (src/tokens/tokens.css). One
+       PROPOSED override: livelier spring (1.14 vs Pathway's 1.04) for
+       Spired's "uplifting" personality. ─────────────────────────────────── */
+    --motion-duration-1: 100ms;
+    --motion-duration-2: 150ms;
+    --motion-duration-3: 200ms;
+    --motion-duration-4: 300ms;
+    --motion-duration-5: 380ms;
+    --motion-duration-6: 460ms;
+    --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --motion-easing-emphasized: cubic-bezier(0.32, 0.72, 0, 1);
+    --motion-easing-spring: cubic-bezier(0.34, 1.14, 0.64, 1); /* PROPOSED */
+    /* PROPOSED — the everyday spring: barely-there overshoot over a longer
+       arc. Elegant, never abrupt. Reserve the livelier spring for loaders. */
+    --motion-easing-spring-soft: cubic-bezier(0.30, 1.05, 0.40, 1);
+    /* PROPOSED — sinusoidal ease for ambient/looping motion (loaders,
+       shimmer). Loops should breathe, not tick. */
+    --motion-easing-breath: cubic-bezier(0.37, 0, 0.63, 1);
+
+    /* Elevation — quiet. Nothing carries shadow weight at rest beyond a
+       single faint contact; the violet ambient cast appears only on
+       hover/overlay, one soft layer, never stacked. Flips per mode. */
+    --spd-elevation-sheet: 0 8px 32px -20px rgba(41,39,36,0.10);
+    --spd-elevation-widget: 0 1px 2px rgba(41,39,36,0.03);
+    --spd-elevation-lift: 0 8px 20px -10px rgba(89,81,160,0.12);
+    --spd-elevation-overlay: 0 20px 48px -20px rgba(89,81,160,0.16), 0 3px 10px -6px rgba(41,39,36,0.06);
+  }
+
+  /* ── MIDNIGHT MODE ────────────────────────────────────────────────────────
+     Not gray, not slate, not black: every surface is deep brand indigo, so
+     the app still reads unmistakably Spired with the lights off.
+     In production these values are a "Midnight" mode on the Figma variable
+     collection — sync-tokens emits --semantic-color-midnight-mode-* (same
+     mechanism as the 452 dark-mode vars already in tokens.css) and the theme
+     switch re-points the aliases. Same names, third value set, zero
+     component changes. */
+  html[data-spd-mode="midnight"] {
+    /* Desaturated throughout — surfaces sit around 20–30% saturation, like a
+       grainy long-exposure photo of a summer night sky. Brand hue is felt,
+       never loud. */
+    --semantic-color-light-mode-surface-canvas-light: var(--primitive-color-purple-950);
+    --semantic-color-light-mode-surface-nav-light: var(--primitive-color-purple-950);
+    --semantic-color-light-mode-surface-sheet-base: #181628;
+    --semantic-color-light-mode-surface-widget-header: #211E32;
+    --semantic-color-light-mode-surface-widget-base: #1A1829;
+    --semantic-color-light-mode-fill-static-neutral-light: #201D30;
+    --semantic-color-light-mode-fill-static-neutral-subtle: rgba(170,166,200,0.08);
+    --semantic-color-light-mode-fill-static-brand-light: rgba(170,166,200,0.12);
+    --semantic-color-light-mode-text-static-primary-base: #ECEAF3;
+    --semantic-color-light-mode-text-static-secondary-base: #B5B1C6;
+    --semantic-color-light-mode-text-static-secondary-subtle: #837E96;
+    --semantic-color-light-mode-text-static-tertiary-base: #6B6680;
+    --semantic-color-light-mode-text-static-positive-base: #4BC495;
+    --semantic-color-light-mode-fill-static-positive-light: rgba(75,196,149,0.12);
+    --semantic-color-light-mode-stroke-static-neutral-light: rgba(170,166,200,0.13);
+    --semantic-color-light-mode-stroke-static-neutral-faint: rgba(170,166,200,0.05);
+    --semantic-color-light-mode-stroke-action-secondary-inverse-base: rgba(170,166,200,0.24);
+    --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(170,166,200,0.06);
+    --semantic-color-light-mode-fill-contextual-navitem-active: rgba(170,166,200,0.12);
+    --semantic-color-light-mode-text-contextual-navitem-base: #B5B1C6;
+    --semantic-color-light-mode-text-contextual-navitem-active: #FFFFFF;
+    --semantic-color-light-mode-icon-contextual-navitem-oncolor: var(--primitive-color-purple-950);
+    --semantic-color-light-mode-fill-action-primary-base: #8F87DD;
+    --semantic-color-light-mode-fill-action-primary-hover: #9C95E4;
+    --semantic-color-light-mode-text-action-primary-base: #ABA5EC;
+    --semantic-color-light-mode-fill-action-secondary-base: rgba(170,166,200,0.10);
+    --semantic-color-light-mode-fill-action-secondary-hover: rgba(170,166,200,0.16);
+    --semantic-color-light-mode-text-action-secondary-base: #D9D6E8;
+    --spd-logo-word: #FFFFFF;
+    --spd-badge-plum-bg: rgba(200,150,170,0.14);   --spd-badge-plum-fg: #DFB4CE;
+    --spd-badge-navy-bg: rgba(150,165,210,0.14);   --spd-badge-navy-fg: #B6C3E6;
+    --spd-badge-orchid-bg: rgba(190,155,210,0.14); --spd-badge-orchid-fg: #D3BAE0;
+    --spd-badge-teal-bg: rgba(140,190,200,0.13);   --spd-badge-teal-fg: #AFD2D8;
+    --spd-badge-amber-bg: rgba(215,180,140,0.13);  --spd-badge-amber-fg: #DBC2A4;
+    --spd-badge-positive-bg: rgba(75,196,149,0.13); --spd-badge-positive-fg: #A9DEC6; --spd-badge-positive-dot: #4BC495;
+    --spd-badge-rose-bg: rgba(210,150,170,0.13);   --spd-badge-rose-fg: #E0B7C5;
+    --spd-badge-role-bg: rgba(170,166,200,0.10); --spd-badge-role-fg: #D9D5EC; --spd-badge-role-stroke: rgba(170,166,200,0.22); --spd-badge-role-dot: #ABA5EC;
+    --semantic-color-light-mode-fill-static-accent-amethyst-base: #8F8AD8;
+    --semantic-color-light-mode-fill-static-accent-amethyst-light: rgba(170,166,200,0.12);
+    --semantic-color-light-mode-fill-static-accent-jade-base: #35B78C;
+    --semantic-color-light-mode-fill-static-accent-jade-light: rgba(75,196,149,0.12);
+    --semantic-color-light-mode-fill-static-accent-seabreeze-base: #7C9BE0;
+    --semantic-color-light-mode-fill-static-accent-seabreeze-light: rgba(124,155,224,0.13);
+    --semantic-color-light-mode-fill-static-accent-magenta-base: #C06BAB;
+    --semantic-color-light-mode-fill-static-accent-magenta-bold: #D693C4;
+    --semantic-color-light-mode-fill-static-accent-magenta-light: rgba(192,107,171,0.13);
+    --semantic-color-light-mode-fill-static-accent-sunrise-base: #D69064;
+    --semantic-color-light-mode-fill-static-accent-sunrise-light: rgba(214,154,127,0.13);
+    --semantic-color-light-mode-fill-static-accent-sunrise-bold: #CE9679;
+    --semantic-color-light-mode-fill-static-accent-teal-base: #6FB3BE;
+    --semantic-color-light-mode-fill-static-accent-teal-light: rgba(111,179,190,0.12);
+    --semantic-color-light-mode-fill-static-accent-mauve-base: #A98BA9;
+    --semantic-color-light-mode-fill-static-accent-taupe-base: #918BA0;
+    --semantic-color-light-mode-fill-static-accent-navy-base: #7C97D6;
+    --semantic-color-light-mode-fill-static-accent-navy-bold: #849FD9;
+    --semantic-color-light-mode-fill-contextual-avatar-base: rgba(207,197,206,0.18);
+    --semantic-color-light-mode-text-contextual-avatar-base: #E6E1E8;
+
+    --spd-elevation-sheet: 0 8px 36px -18px rgba(0,0,0,0.40);
+    --spd-elevation-widget: 0 1px 2px rgba(0,0,0,0.15);
+    --spd-elevation-lift: 0 8px 20px -10px rgba(0,0,0,0.32);
+    --spd-elevation-overlay: 0 20px 48px -16px rgba(0,0,0,0.50);
+  }
+  html[data-spd-mode="midnight"] .spd-topnav { border-bottom-color: rgba(170,166,200,0.08); }
+  html[data-spd-mode="midnight"] .spd-topnav__org { background: rgba(170,166,200,0.07); border-color: rgba(170,166,200,0.13); }
+  html[data-spd-mode="midnight"] .spd-topnav__org:hover { background: rgba(170,166,200,0.11); }
+  html[data-spd-mode="midnight"] .spd-topnav__iconbtn:hover { background: rgba(170,166,200,0.08); }
+  html[data-spd-mode="midnight"] .spd-skeleton { background: rgba(170,166,200,0.08); }
+  html[data-spd-mode="midnight"] *:hover::-webkit-scrollbar-thumb { background: rgba(170,166,200,0.26); }
+
+  html, body, #root {
+    height: 100%;
+    background: var(--semantic-color-light-mode-surface-canvas-light);
+    font-family: 'Google Sans Flex', ui-sans-serif, system-ui, sans-serif;
+    color: var(--semantic-color-light-mode-text-static-primary-base);
+    transition: background var(--motion-duration-5) var(--motion-easing-standard),
+                color var(--motion-duration-5) var(--motion-easing-standard);
+  }
+
+  /* Scrollbars: 3px whisper on BOTH axes (an unstyled horizontal bar is a
+     15px plank), thumb only appears on hover. */
+  ::-webkit-scrollbar { width: 3px; height: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: transparent; border-radius: 3px; }
+  ::-webkit-scrollbar-corner { background: transparent; }
+  *:hover::-webkit-scrollbar-thumb { background: rgba(41,39,36,0.16); }
+
+  /* Material Symbols Rounded per pathway-ds CLAUDE.md §12: wght 400, GRAD 0,
+     opsz 20. Nav items FILL=1 when active (nav-shell-spec §9.2); top-nav FILL=0. */
+  .material-symbols-rounded {
+    font-variation-settings: 'wght' 400, 'GRAD' 0, 'opsz' 20, 'FILL' 0;
+    user-select: none;
+    /* Hide ligature text until the icon font is ready — no flash of raw
+       icon names on slow connections. */
+    visibility: hidden;
+  }
+  html.spd-fonts-ready .material-symbols-rounded { visibility: visible; }
+  .material-symbols-rounded.is-filled {
+    font-variation-settings: 'wght' 400, 'GRAD' 0, 'opsz' 20, 'FILL' 1;
+  }
+
+  /* ── Spired brand motion ──────────────────────────────────────────────── */
+  @keyframes spd-shimmer { 0% { transform: translate(-42%, 42%); } 100% { transform: translate(42%, -42%); } }
+  .spd-skeleton {
+    position: relative; overflow: hidden;
+    background: var(--primitive-color-warm-300);
+    border-radius: 8px;
+  }
+  /* Shimmer: a lavender-into-gray light travelling left to right (rising
+     slightly), mid-pass from the first frame so it reads instantly. */
+  .spd-skeleton::after {
+    content: ""; position: absolute; inset: -80%;
+    background: linear-gradient(78deg, transparent 38%, rgba(150,145,245,0.22) 46%, rgba(148,144,138,0.14) 54%, transparent 62%);
+    animation: spd-shimmer 2.4s var(--motion-easing-breath) infinite;
+    animation-delay: -1.1s;
+  }
+
+  /* The loading glyph is the REAL mark, sitting solid. A soft light sweeps up
+     through it — bottom-left to top-right, the brand's ascension — over a
+     gentle breath. No bouncing bars: elegant, calm, unmistakably rising. */
+  @keyframes spd-mark-breath { 0%, 100% { opacity: 0.80; } 50% { opacity: 1; } }
+  @keyframes spd-mark-sheen  { 0% { background-position: 0% 100%; } 60%, 100% { background-position: 100% 0%; } }
+  .spd-markloader { position: relative; display: block; }
+  .spd-markloader__base { display: block; animation: spd-mark-breath 2.8s var(--motion-easing-breath) infinite; }
+  .spd-markloader__sheen {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(48deg, rgba(255,255,255,0) 42%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0) 58%);
+    background-size: 260% 260%;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-position: center; mask-position: center;
+    animation: spd-mark-sheen 2.8s var(--motion-easing-breath) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spd-markloader__base { animation: none; opacity: 1; }
+    .spd-markloader__sheen { animation: none; opacity: 0; }
+  }
+
+  /* Ring loader — the mark's DNA (one long, one medium, one short pill)
+     arranged in a ring, turning steadily. For buttons and tight spots. */
+  .spd-ring { animation: spd-spin 1.4s linear infinite; }
+
+  /* Loading (gradient shimmer) button — the fill itself breathes light. */
+  @keyframes spd-btn-shimmer { 0% { background-position: 130% 0; } 100% { background-position: -130% 0; } }
+  .spd-btn--shimmering {
+    background: linear-gradient(105deg, #6E64BE 0%, #8A80D6 45%, #6E64BE 90%);
+    background-size: 220% 100%;
+    animation: spd-btn-shimmer 1.9s var(--motion-easing-breath) infinite;
+    border: none; color: #FFFFFF;
+  }
+
+  /* Press — everything pressable settles slightly while held and eases back
+     on release. Quiet, elegant, no theatrics. */
+  .spd-pressmark { position: relative; border: none; background: transparent; cursor: pointer; }
+  .spd-pressmark__mark { display: inline-flex; transition: transform var(--motion-duration-4) var(--motion-easing-spring-soft); }
+  .spd-pressmark:active .spd-pressmark__mark { transform: scale(0.94); transition-duration: var(--motion-duration-1); }
+  .spd-topnav__iconbtn:active, .spd-widget__iconbtn:active { transform: scale(0.92); }
+  .spd-navitem:active { transform: scale(0.99); }
+  .spd-btn:active { transform: scale(0.98); }
+
+  @keyframes spd-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .spd-fade-in { animation: spd-fade-up var(--motion-duration-4) var(--motion-easing-decelerate) both; }
+  .spd-stagger > * { animation: spd-fade-up var(--motion-duration-4) var(--motion-easing-decelerate) both; }
+  .spd-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .spd-stagger > *:nth-child(2) { animation-delay: 40ms; }
+  .spd-stagger > *:nth-child(3) { animation-delay: 80ms; }
+  .spd-stagger > *:nth-child(4) { animation-delay: 120ms; }
+  .spd-stagger > *:nth-child(5) { animation-delay: 160ms; }
+  .spd-stagger > *:nth-child(6) { animation-delay: 200ms; }
+  .spd-stagger > *:nth-child(7) { animation-delay: 240ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spd-fade-in, .spd-stagger > *, .spd-loader-bar { animation: none !important; }
+    .spd-skeleton::after { animation: none !important; }
+  }
+
+  /* ── Shell ────────────────────────────────────────────────────────────── */
+  .spd-shell { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+  .spd-topnav {
+    height: 60px; flex-shrink: 0; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 24px;
+    background: var(--semantic-color-light-mode-surface-nav-light);
+    border-bottom: 0.5px solid rgba(41,39,36,0.10);
+    transition: background var(--motion-duration-5) var(--motion-easing-standard);
+  }
+  .spd-topnav__org {
+    display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
+    border-radius: 12px; background: rgba(255,255,255,0.65);
+    border: 0.5px solid rgba(41,39,36,0.12);
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
+    font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+    transition: background var(--motion-duration-2) var(--motion-easing-standard);
+  }
+  .spd-topnav__org:hover { background: var(--semantic-color-light-mode-fill-static-neutral-light); }
+  .spd-topnav__iconbtn {
+    position: relative; width: 34px; height: 34px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
+    transition: background var(--motion-duration-2) var(--motion-easing-standard),
+                transform var(--motion-duration-3) var(--motion-easing-spring);
+  }
+  .spd-topnav__iconbtn:hover { background: rgba(41,39,36,0.06); }
+  .spd-topnav__iconbtn .material-symbols-rounded { font-size: 20px; }
+
+  .spd-body { flex: 1; display: flex; overflow: hidden; padding-top: 16px; }
+
+  /* SideNav collapse (nav-shell-spec §5/§8): expanded 244px ↔ collapsed 76px
+     rail. Width animates on the emphasized curve; labels and meta icons fade
+     out (opacity, never display:none) so focus order survives. */
+  .spd-sidenav {
+    width: 256px; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
+    padding: 16px 16px 20px 20px;
+    display: flex; flex-direction: column;
+    transition: width var(--motion-duration-6) var(--motion-easing-emphasized),
+                padding var(--motion-duration-6) var(--motion-easing-emphasized);
+  }
+  .spd-sidenav.is-collapsed { width: 76px; padding-left: 14px; padding-right: 14px; }
+  .spd-sidenav.is-collapsed .spd-navitem { padding-left: 0; padding-right: 0; justify-content: center; gap: 0; }
+  .spd-sidenav.is-collapsed .spd-navitem__label { opacity: 0; flex: 0 0 0px; width: 0; }
+  .spd-sidenav.is-collapsed .spd-navitem__meta { opacity: 0; width: 0; }
+  .spd-sidenav.is-collapsed .spd-sidenav__section-label { opacity: 0; height: 14px; padding-top: 10px; padding-bottom: 0; }
+  .spd-navitem__meta { display: inline-flex; overflow: hidden; transition: opacity var(--motion-duration-3) var(--motion-easing-standard); }
+  .spd-sidenav__footer { margin-top: auto; padding-top: 12px; display: flex; justify-content: flex-end; }
+  .spd-sidenav.is-collapsed .spd-sidenav__footer { justify-content: center; }
+  .spd-sidenav__section-label {
+    font-size: 10.5px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--semantic-color-light-mode-text-static-tertiary-base);
+    padding: 24px 16px 8px; white-space: nowrap; overflow: hidden;
+    transition: opacity var(--motion-duration-4) var(--motion-easing-standard),
+                padding var(--motion-duration-6) var(--motion-easing-emphasized),
+                height var(--motion-duration-6) var(--motion-easing-emphasized);
+  }
+  .spd-navitem {
+    position: relative; width: 100%; display: flex; align-items: center; gap: 11px;
+    padding: 7px 10px 7px 14px; height: 42px; border-radius: 12px;
+    background: transparent; border: none; cursor: pointer; text-align: left;
+    font-family: inherit;
+    transition: background var(--motion-duration-2) var(--motion-easing-standard),
+                transform var(--motion-duration-3) var(--motion-easing-spring);
+  }
+  .spd-navitem:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  .spd-navitem.is-active { background: var(--semantic-color-light-mode-fill-contextual-navitem-active); }
+  .spd-navitem.is-locked { opacity: 0.65; }
+  .spd-navitem__indicator {
+    position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 20px; border-radius: 2px;
+  }
+  .spd-navitem__chip {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background var(--motion-duration-3) var(--motion-easing-standard);
+  }
+  .spd-navitem__chip .material-symbols-rounded { font-size: 16px; }
+  .spd-navitem__label {
+    flex: 1; font-size: 13px; font-weight: 400;
+    color: var(--semantic-color-light-mode-text-contextual-navitem-base);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: opacity var(--motion-duration-3) var(--motion-easing-standard),
+                flex var(--motion-duration-6) var(--motion-easing-emphasized);
+  }
+  .spd-navitem.is-active .spd-navitem__label {
+    font-weight: 500; color: var(--semantic-color-light-mode-text-contextual-navitem-active);
+  }
+
+  /* The content sheet — rounded top corners, flush right/bottom (Figma
+     40006833-27620). Depth from one luminance step + soft ambient shadow. */
+  .spd-sheet {
+    flex: 1; display: flex; overflow: hidden; position: relative; margin-right: 16px;
+    background: var(--semantic-color-light-mode-surface-sheet-base);
+    border-radius: var(--semantic-layout-units-contextual-sheet-cornerradius) var(--semantic-layout-units-contextual-sheet-cornerradius) 0 0;
+    box-shadow: var(--spd-elevation-sheet);
+    transition: background var(--motion-duration-5) var(--motion-easing-standard);
+  }
+  .spd-page { flex: 1; overflow: auto; }
+  .spd-page__inner {
+    padding: var(--semantic-layout-units-contextual-page-padding-top)
+             var(--semantic-layout-units-contextual-page-padding-horizontal)
+             var(--semantic-layout-units-contextual-page-padding-bottom);
+    max-width: 1060px; margin: 0 auto;
+  }
+
+  /* Responsive safety net: this is a desktop-product concept. Rather than let
+     a narrow preview panel crush the sheet to a sliver, keep a sensible
+     minimum and scroll horizontally below it. */
+  .spd-body { min-width: 0; }
+  .spd-sheet { min-width: 560px; }
+
+  /* ── Concept-showcase building blocks ─────────────────────────────────── */
+  .spd-concept__lead {
+    font-size: 14px; line-height: 1.55; color: var(--semantic-color-light-mode-text-static-secondary-base);
+    max-width: 680px; margin-top: 6px;
+  }
+  .spd-principle {
+    border-radius: var(--semantic-layout-units-contextual-card-cornerradius-cornerradius);
+    background: var(--semantic-color-light-mode-fill-static-neutral-light);
+    border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
+    padding: 20px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .spd-principle__icon {
+    width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    background: var(--semantic-color-light-mode-fill-static-accent-amethyst-light);
+    color: var(--semantic-color-light-mode-text-action-primary-base); margin-bottom: 4px;
+  }
+  .spd-principle__title { font-size: 14px; font-weight: 600; color: var(--semantic-color-light-mode-text-static-primary-base); }
+  .spd-principle__body { font-size: 12.5px; line-height: 1.5; color: var(--semantic-color-light-mode-text-static-secondary-subtle); }
+
+  /* Do / Don't callouts */
+  .spd-dodont { border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; border: 0.5px solid; }
+  .spd-dodont--do { background: var(--spd-badge-positive-bg); border-color: rgba(75,150,120,0.20); }
+  .spd-dodont--dont { background: var(--spd-badge-rose-bg); border-color: rgba(160,80,100,0.20); }
+  .spd-dodont__h { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; }
+  .spd-dodont--do .spd-dodont__h { color: var(--spd-badge-positive-fg); }
+  .spd-dodont--dont .spd-dodont__h { color: var(--spd-badge-rose-fg); }
+  .spd-dodont__t { font-size: 12.5px; line-height: 1.5; color: var(--semantic-color-light-mode-text-static-secondary-base); }
+
+  /* Form fields with validation states */
+  .spd-field { display: flex; flex-direction: column; gap: 6px; }
+  .spd-field__label { font-size: 12.5px; font-weight: 500; color: var(--semantic-color-light-mode-text-static-secondary-base); }
+  .spd-input {
+    height: 40px; padding: 0 13px; border-radius: 10px; font-family: inherit; font-size: 13.5px;
+    background: var(--semantic-color-light-mode-surface-widget-base, #fff);
+    border: 1px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
+    color: var(--semantic-color-light-mode-text-static-primary-base);
+    outline: none; width: 100%;
+    transition: border-color var(--motion-duration-2) var(--motion-easing-standard), box-shadow var(--motion-duration-2) var(--motion-easing-standard);
+  }
+  .spd-input::placeholder { color: var(--semantic-color-light-mode-text-static-tertiary-base); }
+  .spd-input:focus { border-color: #6E64BE; box-shadow: 0 0 0 3px rgba(110,100,190,0.14); }
+  .spd-input--error { border-color: #C0564E; }
+  .spd-input--error:focus { border-color: #C0564E; box-shadow: 0 0 0 3px rgba(192,86,78,0.14); }
+  .spd-input--success { border-color: #4FA07C; }
+  .spd-field__msg { font-size: 11.5px; display: flex; align-items: center; gap: 4px; }
+  .spd-field__msg--error { color: #B0473F; }
+  .spd-field__msg--success { color: var(--spd-badge-positive-fg); }
+  .spd-field__msg--hint { color: var(--semantic-color-light-mode-text-static-tertiary-base); }
+  .spd-field__msg .material-symbols-rounded { font-size: 14px; }
+
+  /* Alert / inline banner */
+  .spd-alert { display: flex; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 0.5px solid; }
+  .spd-alert__body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .spd-alert__title { font-size: 13px; font-weight: 600; }
+  .spd-alert__text { font-size: 12.5px; line-height: 1.45; }
+  .spd-alert .material-symbols-rounded { font-size: 20px; flex-shrink: 0; }
+  .spd-alert--error { background: var(--spd-badge-rose-bg); border-color: rgba(176,71,63,0.22); }
+  .spd-alert--error .spd-alert__title, .spd-alert--error > .material-symbols-rounded { color: #B0473F; }
+  .spd-alert--error .spd-alert__text { color: var(--spd-badge-rose-fg); }
+  .spd-alert--success { background: var(--spd-badge-positive-bg); border-color: rgba(75,150,120,0.22); }
+  .spd-alert--success .spd-alert__title, .spd-alert--success > .material-symbols-rounded { color: var(--spd-badge-positive-fg); }
+  .spd-alert--success .spd-alert__text { color: var(--spd-badge-positive-fg); }
+  .spd-alert--warn { background: var(--spd-badge-amber-bg); border-color: rgba(150,110,50,0.24); }
+  .spd-alert--warn .spd-alert__title, .spd-alert--warn > .material-symbols-rounded { color: var(--spd-badge-amber-fg); }
+  .spd-alert--warn .spd-alert__text { color: var(--spd-badge-amber-fg); }
+  .spd-alert--info { background: var(--spd-badge-navy-bg); border-color: rgba(60,80,130,0.22); }
+  .spd-alert--info .spd-alert__title, .spd-alert--info > .material-symbols-rounded { color: var(--spd-badge-navy-fg); }
+  .spd-alert--info .spd-alert__text { color: var(--spd-badge-navy-fg); }
+
+  /* Toast */
+  @keyframes spd-toast-in { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .spd-toast {
+    display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px;
+    background: var(--primitive-color-purple-900); color: #fff; font-size: 13px;
+    box-shadow: var(--spd-elevation-overlay); animation: spd-toast-in var(--motion-duration-4) var(--motion-easing-spring-soft) both;
+  }
+  html[data-spd-mode="midnight"] .spd-toast { background: #2A2740; border: 0.5px solid rgba(170,166,200,0.18); }
+  .spd-toast .material-symbols-rounded { font-size: 18px; }
+
+  /* Modal / dialog */
+  .spd-scrim { position: absolute; inset: 0; background: rgba(25,20,60,0.34); display: flex; align-items: center; justify-content: center; z-index: 20; animation: spd-fade-up var(--motion-duration-3) var(--motion-easing-standard) both; }
+  .spd-dialog {
+    width: min(420px, 88%); background: var(--semantic-color-light-mode-surface-widget-base, #fff);
+    border-radius: 18px; box-shadow: var(--spd-elevation-overlay); padding: 24px;
+    display: flex; flex-direction: column; gap: 14px;
+    animation: spd-dialog-in var(--motion-duration-4) var(--motion-easing-spring-soft) both;
+  }
+  @keyframes spd-dialog-in { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  /* IA before/after frames */
+  .spd-ia-frame { border-radius: 12px; border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light); overflow: hidden; background: var(--semantic-color-light-mode-fill-static-neutral-light); }
+  .spd-ia-frame__bar { height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
+  .spd-ia-chip { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 11px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+
+  /* Cards: hairline stroke, no resting shadow; shadow is a hover response. */
+  .spd-card {
+    border-radius: var(--semantic-layout-units-contextual-card-cornerradius-cornerradius);
+    background: var(--semantic-color-light-mode-fill-static-neutral-light);
+    border: var(--semantic-layout-units-contextual-card-border-width-base-base) solid var(--semantic-color-light-mode-stroke-static-neutral-light);
+    transition: background var(--motion-duration-5) var(--motion-easing-standard);
+  }
+  .spd-card--lift {
+    cursor: pointer;
+    transition: transform var(--motion-duration-4) var(--motion-easing-spring-soft),
+                box-shadow var(--motion-duration-4) var(--motion-easing-standard),
+                background var(--motion-duration-5) var(--motion-easing-standard);
+  }
+  .spd-card--lift:hover { transform: translateY(-2px); box-shadow: var(--spd-elevation-lift); }
+  .spd-card__header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-bottom: 1px solid var(--semantic-color-light-mode-stroke-static-neutral-faint);
+    font-size: 15px; font-weight: 600;
+  }
+
+  /* Buttons never go heavier than medium — weight shouts, and Spired doesn't. */
+  .spd-btn {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 18px;
+    border-radius: var(--semantic-layout-units-cornerradius-full);
+    font-family: inherit; font-size: 13px; font-weight: 500; line-height: 1.2;
+    white-space: nowrap; flex-shrink: 0; cursor: pointer;
+    transition: transform var(--motion-duration-4) var(--motion-easing-spring-soft),
+                background var(--motion-duration-3) var(--motion-easing-standard);
+  }
+  .spd-btn .material-symbols-rounded { font-size: 18px; }
+  .spd-btn--primary {
+    background: var(--semantic-color-light-mode-fill-action-primary-base);
+    border: none; color: var(--semantic-color-light-mode-fill-static-neutral-light);
+  }
+  .spd-btn--primary:hover { background: var(--semantic-color-light-mode-fill-action-primary-hover); transform: translateY(-1px); }
+  .spd-btn--outline {
+    background: transparent;
+    border: 0.5px solid var(--semantic-color-light-mode-fill-static-accent-amethyst-base);
+    color: var(--semantic-color-light-mode-text-action-primary-base);
+  }
+  .spd-btn--outline:hover { background: var(--semantic-color-light-mode-fill-static-brand-light); }
+  /* Secondary action per Figma: quiet warm fill, borderless. */
+  .spd-btn--ghost {
+    background: var(--semantic-color-light-mode-fill-action-secondary-base);
+    border: none;
+    color: var(--semantic-color-light-mode-text-action-secondary-base);
+  }
+  .spd-btn--ghost:hover { background: var(--semantic-color-light-mode-fill-action-secondary-hover); }
+  /* Gradient fill — a whisper of the brand gradient for quiet-but-special
+     actions: pale lavender wash, purple text, hairline stroke. */
+  .spd-btn--gradient {
+    background: linear-gradient(105deg, #F3F1FB 0%, #E9E6F7 100%);
+    border: 0.5px solid rgba(110,100,190,0.26);
+    color: var(--semantic-color-light-mode-text-action-primary-base);
+  }
+  .spd-btn--gradient:hover { transform: translateY(-1px); border-color: rgba(110,100,190,0.38); }
+  html[data-spd-mode="midnight"] .spd-btn--gradient {
+    background: linear-gradient(105deg, rgba(170,166,200,0.10) 0%, rgba(170,166,200,0.16) 100%);
+    border-color: rgba(170,166,200,0.28);
+  }
+
+  .spd-textlink {
+    display: inline-flex; align-items: center; gap: 6px; border: none; background: transparent;
+    color: var(--semantic-color-light-mode-text-action-primary-base);
+    font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; padding: 0;
+  }
+  .spd-textlink .material-symbols-rounded { font-size: 16px; }
+
+  /* Badge — exact anatomy from Figma: 20px tall, radius 12, 11px/500/0.3ls
+     label, small leading dot, soft translucent tint + deep ink text. */
+  .spd-pill {
+    display: inline-flex; align-items: center; gap: 4px; height: 20px;
+    padding: 1px 8px 1px 7px; border-radius: 12px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.3px; white-space: nowrap;
+  }
+  .spd-pill__dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; opacity: 0.75; }
+
+  /* Tables: quiet type at a calm density — small, light, roomy. */
+  .spd-table { width: 100%; border-collapse: collapse; }
+  .spd-table th {
+    text-align: left; padding: 10px 20px; font-size: 11.5px; font-weight: 500;
+    color: var(--semantic-color-light-mode-text-static-tertiary-base);
+    border-bottom: 1px solid var(--semantic-color-light-mode-stroke-static-neutral-faint);
+  }
+  .spd-table td { padding: 15px 20px; border-bottom: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint); font-size: 14px; }
+  .spd-table tbody tr { transition: background var(--motion-duration-2) var(--motion-easing-standard); }
+  .spd-table tbody tr:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  .spd-table tbody tr:last-child td { border-bottom: none; }
+
+  /* ── Widgets — structure/behaviour from the Widget Container sandbox demo
+     + Figma 40009622-39702. Anatomy: warm container with a compact 13px
+     header (title left; hover-reveal refresh + more_vert right), and the
+     content as an inner sheet — lighter surface, rounded top corners, soft
+     inset shadow. The sheet-over-canvas motif again, at widget scale. ── */
+  .spd-dashboard { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+  .spd-w-12 { grid-column: span 12; }
+  .spd-w-7 { grid-column: span 7; }
+  .spd-w-6 { grid-column: span 6; }
+  .spd-w-5 { grid-column: span 5; }
+  @media (max-width: 1100px) {
+    .spd-w-7, .spd-w-6, .spd-w-5 { grid-column: span 12; }
+  }
+  .spd-widget {
+    position: relative; display: flex; flex-direction: column; min-width: 0; overflow: hidden;
+    background: var(--semantic-color-light-mode-surface-widget-header);
+    border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
+    border-radius: 12px;
+    box-shadow: var(--spd-elevation-widget);
+    transition: box-shadow var(--motion-duration-2) var(--motion-easing-standard),
+                background var(--motion-duration-5) var(--motion-easing-standard);
+  }
+  .spd-widget__head { display: flex; align-items: center; gap: 6px; padding: 8px 8px 8px 16px; min-height: 44px; }
+  .spd-widget__title {
+    flex: 0 1 auto; min-width: 0; font-weight: 500; font-size: 13px; line-height: 18px;
+    letter-spacing: 0.1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: var(--semantic-color-light-mode-text-static-primary-base);
+  }
+  .spd-widget__actions { display: flex; align-items: center; gap: 0; flex-shrink: 0; margin-left: auto; }
+  .spd-widget__iconbtn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border: 0; background: transparent;
+    color: var(--semantic-color-light-mode-text-static-secondary-subtle);
+    border-radius: 8px; cursor: pointer;
+    transition: background var(--motion-duration-2) var(--motion-easing-standard),
+                color var(--motion-duration-2) var(--motion-easing-standard),
+                transform var(--motion-duration-3) var(--motion-easing-spring);
+  }
+  .spd-widget__iconbtn:hover {
+    background: var(--semantic-color-light-mode-fill-contextual-navitem-hover);
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
+  }
+  .spd-widget__iconbtn .material-symbols-rounded { font-size: 18px; }
+  .spd-widget__refresh { opacity: 0; pointer-events: none; transition: opacity var(--motion-duration-2) var(--motion-easing-standard); }
+  .spd-widget:hover .spd-widget__refresh,
+  .spd-widget:focus-within .spd-widget__refresh { opacity: 1; pointer-events: auto; }
+  @keyframes spd-spin { to { transform: rotate(360deg); } }
+  .spd-widget__refresh.is-refreshing { opacity: 1; pointer-events: auto; }
+  .spd-widget__refresh.is-refreshing .material-symbols-rounded { animation: spd-spin 1.6s linear infinite; }
+  .spd-widget__content {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    background: var(--semantic-color-light-mode-surface-widget-base);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -1px 2px rgba(41,39,36,0.025);
+    overflow: hidden;
+    transition: background var(--motion-duration-5) var(--motion-easing-standard);
+  }
+  html[data-spd-mode="midnight"] .spd-widget__content { box-shadow: 0 -1px 2px rgba(0,0,0,0.20); }
+  /* Fixed action layer at the widget's foot — content scrolls behind it. */
+  .spd-widget__footbar {
+    position: sticky; bottom: 0; padding: 12px 18px; margin-top: auto;
+    background: var(--semantic-color-light-mode-surface-widget-base);
+    border-top: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint);
+    transition: background var(--motion-duration-5) var(--motion-easing-standard);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spd-widget__refresh.is-refreshing .material-symbols-rounded { animation: none; }
+  }
+</style>
+</head>
+<body>
+<script>
+  (function () {
+    var ready = function () { document.documentElement.classList.add("spd-fonts-ready"); };
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(ready);
+      setTimeout(ready, 3000); /* fallback: never hold icons hostage */
+    } else { ready(); }
+  })();
+</script>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* ═══ Brand primitives (SVG mark + ascension device, from the guidelines) ═══ */
+
+/* ═══ The ACTUAL Spired logo — geometry lifted verbatim from
+   Spired_Logo_FC.svg. Mark = 3 paths (bottom #41377D, middle #6E64BE,
+   top #9691F5); wordmark = 7 letter paths (#19143C light / #FFF midnight,
+   via --spd-logo-word). ═══ */
+
+const LOGO_MARK_PATHS = [
+  { d: "M170.9,305.1c-6.4,0-11.5-5.2-11.5-11.5s4.5-10.8,10.3-11.4l104.2-10.9c.6,0,1.2,0,1.8,0,9.4,0,17,7.6,17,17s-7.6,17-17,17h-104.8Z", fill: "var(--primitive-color-purple-600)" },
+  { d: "M203.2,271.5c-5.1.8-10.1-2.3-11.6-7.3-1.7-5.6,1.4-11.4,7-13.1l73.1-22.4c8.6-2.6,17.6,2.2,20.2,10.8,2.6,8.6-2.2,17.6-10.8,20.2-.8.2-1.6.4-2.4.5l-75.6,11.3Z", fill: "var(--primitive-color-purple-300)" },
+  { d: "M270.6,188.2c6.9-4.1,15.9-1.8,20,5.2,4.1,6.9,1.8,15.9-5.2,20-.8.5-1.7.9-2.6,1.2l-47,16.6c-4.3,1.5-9.3-.2-11.7-4.3s-1.2-10.7,3.5-13.4l43-25.3Z", fill: "var(--primitive-color-purple-100)" },
+];
+const LOGO_WORD_PATHS = [
+  "M531.1,305.1v-105.6h25.9v105.6h-25.9Z",
+  "M543.9,186.2c-9,0-15.3-6.7-15.3-15.4s6.4-15.3,15.3-15.3,15.4,7.4,15.4,15.3-6.4,15.4-15.4,15.4Z",
+  "M354.3,307.5c-19.4,0-35-8-43.7-22.3l17.4-14c6,8.7,14.5,15.2,25.6,15.2s17-2.7,17-9.7c0-10.4-10.5-11.9-21.3-14.7-21.2-5-34.7-10.9-34.7-31.9s19.2-32.9,41.4-32.9,33.5,6.7,40.2,20.8l-17.1,13.7c-4.8-7.9-12.7-13.7-22.4-13.7s-15.9,2.8-15.9,9.8,11.8,11.1,20.4,12.9c21.2,5,36.1,10.3,36.1,31.7s-18.8,35-43,35Z",
+  "M470.2,307.5c-14.4,0-28.4-6.1-35.8-16.6v54.5h-25.9v-145.9h25.9v14.2c7.6-10.8,21-16.6,35.6-16.6,33.2,0,47.2,28.2,47.2,55.4s-14.3,55-47,55ZM462.4,285.1c19.2,0,28.6-15.7,28.6-32.6s-8.7-32.7-28.5-32.7-28.7,16.9-28.7,32.8,9.1,32.5,28.6,32.5Z",
+  "M578.8,305.1v-105.6h25.9v18.7c6.1-12.8,17.4-19.5,31.6-19.5s5,.1,6.2.4v24.2c-21.4-3.8-37.8,9.1-37.8,29.7v52h-25.9Z",
+  "M699.5,307.4c-35.5,0-55.2-24.3-55.2-55s18.8-55.2,53.1-55.2,50.5,24.2,50.5,52.1-.4,8.1-.6,10.1h-77.6c2.7,15.9,13.7,25.8,32.1,25.8s21.8-4.8,28.9-12.6l14.8,15.5c-9.6,12.7-26.7,19.3-46.1,19.3ZM722.5,240.9c-1-13.6-8.9-24.3-25.4-24.3s-25.1,10.6-27.3,24.3h52.7Z",
+  "M802.9,307.5c-31.5,0-47-26.1-47-55s14.7-55.4,47.3-55.4,27.9,5.4,35.6,15.9v-57.4h25.8v149.4h-25.8v-13.6c-7.4,9.7-20.3,15.9-35.9,15.9ZM810.8,285.1c18.3,0,28.5-14.2,28.5-32.5s-8.3-32.8-28.6-32.8-28.6,16.8-28.6,32.7,9.7,32.6,28.7,32.6Z",
+];
+const MARK_VB = "159.4 184.1 135.3 121.2";
+const LOGO_VB = "159.4 155.5 705.2 189.9";
+const MONO_OPS = [1, 0.7, 0.45];
+
+function SpiredMark({ size = 22, withWordmark = false, mono }) {
+  const w = withWordmark ? size * (705.2 / 189.9) : size * (135.3 / 121.2);
+  return (
+    <svg width={w} height={size} viewBox={withWordmark ? LOGO_VB : MARK_VB} fill="none" aria-hidden="true" style={{ display: "block" }}>
+      {LOGO_MARK_PATHS.map((p, i) => (
+        <path key={i} d={p.d} fill={mono || p.fill} fillOpacity={mono ? MONO_OPS[i] : 1} />
+      ))}
+      {withWordmark && LOGO_WORD_PATHS.map((d, i) => (
+        <path key={"w" + i} d={d} fill={mono || "var(--spd-logo-word)"} />
+      ))}
+    </svg>
+  );
+}
+
+function AscensionField({ colors, opacity = 1 }) {
+  const [a, b, c] = colors;
+  return (
+    <svg viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true"
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity }}>
+      <polygon points="0,300 400,300 400,230 0,300" fill={a} opacity="0.9" />
+      <polygon points="0,300 400,300 400,255 0,300" fill={b} opacity="0.9" />
+      <polygon points="0,300 400,300 400,278 0,300" fill={c} opacity="0.95" />
+    </svg>
+  );
+}
+
+/* The loader is the REAL mark sitting solid, with a soft light sweeping up
+   through it (bottom-left → top-right, the brand's ascension) over a gentle
+   breath. Full colour = page-level loads; `mono` (grayscale) inside widgets,
+   cards, modals, and on-fill. */
+function SpiredLoader({ label, size = 56, mono }) {
+  const w = size * (135.3 / 121.2);
+  // Mask = the union of the three mark paths, so the sheen only lights the glyph.
+  const maskSvg = "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='" +
+    MARK_VB.replace(/ /g, "%20") + "'>" +
+    LOGO_MARK_PATHS.map((p) => "<path d='" + p.d.replace(/#/g, "%23") + "' fill='%23000'/>").join("") +
+    "</svg>\")";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+      <div className="spd-markloader" style={{ width: w, height: size }}>
+        <svg className="spd-markloader__base" width={w} height={size} viewBox={MARK_VB} fill="none" aria-hidden="true">
+          {LOGO_MARK_PATHS.map((p, i) => (
+            <path key={i} d={p.d} fill={mono || p.fill} fillOpacity={mono ? MONO_OPS[i] : 1} />
+          ))}
+        </svg>
+        <span className="spd-markloader__sheen" style={{ WebkitMaskImage: maskSvg, maskImage: maskSvg }} />
+      </div>
+      {label && <span style={{ fontSize: 13, fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>{label}</span>}
+    </div>
+  );
+}
+
+/* Ring loader — the mark's DNA (one long, one medium, one short pill)
+   arranged in a turning ring. For buttons and tight spots. */
+function RingLoader({ size = 18, mono, strokeWidth = 2.5 }) {
+  const c = size / 2;
+  const r = (size - strokeWidth) / 2;
+  const circ = 2 * Math.PI * r;
+  const segs = [
+    { frac: 0.32, off: 0.0, fill: "var(--primitive-color-purple-600)", op: 1 },
+    { frac: 0.19, off: 0.4, fill: "var(--primitive-color-purple-300)", op: 0.7 },
+    { frac: 0.09, off: 0.68, fill: "var(--primitive-color-purple-100)", op: 0.45 },
+  ];
+  return (
+    <svg className="spd-ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" aria-hidden="true">
+      {segs.map((s, i) => (
+        <circle key={i} cx={c} cy={c} r={r} stroke={mono || s.fill} strokeOpacity={mono ? s.op : 1}
+          strokeWidth={strokeWidth} strokeLinecap="round" fill="none"
+          strokeDasharray={`${s.frac * circ} ${circ}`} strokeDashoffset={-s.off * circ} />
+      ))}
+    </svg>
+  );
+}
+
+/* The logo as a pressable: settles slightly while held, eases back on
+   release. Quiet. */
+function PressableMark({ size = 28, withWordmark = false, pad = 10 }) {
+  return (
+    <button className="spd-pressmark" aria-label="Spired" style={{ padding: pad }}>
+      <span className="spd-pressmark__mark">
+        <SpiredMark size={size} withWordmark={withWordmark} />
+      </span>
+    </button>
+  );
+}
+
+function Icon({ name, filled, size = 20, style }) {
+  return (
+    <span className={"material-symbols-rounded" + (filled ? " is-filled" : "")} style={{ fontSize: size, ...style }}>
+      {name}
+    </span>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="spd-card" style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, minHeight: 140 }}>
+      <div className="spd-skeleton" style={{ width: 40, height: 40, borderRadius: 12 }} />
+      <div className="spd-skeleton" style={{ width: "70%", height: 12 }} />
+      <div className="spd-skeleton" style={{ width: "45%", height: 12 }} />
+    </div>
+  );
+}
+
+function SkeletonRow() {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px" }}>
+      <div className="spd-skeleton" style={{ width: 36, height: 36, borderRadius: "50%" }} />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+        <div className="spd-skeleton" style={{ width: "38%", height: 12 }} />
+        <div className="spd-skeleton" style={{ width: "58%", height: 9 }} />
+      </div>
+      <div className="spd-skeleton" style={{ width: 64, height: 12 }} />
+    </div>
+  );
+}
+
+/* ═══ Nav structure — mirrors the live product sidenav (captured 2026-07-16) ═══ */
+
+const NAV_SECTIONS = [
+  { label: null, items: [
+    { id: "home", label: "Home", icon: "home", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    { id: "people", label: "People", icon: "group", color: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)" },
+    { id: "giving", label: "Giving Admin", icon: "volunteer_activism", color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)" },
+    { id: "accounting", label: "Accounting", icon: "calculate", color: "var(--semantic-color-light-mode-fill-static-accent-navy-base)" },
+    { id: "safety", label: "Safety", icon: "health_and_safety", color: "var(--semantic-color-light-mode-fill-static-accent-sunrise-bold)" },
+  ]},
+  /* Demo-only — the design-system concept showcase, promoted up under the
+     core modules so it's the star of this demo. Not part of the product nav. */
+  { label: "Concept", items: [
+    { id: "motion", label: "Motion", icon: "animation", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    { id: "loading", label: "Loading States", icon: "sync", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    { id: "errors", label: "Error States", icon: "error", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    { id: "validation", label: "Validation States", icon: "rule", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    { id: "states", label: "Component States", icon: "touch_app", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    { id: "feedback", label: "System Feedback", icon: "campaign", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    { id: "ia", label: "Information Architecture", icon: "account_tree", color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+  ]},
+  { label: "More modules", items: [
+    { id: "media", label: "Media", icon: "photo_library", color: "var(--semantic-color-light-mode-fill-static-accent-mauve-base)" },
+    { id: "planning", label: "Service Planning", icon: "event_available", color: "var(--semantic-color-light-mode-fill-static-accent-sunrise-base)" },
+  ]},
+  { label: "Trials", items: [
+    { id: "mobile", label: "Mobile App", icon: "smartphone", color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)", trailing: "schedule" },
+    { id: "websites", label: "Websites", icon: "language", color: "var(--semantic-color-light-mode-fill-static-accent-seabreeze-base)", trailing: "schedule" },
+    { id: "streaming", label: "Streaming", icon: "podcasts", color: "var(--semantic-color-light-mode-fill-static-accent-sunrise-base)", trailing: "schedule" },
+  ]},
+  { label: null, items: [
+    { id: "partners", label: "Partners", icon: "handshake", color: "var(--semantic-color-light-mode-fill-static-accent-navy-bold)" },
+    { id: "settings", label: "Settings", icon: "settings", color: "var(--semantic-color-light-mode-fill-static-accent-taupe-base)" },
+  ]},
+];
+const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap((s) => s.items);
+
+function SideNav({ active, onSelect }) {
+  const [collapsed, setCollapsed] = useState(false);
+  return (
+    <nav aria-label="Module navigation" className={"spd-sidenav" + (collapsed ? " is-collapsed" : "")}>
+      {NAV_SECTIONS.map((section, si) => (
+        <div key={si} className="spd-stagger" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {section.label && <p className="spd-sidenav__section-label">{section.label}</p>}
+          {section.items.map((item) => {
+            const isActive = active === item.id;
+            return (
+              <button
+                key={item.id}
+                className={"spd-navitem" + (isActive ? " is-active" : "") + (item.trailing === "lock" ? " is-locked" : "")}
+                onClick={() => onSelect(item.id)}
+                aria-current={isActive ? "page" : undefined}
+                aria-label={item.label}
+                title={collapsed ? item.label : undefined}
+              >
+                {isActive && <span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} />}
+                <span className="spd-navitem__chip" style={{ background: isActive ? item.color : `color-mix(in srgb, ${item.color} 10%, transparent)` }}>
+                  <Icon name={item.icon} filled={isActive} size={16} style={{ color: isActive ? "var(--semantic-color-light-mode-icon-contextual-navitem-oncolor)" : item.color }} />
+                </span>
+                <span className="spd-navitem__label">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      ))}
+      <div className="spd-sidenav__footer">
+        <button
+          className="spd-topnav__iconbtn"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
+          aria-expanded={!collapsed}
+          title={collapsed ? "Expand" : "Collapse"}
+        >
+          <Icon name={collapsed ? "left_panel_open" : "left_panel_close"} size={18} />
+        </button>
+      </div>
+    </nav>
+  );
+}
+
+function TopNav({ mode, onToggleMode }) {
+  const midnight = mode === "midnight";
+  return (
+    <header className="spd-topnav" role="banner">
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <PressableMark size={22} withWordmark pad={6} />
+        <button className="spd-topnav__org">
+          renmore_test1
+          <Icon name="expand_more" size={16} />
+        </button>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <button
+          className="spd-topnav__iconbtn"
+          onClick={onToggleMode}
+          aria-label={midnight ? "Switch to Light Mode" : "Switch to Midnight Mode"}
+          title={midnight ? "Light Mode" : "Midnight Mode"}
+        >
+          <Icon name={midnight ? "light_mode" : "bedtime"} filled={midnight} />
+        </button>
+        <button className="spd-topnav__iconbtn" aria-label="Search"><Icon name="search" /></button>
+        <button className="spd-topnav__iconbtn" aria-label="Help"><Icon name="help" /></button>
+        <button className="spd-topnav__iconbtn" aria-label="Notifications">
+          <Icon name="notifications" />
+          <span style={{ position: "absolute", top: 6, right: 7, width: 7, height: 7, borderRadius: "50%", background: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)", boxShadow: "0 0 0 2px var(--semantic-color-light-mode-surface-nav-light)" }} />
+        </button>
+        <span style={{ width: 32, height: 32, borderRadius: "50%", marginLeft: 6, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--semantic-color-light-mode-fill-contextual-avatar-base)", color: "var(--semantic-color-light-mode-text-contextual-avatar-base)", fontSize: 11, fontWeight: 600 }}>
+          JL
+        </span>
+      </div>
+    </header>
+  );
+}
+
+/* ═══ Home — content from the live product dashboard (captured 2026-07-16) ═══ */
+
+const TRIALS = [
+  { name: "Mobile App", icon: "smartphone", tone: "jade", remaining: 46, total: 999 },
+  { name: "Websites", icon: "language", tone: "seabreeze", remaining: 46, total: 999 },
+  { name: "Streaming", icon: "podcasts", tone: "sunrise", remaining: 46, total: 928 },
+];
+
+const RECENT_USERS = [
+  { name: "Feargal Phelan", added: "7/15/2026" },
+  { name: "Oisin2 Curran2", added: "7/15/2026" },
+  { name: "Yu-Jay Harris", added: "7/10/2026" },
+  { name: "Kunal Mehta", added: "6/26/2026" },
+  { name: "Krupa Test", added: "6/5/2026" },
+];
+
+function AuthenticatedPill() {
+  return (
+    <span className="spd-pill" style={{ background: "var(--spd-badge-positive-bg)", color: "var(--spd-badge-positive-fg)" }}>
+      <span className="spd-pill__dot" style={{ background: "var(--spd-badge-positive-dot)", opacity: 1 }} />
+      Authenticated
+    </span>
+  );
+}
+
+/* Widget container — structure/behaviour per the Widget Container sandbox
+   demo + Figma 40009622-39702: compact 13px header (title left, actions
+   right), refresh revealed on hover, content as an inner sheet with rounded
+   top corners. Refresh re-runs the widget's loading state, so the branded
+   skeletons exist beyond first paint. */
+function Widget({ title, span = 12, headExtra, onRefresh, refreshing, children }) {
+  return (
+    <section className={"spd-widget spd-w-" + span}>
+      <div className="spd-widget__head">
+        <p className="spd-widget__title">{title}</p>
+        <div className="spd-widget__actions">
+          {headExtra}
+          <button
+            className={"spd-widget__iconbtn spd-widget__refresh" + (refreshing ? " is-refreshing" : "")}
+            aria-label={"Refresh " + title}
+            onClick={onRefresh}
+          >
+            <Icon name="refresh" size={18} />
+          </button>
+          <button className="spd-widget__iconbtn" aria-label={title + " options"}>
+            <Icon name="more_vert" size={18} />
+          </button>
+        </div>
+      </div>
+      <div className="spd-widget__content">{children}</div>
+    </section>
+  );
+}
+
+function HomePage() {
+  const [loading, setLoading] = useState({ trials: true, users: true, usage: true });
+  useEffect(() => {
+    const t = setTimeout(() => setLoading({ trials: false, users: false, usage: false }), 1150);
+    return () => clearTimeout(t);
+  }, []);
+  const refresh = (key) => {
+    setLoading((s) => ({ ...s, [key]: true }));
+    setTimeout(() => setLoading((s) => ({ ...s, [key]: false })), 1150);
+  };
+
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner">
+        <p className="spd-fade-in" style={{ fontSize: 23, fontWeight: 600, lineHeight: "30px", textAlign: "center", marginBottom: 36 }}>
+          Good to see you, Jo!
+        </p>
+
+        <div className="spd-dashboard">
+        {/* My Active Trials */}
+        <Widget
+          title="My Active Trials"
+          span={12}
+          refreshing={loading.trials}
+          onRefresh={() => refresh("trials")}
+        >
+          {loading.trials ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 14, padding: 14 }}>
+              {[0, 1, 2, 3].map((i) => <SkeletonCard key={i} />)}
+            </div>
+          ) : (
+            <div style={{ maxHeight: 320, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+              <div className="spd-stagger" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, padding: 20 }}>
+                {TRIALS.map(({ name, icon, tone, remaining, total }) => (
+                  <div key={name} className="spd-card spd-card--lift" style={{ borderRadius: 12, padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ width: 32, height: 32, borderRadius: 10, background: `var(--semantic-color-light-mode-fill-static-accent-${tone}-light)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <Icon name={icon} size={16} style={{ color: `var(--semantic-color-light-mode-fill-static-accent-${tone}-base)` }} />
+                      </span>
+                      <p style={{ flex: 1, fontSize: 13, fontWeight: 500, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{name}</p>
+                      <span className="spd-pill" style={{ background: "var(--spd-badge-positive-bg)", color: "var(--spd-badge-positive-fg)" }}>
+                        <span className="spd-pill__dot" style={{ background: "var(--spd-badge-positive-dot)", opacity: 1 }} />
+                        Trial Active
+                      </span>
+                    </div>
+                    <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>{remaining} of {total} days left</p>
+                  </div>
+                ))}
+              </div>
+              <div className="spd-widget__footbar">
+                <button className="spd-btn spd-btn--gradient" style={{ width: "100%", justifyContent: "center", minHeight: 34, height: 34, fontSize: 12 }}>
+                  <Icon name="add" size={16} /> Add Trial
+                </button>
+              </div>
+            </div>
+          )}
+        </Widget>
+
+        {/* Recently Added Users */}
+        <Widget title="Recently Added Users" span={7} refreshing={loading.users} onRefresh={() => refresh("users")}>
+            {loading.users ? (
+              <div>{[0, 1, 2, 3, 4].map((i) => <SkeletonRow key={i} />)}</div>
+            ) : (
+              <React.Fragment>
+                <table className="spd-table">
+                  <thead>
+                    <tr><th>Name</th><th>Status</th><th>Added on</th></tr>
+                  </thead>
+                  <tbody className="spd-stagger">
+                    {RECENT_USERS.map((u) => (
+                      <tr key={u.name}>
+                        <td style={{ fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>{u.name}</td>
+                        <td><AuthenticatedPill /></td>
+                        <td style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", fontSize: 12.5 }}>{u.added}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderTop: "1px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" }}>
+                  <span style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>
+                    Showing 5 most recently added out of all 737 users
+                  </span>
+                  <button className="spd-textlink">View all <Icon name="arrow_forward" size={16} /></button>
+                </div>
+              </React.Fragment>
+            )}
+        </Widget>
+
+        {/* Usage — loads with the mark itself rising, not a skeleton, so the
+            two loading voices (shimmer for structure, loader for a moment of
+            waiting) are both visible on the dashboard */}
+        <Widget title="Usage" span={5} refreshing={loading.usage} onRefresh={() => refresh("usage")}>
+          {loading.usage ? (
+            <div style={{ flex: 1, minHeight: 208, display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
+              <SpiredLoader size={38} mono="var(--primitive-color-neutral-300)" label="Loading usage…" />
+            </div>
+          ) : (
+            <React.Fragment>
+            <div className="spd-fade-in" style={{ padding: "14px 14px 0" }}>
+              <button className="spd-btn spd-btn--ghost" style={{ width: "100%", justifyContent: "space-between", borderRadius: 12 }}>
+                July 2026 <Icon name="expand_more" size={18} />
+              </button>
+            </div>
+            <div className="spd-fade-in" style={{ flex: 1, minHeight: 150, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 32 }}>
+              <SpiredMark size={26} mono="var(--semantic-color-light-mode-stroke-action-secondary-inverse-base)" />
+              <p style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>No usage data available.</p>
+            </div>
+            </React.Fragment>
+          )}
+        </Widget>
+
+        {/* My Church Profile */}
+        <div className="spd-card spd-card--lift spd-w-12" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px" }}>
+          <span style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--semantic-color-light-mode-fill-contextual-avatar-base)", color: "var(--semantic-color-light-mode-text-contextual-avatar-base)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 600 }}>JL</span>
+          <p style={{ fontSize: 14.5, fontWeight: 600 }}>My Church Profile</p>
+        </div>
+
+        {/* Explore cards */}
+        {[
+            { title: "Explore Amplify Products", body: "Simplify your ministry with our integrated platform for streaming, website, and giving.", cta: "Explore Additional Products", colors: ["var(--primitive-color-purple-100)", "var(--primitive-color-purple-300)", "var(--primitive-color-purple-600)"] },
+            { title: "Explore Our Partners", body: "Uncover new avenues for growth and collaboration with our vetted network.", cta: "Explore Our Partners", colors: ["var(--primitive-color-blue-300)", "var(--primitive-color-blue-500)", "var(--primitive-color-blue-700)"] },
+          ].map(({ title, body, cta, colors }) => (
+            <div key={title} className="spd-card spd-card--lift spd-w-6" style={{ position: "relative", overflow: "hidden", padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
+              <AscensionField colors={colors} opacity={0.1} />
+              <p style={{ position: "relative", fontSize: 17, fontWeight: 600 }}>{title}</p>
+              <p style={{ position: "relative", fontSize: 13.5, lineHeight: 1.5, color: "var(--semantic-color-light-mode-text-static-secondary-base)", maxWidth: 320 }}>{body}</p>
+              <span style={{ position: "relative", marginTop: 8 }}>
+                <button className="spd-textlink">{cta} <Icon name="arrow_forward" size={16} /></button>
+              </span>
+            </div>
+          ))}
+
+        {/* Free resource banner */}
+        <div className="spd-w-12">
+        <p style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", textAlign: "center", marginBottom: 14, marginTop: 8 }}>
+          Discover more ways to help your ministry
+        </p>
+        <div style={{ position: "relative", overflow: "hidden", borderRadius: 22, background: "var(--primitive-color-purple-900)", border: "0.5px solid rgba(150,145,245,0.18)", padding: "32px 36px", display: "flex", flexDirection: "column", gap: 6 }}>
+          <AscensionField colors={["var(--primitive-color-yellow-300)", "var(--primitive-color-orange-300)", "var(--primitive-color-orange-500)"]} opacity={0.85} />
+          <p style={{ position: "relative", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "var(--primitive-color-yellow-300)" }}>FREE RESOURCE</p>
+          <p style={{ position: "relative", fontSize: 24, fontWeight: 600, color: "var(--primitive-color-neutral-0)", maxWidth: 560 }}>Get Your 2026 Annual Church Giving Report</p>
+          <span style={{ position: "relative", marginTop: 12 }}>
+            <button className="spd-btn" style={{ background: "var(--primitive-color-yellow-300)", border: "none", color: "var(--primitive-color-purple-900)", fontWeight: 600 }}>
+              <Icon name="download" size={18} /> Download Now
+            </button>
+          </span>
+        </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ People — content from Figma reference node 40006833-27620 ═══ */
+
+const PEOPLE = [
+  { name: "John Doe", initials: "JD", email: "john.doe@grace.church", role: "Member", teams: ["Sunday Worship Band"], status: "Active", avatar: "var(--primitive-color-purple-300)" },
+  { name: "Jane Smith", initials: "JS", email: "jane.smith@grace.church", role: "Member", teams: ["Vocal Team", "Youth Worship"], status: "Active", avatar: "var(--primitive-color-blue-700)" },
+  { name: "Sam Green", initials: "SG", email: "sam.green@grace.church", role: "Member", teams: ["Tech Team"], status: "Inactive", avatar: "var(--primitive-color-neutral-900)" },
+  { name: "Maria Santos", initials: "MS", email: "maria.santos@grace.church", role: "Member", teams: ["Sunday Worship Band"], status: "Active", avatar: "var(--primitive-color-mauve-500)" },
+  { name: "Josh Kim", initials: "JK", email: "josh.kim@grace.church", role: "Member", teams: ["Vocal Team"], status: "Active", avatar: "var(--primitive-color-blue-500)" },
+  { name: "Rachel Wright", initials: "RW", email: "rachel.wright@grace.church", role: "Leader", teams: ["Hospitality Team"], status: "Active", avatar: "var(--primitive-color-orange-500)" },
+  { name: "Amy Lin", initials: "AL", email: "amy.lin@grace.church", role: "Leader", teams: ["Sunday Worship Band"], status: "Active", avatar: "var(--primitive-color-green-700)" },
+  { name: "Chris Park", initials: "CP", email: "chris.park@grace.church", role: "Leader", teams: ["Tech Team"], status: "Inactive", avatar: "var(--primitive-color-neutral-600)" },
+  { name: "Rachel 1", initials: "R1", email: "rachel.wright@grace.church", role: "Leader", teams: ["Hospitality Team"], status: "Active", avatar: "var(--primitive-color-magenta-700)" },
+  { name: "Amy Lin", initials: "AL", email: "amy.lin@grace.church", role: "Leader", teams: ["Sunday Worship Band"], status: "Active", avatar: "var(--primitive-color-green-700)" },
+];
+
+/* Team badges — Figma recipe: soft translucent tint, deep ink text, dot. */
+const TEAM_PILLS = {
+  "Sunday Worship Band": { bg: "var(--spd-badge-plum-bg)", text: "var(--spd-badge-plum-fg)" },
+  "Vocal Team": { bg: "var(--spd-badge-navy-bg)", text: "var(--spd-badge-navy-fg)" },
+  "Youth Worship": { bg: "var(--spd-badge-orchid-bg)", text: "var(--spd-badge-orchid-fg)" },
+  "Tech Team": { bg: "var(--spd-badge-teal-bg)", text: "var(--spd-badge-teal-fg)" },
+  "Hospitality Team": { bg: "var(--spd-badge-amber-bg)", text: "var(--spd-badge-amber-fg)" },
+};
+
+function PeoplePage() {
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  useEffect(() => { const t = setTimeout(() => setLoading(false), 1100); return () => clearTimeout(t); }, []);
+
+  const filtered = PEOPLE.filter((p) =>
+    p.name.toLowerCase().includes(query.toLowerCase()) || p.email.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 1120 }}>
+        <div className="spd-fade-in" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
+          <div>
+            <p style={{ fontSize: 24, fontWeight: 600, lineHeight: "30px" }}>People</p>
+            <p style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", marginTop: 4 }}>11 People · 8 Active</p>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button className="spd-btn spd-btn--ghost"><Icon name="download" size={18} /> Export</button>
+            <button className="spd-btn spd-btn--primary"><Icon name="add" size={18} /> Add Person</button>
+          </div>
+        </div>
+
+        <div className="spd-card spd-fade-in" style={{ overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 20px", borderBottom: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" }}>
+            <div style={{ flex: 1, maxWidth: 560, display: "flex", alignItems: "center", gap: 10, height: 40, padding: "0 14px", borderRadius: 999, background: "var(--semantic-color-light-mode-fill-static-neutral-subtle)" }}>
+              <Icon name="search" size={17} style={{ color: "var(--semantic-color-light-mode-text-static-secondary-subtle)" }} />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search..."
+                style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontSize: 13, fontFamily: "inherit", color: "var(--semantic-color-light-mode-text-static-primary-base)" }}
+              />
+            </div>
+          </div>
+
+          {loading ? (
+            <div>{[0, 1, 2, 3, 4, 5].map((i) => <SkeletonRow key={i} />)}</div>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table className="spd-table">
+                <thead>
+                  <tr><th>Name</th><th>Email</th><th>Role</th><th>Teams</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody className="spd-stagger">
+                  {filtered.map((p, i) => (
+                    <tr key={p.name + i}>
+                      <td>
+                        <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          {/* Avatars per the Figma direction: small, subtle, two
+                              alternating light shades — never a rainbow. */}
+                          <span style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--semantic-color-light-mode-fill-contextual-avatar-base)", color: "var(--semantic-color-light-mode-text-contextual-avatar-base)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 600, flexShrink: 0 }}>{p.initials}</span>
+                          <span style={{ fontSize: 15, fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-primary-base)", whiteSpace: "nowrap" }}>{p.name}</span>
+                        </span>
+                      </td>
+                      <td style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)", fontSize: 14.5, whiteSpace: "nowrap" }}>{p.email}</td>
+                      <td>
+                        <span className="spd-pill" style={{ background: "var(--spd-badge-role-bg)", border: "0.5px solid var(--spd-badge-role-stroke)", color: "var(--spd-badge-role-fg)" }}>
+                          <span className="spd-pill__dot" style={{ background: "var(--spd-badge-role-dot)", opacity: 1 }} />
+                          {p.role}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                          {p.teams.map((t) => (
+                            <span key={t} className="spd-pill" style={{ background: TEAM_PILLS[t].bg, color: TEAM_PILLS[t].text }}>
+                              <span className="spd-pill__dot" style={{ background: "currentColor" }} />
+                              {t}
+                            </span>
+                          ))}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="spd-pill" style={{ background: p.status === "Active" ? "var(--spd-badge-positive-bg)" : "var(--spd-badge-rose-bg)", color: p.status === "Active" ? "var(--spd-badge-positive-fg)" : "var(--spd-badge-rose-fg)" }}>
+                          <span className="spd-pill__dot" style={{ background: p.status === "Active" ? "var(--spd-badge-positive-dot)" : "currentColor", opacity: p.status === "Active" ? 1 : 0.75 }} />
+                          {p.status}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <button className="spd-topnav__iconbtn" style={{ width: 30, height: 30 }}><Icon name="more_vert" size={17} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderTop: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" }}>
+            <span style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>Showing 1–10 of 11</span>
+            <span style={{ display: "flex", gap: 4 }}>
+              {[{ icon: "chevron_left" }, { label: "1", active: true }, { label: "2" }, { icon: "chevron_right" }].map((b, i) => (
+                <button key={i} className="spd-topnav__iconbtn" style={{ minWidth: 32, height: 32, borderRadius: 10, fontSize: 13, fontWeight: 500, fontFamily: "inherit", background: b.active ? "var(--semantic-color-light-mode-fill-action-secondary-hover)" : "transparent", color: b.active ? "var(--semantic-color-light-mode-text-static-primary-base)" : "var(--semantic-color-light-mode-text-static-secondary-subtle)" }}>
+                  {b.icon ? <Icon name={b.icon} size={16} /> : b.label}
+                </button>
+              ))}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ Motion & Loading — demo-only showcase of how Spired moves.
+   Warm, gentle, graceful — and always rising, like the mark. ═══ */
+
+function ShowcaseLabel({ children }) {
+  return (
+    <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.6px", textTransform: "uppercase", color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", margin: "32px 0 12px" }}>
+      {children}
+    </p>
+  );
+}
+
+/* A primary action in its loading state: the mono mark assembles bottom-to-top
+   inside the button while the label narrates. */
+function LoadingButtonDemo() {
+  const [state, setState] = useState("idle");
+  const click = () => {
+    if (state !== "idle") return;
+    setState("loading");
+    setTimeout(() => {
+      setState("done");
+      setTimeout(() => setState("idle"), 1600);
+    }, 2800);
+  };
+  return (
+    <button className="spd-btn spd-btn--primary" onClick={click} style={{ minWidth: 160, justifyContent: "center", opacity: state === "loading" ? 0.92 : 1 }}>
+      {state === "loading" ? (
+        <React.Fragment><RingLoader size={16} mono="#FFFFFF" strokeWidth={2.2} /> Adding…</React.Fragment>
+      ) : state === "done" ? (
+        <React.Fragment><Icon name="check" size={17} /> Added</React.Fragment>
+      ) : (
+        <React.Fragment><Icon name="add" size={17} /> Add Person</React.Fragment>
+      )}
+    </button>
+  );
+}
+
+/* Shared concept-page header. */
+function ConceptHeader({ title, lead, action }) {
+  return (
+    <div className="spd-fade-in" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+      <div>
+        <p style={{ fontSize: 24, fontWeight: 600, lineHeight: "30px" }}>{title}</p>
+        <p className="spd-concept__lead">{lead}</p>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+function PrincipleCard({ icon, title, body }) {
+  return (
+    <div className="spd-principle">
+      <span className="spd-principle__icon"><Icon name={icon} size={18} /></span>
+      <p className="spd-principle__title">{title}</p>
+      <p className="spd-principle__body">{body}</p>
+    </div>
+  );
+}
+
+function DoDont({ type, points }) {
+  const isDo = type === "do";
+  return (
+    <div className={"spd-dodont " + (isDo ? "spd-dodont--do" : "spd-dodont--dont")}>
+      <span className="spd-dodont__h"><Icon name={isDo ? "check_circle" : "cancel"} size={14} filled /> {isDo ? "Do" : "Don't"}</span>
+      {points.map((p, i) => <p key={i} className="spd-dodont__t">{p}</p>)}
+    </div>
+  );
+}
+
+function MotionPage() {
+  const [run, setRun] = useState(0);
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader
+          title="Motion"
+          lead="How Spired moves: warm, gentle, graceful — and always rising, like the mark. Motion is calm by default and expressive only where it earns delight."
+          action={<button className="spd-btn spd-btn--outline" onClick={() => setRun((r) => r + 1)}><Icon name="replay" size={17} /> Replay</button>}
+        />
+
+        <ShowcaseLabel>Principles</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16 }}>
+          <PrincipleCard icon="trending_up" title="Always rising" body="Entrances and loaders move upward — the mark's own ascent. Nothing important falls into place; it lifts into place." />
+          <PrincipleCard icon="air" title="Breath, not ticks" body="Ambient and looping motion follows a slow sinusoidal breath (~3s), never a mechanical pulse or blink." />
+          <PrincipleCard icon="bolt" title="Expressive, not busy" body="A barely-there spring overshoot gives life; big movement is reserved for moments that reward it, like completing a flow." />
+        </div>
+
+        <ShowcaseLabel>Entrance — everything rises in</ShowcaseLabel>
+        <div key={"rise" + run} className="spd-stagger" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+          {["First", "Second", "Third", "Fourth", "Fifth"].map((n, i) => (
+            <div key={n} className="spd-card" style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: 4 }}>
+              <p style={{ fontSize: 13, fontWeight: 600 }}>{n}</p>
+              <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)" }}>+{i * 40}ms · rise 8px · decelerate</p>
+            </div>
+          ))}
+        </div>
+
+        <ShowcaseLabel>Elevation — light with a violet cast</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 16 }}>
+          {[
+            { name: "Rest", desc: "Hairline only. No weight at rest.", shadow: "none" },
+            { name: "Raised", desc: "Widgets. Warm contact shadow.", shadow: "var(--spd-elevation-widget)" },
+            { name: "Lifted", desc: "Hover me — violet ambient light.", shadow: "var(--spd-elevation-widget)", lift: true },
+            { name: "Overlay", desc: "Dialogs, popovers. Fullest cast.", shadow: "var(--spd-elevation-overlay)" },
+          ].map(({ name, desc, shadow, lift }) => (
+            <div key={name} className={"spd-card" + (lift ? " spd-card--lift" : "")} style={{ padding: 20, minHeight: 110, boxShadow: lift ? undefined : shadow, display: "flex", flexDirection: "column", gap: 6 }}>
+              <p style={{ fontSize: 13.5, fontWeight: 600 }}>{name}</p>
+              <p style={{ fontSize: 12, lineHeight: 1.45, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)" }}>{desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <ShowcaseLabel>Spring &amp; press — elegant, never abrupt</ShowcaseLabel>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", paddingBottom: 8 }}>
+          <button className="spd-btn spd-btn--primary"><Icon name="add" size={17} /> Hover a primary action</button>
+          <button className="spd-btn spd-btn--ghost">Hover a secondary</button>
+          {["notifications", "favorite"].map((n) => (
+            <button key={n} className="spd-topnav__iconbtn" style={{ width: 40, height: 40 }} aria-label={n}>
+              <Icon name={n} size={20} />
+            </button>
+          ))}
+          <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>
+            Longer arc, barely-there overshoot. Press anything — it settles, then eases back.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ Loading States ═══ */
+function LoadingStatesPage() {
+  const [cardLoading, setCardLoading] = useState(true);
+  useEffect(() => {
+    let alive = true, timer;
+    const loop = () => {
+      if (!alive) return;
+      setCardLoading(true);
+      timer = setTimeout(() => { if (!alive) return; setCardLoading(false); timer = setTimeout(loop, 3200); }, 5200);
+    };
+    loop();
+    return () => { alive = false; clearTimeout(timer); };
+  }, []);
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader title="Loading States" lead="Waiting should feel considered, not anxious. The right loader depends on scale: a whole page vs. a single widget vs. a button — and colour signals which." />
+
+        <ShowcaseLabel>The rule — scale decides the loader</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16 }}>
+          <PrincipleCard icon="fullscreen" title="Page / big feature → full-colour mark" body="Fetching a whole page or major feature earns the full-colour Spired mark rising bottom-to-top. It's the boot screen and route-level loads only." />
+          <PrincipleCard icon="widgets" title="Widget / card / modal → grayscale mark" body="Inside a container the same mark loads in grayscale, so colour stays meaningful and the wait feels quiet." />
+          <PrincipleCard icon="smart_button" title="Button / tight spot → ring" body="Inline actions use the ring — the mark's DNA (long, medium, short pills) turning — or a gradient-shimmer fill for longer waits." />
+        </div>
+
+        <ShowcaseLabel>Page-level vs. in-container</ShowcaseLabel>
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <div className="spd-card" style={{ flex: 1, minWidth: 240, minHeight: 180, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+            <SpiredLoader size={46} label="Loading Spired…" />
+            <span className="spd-pill" style={{ background: "var(--spd-badge-role-bg)", color: "var(--spd-badge-role-fg)", border: "0.5px solid var(--spd-badge-role-stroke)" }}>Page level · full colour</span>
+          </div>
+          <div className="spd-card" style={{ flex: 1, minWidth: 240, minHeight: 180, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+            <SpiredLoader size={34} mono="var(--primitive-color-neutral-300)" />
+            <span className="spd-pill" style={{ background: "var(--spd-badge-role-bg)", color: "var(--spd-badge-role-fg)", border: "0.5px solid var(--spd-badge-role-stroke)" }}>In container · grayscale</span>
+          </div>
+        </div>
+
+        <ShowcaseLabel>Widget loading &amp; skeletons</ShowcaseLabel>
+        <div className="spd-dashboard">
+          <Widget title="Live widget" span={6} refreshing={cardLoading}>
+            {cardLoading ? (
+              <div style={{ flex: 1, minHeight: 190, display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
+                <SpiredLoader size={34} mono="var(--primitive-color-neutral-300)" label="Gathering the latest…" />
+              </div>
+            ) : (
+              <div className="spd-fade-in" style={{ flex: 1, minHeight: 190, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: 32 }}>
+                <span style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--semantic-color-light-mode-fill-static-positive-light)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Icon name="check" size={20} style={{ color: "var(--semantic-color-light-mode-text-static-positive-base)" }} />
+                </span>
+                <p style={{ fontSize: 13.5, fontWeight: 600 }}>Up to date</p>
+                <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>Content lands with a gentle rise.</p>
+              </div>
+            )}
+          </Widget>
+          <Widget title="Skeleton shimmer" span={6}>
+            <div style={{ padding: "6px 0" }}>
+              {[0, 1, 2].map((i) => (
+                <div key={i} style={{ borderBottom: i < 2 ? "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" : "none" }}>
+                  <SkeletonRow />
+                </div>
+              ))}
+              <p style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", padding: "6px 20px 10px" }}>
+                Skeletons mirror the shape of what's coming; the light rises bottom-left → top-right.
+              </p>
+            </div>
+          </Widget>
+        </div>
+
+        <ShowcaseLabel>Action loaders</ShowcaseLabel>
+        <div style={{ display: "flex", gap: 16, alignItems: "stretch", flexWrap: "wrap" }}>
+          <div className="spd-card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 12, flex: 1, minWidth: 230 }}>
+            <LoadingButtonDemo />
+            <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>Click it — the ring turns while it works, then confirms.</p>
+          </div>
+          <div className="spd-card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 12, flex: 1, minWidth: 230 }}>
+            <button className="spd-btn spd-btn--shimmering" style={{ minWidth: 160, justifyContent: "center" }}>Saving changes…</button>
+            <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>The fill breathes light — a gradient shimmer for longer waits.</p>
+          </div>
+          <div className="spd-card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, flex: 1, minWidth: 230 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}><RingLoader size={22} /><SpiredLoader size={26} mono="var(--primitive-color-neutral-300)" /></div>
+            <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", textAlign: "center" }}>Ring for tight spots; grayscale mark for empty states.</p>
+          </div>
+        </div>
+
+        <ShowcaseLabel>Do &amp; don't</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, paddingBottom: 8 }}>
+          <DoDont type="do" points={["Reserve space so content doesn't jump when it lands.", "Show a skeleton when you know the shape of what's coming.", "Keep a blocking spinner only for true full-page waits."]} />
+          <DoDont type="dont" points={["Don't stack a full-colour mark inside every card — colour loses meaning.", "Don't swap a spinner for a skeleton mid-load; pick one.", "Don't leave a button with no loading state — double-submits happen."]} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ Error States ═══ */
+function ErrorStatesPage() {
+  const [widgetError, setWidgetError] = useState(true);
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader title="Error States" lead="When something breaks, the product stays calm, honest, and helpful: say what happened in plain words, and always offer the next step." />
+
+        <ShowcaseLabel>Match the scale of the failure</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16 }}>
+          <PrincipleCard icon="report" title="Full-page — the route failed" body="A 404 / 500 / permission wall replaces the page with a calm illustration, a plain explanation, and one primary way forward." />
+          <PrincipleCard icon="widgets" title="Widget — one part failed" body="Only the affected widget shows its error, with a Retry. The rest of the page keeps working — never blank the whole screen for one failed fetch." />
+          <PrincipleCard icon="edit_note" title="Inline — the input is wrong" body="Validation errors live next to the field that caused them (see Validation States) — never a generic banner that makes the user hunt." />
+        </div>
+
+        <ShowcaseLabel>Full-page error</ShowcaseLabel>
+        <div className="spd-card" style={{ minHeight: 260, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, padding: 40, textAlign: "center" }}>
+          <span style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--spd-badge-rose-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Icon name="cloud_off" size={26} style={{ color: "#B0473F" }} />
+          </span>
+          <div>
+            <p style={{ fontSize: 17, fontWeight: 600 }}>We couldn't load your dashboard</p>
+            <p style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", marginTop: 4, maxWidth: 380 }}>The connection dropped while we were fetching your data. Your information is safe — this is on our side.</p>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button className="spd-btn spd-btn--primary"><Icon name="refresh" size={17} /> Try again</button>
+            <button className="spd-btn spd-btn--ghost">Contact support</button>
+          </div>
+        </div>
+
+        <ShowcaseLabel>Widget-level error — isolate the failure</ShowcaseLabel>
+        <div className="spd-dashboard">
+          <Widget title="Giving this month" span={6}>
+            {widgetError ? (
+              <div style={{ flex: 1, minHeight: 170, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: 28, textAlign: "center" }}>
+                <Icon name="sync_problem" size={26} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }} />
+                <p style={{ fontSize: 13, fontWeight: 600 }}>Couldn't load this widget</p>
+                <p style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>The rest of your dashboard is unaffected.</p>
+                <button className="spd-btn spd-btn--ghost" style={{ minHeight: 32, height: 32 }} onClick={() => setWidgetError(false)}><Icon name="refresh" size={15} /> Retry</button>
+              </div>
+            ) : (
+              <div className="spd-fade-in" style={{ flex: 1, minHeight: 170, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: 28 }}>
+                <p style={{ fontSize: 26, fontWeight: 700, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>$18,420</p>
+                <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>Recovered — loaded on retry.</p>
+                <button className="spd-btn spd-btn--ghost" style={{ minHeight: 30, height: 30, fontSize: 12 }} onClick={() => setWidgetError(true)}>Reset demo</button>
+              </div>
+            )}
+          </Widget>
+          <Widget title="Recently added" span={6}>
+            <div style={{ padding: "8px 0" }}>
+              {["Feargal Phelan", "Yu-Jay Harris", "Kunal Mehta"].map((n, i) => (
+                <div key={n} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 20px", borderBottom: i < 2 ? "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" : "none" }}>
+                  <span style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--semantic-color-light-mode-fill-contextual-avatar-base)", color: "var(--semantic-color-light-mode-text-contextual-avatar-base)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 600 }}>{n.split(" ").map(w => w[0]).join("")}</span>
+                  <span style={{ fontSize: 13.5 }}>{n}</span>
+                </div>
+              ))}
+              <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", padding: "10px 20px 4px" }}>Still working while its neighbour recovers.</p>
+            </div>
+          </Widget>
+        </div>
+
+        <ShowcaseLabel>Inline banner</ShowcaseLabel>
+        <div className="spd-alert spd-alert--error" style={{ marginBottom: 8 }}>
+          <Icon name="error" size={20} filled />
+          <div className="spd-alert__body">
+            <p className="spd-alert__title">Payment method declined</p>
+            <p className="spd-alert__text">Your card ending 6411 was declined. Update it in Billing, or try a different method — nothing was charged.</p>
+          </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, paddingBottom: 8 }}>
+          <DoDont type="do" points={["Say what happened and whose fault it is, in plain words.", "Always give a next step: retry, go back, or get help.", "Fail small — isolate the broken piece, keep the rest alive."]} />
+          <DoDont type="dont" points={["Don't show raw codes or stack traces to end users.", "Don't blank the whole screen because one request failed.", "Don't blame the user for a system error."]} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ Validation States ═══ */
+function ValidationForm() {
+  const [values, setValues] = useState({ name: "", email: "", phone: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [done, setDone] = useState(false);
+  const cardRef = React.useRef(null);
+  const refs = { name: React.useRef(null), email: React.useRef(null), phone: React.useRef(null) };
+
+  const errors = {};
+  if (!values.name.trim()) errors.name = "Enter the person's full name.";
+  if (!values.email.trim()) errors.email = "Enter an email address.";
+  else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(values.email)) errors.email = "That doesn't look like a valid email.";
+  if (values.phone && !/^[0-9()+\-\s]{7,}$/.test(values.phone)) errors.phone = "Use digits, spaces, and + ( ) - only.";
+  const errorList = Object.keys(errors);
+
+  const set = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.value }));
+  const submit = () => {
+    setSubmitted(true);
+    if (errorList.length === 0) { setDone(true); return; }
+    setDone(false);
+    // The signature pattern: reveal the summary panel AND scroll up to it.
+    if (cardRef.current) cardRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const showErr = (k) => submitted && errors[k];
+  const showOk = (k) => submitted && !errors[k] && values[k].trim();
+
+  const field = (k, label, type, placeholder, hint) => (
+    <div className="spd-field">
+      <label className="spd-field__label" htmlFor={"vf-" + k}>{label}</label>
+      <input id={"vf-" + k} ref={refs[k]} type={type} value={values[k]} onChange={set(k)} placeholder={placeholder}
+        className={"spd-input" + (showErr(k) ? " spd-input--error" : showOk(k) ? " spd-input--success" : "")}
+        aria-invalid={showErr(k) ? "true" : "false"} />
+      {showErr(k) ? (
+        <span className="spd-field__msg spd-field__msg--error"><Icon name="error" size={14} filled /> {errors[k]}</span>
+      ) : showOk(k) ? (
+        <span className="spd-field__msg spd-field__msg--success"><Icon name="check_circle" size={14} filled /> Looks good</span>
+      ) : hint ? (
+        <span className="spd-field__msg spd-field__msg--hint">{hint}</span>
+      ) : null}
+    </div>
+  );
+
+  return (
+    <div ref={cardRef} className="spd-card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16, scrollMarginTop: 12 }}>
+      {done ? (
+        <div className="spd-alert spd-alert--success">
+          <Icon name="check_circle" size={20} filled />
+          <div className="spd-alert__body">
+            <p className="spd-alert__title">Person added</p>
+            <p className="spd-alert__text">{values.name} was added to your directory.</p>
+          </div>
+        </div>
+      ) : submitted && errorList.length > 0 ? (
+        <div className="spd-alert spd-alert--error spd-fade-in">
+          <Icon name="error" size={20} filled />
+          <div className="spd-alert__body">
+            <p className="spd-alert__title">{errorList.length === 1 ? "1 field needs attention" : errorList.length + " fields need attention"}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 2 }}>
+              {errorList.map((k) => (
+                <button key={k} onClick={() => refs[k].current && refs[k].current.focus()}
+                  style={{ background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, color: "#B0473F", textDecoration: "underline", textUnderlineOffset: 2 }}>
+                  {errors[k]}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {field("name", "Full name", "text", "Marcus Diaz", "Required.")}
+      {field("email", "Email", "email", "marcus@grace.church", "We'll send an invite here.")}
+      {field("phone", "Phone (optional)", "tel", "+1 555 0110", null)}
+
+      <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+        <button className="spd-btn spd-btn--primary" onClick={submit}><Icon name="person_add" size={17} /> Add person</button>
+        {(submitted || done) && <button className="spd-btn spd-btn--ghost" onClick={() => { setValues({ name: "", email: "", phone: "" }); setSubmitted(false); setDone(false); }}>Reset</button>}
+      </div>
+    </div>
+  );
+}
+
+function ValidationStatesPage() {
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader title="Validation States" lead="Validation guides rather than scolds. Errors appear next to their cause, in plain language, and a failed submit takes you straight to the problem." />
+
+        <ShowcaseLabel>Field states</ShowcaseLabel>
+        <div className="spd-card" style={{ padding: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20 }}>
+          <div className="spd-field">
+            <span className="spd-field__label">Default</span>
+            <input className="spd-input" placeholder="Placeholder" readOnly />
+            <span className="spd-field__msg spd-field__msg--hint">Helper text sits quietly below.</span>
+          </div>
+          <div className="spd-field">
+            <span className="spd-field__label">Error</span>
+            <input className="spd-input spd-input--error" defaultValue="not-an-email" readOnly />
+            <span className="spd-field__msg spd-field__msg--error"><Icon name="error" size={14} filled /> That doesn't look valid.</span>
+          </div>
+          <div className="spd-field">
+            <span className="spd-field__label">Success</span>
+            <input className="spd-input spd-input--success" defaultValue="marcus@grace.church" readOnly />
+            <span className="spd-field__msg spd-field__msg--success"><Icon name="check_circle" size={14} filled /> Looks good</span>
+          </div>
+        </div>
+
+        <ShowcaseLabel>Submit → summary + scroll-to-problem</ShowcaseLabel>
+        <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", margin: "0 0 12px" }}>
+          Submit empty (or with a bad email). The form reveals a summary panel, marks each field, and scrolls to the top so the problems are in view — each summary line focuses its field.
+        </p>
+        <ValidationForm />
+
+        <ShowcaseLabel>Do &amp; don't</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, paddingBottom: 8 }}>
+          <DoDont type="do" points={["Validate on submit; confirm inline once a field has been corrected.", "Put the message on the field, and summarise at the top for long forms.", "Move focus to the first problem so keyboard users aren't stranded."]} />
+          <DoDont type="dont" points={["Don't validate angrily on every keystroke before the user finishes.", "Don't use colour alone — pair red with an icon and words.", "Don't clear what the user typed when validation fails."]} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ Component States ═══ */
+function StateRow({ label, children }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 0", borderBottom: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" }}>
+      <span style={{ width: 96, flexShrink: 0, fontSize: 12, fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>{label}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>{children}</div>
+    </div>
+  );
+}
+function ComponentStatesPage() {
+  const pByState = {
+    default: {},
+    hover: { background: "var(--semantic-color-light-mode-fill-action-primary-hover)" },
+    pressed: { background: "var(--semantic-color-light-mode-fill-action-primary-hover)", transform: "scale(0.98)" },
+    disabled: { opacity: 0.45, filter: "saturate(0.6)" },
+  };
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader title="Component States" lead="Every interactive component speaks the same five-state language — default, hover, pressed, disabled, loading — so behaviour is predictable everywhere." />
+
+        <ShowcaseLabel>Primary button — the five states</ShowcaseLabel>
+        <div className="spd-card" style={{ padding: "6px 24px 8px" }}>
+          {["default", "hover", "pressed", "disabled"].map((s) => (
+            <StateRow key={s} label={s[0].toUpperCase() + s.slice(1)}>
+              <button className="spd-btn spd-btn--primary" style={{ ...pByState[s], pointerEvents: "none" }}><Icon name="add" size={17} /> Add person</button>
+              <span style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>
+                {s === "default" && "resting"}{s === "hover" && "lifts one step lighter"}{s === "pressed" && "settles + darkens"}{s === "disabled" && "dimmed, non-interactive"}
+              </span>
+            </StateRow>
+          ))}
+          <StateRow label="Loading">
+            <button className="spd-btn spd-btn--primary" style={{ pointerEvents: "none", minWidth: 150, justifyContent: "center" }}><RingLoader size={16} mono="#fff" strokeWidth={2.2} /> Adding…</button>
+            <span style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>ring turns; label narrates</span>
+          </StateRow>
+        </div>
+
+        <ShowcaseLabel>Live — hover &amp; press these</ShowcaseLabel>
+        <div className="spd-card" style={{ padding: 24, display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+          <button className="spd-btn spd-btn--primary"><Icon name="add" size={17} /> Primary</button>
+          <button className="spd-btn spd-btn--ghost">Secondary</button>
+          <button className="spd-btn spd-btn--outline">Outline</button>
+          <button className="spd-btn spd-btn--primary" disabled style={{ opacity: 0.45, pointerEvents: "none" }}>Disabled</button>
+          {["notifications", "favorite", "more_vert"].map((n) => (
+            <button key={n} className="spd-topnav__iconbtn" style={{ width: 40, height: 40 }} aria-label={n}><Icon name={n} size={20} /></button>
+          ))}
+        </div>
+
+        <ShowcaseLabel>Inputs &amp; nav items</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, paddingBottom: 8 }}>
+          <div className="spd-card" style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div className="spd-field"><span className="spd-field__label">Default</span><input className="spd-input" placeholder="Search…" readOnly /></div>
+            <div className="spd-field"><span className="spd-field__label">Focus</span><input className="spd-input" defaultValue="typing…" readOnly style={{ borderColor: "#6E64BE", boxShadow: "0 0 0 3px rgba(110,100,190,0.14)" }} /></div>
+            <div className="spd-field"><span className="spd-field__label">Disabled</span><input className="spd-input" placeholder="Unavailable" readOnly disabled style={{ opacity: 0.5 }} /></div>
+          </div>
+          <div className="spd-card" style={{ padding: "12px 12px" }}>
+            <div className="spd-navitem"><span className="spd-navitem__chip" style={{ background: "color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-magenta-base) 10%, transparent)" }}><Icon name="group" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)" }} /></span><span className="spd-navitem__label">Default item</span></div>
+            <div className="spd-navitem" style={{ background: "var(--semantic-color-light-mode-fill-contextual-navitem-hover)" }}><span className="spd-navitem__chip" style={{ background: "color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-magenta-base) 10%, transparent)" }}><Icon name="group" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)" }} /></span><span className="spd-navitem__label">Hover</span></div>
+            <div className="spd-navitem is-active" style={{ position: "relative" }}><span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} /><span className="spd-navitem__chip" style={{ background: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)" }}><Icon name="group" size={16} filled style={{ color: "#fff" }} /></span><span className="spd-navitem__label">Active</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ System Feedback ═══ */
+function SystemFeedbackPage() {
+  const [toast, setToast] = useState(null);
+  const [dialog, setDialog] = useState(false);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 2600); return () => clearTimeout(t); }, [toast]);
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader title="System Feedback" lead="Confirmations, warnings, and errors each have a home. Match the channel to the weight: the heavier the consequence, the more it interrupts." />
+
+        <ShowcaseLabel>Choosing a channel</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16 }}>
+          <PrincipleCard icon="notifications" title="Toast — it happened, carry on" body="Transient confirmation of a completed action. Auto-dismisses, never blocks. 'Saved', 'Sent to 4 donors'." />
+          <PrincipleCard icon="info" title="Alert — persistent context" body="Stays in place until resolved or dismissed. Trial expiring, sync issue, a heads-up tied to the page." />
+          <PrincipleCard icon="crisis_alert" title="Dialog — stop and decide" body="Interrupts because a choice is required, especially destructive or irreversible ones. Delete, discard, publish." />
+        </div>
+
+        <ShowcaseLabel>Toasts — try them</ShowcaseLabel>
+        <div className="spd-card" style={{ padding: 24, display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <button className="spd-btn spd-btn--primary" onClick={() => setToast({ icon: "check_circle", text: "Changes saved" })}>Trigger success toast</button>
+          <button className="spd-btn spd-btn--ghost" onClick={() => setToast({ icon: "mail", text: "Thank-you notes sent to 4 donors" })}>Trigger action toast</button>
+        </div>
+
+        <ShowcaseLabel>Alerts</ShowcaseLabel>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="spd-alert spd-alert--success"><Icon name="check_circle" size={20} filled /><div className="spd-alert__body"><p className="spd-alert__title">Import complete</p><p className="spd-alert__text">312 people were added to your directory.</p></div></div>
+          <div className="spd-alert spd-alert--info"><Icon name="info" size={20} filled /><div className="spd-alert__body"><p className="spd-alert__title">Scheduled maintenance</p><p className="spd-alert__text">Giving will be read-only Sunday 2–4am ET.</p></div></div>
+          <div className="spd-alert spd-alert--warn"><Icon name="warning" size={20} filled /><div className="spd-alert__body"><p className="spd-alert__title">Trial ends in 6 days</p><p className="spd-alert__text">Subscribe to keep your Mobile App data and settings.</p></div></div>
+          <div className="spd-alert spd-alert--error"><Icon name="error" size={20} filled /><div className="spd-alert__body"><p className="spd-alert__title">Sync failed</p><p className="spd-alert__text">We couldn't reach your accounting provider. We'll keep retrying.</p></div></div>
+        </div>
+
+        <ShowcaseLabel>Confirmation dialog — destructive</ShowcaseLabel>
+        <div className="spd-card" style={{ padding: 24 }}>
+          <button className="spd-btn" style={{ background: "var(--spd-badge-rose-bg)", color: "#B0473F", border: "0.5px solid rgba(176,71,63,0.28)" }} onClick={() => setDialog(true)}><Icon name="delete" size={17} /> Delete list…</button>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, paddingBottom: 8 }}>
+          <DoDont type="do" points={["Confirm quietly — a toast for the 95% of actions that just work.", "Reserve dialogs for consequential or destructive choices.", "Name the exact thing and consequence in destructive dialogs."]} />
+          <DoDont type="dont" points={["Don't confirm the mundane with a modal — it trains people to click through.", "Don't use a toast for something the user must act on.", "Don't make 'Delete' the calm default button."]} />
+        </div>
+      </div>
+
+      {toast && (
+        <div style={{ position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 30 }}>
+          <div className="spd-toast"><Icon name={toast.icon} size={18} filled /> {toast.text}</div>
+        </div>
+      )}
+      {dialog && (
+        <div className="spd-scrim" onClick={() => setDialog(false)}>
+          <div className="spd-dialog" onClick={(e) => e.stopPropagation()}>
+            <span style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--spd-badge-rose-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="delete" size={20} filled style={{ color: "#B0473F" }} /></span>
+            <div>
+              <p style={{ fontSize: 16, fontWeight: 600 }}>Delete "Easter Volunteers"?</p>
+              <p style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", marginTop: 4, lineHeight: 1.5 }}>This list and its 48 members' membership will be removed. This can't be undone.</p>
+            </div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 4 }}>
+              <button className="spd-btn spd-btn--ghost" onClick={() => setDialog(false)}>Cancel</button>
+              <button className="spd-btn" style={{ background: "#B0473F", color: "#fff", border: "none" }} onClick={() => { setDialog(false); setToast({ icon: "check_circle", text: "List deleted" }); }}>Delete list</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══ Information Architecture ═══ */
+function IAFrame({ label, tone, children }) {
+  const bg = tone === "bad" ? "var(--spd-badge-rose-bg)" : tone === "good" ? "var(--spd-badge-positive-bg)" : "var(--semantic-color-light-mode-fill-static-neutral-subtle)";
+  const fg = tone === "bad" ? "#B0473F" : tone === "good" ? "var(--spd-badge-positive-fg)" : "var(--semantic-color-light-mode-text-static-tertiary-base)";
+  return (
+    <div className="spd-ia-frame">
+      <div className="spd-ia-frame__bar" style={{ background: bg, color: fg }}>
+        <Icon name={tone === "bad" ? "close" : tone === "good" ? "check" : "circle"} size={14} /> {label}
+      </div>
+      <div style={{ padding: 14 }}>{children}</div>
+    </div>
+  );
+}
+function MiniNavItem({ icon, label, active, muted }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", borderRadius: 8, background: active ? "rgba(110,100,184,0.14)" : "transparent", opacity: muted ? 0.5 : 1 }}>
+      <span style={{ width: 18, height: 18, borderRadius: 5, background: "var(--semantic-color-light-mode-fill-static-accent-amethyst-light)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name={icon} size={12} style={{ color: "var(--semantic-color-light-mode-text-action-primary-base)" }} /></span>
+      <span style={{ fontSize: 12, fontWeight: active ? 600 : 400, color: active ? "var(--semantic-color-light-mode-text-static-primary-base)" : "var(--semantic-color-light-mode-text-static-secondary-base)" }}>{label}</span>
+    </div>
+  );
+}
+function InfoArchitecturePage() {
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 1000 }}>
+        <ConceptHeader title="Information Architecture" lead="A design system isn't just colours and components — it's canonical rules for where things live and how you move between them. Here's the standard, and how it fixes real navigation problems in Amplify today." />
+
+        <ShowcaseLabel>Navigation principles</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 16 }}>
+          <PrincipleCard icon="menu_open" title="Side nav = major areas only" body="The left rail lists top-level product areas and nothing else. Children are rare; if you're nesting, you probably need in-area navigation instead." />
+          <PrincipleCard icon="tab" title="Tasks live inside their area" body="Sub-sections, filters, and flows use in-area navigation — top tabs, segmented toggles, or filter chips — never more side-nav depth." />
+          <PrincipleCard icon="lock" title="Top nav stays stable" body="Global search, help, notifications, org switcher, and profile are constant across every area. They never move or change between modules." />
+          <PrincipleCard icon="swap_horiz" title="One way to switch modules" body="A single, consistent module switcher — same place, same behaviour — whether you're on Home or deep inside a module." />
+        </div>
+
+        <ShowcaseLabel>Where settings live</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 16 }}>
+          <PrincipleCard icon="account_circle" title="Profile → avatar menu" body="Personal, me-specific settings (name, notifications, appearance) live under the profile avatar, top-right. It's about you, so it follows you everywhere." />
+          <PrincipleCard icon="business" title="Account / org → org switcher or Settings area" body="Org-wide configuration (billing, org profile, integrations) belongs to the account — reached from the org context, not mixed into a module." />
+          <PrincipleCard icon="admin_panel_settings" title="Admin → its own governed area" body="User management, roles, and permissions are a distinct administrative area, access-gated — never scattered inside unrelated modules." />
+        </div>
+
+        <ShowcaseLabel>Problem 1 — Home's rail vs. a module's rail look identical</ShowcaseLabel>
+        <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", margin: "0 0 12px", lineHeight: 1.5 }}>
+          In Amplify today, Spired Home shows a left rail that is really a <em>module switcher</em>. Enter a module and the left rail looks nearly the same — but now it's <em>module-specific</em> navigation, while the module switcher jumps to the top-left. Same visual, two different jobs: users can't tell whether the rail switches products or navigates within one.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+          <IAFrame label="Today — ambiguous" tone="bad">
+            <p style={{ fontSize: 11, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginBottom: 8 }}>Inside People — but the rail looks like the Home switcher</p>
+            <MiniNavItem icon="group" label="People" active />
+            <MiniNavItem icon="volunteer_activism" label="Giving" />
+            <MiniNavItem icon="calculate" label="Accounting" />
+            <p style={{ fontSize: 11, color: "#B0473F", marginTop: 8 }}>Is this switching modules, or navigating People? Both patterns share one look.</p>
+          </IAFrame>
+          <IAFrame label="Spired — distinct roles" tone="good">
+            <p style={{ fontSize: 11, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginBottom: 8 }}>Module switcher (top-left) + area nav (rail) look and behave differently</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 9px", borderRadius: 999, background: "var(--semantic-color-light-mode-fill-static-accent-amethyst-light)", width: "fit-content", marginBottom: 8 }}>
+              <Icon name="apps" size={13} style={{ color: "var(--semantic-color-light-mode-text-action-primary-base)" }} /><span style={{ fontSize: 11.5, fontWeight: 600, color: "var(--semantic-color-light-mode-text-action-primary-base)" }}>People ▾</span>
+            </div>
+            <MiniNavItem icon="list" label="Directory" active />
+            <MiniNavItem icon="groups" label="Teams" />
+            <MiniNavItem icon="badge" label="Roles" />
+            <p style={{ fontSize: 11, color: "var(--spd-badge-positive-fg)", marginTop: 8 }}>Switcher = change product. Rail = navigate this product. Never confused.</p>
+          </IAFrame>
+        </div>
+
+        <ShowcaseLabel>Problem 2 — trials, locked items &amp; tasks crowd the rail</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+          <IAFrame label="Today — everything in the rail" tone="bad">
+            <MiniNavItem icon="group" label="People" active />
+            <MiniNavItem icon="smartphone" label="Mobile App (trial)" muted />
+            <MiniNavItem icon="lock" label="Communications" muted />
+            <MiniNavItem icon="local_florist" label="CloverSites" muted />
+            <MiniNavItem icon="settings" label="Settings" />
+            <p style={{ fontSize: 11, color: "#B0473F", marginTop: 8 }}>Owned areas, trials, upsells, and settings all compete in one list.</p>
+          </IAFrame>
+          <IAFrame label="Spired — one job per surface" tone="good">
+            <MiniNavItem icon="group" label="People" active />
+            <MiniNavItem icon="volunteer_activism" label="Giving Admin" />
+            <MiniNavItem icon="calculate" label="Accounting" />
+            <p style={{ fontSize: 11, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", margin: "8px 0 4px", fontWeight: 600 }}>Trials &amp; discovery → a separate, clearly-labelled group or the Home hub. Settings → profile / account, not the module rail.</p>
+            <p style={{ fontSize: 11, color: "var(--spd-badge-positive-fg)", marginTop: 4 }}>The rail is only the areas you actually work in.</p>
+          </IAFrame>
+        </div>
+
+        <ShowcaseLabel>Problem 3 — where do tasks go inside an area</ShowcaseLabel>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, paddingBottom: 8 }}>
+          <IAFrame label="Today — deep side-nav trees" tone="bad">
+            <MiniNavItem icon="group" label="People" active />
+            <div style={{ paddingLeft: 14 }}>
+              <MiniNavItem icon="chevron_right" label="All people" />
+              <MiniNavItem icon="chevron_right" label="Lists" />
+              <MiniNavItem icon="chevron_right" label="Active / Inactive" />
+            </div>
+            <p style={{ fontSize: 11, color: "#B0473F", marginTop: 8 }}>Filters and views become nav children — the rail grows without end.</p>
+          </IAFrame>
+          <IAFrame label="Spired — in-area navigation" tone="good">
+            <div style={{ display: "flex", gap: 6, marginBottom: 10, borderBottom: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)", paddingBottom: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)", borderBottom: "2px solid var(--semantic-color-light-mode-fill-action-primary-base)", paddingBottom: 6 }}>Directory</span>
+              <span style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>Teams</span>
+              <span style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>Roles</span>
+            </div>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {["All", "Active", "Inactive", "Leaders"].map((c, i) => (
+                <span key={c} className="spd-ia-chip" style={{ background: i === 0 ? "var(--spd-badge-role-bg)" : "var(--semantic-color-light-mode-fill-static-neutral-subtle)", color: i === 0 ? "var(--spd-badge-role-fg)" : "var(--semantic-color-light-mode-text-static-secondary-base)", border: i === 0 ? "0.5px solid var(--spd-badge-role-stroke)" : "0.5px solid transparent" }}>{c}</span>
+              ))}
+            </div>
+            <p style={{ fontSize: 11, color: "var(--spd-badge-positive-fg)", marginTop: 10 }}>Tabs for sub-sections, chips for filters — the rail stays flat.</p>
+          </IAFrame>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══ Placeholder — modules not yet captured from the live product ═══ */
+
+function Placeholder({ label }) {
+  return (
+    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 12, padding: 40, textAlign: "center" }}>
+      <SpiredMark size={30} mono="var(--semantic-color-light-mode-stroke-action-secondary-inverse-base)" />
+      <p style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", maxWidth: 440 }}>
+        {label} isn't built in this concept. Home and People show the product; the Concept section is where the design-system standards live.
+      </p>
+    </div>
+  );
+}
+
+/* ═══ App shell ═══ */
+
+function App() {
+  const [booting, setBooting] = useState(true);
+  const [active, setActive] = useState("home");
+  const [mode, setMode] = useState("light");
+
+  useEffect(() => { const t = setTimeout(() => setBooting(false), 900); return () => clearTimeout(t); }, []);
+  useEffect(() => { document.documentElement.dataset.spdMode = mode; }, [mode]);
+
+  if (booting) {
+    return (
+      <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <SpiredLoader label="Loading Spired…" />
+      </div>
+    );
+  }
+
+  const activeLabel = (ALL_NAV_ITEMS.find((i) => i.id === active) || {}).label || "Home";
+
+  return (
+    <div className="spd-shell spd-fade-in">
+      <TopNav mode={mode} onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")} />
+      <div className="spd-body">
+        <SideNav active={active} onSelect={setActive} />
+        <main className="spd-sheet">
+          {/* keyed on page only — a mode toggle re-themes in place, it never
+              reloads content */}
+          <div key={active} className="spd-fade-in" style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
+            {active === "home" ? <HomePage />
+              : active === "people" ? <PeoplePage />
+              : active === "motion" ? <MotionPage />
+              : active === "loading" ? <LoadingStatesPage />
+              : active === "errors" ? <ErrorStatesPage />
+              : active === "validation" ? <ValidationStatesPage />
+              : active === "states" ? <ComponentStatesPage />
+              : active === "feedback" ? <SystemFeedbackPage />
+              : active === "ia" ? <InfoArchitecturePage />
+              : <Placeholder label={activeLabel} />}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
