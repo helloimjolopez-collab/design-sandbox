@@ -1172,11 +1172,20 @@ function SkeletonRow() {
    the modules as one-click destinations plus Admin & Settings. Module→module
    is always two clicks (switcher → target); Home→module is one. ═══ */
 const MODULES = [
-  /* Home = the dashboard landing. No side nav of its own; Spired-level
-     Settings/Admin live in the account menu (avatar), so they never clash
-     with a module's own Settings. */
+  /* Spired Home keeps its own side nav (Amplify wants it there) — the org-
+     level hub. It shows ONLY on Home, so its admin/settings never appear
+     alongside a module's own admin/settings. Personal settings live in the
+     account menu; these are org/account-level. */
   { id: "home", name: "Spired Home", short: "Home", icon: "home",
-    color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)" },
+    color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)", nav: [
+      { id: "dashboard", label: "Dashboard", icon: "dashboard" },
+      { id: "account", label: "Church Account", icon: "business", group: "Administration" },
+      { id: "users", label: "Users & Permissions", icon: "manage_accounts", group: "Administration" },
+      { id: "billing", label: "Billing & Plans", icon: "credit_card", group: "Administration" },
+      { id: "integrations", label: "Integrations", icon: "extension", group: "Administration" },
+      { id: "explore", label: "Explore Products", icon: "apps", group: "Discover" },
+      { id: "partners", label: "Partners", icon: "handshake", group: "Discover" },
+    ]},
 
   { id: "people", name: "People", short: "People", icon: "group",
     color: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)", nav: [
