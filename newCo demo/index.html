@@ -1336,20 +1336,14 @@ function SectionItem({ icon, label, color, active, onClick }) {
   );
 }
 
-/* The current module's OWN navigation — a labelled section panel beside the
-   global rail. Its header names the module so you always know where you are.
-   Home's panel is the hub (Dashboard + Administration + Discover groups);
-   other modules list their functional sections. Renders a group label
-   whenever an item's `group` changes. */
+/* The current module's own navigation — the single side nav. No module-name
+   header (the switcher already names it), so it reads as a plain section list,
+   not a second switcher. Returns null for modules without sections (Home). */
 function ModuleNav({ mod, item, onSelectItem }) {
   if (!mod.nav || !mod.nav.length) return null;
   let lastGroup = null;
   return (
     <nav className="spd-modnav" aria-label={mod.name + " navigation"}>
-      <div className="spd-modnav__head">
-        <Icon name={mod.icon} filled size={17} style={{ color: mod.color }} />
-        <span className="spd-modnav__title">{mod.name}</span>
-      </div>
       <div className="spd-modnav__list spd-stagger">
         {mod.nav.map((n) => {
           const showGroup = n.group && n.group !== lastGroup;
