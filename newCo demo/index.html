@@ -2629,7 +2629,7 @@ function App() {
   const goItem = (id) => { setItemByModule((s) => ({ ...s, [moduleId]: id })); setMobileNav(false); };
 
   const renderPage = () => {
-    if (moduleId === "home") return <HomePage onOpenModule={goModule} />;
+    if (moduleId === "home") return item === "dashboard" ? <HomePage /> : <ModulePlaceholder mod={mod} item={item} />;
     if (moduleId === "people") return item === "directory" ? <PeoplePage /> : <ModulePlaceholder mod={mod} item={item} />;
     if (moduleId === "giving") return item === "overview" ? <GivingOverviewPage /> : <ModulePlaceholder mod={mod} item={item} />;
     if (moduleId === "concept") { const P = CONCEPT_PAGES[item]; return P ? <P /> : <ModulePlaceholder mod={mod} item={item} />; }
@@ -2643,11 +2643,15 @@ function App() {
         onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
         onGoHome={() => goModule("home")}
         onOpenMobileNav={() => setMobileNav(true)}
+        railCollapsed={railCollapsed}
+        moduleId={moduleId}
+        onSwitchModule={goModule}
+        onExpandRail={() => setRailCollapsed(false)}
       />
       <div className="spd-body">
-        {/* Persistent global rail — always here, at the left edge. */}
-        <GlobalRail moduleId={moduleId} onSwitch={goModule} />
-        {/* The current module's own section nav sits beside it (none on Home). */}
+        {/* Persistent module switcher rail — modules only; collapsible. */}
+        {!railCollapsed && <GlobalRail moduleId={moduleId} onSwitch={goModule} onCollapse={() => setRailCollapsed(true)} />}
+        {/* The current module's own section nav sits beside it (Home = hub). */}
         <ModuleNav mod={mod} item={item} onSelectItem={goItem} />
         <main className="spd-sheet">
           {/* keyed on module+section — a mode toggle re-themes in place, it
