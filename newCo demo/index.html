@@ -1663,92 +1663,162 @@ function ErrorStatesPage() {
   );
 }
 
-/* ═══ Validation States ═══ */
-function ValidationForm() {
-  const [values, setValues] = useState({ name: "", email: "", phone: "" });
+/* ═══ Validation States ═══
+   A reusable validated-form engine following the industry-standard error
+   pattern (GOV.UK error-summary + WCAG 3.3.1/3.3.3): validate on submit,
+   show an error SUMMARY panel that lists every problem as a link to its
+   field, mark each field inline (border + icon + message + aria-invalid),
+   move focus to the summary or first bad field, and re-validate live once
+   the user starts fixing. Two example forms below configure it differently. */
+function ValidatedForm({ icon, fields, submitLabel, successTitle, successText, summaryPosition, scrollTo }) {
+  const initial = {};
+  fields.forEach((f) => { initial[f.key] = f.type === "checkbox" ? false : ""; });
+  const [values, setValues] = useState(initial);
   const [submitted, setSubmitted] = useState(false);
   const [done, setDone] = useState(false);
-  const cardRef = React.useRef(null);
-  const refs = { name: React.useRef(null), email: React.useRef(null), phone: React.useRef(null) };
+  const summaryRef = React.useRef(null);
+  const refs = {};
+  fields.forEach((f) => { refs[f.key] = React.useRef(null); });
 
-  const errors = {};
-  if (!values.name.trim()) errors.name = "Enter the person's full name.";
-  if (!values.email.trim()) errors.email = "Enter an email address.";
-  else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(values.email)) errors.email = "That doesn't look like a valid email.";
-  if (values.phone && !/^[0-9()+\-\s]{7,}$/.test(values.phone)) errors.phone = "Use digits, spaces, and + ( ) - only.";
-  const errorList = Object.keys(errors);
+  const computeErrors = (vals) => {
+    const e = {};
+    fields.forEach((f) => {
+      const v = vals[f.key];
+      if (f.type === "checkbox") { if (f.required && !v) e[f.key] = f.errorMsg || ("Please confirm " + f.label.toLowerCase() + "."); return; }
+      const s = (v || "").trim();
+      if (f.required && !s) { e[f.key] = f.emptyMsg || ((f.type === "select" ? "Choose " : "Enter ") + f.label.toLowerCase() + "."); return; }
+      if (!s) return;
+      if (f.type === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)) e[f.key] = "Enter a valid email, like name@church.org.";
+      else if (f.type === "tel" && !/^[0-9()+\-\s]{7,}$/.test(s)) e[f.key] = "Use digits, spaces and + ( ) - only.";
+      else if (f.type === "amount" && !/^\d+(\.\d{1,2})?$/.test(s.replace(/[$,\s]/g, ""))) e[f.key] = "Enter an amount like 250 or 250.00.";
+      else if (f.validate) { const m = f.validate(s, vals); if (m) e[f.key] = m; }
+    });
+    return e;
+  };
+  const errors = computeErrors(values);
+  const errorKeys = fields.filter((f) => errors[f.key]).map((f) => f.key);
 
-  const set = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.value }));
   const submit = () => {
     setSubmitted(true);
-    if (errorList.length === 0) { setDone(true); return; }
+    if (errorKeys.length === 0) { setDone(true); return; }
     setDone(false);
-    // The signature pattern: reveal the summary panel AND scroll up to it.
-    if (cardRef.current) cardRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => {
+      if (scrollTo === "firstError" && refs[errorKeys[0]].current) {
+        const el = refs[errorKeys[0]].current;
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+      } else if (summaryRef.current) {
+        summaryRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        try { summaryRef.current.focus({ preventScroll: true }); } catch (e) { summaryRef.current.focus(); }
+      }
+    }, 40);
   };
+  const reset = () => { setValues(initial); setSubmitted(false); setDone(false); };
   const showErr = (k) => submitted && errors[k];
-  const showOk = (k) => submitted && !errors[k] && values[k].trim();
+  const showOk = (k) => { if (!submitted || errors[k]) return false; const f = fields.find((x) => x.key === k); return f.type === "checkbox" ? values[k] : (values[k] || "").trim(); };
 
-  const field = (k, label, type, placeholder, hint) => (
-    <div className="spd-field">
-      <label className="spd-field__label" htmlFor={"vf-" + k}>{label}</label>
-      <input id={"vf-" + k} ref={refs[k]} type={type} value={values[k]} onChange={set(k)} placeholder={placeholder}
-        className={"spd-input" + (showErr(k) ? " spd-input--error" : showOk(k) ? " spd-input--success" : "")}
-        aria-invalid={showErr(k) ? "true" : "false"} />
-      {showErr(k) ? (
-        <span className="spd-field__msg spd-field__msg--error"><Icon name="error" size={14} filled /> {errors[k]}</span>
-      ) : showOk(k) ? (
-        <span className="spd-field__msg spd-field__msg--success"><Icon name="check_circle" size={14} filled /> Looks good</span>
-      ) : hint ? (
-        <span className="spd-field__msg spd-field__msg--hint">{hint}</span>
-      ) : null}
+  const summary = (
+    <div ref={summaryRef} tabIndex={-1} role="alert" className="spd-alert spd-alert--error spd-fade-in" style={{ outline: "none", scrollMarginTop: 16 }}>
+      <Icon name="error" size={20} filled />
+      <div className="spd-alert__body">
+        <p className="spd-alert__title">Please complete or correct the highlighted {errorKeys.length === 1 ? "field" : errorKeys.length + " fields"}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 3, marginTop: 4 }}>
+          {errorKeys.map((k) => (
+            <button key={k} onClick={() => { const el = refs[k].current; if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus(); } }}
+              style={{ background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, color: "#B0473F", textDecoration: "underline", textUnderlineOffset: 2 }}>
+              {errors[k]}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
+  const renderField = (f) => {
+    const err = showErr(f.key), ok = showOk(f.key);
+    const cls = "spd-input" + (err ? " spd-input--error" : ok ? " spd-input--success" : "");
+    const msgId = "msg-" + f.key;
+    const common = { id: "vf-" + f.key, ref: refs[f.key], "aria-invalid": err ? "true" : "false", "aria-describedby": (err || ok || f.hint) ? msgId : undefined };
+    if (f.type === "checkbox") {
+      return (
+        <div key={f.key} className="spd-field" style={{ gridColumn: "1 / -1" }}>
+          <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+            <input type="checkbox" ref={refs[f.key]} checked={values[f.key]} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.checked }))}
+              aria-invalid={err ? "true" : "false"}
+              style={{ width: 17, height: 17, marginTop: 1, accentColor: "#6E64BE", flexShrink: 0, outline: err ? "2px solid #C0564E" : "none", outlineOffset: 1, borderRadius: 4 }} />
+            <span style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-base)", lineHeight: 1.4 }}>{f.label}</span>
+          </label>
+          {err && <span id={msgId} className="spd-field__msg spd-field__msg--error" style={{ marginLeft: 27 }}><Icon name="error" size={14} filled /> {errors[f.key]}</span>}
+        </div>
+      );
+    }
+    return (
+      <div key={f.key} className="spd-field" style={f.full ? { gridColumn: "1 / -1" } : undefined}>
+        <label className="spd-field__label" htmlFor={"vf-" + f.key}>{f.label}{!f.required && <span style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", fontWeight: 400 }}> · optional</span>}</label>
+        {f.type === "select" ? (
+          <select {...common} className={cls} value={values[f.key]} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))} style={{ appearance: "none", backgroundImage: "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238B85A8' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center", backgroundSize: 16, paddingRight: 34, color: values[f.key] ? "var(--semantic-color-light-mode-text-static-primary-base)" : "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>
+            <option value="">{f.placeholder || "Select…"}</option>
+            {f.options.map((o) => <option key={o} value={o} style={{ color: "#202020" }}>{o}</option>)}
+          </select>
+        ) : (
+          <input {...common} type={f.type === "amount" ? "text" : f.type} inputMode={f.type === "amount" ? "decimal" : undefined}
+            className={cls} value={values[f.key]} placeholder={f.placeholder}
+            onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))} />
+        )}
+        {err ? <span id={msgId} className="spd-field__msg spd-field__msg--error"><Icon name="error" size={14} filled /> {errors[f.key]}</span>
+          : ok ? <span id={msgId} className="spd-field__msg spd-field__msg--success"><Icon name="check_circle" size={14} filled /> Looks good</span>
+          : f.hint ? <span id={msgId} className="spd-field__msg spd-field__msg--hint">{f.hint}</span> : null}
+      </div>
+    );
+  };
+
   return (
-    <div ref={cardRef} className="spd-card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16, scrollMarginTop: 12 }}>
+    <div className="spd-card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16, scrollMarginTop: 12 }}>
       {done ? (
-        <div className="spd-alert spd-alert--success">
+        <div className="spd-alert spd-alert--success spd-fade-in">
           <Icon name="check_circle" size={20} filled />
           <div className="spd-alert__body">
-            <p className="spd-alert__title">Person added</p>
-            <p className="spd-alert__text">{values.name} was added to your directory.</p>
+            <p className="spd-alert__title">{successTitle}</p>
+            <p className="spd-alert__text">{typeof successText === "function" ? successText(values) : successText}</p>
           </div>
         </div>
-      ) : submitted && errorList.length > 0 ? (
-        <div className="spd-alert spd-alert--error spd-fade-in">
-          <Icon name="error" size={20} filled />
-          <div className="spd-alert__body">
-            <p className="spd-alert__title">{errorList.length === 1 ? "1 field needs attention" : errorList.length + " fields need attention"}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 2 }}>
-              {errorList.map((k) => (
-                <button key={k} onClick={() => refs[k].current && refs[k].current.focus()}
-                  style={{ background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, color: "#B0473F", textDecoration: "underline", textUnderlineOffset: 2 }}>
-                  {errors[k]}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      ) : (submitted && errorKeys.length > 0 && summaryPosition === "top") ? summary : null}
 
-      {field("name", "Full name", "text", "Marcus Diaz", "Required.")}
-      {field("email", "Email", "email", "marcus@grace.church", "We'll send an invite here.")}
-      {field("phone", "Phone (optional)", "tel", "+1 555 0110", null)}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+        {fields.map(renderField)}
+      </div>
+
+      {(submitted && errorKeys.length > 0 && summaryPosition === "bottom") ? summary : null}
 
       <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
-        <button className="spd-btn spd-btn--primary" onClick={submit}><Icon name="person_add" size={17} /> Add person</button>
-        {(submitted || done) && <button className="spd-btn spd-btn--ghost" onClick={() => { setValues({ name: "", email: "", phone: "" }); setSubmitted(false); setDone(false); }}>Reset</button>}
+        <button className="spd-btn spd-btn--primary" onClick={submit}><Icon name={icon} size={17} /> {submitLabel}</button>
+        {(submitted || done) && <button className="spd-btn spd-btn--ghost" onClick={reset}>Reset</button>}
       </div>
     </div>
   );
 }
 
 function ValidationStatesPage() {
+  const personFields = [
+    { key: "firstName", label: "First name", type: "text", required: true, placeholder: "Marcus" },
+    { key: "lastName", label: "Last name", type: "text", required: true, placeholder: "Diaz" },
+    { key: "email", label: "Email", type: "email", required: true, placeholder: "marcus@grace.church", full: true, hint: "We'll send an invitation here." },
+    { key: "phone", label: "Phone", type: "tel", required: false, placeholder: "+1 555 0110" },
+    { key: "role", label: "Role", type: "select", required: true, options: ["Member", "Leader", "Volunteer", "Staff"] },
+    { key: "campus", label: "Campus", type: "select", required: true, options: ["Main Campus", "North", "Online"] },
+  ];
+  const giftFields = [
+    { key: "donor", label: "Donor", type: "text", required: true, placeholder: "Search or type a name", full: true },
+    { key: "fund", label: "Fund", type: "select", required: true, options: ["General Fund", "Building Campaign", "Missions", "Youth"] },
+    { key: "amount", label: "Amount", type: "amount", required: true, placeholder: "250.00" },
+    { key: "date", label: "Gift date", type: "date", required: true },
+    { key: "method", label: "Method", type: "select", required: true, options: ["Cash", "Check", "Card", "ACH"] },
+    { key: "consent", label: "The donor authorised recording this gift on their behalf.", type: "checkbox", required: true, errorMsg: "You must confirm the donor's authorisation." },
+  ];
   return (
     <div className="spd-page">
       <div className="spd-page__inner" style={{ maxWidth: 980 }}>
-        <ConceptHeader title="Validation States" lead="Validation guides rather than scolds. Errors appear next to their cause, in plain language, and a failed submit takes you straight to the problem." />
+        <ConceptHeader title="Validation States" lead="Validation guides rather than scolds. On submit, every problem is named in plain language — inline on the field and gathered in a summary — and the view moves to where the work is. Try submitting each form below empty or half-filled." />
 
         <ShowcaseLabel>Field states</ShowcaseLabel>
         <div className="spd-card" style={{ padding: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20 }}>
@@ -1760,7 +1830,7 @@ function ValidationStatesPage() {
           <div className="spd-field">
             <span className="spd-field__label">Error</span>
             <input className="spd-input spd-input--error" defaultValue="not-an-email" readOnly />
-            <span className="spd-field__msg spd-field__msg--error"><Icon name="error" size={14} filled /> That doesn't look valid.</span>
+            <span className="spd-field__msg spd-field__msg--error"><Icon name="error" size={14} filled /> Enter a valid email.</span>
           </div>
           <div className="spd-field">
             <span className="spd-field__label">Success</span>
@@ -1769,16 +1839,24 @@ function ValidationStatesPage() {
           </div>
         </div>
 
-        <ShowcaseLabel>Submit → summary + scroll-to-problem</ShowcaseLabel>
-        <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", margin: "0 0 12px" }}>
-          Submit empty (or with a bad email). The form reveals a summary panel, marks each field, and scrolls to the top so the problems are in view — each summary line focuses its field.
+        <ShowcaseLabel>Example 1 — Add a person · summary at top, scrolls to summary</ShowcaseLabel>
+        <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", margin: "0 0 12px", lineHeight: 1.5 }}>
+          The GOV.UK / WCAG standard for longer forms: a summary panel appears at the top listing every problem as a link, each field is marked inline, and focus moves to the summary. Fixing a field clears it live.
         </p>
-        <ValidationForm />
+        <ValidatedForm icon="person_add" fields={personFields} submitLabel="Add person" summaryPosition="top" scrollTo="summary"
+          successTitle="Person added" successText={(v) => (v.firstName + " " + v.lastName).trim() + " was added to your directory."} />
+
+        <ShowcaseLabel>Example 2 — Record a gift · summary at bottom, scrolls to first field</ShowcaseLabel>
+        <p style={{ fontSize: 12.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", margin: "0 0 12px", lineHeight: 1.5 }}>
+          A shorter, denser form near its action: the summary sits by the button, and submit takes you straight to the first field that needs attention. Shows amount, date, select and a required consent checkbox.
+        </p>
+        <ValidatedForm icon="savings" fields={giftFields} submitLabel="Record gift" summaryPosition="bottom" scrollTo="firstError"
+          successTitle="Gift recorded" successText={(v) => "A $" + (v.amount || "0").replace(/[$,\s]/g, "") + " gift to " + (v.fund || "the fund") + " was recorded."} />
 
         <ShowcaseLabel>Do &amp; don't</ShowcaseLabel>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, paddingBottom: 8 }}>
-          <DoDont type="do" points={["Validate on submit; confirm inline once a field has been corrected.", "Put the message on the field, and summarise at the top for long forms.", "Move focus to the first problem so keyboard users aren't stranded."]} />
-          <DoDont type="dont" points={["Don't validate angrily on every keystroke before the user finishes.", "Don't use colour alone — pair red with an icon and words.", "Don't clear what the user typed when validation fails."]} />
+          <DoDont type="do" points={["Validate on submit; then re-check live so fixed fields turn green as they go.", "Name every problem twice: inline on the field, and in a summary that links to it.", "Move focus to the summary (or first error) so keyboard and screen-reader users land on the problem."]} />
+          <DoDont type="dont" points={["Don't scold on every keystroke before a field is finished.", "Don't rely on red alone — pair colour with an icon and plain words.", "Don't clear the user's input, and never say only 'invalid input'."]} />
         </div>
       </div>
     </div>
