@@ -1150,7 +1150,7 @@ function firstItemOf(id) {
    labels vs. a labelled list), so the two are never confused. */
 const RAIL_TOP = ["home", "people", "giving", "accounting", "media", "safety", "concept"];
 
-function GlobalRail({ moduleId, onSwitch }) {
+function GlobalRail({ moduleId, onSwitch, onCollapse }) {
   const railItem = (m) => {
     const active = m.id === moduleId;
     return (
@@ -1172,13 +1172,71 @@ function GlobalRail({ moduleId, onSwitch }) {
   };
   return (
     <nav className="spd-grail" aria-label="Modules">
+      <div className="spd-grail__head">
+        <button className="spd-topnav__iconbtn spd-grail__collapse" onClick={onCollapse} aria-label="Collapse module rail" title="Collapse">
+          <Icon name="left_panel_close" size={18} />
+        </button>
+      </div>
       <div className="spd-grail__group">
         {RAIL_TOP.map((id) => railItem(MODULE_MAP[id]))}
       </div>
-      <div className="spd-grail__group spd-grail__group--bottom">
-        {railItem(MODULE_MAP.admin)}
-      </div>
     </nav>
+  );
+}
+
+/* When the rail is collapsed, the module switcher folds into this compact
+   top-left control — same function, same place, just a smaller footprint.
+   It shows the current module and opens a menu of modules; a pin button
+   brings the rail back. Modules only (Home/Settings/etc. live on the hub). */
+function TopModuleSwitcher({ moduleId, onSwitch, onExpand }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const mod = MODULE_MAP[moduleId];
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, [open]);
+  return (
+    <div className="spd-tms" ref={ref}>
+      <button className="spd-topnav__iconbtn spd-tms__pin" onClick={onExpand} aria-label="Show module rail" title="Show rail">
+        <Icon name="left_panel_open" size={18} />
+      </button>
+      <button
+        className={"spd-tms__trigger" + (open ? " is-open" : "")}
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu" aria-expanded={open} title="Switch module"
+      >
+        <span className="spd-tms__chip" style={{ background: `color-mix(in srgb, ${mod.color} 15%, transparent)` }}>
+          <Icon name={mod.icon} filled size={16} style={{ color: mod.color }} />
+        </span>
+        <span className="spd-tms__name">{mod.short}</span>
+        <Icon name="unfold_more" size={15} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }} />
+      </button>
+      {open && (
+        <div className="spd-tms__menu spd-fade-in" role="menu" aria-label="Modules">
+          <p className="spd-tms__menuhead">Switch module</p>
+          {RAIL_TOP.map((id) => {
+            const m = MODULE_MAP[id];
+            const current = m.id === moduleId;
+            return (
+              <button key={m.id} role="menuitemradio" aria-checked={current}
+                className={"spd-tms__opt" + (current ? " is-current" : "")}
+                onClick={() => { onSwitch(m.id); setOpen(false); }}>
+                <span className="spd-tms__chip" style={{ background: `color-mix(in srgb, ${m.color} 15%, transparent)` }}>
+                  <Icon name={m.icon} filled size={15} style={{ color: m.color }} />
+                </span>
+                <span style={{ flex: 1 }}>{m.name}{m.demo && <span className="spd-modsw__tag">Demo</span>}</span>
+                {current && <Icon name="check" size={15} style={{ color: m.color }} />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
