@@ -1437,7 +1437,7 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
   );
 }
 
-function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, moduleId, onSwitchModule }) {
+function TopNav({ mode, onToggleMode, onOpenMobileNav, moduleId, onSwitchModule }) {
   const midnight = mode === "midnight";
   return (
     <header className="spd-topnav" role="banner">
@@ -1445,10 +1445,11 @@ function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, moduleId, onSwi
         <button className="spd-topnav__iconbtn spd-topnav__hamburger" onClick={onOpenMobileNav} aria-label="Open navigation">
           <Icon name="menu" />
         </button>
-        {/* Small, quiet brand mark → Home. No wordmark, no heavy press. */}
-        <button className="spd-topnav__logo" onClick={onGoHome} aria-label="Home" title="Home">
+        {/* Quiet, non-interactive brand mark. Home is reached via the switcher
+            and the Home side nav, so the logo isn't a control. */}
+        <span className="spd-topnav__logo" aria-hidden="true">
           <SpiredMark size={22} />
-        </button>
+        </span>
         {/* Module switcher — the single, compact way to change modules. */}
         <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
         <span className="spd-topnav__brandsep" aria-hidden="true" />
