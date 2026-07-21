@@ -1404,64 +1404,107 @@ function SidebarToggleIcon({ collapsed, size = 20 }) {
    labels vs. a labelled list), so the two are never confused. */
 const RAIL_TOP = ["home", "people", "giving", "accounting", "media", "safety", "concept"];
 
-/* Module switcher — Atlassian-style. A nine-dot waffle is the ONLY trigger;
-   the current module's icon + name sit beside it as a non-clickable "you are
-   here" label. Available everywhere (incl. Spired Home), always the same. */
-function ModuleSwitcher({ moduleId, onSwitch }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+/* Home uses a deep, vibrant amethyst (from the Figma warm-nav reference) —
+   NEVER the primary-action purple. Every other module uses its own colour. */
+const moduleGlyphColor = (id) => (id === "home" ? "#694D94" : MODULE_MAP[id].color);
+const moduleBadgeFill = (id) => (id === "home"
+  ? "var(--semantic-color-light-mode-fill-static-accent-amethyst-light)"
+  : `color-mix(in srgb, ${moduleGlyphColor(id)} 17%, transparent)`);
+
+/* The module badge + name in the top bar. This is NOT the switcher anymore —
+   it's a one-click shortcut back to the CURRENT module's home (its dashboard /
+   first section) for when you've navigated deep inside it. Switching modules
+   happens at the Spired logo (popover) or the pinned rail. */
+function ModuleBadge({ moduleId, onHome }) {
   const mod = MODULE_MAP[moduleId];
+  return (
+    <button className="spd-tms__trigger" onClick={onHome} title={mod.name + " home"}>
+      <span className="spd-tms__badge" style={{ background: moduleBadgeFill(mod.id) }}>
+        <Icon name={mod.icon} filled size={17} style={{ color: moduleGlyphColor(mod.id) }} />
+      </span>
+      <span className="spd-tms__name">{mod.name}</span>
+    </button>
+  );
+}
+
+/* Module switcher as a POPOVER — opened from the Spired logo when the switcher
+   isn't pinned. Lists every module; picking one switches. A Pin control docks
+   it to the persistent left rail (see ModuleRail) for one-click access. */
+function SwitcherPopover({ moduleId, onSwitch, onPin, onClose }) {
+  const ref = useRef(null);
   useEffect(() => {
-    if (!open) return;
-    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    const onDoc = (e) => {
+      // Ignore clicks on the logo — it owns the open/close toggle itself.
+      if (e.target.closest && e.target.closest("[data-sw-logo]")) return;
+      if (ref.current && !ref.current.contains(e.target)) onClose();
+    };
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
-  }, [open]);
-  {/* No separate waffle — the module logo + name IS the switcher trigger
-      (clicking opens the module menu). Home's glyph is a solid DEEP purple
-      (#41377D), never the primary-action purple; badge fill is a light tint. */}
-  /* Home uses a deep, vibrant amethyst (from the Figma warm-nav reference) —
-     NOT the primary-action purple. */
-  const glyphColor = mod.id === "home" ? "#694D94" : mod.color;
-  // Home badge fill = a clean light lavender (not a muddy dark tint).
-  const badgeFill = mod.id === "home"
-    ? "var(--semantic-color-light-mode-fill-static-accent-amethyst-light)"
-    : `color-mix(in srgb, ${glyphColor} 17%, transparent)`;
+  }, [onClose]);
   return (
-    <div className="spd-tms" ref={ref}>
-      <button
-        className={"spd-tms__trigger" + (open ? " is-open" : "")}
-        onClick={() => setOpen((o) => !o)}
-        aria-haspopup="menu" aria-expanded={open} title="Switch module"
-      >
-        <span className="spd-tms__badge" style={{ background: badgeFill }}>
-          <Icon name={mod.icon} filled size={17} style={{ color: glyphColor }} />
-        </span>
-        <span className="spd-tms__name">{mod.name}</span>
-      </button>
-      {open && (
-        <div className="spd-tms__menu spd-fade-in" role="menu" aria-label="Modules">
-          <p className="spd-tms__menuhead">Switch module</p>
+    <div className="spd-swpop spd-fade-in" ref={ref} role="menu" aria-label="Modules">
+      <div className="spd-swpop__head">
+        <p className="spd-swpop__title">Switch module</p>
+        <button className="spd-swpop__pin" onClick={onPin} title="Pin the switcher to a rail on the left">
+          <Icon name="push_pin" size={14} /> Pin to rail
+        </button>
+      </div>
+      <div className="spd-swpop__list">
+        {RAIL_TOP.map((id) => {
+          const m = MODULE_MAP[id];
+          const current = m.id === moduleId;
+          return (
+            <button key={m.id} role="menuitemradio" aria-checked={current}
+              className={"spd-tms__opt" + (current ? " is-current" : "")}
+              onClick={() => { onSwitch(m.id); onClose(); }}>
+              <span className="spd-tms__chip" style={{ background: moduleBadgeFill(m.id) }}>
+                <Icon name={m.icon} filled size={15} style={{ color: moduleGlyphColor(m.id) }} />
+              </span>
+              <span style={{ flex: 1 }}>{m.name}{m.demo && <span className="spd-tms__tag">Demo</span>}</span>
+              {current && <Icon name="check" size={15} style={{ color: moduleGlyphColor(m.id) }} />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* Module switcher PINNED as a persistent icon rail at the far left, so every
+   module is one click from everywhere. Collapsed it's an icon rail; hovering
+   expands it (as an overlay, no layout shift) to reveal labels. Unpin returns
+   it to the logo popover. */
+function ModuleRail({ moduleId, onSwitch, onUnpin }) {
+  return (
+    <nav className="spd-mrail" aria-label="Modules">
+      <div className="spd-mrail__inner">
+        <div className="spd-mrail__scroll">
           {RAIL_TOP.map((id) => {
             const m = MODULE_MAP[id];
-            const current = m.id === moduleId;
+            const active = id === moduleId;
+            const gc = moduleGlyphColor(id);
             return (
-              <button key={m.id} role="menuitemradio" aria-checked={current}
-                className={"spd-tms__opt" + (current ? " is-current" : "")}
-                onClick={() => { onSwitch(m.id); setOpen(false); }}>
-                <span className="spd-tms__chip" style={{ background: `color-mix(in srgb, ${m.color} 15%, transparent)` }}>
-                  <Icon name={m.icon} filled size={15} style={{ color: m.color }} />
+              <button key={id} className={"spd-mrail__item" + (active ? " is-active" : "")}
+                onClick={() => onSwitch(id)} title={m.name}
+                style={active ? { "--sel": gc } : undefined}>
+                <span className="spd-mrail__indicator" aria-hidden="true" />
+                <span className="spd-mrail__badge"
+                  style={{ background: active ? `color-mix(in srgb, ${gc} 15%, transparent)` : "transparent" }}>
+                  <Icon name={m.icon} filled={active} size={20} style={active ? { color: gc } : undefined} />
                 </span>
-                <span style={{ flex: 1 }}>{m.name}{m.demo && <span className="spd-tms__tag">Demo</span>}</span>
-                {current && <Icon name="check" size={15} style={{ color: m.color }} />}
+                <span className="spd-mrail__label">{m.name}{m.demo && <span className="spd-tms__tag">Demo</span>}</span>
               </button>
             );
           })}
         </div>
-      )}
-    </div>
+        <button className="spd-mrail__unpin" onClick={onUnpin} title="Unpin — open the switcher from the Spired logo instead">
+          <span className="spd-mrail__badge"><Icon name="keep_off" size={19} /></span>
+          <span className="spd-mrail__label">Unpin</span>
+        </button>
+      </div>
+    </nav>
   );
 }
 
