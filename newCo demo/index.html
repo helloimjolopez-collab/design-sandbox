@@ -2981,14 +2981,19 @@ function App() {
   const [moduleId, setModuleId] = useState("home");
   const [itemByModule, setItemByModule] = useState({}); // remembers last section per module
   const [mobileNav, setMobileNav] = useState(false);
-  const [navHidden, setNavHidden] = useState(false); // logo: side nav fully hidden vs revealed
-  const [navRail, setNavRail] = useState(false);     // collapse control: full labels vs icon rail
-  const [switching, setSwitching] = useState(false); // brief loader while moving to another module
+  const [navRail, setNavRail] = useState(false);       // side-nav collapse control: full labels vs icon rail
+  const [switcherPinned, setSwitcherPinned] = useState(false); // module switcher docked as a left rail
+  const [switcherOpen, setSwitcherOpen] = useState(false);     // popover open (unpinned only)
+  const [railHidden, setRailHidden] = useState(false);         // logo hides/reveals the pinned rail
+  const [switching, setSwitching] = useState(false);   // brief loader while moving to another module
 
-  // The logo hides/reveals the side nav (opens the drawer on mobile).
-  const toggleNav = () => {
-    if (window.matchMedia("(max-width: 768px)").matches) setMobileNav((o) => !o);
-    else setNavHidden((h) => !h);
+  // The Spired logo drives the module switcher: on mobile it opens the drawer;
+  // when the switcher is pinned it hides/reveals the rail; otherwise it opens
+  // the popover.
+  const onLogoClick = () => {
+    if (window.matchMedia("(max-width: 768px)").matches) { setMobileNav((o) => !o); return; }
+    if (switcherPinned) setRailHidden((h) => !h);
+    else setSwitcherOpen((o) => !o);
   };
 
   useEffect(() => { const t = setTimeout(() => setBooting(false), 1700); return () => clearTimeout(t); }, []);
