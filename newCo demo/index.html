@@ -700,7 +700,12 @@
     font-family: inherit; max-width: 240px;
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
-  .spd-tms__trigger:hover, .spd-tms__trigger.is-open { background: color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 11%, transparent); }
+  .spd-tms__trigger:hover, .spd-tms__trigger.is-open { background: color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 8%, transparent); }
+  /* Current-module label — non-interactive "you are here", no hover/cursor. */
+  .spd-tms__current {
+    display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 10px 0 2px;
+    max-width: 240px; user-select: none;
+  }
   /* Module app-tile — light tint fill + solid colour glyph. Squared. */
   .spd-tms__badge {
     width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
@@ -1710,11 +1715,12 @@ function AccountMenu({ mode, onToggleMode }) {
    their module's colour even when inactive); `trailing` adds a → to signal the
    item leaves for another area. */
 function SectionItem({ icon, label, color, active, onClick, leadColor }) {
-  // Active: stripe + icon + label take the selected colour (`--sel`) over a
-  // soft module-tint fill. Recent module links (leadColor) keep their coloured
-  // app-tile. Other idle items are plain neutral, no tile.
-  const tile = !!leadColor && !active; // Recent modules → coloured tile
-  const iconColor = active ? "var(--sel)" : (leadColor || "var(--semantic-color-light-mode-text-static-secondary-base)");
+  // Active: stripe + icon + label take the selected colour (`--sel`).
+  // Recent module links (leadColor) are marked by an OUTLINED ring + outlined
+  // module-ink glyph — distinguishable as apps, but far lighter than a fill.
+  const tile = !!leadColor && !active; // Recent modules → outlined ring
+  const inkFor = (c) => `color-mix(in srgb, ${c} 60%, var(--semantic-color-light-mode-text-static-primary-base))`;
+  const iconColor = active ? "var(--sel)" : (leadColor ? inkFor(leadColor) : "var(--semantic-color-light-mode-text-static-secondary-base)");
   return (
     <button
       className={"spd-navitem" + (active ? " is-active" : "")}
@@ -1726,10 +1732,10 @@ function SectionItem({ icon, label, color, active, onClick, leadColor }) {
     >
       {active && <span className="spd-navitem__indicator" />}
       <span
-        className={"spd-navitem__glyph" + (tile ? " spd-navitem__glyph--tile" : "")}
-        style={tile ? { background: `color-mix(in srgb, ${leadColor} 14%, transparent)` } : undefined}
+        className={"spd-navitem__glyph" + (tile ? " spd-navitem__glyph--ring" : "")}
+        style={tile ? { boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${leadColor} 32%, transparent)` } : undefined}
       >
-        <Icon name={icon} filled={active || tile} size={19} style={{ color: iconColor }} />
+        <Icon name={icon} filled={active} size={19} style={{ color: iconColor }} />
       </span>
       <span className="spd-navitem__label">{label}</span>
     </button>
