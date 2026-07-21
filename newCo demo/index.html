@@ -1426,6 +1426,16 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
   let lastGroup = null;
   return (
     <nav className={"spd-modnav" + (rail ? " is-rail" : "")} aria-label={mod.name + " navigation"}>
+      {/* Collapse / expand control — pinned at the TOP where the sidebar
+          collapse toggle is expected. Full labels ↔ icon rail. This is
+          separate from the logo (which hides/reveals the whole nav). */}
+      <div className="spd-modnav__header">
+        <button className="spd-modnav__collapse" onClick={onToggleRail}
+          aria-label={rail ? "Expand navigation" : "Collapse to rail"}
+          title={rail ? "Expand navigation" : "Collapse to rail"}>
+          <Icon name={rail ? "left_panel_open" : "left_panel_close"} size={18} />
+        </button>
+      </div>
       <div className="spd-modnav__list spd-stagger">
         {mod.nav.map((n) => {
           const showGroup = n.group && n.group !== lastGroup;
@@ -1449,16 +1459,6 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
             </React.Fragment>
           );
         })}
-      </div>
-      {/* Collapse / expand control — full labels ↔ icon rail. Separate from
-          the logo's hide/reveal. */}
-      <div className="spd-modnav__foot">
-        <button className="spd-modnav__collapse" onClick={onToggleRail}
-          aria-label={rail ? "Expand navigation" : "Collapse to rail"}
-          title={rail ? "Expand" : "Collapse"}>
-          <Icon name={rail ? "chevron_right" : "chevron_left"} size={18} />
-          <span className="spd-modnav__collapse-label">Collapse</span>
-        </button>
       </div>
     </nav>
   );
