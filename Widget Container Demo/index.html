@@ -852,6 +852,74 @@
   function fundContent(w){
     return '<div class="dep-controls"><div class="dep-left"><span class="dep-col-h" style="padding:2px 0">Funds</span></div><div class="dep-right">'+simpleToggle(w)+overflowBtn(w)+'</div></div>'+((w.view||"table")==="chart"?pie(FUND,w.size==="large"?170:140,w.size==="large"?"col":"row"):tableHTML(FUND,"Amount",w.size==="wide"));
   }
+  /* ---- Budget Compared to Actual ---- */
+  var BGT_FY="FY 2026";
+  function bgtTog(opts,cur,w,action,aria){return '<div class="vtoggle" role="group" aria-label="'+(aria||"View")+'">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="'+action+'" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+o[1]+'</button>';}).join("")+'</div>';}
+  function bgtHeaderBlock(w){
+    var av=(w.acctview==="expense")?"expense":"income";
+    var rows=bgtSet(w),ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
+    var variance=latest?bgtVariance(av,latest.budget,latest.actual):null,col=bgtFavColor(variance);
+    var sign=(variance==null)?"":(variance>=0?"+":"−"),favWord=(variance==null)?"No data yet":(variance>=0?"Favourable":"Unfavourable");
+    var numInner='<div class="dep-hd-kpigrp"><span class="metric-value" style="color:'+col+'">'+sign+money(Math.abs(variance||0))+'</span><span class="delta-grp"><span class="bgt-favword" style="color:'+col+'">'+favWord+'</span><span class="bgt-caption"> · YTD vs. original budget</span></span></div>';
+    var v=w.view||"bar";
+    var viewToggle=bgtTog([["bar","Per Period"],["ytd","YTD"],["table","Table"]],v,w,"bgt-view","Chart view");
+    var acctToggle=bgtTog([["income","Income"],["expense","Expense"]],av,w,"bgt-acctview","Account view");
+    return '<div class="dep-hd">'+
+    '<div class="dep-hd-top"><span class="scope-chip" style="cursor:default"><span class="sc-nm">'+BGT_FY+'</span></span><div class="dep-hd-toggle">'+viewToggle+'</div></div>'+
+    '<div class="dep-hd-num">'+numInner+'<div class="dep-hd-r">'+acctToggle+'</div></div>'+
+    '</div>';}
+  function bgtBarChart(w){
+    var av=(w.acctview==="expense")?"expense":"income";
+    var rows=bgtThru(bgtSet(w));
+    if(!rows.length)return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No actuals posted yet this year</div><div class="state-sub">Once transactions post for a period, its bar will appear here.</div></div>';
+    var max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual);});
+    var cols=rows.map(function(r){
+      var vr=bgtVariance(av,r.budget,r.actual),col=bgtFavColor(vr),bH=Math.max(2,Math.round(r.budget/max*100)),aH=Math.max(2,Math.round(r.actual/max*100)),sign=vr>=0?"+":"−",
+        srtxt=(r.period+': budget '+money(r.budget)+', actual '+money(r.actual)+', '+sign+money(Math.abs(vr))+' '+(vr>=0?'favourable':'unfavourable')+'.').replace(/"/g,"&quot;");
+      return '<div class="bgt-col" role="group" aria-label="'+srtxt+'"><div class="bgt-bars"><div class="bgt-bar bgt-bar-budget" style="height:'+bH+'%"></div><div class="bgt-bar bgt-bar-actual" style="height:'+aH+'%;background:'+col+'"></div></div><div class="bgt-collbl">'+r.period+'</div><div class="bgt-colvar" style="color:'+col+'" aria-hidden="true">'+sign+fmtAxis(Math.abs(vr))+'</div><span class="sr-only">'+srtxt+'</span></div>';}).join("");
+    return '<div class="bgt-chart-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw bgt-sw-budget"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-fav"></span>Favourable</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-unfav"></span>Unfavourable</span></div><div class="bgt-bars-row">'+cols+'</div></div>';}
+  function bgtYTDChart(w){
+    var av=(w.acctview==="expense")?"expense":"income";
+    var rows=bgtSet(w),ytd=bgtYTD(rows),n=ytd.length,actualsThru=ytd.filter(function(r){return r.actual!=null;});
+    var maxB=Math.max.apply(null,ytd.map(function(r){return r.budget;}));
+    var maxA=actualsThru.length?Math.max.apply(null,actualsThru.map(function(r){return r.actual;})):0;
+    var hi=Math.max(maxB,maxA,1)*1.1;
+    function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return 100-(v/hi*100);}
+    var budgetPts=ytd.map(function(r,i){return px(i).toFixed(2)+','+py(r.budget).toFixed(2);}).join(" ");
+    var actualPts=actualsThru.map(function(r,i){return px(i).toFixed(2)+','+py(r.actual).toFixed(2);}).join(" ");
+    var lastA=actualsThru.length?actualsThru[actualsThru.length-1]:null,lastVar=lastA?bgtVariance(av,lastA.budget,lastA.actual):null,lineCol=bgtFavColor(lastVar);
+    var months=ytd.map(function(r){return r.period;}),tk=[0,Math.round((n-1)/3),Math.round((n-1)*2/3),n-1].filter(function(v,i,a){return a.indexOf(v)===i;});
+    var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
+    var svg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none">'+
+      '<polyline fill="none" stroke="var(--wn-400)" stroke-width="1.7" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" points="'+budgetPts+'"/>'+
+      (actualPts?'<polyline fill="none" stroke="'+lineCol+'" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+actualPts+'"/>':'')+
+      '</svg>';
+    var srRows=ytd.map(function(r){var v=r.actual!=null?bgtVariance(av,r.budget,r.actual):null;return r.period+' cumulative: budget '+money(r.budget)+(r.actual!=null?(', actual '+money(r.actual)+', '+(v>=0?'+':'−')+money(Math.abs(v))+' '+(v>=0?'favourable':'unfavourable')):', actual not yet available')+'.';}).join(" ").replace(/"/g,"&quot;");
+    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw bgt-sw-budget-line"></span>Budget (cumulative)</span><span class="bgt-lg"><span class="bgt-sw" style="background:'+lineCol+'"></span>Actual (cumulative)</span></div><div class="bgt-ytd-canvas">'+svg+'</div><div class="bgt-ytd-xax">'+xl+'</div><span class="sr-only">'+srRows+'</span></div>';}
+  function bgtTable(w){
+    var av=(w.acctview==="expense")?"expense":"income";
+    var rows=bgtSet(w);
+    var body=rows.map(function(r){
+      var v=r.actual!=null?bgtVariance(av,r.budget,r.actual):null,col=bgtFavColor(v),vtxt=v==null?"—":((v>=0?"+":"−")+money(Math.abs(v))),favtxt=v==null?"":(v>=0?" Favourable":" Unfavourable");
+      return '<tr><th scope="row">'+r.period+'</th><td>'+money(r.budget)+'</td><td>'+(r.actual!=null?money(r.actual):"—")+'</td><td style="color:'+col+';font-weight:600">'+vtxt+favtxt+'</td></tr>';}).join("");
+    return '<div class="bgt-table-wrap"><table class="bgt-table"><caption class="sr-only">Budget compared to actual, by period, for '+(av==="expense"?"expense":"income")+' accounts. Compared to the original budget only.</caption><thead><tr><th scope="col">Period</th><th scope="col">Budget</th><th scope="col">Actual</th><th scope="col">Variance</th></tr></thead><tbody>'+body+'</tbody></table></div>';}
+  function bgtGlance(w){
+    var av=(w.acctview==="expense")?"expense":"income";
+    var rows=bgtSet(w),ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
+    var v=latest?bgtVariance(av,latest.budget,latest.actual):null,col=bgtFavColor(v),sign=v==null?"":(v>=0?"+":"−"),favWord=v==null?"No data yet":(v>=0?"Favourable":"Unfavourable");
+    return '<div class="kpi-row"><div class="kpi-num">'+
+      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+(av==="expense"?"Expense":"Income")+'</span></span>'+
+      '<div class="metric-value" style="color:'+col+'">'+sign+money(Math.abs(v||0))+'</div>'+
+      '<div class="gl-sub" style="color:'+col+'">'+favWord+'<span style="color:var(--txt-subtle);font-weight:400"> · YTD vs. budget</span></div>'+
+      '</div></div>';}
+  /* Confluence 8.2/9.8: glance = headline variance; detail (wide) = one chart at a time via toggle; explore (full) = per-period + YTD together, table always a peer view for the accessibility fix (9.5) — never the only way to read a number. */
+  function budgetContent(w){
+    if(w.size==="kpi")return bgtGlance(w);
+    var mh=bgtHeaderBlock(w),v=w.view||"bar";
+    if(w.size==="wide")return mh+(v==="ytd"?bgtYTDChart(w):v==="table"?bgtTable(w):bgtBarChart(w));
+    if(v==="table")return mh+bgtTable(w);
+    return mh+'<div class="bgt-explore"><div class="bgt-explore-col">'+bgtBarChart(w)+'</div><div class="bgt-explore-col">'+bgtYTDChart(w)+'</div></div>';
+  }
   /* Sign-ups: a list with NO natural total, so the optional top metric IS shown (number + trend). Changing the period changes the number/trend only — the list stays "most recent". */
   var SIGNUPS=[{name:"Ava Thompson",group:"Youth",when:"2h ago"},{name:"Liam Carter",group:"Choir",when:"5h ago"},{name:"Noah Bennett",group:"Men's Group",when:"Yesterday"},{name:"Emma Davis",group:"Volunteers",when:"Yesterday"},{name:"Olivia Wright",group:"Youth",when:"2 days ago"},{name:"Mason Reed",group:"Missions",when:"3 days ago"},{name:"Sophia Hughes",group:"Choir",when:"3 days ago"},{name:"Jack Morgan",group:"Youth",when:"4 days ago"}];
   function signupsMetric(w){return '<div class="dep-summary"><div><div class="wsub" style="margin:0 0 2px">Total this '+periodLbl(w)+'</div><div><span class="kpi">128</span> <span class="trend">'+ICON("trending_up")+' 6.2%</span> '+trendRangeBtn(w)+'</div></div>'+sparkMini()+'</div>';}
