@@ -520,7 +520,12 @@
     var big={"Restricted Funds":16,"Grant Funds":9,"Trust Accounts":7};
     var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Facilities","Worship","Children","Fellowship"];
     var inc=["Jan 2012","Jun 2014","Mar 2016","Aug 2018","Feb 2020","Nov 2022"],trs=["up","up","flat","down"];
-    DEP_TYPES.forEach(function(t){var c=big[t]||(2+Math.floor(r()*3));for(var i=0;i<c;i++){out.push({name:(suf[i%suf.length]+(i>=suf.length?" "+(Math.floor(i/suf.length)+1):"")),type:t,incept:inc[Math.floor(r()*6)],acct:"••"+(1000+Math.floor(r()*8999)),net:Math.round(25000+r()*1650000),trend:trs[Math.floor(r()*4)]});}});return out;})();
+    DEP_TYPES.forEach(function(t){var c=big[t]||(2+Math.floor(r()*3));for(var i=0;i<c;i++){out.push({name:(suf[i%suf.length]+(i>=suf.length?" "+(Math.floor(i/suf.length)+1):"")),type:t,incept:inc[Math.floor(r()*6)],acct:"••"+(1000+Math.floor(r()*8999)),net:Math.round(25000+r()*1650000),trend:trs[Math.floor(r()*4)]});}});
+    /* Deliberate test cases: real-world duplicate account names (Shelby doesn't enforce name uniqueness — two different accounts can be created with the same exact name) and a long account name to exercise truncation. */
+    out.push({name:"General",type:"Checking",incept:"May 2019",acct:"••7734",net:412500,trend:"up"});
+    out.push({name:"General",type:"Checking",incept:"Sep 2021",acct:"••2916",net:88750,trend:"down"});
+    out.push({name:"Faith Community Endowment for Children's Ministry and Outreach Programs",type:"Endowment",incept:"Feb 2015",acct:"••5502",net:265300,trend:"flat"});
+    return out;})();
   var DEP_TOTAL=DEP.reduce(function(s,a){return s+a.net;},0);
   /* large dataset for the edge-case instance: ~120 accounts across ~20 types, some types with 20–33 accounts */
   var DEP_BIG=(function(){var out=[],seed=99;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
