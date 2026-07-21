@@ -2766,13 +2766,14 @@ function App() {
       <TopNav
         mode={mode}
         onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
+        onGoHome={() => goModule("home")}
         onOpenMobileNav={() => setMobileNav(true)}
         moduleId={moduleId}
         onSwitchModule={goModule}
       />
       <div className="spd-body">
-        {/* Single side nav = the current module's own nav (none on Home). */}
-        <ModuleNav mod={mod} item={item} onSelectItem={goItem} />
+        {/* Single side nav = the current module's own nav (Home = launcher hub). */}
+        <ModuleNav mod={mod} item={item} onSelectItem={goItem} onSwitchModule={goModule} />
         <main className="spd-sheet">
           {/* keyed on module+section — a mode toggle re-themes in place, it
               never reloads content */}
