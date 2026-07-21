@@ -595,6 +595,14 @@
     font-weight: 600;
     color: color-mix(in srgb, var(--sel) 65%, var(--semantic-color-light-mode-text-static-primary-base));
   }
+  /* Brighter (toward white) in Midnight so the selected label out-contrasts the
+     light inactive labels. */
+  html[data-spd-mode="midnight"] .spd-navitem.is-active .spd-navitem__label {
+    color: color-mix(in srgb, var(--sel) 58%, #FFFFFF);
+  }
+  html[data-spd-mode="midnight"] .spd-navitem.is-active .spd-navitem__glyph .material-symbols-rounded {
+    color: color-mix(in srgb, var(--sel) 68%, #FFFFFF) !important;
+  }
 
   /* ── Logo = hide/reveal the side nav. On hover the three bars replay their
         assembling motion (bottom→top, the loading bump) — NOT a scale. ───── */
@@ -987,6 +995,14 @@
     content: ""; position: absolute; top: -46%; right: -4%; width: 360px; height: 360px;
     background: radial-gradient(circle, rgba(255,201,100,0.30) 0%, rgba(255,201,100,0) 66%);
     pointer-events: none;
+  }
+  /* Film grain — a subtle fractal-noise texture over the gradient so it reads
+     warmer / more tactile / less flatly digital. */
+  .spd-concept-hero::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 140px 140px;
+    opacity: 0.16; mix-blend-mode: overlay;
   }
   .spd-concept-hero__row { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
   .spd-concept-hero__title { font-size: 26px; font-weight: 600; line-height: 32px; color: #FFFFFF; }
