@@ -213,30 +213,36 @@
   /* Every value here reuses an existing token/scale (--r, --wn-*, --chart, gap steps) rather than inventing new ones, and colour is confined to the same small delta-pill/rtrend chips used everywhere else — the chart tracks and lines stay neutral/brand, matching Deposits' own trend line and KPI numbers. */
   .bgt-caption{color:var(--txt-subtle);font-weight:400;font-size:11px;}
   .dep-hd-kpigrp .bgt-caption{margin-left:2px;}
+  .bgt-info-ic{font-size:16px!important;color:var(--txt-subtle);cursor:default;margin-left:1px;}
+  .bgt-info-ic:hover,.bgt-info-ic:focus-visible{color:var(--txt-primary);}
+  /* Each control group gets its own tiny uppercase label (same visual language as .cap/table headers elsewhere) so "FY 2026", "Income accounts", "Per Period vs YTD" and "Chart vs Table" read as four distinct, named categories instead of one ambiguous row of buttons. */
+  .bgt-ctlgrp{display:flex;flex-direction:column;gap:3px;align-items:flex-start;}
+  .bgt-lbl{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--txt-subtle);padding:0 1px;}
+  .bgt-ctlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .bgt-legend{display:flex;align-items:center;gap:14px;padding:0 16px;font-size:11px;color:var(--txt-subtle);}
   .bgt-lg{display:inline-flex;align-items:center;gap:5px;}
   .bgt-sw{width:9px;height:9px;border-radius:2px;display:inline-block;}
-  .bgt-sw-budget{background:var(--wn-200);border:1px solid var(--wn-400);}
+  .bgt-sw-budget{background:var(--wn-300);border:1px solid var(--wn-400);}
   .bgt-sw-actual{background:var(--chart);}
   .bgt-sw-budget-line{width:12px;height:0;border-top:2px dashed var(--wn-400);border-radius:0;}
   /* flex:1/min-height:0 here (not a fixed height) is what makes this fill whatever room .wcontent actually has, the same way depTrend's .tr-plot and Deposits' .dep-full do — a fixed pixel height would just sit there at one size regardless of the widget's real height. */
-  .bgt-bars-row{flex:1;min-height:0;display:flex;align-items:flex-end;gap:4px;padding:14px 16px 0;}
-  .bgt-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;}
-  .bgt-bars{flex:1 1 auto;display:flex;align-items:flex-end;gap:3px;width:100%;justify-content:center;min-height:0;}
-  .bgt-bar{width:38%;max-width:16px;border-radius:4px 4px 0 0;min-height:2px;}
-  /* Budget = the same pale, inset track used by .pct-bar elsewhere; Actual = brand chart colour, same weight as every other bar/fill in the app — no solid red/green blocks. */
-  .bgt-bar-budget{background:var(--wn-200);box-shadow:inset 0 0 0 1px var(--stroke-widget);}
+  .bgt-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding-bottom:2px;}
+  /* Bars sit inside the same .tr-plot/.tr-yax/.tr-canvas/.tr-xax grid every other chart in the app uses (46px y-axis column, 0/50/100% gridlines) instead of a bespoke axis-less layout — real $ labels on the y-axis, real month labels + variance chips on a taller x-axis row (two lines instead of the base 18px). */
+  .tr-plot.bgt-plot{grid-template-rows:minmax(0,1fr) 34px;}
+  .bgt-bars-row{position:absolute;inset:0;display:flex;align-items:flex-end;gap:4px;padding:0 2px;}
+  .bgt-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;}
+  .bgt-bars{flex:0 0 auto;display:flex;align-items:flex-end;gap:3px;width:100%;justify-content:center;height:100%;}
+  .bgt-bar{width:38%;max-width:18px;border-radius:3px 3px 0 0;min-height:2px;}
+  /* Budget = a visibly bordered, mid-tone neutral track (not near-white) so it actually reads as a bar and not blank space; Actual = brand chart colour, same weight as every other bar/fill in the app — no solid red/green blocks. */
+  .bgt-bar-budget{background:var(--wn-300);box-shadow:inset 0 0 0 1px var(--wn-400);}
   .bgt-bar-actual{background:var(--chart);box-shadow:inset -1px 0 0 var(--chart-strong);}
   .bgt-bar-actual.neg{background:var(--chart-soft);box-shadow:inset -1px 0 0 var(--am-400);}
-  .bgt-collbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
-  .bgt-col .rtrend{font-size:10.5px;}
-  .bgt-col .rtrend .material-symbols-rounded{font-size:15px;margin:-2px -1px;}
-  .bgt-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding-bottom:14px;}
+  .bgt-xax{position:static;display:flex;gap:4px;padding:3px 0 0;}
+  .bgt-xcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .bgt-xcol .bgt-collbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
+  .bgt-xcol .rtrend{font-size:10.5px;}
+  .bgt-xcol .rtrend .material-symbols-rounded{font-size:14px;margin:-2px -1px;}
   .bgt-ytd-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 14px;}
-  .bgt-ytd-canvas{position:relative;height:150px;margin:10px 16px 0;}
-  .bgt-ytd-canvas .ln{width:100%;height:100%;overflow:visible;}
-  .bgt-ytd-xax{position:relative;height:16px;margin:2px 16px 0;font-size:10px;color:var(--txt-subtle);}
-  .bgt-ytd-xax span{position:absolute;}
   .bgt-table-wrap{padding:4px 16px 16px;overflow:auto;}
   .bgt-table{width:100%;border-collapse:collapse;font-size:13px;}
   .bgt-table th,.bgt-table td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--stroke-widget);}
