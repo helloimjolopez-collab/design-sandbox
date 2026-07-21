@@ -3020,6 +3020,12 @@ function App() {
     setTimeout(() => setSwitching(false), 750);
   };
   const goItem = (id) => { setItemByModule((s) => ({ ...s, [moduleId]: id })); setMobileNav(false); };
+  const goModuleHome = () => goItem(firstItemOf(moduleId)); // badge → back to this module's home
+  const pinSwitcher = () => { setSwitcherPinned(true); setSwitcherOpen(false); setRailHidden(false); };
+  const railShown = switcherPinned && !railHidden;
+  const logoLabel = switcherPinned
+    ? (railHidden ? "Show module rail" : "Hide module rail")
+    : (switcherOpen ? "Close module switcher" : "Switch module");
 
   const renderPage = () => {
     if (moduleId === "home") return item === "dashboard" ? <HomePage /> : <ModulePlaceholder mod={mod} item={item} />;
