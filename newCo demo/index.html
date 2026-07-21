@@ -1847,20 +1847,20 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
   );
 }
 
-function TopNav({ mode, onToggleMode, onLogoClick, logoLabel, logoActive, moduleId, onModuleHome }) {
+function TopNav({ mode, onToggleMode, onLogoClick, onLogoEnter, onLogoLeave, logoLabel, logoActive, moduleId }) {
   const midnight = mode === "midnight";
   return (
     <header className="spd-topnav" role="banner">
-      {/* Left cluster: the Spired logo is the module switcher's toggle (opens
-          the popover, or hides/reveals the pinned rail). The badge + name beside
-          it is a shortcut back to the current module's home. */}
+      {/* Left cluster: the Spired logo opens the module switcher (hover or click).
+          The module glyph + name beside it is a non-clickable "you are here". */}
       <div className="spd-topnav__lead">
         <button className={"spd-topnav__logo" + (logoActive ? " is-active" : "")} data-sw-logo
-          onClick={onLogoClick} aria-label={logoLabel} title={logoLabel}>
+          onClick={onLogoClick} onMouseEnter={onLogoEnter} onMouseLeave={onLogoLeave}
+          aria-label={logoLabel} title={logoLabel}>
           <span className="spd-topnav__logo-mark"><LogoMark size={22} /></span>
         </button>
         <span className="spd-topnav__leadsep" aria-hidden="true" />
-        <ModuleBadge moduleId={moduleId} onHome={onModuleHome} />
+        <ModuleBadge moduleId={moduleId} />
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
         {/* Org switcher now lives on the right, with the account controls. */}
