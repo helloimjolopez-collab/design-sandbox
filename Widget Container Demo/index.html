@@ -894,46 +894,52 @@
   }
   /* ---- Budget Compared to Actual ---- */
   function bgtTog(opts,cur,w,action,aria){return '<div class="vtoggle" role="group" aria-label="'+(aria||"View")+'">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="'+action+'" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+o[1]+'</button>';}).join("")+'</div>';}
-  /* Brand rule, taken from how every other widget in this file already behaves (Deposits' trend line is always blue regardless of up/down; its big numbers are always --txt-primary; red/green only ever appears on a small delta-pill or rtrend chip, per the app-wide convention, never as a big colored number or a solid-filled chart area): the headline number, chart lines, and bar tracks stay neutral/brand-colored here too. Favourability is carried by the same small .delta-pill / .rtrend chips the rest of the app already uses, plus a soft (not solid) tint on the actual bar — never a big flat red/green fill. */
-  function bgtDeltaPill(v,noDataLabel){if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)">'+(noDataLabel||"No data yet")+'</span>';var neg=v<0;return '<span class="delta-pill'+(neg?" neg":"")+'">'+ICON(neg?"south_east":"north_east")+money(Math.abs(v))+'</span>';}
-  /* Header KPI needs the dollar amount and the favourable/unfavourable read to be two separate, unambiguous facts (not the same number doing double duty) — this pill carries only the word, the amount lives in the metric-value next to it. */
-  function bgtFavPill(v){if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)">No data yet</span>';var neg=v<0;return '<span class="delta-pill'+(neg?" neg":"")+'">'+ICON(neg?"south_east":"north_east")+(neg?"Unfavourable":"Favourable")+'</span>';}
-  function bgtRtrend(v){var neg=v<0;return '<span class="rtrend'+(neg?" neg":"")+'"><span class="material-symbols-rounded">'+(neg?"arrow_drop_down":"arrow_drop_up")+'</span>'+(neg?"−":"+")+fmtAxis(Math.abs(v))+'</span>';}
-  /* Real, working controls — same filter-chip (button + chevron, opens a popover) used by Deposits' account/type picker, not inert text. FY switches the whole dataset (2024/2025 are fully closed years so the picker visibly does something); account view switches income vs expense. */
+  function bgtDeltaPill(v,noDataLabel){if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)">'+(noDataLabel||"No data yet")+'</span>';var neg=v<0;return '<span class="delta-pill'+(neg?" neg":"")+'" style="color:'+(neg?"var(--red-100)":"var(--pos-100)")+';background:'+(neg?"var(--red-10)":"var(--pos-10)")+'">'+ICON(neg?"south_east":"north_east")+money(Math.abs(v))+'</span>';}
+  /* Explicit, requested exception to the app's usual "colour only lives on a small pill" rule: favourable/unfavourable gets real colour here — Pathway's actual Static/Positive (#36a14f) and Static/Negative (#b03a3a) tokens, pulled straight from the design-system file's variables panel, not an invented semaphore red/green. Header KPI keeps the dollar amount and the favourable/unfavourable read as two separate facts — this pill carries only the word, the amount lives in the metric-value next to it. */
+  function bgtFavPill(v){if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)">No data yet</span>';var neg=v<0;return '<span class="delta-pill'+(neg?" neg":"")+'" style="color:'+(neg?"var(--red-100)":"var(--pos-100)")+';background:'+(neg?"var(--red-10)":"var(--pos-10)")+'">'+ICON(neg?"south_east":"north_east")+(neg?"Unfavourable":"Favourable")+'</span>';}
+  function bgtRtrend(v){var neg=v<0;return '<span class="rtrend'+(neg?" neg":"")+'" style="color:'+(neg?"var(--red-100)":"var(--pos-100)")+'"><span class="material-symbols-rounded">'+(neg?"arrow_drop_down":"arrow_drop_up")+'</span>'+(neg?"−":"+")+fmtAxis(Math.abs(v))+'</span>';}
+  /* FY is a real filter-chip (button + chevron, opens a popover) — Deposits' exact account/type-picker pattern — because the list of fiscal years genuinely grows over time. Income/Expense is a plain 2-button toggle, not a dropdown — there are only ever two options, so a popover would be one extra click for nothing. */
   function bgtFyChip(w){return '<button class="filter-chip" data-action="bgtfy" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Fiscal year — tap to change"><span class="fc-label">FY '+(w.fy||"2026")+'</span>'+ICON("expand_more")+'</button>';}
-  function bgtAcctChip(w){var av=(w.acctview==="expense")?"Expense":"Income";return '<button class="filter-chip" data-action="bgtacct" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Account view — tap to change"><span class="fc-label">'+av+' accounts</span>'+ICON("expand_more")+'</button>';}
   function bgtHeaderBlock(w){
     var av=(w.acctview==="expense")?"expense":"income",fy=w.fy||"2026";
     var rows=bgtSet(w),ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
     var variance=latest?bgtVariance(av,latest.budget,latest.actual):null;
-    var explainTip=(latest?('Actual '+av+' is '+money(Math.abs(variance))+' '+(variance>=0?"more":"less")+' than the original FY '+fy+' budget, year‑to‑date through '+latest.period+'. '+(variance>=0?"More income than planned is favourable.":"Less income than planned is unfavourable.")):('No '+av+' has posted yet against the FY '+fy+' budget.')).replace(/"/g,"&quot;");
-    if(av==="expense"&&latest)explainTip=('Actual expense is '+money(Math.abs(variance))+' '+(variance>=0?"less":"more")+' than the original FY '+fy+' budget, year‑to‑date through '+latest.period+'. '+(variance>=0?"Spending less than planned is favourable.":"Spending more than planned is unfavourable.")).replace(/"/g,"&quot;");
-    var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance)+'<span class="material-symbols-rounded bgt-info-ic" tabindex="0" data-tip="'+explainTip+'" data-tip-plain aria-label="What this number means">info</span></div>';
-    var fmt=w.bfmt||"chart",cmp=w.bcmp||"bar";
-    var fmtToggle='<div class="bgt-ctlgrp"><span class="bgt-lbl">Format</span>'+bgtTog([["chart","Chart"],["table","Table"]],fmt,w,"bgt-fmt","Format")+'</div>';
-    var cmpToggle=fmt==="table"?"":('<div class="bgt-ctlgrp"><span class="bgt-lbl">Compare</span>'+bgtTog([["bar","Per Period"],["ytd","YTD"]],cmp,w,"bgt-cmp","Compare")+'</div>');
+    var explainTip=latest?(money(Math.abs(variance))+' '+(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than"))+' the FY '+fy+' budget, through '+latest.period+'.'):('No '+av+' posted yet against the FY '+fy+' budget.');
+    explainTip=explainTip.replace(/"/g,"&quot;");
+    var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance)+'<span class="material-symbols-rounded bgt-info-ic" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
+    var fmt=w.bfmt||"chart";
+    var acctToggle=bgtTog([["income","Income"],["expense","Expense"]],av,w,"bgt-acctview","Account view");
+    var fmtToggle=bgtTog([["chart","Chart"],["table","Table"]],fmt,w,"bgt-fmt","Format");
     return '<div class="dep-hd">'+
-    '<div class="dep-hd-top"><div class="bgt-ctlrow">'+bgtFyChip(w)+bgtAcctChip(w)+'</div><div class="dep-hd-toggle">'+fmtToggle+'</div></div>'+
-    '<div class="dep-hd-num">'+numInner+'<div class="dep-hd-r">'+cmpToggle+'</div></div>'+
-    '</div>';}
-  /* Bars sit inside the exact same .tr-plot/.tr-yax/.tr-canvas/.tr-xax grid depTrend and the YTD chart use below — real $ gridlines/labels on the y-axis, and every bar is hoverable via the app's existing data-tip system (same one used on Deposits' account tooltips) so the exact budget/actual/variance figures are always one hover away, not locked inside un-labelled geometry. */
+    '<div class="dep-hd-top"><div class="bgt-ctlrow">'+bgtFyChip(w)+acctToggle+'</div><div class="dep-hd-toggle">'+fmtToggle+'</div></div>'+
+    '<div class="dep-hd-num">'+numInner+'</div>'+
+    '</div>'+bgtBurn(rows,av,fy);}
+  /* Direct answer to the basic question this widget was missing entirely: how much of the budget is used, and how much of the year is gone. Always visible, no toggle to find it behind — reuses Payroll's exact .pct-bar/.pct-fill proportion-bar, just two of them stacked so the two percentages read side by side. */
+  function bgtBurn(rows,av,fy){
+    var thru=bgtThru(rows),totalBudget=rows.reduce(function(s,r){return s+r.budget;},0),usedSoFar=thru.reduce(function(s,r){return s+(r.actual||0);},0);
+    var pctUsed=totalBudget?Math.min(100,Math.round(usedSoFar/totalBudget*100)):0,pctElapsed=rows.length?Math.round(thru.length/rows.length*100):0;
+    var usedLbl=av==="expense"?"Budget spent":"Budget achieved";
+    return '<div class="bgt-burn"><div class="bgt-burn-row"><span class="bgt-burn-lbl">'+usedLbl+'</span><span class="pct-bar"><span class="pct-fill" style="width:'+pctUsed+'%"></span></span><span class="bgt-burn-val">'+pctUsed+'%</span></div>'+
+    '<div class="bgt-burn-row"><span class="bgt-burn-lbl">FY '+fy+' elapsed</span><span class="pct-bar"><span class="pct-fill" style="width:'+pctElapsed+'%;background:var(--wn-750)"></span></span><span class="bgt-burn-val">'+pctElapsed+'%</span></div></div>';}
+  /* Bars sit inside the exact same .tr-plot/.tr-yax/.tr-canvas/.tr-xax grid depTrend uses (46px y-axis column, real $ gridlines/labels) — no bespoke axis-less layout, no strokes or shadows on the bars themselves (matching the app's own placeholder bar chart on Payments over time: flat fill, rounded top corners, nothing else). Colour (Positive/Negative, see bgtFavPill) tells the favourable/unfavourable story on sight; the exact $ figures are one hover away via the app's existing data-tip system, same one used on Deposits' account tooltips. One label per bar on the x-axis, nothing else stacked under it. */
   function bgtBarChart(w){
     var av=(w.acctview==="expense")?"expense":"income";
     var rows=bgtThru(bgtSet(w));
     if(!rows.length)return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No actuals posted yet this year</div><div class="state-sub">Once transactions post for a period, its bar will appear here.</div></div>';
-    var max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual);});max=max*1.12;
+    var n=rows.length,max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual);});max=max*1.12;
+    function px(i){return n>1?(i/(n-1)*100):50;}
     var grid="";[0,50,100].forEach(function(gy){grid+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="var(--stroke-widget)" stroke-width="1" vector-effect="non-scaling-stroke"'+(gy===100?'':' stroke-dasharray="2 4" opacity="0.5"')+'/>';});
     var gridSvg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none">'+grid+'</svg>';
-    var cols="",xax="";
+    var cols="";
     rows.forEach(function(r){
       var vr=bgtVariance(av,r.budget,r.actual),neg=vr<0,bH=Math.max(1,Math.round(r.budget/max*100)),aH=Math.max(1,Math.round(r.actual/max*100)),
         tip=(r.period+' — Budget '+money(r.budget)+', Actual '+money(r.actual)+', '+(neg?"−":"+")+money(Math.abs(vr))+' '+(neg?'unfavourable':'favourable')+'.').replace(/"/g,"&quot;");
       cols+='<div class="bgt-col" role="group" aria-label="'+tip+'" data-tip="'+tip+'" data-tip-plain><div class="bgt-bars"><div class="bgt-bar bgt-bar-budget" style="height:'+bH+'%"></div><div class="bgt-bar bgt-bar-actual'+(neg?" neg":"")+'" style="height:'+aH+'%"></div></div><span class="sr-only">'+tip+'</span></div>';
-      xax+='<div class="bgt-xcol"><span class="bgt-collbl">'+r.period+'</span>'+bgtRtrend(vr)+'</div>';
     });
+    var xl=rows.map(function(r,i){return '<span style="left:'+px(i)+'%;transform:translateX(-50%)">'+r.period+'</span>';}).join("");
     var yl='<span style="top:0%">'+fmtAxis(max)+'</span><span style="top:50%">'+fmtAxis(max/2)+'</span><span style="top:100%">$0</span>';
-    return '<div class="bgt-chart-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw bgt-sw-budget"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div><div class="tr-plot bgt-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+gridSvg+'<div class="bgt-bars-row">'+cols+'</div></div><div class="bgt-xax">'+xax+'</div></div></div>';}
-  /* Reuses depTrend's exact chrome (.tr-plot grid: 46px y-axis column + canvas + x-axis row, 0/50/100% gridlines, fmtAxis y-labels) instead of a bespoke layout, so this renders as the same trend chart everywhere else in the app — just two fixed series (budget, actual) instead of depTrend's per-account/per-type set. */
+    return '<div class="bgt-chart-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw bgt-sw-budget"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div><div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+gridSvg+'<div class="bgt-bars-row">'+cols+'</div></div><div class="tr-xax">'+xl+'</div></div></div>';}
+  /* Reuses depTrend's exact chrome AND its real hover system — same data-blob/-months/-lo/-hi/-n contract on .tr-canvas, plus a .tr-cross target — so this is wired into the app's actual, already-working document-level mousemove/crosshair/tooltip code, not a static picture of a line. Hover shows the exact cumulative figures at that month; Actual's line colour matches the bars' favourable/unfavourable read. */
   function bgtYTDChart(w){
     var av=(w.acctview==="expense")?"expense":"income";
     var rows=bgtSet(w),ytd=bgtYTD(rows),n=ytd.length,actualsThru=ytd.filter(function(r){return r.actual!=null;});
@@ -941,26 +947,31 @@
     if(!isFinite(hi)||hi<=0)hi=1;var sp=hi||1;hi=hi+sp*0.12;var dom=(hi-lo)||1;
     function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
     var grid="";[0,50,100].forEach(function(gy){grid+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="var(--stroke-widget)" stroke-width="1" vector-effect="non-scaling-stroke"'+(gy===100?'':' stroke-dasharray="2 4" opacity="0.5"')+'/>';});
+    var lastA=actualsThru.length?actualsThru[actualsThru.length-1]:null,lastVar=lastA?bgtVariance(av,lastA.budget,lastA.actual):null,aNeg=lastVar!=null&&lastVar<0;
+    var aColor=aNeg?"var(--red-100)":"var(--pos-100)";
     var budgetPts=ytd.map(function(r,i){return px(i).toFixed(2)+','+py(r.budget).toFixed(2);}).join(" ");
     var actualPts=actualsThru.map(function(r,i){return px(i).toFixed(2)+','+py(r.actual).toFixed(2);}).join(" ");
-    var lastA=actualsThru.length?actualsThru[actualsThru.length-1]:null,lastVar=lastA?bgtVariance(av,lastA.budget,lastA.actual):null;
     var svg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none">'+grid+
-      '<polyline fill="none" stroke="var(--wn-400)" stroke-width="1.7" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" points="'+budgetPts+'"/>'+
-      (actualPts?'<polyline fill="none" stroke="var(--chart)" stroke-width="1.7" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+actualPts+'"/>':'')+
+      '<polyline class="tl" data-idx="0" fill="none" stroke="var(--wn-400)" stroke-width="1.7" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" points="'+budgetPts+'"/>'+
+      '<polyline class="tl-hit" data-idx="0" fill="none" stroke="transparent" stroke-width="18" vector-effect="non-scaling-stroke" points="'+budgetPts+'"/>'+
+      (actualPts?('<polyline class="tl" data-idx="1" fill="none" stroke="'+aColor+'" stroke-width="1.7" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+actualPts+'"/><polyline class="tl-hit" data-idx="1" fill="none" stroke="transparent" stroke-width="18" vector-effect="non-scaling-stroke" points="'+actualPts+'"/>'):'')+
       '</svg>';
     var yl='<span style="top:0%">'+fmtAxis(hi)+'</span><span style="top:50%">'+fmtAxis((hi+lo)/2)+'</span><span style="top:100%">'+fmtAxis(lo)+'</span>';
     var months=ytd.map(function(r){return r.period;}),tk=(n<=1)?[0]:(n<=3)?[0,n-1]:[0,Math.round((n-1)/3),Math.round((n-1)*2/3),n-1];tk=tk.filter(function(v,i,a){return a.indexOf(v)===i;});
     var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
-    var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'</div><div class="tr-xax">'+xl+'</div></div>';
-    var srRows=ytd.map(function(r){var v=r.actual!=null?bgtVariance(av,r.budget,r.actual):null;return r.period+' cumulative: budget '+money(r.budget)+(r.actual!=null?(', actual '+money(r.actual)+', '+(v>=0?'+':'−')+money(Math.abs(v))+' '+(v>=0?'favourable':'unfavourable')):', actual not yet available')+'.';}).join(" ").replace(/"/g,"&quot;");
-    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw bgt-sw-budget-line"></span>Budget (cumulative)</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual (cumulative)</span><span class="bgt-lg" style="margin-left:auto">'+bgtDeltaPill(lastVar,"—")+'</span></div>'+plot+'<span class="sr-only">'+srRows+'</span></div>';}
+    var blob="Budget|var(--wn-400)|0|"+ytd.map(function(r){return r.budget;}).join(",")+(actualsThru.length?(";Actual|"+aColor+"|1|"+actualsThru.map(function(r){return r.actual;}).join(",")):"");
+    var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-id="'+w.id+'" data-multi="0" data-blob="'+blob.replace(/"/g,"&quot;")+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div><div class="tr-xax">'+xl+'</div></div>';
+    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw bgt-sw-budget-line"></span>Budget (cumulative)</span><span class="bgt-lg" style="color:'+aColor+'"><span class="bgt-sw" style="background:'+aColor+'"></span>Actual (cumulative)</span></div>'+plot+'</div>';}
+  /* Same .wt-row/.wt-head structure Deposits' own table view uses — not a bespoke &lt;table&gt;. */
   function bgtTable(w){
     var av=(w.acctview==="expense")?"expense":"income";
     var rows=bgtSet(w);
+    var head='<div class="wt-row wt-head"><span class="lr-main">Period</span><span class="wt-c2">Budget</span><span class="wt-c2">Actual</span><span class="dt-c dt-tr">Variance</span><span class="dt-c bgt-favcol">Result</span></div>';
     var body=rows.map(function(r){
       var v=r.actual!=null?bgtVariance(av,r.budget,r.actual):null,favtxt=v==null?"—":(v>=0?"Favourable":"Unfavourable");
-      return '<tr><th scope="row">'+r.period+'</th><td>'+money(r.budget)+'</td><td>'+(r.actual!=null?money(r.actual):"—")+'</td><td>'+(v==null?"—":bgtRtrend(v))+'</td><td class="bgt-favcell">'+favtxt+'</td></tr>';}).join("");
-    return '<div class="bgt-table-wrap"><table class="bgt-table"><caption class="sr-only">FY '+(w.fy||"2026")+' budget compared to actual, by period, for '+(av==="expense"?"expense":"income")+' accounts. Compared to the original budget only.</caption><thead><tr><th scope="col">Period</th><th scope="col">Budget</th><th scope="col">Actual</th><th scope="col">Variance</th><th scope="col">Result</th></tr></thead><tbody>'+body+'</tbody></table></div>';}
+      return '<div class="wt-row"><span class="lr-main">'+r.period+'</span><span class="wt-c2">'+money(r.budget)+'</span><span class="wt-c2">'+(r.actual!=null?money(r.actual):"—")+'</span><span class="dt-c dt-tr">'+(v==null?"—":bgtRtrend(v))+'</span><span class="dt-c bgt-favcol">'+favtxt+'</span></div>';}).join("");
+    var thru=bgtThru(rows),totalV=thru.length?bgtVariance(av,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
+    return '<div class="bgt-table-wrap"><div class="scroll">'+head+body+'</div><div class="dep-total"><span>YTD total</span><span>'+(totalV==null?"—":bgtRtrend(totalV))+'</span></div></div>';}
   function bgtGlance(w){
     var av=(w.acctview==="expense")?"expense":"income";
     var rows=bgtSet(w),ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
@@ -970,11 +981,11 @@
       '<div class="metric-value">'+money(Math.abs(v||0))+'</div>'+
       '<div class="gl-sub">'+bgtFavPill(v)+'<span class="bgt-caption">vs. budget, YTD</span></div>'+
       '</div></div>';}
-  /* Confluence 8.2/9.8: glance = headline variance; detail (wide) = one chart at a time via a "Compare" toggle, "Format" separately switches chart↔table; explore (full) = per-period + YTD together — same FY/account scope, explicitly labelled per column so the two charts read as one dataset shown two ways, not an apples-to-oranges comparison. Table is always a peer view (9.5's accessibility fix) — never the only way to read a number. */
+  /* Confluence 8.2/9.8: glance = headline variance; detail (wide) = the per-period bar chart, or the table (Format); explore (full) = per-period + YTD together, explicitly labelled per column so the two charts read as one dataset shown two ways. Table is always a peer view (9.5's accessibility fix) — never the only way to read a number. */
   function budgetContent(w){
     if(w.size==="kpi")return bgtGlance(w);
-    var mh=bgtHeaderBlock(w),fmt=w.bfmt||"chart",cmp=w.bcmp||"bar";
-    if(w.size==="wide")return mh+(fmt==="table"?bgtTable(w):(cmp==="ytd"?bgtYTDChart(w):bgtBarChart(w)));
+    var mh=bgtHeaderBlock(w),fmt=w.bfmt||"chart";
+    if(w.size==="wide")return mh+(fmt==="table"?bgtTable(w):bgtBarChart(w));
     if(fmt==="table")return mh+bgtTable(w);
     return mh+'<div class="bgt-explore"><div class="bgt-explore-col"><div class="dep-col-h">Per Period</div>'+bgtBarChart(w)+'</div><div class="bgt-explore-col"><div class="dep-col-h">Year to Date (cumulative)</div>'+bgtYTDChart(w)+'</div></div>';
   }
