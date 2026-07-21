@@ -1538,17 +1538,18 @@ const moduleBadgeFill = (id) => (id === "home"
    it's a one-click shortcut back to the CURRENT module's home (its dashboard /
    first section) for when you've navigated deep inside it. Switching modules
    happens at the Spired logo (popover) or the pinned rail. */
-function ModuleBadge({ moduleId, onHome }) {
+function ModuleBadge({ moduleId }) {
   const mod = MODULE_MAP[moduleId];
   return (
-    <button className="spd-tms__trigger" onClick={onHome} title={mod.name + " home"}>
-      {/* No background tile — just the module glyph (filled, since it's the
-          current module) in its high-contrast ink. */}
+    /* NON-clickable "you are here" label (each module's own side nav has a
+       Dashboard, so this needn't be a shortcut). No background tile — just the
+       module glyph in its high-contrast ink, sized close to the Spired logo. */
+    <div className="spd-tms__current" aria-label={"Current module: " + mod.name}>
       <span className="spd-tms__badge">
-        <Icon name={mod.icon} filled size={18} style={{ color: moduleInk(mod.id) }} />
+        <Icon name={mod.icon} filled size={20} style={{ color: moduleInk(mod.id) }} />
       </span>
       <span className="spd-tms__name">{mod.name}</span>
-    </button>
+    </div>
   );
 }
 
