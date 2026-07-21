@@ -1357,9 +1357,12 @@ function AccountMenu() {
   );
 }
 
-/* A single section-nav item (labelled list style) — used by both the module
-   section panel and the mobile drawer. */
-function SectionItem({ icon, label, color, active, onClick }) {
+/* A single section-nav item (labelled list style) — used by the section panel
+   and the mobile drawer. `leadColor` forces the icon colour (module-links show
+   their module's colour even when inactive); `trailing` adds a → to signal the
+   item leaves for another area. */
+function SectionItem({ icon, label, color, active, onClick, leadColor, trailing }) {
+  const idle = leadColor || "var(--semantic-color-light-mode-text-static-secondary-base)";
   return (
     <button
       className={"spd-navitem" + (active ? " is-active" : "")}
@@ -1368,18 +1371,19 @@ function SectionItem({ icon, label, color, active, onClick }) {
       aria-label={label}
     >
       {active && <span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} />}
-      <span className="spd-navitem__chip spd-navitem__chip--fn" style={{ background: active ? `color-mix(in srgb, ${color} 14%, transparent)` : "transparent" }}>
-        <Icon name={icon} filled={active} size={19} style={{ color: active ? color : "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
+      <span className="spd-navitem__chip spd-navitem__chip--fn" style={{ background: active ? `color-mix(in srgb, ${color} 14%, transparent)` : (leadColor ? `color-mix(in srgb, ${leadColor} 10%, transparent)` : "transparent") }}>
+        <Icon name={icon} filled={active} size={19} style={{ color: active ? color : idle }} />
       </span>
       <span className="spd-navitem__label">{label}</span>
+      {trailing && <Icon name="chevron_right" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />}
     </button>
   );
 }
 
-/* The current module's own navigation — the single side nav. No module-name
-   header (the switcher already names it), so it reads as a plain section list,
-   not a second switcher. Returns null for modules without sections (Home). */
-function ModuleNav({ mod, item, onSelectItem }) {
+/* The current module's own navigation — the single side nav. On Home, a
+   "Modules" group provides one-click access into every module (items with
+   `to`); other items navigate within the current module. */
+function ModuleNav({ mod, item, onSelectItem, onSwitchModule }) {
   if (!mod.nav || !mod.nav.length) return null;
   let lastGroup = null;
   return (
@@ -1388,10 +1392,22 @@ function ModuleNav({ mod, item, onSelectItem }) {
         {mod.nav.map((n) => {
           const showGroup = n.group && n.group !== lastGroup;
           lastGroup = n.group || lastGroup;
+          const target = n.to ? MODULE_MAP[n.to] : null;
           return (
             <React.Fragment key={n.id}>
               {showGroup && <p className="spd-modnav__group">{n.group}</p>}
-              <SectionItem icon={n.icon} label={n.label} color={mod.color} active={item === n.id} onClick={() => onSelectItem(n.id)} />
+              {target ? (
+                <SectionItem
+                  icon={target.icon} label={target.name} color={target.color}
+                  leadColor={target.color} trailing active={false}
+                  onClick={() => onSwitchModule(n.to)}
+                />
+              ) : (
+                <SectionItem
+                  icon={n.icon} label={n.label} color={mod.color}
+                  active={item === n.id} onClick={() => onSelectItem(n.id)}
+                />
+              )}
             </React.Fragment>
           );
         })}
