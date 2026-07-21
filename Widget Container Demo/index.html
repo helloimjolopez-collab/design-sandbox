@@ -667,7 +667,8 @@
      is the one function every bar/line/table in this widget calls for color, so the flip can never drift out of
      sync between views. */
   function bgtVariance(type,b,a){if(a==null)return null;return type==="expense"?(b-a):(a-b);}
-  function bgtYTD(rows){var out=[],cb=0,ca=0,anyAct=false;rows.forEach(function(r){cb+=r.budget;if(r.actual!=null){ca+=r.actual;anyAct=true;}out.push({period:r.period,budget:cb,actual:anyAct?ca:null});});return out;}
+  /* Cumulative actual must go null the moment a period itself has no actual — NOT stay frozen at the last real total. An earlier version tracked "has any actual appeared yet" instead of "does THIS period have one", so once Jan posted, every later month (including unposted Aug–Dec) was treated as having a real (frozen) actual, letting a full-year cumulative budget get compared against a stale mid-year actual. */
+  function bgtYTD(rows){var out=[],cb=0,ca=0;rows.forEach(function(r){cb+=r.budget;if(r.actual!=null){ca+=r.actual;out.push({period:r.period,budget:cb,actual:ca});}else{out.push({period:r.period,budget:cb,actual:null});}});return out;}
   function bgtThru(rows){return rows.filter(function(r){return r.actual!=null;});}
   function bgtFavColor(v){return v==null?"var(--txt-subtle)":(v>=0?"var(--txt-pos)":"var(--red-100)");}
   /* single-hue blue ramp, dark→light, evenly stepped so slices read at a glance (biggest = darkest). Red is reserved for negative/declining only. */
