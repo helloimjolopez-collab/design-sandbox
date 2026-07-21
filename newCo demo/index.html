@@ -1290,11 +1290,9 @@ function firstItemOf(id) {
    labels vs. a labelled list), so the two are never confused. */
 const RAIL_TOP = ["home", "people", "giving", "accounting", "media", "safety", "concept"];
 
-/* Module switcher — the single, compact way to change modules. Switching is
-   infrequent within a session, so this is a top-left dropdown, not a persistent
-   rail. Modules only (Home + product areas); Spired-level Settings/Admin live
-   in the account menu, not here. Shows the current module so you always know
-   where you are. */
+/* Module switcher — Atlassian-style. A nine-dot waffle is the ONLY trigger;
+   the current module's icon + name sit beside it as a non-clickable "you are
+   here" label. Available everywhere (incl. Spired Home), always the same. */
 function ModuleSwitcher({ moduleId, onSwitch }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -1310,16 +1308,19 @@ function ModuleSwitcher({ moduleId, onSwitch }) {
   return (
     <div className="spd-tms" ref={ref}>
       <button
-        className={"spd-tms__trigger" + (open ? " is-open" : "")}
+        className={"spd-tms__waffle" + (open ? " is-open" : "")}
         onClick={() => setOpen((o) => !o)}
-        aria-haspopup="menu" aria-expanded={open} title="Switch module"
+        aria-haspopup="menu" aria-expanded={open} aria-label="Switch module" title="Switch module"
       >
+        <Icon name="apps" size={22} />
+      </button>
+      {/* Non-clickable current-module label. */}
+      <span className="spd-tms__current" aria-hidden="true">
         <span className="spd-tms__chip" style={{ background: `color-mix(in srgb, ${mod.color} 15%, transparent)` }}>
           <Icon name={mod.icon} filled size={16} style={{ color: mod.color }} />
         </span>
         <span className="spd-tms__name">{mod.name}</span>
-        <Icon name="expand_more" size={18} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }} />
-      </button>
+      </span>
       {open && (
         <div className="spd-tms__menu spd-fade-in" role="menu" aria-label="Modules">
           <p className="spd-tms__menuhead">Switch module</p>
