@@ -2998,8 +2998,10 @@ function App() {
         <main className="spd-sheet">
           {/* keyed on module+section — a mode toggle re-themes in place, it
               never reloads content */}
-          <div key={moduleId + ":" + item} className="spd-fade-in" style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
-            {renderPage()}
+          <div key={moduleId + ":" + item + ":" + (switching ? "load" : "page")} className="spd-fade-in" style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
+            {switching
+              ? <div className="spd-modload"><SpiredLoader label={"Opening " + mod.name + "…"} /></div>
+              : renderPage()}
           </div>
         </main>
       </div>
