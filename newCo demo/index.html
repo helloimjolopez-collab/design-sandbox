@@ -139,7 +139,12 @@
        In-product color should murmur, not shout (and never clash). */
     --semantic-color-light-mode-fill-static-accent-amethyst-base: #6E64B8; /* amethyst-90, Jo's pipeline */
     --semantic-color-light-mode-fill-static-accent-amethyst-light: #F4F2FA; /* amethyst-10 */
-    --semantic-color-light-mode-fill-static-accent-jade-base: #1F9A66; /* more vibrant, still accessible */
+    --semantic-color-light-mode-fill-static-accent-jade-base: #159770; /* brand green (emerald-teal family, #14C382→#159770) */
+    /* Home/Spired amethyst ink — mode-aware so it flips in Midnight (was a
+       hard-coded hex that stayed dark & invisible on the dark nav). */
+    --spd-home-glyph: #694D94;    /* rail / general glyph */
+    --spd-home-ink: #694D94;      /* popover chip glyph */
+    --spd-home-ink-deep: #41326B; /* top-nav label + glyph (deep) */
     --semantic-color-light-mode-fill-static-accent-jade-light: #E4F3EC;
     --semantic-color-light-mode-fill-static-accent-seabreeze-base: #4A7ECB;
     --semantic-color-light-mode-fill-static-accent-seabreeze-light: #EAF0FA;
@@ -3284,7 +3289,7 @@ function App() {
         <ModuleRail moduleId={moduleId} pinned={switcherPinned} onSwitch={goModule} onUnpin={unpinSwitcher} />
         {/* Single side nav = the current module's own nav (Home = the hub).
             The in-nav collapse control shrinks it to an icon rail. */}
-        <ModuleNav key={moduleId} mod={mod} item={item} onSelectItem={goItem} onSwitchModule={goModule}
+        <ModuleNav key={moduleId} mod={mod} item={item} onSelectItem={goItem} onSwitchModule={goModuleFromNav}
           rail={navRail} onToggleRail={() => setNavRail((r) => !r)} />
         <main className="spd-sheet">
           {/* keyed on module+section — a mode toggle re-themes in place, it
