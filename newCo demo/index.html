@@ -1426,6 +1426,10 @@ function ModuleSwitcher({ moduleId, onSwitch }) {
   /* Home uses a deep, vibrant amethyst (from the Figma warm-nav reference) —
      NOT the primary-action purple. */
   const glyphColor = mod.id === "home" ? "#694D94" : mod.color;
+  // Home badge fill = a clean light lavender (not a muddy dark tint).
+  const badgeFill = mod.id === "home"
+    ? "var(--semantic-color-light-mode-fill-static-accent-amethyst-light)"
+    : `color-mix(in srgb, ${glyphColor} 17%, transparent)`;
   return (
     <div className="spd-tms" ref={ref}>
       <button
@@ -1433,13 +1437,10 @@ function ModuleSwitcher({ moduleId, onSwitch }) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu" aria-expanded={open} title="Switch module"
       >
-        <span className="spd-tms__badge" style={{ background: `color-mix(in srgb, ${glyphColor} 17%, transparent)` }}>
-          <Icon name={mod.icon} filled size={16} style={{ color: glyphColor }} />
+        <span className="spd-tms__badge" style={{ background: badgeFill }}>
+          <Icon name={mod.icon} filled size={17} style={{ color: glyphColor }} />
         </span>
-        <span className="spd-tms__labelgroup">
-          <span className="spd-tms__name">{mod.name}</span>
-          <Icon name="expand_more" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />
-        </span>
+        <span className="spd-tms__name">{mod.name}</span>
       </button>
       {open && (
         <div className="spd-tms__menu spd-fade-in" role="menu" aria-label="Modules">
