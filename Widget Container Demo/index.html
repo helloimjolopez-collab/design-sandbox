@@ -734,7 +734,7 @@
       content='<div class="acctm-chart tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'</div><div class="tr-xax">'+xl+'</div></div>';
     }
     return '<div class="acctm">'+head+content+'</div>';}
-  function openAcct(w,name,type){var a=depData(w).filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;var mw=Object.assign({},w,{id:"__acctmodal",acct:name,acctType:type,size:"wide",view:"trend",trmode:"total",trIso:null,state:"ready",leaf:true});modal={t:name,glyph:"account_balance_wallet",scoped:true,mw:mw};modalMounted=false;pop=null;render();}
+  function openAcct(w,name,type,acctNo){var a=acctNo?depData(w).filter(function(x){return x.acct===acctNo;})[0]:depData(w).filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;var mw=Object.assign({},w,{id:"__acctmodal",acct:a.name,acctType:a.type,acctNo:a.acct,size:"wide",view:"trend",trmode:"total",trIso:null,state:"ready",leaf:true});modal={t:a.name,glyph:"account_balance_wallet",scoped:true,mw:mw};modalMounted=false;pop=null;render();}
   function openType(w,typeName){var mw=Object.assign({},w,{id:"__acctmodal",filter:typeName,acct:null,acctType:null,size:"wide",view:"trend",trmode:"total",trIso:null,state:"ready",leaf:true});modal={t:typeName,glyph:"category",scoped:true,mw:mw};modalMounted=false;pop=null;render();}
   function overflowBtn(w){return "";}
   /* Glance spark = total deposits over the chosen window. No axes (it's a sparkline); hover reveals the point's period + value and scrubs the KPI number — standard sparkline behaviour. */
