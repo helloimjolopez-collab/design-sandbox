@@ -3198,14 +3198,16 @@ function App() {
         mode={mode}
         onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
         onLogoClick={onLogoClick}
+        onLogoEnter={hoverOpen}
+        onLogoLeave={hoverClose}
         logoLabel={logoLabel}
         logoActive={switcherOpen}
         moduleId={moduleId}
-        onModuleHome={goModuleHome}
       />
       {switcherOpen && (
         <SwitcherPopover moduleId={moduleId} pinned={switcherPinned} onSwitch={goModule}
-          onPin={pinSwitcher} onUnpin={unpinSwitcher} onClose={() => setSwitcherOpen(false)} />
+          onPin={pinSwitcher} onUnpin={unpinSwitcher} onClose={() => setSwitcherOpen(false)}
+          onMouseEnter={hoverKeep} onMouseLeave={hoverClose} />
       )}
       <div className="spd-body">
         {/* Module-switcher rail at the far left (before the section nav). Always
