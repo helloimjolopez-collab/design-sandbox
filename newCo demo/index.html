@@ -821,14 +821,11 @@
   }
   .spd-mrail.is-collapsed .spd-mrail__inner { transform: translateX(-100%); opacity: 0; }
   html[data-spd-mode="midnight"] .spd-mrail__inner { box-shadow: 3px 0 12px -6px rgba(0, 0, 0, 0.45); }
-  .spd-mrail:hover .spd-mrail__inner, .spd-mrail:focus-within .spd-mrail__inner {
+  /* Expand is driven by JS state (is-expanded), NOT CSS :hover/:focus-within —
+     deterministic so it always collapses after a pick or on mouse-out. */
+  .spd-mrail.is-expanded .spd-mrail__inner {
     width: 214px; box-shadow: var(--spd-elevation-sheet);
   }
-  /* After picking a module, snap back to icon-only even while still hovered
-     (until the pointer leaves) — placed after :hover so it wins. */
-  .spd-mrail.is-suppress .spd-mrail__inner { width: 64px; box-shadow: 3px 0 10px -7px rgba(41, 39, 36, 0.16); }
-  html[data-spd-mode="midnight"] .spd-mrail.is-suppress .spd-mrail__inner { box-shadow: 3px 0 12px -6px rgba(0, 0, 0, 0.45); }
-  .spd-mrail.is-suppress .spd-mrail__label { opacity: 0; }
   .spd-mrail__scroll { flex: 1; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overflow-x: hidden; padding-left: 8px; }
   .spd-mrail__item, .spd-mrail__unpin {
     position: relative; display: flex; align-items: center; gap: 11px; height: 44px;
