@@ -2775,13 +2775,14 @@ function App() {
       <TopNav
         mode={mode}
         onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
-        onGoHome={() => goModule("home")}
-        onOpenMobileNav={() => setMobileNav(true)}
+        onToggleNav={toggleNav}
+        navHidden={navHidden}
         moduleId={moduleId}
         onSwitchModule={goModule}
       />
-      <div className="spd-body">
-        {/* Single side nav = the current module's own nav (Home = launcher hub). */}
+      <div className={"spd-body" + (navHidden ? " is-nav-hidden" : "")}>
+        {/* Single side nav = the current module's own nav (Home = the hub).
+            Hidden on desktop when the logo toggle collapses it. */}
         <ModuleNav mod={mod} item={item} onSelectItem={goItem} onSwitchModule={goModule} />
         <main className="spd-sheet">
           {/* keyed on module+section — a mode toggle re-themes in place, it
