@@ -643,7 +643,8 @@
     for(i=n-1;i>=0;i--)out.push(M[(((now-i)%12)+12)%12]); // Y (calendar year) and any other range: real trailing month names ending at "today"
     return out;}
   function filterBtn(w){var f=w.filter||"All types",allT=f.indexOf("All")===0;return '<button class="filter-chip" data-action="depfilter" data-id="'+w.id+'"><span class="fc-label">'+(allT?"All account types":f)+'</span>'+ICON("expand_more")+'</button>';}
-  function typeLabel(w){if(w.acct)return "Account: "+w.acct;var f=w.filter||"All types";return f.indexOf("All")===0?"All Accounts":"Account Type: "+f;}
+  /* Two accounts can share a name (9.x elsewhere) so once scoped to one, the chip carries its last-2-digit suffix too — otherwise "Account: General" alone can't tell you which of several "General" accounts you're actually looking at. */
+  function typeLabel(w){if(w.acct){var suf=w.acctNo?w.acctNo.slice(-2):"";return "Account: "+w.acct+(suf?" **"+suf:"");}var f=w.filter||"All types";return f.indexOf("All")===0?"All Accounts":"Account Type: "+f;}
   function scopeChip(w){var lb=typeLabel(w);return '<button class="scope-chip" data-action="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Scope — tap to change" title="'+lb.replace(/"/g,"&quot;")+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
   function periodLbl(w){return {W:"week",M:"month",Q:"quarter",F:"fiscal year",Y:"calendar year"}[w.range||"Q"];}
   function secHead(t){return '<div class="dep-col-h" style="padding:8px 16px 4px">'+t+'</div>';}
