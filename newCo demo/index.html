@@ -1402,24 +1402,23 @@ function ModuleSwitcher({ moduleId, onSwitch }) {
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
   }, [open]);
+  {/* No separate waffle — the module logo + name IS the switcher trigger
+      (clicking opens the module menu). Home's glyph is a solid DEEP purple
+      (#41377D), never the primary-action purple; badge fill is a light tint. */}
+  const glyphColor = mod.id === "home" ? "var(--primitive-color-purple-600)" : mod.color;
   return (
     <div className="spd-tms" ref={ref}>
       <button
-        className={"spd-tms__waffle" + (open ? " is-open" : "")}
+        className={"spd-tms__trigger" + (open ? " is-open" : "")}
         onClick={() => setOpen((o) => !o)}
-        aria-haspopup="menu" aria-expanded={open} aria-label="Switch module" title="Switch module"
+        aria-haspopup="menu" aria-expanded={open} title="Switch module"
       >
-        <WaffleMark size={22} />
-      </button>
-      {/* Non-clickable current-module label — a rounded brand app-tile that
-          reads as identity, not a button. Home shows the ALL-WHITE Spired mark
-          on a DEEP purple (deliberately not the primary-action purple). */}
-      <span className="spd-tms__current" aria-hidden="true">
-        <span className="spd-tms__badge" style={{ background: mod.id === "home" ? "var(--primitive-color-purple-600)" : mod.color }}>
-          <Icon name={mod.icon} filled size={14} style={{ color: "#FFFFFF" }} />
+        <span className="spd-tms__badge" style={{ background: `color-mix(in srgb, ${glyphColor} 15%, transparent)` }}>
+          <Icon name={mod.icon} filled size={14} style={{ color: glyphColor }} />
         </span>
         <span className="spd-tms__name">{mod.name}</span>
-      </span>
+        <Icon name="expand_more" size={18} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />
+      </button>
       {open && (
         <div className="spd-tms__menu spd-fade-in" role="menu" aria-label="Modules">
           <p className="spd-tms__menuhead">Switch module</p>
