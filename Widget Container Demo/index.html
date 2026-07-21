@@ -210,22 +210,26 @@
   .dep-hd-num .metric-value{font-size:22px;line-height:1.1;}
   /* Visually hidden but present in the DOM — real screen-reader text, not a hover-only tooltip. Used to fix Budget Compared to Actual's confirmed-live gap: amounts/variance existed only as SVG geometry + hover, absent from the accessibility tree. */
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-  .bgt-favword{font-weight:600;}
-  .bgt-caption{color:var(--txt-subtle);font-weight:400;}
+  /* Every value here reuses an existing token/scale (--r, --wn-*, --chart, gap steps) rather than inventing new ones, and colour is confined to the same small delta-pill/rtrend chips used everywhere else — the chart tracks and lines stay neutral/brand, matching Deposits' own trend line and KPI numbers. */
+  .bgt-caption{color:var(--txt-subtle);font-weight:400;font-size:11px;}
+  .dep-hd-kpigrp .bgt-caption{margin-left:2px;}
   .bgt-legend{display:flex;align-items:center;gap:14px;padding:0 16px;font-size:11px;color:var(--txt-subtle);}
   .bgt-lg{display:inline-flex;align-items:center;gap:5px;}
   .bgt-sw{width:9px;height:9px;border-radius:2px;display:inline-block;}
-  .bgt-sw-budget{background:var(--wn-300);border:1px solid var(--wn-400);}
-  .bgt-sw-fav{background:var(--txt-pos);}
-  .bgt-sw-unfav{background:var(--red-100);}
+  .bgt-sw-budget{background:var(--wn-200);border:1px solid var(--wn-400);}
+  .bgt-sw-actual{background:var(--chart);}
   .bgt-sw-budget-line{width:12px;height:0;border-top:2px dashed var(--wn-400);border-radius:0;}
   .bgt-bars-row{display:flex;align-items:flex-end;gap:4px;height:150px;padding:14px 16px 0;}
   .bgt-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;}
   .bgt-bars{flex:1 1 auto;display:flex;align-items:flex-end;gap:3px;width:100%;justify-content:center;min-height:0;}
-  .bgt-bar{width:38%;max-width:16px;border-radius:3px 3px 0 0;min-height:2px;}
-  .bgt-bar-budget{background:var(--wn-300);border:1px solid var(--wn-400);border-bottom:none;}
+  .bgt-bar{width:38%;max-width:16px;border-radius:4px 4px 0 0;min-height:2px;}
+  /* Budget = the same pale, inset track used by .pct-bar elsewhere; Actual = brand chart colour, same weight as every other bar/fill in the app — no solid red/green blocks. */
+  .bgt-bar-budget{background:var(--wn-200);box-shadow:inset 0 0 0 1px var(--stroke-widget);}
+  .bgt-bar-actual{background:var(--chart);box-shadow:inset -1px 0 0 var(--chart-strong);}
+  .bgt-bar-actual.neg{background:var(--chart-soft);box-shadow:inset -1px 0 0 var(--am-400);}
   .bgt-collbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
-  .bgt-colvar{font-size:10.5px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .bgt-col .rtrend{font-size:10.5px;}
+  .bgt-col .rtrend .material-symbols-rounded{font-size:15px;margin:-2px -1px;}
   .bgt-chart-wrap{padding-bottom:14px;}
   .bgt-ytd-wrap{padding:0 0 14px;}
   .bgt-ytd-canvas{position:relative;height:150px;margin:10px 16px 0;}
@@ -238,6 +242,7 @@
   .bgt-table thead th{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);font-weight:700;border-bottom:1px solid var(--stroke-widget);}
   .bgt-table tbody th{font-weight:500;color:var(--txt-primary);}
   .bgt-table td{font-variant-numeric:tabular-nums;}
+  .bgt-favcell{color:var(--txt-subtle);font-size:12.5px;}
   .bgt-explore{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start;}
   .bgt-explore-col+.bgt-explore-col{border-left:1px solid var(--stroke-widget);}
   .vt{display:inline-flex;align-items:center;gap:4px;}
