@@ -928,38 +928,54 @@
   /* Detail (wide) view gets a real time-span control — Month / Quarter / Year to date — because Confluence's own SME note says period comparison is explicitly in scope here (unlike Payroll). Explore (xwide) always shows the full year-to-date on both sides, since its two columns already spell out "per period" vs "year to date" by column heading — a second, competing span control there would just re-introduce the exact ambiguity this is fixing. */
   function bgtEffScope(w){return w.size==="wide"?(w.bscope||"ytd"):"ytd";}
   function bgtScopedRows(rows,scope){var thru=bgtThru(rows);if(scope==="month")return thru.slice(-1);if(scope==="quarter")return thru.slice(-3);return thru;}
+  /* Shared "nothing entered yet for this account view" state — used by the KPI, both charts, and the table alike, so switching Income ↔ Expense into an unbudgeted view always reads the same way instead of each part of the widget guessing independently. Deliberately distinct from the fully-empty widget state (EMPTY_COPY.budget / bgt2): that's "no budget AND no activity anywhere"; this is "actuals are real, there's just nothing to compare them to" — different problem, different fix (go enter a budget), so it gets its own honest copy rather than reusing the blanket empty-state message. */
+  function bgtNoBudgetState(w,av){
+    var fy=w.fy||"2026";
+    return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No '+av+' budget for FY '+fy+'</div><div class="state-sub">Actuals are posting normally — there’s just nothing entered yet to compare them against.</div><button class="btn outlined" data-action="add-budget" data-id="'+w.id+'">'+ICON("add")+'Set up budget</button></div>';
+  }
   function bgtHeaderBlock(w){
     var av=(w.acctview==="expense")?"expense":"income",fy=w.fy||"2026",scope=bgtEffScope(w);
-    var rows=bgtSet(w),scoped=bgtScopedRows(rows,scope);
-    var sumB=scoped.reduce(function(s,r){return s+r.budget;},0),sumA=scoped.reduce(function(s,r){return s+r.actual;},0);
-    var variance=scoped.length?bgtVariance(av,sumB,sumA):null;
-    var scopeLbl={month:"This month",quarter:"This quarter",ytd:"Year to date"}[scope];
-    var periodDesc=scoped.length?(scoped.length===1?scoped[0].period:(scoped[0].period+"–"+scoped[scoped.length-1].period)):null;
-    /* The KPI answers exactly the question raised — which period, is this this month — by naming it plainly right above the number instead of leaving it implicit. */
-    var explainTip=(scoped.length?(money(Math.abs(variance))+' '+(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than"))+' the FY '+fy+' budget for '+(periodDesc||scopeLbl)+'.'):('No '+av+' posted yet for '+scopeLbl.toLowerCase()+'.')).replace(/"/g,"&quot;");
-    var numInner='<div class="bgt-kpi-col"><div class="wsub">'+scopeLbl+(periodDesc?' · '+periodDesc:'')+'</div><div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance)+'<span class="material-symbols-rounded bgt-info-ic" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div></div>';
+    var rows=bgtSet(w),hasBudget=bgtHasBudget(rows);
     var fmt=w.bfmt||"chart";
     var acctToggle=bgtTog([["income","Income"],["expense","Expense"]],av,w,"bgt-acctview","Account view");
     var fmtToggle=bgtTog([["chart","Chart"],["table","Table"]],fmt,w,"bgt-fmt","Format");
     var scopeToggle=(w.size==="wide")?bgtTog([["month","Month"],["quarter","Quarter"],["ytd","YTD"]],scope,w,"bgt-scope","Time span"):"";
+    var numInner;
+    if(!hasBudget){
+      /* No fabricated variance against a $0 baseline — the KPI says plainly that there's nothing to compare yet, same fact bgtBurn/bgtBarChart/bgtYTDChart/bgtTable all show below, rather than one part of the widget going quiet while another still tries to do math on it. */
+      numInner='<div class="bgt-kpi-col"><div class="wsub">'+(av==="expense"?"Expense":"Income")+' · FY '+fy+'</div><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</span></div></div>';
+    }else{
+      var scoped=bgtScopedRows(rows,scope);
+      var sumB=scoped.reduce(function(s,r){return s+r.budget;},0),sumA=scoped.reduce(function(s,r){return s+r.actual;},0);
+      var variance=scoped.length?bgtVariance(av,sumB,sumA):null;
+      var scopeLbl={month:"This month",quarter:"This quarter",ytd:"Year to date"}[scope];
+      var periodDesc=scoped.length?(scoped.length===1?scoped[0].period:(scoped[0].period+"–"+scoped[scoped.length-1].period)):null;
+      /* The KPI answers exactly the question raised — which period, is this this month — by naming it plainly right above the number instead of leaving it implicit. */
+      var explainTip=(scoped.length?(money(Math.abs(variance))+' '+(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than"))+' the FY '+fy+' budget for '+(periodDesc||scopeLbl)+'.'):('No '+av+' posted yet for '+scopeLbl.toLowerCase()+'.')).replace(/"/g,"&quot;");
+      numInner='<div class="bgt-kpi-col"><div class="wsub">'+scopeLbl+(periodDesc?' · '+periodDesc:'')+'</div><div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance)+'<span class="material-symbols-rounded bgt-info-ic" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div></div>';
+    }
     return '<div class="dep-hd">'+
     '<div class="dep-hd-top"><div class="bgt-ctlrow">'+bgtFyChip(w)+scopeToggle+'</div><div class="dep-hd-toggle">'+fmtToggle+'</div></div>'+
     '<div class="dep-hd-num">'+numInner+'<div class="dep-hd-r">'+acctToggle+'</div></div>'+
     '</div>'+bgtBurn(rows,av,fy);}
-  /* Direct answer to the basic question this widget was missing entirely: how much of the budget is used, and how much of the year is gone. Always visible, no toggle to find it behind, and each row explains itself on hover — reuses Payroll's exact .pct-bar/.pct-fill proportion-bar. Deliberately based on the FULL fiscal year regardless of the Month/Quarter/YTD span above it — this is a once-per-widget pace check, not another view of whatever span is selected. */
+  /* Direct answer to the basic question this widget was missing entirely: how much of the budget is used, and how much of the year is gone. Always visible, no toggle to find it behind, and each row explains itself on hover — reuses Payroll's exact .pct-bar/.pct-fill proportion-bar. Deliberately based on the FULL fiscal year regardless of the Month/Quarter/YTD span above it — this is a once-per-widget pace check, not another view of whatever span is selected. "Elapsed" comes from BGT_CUR_PERIOD (real calendar position in the FY), NOT from how many months happen to have posted actuals — those two used to be the same number by coincidence in the demo data, which hid a real bug: a budget with zero actuals posted would have shown "0% elapsed" instead of correctly showing the year is well underway with nothing logged against it yet. */
   function bgtBurn(rows,av,fy){
-    var thru=bgtThru(rows),totalBudget=rows.reduce(function(s,r){return s+r.budget;},0),usedSoFar=thru.reduce(function(s,r){return s+(r.actual||0);},0);
-    var pctUsed=totalBudget?Math.min(100,Math.round(usedSoFar/totalBudget*100)):0,pctElapsed=rows.length?Math.round(thru.length/rows.length*100):0;
+    if(!bgtHasBudget(rows))return '<div class="bgt-noB">No '+av+' budget entered for FY '+fy+' yet — nothing to track progress against.</div>';
+    var totalBudget=rows.reduce(function(s,r){return s+r.budget;},0),usedSoFar=bgtThru(rows).reduce(function(s,r){return s+(r.actual||0);},0);
+    var curIdx=Math.min(BGT_CUR_PERIOD[fy]||rows.length,rows.length);
+    var pctUsed=totalBudget?Math.min(100,Math.round(usedSoFar/totalBudget*100)):0,pctElapsed=rows.length?Math.round(curIdx/rows.length*100):0;
     var usedLbl=av==="expense"?"Budget spent":"Budget achieved";
     var usedTip=(av==="expense"?(money(usedSoFar)+' spent of the full FY '+fy+' budget ('+money(totalBudget)+').'):(money(usedSoFar)+' achieved of the full FY '+fy+' income budget ('+money(totalBudget)+').')).replace(/"/g,"&quot;");
-    var elapsedTip=(thru.length+' of '+rows.length+' months in FY '+fy+' have posted actuals so far.').replace(/"/g,"&quot;");
+    var elapsedTip=(curIdx+' of '+rows.length+' months in FY '+fy+' have passed.').replace(/"/g,"&quot;");
     return '<div class="bgt-burn"><div class="bgt-burn-row"><span class="bgt-burn-lbl" tabindex="0" data-tip="'+usedTip+'" data-tip-narrow data-tip-plain>'+usedLbl+'</span><span class="pct-bar"><span class="pct-fill" style="width:'+pctUsed+'%"></span></span><span class="bgt-burn-val">'+pctUsed+'%</span></div>'+
     '<div class="bgt-burn-row"><span class="bgt-burn-lbl" tabindex="0" data-tip="'+elapsedTip+'" data-tip-narrow data-tip-plain>FY '+fy+' elapsed</span><span class="pct-bar"><span class="pct-fill" style="width:'+pctElapsed+'%;background:var(--wn-750)"></span></span><span class="bgt-burn-val">'+pctElapsed+'%</span></div></div>';}
   /* Bars sit inside the exact same .tr-plot/.tr-yax/.tr-canvas/.tr-xax grid depTrend uses — no strokes/shadows on the bars (matching Payments over time's flat-fill placeholder bar). Label position uses (i+0.5)/n, matching the flex column centers the bars actually render at — the previous version borrowed the line-chart's edge-anchored i/(n-1) formula, which is why the month labels drifted out from under their bars. Hover now gives visible feedback (a soft highlight on the whole column), not just an invisible tooltip trigger. */
   function bgtBarChart(w,forceScope){
     var av=(w.acctview==="expense")?"expense":"income";
+    var full=bgtSet(w);
+    if(!bgtHasBudget(full))return bgtNoBudgetState(w,av);
     var scope=forceScope||bgtEffScope(w);
-    var rows=bgtScopedRows(bgtSet(w),scope);
+    var rows=bgtScopedRows(full,scope);
     if(!rows.length)return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No actuals posted yet this year</div><div class="state-sub">Once transactions post for a period, its bar will appear here.</div></div>';
     var n=rows.length,max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual);});max=max*1.12;
     function px(i){return (i+0.5)/n*100;}
@@ -977,7 +993,9 @@
   /* Reuses depTrend's exact chrome AND its real hover system — same data-blob/-months/-lo/-hi/-n contract on .tr-canvas, plus a .tr-cross target — so this is wired into the app's actual, already-working document-level mousemove/crosshair/tooltip code, not a static picture of a line. Hover shows the exact cumulative figures at that month; Actual's line colour matches the bars' favourable/unfavourable read (--txt-pos / --red-100, same tokens as everywhere else). */
   function bgtYTDChart(w){
     var av=(w.acctview==="expense")?"expense":"income";
-    var rows=bgtSet(w),ytd=bgtYTD(rows),n=ytd.length,actualsThru=ytd.filter(function(r){return r.actual!=null;});
+    var rows=bgtSet(w);
+    if(!bgtHasBudget(rows))return bgtNoBudgetState(w,av);
+    var ytd=bgtYTD(rows),n=ytd.length,actualsThru=ytd.filter(function(r){return r.actual!=null;});
     var lo=0,hi=-Infinity;ytd.forEach(function(r){if(r.budget>hi)hi=r.budget;});actualsThru.forEach(function(r){if(r.actual>hi)hi=r.actual;});
     if(!isFinite(hi)||hi<=0)hi=1;var sp=hi||1;hi=hi+sp*0.12;var dom=(hi-lo)||1;
     function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
@@ -1000,7 +1018,9 @@
   /* Same .wt-row/.wt-head structure Deposits' table view uses — including real sortable column headers (.wt-sort, same as depTable's sb() helper), not plain unclickable text. Variance/Result are visually broken off from Period/Budget/Actual with the same divider convention the explore columns already use, and Result is now the same colour-coded pill as everywhere else instead of plain grey text repeating the word. */
   function bgtTable(w){
     var av=(w.acctview==="expense")?"expense":"income";
-    var rows=bgtSet(w).map(function(r,i){return {period:r.period,budget:r.budget,actual:r.actual,idx:i,variance:r.actual!=null?bgtVariance(av,r.budget,r.actual):null};});
+    var full=bgtSet(w);
+    if(!bgtHasBudget(full))return bgtNoBudgetState(w,av);
+    var rows=full.map(function(r,i){return {period:r.period,budget:r.budget,actual:r.actual,idx:i,variance:r.actual!=null?bgtVariance(av,r.budget,r.actual):null};});
     var sk=(w.bsort||"idx-asc").split("-"),key=sk[0],dir=sk[1]==="desc"?-1:1;
     function val(x){if(key==="budget")return x.budget;if(key==="actual")return x.actual==null?-Infinity:x.actual;if(key==="variance")return x.variance==null?-Infinity:x.variance;return x.idx;}
     rows.sort(function(a,b){return dir*(val(a)-val(b));});
@@ -1009,11 +1029,16 @@
     var body=rows.map(function(r){
       var v=r.variance;
       return '<div class="wt-row"><span class="lr-main">'+r.period+'</span><span class="wt-c2">'+money(r.budget)+'</span><span class="wt-c2">'+(r.actual!=null?money(r.actual):"—")+'</span><span class="dt-c dt-tr bgt-vardiv">'+(v==null?"—":bgtRtrend(v))+'</span><span class="dt-c bgt-favcol">'+(v==null?'<span class="bgt-caption">—</span>':bgtFavPill(v))+'</span></div>';}).join("");
-    var thru=bgtThru(bgtSet(w)),totalV=thru.length?bgtVariance(av,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
+    var thru=bgtThru(full),totalV=thru.length?bgtVariance(av,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
     return '<div class="bgt-table-wrap"><div class="scroll">'+head+body+'</div><div class="dep-total"><span>YTD total</span><span>'+(totalV==null?"—":bgtRtrend(totalV))+'</span></div></div>';}
   function bgtGlance(w){
     var av=(w.acctview==="expense")?"expense":"income";
-    var rows=bgtSet(w),ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
+    var rows=bgtSet(w);
+    if(!bgtHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+
+      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+(av==="expense"?"Expense":"Income")+' · FY '+(w.fy||"2026")+'</span></span>'+
+      '<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div>'+
+      '</div></div>';
+    var ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
     var v=latest?bgtVariance(av,latest.budget,latest.actual):null;
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+(av==="expense"?"Expense":"Income")+' · FY '+(w.fy||"2026")+'</span></span>'+
