@@ -540,9 +540,11 @@
      carry the selected colour (--sel). */
   .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 10%, transparent); }
   .spd-navitem.is-locked { opacity: 0.65; }
-  /* Stripe sits flush to the panel's left edge (the side nav starts at x=0). */
+  /* Stripe breaks out of the 12px content inset to sit flush at the screen's
+     left edge (x=0); the item's own rounded container stays inset. -12px lands
+     exactly on the list's overflow clip edge, so it shows without being cut. */
   .spd-navitem__indicator {
-    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
     width: 3px; height: 20px; border-radius: 0 3px 3px 0;
     background: var(--sel);
   }
