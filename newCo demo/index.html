@@ -849,7 +849,7 @@
        sequenced gesture rather than everything moving at once. */
     opacity: 0; transition: opacity var(--motion-duration-3) var(--motion-easing-standard) 70ms;
   }
-  .spd-mrail:hover .spd-mrail__label, .spd-mrail:focus-within .spd-mrail__label { opacity: 1; }
+  .spd-mrail.is-expanded .spd-mrail__label { opacity: 1; }
   /* Active fill is a centred SQUARE behind the glyph (not a wide row) — the
      glyph sits centred inside it, even padding all round. */
   .spd-mrail__item.is-active .spd-mrail__badge { background: color-mix(in srgb, var(--sel) 14%, transparent); }
@@ -1668,14 +1668,15 @@ function ModuleRail({ moduleId, pinned, onSwitch, onUnpin }) {
   // cursor is still over it (CSS :hover would otherwise keep it expanded until
   // you move away). `collapsedAfterPick` suppresses the hover-expand until the
   // pointer actually leaves and returns.
-  const [collapsedAfterPick, setCollapsedAfterPick] = useState(false);
-  // Blur the clicked item so :focus-within stops holding the rail open (that was
-  // why it stayed expanded until you clicked elsewhere).
-  const pick = (id, e) => { onSwitch(id); setCollapsedAfterPick(true); if (e && e.currentTarget) e.currentTarget.blur(); };
+  // Expand purely on pointer hover, tracked in state so a selection can force
+  // it closed deterministically (CSS :hover/:focus-within couldn't).
+  const [expanded, setExpanded] = useState(false);
+  const pick = (id, e) => { onSwitch(id); setExpanded(false); if (e && e.currentTarget) e.currentTarget.blur(); };
   return (
-    <nav className={"spd-mrail" + (pinned ? "" : " is-collapsed") + (collapsedAfterPick ? " is-suppress" : "")}
+    <nav className={"spd-mrail" + (pinned ? "" : " is-collapsed") + (expanded && pinned ? " is-expanded" : "")}
       aria-label="Modules" aria-hidden={!pinned}
-      onMouseLeave={() => setCollapsedAfterPick(false)}>
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}>
       <div className="spd-mrail__inner">
         <div className="spd-mrail__scroll">
           {RAIL_TOP.map((id) => {
