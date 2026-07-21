@@ -1543,6 +1543,8 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
   const [q, setQ] = useState("");
   if (!mod.nav || !mod.nav.length) return null;
   const query = rail ? "" : q.trim().toLowerCase(); // no filtering while railed
+  // Home's selected-item accent is the deeper amethyst (never the primary purple).
+  const accent = mod.id === "home" ? "#694D94" : mod.color;
   const labelOf = (n) => (n.to ? MODULE_MAP[n.to].name : n.label);
   const visible = mod.nav.filter((n) => !query || labelOf(n).toLowerCase().includes(query));
   let lastGroup = null;
