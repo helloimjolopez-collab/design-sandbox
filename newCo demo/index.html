@@ -1290,6 +1290,34 @@ function firstItemOf(id) {
   return m && m.nav && m.nav.length ? m.nav[0].id : null;
 }
 
+/* Personalised app-switcher glyph — a 2×2 of rounded squares in the brand
+   purples, laid out so the darkest sits bottom-left rising to the lightest
+   top-right (echoing the mark's ascension). Bespoke to Spired, à la Confluence. */
+function WaffleMark({ size = 22 }) {
+  const d = "var(--primitive-color-purple-600)", m = "var(--primitive-color-purple-300)", l = "var(--primitive-color-purple-100)";
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ display: "block" }}>
+      <rect x="3.5"  y="3.5"  width="7.5" height="7.5" rx="2.4" fill={m} />
+      <rect x="13"   y="3.5"  width="7.5" height="7.5" rx="2.4" fill={l} />
+      <rect x="3.5"  y="13"   width="7.5" height="7.5" rx="2.4" fill={d} />
+      <rect x="13"   y="13"   width="7.5" height="7.5" rx="2.4" fill={m} />
+    </svg>
+  );
+}
+
+/* Elegant custom sidebar collapse/expand glyph — a soft rounded panel with a
+   left column; when railed, the column fills to show the icon-rail is active.
+   Cleaner than the Material left_panel symbol. */
+function SidebarToggleIcon({ collapsed, size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ display: "block" }}>
+      <rect x="3.25" y="5" width="17.5" height="14" rx="4.2" stroke="currentColor" strokeWidth="1.6" />
+      {collapsed && <rect x="3.25" y="5" width="6.5" height="14" rx="4.2" fill="currentColor" fillOpacity="0.18" />}
+      <line x1="9.75" y1="6.4" x2="9.75" y2="17.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /* Persistent global rail — the ONE place navigation lives, at the left edge,
    identical on Home and inside every module. A slim vertical rail of module
    icons (Home first) with Admin pinned at the bottom. Switching a module and
