@@ -1465,14 +1465,29 @@ function SectionItem({ icon, label, color, active, onClick, leadColor, trailing 
    "Modules" group provides one-click access into every module (items with
    `to`); other items navigate within the current module. */
 function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail }) {
+  const [q, setQ] = useState("");
   if (!mod.nav || !mod.nav.length) return null;
+  const query = rail ? "" : q.trim().toLowerCase(); // no filtering while railed
+  const labelOf = (n) => (n.to ? MODULE_MAP[n.to].name : n.label);
+  const visible = mod.nav.filter((n) => !query || labelOf(n).toLowerCase().includes(query));
   let lastGroup = null;
   return (
     <nav className={"spd-modnav" + (rail ? " is-rail" : "")} aria-label={mod.name + " navigation"}>
-      {/* Collapse / expand control — pinned at the TOP where the sidebar
-          collapse toggle is expected. Full labels ↔ icon rail. This is
-          separate from the logo (which hides/reveals the whole nav). */}
+      {/* Header: a filter for this area's nav + the collapse/expand control.
+          (No module name/badge here — the top-nav switcher already names the
+          module, so repeating it would be redundant.) */}
       <div className="spd-modnav__header">
+        {!rail && (
+          <div className="spd-modnav__search">
+            <Icon name="search" size={17} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter…" aria-label={"Filter " + mod.name + " navigation"} />
+            {q && (
+              <button className="spd-modnav__search-clear" onClick={() => setQ("")} aria-label="Clear filter">
+                <Icon name="close" size={15} />
+              </button>
+            )}
+          </div>
+        )}
         <button className="spd-modnav__collapse" onClick={onToggleRail}
           aria-label={rail ? "Expand navigation" : "Collapse to rail"}
           title={rail ? "Expand navigation" : "Collapse to rail"}>
@@ -1480,7 +1495,7 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
         </button>
       </div>
       <div className="spd-modnav__list spd-stagger">
-        {mod.nav.map((n) => {
+        {visible.map((n) => {
           const showGroup = n.group && n.group !== lastGroup;
           lastGroup = n.group || lastGroup;
           const target = n.to ? MODULE_MAP[n.to] : null;
@@ -1502,6 +1517,7 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
             </React.Fragment>
           );
         })}
+        {visible.length === 0 && <p className="spd-modnav__empty">No matches</p>}
       </div>
     </nav>
   );
