@@ -2283,8 +2283,21 @@ function LoadingButtonDemo() {
   );
 }
 
-/* Shared concept-page header. */
-function ConceptHeader({ title, lead, action }) {
+/* Shared concept-page header. `gradient` renders it as a brand-gradient hero. */
+function ConceptHeader({ title, lead, action, gradient }) {
+  if (gradient) {
+    return (
+      <div className="spd-concept-hero spd-fade-in">
+        <div className="spd-concept-hero__row">
+          <div>
+            <p className="spd-concept-hero__title">{title}</p>
+            <p className="spd-concept-hero__lead">{lead}</p>
+          </div>
+          {action}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="spd-fade-in" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
       <div>
