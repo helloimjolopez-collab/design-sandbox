@@ -412,33 +412,34 @@
   /* ── Boot logo — bespoke full-app load animation (a little story) ──────── */
   .spd-boot {
     height: 100%; display: flex; align-items: center; justify-content: center;
-    animation: spd-boot-out var(--motion-duration-4) var(--motion-easing-standard) 1.35s both;
+    /* Let the mark assemble, land, and take one calm breath before it fades. */
+    animation: spd-boot-out 0.6s var(--motion-easing-standard) 2.35s both;
   }
   /* Settled logo breathes softly (kicks in once the strokes have landed). */
-  .spd-boot__svg { transform-origin: center; animation: spd-boot-breath 3.4s ease-in-out 1.15s infinite; }
-  /* Each stroke rises and stacks into place with a gentle upward woop. */
+  .spd-boot__svg { transform-origin: center; animation: spd-boot-breath 4.2s var(--motion-easing-breath) 1.95s infinite; }
+  /* Each stroke rises and stacks into place with a gentle, unhurried woop. */
   .spd-boot-bar {
     opacity: 0;
-    animation: spd-boot-rise 0.72s cubic-bezier(0.22, 0.8, 0.3, 1) both;
+    animation: spd-boot-rise 1.05s var(--motion-easing-burst) both;
   }
-  /* The wordmark whispers in beside the assembled mark. */
+  /* The wordmark whispers in beside the assembled mark, after it has settled. */
   .spd-boot-word {
     opacity: 0;
-    animation: spd-boot-word 0.6s var(--motion-easing-breath) 0.62s both;
+    animation: spd-boot-word 0.85s var(--motion-easing-breath) 1.28s both;
   }
   @keyframes spd-boot-rise {
-    0%   { opacity: 0; transform: translateY(19px); }
-    60%  { opacity: 1; transform: translateY(-3.5px); }
-    80%  { transform: translateY(1px); }
+    0%   { opacity: 0; transform: translateY(20px); }
+    55%  { opacity: 1; transform: translateY(-4px); }
+    78%  { transform: translateY(1.5px); }
     100% { opacity: 1; transform: translateY(0); }
   }
   @keyframes spd-boot-word {
-    0%   { opacity: 0; transform: translateX(7px); }
+    0%   { opacity: 0; transform: translateX(9px); }
     100% { opacity: 1; transform: translateX(0); }
   }
   @keyframes spd-boot-breath {
     0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.04); }
+    50%      { transform: scale(1.045); }
   }
   @keyframes spd-boot-out { to { opacity: 0; } }
   @media (prefers-reduced-motion: reduce) {
@@ -767,6 +768,8 @@
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
   .spd-swpop__pin:hover { background: color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 11%, transparent); }
+  .spd-swpop__pin.is-unpin { color: var(--semantic-color-light-mode-text-static-secondary-base); }
+  .spd-swpop__pin.is-unpin:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-swpop__list { display: flex; flex-direction: column; gap: 1px; }
 
   /* ── Pinned module rail (far left). Collapsed = icon rail; hover expands it
