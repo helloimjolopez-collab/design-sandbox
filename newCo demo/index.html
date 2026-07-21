@@ -1432,10 +1432,11 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
             return <SectionItem key={id} icon={m.icon} label={m.name} color={m.color} active={id === moduleId} onClick={() => onSwitchModule(id)} />;
           })}
         </div>
-        {mod.nav && mod.nav.length > 0 && (
+        {mod.nav && mod.nav.filter((n) => !n.to).length > 0 && (
           <div className="spd-modnav__list spd-stagger" style={{ marginTop: 8 }}>
             <p className="spd-sidenav__section-label">{mod.name}</p>
-            {mod.nav.map((n) => (
+            {/* skip module-link items — the Modules list above already covers them */}
+            {mod.nav.filter((n) => !n.to).map((n) => (
               <SectionItem key={n.id} icon={n.icon} label={n.label} color={mod.color} active={item === n.id} onClick={() => onSelectItem(n.id)} />
             ))}
           </div>
