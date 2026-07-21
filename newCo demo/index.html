@@ -1446,7 +1446,7 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
   );
 }
 
-function TopNav({ mode, onToggleMode, onOpenMobileNav, moduleId, onSwitchModule }) {
+function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, moduleId, onSwitchModule }) {
   const midnight = mode === "midnight";
   return (
     <header className="spd-topnav" role="banner">
@@ -1454,12 +1454,12 @@ function TopNav({ mode, onToggleMode, onOpenMobileNav, moduleId, onSwitchModule 
         <button className="spd-topnav__iconbtn spd-topnav__hamburger" onClick={onOpenMobileNav} aria-label="Open navigation">
           <Icon name="menu" />
         </button>
-        {/* Quiet, non-interactive brand mark. Home is reached via the switcher
-            and the Home side nav, so the logo isn't a control. */}
-        <span className="spd-topnav__logo" aria-hidden="true">
+        {/* Logo → Spired Home (the launcher hub). Distinct job from the
+            switcher, which jumps to a module and shows the module's own icon. */}
+        <button className="spd-topnav__logo" onClick={onGoHome} aria-label="Spired Home" title="Spired Home">
           <SpiredMark size={22} />
-        </span>
-        {/* Module switcher — the single, compact way to change modules. */}
+        </button>
+        {/* Module switcher — the compact way to change modules. */}
         <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
         <span className="spd-topnav__brandsep" aria-hidden="true" />
         <button className="spd-topnav__org">
