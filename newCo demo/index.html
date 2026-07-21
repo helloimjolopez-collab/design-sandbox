@@ -619,15 +619,20 @@
   }
   .spd-modnav__group:first-child { padding-top: 4px; }
 
-  /* ── Module switcher (compact, top-left) ──────────────────────────────── */
-  .spd-tms { position: relative; display: flex; align-items: center; }
-  .spd-tms__trigger {
-    display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 9px 0 5px;
-    border-radius: 11px; background: transparent; border: none; cursor: pointer;
-    font-family: inherit; max-width: 210px;
+  /* ── Module switcher (Atlassian-style: waffle trigger + static label) ──── */
+  .spd-tms { position: relative; display: flex; align-items: center; gap: 8px; }
+  .spd-tms__waffle {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
-  .spd-tms__trigger:hover, .spd-tms__trigger.is-open { background: rgba(41,39,36,0.06); }
+  .spd-tms__waffle:hover, .spd-tms__waffle.is-open { background: rgba(41,39,36,0.06); }
+  .spd-tms__current {
+    display: flex; align-items: center; gap: 8px; max-width: 210px;
+    pointer-events: none; /* label only — not clickable */
+  }
   .spd-tms__chip {
     width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
