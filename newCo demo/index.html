@@ -1539,8 +1539,10 @@ function ModuleBadge({ moduleId, onHome }) {
   const mod = MODULE_MAP[moduleId];
   return (
     <button className="spd-tms__trigger" onClick={onHome} title={mod.name + " home"}>
-      <span className="spd-tms__badge" style={{ background: moduleBadgeFill(mod.id) }}>
-        <Icon name={mod.icon} filled size={17} style={{ color: moduleGlyphColor(mod.id) }} />
+      {/* No background tile — just the module glyph (filled, since it's the
+          current module) in its high-contrast ink. */}
+      <span className="spd-tms__badge">
+        <Icon name={mod.icon} filled size={18} style={{ color: moduleInk(mod.id) }} />
       </span>
       <span className="spd-tms__name">{mod.name}</span>
     </button>
