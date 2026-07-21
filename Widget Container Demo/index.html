@@ -659,23 +659,54 @@
   var FUND=[{name:"General",net:12400},{name:"Building",net:6200},{name:"Missions",net:3100},{name:"Payroll",net:8800},{name:"Utilities",net:1450},{name:"Software",net:980}];
   /* ---- Budget Compared to Actual ----
      Org fiscal year = calendar year (Jan–Dec), matching test1's verified-live axis. "Today" across this whole
-     demo is fixed at mid-July (see rangeMonths' now=6), so actuals only exist Jan–Jul (idx 0–6); Aug–Dec carry
-     a budget but actual:null — the year isn't over yet, that's not the same as a zero. Comparison is against
-     the ORIGINAL budget only (mid-year revisions excluded), per the Confluence spec — no "revised" field exists
-     in this model on purpose, so nothing can quietly compare against the wrong baseline. */
-  var BUDGET_INCOME=[
-    {period:"Jan",budget:42000,actual:44200},{period:"Feb",budget:42000,actual:40100},{period:"Mar",budget:44000,actual:47300},
-    {period:"Apr",budget:44000,actual:41800},{period:"May",budget:46000,actual:48900},{period:"Jun",budget:46000,actual:43500},
-    {period:"Jul",budget:48000,actual:52100},{period:"Aug",budget:48000,actual:null},{period:"Sep",budget:50000,actual:null},
-    {period:"Oct",budget:50000,actual:null},{period:"Nov",budget:52000,actual:null},{period:"Dec",budget:58000,actual:null}
-  ];
-  var BUDGET_EXPENSE=[
-    {period:"Jan",budget:38000,actual:36400},{period:"Feb",budget:38000,actual:39800},{period:"Mar",budget:39000,actual:37200},
-    {period:"Apr",budget:39000,actual:41600},{period:"May",budget:40000,actual:38300},{period:"Jun",budget:40000,actual:42900},
-    {period:"Jul",budget:41000,actual:39700},{period:"Aug",budget:41000,actual:null},{period:"Sep",budget:42000,actual:null},
-    {period:"Oct",budget:42000,actual:null},{period:"Nov",budget:44000,actual:null},{period:"Dec",budget:47000,actual:null}
-  ];
-  function bgtSet(w){return w.acctview==="expense"?BUDGET_EXPENSE:BUDGET_INCOME;}
+     demo is fixed at mid-July (see rangeMonths' now=6), so FY 2026 (the current, in-progress year) only has
+     actuals through Jul; Aug–Dec carry a budget but actual:null — the year isn't over yet, that's not the same
+     as a zero. FY 2024/2025 are fully closed years (every period has an actual) so switching the fiscal-year
+     picker visibly changes the data, not just an empty state. Comparison is against the ORIGINAL budget only
+     (mid-year revisions excluded), per the Confluence spec — no "revised" field exists in this model on purpose,
+     so nothing can quietly compare against the wrong baseline. */
+  var BGT_FYS=["2024","2025","2026"];
+  var BUDGET_INCOME_BY_FY={
+    "2024":[
+      {period:"Jan",budget:38000,actual:39500},{period:"Feb",budget:38000,actual:37200},{period:"Mar",budget:40000,actual:41800},
+      {period:"Apr",budget:40000,actual:38900},{period:"May",budget:42000,actual:43600},{period:"Jun",budget:42000,actual:40800},
+      {period:"Jul",budget:44000,actual:45300},{period:"Aug",budget:44000,actual:42700},{period:"Sep",budget:46000,actual:47100},
+      {period:"Oct",budget:46000,actual:44500},{period:"Nov",budget:48000,actual:49200},{period:"Dec",budget:54000,actual:56100}
+    ],
+    "2025":[
+      {period:"Jan",budget:40000,actual:41100},{period:"Feb",budget:40000,actual:38700},{period:"Mar",budget:42000,actual:43900},
+      {period:"Apr",budget:42000,actual:40600},{period:"May",budget:44000,actual:45800},{period:"Jun",budget:44000,actual:42300},
+      {period:"Jul",budget:46000,actual:48200},{period:"Aug",budget:46000,actual:44900},{period:"Sep",budget:48000,actual:49300},
+      {period:"Oct",budget:48000,actual:46700},{period:"Nov",budget:50000,actual:51600},{period:"Dec",budget:56000,actual:58900}
+    ],
+    "2026":[
+      {period:"Jan",budget:42000,actual:44200},{period:"Feb",budget:42000,actual:40100},{period:"Mar",budget:44000,actual:47300},
+      {period:"Apr",budget:44000,actual:41800},{period:"May",budget:46000,actual:48900},{period:"Jun",budget:46000,actual:43500},
+      {period:"Jul",budget:48000,actual:52100},{period:"Aug",budget:48000,actual:null},{period:"Sep",budget:50000,actual:null},
+      {period:"Oct",budget:50000,actual:null},{period:"Nov",budget:52000,actual:null},{period:"Dec",budget:58000,actual:null}
+    ]
+  };
+  var BUDGET_EXPENSE_BY_FY={
+    "2024":[
+      {period:"Jan",budget:35000,actual:33800},{period:"Feb",budget:35000,actual:36400},{period:"Mar",budget:36000,actual:34700},
+      {period:"Apr",budget:36000,actual:38100},{period:"May",budget:37000,actual:35600},{period:"Jun",budget:37000,actual:39200},
+      {period:"Jul",budget:38000,actual:36900},{period:"Aug",budget:38000,actual:39700},{period:"Sep",budget:39000,actual:37200},
+      {period:"Oct",budget:39000,actual:40100},{period:"Nov",budget:41000,actual:38600},{period:"Dec",budget:44000,actual:41300}
+    ],
+    "2025":[
+      {period:"Jan",budget:36500,actual:35200},{period:"Feb",budget:36500,actual:37900},{period:"Mar",budget:37500,actual:36100},
+      {period:"Apr",budget:37500,actual:39400},{period:"May",budget:38500,actual:37000},{period:"Jun",budget:38500,actual:40600},
+      {period:"Jul",budget:39500,actual:38300},{period:"Aug",budget:39500,actual:41000},{period:"Sep",budget:40500,actual:38700},
+      {period:"Oct",budget:40500,actual:41500},{period:"Nov",budget:42500,actual:40000},{period:"Dec",budget:45500,actual:42700}
+    ],
+    "2026":[
+      {period:"Jan",budget:38000,actual:36400},{period:"Feb",budget:38000,actual:39800},{period:"Mar",budget:39000,actual:37200},
+      {period:"Apr",budget:39000,actual:41600},{period:"May",budget:40000,actual:38300},{period:"Jun",budget:40000,actual:42900},
+      {period:"Jul",budget:41000,actual:39700},{period:"Aug",budget:41000,actual:null},{period:"Sep",budget:42000,actual:null},
+      {period:"Oct",budget:42000,actual:null},{period:"Nov",budget:44000,actual:null},{period:"Dec",budget:47000,actual:null}
+    ]
+  };
+  function bgtSet(w){var fy=w.fy||"2026",table=(w.acctview==="expense")?BUDGET_EXPENSE_BY_FY:BUDGET_INCOME_BY_FY;return table[fy]||table["2026"];}
   /* Favourable = actual revenue above budget, OR actual expense below budget — the formula reverses by account
      type, so a single "green when actual >= budget" rule is correct for income and backwards for expense. This
      is the one function every bar/line/table in this widget calls for color, so the flip can never drift out of
