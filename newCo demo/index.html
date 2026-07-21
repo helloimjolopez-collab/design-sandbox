@@ -1753,9 +1753,9 @@ function AccountMenu({ mode, onToggleMode }) {
             </button>
           ))}
           <div className="spd-acct__sep" />
-          {/* Appearance — the mode toggle lives here, not on the top bar. Stays
-              open so you can see the theme flip in place. */}
-          <button className="spd-tms__opt" role="menuitemcheckbox" aria-checked={midnight} onClick={onToggleMode}>
+          {/* Appearance — the mode toggle lives here; closes the menu on select
+              like every other action. */}
+          <button className="spd-tms__opt" role="menuitemcheckbox" aria-checked={midnight} onClick={() => { onToggleMode(); setOpen(false); }}>
             <Icon name={midnight ? "light_mode" : "bedtime"} filled={midnight} size={18} style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
             <span style={{ flex: 1 }}>{midnight ? "Light Mode" : "Midnight Mode"}</span>
           </button>
