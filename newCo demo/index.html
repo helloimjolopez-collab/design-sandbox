@@ -562,8 +562,8 @@
      tiles: transparent by default, module-tinted only when active. */
   .spd-navitem__chip--fn { border-radius: 9px; }
 
-  /* ── Logo = hide/reveal the side nav. Stays the brand mark; on hover it
-        lifts gently (the brand's ascension), no icon morph. ─────────────── */
+  /* ── Logo = hide/reveal the side nav. On hover the three bars replay their
+        assembling motion (bottom→top, the loading bump) — NOT a scale. ───── */
   .spd-topnav__logo {
     position: relative; display: inline-flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 10px; padding: 0; flex-shrink: 0;
@@ -571,13 +571,13 @@
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
   .spd-topnav__logo:hover { background: rgba(41,39,36,0.06); }
-  .spd-topnav__logo:active .spd-topnav__logo-mark { transform: translateY(0) scale(0.92); }
-  .spd-topnav__logo-mark {
-    display: inline-flex; align-items: center; justify-content: center;
-    transform-origin: center;
-    transition: transform var(--motion-duration-4) var(--motion-easing-spring-soft);
-  }
-  .spd-topnav__logo:hover .spd-topnav__logo-mark { transform: translateY(-1.5px) scale(1.09); }
+  .spd-topnav__logo-mark { display: inline-flex; align-items: center; justify-content: center; }
+  /* LOGO_MARK_PATHS order is bottom, middle, top — so nth-child(1) rises first. */
+  .spd-topnav__logo:hover .spd-logobar { animation: spd-boot-rise 0.58s cubic-bezier(0.22, 0.85, 0.3, 1) both; }
+  .spd-topnav__logo:hover .spd-logobar:nth-child(1) { animation-delay: 0s; }
+  .spd-topnav__logo:hover .spd-logobar:nth-child(2) { animation-delay: 0.085s; }
+  .spd-topnav__logo:hover .spd-logobar:nth-child(3) { animation-delay: 0.17s; }
+  @media (prefers-reduced-motion: reduce) { .spd-topnav__logo:hover .spd-logobar { animation: none; } }
 
   /* ── Module section nav — the single side nav (current module's own). The
      header + footer are fixed; the list between them scrolls. ───────────── */
@@ -1626,7 +1626,7 @@ function TopNav({ mode, onToggleMode, onToggleNav, onOpenMobileNav, navHidden, m
         {/* The logo hides/reveals the side nav. Brand mark stays the mark — it
             just lifts gently on hover; tooltip conveys the action. */}
         <button className="spd-topnav__logo" onClick={onToggleNav} aria-label={navHidden ? "Show menu" : "Hide menu"} title={navHidden ? "Show menu" : "Hide menu"}>
-          <span className="spd-topnav__logo-mark"><LogoMark size={22} /></span>
+          <span className="spd-topnav__logo-mark"><LogoMark size={24} /></span>
         </button>
         <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
       </div>
