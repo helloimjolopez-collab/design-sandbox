@@ -1612,17 +1612,14 @@ function ModuleRail({ moduleId, pinned, onSwitch, onUnpin }) {
           {RAIL_TOP.map((id) => {
             const m = MODULE_MAP[id];
             const active = id === moduleId;
-            const gc = moduleGlyphColor(id);
             return (
               <button key={id} className={"spd-mrail__item" + (active ? " is-active" : "")}
-                onClick={() => onSwitch(id)} title={m.name}
-                style={{ "--sel": gc }}>
-                <span className="spd-mrail__indicator" aria-hidden="true" />
-                {/* Always a coloured module tile (tint fill + solid colour glyph)
-                    so these read as MODULE icons, not generic nav items — even
-                    when inactive. Active adds the stripe + a soft row tint. */}
-                <span className="spd-mrail__badge" style={{ background: moduleBadgeFill(id) }}>
-                  <Icon name={m.icon} filled size={20} style={{ color: gc }} />
+                onClick={() => onSwitch(id)} title={m.name}>
+                {/* Selection = primary-purple stripe (below) + the glyph FILLS.
+                    Module identity = the glyph's ink colour. No background tile. */}
+                {active && <span className="spd-mrail__indicator" aria-hidden="true" />}
+                <span className="spd-mrail__badge">
+                  <Icon name={m.icon} filled={active} size={19} style={{ color: moduleInk(id) }} />
                 </span>
                 <span className="spd-mrail__label">{m.name}{m.demo && <span className="spd-tms__tag">Demo</span>}</span>
               </button>
