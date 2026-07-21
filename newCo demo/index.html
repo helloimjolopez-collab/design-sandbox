@@ -562,27 +562,22 @@
      tiles: transparent by default, module-tinted only when active. */
   .spd-navitem__chip--fn { border-radius: 9px; }
 
-  /* ── Logo = menu toggle. Brand mark at rest; morphs to a panel icon on
-        hover to reveal it hides/shows the side nav. ─────────────────────── */
+  /* ── Logo = hide/reveal the side nav. Stays the brand mark; on hover it
+        lifts gently (the brand's ascension), no icon morph. ─────────────── */
   .spd-topnav__logo {
     position: relative; display: inline-flex; align-items: center; justify-content: center;
-    width: 30px; height: 30px; border-radius: 9px; padding: 0; flex-shrink: 0;
+    width: 34px; height: 34px; border-radius: 10px; padding: 0; flex-shrink: 0;
     background: transparent; border: none; cursor: pointer;
-    transition: background var(--motion-duration-2) var(--motion-easing-standard),
-                transform var(--motion-duration-3) var(--motion-easing-spring);
+    transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
   .spd-topnav__logo:hover { background: rgba(41,39,36,0.06); }
-  .spd-topnav__logo:active { transform: scale(0.94); }
-  .spd-topnav__logo-mark, .spd-topnav__logo-menu {
+  .spd-topnav__logo:active .spd-topnav__logo-mark { transform: translateY(0) scale(0.92); }
+  .spd-topnav__logo-mark {
     display: inline-flex; align-items: center; justify-content: center;
-    transition: opacity var(--motion-duration-2) var(--motion-easing-standard);
+    transform-origin: center;
+    transition: transform var(--motion-duration-4) var(--motion-easing-spring-soft);
   }
-  .spd-topnav__logo-menu {
-    position: absolute; inset: 0; opacity: 0;
-    color: var(--semantic-color-light-mode-text-static-secondary-base);
-  }
-  .spd-topnav__logo:hover .spd-topnav__logo-mark { opacity: 0; }
-  .spd-topnav__logo:hover .spd-topnav__logo-menu { opacity: 1; }
+  .spd-topnav__logo:hover .spd-topnav__logo-mark { transform: translateY(-1.5px) scale(1.09); }
 
   /* ── Module section nav — the single side nav (current module's own) ───── */
   .spd-modnav {
