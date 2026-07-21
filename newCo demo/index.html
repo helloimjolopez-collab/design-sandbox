@@ -579,14 +579,27 @@
   }
   .spd-topnav__logo:hover .spd-topnav__logo-mark { transform: translateY(-1.5px) scale(1.09); }
 
-  /* ── Module section nav — the single side nav (current module's own) ───── */
+  /* ── Module section nav — the single side nav (current module's own). The
+     header + footer are fixed; the list between them scrolls. ───────────── */
   .spd-modnav {
     width: 216px; flex-shrink: 0; display: flex; flex-direction: column;
-    padding: 20px 12px 20px; overflow-y: auto;
+    padding: 20px 12px 16px; overflow: hidden;
+  }
+  .spd-modnav__list {
+    display: flex; flex-direction: column; gap: 4px;
+    flex: 1 1 auto; min-height: 0; overflow-y: auto;
     scrollbar-width: none; -ms-overflow-style: none;
   }
-  .spd-modnav::-webkit-scrollbar { width: 0; height: 0; display: none; }
-  .spd-modnav__list { display: flex; flex-direction: column; gap: 4px; }
+  .spd-modnav__list::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  /* Pinned account-settings footer — opaque (canvas) so the list scrolls
+     behind it, with a hairline to signal there's more above. */
+  .spd-modnav__foot {
+    flex-shrink: 0; display: flex; flex-direction: column; gap: 4px;
+    margin: 4px -12px 0; padding: 6px 12px 0;
+    background: var(--semantic-color-light-mode-surface-canvas-light);
+    border-top: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint);
+  }
+  .spd-modnav__foot-label { padding-top: 10px; }
   /* Side nav hidden via the logo toggle (desktop). */
   .spd-body.is-nav-hidden .spd-modnav { display: none; }
 
