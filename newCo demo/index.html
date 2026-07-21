@@ -2961,7 +2961,15 @@ function App() {
   const mod = MODULE_MAP[moduleId];
   const item = itemByModule[moduleId] ?? firstItemOf(moduleId);
 
-  const goModule = (id) => { setModuleId(id); setMobileNav(false); };
+  const goModule = (id) => {
+    setMobileNav(false);
+    if (id === moduleId) return;
+    // Switching modules moves to a different "space" — show a brief branded
+    // load so it doesn't feel like an instant, weightless jump.
+    setSwitching(true);
+    setModuleId(id);
+    setTimeout(() => setSwitching(false), 750);
+  };
   const goItem = (id) => { setItemByModule((s) => ({ ...s, [moduleId]: id })); setMobileNav(false); };
 
   const renderPage = () => {
