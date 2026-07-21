@@ -244,7 +244,9 @@
   .bgt-table tbody th{font-weight:500;color:var(--txt-primary);}
   .bgt-table td{font-variant-numeric:tabular-nums;}
   .bgt-favcell{color:var(--txt-subtle);font-size:12.5px;}
-  .bgt-explore{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start;}
+  /* Same flex-fill chain as .dep-full/.dep-col (Deposits' table+donut split) — the outer row fills .wcontent, each column is its own flex-column context so the chart inside can flex:1 to the column's real height. */
+  .bgt-explore{flex:1;min-height:0;display:flex;}
+  .bgt-explore-col{flex:1;min-width:0;display:flex;flex-direction:column;}
   .bgt-explore-col+.bgt-explore-col{border-left:1px solid var(--stroke-widget);}
   .vt{display:inline-flex;align-items:center;gap:4px;}
   .vt .material-symbols-rounded{font-size:15px;}
