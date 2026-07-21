@@ -1539,9 +1539,15 @@ function SwitcherPopover({ moduleId, pinned, onSwitch, onPin, onUnpin, onClose }
     <div className="spd-swpop spd-fade-in" ref={ref} role="menu" aria-label="Modules">
       <div className="spd-swpop__head">
         <p className="spd-swpop__title">Switch module</p>
-        <button className="spd-swpop__pin" onClick={onPin} title="Pin the switcher to a rail on the left">
-          <Icon name="push_pin" size={14} /> Pin to rail
-        </button>
+        {pinned ? (
+          <button className="spd-swpop__pin is-unpin" onClick={onUnpin} title="Unpin the rail — keep the switcher as a popover">
+            <Icon name="keep_off" size={14} /> Unpin rail
+          </button>
+        ) : (
+          <button className="spd-swpop__pin" onClick={onPin} title="Pin the switcher to a rail on the left">
+            <Icon name="push_pin" size={14} /> Pin to rail
+          </button>
+        )}
       </div>
       <div className="spd-swpop__list">
         {RAIL_TOP.map((id) => {
