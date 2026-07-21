@@ -1541,6 +1541,17 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
         })}
         {visible.length === 0 && <p className="spd-modnav__empty">No matches</p>}
       </div>
+      {/* Account settings pinned to the bottom — always visible; the list
+          above scrolls behind it. */}
+      {mod.footerNav && mod.footerNav.length > 0 && (
+        <div className="spd-modnav__foot">
+          <p className="spd-modnav__group spd-modnav__foot-label">Account settings</p>
+          {mod.footerNav.map((n) => (
+            <SectionItem key={n.id} icon={n.icon} label={n.label} color={mod.color}
+              active={item === n.id} onClick={() => onSelectItem(n.id)} />
+          ))}
+        </div>
+      )}
     </nav>
   );
 }
