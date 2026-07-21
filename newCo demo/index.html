@@ -560,9 +560,10 @@
      tiles: transparent by default, module-tinted only when active. */
   .spd-navitem__chip--fn { border-radius: 9px; }
 
-  /* ── Brand mark → Spired Home (the launcher hub) ──────────────────────── */
+  /* ── Logo = menu toggle. Brand mark at rest; morphs to a panel icon on
+        hover to reveal it hides/shows the side nav. ─────────────────────── */
   .spd-topnav__logo {
-    display: inline-flex; align-items: center; justify-content: center;
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 11px; padding: 0;
     background: transparent; border: none; cursor: pointer;
     transition: background var(--motion-duration-2) var(--motion-easing-standard),
@@ -570,6 +571,16 @@
   }
   .spd-topnav__logo:hover { background: rgba(41,39,36,0.06); }
   .spd-topnav__logo:active { transform: scale(0.94); }
+  .spd-topnav__logo-mark, .spd-topnav__logo-menu {
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: opacity var(--motion-duration-2) var(--motion-easing-standard);
+  }
+  .spd-topnav__logo-menu {
+    position: absolute; inset: 0; opacity: 0;
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
+  }
+  .spd-topnav__logo:hover .spd-topnav__logo-mark { opacity: 0; }
+  .spd-topnav__logo:hover .spd-topnav__logo-menu { opacity: 1; }
 
   /* ── Module section nav — the single side nav (current module's own) ───── */
   .spd-modnav {
