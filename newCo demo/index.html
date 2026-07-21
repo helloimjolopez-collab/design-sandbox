@@ -1348,12 +1348,13 @@ function ModuleSwitcher({ moduleId, onSwitch }) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu" aria-expanded={open} aria-label="Switch module" title="Switch module"
       >
-        <Icon name="apps" size={22} />
+        <WaffleMark size={22} />
       </button>
-      {/* Non-clickable current-module label. */}
+      {/* Non-clickable current-module label — solid brand-colour app badge +
+          white glyph, so it reads as identity, not a button. */}
       <span className="spd-tms__current" aria-hidden="true">
-        <span className="spd-tms__chip" style={{ background: `color-mix(in srgb, ${mod.color} 15%, transparent)` }}>
-          <Icon name={mod.icon} filled size={16} style={{ color: mod.color }} />
+        <span className="spd-tms__badge" style={{ background: mod.color }}>
+          <Icon name={mod.icon} filled size={15} style={{ color: "#FFFFFF" }} />
         </span>
         <span className="spd-tms__name">{mod.name}</span>
       </span>
