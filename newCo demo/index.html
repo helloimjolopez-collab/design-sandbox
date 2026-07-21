@@ -986,34 +986,29 @@
     font-size: 14px; line-height: 1.55; color: var(--semantic-color-light-mode-text-static-secondary-base);
     max-width: 680px; margin-top: 6px;
   }
-  /* Gradient hero — brand amethyst → magenta, with a soft glow. */
+  /* Gradient hero — brand FOUR-COLOUR linear gradients (horizontal), no radial
+     glow. Purple / magenta / orange families only (never gray/blue/green).
+     Weighted dark→vibrant left-to-right so the white title/lead (left) stay
+     legible while the vibrant brand colour shows toward the right. */
   .spd-concept-hero {
     position: relative; overflow: hidden; border-radius: 18px; padding: 30px 32px; margin-bottom: 6px;
-    /* Default = amethyst/orchid; per-page tones below. Grain (::before) + a soft
-       glow (::after) sit over each. Title/lead live on the dark left end. */
-    background: linear-gradient(122deg, #2A2154 0%, #41377D 30%, #6E64BE 66%, #9558A0 100%);
+    background: linear-gradient(90deg, #19143C 0%, #41377D 54%, #6E64BE 85%, #9691F5 100%);
     color: #FFFFFF;
   }
-  /* Per-page brand gradients — a different family on each Design Concept page. */
-  .spd-concept-hero--motion { background: linear-gradient(122deg, #2A2154 0%, #41377D 30%, #6E64BE 66%, #9558A0 100%); }
-  .spd-concept-hero--loading { background: linear-gradient(122deg, #1B2450 0%, #2E4A92 46%, #4E7BCE 100%); }
-  .spd-concept-hero--errors { background: linear-gradient(122deg, #351140 0%, #7A1466 46%, #B23C88 100%); }
-  .spd-concept-hero--validation { background: linear-gradient(122deg, #0F3A33 0%, #15705B 48%, #1E9E72 100%); }
-  .spd-concept-hero--states { background: linear-gradient(122deg, #3A2150 0%, #8A3F5E 48%, #D07A3E 112%); }
-  .spd-concept-hero--feedback { background: linear-gradient(122deg, #241C48 0%, #5A2C86 46%, #93307A 100%); }
-  .spd-concept-hero--ia { background: linear-gradient(122deg, #15303A 0%, #2A5E70 48%, #3E86A0 100%); }
-  .spd-concept-hero::after {
-    content: ""; position: absolute; top: -46%; right: -4%; width: 360px; height: 360px;
-    background: radial-gradient(circle, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 66%);
-    pointer-events: none;
-  }
-  /* Film grain — a subtle fractal-noise texture over the gradient so it reads
-     warmer / more tactile / less flatly digital. */
+  /* Per-page brand 4-colour gradients (horizontal). */
+  .spd-concept-hero--motion     { background: linear-gradient(90deg, #19143C 0%, #41377D 54%, #6E64BE 85%, #9691F5 100%); } /* primary purple */
+  .spd-concept-hero--loading    { background: linear-gradient(90deg, #33103F 0%, #6A0661 54%, #8A0570 86%, #9B0078 100%); } /* magenta */
+  .spd-concept-hero--errors     { background: linear-gradient(90deg, #3E2848 0%, #7E4E5C 54%, #C0705A 88%, #FF8C50 100%); } /* orange (plum→orange) */
+  .spd-concept-hero--validation { background: linear-gradient(90deg, #19143C 0%, #4A1E66 52%, #7A0569 86%, #9B0078 100%); } /* purple → magenta */
+  .spd-concept-hero--states     { background: linear-gradient(90deg, #33103F 0%, #7A0569 50%, #B05A5C 86%, #FF8C50 100%); } /* magenta → orange */
+  .spd-concept-hero--feedback   { background: linear-gradient(90deg, #241848 0%, #4E3A86 54%, #7E56A6 86%, #B07AC4 100%); } /* indigo → orchid */
+  .spd-concept-hero--ia         { background: linear-gradient(90deg, #2A0F3E 0%, #5A0A5A 52%, #7E3288 86%, #A65BAE 100%); } /* deep magenta → orchid */
+  /* Film grain — fractal-noise texture over the gradient (warmer / more tactile). */
   .spd-concept-hero::before {
     content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-    background-size: 140px 140px;
-    opacity: 0.16; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 150px 150px;
+    opacity: 0.28; mix-blend-mode: overlay;
   }
   .spd-concept-hero__row { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
   .spd-concept-hero__title { font-size: 26px; font-weight: 600; line-height: 32px; color: #FFFFFF; }
