@@ -1378,11 +1378,14 @@ function ModuleSwitcher({ moduleId, onSwitch }) {
       >
         <WaffleMark size={22} />
       </button>
-      {/* Non-clickable current-module label — solid brand-colour app badge +
-          white glyph, so it reads as identity, not a button. */}
+      {/* Non-clickable current-module label — a rounded brand app-tile that
+          reads as identity, not a button. Home shows the white Spired mark on
+          a deep vibrant purple; other modules show a white glyph on their hue. */}
       <span className="spd-tms__current" aria-hidden="true">
-        <span className="spd-tms__badge" style={{ background: mod.color }}>
-          <Icon name={mod.icon} filled size={15} style={{ color: "#FFFFFF" }} />
+        <span className="spd-tms__badge" style={{ background: mod.id === "home" ? "var(--primitive-color-purple-300)" : mod.color }}>
+          {mod.id === "home"
+            ? <SpiredMark size={13} mono="#FFFFFF" />
+            : <Icon name={mod.icon} filled size={15} style={{ color: "#FFFFFF" }} />}
         </span>
         <span className="spd-tms__name">{mod.name}</span>
       </span>
