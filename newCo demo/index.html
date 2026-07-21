@@ -1316,12 +1316,8 @@ function AccountMenu() {
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
   }, [open]);
-  const org = [
-    { icon: "business", label: "Church Account" },
-    { icon: "manage_accounts", label: "Users & Permissions" },
-    { icon: "credit_card", label: "Billing & Plans" },
-    { icon: "extension", label: "Integrations" },
-  ];
+  /* Personal only — org/account admin lives in the Spired Home side nav, so
+     it isn't duplicated here. */
   const personal = [
     { icon: "person", label: "My Profile" },
     { icon: "tune", label: "Preferences" },
@@ -1341,13 +1337,6 @@ function AccountMenu() {
               <span className="spd-acct__sub">Grace Community Church</span>
             </span>
           </div>
-          <p className="spd-tms__menuhead">Organization</p>
-          {org.map((i) => (
-            <button key={i.label} className="spd-tms__opt" onClick={() => setOpen(false)}>
-              <Icon name={i.icon} size={18} style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
-              <span style={{ flex: 1 }}>{i.label}</span>
-            </button>
-          ))}
           <div className="spd-acct__sep" />
           {personal.map((i) => (
             <button key={i.label} className="spd-tms__opt" onClick={() => setOpen(false)}>
