@@ -1624,14 +1624,16 @@ function ModuleRail({ moduleId, pinned, onSwitch, onUnpin }) {
           {RAIL_TOP.map((id) => {
             const m = MODULE_MAP[id];
             const active = id === moduleId;
+            const c = moduleGlyphColor(id); // the module's own (now vibrant) colour
             return (
               <button key={id} className={"spd-mrail__item" + (active ? " is-active" : "")}
-                onClick={() => onSwitch(id)} title={m.name}>
-                {/* Selection = primary-purple stripe (below) + the glyph FILLS.
-                    Module identity = the glyph's ink colour. No background tile. */}
+                onClick={() => onSwitch(id)} style={{ "--sel": c }}>
+                {/* Each module keeps its OWN vibrant colour (filled glyph) so it's
+                    recognisable; the active stripe + tint + label are that SAME
+                    colour (never a mismatched purple). */}
                 {active && <span className="spd-mrail__indicator" aria-hidden="true" />}
                 <span className="spd-mrail__badge">
-                  <Icon name={m.icon} filled={active} size={19} style={{ color: moduleInk(id) }} />
+                  <Icon name={m.icon} filled size={20} style={{ color: c }} />
                 </span>
                 <span className="spd-mrail__label">{m.name}{m.demo && <span className="spd-tms__tag">Demo</span>}</span>
               </button>
