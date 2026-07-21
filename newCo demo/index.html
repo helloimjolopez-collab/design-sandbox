@@ -3243,6 +3243,11 @@ function App() {
     setTimeout(() => setSwitching(false), 750);
   };
   const goItem = (id) => { setItemByModule((s) => ({ ...s, [moduleId]: id })); setMobileNav(false); };
+  // Jumping into a module FROM the Spired Home side nav auto-pins the switcher
+  // rail — a built-in "back" so you're never stranded in a module's own nav with
+  // no visible way back to where you came from. (Only from Home; the popover/rail
+  // switches never force-pin.)
+  const goModuleFromNav = (id) => { if (moduleId === "home") setSwitcherPinned(true); goModule(id); };
   const goModuleHome = () => goItem(firstItemOf(moduleId)); // badge → back to this module's home
   const pinSwitcher = () => { setSwitcherPinned(true); setSwitcherOpen(false); };
   const unpinSwitcher = () => { setSwitcherPinned(false); setSwitcherOpen(false); }; // both pin & unpin close the popover
