@@ -567,7 +567,13 @@
     transition: opacity var(--motion-duration-3) var(--motion-easing-standard),
                 flex var(--motion-duration-6) var(--motion-easing-emphasized);
   }
-  .spd-navitem.is-active .spd-navitem__label { font-weight: 600; color: var(--sel); }
+  /* Active label text: blend the module colour toward the mode's primary text
+     so it stays accessible — darkens in Light, lightens in Midnight (the plain
+     module colour, e.g. People's magenta, failed contrast on the soft tint). */
+  .spd-navitem.is-active .spd-navitem__label {
+    font-weight: 600;
+    color: color-mix(in srgb, var(--sel) 65%, var(--semantic-color-light-mode-text-static-primary-base));
+  }
 
   /* ── Logo = hide/reveal the side nav. On hover the three bars replay their
         assembling motion (bottom→top, the loading bump) — NOT a scale. ───── */
