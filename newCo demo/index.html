@@ -1535,23 +1535,24 @@ function TopNav({ mode, onToggleMode, onToggleNav, onOpenMobileNav, navHidden, m
   const menuIcon = "menu"; // hamburger = hide/reveal the whole nav (distinct from the rail collapse's panel icon)
   return (
     <header className="spd-topnav" role="banner">
-      <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-        {/* The logo IS the menu button — at rest it's the brand mark; on hover
-            it morphs to a panel toggle. Click hides/shows the side nav (opens
-            the drawer on mobile). Gives the logo a real, single job. */}
+      {/* Left cluster sits over the side-nav column: logo (hide/reveal) then
+          the waffle switcher tight against the current-module label. */}
+      <div className="spd-topnav__lead">
+        {/* The logo hides/reveals the side nav; brand mark at rest, hamburger
+            on hover. */}
         <button className="spd-topnav__logo" onClick={onToggleNav} aria-label={navHidden ? "Show menu" : "Hide menu"} title={navHidden ? "Show menu" : "Hide menu"}>
-          <span className="spd-topnav__logo-mark"><SpiredMark size={22} /></span>
-          <span className="spd-topnav__logo-menu"><Icon name={menuIcon} size={20} /></span>
+          <span className="spd-topnav__logo-mark"><SpiredMark size={19} /></span>
+          <span className="spd-topnav__logo-menu"><Icon name={menuIcon} size={19} /></span>
         </button>
-        {/* Module switcher — the compact way to change modules. */}
         <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
-        <span className="spd-topnav__brandsep" aria-hidden="true" />
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        {/* Org switcher now lives on the right, with the account controls. */}
         <button className="spd-topnav__org">
           <span className="spd-topnav__orgname">Grace Community Church</span>
           <Icon name="expand_more" size={16} />
         </button>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <span className="spd-topnav__brandsep" aria-hidden="true" />
         <button
           className="spd-topnav__iconbtn"
           onClick={onToggleMode}
