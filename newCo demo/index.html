@@ -2736,6 +2736,14 @@ function App() {
   const [moduleId, setModuleId] = useState("home");
   const [itemByModule, setItemByModule] = useState({}); // remembers last section per module
   const [mobileNav, setMobileNav] = useState(false);
+  const [navHidden, setNavHidden] = useState(false); // desktop side-nav hidden (via logo toggle)
+
+  // The logo toggles the nav: on mobile it opens the drawer, on desktop it
+  // hides/shows the side nav.
+  const toggleNav = () => {
+    if (window.matchMedia("(max-width: 768px)").matches) setMobileNav((o) => !o);
+    else setNavHidden((h) => !h);
+  };
 
   useEffect(() => { const t = setTimeout(() => setBooting(false), 1700); return () => clearTimeout(t); }, []);
   useEffect(() => { document.documentElement.dataset.spdMode = mode; }, [mode]);
