@@ -536,21 +536,21 @@
                 transform var(--motion-duration-3) var(--motion-easing-spring);
   }
   .spd-navitem:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
-  /* Active = light warm-neutral fill + faint hairline; the stripe/icon/label
-     carry the selected colour (--sel). No coloured tint behind the glyph. */
-  .spd-navitem.is-active {
-    background: var(--semantic-color-light-mode-fill-static-neutral-light);
-    box-shadow: inset 0 0 0 0.5px var(--semantic-color-light-mode-stroke-static-neutral-light);
-  }
+  /* Active = a SOFT tint of the selected colour (not white); stripe/icon/label
+     carry the selected colour (--sel). */
+  .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 10%, transparent); }
   .spd-navitem.is-locked { opacity: 0.65; }
+  /* Stripe sits flush to the panel's left edge (the side nav starts at x=0). */
   .spd-navitem__indicator {
     position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-    width: 3px; height: 18px; border-radius: 0 3px 3px 0;
+    width: 3px; height: 20px; border-radius: 0 3px 3px 0;
     background: var(--sel);
   }
   .spd-navitem__glyph {
-    width: 26px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; flex-shrink: 0; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
   }
+  .spd-navitem__glyph--tile { transition: background var(--motion-duration-2) var(--motion-easing-standard); }
   .spd-navitem__glyph .material-symbols-rounded { font-size: 19px; }
   /* Still used by the Component-States showcase + a couple of icon tiles. */
   .spd-navitem__chip {
