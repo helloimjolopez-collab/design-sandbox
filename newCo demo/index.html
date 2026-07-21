@@ -803,38 +803,41 @@
   .spd-mrail:hover .spd-mrail__inner, .spd-mrail:focus-within .spd-mrail__inner {
     width: 214px; box-shadow: var(--spd-elevation-sheet);
   }
-  .spd-mrail__scroll { flex: 1; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overflow-x: hidden; }
+  .spd-mrail__scroll { flex: 1; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overflow-x: hidden; padding-left: 8px; }
   .spd-mrail__item, .spd-mrail__unpin {
-    position: relative; display: flex; align-items: center; gap: 12px; height: 48px;
-    padding: 0 8px; border-radius: 12px; background: transparent; border: none;
+    position: relative; display: flex; align-items: center; gap: 11px; height: 44px;
+    padding: 0 8px; border-radius: 11px; background: transparent; border: none;
     cursor: pointer; font-family: inherit; text-align: left; flex-shrink: 0;
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
-  .spd-mrail__item:hover, .spd-mrail__unpin:hover { background: color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 9%, transparent); }
+  .spd-mrail__item:hover, .spd-mrail__unpin:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  /* No tile — a transparent slot that just centres the module glyph (sized to
+     match the top-nav module glyph). */
   .spd-mrail__badge {
-    width: 40px; height: 40px; flex-shrink: 0; border-radius: 11px;
+    width: 26px; height: 26px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     color: var(--semantic-color-light-mode-text-static-secondary-base);
   }
   .spd-mrail__label {
-    font-size: 13.5px; font-weight: 600; letter-spacing: -0.1px; white-space: nowrap;
-    color: var(--semantic-color-light-mode-text-static-primary-base);
+    font-size: 12.5px; font-weight: 500; letter-spacing: -0.05px; white-space: nowrap;
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
     /* Labels fade in just after the panel begins widening, so it reads as one
        sequenced gesture rather than everything moving at once. */
     opacity: 0; transition: opacity var(--motion-duration-3) var(--motion-easing-standard) 70ms;
   }
   .spd-mrail:hover .spd-mrail__label, .spd-mrail:focus-within .spd-mrail__label { opacity: 1; }
-  .spd-mrail__item.is-active { background: color-mix(in srgb, var(--sel) 10%, transparent); }
-  .spd-mrail__item.is-active .spd-mrail__label { color: color-mix(in srgb, var(--sel) 65%, var(--semantic-color-light-mode-text-static-primary-base)); }
+  .spd-mrail__item.is-active .spd-mrail__label { color: var(--semantic-color-light-mode-text-static-primary-base); font-weight: 600; }
+  /* Selection stripe — ALWAYS Spired primary purple (never the module colour),
+     flush to the rail's left edge, matching the side-nav stripe's look. The
+     -8px breakout lands on the scroll's clip edge so it shows without clipping. */
   .spd-mrail__indicator {
-    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-    width: 3px; height: 0; border-radius: 0 3px 3px 0; background: var(--sel);
-    transition: height var(--motion-duration-2) var(--motion-easing-standard);
+    position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 20px; border-radius: 0 3px 3px 0;
+    background: var(--semantic-color-light-mode-fill-action-primary-base);
   }
-  .spd-mrail__item.is-active .spd-mrail__indicator { height: 28px; }
-  .spd-mrail__unpin { margin-top: 4px; }
+  .spd-mrail__unpin { margin: 4px 0 0 8px; }
   .spd-mrail__unpin .spd-mrail__badge { color: var(--semantic-color-light-mode-text-static-tertiary-base); }
-  .spd-mrail__unpin .spd-mrail__label { color: var(--semantic-color-light-mode-text-static-secondary-base); font-weight: 500; }
+  .spd-mrail__unpin .spd-mrail__label { color: var(--semantic-color-light-mode-text-static-secondary-base); }
   @media (max-width: 768px) { .spd-mrail { display: none; } }
 
   .spd-topnav__brandsep {
