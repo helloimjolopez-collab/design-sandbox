@@ -3040,14 +3040,24 @@ function App() {
       <TopNav
         mode={mode}
         onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
-        onToggleNav={toggleNav}
-        navHidden={navHidden}
+        onLogoClick={onLogoClick}
+        logoLabel={logoLabel}
+        logoActive={switcherOpen || railShown}
         moduleId={moduleId}
-        onSwitchModule={goModule}
+        onModuleHome={goModuleHome}
       />
-      <div className={"spd-body" + (navHidden ? " is-nav-hidden" : "")}>
+      {!switcherPinned && switcherOpen && (
+        <SwitcherPopover moduleId={moduleId} onSwitch={goModule} onPin={pinSwitcher}
+          onClose={() => setSwitcherOpen(false)} />
+      )}
+      <div className="spd-body">
+        {/* Pinned module switcher lives as a rail at the far left, before the
+            current module's own section nav. */}
+        {railShown && (
+          <ModuleRail moduleId={moduleId} onSwitch={goModule} onUnpin={() => setSwitcherPinned(false)} />
+        )}
         {/* Single side nav = the current module's own nav (Home = the hub).
-            Logo hides it; the in-nav collapse control shrinks it to a rail. */}
+            The in-nav collapse control shrinks it to an icon rail. */}
         <ModuleNav key={moduleId} mod={mod} item={item} onSelectItem={goItem} onSwitchModule={goModule}
           rail={navRail} onToggleRail={() => setNavRail((r) => !r)} />
         <main className="spd-sheet">
