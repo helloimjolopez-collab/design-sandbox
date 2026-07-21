@@ -1672,7 +1672,9 @@ function ModuleRail({ moduleId, pinned, onSwitch, onUnpin }) {
   // you move away). `collapsedAfterPick` suppresses the hover-expand until the
   // pointer actually leaves and returns.
   const [collapsedAfterPick, setCollapsedAfterPick] = useState(false);
-  const pick = (id) => { onSwitch(id); setCollapsedAfterPick(true); };
+  // Blur the clicked item so :focus-within stops holding the rail open (that was
+  // why it stayed expanded until you clicked elsewhere).
+  const pick = (id, e) => { onSwitch(id); setCollapsedAfterPick(true); if (e && e.currentTarget) e.currentTarget.blur(); };
   return (
     <nav className={"spd-mrail" + (pinned ? "" : " is-collapsed") + (collapsedAfterPick ? " is-suppress" : "")}
       aria-label="Modules" aria-hidden={!pinned}
