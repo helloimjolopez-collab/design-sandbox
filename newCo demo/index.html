@@ -3136,9 +3136,23 @@ function App() {
   // mobile). The popover is also where you pin the switcher to a rail — and,
   // when already pinned, where you unpin it back to a popover.
   const onLogoClick = () => {
+    clearTimeout(hoverTimer.current);
     if (window.matchMedia("(max-width: 768px)").matches) { setMobileNav((o) => !o); return; }
     setSwitcherOpen((o) => !o);
   };
+  // Hover-to-open with intent: a short delay before opening so a passing cursor
+  // doesn't trigger it, and a grace delay before closing so you can travel to
+  // the popover without it vanishing. Desktop only (no hover on touch).
+  const hoverOpen = () => {
+    if (window.matchMedia("(max-width: 768px)").matches) return;
+    clearTimeout(hoverTimer.current);
+    hoverTimer.current = setTimeout(() => setSwitcherOpen(true), 340);
+  };
+  const hoverClose = () => {
+    clearTimeout(hoverTimer.current);
+    hoverTimer.current = setTimeout(() => setSwitcherOpen(false), 260);
+  };
+  const hoverKeep = () => { clearTimeout(hoverTimer.current); };
 
   useEffect(() => { const t = setTimeout(() => setBooting(false), 2900); return () => clearTimeout(t); }, []);
   useEffect(() => { document.documentElement.dataset.spdMode = mode; }, [mode]);
