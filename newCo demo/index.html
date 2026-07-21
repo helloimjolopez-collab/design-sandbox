@@ -603,18 +603,21 @@
   /* Side nav hidden via the logo toggle (desktop). */
   .spd-body.is-nav-hidden .spd-modnav { display: none; }
 
-  /* Header: a clear search field + collapse control, at the top of the side nav. */
-  .spd-modnav__header { display: flex; align-items: center; gap: 6px; padding: 0 2px 12px; }
+  /* Header: search field + collapse control, then a divider before the nav. */
+  .spd-modnav__header {
+    display: flex; align-items: center; gap: 6px; padding: 0 2px 14px; margin-bottom: 6px;
+    border-bottom: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint);
+  }
   .spd-modnav__search {
     flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px;
-    height: 36px; padding: 0 11px; border-radius: 10px; border: none;
-    /* neutral-light (near-white), NOT -subtle which equals the canvas colour
-       and made the field invisible. */
-    background: var(--semantic-color-light-mode-fill-static-neutral-light);
-    box-shadow: inset 0 0 0 0.5px var(--semantic-color-light-mode-stroke-static-neutral-faint);
+    height: 38px; padding: 0 11px; border-radius: 10px; border: none;
+    /* A subtle warm off-white — visible against the canvas but not a stark
+       white box. A faint hairline defines the field. */
+    background: var(--primitive-color-warm-200);
+    box-shadow: inset 0 0 0 0.5px var(--semantic-color-light-mode-stroke-static-neutral-light);
     transition: box-shadow var(--motion-duration-2) var(--motion-easing-standard);
   }
-  .spd-modnav__search:focus-within { box-shadow: 0 0 0 2px color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 40%, transparent); }
+  .spd-modnav__search:focus-within { box-shadow: inset 0 0 0 1px var(--semantic-color-light-mode-fill-action-primary-base); }
   .spd-modnav__search input {
     flex: 1; min-width: 0; border: none; outline: none; background: transparent;
     font-family: inherit; font-size: 13.5px;
