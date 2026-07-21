@@ -1579,17 +1579,15 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
 
 function TopNav({ mode, onToggleMode, onToggleNav, onOpenMobileNav, navHidden, moduleId, onSwitchModule }) {
   const midnight = mode === "midnight";
-  const menuIcon = "menu"; // hamburger = hide/reveal the whole nav (distinct from the rail collapse's panel icon)
   return (
     <header className="spd-topnav" role="banner">
       {/* Left cluster sits over the side-nav column: logo (hide/reveal) then
           the waffle switcher tight against the current-module label. */}
       <div className="spd-topnav__lead">
-        {/* The logo hides/reveals the side nav; brand mark at rest, hamburger
-            on hover. */}
+        {/* The logo hides/reveals the side nav. Brand mark stays the mark — it
+            just lifts gently on hover; tooltip conveys the action. */}
         <button className="spd-topnav__logo" onClick={onToggleNav} aria-label={navHidden ? "Show menu" : "Hide menu"} title={navHidden ? "Show menu" : "Hide menu"}>
-          <span className="spd-topnav__logo-mark"><SpiredMark size={19} /></span>
-          <span className="spd-topnav__logo-menu"><Icon name={menuIcon} size={19} /></span>
+          <span className="spd-topnav__logo-mark"><SpiredMark size={20} /></span>
         </button>
         <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
       </div>
