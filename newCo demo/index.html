@@ -3076,17 +3076,15 @@ function App() {
   const [mobileNav, setMobileNav] = useState(false);
   const [navRail, setNavRail] = useState(false);       // side-nav collapse control: full labels vs icon rail
   const [switcherPinned, setSwitcherPinned] = useState(false); // module switcher docked as a left rail
-  const [switcherOpen, setSwitcherOpen] = useState(false);     // popover open (unpinned only)
-  const [railHidden, setRailHidden] = useState(false);         // logo hides/reveals the pinned rail
+  const [switcherOpen, setSwitcherOpen] = useState(false);     // switcher popover open
   const [switching, setSwitching] = useState(false);   // brief loader while moving to another module
 
-  // The Spired logo drives the module switcher: on mobile it opens the drawer;
-  // when the switcher is pinned it hides/reveals the rail; otherwise it opens
-  // the popover.
+  // The Spired logo always opens the module-switcher popover (the drawer on
+  // mobile). The popover is also where you pin the switcher to a rail — and,
+  // when already pinned, where you unpin it back to a popover.
   const onLogoClick = () => {
     if (window.matchMedia("(max-width: 768px)").matches) { setMobileNav((o) => !o); return; }
-    if (switcherPinned) setRailHidden((h) => !h);
-    else setSwitcherOpen((o) => !o);
+    setSwitcherOpen((o) => !o);
   };
 
   useEffect(() => { const t = setTimeout(() => setBooting(false), 1700); return () => clearTimeout(t); }, []);
@@ -3114,11 +3112,9 @@ function App() {
   };
   const goItem = (id) => { setItemByModule((s) => ({ ...s, [moduleId]: id })); setMobileNav(false); };
   const goModuleHome = () => goItem(firstItemOf(moduleId)); // badge → back to this module's home
-  const pinSwitcher = () => { setSwitcherPinned(true); setSwitcherOpen(false); setRailHidden(false); };
-  const railShown = switcherPinned && !railHidden;
-  const logoLabel = switcherPinned
-    ? (railHidden ? "Show module rail" : "Hide module rail")
-    : (switcherOpen ? "Close module switcher" : "Switch module");
+  const pinSwitcher = () => { setSwitcherPinned(true); setSwitcherOpen(false); };
+  const unpinSwitcher = () => { setSwitcherPinned(false); }; // keep popover open so it's clearly back to popover mode
+  const logoLabel = switcherOpen ? "Close module switcher" : "Switch module";
 
   const renderPage = () => {
     if (moduleId === "home") return item === "dashboard" ? <HomePage /> : <ModulePlaceholder mod={mod} item={item} />;
