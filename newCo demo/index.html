@@ -1447,18 +1447,18 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
   );
 }
 
-function TopNav({ mode, onToggleMode, onGoHome, onOpenMobileNav, moduleId, onSwitchModule }) {
+function TopNav({ mode, onToggleMode, onToggleNav, onOpenMobileNav, navHidden, moduleId, onSwitchModule }) {
   const midnight = mode === "midnight";
+  const menuIcon = navHidden ? "left_panel_open" : "left_panel_close";
   return (
     <header className="spd-topnav" role="banner">
       <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-        <button className="spd-topnav__iconbtn spd-topnav__hamburger" onClick={onOpenMobileNav} aria-label="Open navigation">
-          <Icon name="menu" />
-        </button>
-        {/* Logo → Spired Home (the launcher hub). Distinct job from the
-            switcher, which jumps to a module and shows the module's own icon. */}
-        <button className="spd-topnav__logo" onClick={onGoHome} aria-label="Spired Home" title="Spired Home">
-          <SpiredMark size={22} />
+        {/* The logo IS the menu button — at rest it's the brand mark; on hover
+            it morphs to a panel toggle. Click hides/shows the side nav (opens
+            the drawer on mobile). Gives the logo a real, single job. */}
+        <button className="spd-topnav__logo" onClick={onToggleNav} aria-label={navHidden ? "Show menu" : "Hide menu"} title={navHidden ? "Show menu" : "Hide menu"}>
+          <span className="spd-topnav__logo-mark"><SpiredMark size={22} /></span>
+          <span className="spd-topnav__logo-menu"><Icon name={menuIcon} size={20} /></span>
         </button>
         {/* Module switcher — the compact way to change modules. */}
         <ModuleSwitcher moduleId={moduleId} onSwitch={onSwitchModule} />
