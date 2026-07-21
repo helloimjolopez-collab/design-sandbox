@@ -1104,15 +1104,31 @@ const MARK_VB = "159.4 184.1 135.3 121.2";
 const LOGO_VB = "159.4 155.5 705.2 189.9";
 const MONO_OPS = [1, 0.7, 0.45];
 
-function SpiredMark({ size = 22, withWordmark = false, mono }) {
+/* `solid` = a flat single-colour mark (all bars full opacity) — used on dark
+   tiles where the tiered white opacities would look muddy. */
+function SpiredMark({ size = 22, withWordmark = false, mono, solid = false }) {
   const w = withWordmark ? size * (705.2 / 189.9) : size * (135.3 / 121.2);
   return (
     <svg width={w} height={size} viewBox={withWordmark ? LOGO_VB : MARK_VB} fill="none" aria-hidden="true" style={{ display: "block" }}>
       {LOGO_MARK_PATHS.map((p, i) => (
-        <path key={i} d={p.d} fill={mono || p.fill} fillOpacity={mono ? MONO_OPS[i] : 1} />
+        <path key={i} d={p.d} fill={mono || p.fill} fillOpacity={mono && !solid ? MONO_OPS[i] : 1} />
       ))}
       {withWordmark && LOGO_WORD_PATHS.map((d, i) => (
         <path key={"w" + i} d={d} fill={mono || "var(--spd-logo-word)"} />
+      ))}
+    </svg>
+  );
+}
+
+/* The top-left logo — three bars that replay their assembling motion on hover
+   (bottom→top, the loading bump), not a scale. Bars are individual <g>s so CSS
+   can stagger them. */
+function LogoMark({ size = 24 }) {
+  const w = size * (135.3 / 121.2);
+  return (
+    <svg width={w} height={size} viewBox={MARK_VB} fill="none" aria-hidden="true" style={{ display: "block" }}>
+      {LOGO_MARK_PATHS.map((p, i) => (
+        <g key={i} className="spd-logobar"><path d={p.d} fill={p.fill} /></g>
       ))}
     </svg>
   );
