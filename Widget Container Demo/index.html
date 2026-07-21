@@ -715,7 +715,6 @@
   /* Cumulative actual must go null the moment a period itself has no actual — NOT stay frozen at the last real total. An earlier version tracked "has any actual appeared yet" instead of "does THIS period have one", so once Jan posted, every later month (including unposted Aug–Dec) was treated as having a real (frozen) actual, letting a full-year cumulative budget get compared against a stale mid-year actual. */
   function bgtYTD(rows){var out=[],cb=0,ca=0;rows.forEach(function(r){cb+=r.budget;if(r.actual!=null){ca+=r.actual;out.push({period:r.period,budget:cb,actual:ca});}else{out.push({period:r.period,budget:cb,actual:null});}});return out;}
   function bgtThru(rows){return rows.filter(function(r){return r.actual!=null;});}
-  function bgtFavColor(v){return v==null?"var(--txt-subtle)":(v>=0?"var(--txt-pos)":"var(--red-100)");}
   /* single-hue blue ramp, dark→light, evenly stepped so slices read at a glance (biggest = darkest). Red is reserved for negative/declining only. */
   /* brand-blue ramp, dark→light (8 steps); slices sorted big→small, contiguous arcs (no gaps). Red reserved for negative/declining. */
   var PIE_COLORS=["#22376b","#2d4889","#3a5aaa","#4b6ec3","#6e8bd4","#8fa9de","#b0c4ea","#d3e0f6"];
