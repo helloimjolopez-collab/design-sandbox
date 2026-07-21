@@ -1514,9 +1514,10 @@ function AccountMenu() {
    their module's colour even when inactive); `trailing` adds a → to signal the
    item leaves for another area. */
 function SectionItem({ icon, label, color, active, onClick, leadColor }) {
-  // Active: stripe + icon + label take the selected colour (`--sel`), over a
-  // light warm-neutral fill — NO tinted square behind the glyph. Recent module
-  // links keep their module colour; other idle items are neutral.
+  // Active: stripe + icon + label take the selected colour (`--sel`) over a
+  // soft module-tint fill. Recent module links (leadColor) keep their coloured
+  // app-tile. Other idle items are plain neutral, no tile.
+  const tile = !!leadColor && !active; // Recent modules → coloured tile
   const iconColor = active ? "var(--sel)" : (leadColor || "var(--semantic-color-light-mode-text-static-secondary-base)");
   return (
     <button
@@ -1528,8 +1529,11 @@ function SectionItem({ icon, label, color, active, onClick, leadColor }) {
       style={active ? { "--sel": color } : undefined}
     >
       {active && <span className="spd-navitem__indicator" />}
-      <span className="spd-navitem__glyph">
-        <Icon name={icon} filled={active} size={19} style={{ color: iconColor }} />
+      <span
+        className={"spd-navitem__glyph" + (tile ? " spd-navitem__glyph--tile" : "")}
+        style={tile ? { background: `color-mix(in srgb, ${leadColor} 14%, transparent)` } : undefined}
+      >
+        <Icon name={icon} filled={active || tile} size={19} style={{ color: iconColor }} />
       </span>
       <span className="spd-navitem__label">{label}</span>
     </button>
