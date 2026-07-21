@@ -1498,8 +1498,11 @@ function AccountMenu() {
    and the mobile drawer. `leadColor` forces the icon colour (module-links show
    their module's colour even when inactive); `trailing` adds a → to signal the
    item leaves for another area. */
-function SectionItem({ icon, label, color, active, onClick, leadColor, trailing }) {
-  const idle = leadColor || "var(--semantic-color-light-mode-text-static-secondary-base)";
+function SectionItem({ icon, label, color, active, onClick, leadColor }) {
+  // Active: stripe + icon + label take the selected colour (`--sel`), over a
+  // light warm-neutral fill — NO tinted square behind the glyph. Recent module
+  // links keep their module colour; other idle items are neutral.
+  const iconColor = active ? "var(--sel)" : (leadColor || "var(--semantic-color-light-mode-text-static-secondary-base)");
   return (
     <button
       className={"spd-navitem" + (active ? " is-active" : "")}
@@ -1507,13 +1510,13 @@ function SectionItem({ icon, label, color, active, onClick, leadColor, trailing 
       aria-current={active ? "page" : undefined}
       aria-label={label}
       title={label}
+      style={active ? { "--sel": color } : undefined}
     >
-      {active && <span className="spd-navitem__indicator" style={{ background: "var(--semantic-color-light-mode-fill-action-primary-base)" }} />}
-      <span className="spd-navitem__chip spd-navitem__chip--fn" style={{ background: active ? `color-mix(in srgb, ${color} 14%, transparent)` : (leadColor ? `color-mix(in srgb, ${leadColor} 10%, transparent)` : "transparent") }}>
-        <Icon name={icon} filled={active} size={19} style={{ color: active ? color : idle }} />
+      {active && <span className="spd-navitem__indicator" />}
+      <span className="spd-navitem__glyph">
+        <Icon name={icon} filled={active} size={19} style={{ color: iconColor }} />
       </span>
       <span className="spd-navitem__label">{label}</span>
-      {trailing && <Icon name="chevron_right" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />}
     </button>
   );
 }
