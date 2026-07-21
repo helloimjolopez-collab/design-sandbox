@@ -167,9 +167,11 @@
   .wt-head{position:sticky;top:0;background:var(--surface-widget);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
   .wt-row .lr-main{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* Individual deposit accounts only: two accounts can legitimately share the exact same name, so the account number is always shown (not just on hover) as a quiet second line under the name — disambiguates without a dedicated table column, and works for touch users who can't hover. */
-  .wt-row .lr-main.lr-stack{display:flex;flex-direction:column;white-space:normal;overflow:visible;text-overflow:clip;gap:0;justify-content:center;}
-  .lr-stack .lr-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .lr-acctno{font-size:11px;line-height:1.3;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .wt-row .lr-main.lr-stack{display:flex;align-items:center;white-space:normal;overflow:visible;text-overflow:clip;min-width:0;}
+  /* The tooltip trigger must hug the visible text, not the wide flex:1 table cell — otherwise the shared tip's center-on-trigger math (unchanged, used everywhere else in the app) centers on the cell's midpoint instead of the actual name, landing far away with a caret pointing nowhere. */
+  .lr-tipwrap{display:inline-block;max-width:100%;min-width:0;vertical-align:middle;}
+  .lr-tipwrap .lr-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lr-acctno{display:block;font-size:11px;line-height:1.3;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .wt-type{flex:0 0 110px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt-secondary);}
   .wt-c2{flex:0 0 96px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;}
   .wt-row .dt-c{flex:0 0 88px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
