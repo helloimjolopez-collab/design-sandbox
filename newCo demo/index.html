@@ -1399,11 +1399,11 @@ function SectionItem({ icon, label, color, active, onClick, leadColor, trailing 
 /* The current module's own navigation — the single side nav. On Home, a
    "Modules" group provides one-click access into every module (items with
    `to`); other items navigate within the current module. */
-function ModuleNav({ mod, item, onSelectItem, onSwitchModule }) {
+function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail }) {
   if (!mod.nav || !mod.nav.length) return null;
   let lastGroup = null;
   return (
-    <nav className="spd-modnav" aria-label={mod.name + " navigation"}>
+    <nav className={"spd-modnav" + (rail ? " is-rail" : "")} aria-label={mod.name + " navigation"}>
       <div className="spd-modnav__list spd-stagger">
         {mod.nav.map((n) => {
           const showGroup = n.group && n.group !== lastGroup;
@@ -1427,6 +1427,16 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule }) {
             </React.Fragment>
           );
         })}
+      </div>
+      {/* Collapse / expand control — full labels ↔ icon rail. Separate from
+          the logo's hide/reveal. */}
+      <div className="spd-modnav__foot">
+        <button className="spd-modnav__collapse" onClick={onToggleRail}
+          aria-label={rail ? "Expand navigation" : "Collapse to rail"}
+          title={rail ? "Expand" : "Collapse"}>
+          <Icon name={rail ? "chevron_right" : "chevron_left"} size={18} />
+          <span className="spd-modnav__collapse-label">Collapse</span>
+        </button>
       </div>
     </nav>
   );
