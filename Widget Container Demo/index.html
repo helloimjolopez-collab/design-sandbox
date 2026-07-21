@@ -609,6 +609,33 @@
   /* ---- generic breakdown content, shared by Deposit Accounts + Spend by fund ---- */
   var TYPES=["All types"].concat(DEP_TYPES);
   var FUND=[{name:"General",net:12400},{name:"Building",net:6200},{name:"Missions",net:3100},{name:"Payroll",net:8800},{name:"Utilities",net:1450},{name:"Software",net:980}];
+  /* ---- Budget Compared to Actual ----
+     Org fiscal year = calendar year (Jan–Dec), matching test1's verified-live axis. "Today" across this whole
+     demo is fixed at mid-July (see rangeMonths' now=6), so actuals only exist Jan–Jul (idx 0–6); Aug–Dec carry
+     a budget but actual:null — the year isn't over yet, that's not the same as a zero. Comparison is against
+     the ORIGINAL budget only (mid-year revisions excluded), per the Confluence spec — no "revised" field exists
+     in this model on purpose, so nothing can quietly compare against the wrong baseline. */
+  var BUDGET_INCOME=[
+    {period:"Jan",budget:42000,actual:44200},{period:"Feb",budget:42000,actual:40100},{period:"Mar",budget:44000,actual:47300},
+    {period:"Apr",budget:44000,actual:41800},{period:"May",budget:46000,actual:48900},{period:"Jun",budget:46000,actual:43500},
+    {period:"Jul",budget:48000,actual:52100},{period:"Aug",budget:48000,actual:null},{period:"Sep",budget:50000,actual:null},
+    {period:"Oct",budget:50000,actual:null},{period:"Nov",budget:52000,actual:null},{period:"Dec",budget:58000,actual:null}
+  ];
+  var BUDGET_EXPENSE=[
+    {period:"Jan",budget:38000,actual:36400},{period:"Feb",budget:38000,actual:39800},{period:"Mar",budget:39000,actual:37200},
+    {period:"Apr",budget:39000,actual:41600},{period:"May",budget:40000,actual:38300},{period:"Jun",budget:40000,actual:42900},
+    {period:"Jul",budget:41000,actual:39700},{period:"Aug",budget:41000,actual:null},{period:"Sep",budget:42000,actual:null},
+    {period:"Oct",budget:42000,actual:null},{period:"Nov",budget:44000,actual:null},{period:"Dec",budget:47000,actual:null}
+  ];
+  function bgtSet(w){return w.acctview==="expense"?BUDGET_EXPENSE:BUDGET_INCOME;}
+  /* Favourable = actual revenue above budget, OR actual expense below budget — the formula reverses by account
+     type, so a single "green when actual >= budget" rule is correct for income and backwards for expense. This
+     is the one function every bar/line/table in this widget calls for color, so the flip can never drift out of
+     sync between views. */
+  function bgtVariance(type,b,a){if(a==null)return null;return type==="expense"?(b-a):(a-b);}
+  function bgtYTD(rows){var out=[],cb=0,ca=0,anyAct=false;rows.forEach(function(r){cb+=r.budget;if(r.actual!=null){ca+=r.actual;anyAct=true;}out.push({period:r.period,budget:cb,actual:anyAct?ca:null});});return out;}
+  function bgtThru(rows){return rows.filter(function(r){return r.actual!=null;});}
+  function bgtFavColor(v){return v==null?"var(--txt-subtle)":(v>=0?"var(--txt-pos)":"var(--red-100)");}
   /* single-hue blue ramp, dark→light, evenly stepped so slices read at a glance (biggest = darkest). Red is reserved for negative/declining only. */
   /* brand-blue ramp, dark→light (8 steps); slices sorted big→small, contiguous arcs (no gaps). Red reserved for negative/declining. */
   var PIE_COLORS=["#22376b","#2d4889","#3a5aaa","#4b6ec3","#6e8bd4","#8fa9de","#b0c4ea","#d3e0f6"];
