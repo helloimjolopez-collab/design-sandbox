@@ -1522,7 +1522,7 @@ function ModuleBadge({ moduleId, onHome }) {
 /* Module switcher as a POPOVER — opened from the Spired logo when the switcher
    isn't pinned. Lists every module; picking one switches. A Pin control docks
    it to the persistent left rail (see ModuleRail) for one-click access. */
-function SwitcherPopover({ moduleId, onSwitch, onPin, onClose }) {
+function SwitcherPopover({ moduleId, pinned, onSwitch, onPin, onUnpin, onClose }) {
   const ref = useRef(null);
   useEffect(() => {
     const onDoc = (e) => {
@@ -3131,19 +3131,19 @@ function App() {
         onToggleMode={() => setMode(mode === "light" ? "midnight" : "light")}
         onLogoClick={onLogoClick}
         logoLabel={logoLabel}
-        logoActive={switcherOpen || railShown}
+        logoActive={switcherOpen}
         moduleId={moduleId}
         onModuleHome={goModuleHome}
       />
-      {!switcherPinned && switcherOpen && (
-        <SwitcherPopover moduleId={moduleId} onSwitch={goModule} onPin={pinSwitcher}
-          onClose={() => setSwitcherOpen(false)} />
+      {switcherOpen && (
+        <SwitcherPopover moduleId={moduleId} pinned={switcherPinned} onSwitch={goModule}
+          onPin={pinSwitcher} onUnpin={unpinSwitcher} onClose={() => setSwitcherOpen(false)} />
       )}
       <div className="spd-body">
         {/* Pinned module switcher lives as a rail at the far left, before the
             current module's own section nav. */}
-        {railShown && (
-          <ModuleRail moduleId={moduleId} onSwitch={goModule} onUnpin={() => setSwitcherPinned(false)} />
+        {switcherPinned && (
+          <ModuleRail moduleId={moduleId} onSwitch={goModule} onUnpin={unpinSwitcher} />
         )}
         {/* Single side nav = the current module's own nav (Home = the hub).
             The in-nav collapse control shrinks it to an icon rail. */}
