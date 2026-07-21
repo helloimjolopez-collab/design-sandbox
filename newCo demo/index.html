@@ -1586,9 +1586,10 @@ function ModuleRail({ moduleId, onSwitch, onUnpin }) {
 /* Account menu — Spired-level (org/account) settings and admin live here,
    under the avatar, NOT in a side nav. Keeping them out of the rail avoids
    clashing with any module's own Settings/Admin. */
-function AccountMenu() {
+function AccountMenu({ mode, onToggleMode }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const midnight = mode === "midnight";
   useEffect(() => {
     if (!open) return;
     const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -1618,6 +1619,13 @@ function AccountMenu() {
               <span className="spd-acct__sub">Grace Community Church</span>
             </span>
           </div>
+          <div className="spd-acct__sep" />
+          {/* Appearance — the mode toggle lives here now, not on the top bar.
+              Stays open so you can see the theme flip in place. */}
+          <button className="spd-tms__opt" role="menuitemcheckbox" aria-checked={midnight} onClick={onToggleMode}>
+            <Icon name={midnight ? "light_mode" : "bedtime"} filled={midnight} size={18} style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
+            <span style={{ flex: 1 }}>{midnight ? "Light Mode" : "Midnight Mode"}</span>
+          </button>
           <div className="spd-acct__sep" />
           {personal.map((i) => (
             <button key={i.label} className="spd-tms__opt" onClick={() => setOpen(false)}>
