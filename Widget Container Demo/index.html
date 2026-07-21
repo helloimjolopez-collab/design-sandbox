@@ -689,9 +689,10 @@
     var atot=agg[agg.length-1],af=agg[0],ad=af?(((atot-af)/af)*100):0,neg=ad<0;
     var multi=(mode!=="total");
     var fullSet=multi?trendSet(w,range,mode):[{name:(allT?"All accounts":f),series:agg}];
-    var names=fullSet.map(function(x){return x.name;}),ramp=blueRamp(Math.max(1,fullSet.length));
-    var isoName=(multi&&w.trIso&&names.indexOf(w.trIso)>-1)?w.trIso:null;
-    var plotted=isoName?fullSet.filter(function(x){return x.name===isoName;}):fullSet;
+    var ramp=blueRamp(Math.max(1,fullSet.length));
+    /* Isolate/highlight state is keyed by position in fullSet, not by name — account names can repeat (e.g. two "General" accounts), so a name-keyed lookup would isolate or highlight every same-named entry at once instead of just the one actually hovered/selected. */
+    var isoIdx=(multi&&w.trIso!=null&&w.trIso>=0&&w.trIso<fullSet.length)?w.trIso:null;
+    var plotted=isoIdx!=null?[fullSet[isoIdx]]:fullSet;
     var n=(fullSet[0]&&fullSet[0].series)?fullSet[0].series.length:0;
     var lo=Infinity,hi=-Infinity;plotted.forEach(function(x){x.series.forEach(function(v){if(v<lo)lo=v;if(v>hi)hi=v;});});
     if(!isFinite(lo)){lo=0;hi=1;}var sp=(hi-lo)||Math.abs(hi)||1;lo=Math.max(0,lo-sp*0.18);hi=hi+sp*0.18;var dom=(hi-lo)||1;
