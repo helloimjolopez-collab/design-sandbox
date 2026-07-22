@@ -602,11 +602,13 @@
   /* The fill is mixed with WHITE (not tinted through the warm beige) so the
      colour stays CLEAN and vibrant — a warm beige + a transparent purple would
      mix toward mud/grey (complements), which is why the purple read flat. */
-  .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 8%, #FFFFFF); --spd-navink: var(--spd-navink-strong); }
-  /* Active = a SATURATED tonal chip (mixed with white so it stays clean) that
-     clearly sits on the light surface + the coloured stripe; icon + label take
-     the strong slate so they're immediately visible. Material-style pop. */
-  .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 15%, #FFFFFF); --spd-navink: var(--spd-navink-strong); }
+  /* Hover = a plain WARM-NEUTRAL step (never the module tint — on Home the purple
+     tint read cool/blue). The active state is what carries colour. */
+  .spd-navitem:hover { background: var(--primitive-color-warm-300); --spd-navink: var(--spd-navink-strong); }
+  /* Active = a light BUT vibrant tonal chip. Mixed in OKLCH (not sRGB) so it stays
+     chromatic/poppy as it lightens — an sRGB white-mix washes out to grey. Sits
+     clearly on the surface + coloured stripe; icon + label are near-black. */
+  .spd-navitem.is-active { background: color-mix(in oklch, var(--sel) 30%, #FFFFFF); --spd-navink: var(--spd-navink-strong); }
   /* Midnight: mix over the SOLID surface (not transparent) — a transparent tint
      let the dark show through and desaturated the colour to grey. Higher ratios
      over the purple-charcoal paper keep the chip clearly coloured, never grey. */
