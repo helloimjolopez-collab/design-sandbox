@@ -569,19 +569,20 @@
     padding: 7px 10px 7px 14px; height: 42px; border-radius: 999px; /* MD3 pill */
     background: transparent; border: none; cursor: pointer; text-align: left;
     font-family: inherit;
+    --spd-navink: var(--spd-navink-idle); /* icon + label ink, darkens on state */
     transition: background var(--motion-duration-2) var(--motion-easing-standard),
                 transform var(--motion-duration-3) var(--motion-easing-spring),
                 padding var(--motion-duration-5) var(--motion-easing-inout),
                 gap var(--motion-duration-5) var(--motion-easing-inout);
   }
-  .spd-navitem:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
-  /* Active = a SOFT tint of the selected colour (not white); stripe/icon/label
-     carry the selected colour (--sel). */
-  .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 7%, transparent); }
-  /* Midnight: tints on a dark surface need more opacity to read, and the label
-     must be BRIGHTER than the (light) inactive labels so the selected row is
-     clearly the most prominent — not less. */
-  html[data-spd-mode="midnight"] .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 22%, transparent); }
+  /* Hover = a visible tint of the module/primary colour (the FILL carries the
+     colour); the ink itself just steps to the stronger slate — never coloured. */
+  .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 9%, transparent); --spd-navink: var(--spd-navink-strong); }
+  /* Active = a stronger tint of the selected colour + the coloured stripe; the
+     icon + label stay slate (the strong slate), so nothing text-like turns purple. */
+  .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 14%, transparent); --spd-navink: var(--spd-navink-strong); }
+  html[data-spd-mode="midnight"] .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 15%, transparent); }
+  html[data-spd-mode="midnight"] .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 24%, transparent); }
   .spd-navitem.is-locked { opacity: 0.65; }
   /* Stripe breaks out of the 12px content inset to sit flush at the screen's
      left edge (x=0); the item's own rounded container stays inset. -12px lands
