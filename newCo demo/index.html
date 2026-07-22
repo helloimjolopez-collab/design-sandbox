@@ -1319,15 +1319,13 @@
   @keyframes spd-halo-cw { to { transform: rotate(360deg); } }
   @keyframes spd-halo-ccw { to { transform: rotate(-360deg); } }
   @keyframes spd-spot-breath { 0%,100% { transform: scale(0.965); } 50% { transform: scale(1); } }
-  /* Hover = a graceful squash-stretch BLOOM (the shape flexes with personality),
-     not a spin. */
-  .spd-askspot:hover .spd-spotmark { animation: spd-spot-hover 1.05s var(--motion-easing-spring); }
+  /* Hover = a clean spring BLOOM: a uniform pop + a quarter-turn that settles
+     (no squash-stretch, which read as a glitch). Composes with the rings' drift. */
+  .spd-askspot:hover .spd-spotmark { animation: spd-spot-hover 0.9s var(--motion-easing-spring); }
   @keyframes spd-spot-hover {
-    0% { transform: scale(1, 1) rotate(0deg); }
-    28% { transform: scale(1.2, 0.86) rotate(-10deg); }
-    58% { transform: scale(0.9, 1.16) rotate(8deg); }
-    80% { transform: scale(1.06, 0.97) rotate(-3deg); }
-    100% { transform: scale(1, 1) rotate(0deg); }
+    0% { transform: scale(1) rotate(0deg); }
+    45% { transform: scale(1.2) rotate(30deg); }
+    100% { transform: scale(1) rotate(0deg); }
   }
   @media (prefers-reduced-motion: reduce) { .spd-spotmark, .spd-spotmark__ring1, .spd-spotmark__ring2, .spd-askspot:hover .spd-spotmark { animation: none; } }
 
