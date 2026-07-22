@@ -582,12 +582,15 @@
   }
   /* Hover = a visible tint of the module/primary colour (the FILL carries the
      colour); the ink itself just steps to the stronger slate — never coloured. */
-  .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 9%, transparent); --spd-navink: var(--spd-navink-strong); }
-  /* Active = a stronger tint of the selected colour + the coloured stripe; the
-     icon + label stay slate (the strong slate), so nothing text-like turns purple. */
-  .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 14%, transparent); --spd-navink: var(--spd-navink-strong); }
+  /* The fill is mixed with WHITE (not tinted through the warm beige) so the
+     colour stays CLEAN and vibrant — a warm beige + a transparent purple would
+     mix toward mud/grey (complements), which is why the purple read flat. */
+  .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 11%, #FFFFFF); --spd-navink: var(--spd-navink-strong); }
+  /* Active = a clean, saturated tonal chip + the coloured stripe; icon + label
+     stay slate (strong slate), so nothing text-like turns purple. */
+  .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 20%, #FFFFFF); --spd-navink: var(--spd-navink-strong); }
   html[data-spd-mode="midnight"] .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 15%, transparent); }
-  html[data-spd-mode="midnight"] .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 24%, transparent); }
+  html[data-spd-mode="midnight"] .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 26%, transparent); }
   .spd-navitem.is-locked { opacity: 0.65; }
   /* Stripe breaks out of the 12px content inset to sit flush at the screen's
      left edge (x=0); the item's own rounded container stays inset. -12px lands
