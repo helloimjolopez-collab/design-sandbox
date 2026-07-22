@@ -710,23 +710,27 @@
     width: 0; opacity: 0; padding-left: 0; padding-right: 0; pointer-events: none;
   }
 
-  /* Header: search field + collapse control, then a divider before the nav. */
+  /* Header: search + collapse control. padding-left 29 so the search icon centres
+     at the same x (48) as the nav glyphs below it. */
   .spd-modnav__header {
-    display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 10px 16px 20px; margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 10px 16px 29px; margin-bottom: 14px;
     border-bottom: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint);
   }
-  /* A compact, fully-rounded-corner SQUARE search button (icon only, no field/
-     placeholder), in a MUCH LIGHTER mauve tint. */
+  /* Idle: a rounded SQUARE, icon only. On focus it expands into a working field
+     (you can type). Shared mauve fill. */
   .spd-modnav__search {
-    flex: none; width: 38px; height: 38px; padding: 0; border-radius: 12px; border: none;
-    display: flex; align-items: center; justify-content: center;
-    background: color-mix(in oklch, var(--semantic-color-light-mode-fill-static-accent-mauve-base) 11%, #FFFFFF);
-    box-shadow: none; cursor: pointer;
-    transition: box-shadow var(--motion-duration-2) var(--motion-easing-standard),
-                background var(--motion-duration-2) var(--motion-easing-standard);
+    flex: 0 1 38px; height: 38px; min-width: 0; padding: 0; border-radius: 12px; border: none;
+    display: flex; align-items: center; justify-content: center; gap: 8px; overflow: hidden;
+    background: var(--spd-search-fill); box-shadow: none; cursor: text;
+    transition: flex-basis var(--motion-duration-4) var(--motion-easing-inout),
+                padding var(--motion-duration-4) var(--motion-easing-inout),
+                box-shadow var(--motion-duration-2) var(--motion-easing-standard);
   }
-  .spd-modnav__search:hover { background: color-mix(in oklch, var(--semantic-color-light-mode-fill-static-accent-mauve-base) 18%, #FFFFFF); }
-  .spd-modnav__search input { display: none; }
+  .spd-modnav__search:hover { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-mauve-base) 24%, transparent); }
+  .spd-modnav__search:focus-within {
+    flex-basis: 100%; justify-content: flex-start; padding: 0 12px;
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-mauve-base) 52%, transparent);
+  }
   /* People / in-content table search, in-family warm-neutral fill, a rounded
      rectangle, with a clear focused state (brightens + primary ring). */
   .spd-tablesearch {
