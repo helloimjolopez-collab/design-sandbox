@@ -1260,23 +1260,21 @@
   /* ── Ask Spot, the AI-assistant CTA on Spired Home. The first action you meet
         on landing: a rounded prompt bar with a gradient spark badge and a send
         affordance. Placeholder (no real AI), it just invites. ─────────────── */
-  /* Ask Spot mark, the silhouette MORPHS bouncily (SMIL on the path `d`); on top
-     of that, a gentle rocking drift (never a full spin, so it never reads as a
-     loader). The hex core breathes softly. */
-  .spd-spotmark__halo { transform-box: fill-box; transform-origin: center; animation: spd-spot-rock 6.5s var(--motion-easing-breath) infinite; }
-  .spd-spotmark__core { transform-box: fill-box; transform-origin: center; animation: spd-spot-core 3.8s var(--motion-easing-breath) infinite; }
-  @keyframes spd-spot-rock { 0%,100% { transform: rotate(-6deg) scale(0.965); } 50% { transform: rotate(6deg) scale(1); } }
-  @keyframes spd-spot-core { 0%,100% { transform: scale(1); opacity: 0.92; } 50% { transform: scale(0.86); opacity: 1; } }
-  /* Hover = a delightful bouncy roll + pop of the whole mark. */
-  .spd-askspot { --spot-hover: 0; }
+  /* Ask Spot Halo: the two scalloped rings slowly counter-rotate (an elegant,
+     alive shimmer — never a fast loader spin). On hover the whole mark does a
+     delightful bouncy roll + pop. */
   .spd-spotmark { transform-box: fill-box; transform-origin: center; }
+  .spd-spotmark__ring1 { transform-box: fill-box; transform-origin: center; animation: spd-halo-cw 15s linear infinite; }
+  .spd-spotmark__ring2 { transform-box: fill-box; transform-origin: center; animation: spd-halo-ccw 12s linear infinite; }
+  @keyframes spd-halo-cw { to { transform: rotate(360deg); } }
+  @keyframes spd-halo-ccw { to { transform: rotate(-360deg); } }
   .spd-askspot:hover .spd-spotmark { animation: spd-spot-hover 0.85s var(--motion-easing-spring); }
   @keyframes spd-spot-hover {
     0% { transform: rotate(0deg) scale(1); }
     55% { transform: rotate(210deg) scale(1.14); }
     100% { transform: rotate(360deg) scale(1); }
   }
-  @media (prefers-reduced-motion: reduce) { .spd-spotmark__halo, .spd-spotmark__core { animation: none; } .spd-spotmark animate { display: none; } .spd-askspot:hover .spd-spotmark { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .spd-spotmark__ring1, .spd-spotmark__ring2, .spd-askspot:hover .spd-spotmark { animation: none; } }
 
   /* Ask Spot CTA, a LIGHT prompt bar (its own raised paper surface) whose
      primary-coloured send button is the visible primary action that pops. */
