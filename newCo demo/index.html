@@ -896,9 +896,11 @@
     opacity: 0; transition: opacity var(--motion-duration-3) var(--motion-easing-standard) 70ms;
   }
   .spd-mrail.is-expanded .spd-mrail__label { opacity: 1; }
-  /* Active fill is a centred SQUARE behind the glyph (not a wide row) — the
-     glyph sits centred inside it, even padding all round. */
-  .spd-mrail__item.is-active .spd-mrail__badge { background: color-mix(in srgb, var(--sel) 14%, transparent); }
+  /* Active fill is the whole rounded ROW (a clean tonal chip, white-mixed) +
+     the stripe — identical treatment to the side-nav pill, so the two nav
+     surfaces read as one system rather than pill-vs-square. */
+  .spd-mrail__item.is-active { background: color-mix(in srgb, var(--sel) 20%, #FFFFFF); }
+  html[data-spd-mode="midnight"] .spd-mrail__item.is-active { background: color-mix(in srgb, var(--sel) 42%, var(--semantic-color-light-mode-surface-nav-light)); }
   .spd-mrail__item.is-active .spd-mrail__label { color: color-mix(in srgb, var(--sel) 58%, var(--semantic-color-light-mode-text-static-primary-base)); font-weight: 600; }
   /* Selection stripe = the MODULE's own colour (matches its glyph — never a
      mismatched purple), flush to the rail's left edge. The -8px breakout lands
