@@ -215,18 +215,14 @@
   .bgt-caption{color:var(--txt-subtle);font-weight:400;font-size:11px;}
   .bgt-info-ic{font-size:16px!important;color:var(--txt-subtle);cursor:default;margin-left:1px;}
   .bgt-info-ic:hover,.bgt-info-ic:focus-visible{color:var(--txt-primary);}
-  /* Three real filter-chip controls (Account Type / Fiscal Year / Period View) — same chip+popover component Deposits' scope-chip already uses, just three of them in a row instead of one, per Oisin's reviewed "Variance Bar" mockup. No caption headings over them — the chip's own label is the label. */
+  /* Controls are real segmented toggles (Account scope, Period) + a Fiscal-year chip. Toggles for the small fixed option sets (2-3 items), a dropdown chip only where the list genuinely grows (fiscal years, special reports). */
   .bgt-ctlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  /* Wraps the KPI's period caption + number/pill so the caption sits directly above the number it describes. Deliberately quiet (not a bold uppercase eyebrow) — the period is already named by the Period View chip above it, this is just a small confirmation, not a second competing headline. */
-  .bgt-kpi-col{display:flex;flex-direction:column;gap:3px;min-width:0;}
   .bgt-legend{display:flex;align-items:center;gap:16px;padding:10px 16px 6px;font-size:12px;color:var(--txt-subtle);flex-wrap:wrap;}
   .bgt-lg{display:inline-flex;align-items:center;gap:6px;}
-  /* Explicit colour rule, direct from the person building this: light purple = Budget (fixed — "the plan"), dark purple = Actual when favourable/neutral, deep red = Actual only when unfavourable. Purple reuses the app's own real chart tokens (--am-*, already the source of --chart/--chart-strong elsewhere) rather than inventing new colours. */
+  /* Two chart colours only: light purple Budget (the plan), dark purple Actual (the result). No red — favourability is read from the hover popover and the headline pill, never from the bar colour itself. */
   .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;background:var(--am-200);}
   .bgt-sw-actual{background:var(--am-600);}
-  .bgt-sw-actual.neg{background:var(--red-100);}
   .bgt-sw-budget-line{width:12px;height:0;border-top:2px dashed var(--am-300);border-radius:0;display:inline-block;}
-  /* flex:1/min-height:0 here (not a fixed height) is what makes this fill whatever room .wcontent actually has, the same way depTrend's .tr-plot and Deposits' .dep-full do. */
   .bgt-chart-wrap2{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 8px;}
   .bgt-plotrow2{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
   .bgt-yax2{flex:0 0 40px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
@@ -239,27 +235,39 @@
   .bgt-bar2{width:38%;max-width:18px;border-radius:3px 3px 0 0;min-height:2px;}
   .bgt-bar-budget2{background:var(--am-200);}
   .bgt-bar-actual2{background:var(--am-600);}
-  .bgt-bar-actual2.neg{background:var(--red-100);}
-  /* Custom two-line x-axis (period name + its own variance, e.g. "Jan" / "+$2.9k") laid out as a second flex row with an identical column count/gap to the bars above it, instead of percentage-position spans — guarantees pixel-perfect alignment with the bars without any position-formula math to get wrong. Variance is the one number always visible without hovering, answering "by how much" at a glance per Oisin's design note; exact Budget/Actual dollars are one hover (or the peer Table view) away. */
+  /* Custom two-line x-axis (period name + its own signed variance) laid out as a second flex row with the same column count/gap as the bars, so alignment is exact by construction. Variance number is a single neutral colour (no red); its sign carries the direction, the popover carries the good/bad reading. */
   .bgt-xaxrow2{display:flex;gap:8px;padding:6px 16px 0;}
   .bgt-yax2sp{flex:0 0 40px;}
   .bgt-xcols2{flex:1;min-width:0;display:flex;gap:4px;padding:0 2px;}
   .bgt-xcol2{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
   .bgt-xlbl2{font-size:11px;color:var(--txt-subtle);white-space:nowrap;}
-  .bgt-xvar2{font-size:10.5px;font-weight:600;color:var(--am-600);font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .bgt-xvar2.neg{color:var(--red-100);}
+  .bgt-xvar2{font-size:10.5px;font-weight:600;color:var(--txt-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;}
   .bgt-xvar2.muted{color:var(--txt-subtle);font-weight:400;}
   .bgt-ytd-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 14px;}
   .bgt-table-wrap{padding:4px 16px 16px;overflow:auto;}
   .bgt-favcol{flex:0 0 130px;display:flex;align-items:center;}
-  /* Breaks the header visually into "the plan" (Period/Budget/Actual) vs. "the read" (Variance/Result) — same border-left divider convention the explore columns already use, rather than four unrelated-looking columns in a row. */
   .bgt-vardiv{border-left:1px solid var(--stroke-widget);padding-left:12px;margin-left:2px;}
-  /* Variance column carries both the $ trend and its % now, so it needs more room than the shared 84px dt-tr default. */
   .wt-row .dt-c.dt-tr.bgt-vardiv{flex:0 0 128px;}
-  /* Same flex-fill chain as .dep-full/.dep-col (Deposits' table+donut split) — the outer row fills .wcontent, each column is its own flex-column context so the chart inside can flex:1 to the column's real height. */
   .bgt-explore{flex:1;min-height:0;display:flex;}
   .bgt-explore-col{flex:1;min-width:0;display:flex;flex-direction:column;}
   .bgt-explore-col+.bgt-explore-col{border-left:1px solid var(--stroke-widget);}
+  /* Explore panels each carry their own period toggle so the two charts can be set to different grains (e.g. Month bars beside YTD line). */
+  .bgt-panel-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px 2px;}
+  .bgt-panel-hd .dep-col-h{padding:0;}
+  /* Bar hover shows a formatted popover card, not a cramped one-line tooltip: budget and actual on their own rows with swatches, a divider, then the variance and whether it is favourable or unfavourable. */
+  .bgt-pop{position:fixed;z-index:120;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:10px;box-shadow:0 12px 32px rgba(41,39,36,.22),0 2px 8px rgba(41,39,36,.12);padding:10px 12px;min-width:190px;pointer-events:none;font-size:12px;}
+  .bgt-pop-h{font-weight:700;font-size:12px;color:var(--txt-primary);margin-bottom:7px;}
+  .bgt-pop-r{display:flex;align-items:center;gap:8px;line-height:1.9;color:var(--txt-secondary);}
+  .bgt-pop-sw{width:10px;height:10px;border-radius:2px;flex:0 0 auto;}
+  .bgt-pop-lbl{flex:1;min-width:0;}
+  .bgt-pop-v{font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-primary);}
+  .bgt-pop-div{height:1px;background:var(--stroke-widget);margin:7px 0;}
+  .bgt-pop-var{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  .bgt-pop-var .bgt-pop-lbl{font-weight:600;color:var(--txt-primary);}
+  .bgt-pop-fav{font-weight:700;color:var(--txt-pos);font-variant-numeric:tabular-nums;}
+  .bgt-pop-fav.neg{color:var(--red-100);}
+  .bgt-pop-fav.neutral{color:var(--txt-secondary);}
+  .bgt-pop-note{font-size:11px;color:var(--txt-subtle);margin-top:5px;}
   .vt{display:inline-flex;align-items:center;gap:4px;}
   .vt .material-symbols-rounded{font-size:15px;}
   .wt-sort{border:0;background:transparent;font-family:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:1px;padding:0;}
