@@ -1362,6 +1362,30 @@
   document.addEventListener("mouseout",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)hideTip();});
   document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)showTip(t);});
   document.addEventListener("focusout",hideTip);
+  /* Budget bar hover: a formatted popover card (Budget / Actual / Variance + favourable-or-unfavourable), not a one-line tooltip. Data rides on the column as data-bpop="period|budget|actual|variance|mode|partial". */
+  var bpopEl=null;
+  function bgtHideBpop(){if(bpopEl){bpopEl.remove();bpopEl=null;}}
+  function bgtShowBpop(col,mx,my){
+    var raw=col.getAttribute("data-bpop");if(!raw)return;var p=raw.split("|");
+    var period=p[0],budget=+p[1],actual=(p[2]===""?null:+p[2]),vr=(p[3]===""?null:+p[3]),mode=p[4],partial=p[5]==="1";
+    var neg=vr!=null&&vr<0;
+    var favCls=(mode==="neutral")?"neutral":(neg?"neg":"");
+    var favWord=(mode==="neutral")?(neg?"Under budget":"Over budget"):(neg?"Unfavourable":"Favourable");
+    var rowsHtml='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-200)"></span><span class="bgt-pop-lbl">Budget</span><span class="bgt-pop-v">'+money(budget)+'</span></div>';
+    if(actual!=null)rowsHtml+='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600)"></span><span class="bgt-pop-lbl">Actual</span><span class="bgt-pop-v">'+money(actual)+'</span></div>';
+    else rowsHtml+='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600);opacity:.35"></span><span class="bgt-pop-lbl">Actual</span><span class="bgt-pop-v" style="color:var(--txt-subtle);font-weight:400">Not posted yet</span></div>';
+    var varHtml=(vr!=null)?('<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">Variance</span><span class="bgt-pop-fav '+favCls+'">'+(neg?"−":"+")+money(Math.abs(vr))+' · '+favWord+'</span></div>'):'';
+    var note=partial?'<div class="bgt-pop-note">Partial quarter, not all months posted yet.</div>':'';
+    bgtHideBpop();
+    bpopEl=document.createElement("div");bpopEl.className="bgt-pop";
+    bpopEl.innerHTML='<div class="bgt-pop-h">'+period+'</div>'+rowsHtml+varHtml+note;
+    document.body.appendChild(bpopEl);
+    var bw=bpopEl.offsetWidth,bh=bpopEl.offsetHeight,M=10;
+    var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
+    var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
+    bpopEl.style.left=left+"px";bpopEl.style.top=top+"px";
+  }
+  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".bgt-col2[data-bpop]");if(!col){if(bpopEl)bgtHideBpop();return;}bgtShowBpop(col,e.clientX,e.clientY);});
   /* Glance spark scrubbing: hover the deposits sparkline to read the total at that point in time */
   var dsTip=null;
   function dsShow(e,label,val){if(!dsTip){dsTip=document.createElement("div");dsTip.className="ds-tip";document.body.appendChild(dsTip);}dsTip.innerHTML='<span class="dst-l">'+label+'</span><span class="dst-v">'+val+'</span>';var x=e.clientX+12,y=e.clientY-16;if(x+140>innerWidth)x=e.clientX-140;dsTip.style.left=x+"px";dsTip.style.top=y+"px";}
