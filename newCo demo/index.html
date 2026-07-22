@@ -253,8 +253,8 @@
     /* Warm-neutral (never purple) light slate on the dark paper. */
     --spd-navink-idle: #B7B3AB;
     --spd-navink-strong: #F1EFE9;
-    --semantic-color-light-mode-surface-widget-header: #211E32;
-    --semantic-color-light-mode-surface-widget-base: #1A1829;
+    --semantic-color-light-mode-surface-widget-header: #322E3F;
+    --semantic-color-light-mode-surface-widget-base: #2C2937;
     --semantic-color-light-mode-fill-static-neutral-light: #201D30;
     --semantic-color-light-mode-fill-static-neutral-subtle: rgba(170,166,200,0.08);
     --semantic-color-light-mode-fill-static-brand-light: rgba(170,166,200,0.12);
@@ -593,8 +593,11 @@
   /* Active = a clean, saturated tonal chip + the coloured stripe; icon + label
      stay slate (strong slate), so nothing text-like turns purple. */
   .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 20%, #FFFFFF); --spd-navink: var(--spd-navink-strong); }
-  html[data-spd-mode="midnight"] .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 15%, transparent); }
-  html[data-spd-mode="midnight"] .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 26%, transparent); }
+  /* Midnight: mix over the SOLID surface (not transparent) — a transparent tint
+     let the dark show through and desaturated the colour to grey. Higher ratios
+     over the purple-charcoal paper keep the chip clearly coloured, never grey. */
+  html[data-spd-mode="midnight"] .spd-navitem:hover { background: color-mix(in srgb, var(--sel) 22%, var(--semantic-color-light-mode-surface-nav-light)); }
+  html[data-spd-mode="midnight"] .spd-navitem.is-active { background: color-mix(in srgb, var(--sel) 42%, var(--semantic-color-light-mode-surface-nav-light)); }
   .spd-navitem.is-locked { opacity: 0.65; }
   /* Stripe breaks out of the 12px content inset to sit flush at the screen's
      left edge (x=0); the item's own rounded container stays inset. -12px lands
