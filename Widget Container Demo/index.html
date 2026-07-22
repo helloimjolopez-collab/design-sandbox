@@ -993,21 +993,12 @@
   /* Account scope is a DROPDOWN, not a toggle: it isn't a flat 2-3 item set — the third option (Special report) branches into a two-part selection (Report, then Report line), which a segmented toggle can't express. The chip shows the current scope; the popover offers Income / Expense as one-tap options and a Special-report section with the two selects. */
   function bgtScopeLabel(w){var av=w.acctview||"income";if(av==="expense")return "Expense accounts";if(av==="special"){var rep=bgtReport(w),ln=bgtReportLine(w);return rep.name+" · "+ln.name;}return "Income accounts";}
   function bgtScopeChip(w){return '<button class="filter-chip" data-action="bgt-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="fc-label">'+bgtScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
-  /* Grain: Period / Month / YTD. Month = 12 monthly columns; Period = the org's fiscal periods grouped (quarters here); YTD = cumulative running total. A segmented toggle (fixed 3-item set). */
-  function bgtGrainToggle(w,grain,action,extra){return bgtTog([["period","Period"],["month","Month"],["ytd","YTD"]],grain,w,action,"Grain",extra);}
-  /* Shape: Bar / Line / Table — where the line chart lives as a first-class option. Each button carries a plain-language tooltip so "Bar" / "Line" aren't left to guesswork: Bar compares the two figures per period, Line shows how they track over time, Table lists exact numbers. */
-  function bgtShapeToggle(w,fmt,action,extra){return bgtTog([["bar","Bar","bar_chart","Budget and actual side by side for each period"],["line","Line","show_chart","How budget and actual track over time (the trend)"],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
-  function bgtGroupedRows(rows,view){
-    if(view!=="period")return rows;
-    var q=[[],[],[],[]];
-    rows.forEach(function(r,i){q[Math.min(3,Math.floor(i/3))].push(r);});
-    return q.filter(function(g){return g.length;}).map(function(g,qi){
-      var b=g.reduce(function(s,r){return s+r.budget;},0),anyA=g.some(function(r){return r.actual!=null;}),allA=g.every(function(r){return r.actual!=null;});
-      return {period:"P"+(qi+1),budget:b,actual:anyA?g.reduce(function(s,r){return s+(r.actual||0);},0):null,partial:anyA&&!allA};
-    });
-  }
-  /* One place that turns the chosen grain into rows, so bars / line / table always read the same data. */
-  function bgtRowsAt(w,grain){var full=bgtSet(w);if(grain==="ytd")return bgtYTD(full);if(grain==="period")return bgtGroupedRows(full,"period");return full;}
+  /* Grain = which slice of time to show, NOT a grouping: Period = just the current fiscal period on its own; Month = every month across the year; YTD = the whole year to date, cumulative. */
+  function bgtGrainToggle(w,grain,action,extra){return bgtTog([["period","Period","","Just the current fiscal period"],["month","Month","","Every month across the year"],["ytd","YTD","","The whole fiscal year to date, cumulative"]],grain,w,action,"Time span",extra);}
+  /* Shape: Bar / Line / Table — where the line chart lives as a first-class option. Plain-language tooltips so "Bar"/"Line" aren't guesswork. */
+  function bgtShapeToggle(w,fmt,action,extra){return bgtTog([["bar","Bar","bar_chart","Budget and actual side by side"],["line","Line","show_chart","How budget and actual track over time (the trend)"],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
+  /* One place that turns the chosen time span into rows. Period = the single current fiscal period (latest posted); Month = every month; YTD = cumulative running totals. */
+  function bgtRowsAt(w,grain){var full=bgtSet(w);if(grain==="ytd")return bgtYTD(full);if(grain==="period"){var t=bgtThru(full);return t.length?[t[t.length-1]]:[full[0]];}return full;}
   /* Single, self-contained empty state: icon + one line + the set-up-budget action. No header, no eyebrow, no KPI block above it. */
   function bgtNoBudgetState(w,av){
     var lbl=(av==="special")?"budget for this report line":av+" budget";
