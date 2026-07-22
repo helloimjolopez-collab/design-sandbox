@@ -1875,11 +1875,11 @@ function HaloSwatch({ kind, size = 66 }) {
   };
   const v = map[kind];
   return (
-    <svg viewBox="0 0 210 210" width={size} height={size} fill="none" style={{ display: "block" }}>
+    <svg className="spd-spotmark" viewBox="0 0 210 210" width={size} height={size} fill="none" style={{ display: "block" }}>
       <circle cx="105" cy="105" r="104.996" fill={v.bg} />
       {v.fill
-        ? (<React.Fragment><path d={HALO_OUTER} fill={v.o} /><path d={HALO_INNER} fill={v.i} /></React.Fragment>)
-        : (<React.Fragment><path d={HALO_OUTER} stroke={v.o} strokeWidth={S} fill="none" /><path d={HALO_INNER} stroke={v.i} strokeWidth={S} fill="none" /></React.Fragment>)}
+        ? (<React.Fragment><g className="spd-spotmark__ring1"><path d={HALO_OUTER} fill={v.o} /></g><g className="spd-spotmark__ring2"><path d={HALO_INNER} fill={v.i} /></g></React.Fragment>)
+        : (<React.Fragment><g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke={v.o} strokeWidth={S} fill="none" /></g><g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke={v.i} strokeWidth={S} fill="none" /></g></React.Fragment>)}
     </svg>
   );
 }
