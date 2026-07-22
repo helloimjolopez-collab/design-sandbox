@@ -606,26 +606,15 @@
   .spd-navitem__chip .material-symbols-rounded { font-size: 16px; }
   .spd-navitem__label {
     flex: 1; font-size: 12px; font-weight: 500;
-    color: var(--semantic-color-light-mode-text-static-secondary-subtle);
+    color: var(--spd-navink); /* slate — steps to strong slate on hover/active */
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    transition: opacity var(--motion-duration-3) var(--motion-easing-standard),
+    transition: color var(--motion-duration-2) var(--motion-easing-standard),
+                opacity var(--motion-duration-3) var(--motion-easing-standard),
                 flex var(--motion-duration-6) var(--motion-easing-inout);
   }
-  /* Active label text: blend the module colour toward the mode's primary text
-     so it stays accessible — darkens in Light, lightens in Midnight (the plain
-     module colour, e.g. People's magenta, failed contrast on the soft tint). */
-  .spd-navitem.is-active .spd-navitem__label {
-    font-weight: 500;
-    color: color-mix(in srgb, var(--sel) 65%, var(--semantic-color-light-mode-text-static-primary-base));
-  }
-  /* Brighter (toward white) in Midnight so the selected label out-contrasts the
-     light inactive labels. */
-  html[data-spd-mode="midnight"] .spd-navitem.is-active .spd-navitem__label {
-    color: color-mix(in srgb, var(--sel) 58%, #FFFFFF);
-  }
-  html[data-spd-mode="midnight"] .spd-navitem.is-active .spd-navitem__glyph .material-symbols-rounded {
-    color: color-mix(in srgb, var(--sel) 68%, #FFFFFF) !important;
-  }
+  /* Active label = the strong slate + heavier weight → clearly the most
+     prominent row, without the text ever taking the module colour. */
+  .spd-navitem.is-active .spd-navitem__label { font-weight: 600; }
 
   /* ── Logo = hide/reveal the side nav. On hover the three bars replay their
         assembling motion (bottom→top, the loading bump) — NOT a scale. ───── */
