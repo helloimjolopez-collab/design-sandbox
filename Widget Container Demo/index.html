@@ -1096,6 +1096,12 @@
     var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-id="'+w.id+'" data-multi="0" data-blob="'+blob.replace(/"/g,"&quot;")+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div><div class="tr-xax">'+xl+'</div></div>';
     return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget'+(cum?" (cumulative)":"")+'</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual'+(cum?" (cumulative)":"")+'</span></div>'+plot+'</div>';
   }
+  /* One variance cell: signed dollars + a quiet %, coloured green/red by favourability (or neutral grey for a mixed report line). This single column replaces the old $-trend + separate Result-pill pair that was overcrowding the row. */
+  function bgtVarCell(v,neutral,budget){
+    if(v==null)return '<span class="bgt-tv neu">n/a</span>';
+    var neg=v<0,cls=neutral?"neu":(neg?"neg":"pos"),pct=(budget>0)?(Math.round(Math.abs(v)/budget*1000)/10):null;
+    return '<span class="bgt-tv '+cls+'">'+(neg?"−":"+")+money(Math.abs(v))+(pct!=null?'<span class="bgt-tvpct">'+pct+'%</span>':"")+'</span>';
+  }
   function bgtTable(w,grain){
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
     var full=bgtSet(w);
@@ -1104,13 +1110,12 @@
     var sk=(w.bsort||"idx-asc").split("-"),key=sk[0],dir=sk[1]==="desc"?-1:1;
     function val(x){if(key==="budget")return x.budget;if(key==="actual")return x.actual==null?-Infinity:x.actual;if(key==="variance")return x.variance==null?-Infinity:x.variance;return x.idx;}
     rows.sort(function(a,b){return dir*(val(a)-val(b));});
-    function sb(k,label,cls){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<span class="'+cls+'"><button class="wt-sort'+(on?" on":"")+'" data-action="bgt-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded" data-i="'+ic+'">'+ic+'</span></button></span>';}
-    var head='<div class="wt-row wt-head">'+sb("idx","Period","lr-main")+sb("budget","Budget","wt-c2")+sb("actual","Actual","wt-c2")+sb("variance","Variance","dt-c dt-tr bgt-vardiv")+'<span class="dt-c bgt-favcol">Result</span></div>';
+    function sh(k,label,cls){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="bgt-tsort'+(on?" on":"")+' '+cls+'" data-action="bgt-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+'<span class="material-symbols-rounded" data-i="'+ic+'">'+ic+'</span></button>';}
+    var head='<div class="bgt-trow bgt-thead">'+sh("idx","Period","bgt-tp")+sh("budget","Budget","bgt-tc")+sh("actual","Actual","bgt-tc")+sh("variance","Variance","bgt-tv")+'</div>';
     var body=rows.map(function(r){
-      var v=r.variance,vpct=(v!=null&&r.budget>0)?Math.round(Math.abs(v)/r.budget*1000)/10:null;
-      return '<div class="wt-row"><span class="lr-main">'+r.period+'</span><span class="wt-c2">'+money(r.budget)+'</span><span class="wt-c2">'+(r.actual!=null?money(r.actual):'<span class="bgt-caption">not posted</span>')+'</span><span class="dt-c dt-tr bgt-vardiv">'+(v==null?'<span class="bgt-caption">n/a</span>':(bgtRtrend(v)+(vpct!=null?'<span class="bgt-caption" style="margin-left:6px">'+vpct+'%</span>':'')))+'</span><span class="dt-c bgt-favcol">'+(v==null?'<span class="bgt-caption">n/a</span>':bgtFavPill(v,special))+'</span></div>';}).join("");
-    var thru=bgtThru(full),totalV=thru.length?bgtVariance(av,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
-    return '<div class="bgt-table-wrap"><div class="scroll">'+head+body+'</div><div class="dep-total"><span>Year-to-date total</span><span>'+(totalV==null?'<span class="bgt-caption">n/a</span>':bgtRtrend(totalV))+'</span></div></div>';}
+      return '<div class="bgt-trow"><span class="bgt-tp">'+r.period+'</span><span class="bgt-tc">'+money(r.budget)+'</span><span class="bgt-tc">'+(r.actual!=null?money(r.actual):'<span class="bgt-caption">—</span>')+'</span>'+bgtVarCell(r.variance,neutral,r.budget)+'</div>';}).join("");
+    var thru=bgtThru(full),totalV=thru.length?bgtVariance(vt,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
+    return '<div class="bgt-tbl"><div class="bgt-tscroll">'+head+body+'</div><div class="bgt-ttot"><span>Year-to-date total</span>'+bgtVarCell(totalV,neutral,thru.reduce(function(s,r){return s+r.budget;},0))+'</div></div>';}
   /* Render whichever shape at whichever grain — the one place grain × shape combine. */
   function bgtView(w,grain,fmt){
     var av=w.acctview||"income";
