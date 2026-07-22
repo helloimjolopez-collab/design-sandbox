@@ -1028,12 +1028,33 @@
   /* Account scope is a DROPDOWN, not a toggle: it isn't a flat 2-3 item set — the third option (Special report) branches into a two-part selection (Report, then Report line), which a segmented toggle can't express. The chip shows the current scope; the popover offers Income / Expense as one-tap options and a Special-report section with the two selects. */
   function bgtScopeLabel(w){var av=w.acctview||"income";if(av==="expense")return "Expense accounts";if(av==="special"){var rep=bgtReport(w),ln=bgtReportLine(w);return rep.name+" · "+ln.name;}return "Income accounts";}
   function bgtScopeChip(w){var spin=w.bloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip bgt-scope-chip" data-action="bgt-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change">'+spin+'<span class="fc-label">'+bgtScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
-  /* Grain = which slice of time to show, NOT a grouping: Period = just the current fiscal period on its own; Month = every month across the year; YTD = the whole year to date, cumulative. */
-  function bgtGrainToggle(w,grain,action,extra){return bgtTog([["period","Period","","Just the current fiscal period"],["month","Month","","Every month across the year"],["ytd","YTD","","The whole fiscal year to date, cumulative"]],grain,w,action,"Time span",extra);}
-  /* Shape: Bar / Line / Table — where the line chart lives as a first-class option. Plain-language tooltips so "Bar"/"Line" aren't guesswork. */
+  /* Two independent axes, per the design decision:
+       INTERVAL = what each bar/point represents — Month, Quarter, Fiscal period, or Year.
+       TIME SPAN = how far back the data runs — this fiscal year, this fiscal period, last fiscal year, or all time.
+     The chart is "each [interval] over [time span]". Interval is a segmented toggle (fixed set); time span is a dropdown chip (reads as a phrase). */
+  var BGT_ALL_FYS=["2024","2025","2026"],BGT_CUR_FY="2026";
+  function bgtIntervalToggle(w,interval,action,extra){return bgtTog([["month","Month","","Each bar is one month"],["quarter","Quarter","","Each bar is one quarter"],["period","Period","","Each bar is one fiscal period"],["year","Year","","Each bar is one fiscal year"]],interval,w,action,"Interval",extra);}
+  function bgtSpanLabel(s){return s==="period"?"This period":s==="last"?"Last year":s==="all"?"All time":"This year";}
+  function bgtSpanFull(s){return s==="period"?"This fiscal period":s==="last"?"Last fiscal year":s==="all"?"All time":"This fiscal year";}
+  function bgtSpanChip(w,extra){return '<button class="filter-chip" data-action="bgt-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, tap to change"><span class="material-symbols-rounded" data-i="calendar_month" style="font-size:15px">calendar_month</span><span class="fc-label">'+bgtSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
   function bgtShapeToggle(w,fmt,action,extra){return bgtTog([["bar","Bar","bar_chart","Budget and actual side by side"],["line","Line","show_chart","How budget and actual track over time (the trend)"],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
-  /* One place that turns the chosen time span into rows. Period = the single current fiscal period (latest posted); Month = every month; YTD = cumulative running totals. */
-  function bgtRowsAt(w,grain){var full=bgtSet(w);if(grain==="ytd")return bgtYTD(full);if(grain==="period"){var t=bgtThru(full);return t.length?[t[t.length-1]]:[full[0]];}return full;}
+  /* Which fiscal years a span covers (special reports only carry the current year in this demo, so multi-year spans gracefully fall back to it). */
+  function bgtSpanYears(w,span){if(w.acctview==="special")return [BGT_CUR_FY];if(span==="last")return ["2025"];if(span==="all")return BGT_ALL_FYS.slice();return [BGT_CUR_FY];}
+  function bgtSeriesFor(w,fy){if(w.acctview==="special")return (fy===BGT_CUR_FY)?bgtReportLine(w).rows:null;var t=(w.acctview==="expense")?BUDGET_EXPENSE_BY_FY:BUDGET_INCOME_BY_FY;return t[fy]||null;}
+  /* Flat monthly rows across the span's years, each tagged with its year and its index within that year. "This period" collapses to just the latest posted month. */
+  function bgtSpanMonthly(w,span){var years=bgtSpanYears(w,span),out=[];years.forEach(function(fy){var s=bgtSeriesFor(w,fy)||[];s.forEach(function(r,i){out.push({m:r.period,y:fy,i:i,budget:r.budget,actual:r.actual});});});if(span==="period"){var thru=out.filter(function(r){return r.actual!=null;});out=thru.length?[thru[thru.length-1]]:out.slice(0,1);}return out;}
+  /* Aggregate the monthly rows to the chosen interval. Month/Period = one bar each; Quarter = groups of three within a year; Year = one bar per year. Labels gain a ’YY suffix only when the span crosses years. */
+  function bgtAgg(rows,interval,multiY){
+    function suf(y){return multiY?(" ’"+y.slice(2)):"";}
+    if(interval==="month")return rows.map(function(r){return {period:r.m+suf(r.y),budget:r.budget,actual:r.actual};});
+    if(interval==="period")return rows.map(function(r){return {period:"P"+(r.i+1)+suf(r.y),budget:r.budget,actual:r.actual};});
+    var groups={},order=[];
+    rows.forEach(function(r){var key,label;if(interval==="quarter"){var q=Math.floor(r.i/3)+1;key=r.y+"Q"+q;label="Q"+q+suf(r.y);}else{key=r.y;label="FY "+r.y;}if(!groups[key]){groups[key]={period:label,budget:0,actual:0,anyA:false,allA:true};order.push(key);}var g=groups[key];g.budget+=r.budget;if(r.actual!=null){g.actual+=r.actual;g.anyA=true;}else g.allA=false;});
+    return order.map(function(k){var g=groups[k];return {period:g.period,budget:g.budget,actual:g.anyA?g.actual:null,partial:g.anyA&&!g.allA};});
+  }
+  function bgtViewRows(w){var span=w.bspan||"year";return bgtAgg(bgtSpanMonthly(w,span),w.binterval||"month",bgtSpanYears(w,span).length>1);}
+  /* Variance over the selected span's posted actuals — so the headline KPI reflects exactly what the chart is showing. */
+  function bgtSpanVariance(w,vt){var m=bgtSpanMonthly(w,w.bspan||"year").filter(function(r){return r.actual!=null;});if(!m.length)return {v:null,sumA:0,sumB:0};var sumB=m.reduce(function(s,r){return s+r.budget;},0),sumA=m.reduce(function(s,r){return s+r.actual;},0);return {v:bgtVariance(vt,sumB,sumA),sumA:sumA,sumB:sumB};}
   /* Single, self-contained empty state: icon + one line + the set-up-budget action. No header, no eyebrow, no KPI block above it. */
   function bgtNoBudgetState(w,av){
     var lbl=(av==="special")?"budget for this report line":av+" budget";
