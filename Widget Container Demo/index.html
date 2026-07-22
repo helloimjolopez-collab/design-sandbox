@@ -215,33 +215,40 @@
   .bgt-caption{color:var(--txt-subtle);font-weight:400;font-size:11px;}
   .bgt-info-ic{font-size:16px!important;color:var(--txt-subtle);cursor:default;margin-left:1px;}
   .bgt-info-ic:hover,.bgt-info-ic:focus-visible{color:var(--txt-primary);}
-  /* No caption headings over these — Deposits/Payroll never label a toggle with an uppercase heading, the toggle's own text is the label. Just a plain row of real controls, same as everywhere else. */
+  /* Three real filter-chip controls (Account Type / Fiscal Year / Period View) — same chip+popover component Deposits' scope-chip already uses, just three of them in a row instead of one, per Oisin's reviewed "Variance Bar" mockup. No caption headings over them — the chip's own label is the label. */
   .bgt-ctlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  /* Wraps the .wsub scope label + the KPI number/pill so the label sits directly above the number it describes, answering "what time period is this" on sight instead of leaving it implicit. */
+  /* Wraps the KPI's period caption + number/pill so the caption sits directly above the number it describes. Deliberately quiet (not a bold uppercase eyebrow) — the period is already named by the Period View chip above it, this is just a small confirmation, not a second competing headline. */
   .bgt-kpi-col{display:flex;flex-direction:column;gap:3px;min-width:0;}
-  /* Given real breathing room from the divider above and sized to actually read, not a note in tiny print jammed against a line. */
-  .bgt-legend{display:flex;align-items:center;gap:16px;padding:10px 16px 6px;font-size:12px;color:var(--txt-subtle);}
+  .bgt-legend{display:flex;align-items:center;gap:16px;padding:10px 16px 6px;font-size:12px;color:var(--txt-subtle);flex-wrap:wrap;}
   .bgt-lg{display:inline-flex;align-items:center;gap:6px;}
-  .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;}
-  .bgt-sw-budget{background:var(--wn-400);}
-  .bgt-sw-actual{background:var(--txt-pos);}
-  .bgt-sw-budget-line{width:12px;height:0;border-top:2px dashed var(--wn-400);border-radius:0;}
-  /* Direct answer to "how much of my budget have I used, with how much time left" — always visible, no toggle needed, reusing Payroll's exact .pct-bar/.pct-fill proportion-bar. Each label carries a data-tip explaining the number in plain terms, since a bare "Budget achieved" / "FY elapsed" pair reads as jargon on its own. */
-  .bgt-burn{padding:2px 16px 12px;display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--stroke-widget);}
-  .bgt-burn-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--txt-secondary);}
-  .bgt-burn-lbl{flex:0 0 108px;cursor:default;border-bottom:1px dotted var(--stroke-widget);}
-  .bgt-burn-val{flex:0 0 32px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-primary);}
-  /* flex:1/min-height:0 here (not a fixed height) is what makes this fill whatever room .wcontent actually has, the same way depTrend's .tr-plot and Deposits' .dep-full do — a fixed pixel height would just sit there at one size regardless of the widget's real height. */
-  .bgt-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding-bottom:2px;}
-  .bgt-bars-row{position:absolute;inset:0;display:flex;align-items:flex-end;gap:4px;padding:0 2px;}
-  .bgt-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;border-radius:6px;}
-  .bgt-col:hover{background:var(--wn-100);}
-  .bgt-bars{flex:0 0 auto;display:flex;align-items:flex-end;gap:3px;width:100%;justify-content:center;height:100%;}
-  /* Flat fills only — no strokes, no inset shadows, matching the app's own placeholder bar chart (Payments over time's .bar: solid fill, rounded top corners, nothing else). Budget is a visible neutral grey (the plan, not a result) — darker than the widget's own pale background so it doesn't wash out; Actual is coloured by favourable/unfavourable using the app's one real positive/negative pair (--txt-pos/--red-100), same tokens as every delta-pill elsewhere, so the bars, the badges, and the line below all agree with each other. */
-  .bgt-bar{width:38%;max-width:18px;border-radius:3px 3px 0 0;min-height:2px;}
-  .bgt-bar-budget{background:var(--wn-400);}
-  .bgt-bar-actual{background:var(--txt-pos);}
-  .bgt-bar-actual.neg{background:var(--red-100);}
+  /* Explicit colour rule, direct from the person building this: light purple = Budget (fixed — "the plan"), dark purple = Actual when favourable/neutral, deep red = Actual only when unfavourable. Purple reuses the app's own real chart tokens (--am-*, already the source of --chart/--chart-strong elsewhere) rather than inventing new colours. */
+  .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;background:var(--am-200);}
+  .bgt-sw-actual{background:var(--am-600);}
+  .bgt-sw-actual.neg{background:var(--red-100);}
+  .bgt-sw-budget-line{width:12px;height:0;border-top:2px dashed var(--am-300);border-radius:0;display:inline-block;}
+  /* flex:1/min-height:0 here (not a fixed height) is what makes this fill whatever room .wcontent actually has, the same way depTrend's .tr-plot and Deposits' .dep-full do. */
+  .bgt-chart-wrap2{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 8px;}
+  .bgt-plotrow2{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
+  .bgt-yax2{flex:0 0 40px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
+  .bgt-canvas2{flex:1;min-width:0;position:relative;border-bottom:1px solid var(--stroke-widget);}
+  .bgt-gl2{position:absolute;left:0;right:0;border-top:1px dashed var(--stroke-widget);opacity:.5;}
+  .bgt-cols2{position:absolute;inset:0;display:flex;align-items:flex-end;gap:4px;padding:0 2px;}
+  .bgt-col2{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;border-radius:6px;}
+  .bgt-col2:hover{background:var(--wn-100);}
+  .bgt-barpair2{flex:0 0 auto;display:flex;align-items:flex-end;gap:3px;width:100%;justify-content:center;height:100%;}
+  .bgt-bar2{width:38%;max-width:18px;border-radius:3px 3px 0 0;min-height:2px;}
+  .bgt-bar-budget2{background:var(--am-200);}
+  .bgt-bar-actual2{background:var(--am-600);}
+  .bgt-bar-actual2.neg{background:var(--red-100);}
+  /* Custom two-line x-axis (period name + its own variance, e.g. "Jan" / "+$2.9k") laid out as a second flex row with an identical column count/gap to the bars above it, instead of percentage-position spans — guarantees pixel-perfect alignment with the bars without any position-formula math to get wrong. Variance is the one number always visible without hovering, answering "by how much" at a glance per Oisin's design note; exact Budget/Actual dollars are one hover (or the peer Table view) away. */
+  .bgt-xaxrow2{display:flex;gap:8px;padding:6px 16px 0;}
+  .bgt-yax2sp{flex:0 0 40px;}
+  .bgt-xcols2{flex:1;min-width:0;display:flex;gap:4px;padding:0 2px;}
+  .bgt-xcol2{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .bgt-xlbl2{font-size:11px;color:var(--txt-subtle);white-space:nowrap;}
+  .bgt-xvar2{font-size:10.5px;font-weight:600;color:var(--am-600);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .bgt-xvar2.neg{color:var(--red-100);}
+  .bgt-xvar2.muted{color:var(--txt-subtle);font-weight:400;}
   .bgt-ytd-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 14px;}
   .bgt-table-wrap{padding:4px 16px 16px;overflow:auto;}
   .bgt-favcol{flex:0 0 130px;display:flex;align-items:center;}
@@ -251,8 +258,6 @@
   .bgt-explore{flex:1;min-height:0;display:flex;}
   .bgt-explore-col{flex:1;min-width:0;display:flex;flex-direction:column;}
   .bgt-explore-col+.bgt-explore-col{border-left:1px solid var(--stroke-widget);}
-  .bgt-noB{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 16px 16px;color:var(--txt-subtle);font-size:12.5px;}
-  .bgt-noB b{color:var(--txt-secondary);font-weight:600;}
   .vt{display:inline-flex;align-items:center;gap:4px;}
   .vt .material-symbols-rounded{font-size:15px;}
   .wt-sort{border:0;background:transparent;font-family:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:1px;padding:0;}
