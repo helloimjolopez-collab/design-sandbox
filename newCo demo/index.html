@@ -1755,33 +1755,36 @@ const HALO_INNER = "M59.4149 75.7287C60.353 63.6615 71.042 54.7328 83.0835 55.95
    animated centre. */
 const HALO_CENTER = "M85.1511 91.7733C85.5134 87.1113 89.6427 83.662 94.2947 84.1354L95.0203 84.2088C96.1701 84.3258 97.3178 83.9666 98.196 83.2153C102.053 79.9149 107.87 80.4369 111.078 84.3711C111.808 85.2668 112.874 85.8244 114.026 85.914L114.754 85.9703C119.416 86.3327 122.865 90.4621 122.392 95.114L122.318 95.8402C122.201 96.99 122.56 98.1378 123.311 99.0159C126.612 102.873 126.09 108.69 122.155 111.898C121.26 112.628 120.702 113.694 120.612 114.846L120.556 115.574C120.194 120.236 116.064 123.685 111.412 123.212L110.686 123.138C109.536 123.021 108.389 123.38 107.511 124.131C103.654 127.431 97.8362 126.91 94.6286 122.975C93.8982 122.08 92.8327 121.522 91.6804 121.432L90.9534 121.375C86.2914 121.013 82.8421 116.884 83.3155 112.232L83.3889 111.506C83.5058 110.356 83.1469 109.209 82.3954 108.33C79.095 104.474 79.617 98.6561 83.5512 95.4485C84.447 94.7181 85.0046 93.6527 85.0941 92.5003L85.1511 91.7733Z";
 
-/* Ask Spot AI mark = the Halo. Per Jo's variants, it ANIMATES: the two scalloped
-   rings slowly counter-rotate AND the whole thing cycles through brand colour
-   combos (swapping stroke colours) while a centre core grows/shrinks/recolours.
-   Colours cross-fade via CSS transitions; timing via React state. */
-/* The centre steps through many colours (gold → amber → coral → mauve → purple →
-   deep) so the yellow→dark-purple transition is gradual, and it grows/shrinks. */
-const SPOT_COMBOS = [
-  { o: "#6E64BE", i: "#9691F5", c: "#F9C56C", cs: 0.55 },
-  { o: "#544A9E", i: "#9691F5", c: "#E8A85A", cs: 0.74 },
-  { o: "#41377D", i: "#8B83DE", c: "#CE8E96", cs: 0.9 },
-  { o: "#2A2360", i: "#7A72D4", c: "#A99AE0", cs: 1.05 },
-  { o: "#19143C", i: "#6E64BE", c: "#6E64BE", cs: 0.86 },
-  { o: "#3A3080", i: "#9691F5", c: "#41377D", cs: 0.6 },
+/* Ask Spot AI mark = the Halo, as a FILLED composition (Jo's direction): a large
+   gradient scalloped shape, a LIGHTER scalloped shape on top, and a vibrant centre
+   that grows/shrinks. Colours stay LIGHT→vibrant (gold ↔ vibrant lilac) — never
+   dark purple. Gradient stops + fills cross-fade (React state + CSS transition);
+   the two scallops counter-rotate slowly + breathe; hover = a squash-stretch bloom. */
+const SPOT_FRAMES = [
+  { g1: "#F9C56C", g2: "#9691F5", inner: "#FDFBFF", cen: "#7B6EF0", cs: 0.62 },
+  { g1: "#BCA9F2", g2: "#F9C56C", inner: "#FFFFFF", cen: "#F9C56C", cs: 0.9 },
+  { g1: "#9691F5", g2: "#C9BDF7", inner: "#F5F2FF", cen: "#8E86E8", cs: 1.06 },
+  { g1: "#EFB06A", g2: "#A99AEE", inner: "#FFFFFF", cen: "#9691F5", cs: 0.72 },
 ];
 function SpotMark({ size = 30 }) {
   const [f, setF] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setF((x) => (x + 1) % SPOT_COMBOS.length), 2200);
+    const id = setInterval(() => setF((x) => (x + 1) % SPOT_FRAMES.length), 2400);
     return () => clearInterval(id);
   }, []);
-  const cur = SPOT_COMBOS[f];
-  const tr = "1.6s cubic-bezier(0.4,0,0.2,1)";
+  const c = SPOT_FRAMES[f];
+  const tr = "1.7s cubic-bezier(0.4,0,0.2,1)";
   return (
     <svg className="spd-spotmark" viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
-      <g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke={cur.o} strokeWidth="11" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
-      <g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke={cur.i} strokeWidth="11" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
-      <path d={HALO_CENTER} fill={cur.c} style={{ transformBox: "fill-box", transformOrigin: "center", transform: "scale(" + cur.cs + ")", transition: "transform 1.9s cubic-bezier(0.34,1.3,0.5,1), fill " + tr }} />
+      <defs>
+        <linearGradient id="spd-spotg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor={c.g1} style={{ transition: "stop-color " + tr }} />
+          <stop offset="100%" stopColor={c.g2} style={{ transition: "stop-color " + tr }} />
+        </linearGradient>
+      </defs>
+      <g className="spd-spotmark__ring1"><path d={HALO_OUTER} fill="url(#spd-spotg)" /></g>
+      <g className="spd-spotmark__ring2"><path d={HALO_INNER} fill={c.inner} style={{ transition: "fill " + tr }} /></g>
+      <path d={HALO_CENTER} fill={c.cen} style={{ transformBox: "fill-box", transformOrigin: "center", transform: "scale(" + c.cs + ")", transition: "transform 1.9s cubic-bezier(0.34,1.3,0.5,1), fill " + tr }} />
     </svg>
   );
 }
