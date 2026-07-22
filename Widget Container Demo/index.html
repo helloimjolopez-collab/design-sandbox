@@ -739,14 +739,25 @@
       {period:"Oct",budget:0,actual:null},{period:"Nov",budget:0,actual:null},{period:"Dec",budget:0,actual:null}
     ]
   };
-  /* "Special report" scope, per Confluence 9/11.8: a saved GL financial-statement report line, not a plain income/expense account set. Budget-vs-actual on one of these is shown NEUTRALLY (sign only, no favourable/unfavourable) because a mixed report line has no single "good" direction. The picker is a real dropdown (the list grows and is searchable in production); junk/test report names are hidden here the way the spec asks. */
+  /* "Special report" scope, per Confluence 9/11.8: a saved GL financial-statement report (the "Special Report Title") drilled to one of its lines (the "Line Description"). Two selections are needed — Report, then Report line — so choosing this scope opens a picker for both. Budget-vs-actual on a report line is shown NEUTRALLY (sign only, no favourable/unfavourable) because a mixed line has no single "good" direction. */
+  function bgtMonths(bs,as){var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return m.map(function(p,i){return {period:p,budget:bs[i],actual:(i<as.length?as[i]:null)};});}
   var BGT_REPORTS=[
-    {id:"missions",name:"Missions & Outreach",data:{"2026":[{period:"Jan",budget:8000,actual:7600},{period:"Feb",budget:8000,actual:8300},{period:"Mar",budget:8500,actual:8100},{period:"Apr",budget:8500,actual:9200},{period:"May",budget:9000,actual:8700},{period:"Jun",budget:9000,actual:9400},{period:"Jul",budget:9500,actual:9100},{period:"Aug",budget:9500,actual:null},{period:"Sep",budget:10000,actual:null},{period:"Oct",budget:10000,actual:null},{period:"Nov",budget:10500,actual:null},{period:"Dec",budget:12000,actual:null}]}},
-    {id:"building",name:"Building & Facilities",data:{"2026":[{period:"Jan",budget:15000,actual:14200},{period:"Feb",budget:15000,actual:16100},{period:"Mar",budget:15000,actual:14800},{period:"Apr",budget:16000,actual:15300},{period:"May",budget:16000,actual:17200},{period:"Jun",budget:16000,actual:15600},{period:"Jul",budget:17000,actual:16400},{period:"Aug",budget:17000,actual:null},{period:"Sep",budget:17000,actual:null},{period:"Oct",budget:18000,actual:null},{period:"Nov",budget:18000,actual:null},{period:"Dec",budget:20000,actual:null}]}},
-    {id:"benevolence",name:"Benevolence Fund",data:{"2026":[{period:"Jan",budget:3000,actual:3400},{period:"Feb",budget:3000,actual:2800},{period:"Mar",budget:3000,actual:3100},{period:"Apr",budget:3200,actual:3600},{period:"May",budget:3200,actual:2900},{period:"Jun",budget:3200,actual:3300},{period:"Jul",budget:3500,actual:3050},{period:"Aug",budget:3500,actual:null},{period:"Sep",budget:3500,actual:null},{period:"Oct",budget:3700,actual:null},{period:"Nov",budget:3700,actual:null},{period:"Dec",budget:4000,actual:null}]}}
+    {id:"stmt-act",name:"Statement of Activities",lines:[
+      {id:"contrib",name:"Contributions & offerings",rows:bgtMonths([42000,42000,44000,44000,46000,46000,48000,48000,50000,50000,52000,58000],[44200,40100,47300,41800,48900,43500,52100])},
+      {id:"programs",name:"Program service revenue",rows:bgtMonths([9000,9000,9500,9500,10000,10000,10500,10500,11000,11000,11500,13000],[8700,9300,9100,10200,9600,10400,10050])}
+    ]},
+    {id:"missions",name:"Missions & Outreach Summary",lines:[
+      {id:"intl",name:"International missions",rows:bgtMonths([8000,8000,8500,8500,9000,9000,9500,9500,10000,10000,10500,12000],[7600,8300,8100,9200,8700,9400,9100])},
+      {id:"local",name:"Local outreach",rows:bgtMonths([3000,3000,3000,3200,3200,3200,3500,3500,3500,3700,3700,4000],[3400,2800,3100,3600,2900,3300,3050])}
+    ]},
+    {id:"bldg",name:"Building & Facilities",lines:[
+      {id:"maint",name:"Maintenance & repairs",rows:bgtMonths([15000,15000,15000,16000,16000,16000,17000,17000,17000,18000,18000,20000],[14200,16100,14800,15300,17200,15600,16400])},
+      {id:"utils",name:"Utilities",rows:bgtMonths([6000,6000,6000,6500,6500,6500,7000,7000,7000,7500,7500,8000],[5800,6300,6100,6600,6900,6400,7100])}
+    ]}
   ];
   function bgtReport(w){var id=w.report||BGT_REPORTS[0].id;for(var i=0;i<BGT_REPORTS.length;i++)if(BGT_REPORTS[i].id===id)return BGT_REPORTS[i];return BGT_REPORTS[0];}
-  function bgtSet(w){if(w.acctview==="special"){var rep=bgtReport(w),fy=w.fy||"2026";return rep.data[fy]||rep.data["2026"];}var fy2=w.fy||"2026",table=(w.acctview==="expense")?BUDGET_EXPENSE_BY_FY:BUDGET_INCOME_BY_FY;return table[fy2]||table["2026"];}
+  function bgtReportLine(w){var rep=bgtReport(w),id=w.reportLine||rep.lines[0].id;for(var i=0;i<rep.lines.length;i++)if(rep.lines[i].id===id)return rep.lines[i];return rep.lines[0];}
+  function bgtSet(w){if(w.acctview==="special")return bgtReportLine(w).rows;var fy2=w.fy||"2026",table=(w.acctview==="expense")?BUDGET_EXPENSE_BY_FY:BUDGET_INCOME_BY_FY;return table[fy2]||table["2026"];}
   /* True when nobody has entered a budget for these rows at all (every period's budget is 0) — distinct from a budget that's simply small. Drives the "no budget set up for this view yet" message so a $0 baseline never gets compared against real actuals as if it meant something. */
   function bgtHasBudget(rows){return rows.some(function(r){return r.budget>0;});}
   /* Favourable = actual revenue above budget, OR actual expense below budget — the formula reverses by account
