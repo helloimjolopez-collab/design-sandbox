@@ -274,9 +274,27 @@
   .bgt-tsort.on{color:var(--txt-primary);}.bgt-tsort.on .material-symbols-rounded{opacity:1;}
   .bgt-tsort.bgt-tc,.bgt-tsort.bgt-tv{justify-content:flex-end;}
   .bgt-ttot{display:flex;align-items:center;justify-content:space-between;padding:9px 2px 0;border-top:1.5px solid var(--stroke-widget);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;margin-top:2px;}
-  .bgt-rep-pop{padding:4px 4px 8px;min-width:230px;}
-  .bgt-rep-pop label{display:block;font-size:11px;font-weight:600;color:var(--txt-secondary);padding:8px 8px 3px;}
-  .bgt-rep-pop select{width:100%;font:inherit;font-size:13px;color:var(--txt-primary);border:1px solid var(--stroke-widget);border-radius:7px;padding:7px 8px;background:var(--surface-widget);cursor:pointer;}
+  .bgt-scope-chip{justify-self:start;}
+  .bgt-rep-pop{padding:4px 6px 6px;min-width:250px;}
+  .bgt-rep-pop label{display:block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--txt-subtle);padding:8px 4px 4px;}
+  /* Branded picker button (not a native select): full-width, label left, chevron with real breathing room on the right — the report/line lists open as our own searchable menus, never a 1992 system popover. */
+  .bgt-pick{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;font-family:inherit;font-size:13px;font-weight:500;color:var(--txt-primary);background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:8px;padding:8px 10px;cursor:pointer;text-align:left;}
+  .bgt-pick:hover{background:var(--wn-100);border-color:var(--wn-400);}
+  .bgt-pick-v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .bgt-pick .material-symbols-rounded{font-size:18px;color:var(--txt-subtle);flex:0 0 auto;}
+  /* Loading motion — a gentle shimmer sweep + a soft spinner. Reused across widgets; both respect reduced-motion. */
+  .bgt-spin{display:inline-block;width:13px;height:13px;border-radius:50%;border:2px solid var(--am-200);border-top-color:var(--am-600);animation:bgtspin .7s linear infinite;flex:0 0 auto;vertical-align:middle;}
+  @keyframes bgtspin{to{transform:rotate(360deg);}}
+  .bgt-skel{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 16px 16px;animation:bgtfade .25s var(--ease,ease);}
+  @keyframes bgtfade{from{opacity:0;}to{opacity:1;}}
+  .bgt-skel-plot{flex:1;min-height:0;display:flex;align-items:flex-end;gap:10px;padding:0 2px;}
+  .bgt-sk-col{flex:1 1 0;height:100%;display:flex;align-items:flex-end;}
+  .bgt-sk-bar{width:100%;border-radius:4px 4px 0 0;display:block;}
+  .bgt-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;padding-top:12px;font-size:12px;color:var(--txt-subtle);}
+  /* Smoother, more elegant shimmer than the base .sk sweep — softer gradient, gentle ease. */
+  .bgt-skel .sk,.bgt-sk-bar{background:linear-gradient(100deg,var(--wn-200) 30%,var(--wn-100) 50%,var(--wn-200) 70%);background-size:200% 100%;animation:bgtshimmer 1.5s ease-in-out infinite;}
+  @keyframes bgtshimmer{from{background-position:200% 0;}to{background-position:-200% 0;}}
+  @media(prefers-reduced-motion:reduce){.bgt-spin,.bgt-skel .sk,.bgt-sk-bar,.bgt-skel{animation:none!important;}}
   /* Bar hover shows a formatted popover card, not a cramped one-line tooltip: budget and actual on their own rows with swatches, a divider, then the variance and whether it is favourable or unfavourable. */
   .bgt-pop{position:fixed;z-index:120;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:10px;box-shadow:0 12px 32px rgba(41,39,36,.22),0 2px 8px rgba(41,39,36,.12);padding:10px 12px;min-width:190px;pointer-events:none;font-size:12px;}
   .bgt-pop-h{font-weight:700;font-size:12px;color:var(--txt-primary);margin-bottom:7px;}
