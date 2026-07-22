@@ -1126,25 +1126,27 @@
     return (fmt==="line")?bgtLine(w,rows,grain):bgtBars(w,rows,grain);
   }
   function bgtGlance(w){
-    var av=w.acctview||"income",special=(av==="special");
-    var rows=bgtSet(w);
-    var label=special?bgtScopeLabel(w):(av==="expense"?"Expense accounts":"Income accounts");
+    var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
+    var rows=bgtSet(w),label=bgtScopeLabel(w);
     if(!bgtHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+label+'</span></span>'+
       '<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div>'+
       '</div></div>';
     var ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
-    var v=latest?bgtVariance(av,latest.budget,latest.actual):null;
+    var v=latest?bgtVariance(vt,latest.budget,latest.actual):null;
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+label+'</span></span>'+
       '<div class="metric-value">'+money(Math.abs(v||0))+'</div>'+
-      '<div class="gl-sub">'+bgtFavPill(v,special)+'<span class="bgt-caption">vs. budget, YTD</span></div>'+
+      '<div class="gl-sub">'+bgtFavPill(v,neutral)+'<span class="bgt-caption">vs. budget, YTD</span></div>'+
       '</div></div>';}
-  /* Glance = headline only. Detail (wide) = header + view bar + the chosen view. Explore (biggest) = header + two panels side by side, each with its OWN view bar (grain + shape), so you can put e.g. Month bars beside a cumulative YTD line. */
+  /* Data-fetch loading: scope / report / report-line changes fetch new data, so they flip a transient bloading flag and clear it after a beat — the widget shows a shimmer skeleton meanwhile. Grain / shape / sort are client-side re-renders of data already in hand, so they never trigger a load. */
+  function bgtLoad(w){w.bloading=true;clearTimeout(timers["bgt-"+w.id]);timers["bgt-"+w.id]=setTimeout(function(){w.bloading=false;render();},850);}
+  /* Glance = headline only. Detail (wide) = header + the chosen view. Explore (biggest) = header + two panels, each with its own view bar. While loading, the header controls stay usable and the content area shimmers. */
   function budgetContent(w){
     if(w.size==="kpi")return bgtGlance(w);
     var av=w.acctview||"income";
-    if(!bgtHasBudget(bgtSet(w)))return bgtHeaderBlock(w,true)+bgtNoBudgetState(w,av);
+    if(!bgtHasBudget(bgtSet(w))&&!w.bloading)return bgtHeaderBlock(w,true)+bgtNoBudgetState(w,av);
+    if(w.bloading){var mhl=bgtHeaderBlock(w,"loading");return mhl+(w.size==="xwide"?('<div class="bgt-explore"><div class="bgt-explore-col">'+bgtSkeleton()+'</div><div class="bgt-explore-col">'+bgtSkeleton()+'</div></div>'):bgtSkeleton());}
     var mh=bgtHeaderBlock(w);
     if(w.size!=="xwide")return mh+bgtView(w,w.bgrain||"month",w.bshape||"bar");
     return mh+'<div class="bgt-explore">'+bgtPanel(w,"a")+bgtPanel(w,"b")+'</div>';
