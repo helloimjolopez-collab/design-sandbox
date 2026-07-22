@@ -1735,9 +1735,10 @@ function SpotMark({ size = 30 }) {
     for (let i = 0; i < M; i++) d += `Q${pts[i][0].toFixed(2)} ${pts[i][1].toFixed(2)} ${mids[i][0].toFixed(2)} ${mids[i][1].toFixed(2)}`;
     return d + "Z";
   };
-  // Morph frames: SHALLOW bumps (a soft rounded blob, never deep enough to read
-   // as a star) that gently grow/shift so the silhouette reshapes softly.
-  const A = frame(1.3, 0), B = frame(2.2, 0.9), D = frame(1.5, 1.9), E = frame(2.0, 2.9);
+  // Morph frames: DEFINED but rounded lobes (a soft flower/halo like the Figma
+   // mark — clear scallops, but smooth tips, never sharp star points) that grow
+   // and shift so the silhouette gently reshapes.
+  const A = frame(2.3, 0), B = frame(3.0, 0.9), D = frame(2.5, 1.9), E = frame(2.8, 2.9);
   const hexR = 7.4;
   let hex = "";
   for (let i = 0; i < 6; i++) {
