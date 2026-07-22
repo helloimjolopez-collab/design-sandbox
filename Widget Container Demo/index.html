@@ -1186,15 +1186,16 @@
     if(!bgtHasBudget(bgtSet(w))&&!w.bloading)return bgtHeaderBlock(w,true)+bgtNoBudgetState(w,av);
     if(w.bloading){var mhl=bgtHeaderBlock(w,"loading");return mhl+(w.size==="xwide"?('<div class="bgt-explore"><div class="bgt-explore-col">'+bgtSkeleton()+'</div><div class="bgt-explore-col">'+bgtSkeleton()+'</div></div>'):bgtSkeleton());}
     var mh=bgtHeaderBlock(w);
-    if(w.size!=="xwide")return mh+bgtView(w,w.bgrain||"month",w.bshape||"bar");
+    if(w.size!=="xwide")return mh+bgtView(w,w.bshape||"bar");
     return mh+'<div class="bgt-explore">'+bgtPanel(w,"a")+bgtPanel(w,"b")+'</div>';
   }
-  /* One explore panel: its own grain + shape view bar, then the chart/table. State on the widget as g/f per side (gA/fA, gB/fB), independent of the other panel. */
+  /* One explore panel: its own interval + shape bar, then the chart/table — so the two panels can show different cuts of the SAME span (span + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtPanel(w,side){
-    var grain=w[side==="a"?"gA":"gB"]||(side==="a"?"month":"ytd");
+    var interval=w[side==="a"?"iA":"iB"]||"month";
     var fmt=w[side==="a"?"fA":"fB"]||(side==="a"?"bar":"line");
-    var bar='<div class="bgt-panel-hd"><div class="bgt-viewbar-l">'+bgtGrainToggle(w,grain,"set-bgt-pgrain",' data-panel="'+side+'"')+'</div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-pshape",' data-panel="'+side+'"')+'</div></div>';
-    return '<div class="bgt-explore-col">'+bar+bgtView(w,grain,fmt)+'</div>';
+    var wv=Object.assign({},w,{binterval:interval});
+    var bar='<div class="bgt-panel-hd"><div class="bgt-viewbar-l">'+bgtIntervalToggle(w,interval,"set-bgt-pinterval",' data-panel="'+side+'"')+'</div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-pshape",' data-panel="'+side+'"')+'</div></div>';
+    return '<div class="bgt-explore-col">'+bar+bgtView(wv,fmt)+'</div>';
   }
   /* Sign-ups: a list with NO natural total, so the optional top metric IS shown (number + trend). Changing the period changes the number/trend only — the list stays "most recent". */
   var SIGNUPS=[{name:"Ava Thompson",group:"Youth",when:"2h ago"},{name:"Liam Carter",group:"Choir",when:"5h ago"},{name:"Noah Bennett",group:"Men's Group",when:"Yesterday"},{name:"Emma Davis",group:"Volunteers",when:"Yesterday"},{name:"Olivia Wright",group:"Youth",when:"2 days ago"},{name:"Mason Reed",group:"Missions",when:"3 days ago"},{name:"Sophia Hughes",group:"Choir",when:"3 days ago"},{name:"Jack Morgan",group:"Youth",when:"4 days ago"}];
