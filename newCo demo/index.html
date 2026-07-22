@@ -1828,19 +1828,20 @@ function AccountMenu({ mode, onToggleMode }) {
    their module's colour even when inactive); `trailing` adds a → to signal the
    item leaves for another area. */
 function SectionItem({ icon, label, color, active, onClick, leadColor }) {
-  // Active: stripe + icon + label take the selected colour (`--sel`).
-  // Recent module links (leadColor) are marked by an OUTLINED ring + outlined
-  // module-ink glyph — distinguishable as apps, but far lighter than a fill.
+  // The module/primary colour (`--sel`) drives ONLY the fill + stripe. The
+  // icon + label ride the slate `--spd-navink` var so they stay slate and just
+  // deepen on hover/active. Recent module links (leadColor) keep an OUTLINED
+  // ring + module-ink glyph so they still read as apps.
   const tile = !!leadColor && !active; // Recent modules → outlined ring
   const inkFor = (c) => `color-mix(in srgb, ${c} 60%, var(--semantic-color-light-mode-text-static-primary-base))`;
-  const iconColor = active ? "var(--sel)" : (leadColor ? inkFor(leadColor) : "var(--semantic-color-light-mode-text-static-secondary-subtle)");
+  const iconColor = leadColor && !active ? inkFor(leadColor) : "var(--spd-navink)";
   return (
     <button
       className={"spd-navitem" + (active ? " is-active" : "")}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       aria-label={label}
-      style={active ? { "--sel": color } : undefined}
+      style={{ "--sel": color }}
     >
       {active && <span className="spd-navitem__indicator" />}
       <span
