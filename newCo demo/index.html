@@ -400,20 +400,21 @@
      higher (--rise), so it reads as steps climbing: a gentle burst of
      inspiration. Subtle throughout. */
   @keyframes spd-drift {
-    0%   { transform: translateY(0);                        opacity: 0.32; }
-    17%  { transform: translateY(calc(var(--rise) * 1.32)); opacity: 1; }   /* a decisive rise, overshoots the step */
-    28%  { transform: translateY(calc(var(--rise) * 0.93)); opacity: 1; }   /* gentle secondary settle (Material's expressive bounce-in) */
-    39%  { transform: translateY(var(--rise));              opacity: 1; }   /* eases onto the step */
-    55%  { transform: translateY(var(--rise));              opacity: 1; }   /* holds a breath at the top */
-    83%, 100% { transform: translateY(0);                   opacity: 0.32; }/* graceful, decelerating fall */
+    0%   { transform: translateY(0);                        opacity: 0.3; }
+    24%  { transform: translateY(calc(var(--rise) * 1.35)); opacity: 1; }   /* PULLED up past the step (as if from above) */
+    38%  { transform: translateY(calc(var(--rise) * 0.86)); opacity: 1; }   /* springs back under, the bounce */
+    50%  { transform: translateY(var(--rise));              opacity: 1; }   /* settles onto the step */
+    62%  { transform: translateY(var(--rise));              opacity: 1; }   /* holds a breath at the top */
+    100% { transform: translateY(0);                        opacity: 0.3; } /* dropped GENTLY back down */
   }
   /* overflow visible so the bars' upward rise isn't clipped by the SVG's
      own viewBox edge */
   .spd-markloader__base { display: block; overflow: visible; }
   .spd-drawbar {
-    /* MD3 "emphasized" easing so each step is expressive, quick, confident
-       rise then a slow, graceful settle, rather than an even sine. */
-    animation: spd-drift 2s var(--motion-easing-emphasized) infinite both;
+    /* The SAME ascent-and-pull feel as the boot/logo-hover: a smooth sine
+       (breath) that lets the keyframe's overshoot read as a soft spring — each
+       bar pulled up, bouncing, then dropped gently. NOT the abrupt emphasized. */
+    animation: spd-drift 2.3s var(--motion-easing-breath) infinite both;
     will-change: transform, opacity;
   }
   @media (prefers-reduced-motion: reduce) {
