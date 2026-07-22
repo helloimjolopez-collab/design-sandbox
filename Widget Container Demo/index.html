@@ -965,8 +965,14 @@
       /* Always the full fiscal-year-to-date figure, regardless of what Period View is set to below — the headline answers "are we on plan for the year" (the board-facing question), Period View only changes how the detail chart/table underneath it is grouped. Keeping these two jobs separate is what stops the KPI and the chart from ever reading as if they disagree. */
       var thru=bgtThru(rows),sumB=thru.reduce(function(s,r){return s+r.budget;},0),sumA=thru.reduce(function(s,r){return s+r.actual;},0);
       var variance=thru.length?bgtVariance(av,sumB,sumA):null;
-      var explainTip=(thru.length?(money(Math.abs(variance))+' '+(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than"))+' the FY '+fy+' budget, year to date.'):('No '+av+' posted yet for FY '+fy+'.')).replace(/"/g,"&quot;");
-      numInner='<div class="bgt-kpi-col"><span class="bgt-caption">Year to date · FY '+fy+'</span><div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance)+'<span class="material-symbols-rounded bgt-info-ic" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div></div>';
+      /* Variance % is the $ variance against the budget it's measured on — Confluence 11.4 "% as support", never as the primary figure. Shown inline right after the dollar pill so the two read as one statement ("$X favourable, that's Y%"). */
+      var varPct=(variance!=null&&sumB>0)?Math.round(Math.abs(variance)/sumB*1000)/10:null;
+      /* "% of budget used / remaining" — the SME's explicitly "highly desired" remaining-budget read, at the annual-budget level. Uses the FULL fiscal-year budget as the denominator (what's planned for the whole year), not just budget-to-date, so "remaining" means remaining for the year. */
+      var fullB=rows.reduce(function(s,r){return s+r.budget;},0),pctUsed=fullB>0?Math.round(sumA/fullB*100):0,remaining=fullB-sumA;
+      var usedWord=av==="expense"?"spent":"received";
+      var explainTip=(thru.length?(money(Math.abs(variance))+' '+(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than"))+' the FY '+fy+' budget, year to date'+(varPct!=null?(' ('+varPct+'%)'):'')+'.'):('No '+av+' posted yet for FY '+fy+'.')).replace(/"/g,"&quot;");
+      var remainWord=remaining>=0?"remaining":"over annual budget";
+      numInner='<div class="bgt-kpi-col"><span class="bgt-caption">Year to date · FY '+fy+'</span><div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance)+(varPct!=null?('<span class="bgt-caption" style="font-weight:600">'+varPct+'%</span>'):'')+'<span class="material-symbols-rounded bgt-info-ic" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div><span class="bgt-caption">'+pctUsed+'% of the annual budget '+usedWord+' · '+money(Math.abs(remaining))+' '+remainWord+'</span></div>';
     }
     return '<div class="dep-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+chips+'</div><div class="dep-hd-toggle">'+fmtToggle+'</div></div><div class="dep-hd-num">'+numInner+'</div></div>';
   }
