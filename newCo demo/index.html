@@ -1955,17 +1955,20 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
 
 function TopNav({ mode, onToggleMode, onLogoClick, onLogoEnter, onLogoLeave, logoLabel, logoActive, moduleId }) {
   const midnight = mode === "midnight";
+  const isHome = moduleId === "home";
   return (
     <header className="spd-topnav" role="banner">
       {/* Left cluster: the Spired logo opens the module switcher (hover or click).
-          The module glyph + name beside it is a non-clickable "you are here". */}
-      <div className="spd-topnav__lead">
+          On Home the mark + "spired" wordmark sit tight (no divider) so they read
+          as the ONE Spired logo; on other modules a divider separates the mark
+          (switcher) from the module glyph + name. */}
+      <div className={"spd-topnav__lead" + (isHome ? " spd-topnav__lead--brand" : "")}>
         <button className={"spd-topnav__logo" + (logoActive ? " is-active" : "")} data-sw-logo
           onClick={onLogoClick} onMouseEnter={onLogoEnter} onMouseLeave={onLogoLeave}
           aria-label={logoLabel}>
           <span className="spd-topnav__logo-mark"><LogoMark size={20} /></span>
         </button>
-        <span className="spd-topnav__leadsep" aria-hidden="true" />
+        {!isHome && <span className="spd-topnav__leadsep" aria-hidden="true" />}
         <ModuleBadge moduleId={moduleId} />
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
