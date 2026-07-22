@@ -1049,7 +1049,7 @@
       var favWord=neutral?(neg?"under budget":"over budget"):(neg?"Unfavourable":"Favourable");
       var bH=Math.max(1,Math.round(r.budget/max*100)),aH=r.actual!=null?Math.max(1,Math.round(r.actual/max*100)):0;
       var srtxt=(r.actual!=null?('Budget '+money(r.budget)+', Actual '+money(r.actual)+', variance '+(neg?"−":"+")+money(Math.abs(vr))+' '+favWord):('Budget '+money(r.budget)+', actual not posted yet'));
-      var dpop=[r.period,r.budget,(r.actual!=null?r.actual:""),(vr!=null?vr:""),(special?"neutral":"fav"),(r.partial?"1":"")].join("|").replace(/"/g,"&quot;");
+      var dpop=[r.period,r.budget,(r.actual!=null?r.actual:""),(vr!=null?vr:""),(neutral?"neutral":"fav"),(r.partial?"1":"")].join("|").replace(/"/g,"&quot;");
       cols+='<div class="bgt-col2" role="group" aria-label="'+r.period+': '+srtxt+'" data-bpop="'+dpop+'"><div class="bgt-barpair2"><div class="bgt-bar2 bgt-bar-budget2" style="height:'+bH+'%"></div>'+(r.actual!=null?('<div class="bgt-bar2 bgt-bar-actual2" style="height:'+aH+'%"></div>'):'')+'</div><span class="sr-only">'+r.period+': '+srtxt+'</span></div>';
       xl+='<div class="bgt-xcol2"><span class="bgt-xlbl2">'+r.period+'</span>'+(vr!=null?('<span class="bgt-xvar2">'+(neg?"−":"+")+fmtAxis(Math.abs(vr))+'</span>'):'<span class="bgt-xvar2 muted">n/a</span>')+'</div>';
     });
