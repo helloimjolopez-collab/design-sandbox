@@ -873,17 +873,16 @@
   .spd-mrail__scroll { flex: 1; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overflow-x: hidden; padding-left: 8px; }
   .spd-mrail__item, .spd-mrail__unpin {
     position: relative; display: flex; align-items: center; gap: 11px; height: 44px;
-    padding: 0 8px; border-radius: 999px; /* fully rounded — matches the side-nav pill */
-    background: transparent; border: none;
+    padding: 0 8px 0 2px; background: transparent; border: none;
     cursor: pointer; font-family: inherit; text-align: left; flex-shrink: 0;
-    transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
-  /* Hover/active carry the module colour on the whole rounded row (like the side
-     nav) — mixed with WHITE so it stays clean, never grey. */
-  .spd-mrail__item:hover { background: color-mix(in srgb, var(--sel) 11%, #FFFFFF); }
-  .spd-mrail__unpin:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
-  html[data-spd-mode="midnight"] .spd-mrail__item:hover { background: color-mix(in srgb, var(--sel) 22%, var(--semantic-color-light-mode-surface-nav-light)); }
-  html[data-spd-mode="midnight"] .spd-mrail__unpin:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  /* MD3 nav-rail model: the fill/hover live on the ICON as a fully-rounded-corner
+     RECTANGLE (a stadium, wider than tall — never a circle, never the whole row).
+     Colour mixed with WHITE so it stays clean, never grey. */
+  .spd-mrail__item:hover .spd-mrail__badge { background: color-mix(in srgb, var(--sel) 11%, #FFFFFF); }
+  .spd-mrail__unpin:hover .spd-mrail__badge { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  html[data-spd-mode="midnight"] .spd-mrail__item:hover .spd-mrail__badge { background: color-mix(in srgb, var(--sel) 22%, var(--semantic-color-light-mode-surface-nav-light)); }
+  html[data-spd-mode="midnight"] .spd-mrail__unpin:hover .spd-mrail__badge { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   /* No tile — a transparent slot that just centres the module glyph (sized to
      match the top-nav module glyph). */
   .spd-mrail__badge {
