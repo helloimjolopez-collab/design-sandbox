@@ -1111,13 +1111,13 @@
       xl+='<div class="bgt-xcol2"><span class="bgt-xlbl2">'+r.period+'</span>'+(vr!=null?('<span class="bgt-xvar2">'+(neg?"−":"+")+fmtAxis(Math.abs(vr))+'</span>'):'<span class="bgt-xvar2 muted">n/a</span>')+'</div>';
     });
     var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
-    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw"></span>Budget'+(cum?" (cumulative)":"")+'</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual'+(cum?" (cumulative)":"")+'</span></div>'+
+    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+
     '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
     '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div></div>';
   }
-  /* Line from already-grained rows (cumulative when grain=YTD, per-period otherwise). Reuses depTrend's real hover/crosshair. Both lines purple — dashed light Budget, solid dark Actual; no red. */
-  function bgtLine(w,rows,grain){
-    var cum=(grain==="ytd"),n=rows.length,actuals=rows.filter(function(r){return r.actual!=null;});
+  /* Line (trend) from the interval rows — budget and actual as two lines. Reuses depTrend's real hover/crosshair. Both lines purple: dashed light Budget, solid dark Actual; no red. */
+  function bgtLine(w,rows){
+    var n=rows.length,actuals=rows.filter(function(r){return r.actual!=null;});
     var lo=0,hi=-Infinity;rows.forEach(function(r){if(r.budget>hi)hi=r.budget;});actuals.forEach(function(r){if(r.actual>hi)hi=r.actual;});
     if(!isFinite(hi)||hi<=0)hi=1;hi=hi+hi*0.12;var dom=(hi-lo)||1;
     function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
