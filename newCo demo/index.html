@@ -2145,6 +2145,9 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
   let lastGroup = null;
   return (
     <nav className={"spd-modnav" + (rail ? " is-rail" : "")} aria-label={mod.name + " navigation"}>
+      {/* Accounting has a SECONDARY app switcher (GL / Payroll / AP / AR / …) at
+          the top of its own nav — you're switching sub-apps, not just sections. */}
+      {mod.id === "accounting" && !rail && <AccountingAppSwitcher />}
       {/* Header: a filter for this area's nav + the collapse/expand control.
           (No module name/badge here, the top-nav switcher already names the
           module, so repeating it would be redundant.) */}
