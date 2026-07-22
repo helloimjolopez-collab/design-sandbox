@@ -2163,30 +2163,52 @@ function SectionItem({ icon, label, color, active, onClick, leadColor }) {
 /* The current module's own navigation, the single side nav. On Home, a
    "Modules" group provides one-click access into every module (items with
    `to`); other items navigate within the current module. */
-/* Accounting's SECONDARY app switcher — you switch between the sub-apps of
-   Accounting (GL, Payroll, AP, AR, Deposits). Lives at the top of its side nav. */
+/* Accounting's SECONDARY app switcher — each sub-app (GL / Payroll / AP / AR /
+   Deposits) has its OWN side-nav sections, so switching the app swaps the nav. */
 const ACCT_APPS = [
-  { name: "General Ledger", icon: "account_balance" },
-  { name: "Payroll", icon: "payments" },
-  { name: "Accounts Payable", icon: "call_made" },
-  { name: "Accounts Receivable", icon: "call_received" },
-  { name: "Deposits on Hand", icon: "account_balance_wallet" },
+  { name: "General Ledger", icon: "account_balance", nav: [
+    { id: "gl-accounts", label: "Chart of Accounts", icon: "list_alt" },
+    { id: "gl-journal", label: "Journal Entries", icon: "edit_note" },
+    { id: "gl-recon", label: "Reconciliation", icon: "rule" },
+    { id: "gl-reports", label: "Reports", icon: "summarize" },
+  ] },
+  { name: "Payroll", icon: "payments", nav: [
+    { id: "pr-runs", label: "Pay Runs", icon: "event_repeat" },
+    { id: "pr-people", label: "Employees", icon: "badge" },
+    { id: "pr-taxes", label: "Taxes & Filings", icon: "receipt_long" },
+  ] },
+  { name: "Accounts Payable", icon: "call_made", nav: [
+    { id: "ap-bills", label: "Bills", icon: "description" },
+    { id: "ap-vendors", label: "Vendors", icon: "store" },
+    { id: "ap-pay", label: "Payments", icon: "payments" },
+  ] },
+  { name: "Accounts Receivable", icon: "call_received", nav: [
+    { id: "ar-invoices", label: "Invoices", icon: "request_quote" },
+    { id: "ar-customers", label: "Donors & Customers", icon: "group" },
+    { id: "ar-deposits", label: "Deposits", icon: "account_balance_wallet" },
+  ] },
+  { name: "Deposits on Hand", icon: "account_balance_wallet", nav: [
+    { id: "doh-batches", label: "Batches", icon: "inventory_2" },
+    { id: "doh-undep", label: "Undeposited Funds", icon: "savings" },
+  ] },
 ];
-function AccountingAppSwitcher() {
-  const [app, setApp] = useState(ACCT_APPS[0]);
+const ACCT_APP_SECTION = Object.fromEntries(ACCT_APPS.flatMap((a) => a.nav.map((n) => [n.id, { app: a.name, label: n.label, icon: n.icon }])));
+/* Controlled, inline in the side-nav header. NOT a floating white card (that's
+   reserved for the context toolbar) — a subtle warm control. */
+function AccountingAppSwitcher({ app, onPick }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="spd-acctapp">
-      <button className="spd-acctapp__btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        <span className="spd-acctapp__glyph"><Icon name={app.icon} filled size={17} /></span>
+      <button className="spd-acctapp__btn" onClick={() => setOpen((o) => !o)} aria-expanded={open} title={app.name}>
+        <span className="spd-acctapp__glyph"><Icon name={app.icon} filled size={16} /></span>
         <span className="spd-acctapp__name">{app.name}</span>
-        <Icon name="unfold_more" size={17} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />
+        <Icon name="unfold_more" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />
       </button>
       {open && (
         <div className="spd-acctapp__menu spd-fade-in" role="menu">
           <p className="spd-acctapp__cap">Accounting apps</p>
           {ACCT_APPS.map((a) => (
-            <button key={a.name} className={"spd-acctapp__opt" + (a.name === app.name ? " is-active" : "")} onClick={() => { setApp(a); setOpen(false); }}>
+            <button key={a.name} className={"spd-acctapp__opt" + (a.name === app.name ? " is-active" : "")} onClick={() => { onPick(a); setOpen(false); }}>
               <Icon name={a.icon} filled={a.name === app.name} size={17} style={{ color: a.name === app.name ? "var(--semantic-color-light-mode-fill-static-accent-amber-base)" : "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
               <span style={{ flex: 1 }}>{a.name}</span>
               {a.name === app.name && <Icon name="check" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)" }} />}
@@ -2198,37 +2220,49 @@ function AccountingAppSwitcher() {
   );
 }
 
-/* Accounting's CONTEXT toolbar — company (switch this FIRST; the rest depend on
-   it), fiscal period, bank account. Elevated, top-right of the page; each app in
-   Accounting can carry its own context. */
+/* Accounting's CONTEXT toolbar (top-right, elevated). Company is switched FIRST
+   (the rest depend on it); fiscal period + bank account are ALSO switchable. */
 const ACCT_COMPANIES = ["Grace Community Church", "Grace Kids Foundation", "Grace Missions Intl."];
-function AccountingContextBar() {
-  const [co, setCo] = useState(ACCT_COMPANIES[0]);
+const ACCT_PERIODS = ["FY26 · Jul", "FY26 · Jun", "FY26 · May", "FY25 · Q4"];
+const ACCT_BANKS = ["Operating ••4021", "Reserve ••8830", "Missions ••1177"];
+function CtxItem({ label, value, options, onChange, lead, first }) {
   const [open, setOpen] = useState(false);
   return (
+    <div className="spd-acctctx__item">
+      <button className={"spd-acctctx__btn" + (first ? " is-co" : "")} onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+        {lead}
+        <span className="spd-acctctx__stack">
+          <span className="spd-acctctx__lbl">{label}</span>
+          <span className={"spd-acctctx__val" + (first ? " is-co" : "")}>{value}</span>
+        </span>
+        <Icon name="expand_more" size={15} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />
+      </button>
+      {open && (
+        <div className="spd-acctctx__menu spd-fade-in" role="menu">
+          <p className="spd-acctapp__cap">{label}</p>
+          {options.map((o) => (
+            <button key={o} className={"spd-acctapp__opt" + (o === value ? " is-active" : "")} onClick={() => { onChange(o); setOpen(false); }}>
+              <span style={{ flex: 1 }}>{o}</span>
+              {o === value && <Icon name="check" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)" }} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+function AccountingContextBar() {
+  const [co, setCo] = useState(ACCT_COMPANIES[0]);
+  const [period, setPeriod] = useState(ACCT_PERIODS[0]);
+  const [bank, setBank] = useState(ACCT_BANKS[0]);
+  return (
     <div className="spd-acctctx">
-      <div className="spd-acctctx__co">
-        <button className="spd-acctctx__cobtn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-          <Icon name="corporate_fare" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)" }} />
-          <span className="spd-acctctx__coname">{co}</span>
-          <Icon name="expand_more" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }} />
-        </button>
-        {open && (
-          <div className="spd-acctctx__menu spd-fade-in" role="menu">
-            <p className="spd-acctapp__cap">Switch company</p>
-            {ACCT_COMPANIES.map((c) => (
-              <button key={c} className={"spd-acctapp__opt" + (c === co ? " is-active" : "")} onClick={() => { setCo(c); setOpen(false); }}>
-                <span style={{ flex: 1 }}>{c}</span>
-                {c === co && <Icon name="check" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)" }} />}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+      <CtxItem first label="Company" value={co} options={ACCT_COMPANIES} onChange={setCo}
+        lead={<Icon name="corporate_fare" size={17} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)", flexShrink: 0 }} />} />
       <span className="spd-acctctx__sep" />
-      <div className="spd-acctctx__field"><span className="spd-acctctx__lbl">Fiscal period</span><span className="spd-acctctx__val">FY26 · Jul</span></div>
+      <CtxItem label="Fiscal period" value={period} options={ACCT_PERIODS} onChange={setPeriod} />
       <span className="spd-acctctx__sep" />
-      <div className="spd-acctctx__field"><span className="spd-acctctx__lbl">Bank account</span><span className="spd-acctctx__val">Operating ••4021</span></div>
+      <CtxItem label="Bank account" value={bank} options={ACCT_BANKS} onChange={setBank} />
     </div>
   );
 }
