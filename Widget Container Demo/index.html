@@ -1452,8 +1452,6 @@
   document.addEventListener("mouseout",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)hideTip();});
   document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)showTip(t);});
   document.addEventListener("focusout",hideTip);
-  /* Special-report picker: the two <select>s in the scope popover need the two selections. Changing Report resets the Report line to that report's first line; changing either commits the scope to "special". The popover stays open so both picks can be made in one visit. */
-  document.addEventListener("change",function(e){var s=e.target;if(!s||!s.getAttribute)return;var a=s.getAttribute("data-action");if(a!=="set-bgt-report"&&a!=="set-bgt-repline")return;var w=find(s.getAttribute("data-id"));if(!w)return;w.acctview="special";if(a==="set-bgt-report"){w.report=s.value;w.reportLine=bgtReport(w).lines[0].id;}else{w.reportLine=s.value;}render();});
   /* Budget bar hover: a formatted popover card (Budget / Actual / Variance + favourable-or-unfavourable), not a one-line tooltip. Data rides on the column as data-bpop="period|budget|actual|variance|mode|partial". */
   var bpopEl=null;
   function bgtHideBpop(){if(bpopEl){bpopEl.remove();bpopEl=null;}}
