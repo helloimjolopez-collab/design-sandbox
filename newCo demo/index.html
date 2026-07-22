@@ -1750,26 +1750,29 @@ const HALO_CENTER = "M85.1511 91.7733C85.5134 87.1113 89.6427 83.662 94.2947 84.
    rings slowly counter-rotate AND the whole thing cycles through brand colour
    combos (swapping stroke colours) while a centre core grows/shrinks/recolours.
    Colours cross-fade via CSS transitions; timing via React state. */
+/* The centre steps through many colours (gold → amber → coral → mauve → purple →
+   deep) so the yellow→dark-purple transition is gradual, and it grows/shrinks. */
 const SPOT_COMBOS = [
-  { o: "#6E64BE", i: "#9691F5", c: "transparent", cs: 0 },
-  { o: "#41377D", i: "#9691F5", c: "#F9C56C", cs: 0.78 },
-  { o: "#19143C", i: "#9691F5", c: "#41377D", cs: 1 },
-  { o: "#9691F5", i: "#41377D", c: "#B3A0CD", cs: 0.55 },
-  { o: "#7358E8", i: "#B3A0CD", c: "transparent", cs: 0 },
+  { o: "#6E64BE", i: "#9691F5", c: "#F9C56C", cs: 0.55 },
+  { o: "#544A9E", i: "#9691F5", c: "#E8A85A", cs: 0.74 },
+  { o: "#41377D", i: "#8B83DE", c: "#CE8E96", cs: 0.9 },
+  { o: "#2A2360", i: "#7A72D4", c: "#A99AE0", cs: 1.05 },
+  { o: "#19143C", i: "#6E64BE", c: "#6E64BE", cs: 0.86 },
+  { o: "#3A3080", i: "#9691F5", c: "#41377D", cs: 0.6 },
 ];
 function SpotMark({ size = 30 }) {
   const [f, setF] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setF((x) => (x + 1) % SPOT_COMBOS.length), 2600);
+    const id = setInterval(() => setF((x) => (x + 1) % SPOT_COMBOS.length), 2200);
     return () => clearInterval(id);
   }, []);
   const cur = SPOT_COMBOS[f];
-  const tr = "1.4s cubic-bezier(0.4,0,0.2,1)";
+  const tr = "1.6s cubic-bezier(0.4,0,0.2,1)";
   return (
     <svg className="spd-spotmark" viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
-      <g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke={cur.o} strokeWidth="8.4" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
-      <g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke={cur.i} strokeWidth="8.4" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
-      <path d={HALO_CENTER} fill={cur.c} style={{ transformBox: "fill-box", transformOrigin: "center", transform: "scale(" + cur.cs + ")", transition: "transform 1.4s cubic-bezier(0.34,1.25,0.5,1), fill " + tr }} />
+      <g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke={cur.o} strokeWidth="11" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
+      <g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke={cur.i} strokeWidth="11" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
+      <path d={HALO_CENTER} fill={cur.c} style={{ transformBox: "fill-box", transformOrigin: "center", transform: "scale(" + cur.cs + ")", transition: "transform 1.9s cubic-bezier(0.34,1.3,0.5,1), fill " + tr }} />
     </svg>
   );
 }
