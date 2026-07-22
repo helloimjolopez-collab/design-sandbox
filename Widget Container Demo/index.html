@@ -959,54 +959,49 @@
     return '<div class="dep-controls"><div class="dep-left"><span class="dep-col-h" style="padding:2px 0">Funds</span></div><div class="dep-right">'+simpleToggle(w)+overflowBtn(w)+'</div></div>'+((w.view||"table")==="chart"?pie(FUND,w.size==="large"?170:140,w.size==="large"?"col":"row"):tableHTML(FUND,"Amount",w.size==="wide"));
   }
   /* ---- Budget Compared to Actual ----
-     Rebuilt against two authoritative sources: Confluence "Budget Compared to Actual" (space DR, page 7371554817) and Oisin Curran's reviewed mockup ("Final Check" tab, Option A "Variance Bar" — status Keep/Refresh). Three real filter chips (Account Type / Fiscal Year / Period View) replace the previous unlabeled FY chip + scattered toggles; the KPI headline is always the full fiscal-year-to-date variance (Period View only changes the detail chart/table below it, so the two can never disagree); the "Budget achieved / FY elapsed" burn bars are gone (not in either source, and not what "budget spent" was answering); and Period View doubles as the answer to "why is there only a bar chart" — set it to Year to date to get the real cumulative line, Monthly/Quarterly for the grouped bars. Explore still always shows both, side by side, per Confluence 9.1. */
+     Two orthogonal, clearly-separated controls: (1) an ACCOUNT SCOPE dropdown in the header — Income / Expense / a Special report (which needs two picks: Report + Report line); (2) a VIEW BAR sitting directly on top of the chart/table, carrying the grain (Period / Month / YTD) and the shape (Bar / Line / Table). No fiscal-year selector. Favourability colour lives only in the headline pill and the hover popover — never on the bars (two purples only). */
   function bgtTog(opts,cur,w,action,aria,extra){return '<div class="vtoggle" role="group" aria-label="'+(aria||"View")+'">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="'+action+'" data-id="'+w.id+'" data-v="'+o[0]+'"'+(extra||"")+' aria-pressed="'+(cur===o[0])+'">'+(o[2]?ICON(o[2]):"")+o[1]+'</button>';}).join("")+'</div>';}
-  /* Favourability pill uses the app's standard delta-pill green/red — the widget-wide convention for a good/bad read, kept only for income/expense. For a special-report scope it goes NEUTRAL grey (sign only), because a report line mixes account types and has no single "good" direction (Confluence 11.2). */
   function bgtFavPill(v,neutral){if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)">No data yet</span>';var neg=v<0;if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)">'+ICON(neg?"south_east":"north_east")+(neg?"Under budget":"Over budget")+'</span>';return '<span class="delta-pill'+(neg?" neg":"")+'">'+ICON(neg?"south_east":"north_east")+(neg?"Unfavourable":"Favourable")+'</span>';}
   function bgtRtrend(v){var neg=v<0;return '<span class="rtrend'+(neg?" neg":"")+'"><span class="material-symbols-rounded">'+(neg?"arrow_drop_down":"arrow_drop_up")+'</span>'+(neg?"−":"+")+fmtAxis(Math.abs(v))+'</span>';}
-  /* Account scope is a real 3-way segmented toggle (Income / Expense / Special report) — small fixed set, so a toggle not a dropdown. Choosing Special report reveals a report picker dropdown beside it (that list genuinely grows and is searchable, so it stays a dropdown chip). */
-  function bgtScopeToggle(w){var av=w.acctview||"income";return bgtTog([["income","Income"],["expense","Expense"],["special","Special report"]],av,w,"set-bgt-acct","Account scope");}
-  function bgtReportChip(w){var rep=bgtReport(w);return '<button class="filter-chip" data-action="bgt-report" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Special report, tap to change"><span class="fc-label">'+rep.name+'</span>'+ICON("expand_more")+'</button>';}
-  /* Fiscal year stays a dropdown chip: unlike scope/period it is an open, growing list (prior years accumulate), so a toggle would not scale. It selects WHICH year's data to show; the Period toggle below selects the grain WITHIN that year — two different axes. */
-  function bgtFyChip(w){return '<button class="filter-chip" data-action="bgtfy" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Fiscal year, tap to change"><span class="fc-label">FY '+(w.fy||"2026")+'</span>'+ICON("expand_more")+'</button>';}
-  /* Period is a 3-way segmented toggle (Month / Quarter / YTD), not a dropdown. Month/Quarter draw the grouped bars; YTD draws the cumulative line — so the cumulative view is reachable at every size, not gated to the largest one. */
-  function bgtPeriodToggle(w){var v=w.bview||"month";return bgtTog([["month","Month"],["quarter","Quarter"],["ytd","YTD"]],v,w,"set-bgt-period","Period");}
+  /* Account scope is a DROPDOWN, not a toggle: it isn't a flat 2-3 item set — the third option (Special report) branches into a two-part selection (Report, then Report line), which a segmented toggle can't express. The chip shows the current scope; the popover offers Income / Expense as one-tap options and a Special-report section with the two selects. */
+  function bgtScopeLabel(w){var av=w.acctview||"income";if(av==="expense")return "Expense accounts";if(av==="special"){var rep=bgtReport(w),ln=bgtReportLine(w);return rep.name+" · "+ln.name;}return "Income accounts";}
+  function bgtScopeChip(w){return '<button class="filter-chip" data-action="bgt-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="fc-label">'+bgtScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  /* Grain: Period / Month / YTD. Month = 12 monthly columns; Period = the org's fiscal periods grouped (quarters here); YTD = cumulative running total. A segmented toggle (fixed 3-item set). */
+  function bgtGrainToggle(w,grain,action,extra){return bgtTog([["period","Period"],["month","Month"],["ytd","YTD"]],grain,w,action,"Grain",extra);}
+  /* Shape: Bar / Line / Table — this is where the line chart lives as a first-class option. Icons match the app's other view toggles. */
+  function bgtShapeToggle(w,fmt,action,extra){return bgtTog([["bar","Bar","bar_chart"],["line","Line","show_chart"],["table","Table","table_rows"]],fmt,w,action,"View",extra);}
   function bgtGroupedRows(rows,view){
-    if(view!=="quarter")return rows;
+    if(view!=="period")return rows;
     var q=[[],[],[],[]];
     rows.forEach(function(r,i){q[Math.min(3,Math.floor(i/3))].push(r);});
     return q.filter(function(g){return g.length;}).map(function(g,qi){
       var b=g.reduce(function(s,r){return s+r.budget;},0),anyA=g.some(function(r){return r.actual!=null;}),allA=g.every(function(r){return r.actual!=null;});
-      return {period:"Q"+(qi+1),budget:b,actual:anyA?g.reduce(function(s,r){return s+(r.actual||0);},0):null,partial:anyA&&!allA};
+      return {period:"P"+(qi+1),budget:b,actual:anyA?g.reduce(function(s,r){return s+(r.actual||0);},0):null,partial:anyA&&!allA};
     });
   }
-  /* Single, self-contained empty state: icon + one-line title + one-line explanation + the set-up-budget action. Nothing else — no header, no eyebrow, no KPI block above it (that duplicate heading is what was cluttering this before). */
+  /* One place that turns the chosen grain into rows, so bars / line / table always read the same data. */
+  function bgtRowsAt(w,grain){var full=bgtSet(w);if(grain==="ytd")return bgtYTD(full);if(grain==="period")return bgtGroupedRows(full,"period");return full;}
+  /* Single, self-contained empty state: icon + one line + the set-up-budget action. No header, no eyebrow, no KPI block above it. */
   function bgtNoBudgetState(w,av){
-    var fy=w.fy||"2026",lbl=(av==="special")?"budget for this report":av+" budget";
-    return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No '+lbl+' for FY '+fy+'</div><div class="state-sub">Actuals are posting, but nothing has been entered yet to compare them against.</div><button class="btn outlined" data-action="add-budget" data-id="'+w.id+'">'+ICON("add")+'Set up budget</button></div>';
+    var lbl=(av==="special")?"budget for this report line":av+" budget";
+    return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No '+lbl+' set up</div><div class="state-sub">Actuals are posting, but nothing has been entered yet to compare them against.</div><button class="btn outlined" data-action="add-budget" data-id="'+w.id+'">'+ICON("add")+'Set up budget</button></div>';
   }
+  /* Header: account-scope dropdown on the left, the year-to-date headline variance on the right. No FY selector, no eyebrow, no floating %. */
   function bgtHeaderBlock(w,controlsOnly){
-    var av=w.acctview||"income",fy=w.fy||"2026",special=(av==="special");
+    var av=w.acctview||"income",special=(av==="special");
     var rows=bgtSet(w);
-    var fmt=w.bfmt||"chart";
-    var fmtToggle=bgtTog([["chart","Chart","bar_chart"],["table","Table","table_rows"]],fmt,w,"bgt-fmt","Format");
-    var controls=bgtScopeToggle(w)+(special?bgtReportChip(w):"")+bgtFyChip(w)+((w.size!=="kpi"&&w.size!=="xwide")?bgtPeriodToggle(w):"");
-    /* No-budget scope: show only the controls (so Income/Expense/report/year can still be switched) and let the empty state below carry the message. No KPI heading block — that duplicate "$0 / No budget" heading is what was cluttering the empty view. */
-    if(controlsOnly)return '<div class="dep-hd" style="grid-template-columns:1fr auto"><div class="dep-hd-top"><div class="bgt-ctlrow">'+controls+'</div><div class="dep-hd-toggle">'+fmtToggle+'</div></div></div>';
-    /* Headline is always the full fiscal-year-to-date variance in dollars, plus a plain favourable/unfavourable read. No eyebrow (the scope is already named by the controls), no floating % (it read as a mystery comparison), no "% of budget used" line. Dollars are the headline; the % lives in the table under a labelled column where it is unambiguous. */
+    if(controlsOnly)return '<div class="dep-hd" style="grid-template-columns:1fr;padding-bottom:8px"><div class="bgt-ctlrow">'+bgtScopeChip(w)+'</div></div>';
     var thru=bgtThru(rows),sumB=thru.reduce(function(s,r){return s+r.budget;},0),sumA=thru.reduce(function(s,r){return s+r.actual;},0);
     var variance=thru.length?bgtVariance(av,sumB,sumA):null;
-    var explainTip=(thru.length?(money(Math.abs(variance))+' '+(special?(variance>=0?"over":"under"):(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than")))+' budget, year to date.'):('Nothing posted yet for FY '+fy+'.')).replace(/"/g,"&quot;");
+    var explainTip=(thru.length?(money(Math.abs(variance))+' '+(special?(variance>=0?"over":"under"):(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than")))+' budget, year to date.'):('Nothing posted yet.')).replace(/"/g,"&quot;");
     var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance,special)+'<span class="material-symbols-rounded bgt-info-ic" data-i="info" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
-    return '<div class="dep-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+controls+'</div><div class="dep-hd-toggle">'+fmtToggle+'</div></div><div class="dep-hd-num">'+numInner+'</div></div>';
+    return '<div class="dep-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+bgtScopeChip(w)+'</div></div><div class="dep-hd-num">'+numInner+'</div></div>';
   }
-  /* Bars: two colours only (light-purple Budget, dark-purple Actual) — no red. The signed variance under each bar carries direction; the good/bad read lives in the hover popover, not the bar colour. Popover data travels on the column as data-* attributes; a document-level handler builds the formatted card. Full text also lives in an sr-only span (values in the DOM, not hover-only, per Confluence 11). */
-  function bgtBarChart(w,view){
-    var av=w.acctview||"income",special=(av==="special");
-    var full=bgtSet(w);
-    if(!bgtHasBudget(full))return bgtNoBudgetState(w,av);
-    view=view||w.bview||"month";if(view==="ytd")view="month";
-    var rows=bgtGroupedRows(full,view);
+  /* The view bar: grain toggle (left) + shape toggle (right), directly on top of the chart/table it controls. */
+  function bgtViewBar(w){var grain=w.bgrain||"month",fmt=w.bshape||"bar";return '<div class="bgt-viewbar"><div class="bgt-viewbar-l">'+bgtGrainToggle(w,grain,"set-bgt-grain")+'</div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-shape")+'</div></div>';}
+  /* Grouped bars from already-grained rows. Two purples only, no red; signed variance under each bar; formatted popover data on the column; full text in an sr-only span. */
+  function bgtBars(w,rows,grain){
+    var av=w.acctview||"income",special=(av==="special"),cum=(grain==="ytd");
     var max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual||0);});max=max*1.15;
     var cols="",xl="";
     rows.forEach(function(r){
@@ -1019,41 +1014,36 @@
       xl+='<div class="bgt-xcol2"><span class="bgt-xlbl2">'+r.period+'</span>'+(vr!=null?('<span class="bgt-xvar2">'+(neg?"−":"+")+fmtAxis(Math.abs(vr))+'</span>'):'<span class="bgt-xvar2 muted">n/a</span>')+'</div>';
     });
     var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
-    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+
+    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw"></span>Budget'+(cum?" (cumulative)":"")+'</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual'+(cum?" (cumulative)":"")+'</span></div>'+
     '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
     '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div></div>';
   }
-  /* Cumulative line, reusing depTrend's real hover/crosshair system. Both lines are purple (dashed light-purple Budget, solid dark-purple Actual) — no red, matching the bars. */
-  function bgtYTDChart(w){
-    var av=w.acctview||"income";
-    var rows=bgtSet(w);
-    if(!bgtHasBudget(rows))return bgtNoBudgetState(w,av);
-    var ytd=bgtYTD(rows),n=ytd.length,actualsThru=ytd.filter(function(r){return r.actual!=null;});
-    var lo=0,hi=-Infinity;ytd.forEach(function(r){if(r.budget>hi)hi=r.budget;});actualsThru.forEach(function(r){if(r.actual>hi)hi=r.actual;});
-    if(!isFinite(hi)||hi<=0)hi=1;var sp=hi||1;hi=hi+sp*0.12;var dom=(hi-lo)||1;
+  /* Line from already-grained rows (cumulative when grain=YTD, per-period otherwise). Reuses depTrend's real hover/crosshair. Both lines purple — dashed light Budget, solid dark Actual; no red. */
+  function bgtLine(w,rows,grain){
+    var cum=(grain==="ytd"),n=rows.length,actuals=rows.filter(function(r){return r.actual!=null;});
+    var lo=0,hi=-Infinity;rows.forEach(function(r){if(r.budget>hi)hi=r.budget;});actuals.forEach(function(r){if(r.actual>hi)hi=r.actual;});
+    if(!isFinite(hi)||hi<=0)hi=1;hi=hi+hi*0.12;var dom=(hi-lo)||1;
     function px(i){return n>1?(i/(n-1)*100):50;}function py(v){return (1-(v-lo)/dom)*100;}
     var grid="";[0,50,100].forEach(function(gy){grid+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="var(--stroke-widget)" stroke-width="1" vector-effect="non-scaling-stroke"'+(gy===100?'':' stroke-dasharray="2 4" opacity="0.5"')+'/>';});
     var aColor="var(--am-600)";
-    var budgetPts=ytd.map(function(r,i){return px(i).toFixed(2)+','+py(r.budget).toFixed(2);}).join(" ");
-    var actualPts=actualsThru.map(function(r,i){return px(i).toFixed(2)+','+py(r.actual).toFixed(2);}).join(" ");
+    var budgetPts=rows.map(function(r,i){return px(i).toFixed(2)+','+py(r.budget).toFixed(2);}).join(" ");
+    var actualPts=actuals.map(function(r,i){return px(i).toFixed(2)+','+py(r.actual).toFixed(2);}).join(" ");
     var svg='<svg class="ln" viewBox="0 0 100 100" preserveAspectRatio="none">'+grid+
       '<polyline class="tl" data-idx="0" fill="none" stroke="var(--am-300)" stroke-width="1.7" stroke-dasharray="3 3" vector-effect="non-scaling-stroke" points="'+budgetPts+'"/>'+
       '<polyline class="tl-hit" data-idx="0" fill="none" stroke="transparent" stroke-width="18" vector-effect="non-scaling-stroke" points="'+budgetPts+'"/>'+
       (actualPts?('<polyline class="tl" data-idx="1" fill="none" stroke="'+aColor+'" stroke-width="1.7" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" points="'+actualPts+'"/><polyline class="tl-hit" data-idx="1" fill="none" stroke="transparent" stroke-width="18" vector-effect="non-scaling-stroke" points="'+actualPts+'"/>'):'')+
       '</svg>';
     var yl='<span style="top:0%">'+fmtAxis(hi)+'</span><span style="top:50%">'+fmtAxis((hi+lo)/2)+'</span><span style="top:100%">'+fmtAxis(lo)+'</span>';
-    var months=ytd.map(function(r){return r.period;}),tk=(n<=1)?[0]:(n<=3)?[0,n-1]:[0,Math.round((n-1)/3),Math.round((n-1)*2/3),n-1];tk=tk.filter(function(v,i,a){return a.indexOf(v)===i;});
+    var months=rows.map(function(r){return r.period;}),tk=(n<=1)?[0]:(n<=3)?[0,n-1]:[0,Math.round((n-1)/3),Math.round((n-1)*2/3),n-1];tk=tk.filter(function(v,i,a){return a.indexOf(v)===i;});
     var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
-    var blob="Budget|var(--am-300)|0|"+ytd.map(function(r){return r.budget;}).join(",")+(actualsThru.length?(";Actual|"+aColor+"|1|"+actualsThru.map(function(r){return r.actual;}).join(",")):"");
+    var blob="Budget|var(--am-300)|0|"+rows.map(function(r){return r.budget;}).join(",")+(actuals.length?(";Actual|"+aColor+"|1|"+actuals.map(function(r){return r.actual;}).join(",")):"");
     var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-id="'+w.id+'" data-multi="0" data-blob="'+blob.replace(/"/g,"&quot;")+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div><div class="tr-xax">'+xl+'</div></div>';
-    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget (cumulative)</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual (cumulative)</span></div>'+plot+'</div>';
+    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget'+(cum?" (cumulative)":"")+'</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual'+(cum?" (cumulative)":"")+'</span></div>'+plot+'</div>';
   }
-  function bgtTable(w){
+  function bgtTable(w,grain){
     var av=w.acctview||"income",special=(av==="special");
     var full=bgtSet(w);
-    if(!bgtHasBudget(full))return bgtNoBudgetState(w,av);
-    var view=w.bview||"month";
-    var base=(view==="ytd")?bgtYTD(full):bgtGroupedRows(full,view);
+    var base=bgtRowsAt(w,grain);
     var rows=base.map(function(r,i){return {period:r.period,budget:r.budget,actual:r.actual,idx:i,variance:r.actual!=null?bgtVariance(av,r.budget,r.actual):null};});
     var sk=(w.bsort||"idx-asc").split("-"),key=sk[0],dir=sk[1]==="desc"?-1:1;
     function val(x){if(key==="budget")return x.budget;if(key==="actual")return x.actual==null?-Infinity:x.actual;if(key==="variance")return x.variance==null?-Infinity:x.variance;return x.idx;}
@@ -1065,10 +1055,18 @@
       return '<div class="wt-row"><span class="lr-main">'+r.period+'</span><span class="wt-c2">'+money(r.budget)+'</span><span class="wt-c2">'+(r.actual!=null?money(r.actual):'<span class="bgt-caption">not posted</span>')+'</span><span class="dt-c dt-tr bgt-vardiv">'+(v==null?'<span class="bgt-caption">n/a</span>':(bgtRtrend(v)+(vpct!=null?'<span class="bgt-caption" style="margin-left:6px">'+vpct+'%</span>':'')))+'</span><span class="dt-c bgt-favcol">'+(v==null?'<span class="bgt-caption">n/a</span>':bgtFavPill(v,special))+'</span></div>';}).join("");
     var thru=bgtThru(full),totalV=thru.length?bgtVariance(av,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
     return '<div class="bgt-table-wrap"><div class="scroll">'+head+body+'</div><div class="dep-total"><span>Year-to-date total</span><span>'+(totalV==null?'<span class="bgt-caption">n/a</span>':bgtRtrend(totalV))+'</span></div></div>';}
+  /* Render whichever shape at whichever grain — the one place grain × shape combine. */
+  function bgtView(w,grain,fmt){
+    var av=w.acctview||"income";
+    if(!bgtHasBudget(bgtSet(w)))return bgtNoBudgetState(w,av);
+    if(fmt==="table")return bgtTable(w,grain);
+    var rows=bgtRowsAt(w,grain);
+    return (fmt==="line")?bgtLine(w,rows,grain):bgtBars(w,rows,grain);
+  }
   function bgtGlance(w){
     var av=w.acctview||"income",special=(av==="special");
     var rows=bgtSet(w);
-    var label=special?bgtReport(w).name:((av==="expense"?"Expense":"Income")+" · FY "+(w.fy||"2026"));
+    var label=special?bgtScopeLabel(w):(av==="expense"?"Expense accounts":"Income accounts");
     if(!bgtHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+label+'</span></span>'+
       '<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div>'+
@@ -1080,26 +1078,21 @@
       '<div class="metric-value">'+money(Math.abs(v||0))+'</div>'+
       '<div class="gl-sub">'+bgtFavPill(v,special)+'<span class="bgt-caption">vs. budget, YTD</span></div>'+
       '</div></div>';}
-  /* Glance = headline variance only. Detail (wide) = one chart/table, its grain set by the Period toggle (Month/Quarter bars or the YTD line). Explore (biggest) = TWO panels side by side, each with its OWN period toggle, so you can set e.g. Month bars beside a YTD line, or any combination — the widget-level period control is dropped at this size in favour of the per-panel ones. */
+  /* Glance = headline only. Detail (wide) = header + view bar + the chosen view. Explore (biggest) = header + two panels side by side, each with its OWN view bar (grain + shape), so you can put e.g. Month bars beside a cumulative YTD line. */
   function budgetContent(w){
     if(w.size==="kpi")return bgtGlance(w);
     var av=w.acctview||"income";
     if(!bgtHasBudget(bgtSet(w)))return bgtHeaderBlock(w,true)+bgtNoBudgetState(w,av);
-    var mh=bgtHeaderBlock(w),fmt=w.bfmt||"chart";
-    if(w.size!=="xwide"){
-      var view=w.bview||"month";
-      if(fmt==="table")return mh+bgtTable(w);
-      return mh+(view==="ytd"?bgtYTDChart(w):bgtBarChart(w));
-    }
-    if(fmt==="table")return mh+bgtTable(w);
-    var va=w.bviewA||"month",vb=w.bviewB||"ytd";
-    return mh+'<div class="bgt-explore">'+bgtPanel(w,"a",va)+bgtPanel(w,"b",vb)+'</div>';
+    var mh=bgtHeaderBlock(w);
+    if(w.size!=="xwide")return mh+bgtViewBar(w)+bgtView(w,w.bgrain||"month",w.bshape||"bar");
+    return mh+'<div class="bgt-explore">'+bgtPanel(w,"a")+bgtPanel(w,"b")+'</div>';
   }
-  /* One explore panel: its own Month/Quarter/YTD toggle, then the matching chart. Each panel keeps its grain on the widget as bviewA / bviewB, independent of the other. */
-  function bgtPanel(w,side,view){
-    var toggle=bgtTog([["month","Month"],["quarter","Quarter"],["ytd","YTD"]],view,w,"set-bgt-panel","Period",' data-panel="'+side+'"');
-    var chart=(view==="ytd")?bgtYTDChart(w):bgtBarChart(w,view);
-    return '<div class="bgt-explore-col"><div class="bgt-panel-hd"><span class="dep-col-h">'+(view==="ytd"?"Cumulative":"Per period")+'</span>'+toggle+'</div>'+chart+'</div>';
+  /* One explore panel: its own grain + shape view bar, then the chart/table. State on the widget as g/f per side (gA/fA, gB/fB), independent of the other panel. */
+  function bgtPanel(w,side){
+    var grain=w[side==="a"?"gA":"gB"]||(side==="a"?"month":"ytd");
+    var fmt=w[side==="a"?"fA":"fB"]||(side==="a"?"bar":"line");
+    var bar='<div class="bgt-panel-hd"><div class="bgt-viewbar-l">'+bgtGrainToggle(w,grain,"set-bgt-pgrain",' data-panel="'+side+'"')+'</div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-pshape",' data-panel="'+side+'"')+'</div></div>';
+    return '<div class="bgt-explore-col">'+bar+bgtView(w,grain,fmt)+'</div>';
   }
   /* Sign-ups: a list with NO natural total, so the optional top metric IS shown (number + trend). Changing the period changes the number/trend only — the list stays "most recent". */
   var SIGNUPS=[{name:"Ava Thompson",group:"Youth",when:"2h ago"},{name:"Liam Carter",group:"Choir",when:"5h ago"},{name:"Noah Bennett",group:"Men's Group",when:"Yesterday"},{name:"Emma Davis",group:"Volunteers",when:"Yesterday"},{name:"Olivia Wright",group:"Youth",when:"2 days ago"},{name:"Mason Reed",group:"Missions",when:"3 days ago"},{name:"Sophia Hughes",group:"Choir",when:"3 days ago"},{name:"Jack Morgan",group:"Youth",when:"4 days ago"}];
