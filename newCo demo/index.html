@@ -1720,55 +1720,47 @@ function WaffleMark({ size = 24 }) {
   );
 }
 
-/* Ask Spot AI mark, the "halo" logo Jo designed: a SOFT rounded scalloped shape
-   (a sinusoidal-radius blob, densely sampled so the lobes are gentle bumps, NOT
-   pointy cog teeth), filled with a brand purple→magenta→rose gradient. Its motion
-   is MD3-expressive: the shape MORPHS bouncily between frames (delightful), rather
-   than spinning like a loader. Hex core breathes. */
+/* The "Halo" mark Jo designed (from Group 18/19/23/26.svg): two concentric
+   scalloped rings on a 210×210 canvas, centred at (105,105). Reused by the Ask
+   Spot icon (as gradient strokes) and the avatars (as a white/ink overlay). */
+const HALO_OUTER = "M26.7214 104.926C21.4015 98.2693 22.6056 88.5376 29.3872 83.3776L44.2743 72.0503C45.3022 71.2682 45.9658 70.0992 46.1091 68.8155C48.1928 50.1517 65.2331 36.8631 83.8421 39.3905C85.1219 39.5643 86.4174 39.2065 87.4263 38.4002L102.039 26.7221C108.696 21.402 118.428 22.6059 123.588 29.3878L134.915 44.2749C135.697 45.3027 136.866 45.9655 138.15 46.1088C156.522 48.1599 169.686 64.7044 167.682 82.9713L167.575 83.8418C167.412 85.0417 167.716 86.2555 168.42 87.2338L168.565 87.426L180.243 102.04C185.563 108.697 184.359 118.428 177.577 123.588L162.69 134.915L162.502 135.066C161.582 135.843 160.991 136.946 160.857 138.149C158.773 156.813 141.733 170.102 123.124 167.574C121.844 167.401 120.548 167.759 119.539 168.566L104.926 180.244C98.2685 185.563 88.5368 184.36 83.3769 177.578L72.0506 162.691C71.2685 161.663 70.0995 160.999 68.8158 160.856C50.1519 158.773 36.8634 141.732 39.3908 123.123C39.5647 121.843 39.2059 120.548 38.3996 119.539L26.7214 104.926Z";
+const HALO_INNER = "M59.4149 75.7287C60.353 63.6615 71.042 54.7328 83.0835 55.9577L86.1456 56.2692C87.3813 56.3948 88.6145 56.0088 89.5582 55.2012C100.037 46.2343 115.843 47.6526 124.558 58.3415C125.342 59.3043 126.488 59.903 127.726 59.9993L130.794 60.2385C142.862 61.1765 151.79 71.8654 150.565 83.9071L150.254 86.9686C150.129 88.2044 150.514 89.438 151.322 90.3818C160.289 100.86 158.87 116.666 148.181 125.381C147.279 126.117 146.696 127.17 146.547 128.319L146.524 128.55L146.284 131.618C145.346 143.685 134.658 152.614 122.616 151.389L119.554 151.078L119.323 151.06C118.166 151.002 117.026 151.388 116.141 152.145C105.663 161.112 89.8566 159.694 81.1418 149.005C80.3569 148.042 79.2122 147.443 77.9738 147.347L74.9052 147.108C62.8379 146.17 53.9092 135.481 55.1341 123.439L55.4456 120.377C55.5712 119.142 55.1852 117.908 54.3777 116.965C45.4109 106.486 46.8291 90.6802 57.5179 81.9654C58.4806 81.1805 59.0799 80.0357 59.1763 78.7974L59.4149 75.7287Z";
+
+/* Ask Spot AI mark = the Halo, its two scalloped rings drawn as gradient strokes
+   that slowly counter-rotate (elegant, alive, not a loader spinner). */
 function SpotMark({ size = 30 }) {
-  const N = 7, C = 24, Rmid = 18.8, M = N * 12;
-  // A smooth closed path for radius modulation r(θ)=Rmid+amp·cos(Nθ+phase).
-  const frame = (amp, phase) => {
-    const pts = [];
-    for (let i = 0; i < M; i++) {
-      const t = (i / M) * Math.PI * 2 - Math.PI / 2;
-      const r = Rmid + amp * Math.cos(N * t + phase);
-      pts.push([C + r * Math.cos(t), C + r * Math.sin(t)]);
-    }
-    const mids = pts.map((p, i) => { const n = pts[(i + 1) % M]; return [(p[0] + n[0]) / 2, (p[1] + n[1]) / 2]; });
-    let d = `M${mids[M - 1][0].toFixed(2)} ${mids[M - 1][1].toFixed(2)}`;
-    for (let i = 0; i < M; i++) d += `Q${pts[i][0].toFixed(2)} ${pts[i][1].toFixed(2)} ${mids[i][0].toFixed(2)} ${mids[i][1].toFixed(2)}`;
-    return d + "Z";
-  };
-  // Morph frames: DEFINED but rounded lobes (a soft flower/halo like the Figma
-   // mark, clear scallops, but smooth tips, never sharp star points) that grow
-   // and shift so the silhouette gently reshapes.
-  const A = frame(2.3, 0), B = frame(3.0, 0.9), D = frame(2.5, 1.9), E = frame(2.8, 2.9);
-  const hexR = 7.4;
-  let hex = "";
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI / 3) * i - Math.PI / 2;
-    hex += (i === 0 ? "M" : "L") + (C + hexR * Math.cos(a)).toFixed(2) + " " + (C + hexR * Math.sin(a)).toFixed(2);
-  }
-  hex += "Z";
-  const bounce = "0.34 1.30 0.5 1";
   return (
-    <svg className="spd-spotmark" viewBox="0 0 48 48" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
+    <svg className="spd-spotmark" viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
       <defs>
         <linearGradient id="spd-spotgrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#9585F2" />
-          <stop offset="55%" stopColor="#B97FCC" />
-          <stop offset="100%" stopColor="#DCA6C0" />
+          <stop offset="0%" stopColor="#7358E8" />
+          <stop offset="100%" stopColor="#B98FD8" />
         </linearGradient>
       </defs>
-      <g className="spd-spotmark__halo">
-        <path d={A} fill="url(#spd-spotgrad)">
-          <animate attributeName="d" dur="5.2s" repeatCount="indefinite" calcMode="spline"
-            keyTimes="0;0.28;0.55;0.8;1" values={`${A};${B};${D};${E};${A}`}
-            keySplines={`${bounce};${bounce};${bounce};${bounce}`} />
-        </path>
-      </g>
-      <path className="spd-spotmark__core" d={hex} fill="#FFFFFF" fillOpacity="0.92" />
+      <g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke="url(#spd-spotgrad)" strokeWidth="8.4" strokeLinejoin="round" /></g>
+      <g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke="url(#spd-spotgrad)" strokeWidth="8.4" strokeLinejoin="round" /></g>
+    </svg>
+  );
+}
+
+/* Avatar treatments Jo designed (Group 18/26/19/23): the Halo overlay on solid
+   or grainy-gradient circles. Cycled across the directory. */
+const AVATAR_VARIANTS = [
+  { solid: "#3555A0", halo: "#FFFFFF", ink: "#FFFFFF" },
+  { from: "#EEAC8B", to: "#9F98D3", halo: "#FFFFFE", ink: "#FFFFFF" },
+  { solid: "#F7F5F3", halo: "#3555A0", ink: "#3555A0" },
+  { from: "#C6B8AB", to: "#DE8C8C", halo: "#FFFFFE", ink: "#FFFFFF" },
+];
+function HaloAvatar({ initials, index, size = 28 }) {
+  const v = AVATAR_VARIANTS[index % AVATAR_VARIANTS.length];
+  const gid = "spd-av-" + index;
+  return (
+    <svg viewBox="0 0 210 210" width={size} height={size} style={{ display: "block", flexShrink: 0 }} aria-hidden="true">
+      {v.from && <defs><linearGradient id={gid} x1="0.1" y1="0.28" x2="0.9" y2="0.9"><stop offset="0%" stopColor={v.from} /><stop offset="100%" stopColor={v.to} /></linearGradient></defs>}
+      <circle cx="105" cy="105" r="104.996" fill={v.from ? `url(#${gid})` : v.solid} />
+      <path d={HALO_OUTER} stroke={v.halo} strokeWidth="7.4" fill="none" />
+      <path d={HALO_INNER} stroke={v.halo} strokeWidth="7.4" fill="none" />
+      <text x="105" y="107" textAnchor="middle" dominantBaseline="central" fill={v.ink} fontSize="42" fontWeight="600" fontFamily="inherit" letterSpacing="-1">{initials}</text>
     </svg>
   );
 }
