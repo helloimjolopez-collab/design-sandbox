@@ -1196,6 +1196,9 @@
       var presetRows=PR_PRESETS.map(function(o){var on=rp===o[0];return '<button class="mi'+(on?" check":"")+'" data-action="pr-range-set" data-id="'+wp.id+'" data-r="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");
       return customRow+'<div class="sep"></div>'+presetRows;}
     if(pop.type==="bgtfy"){var wfy=find(pop.id),cf=wfy.fy||"2026";return '<div class="cap">Fiscal year</div>'+BGT_FYS.slice().reverse().map(function(y){return '<button class="mi'+(cf===y?" check":"")+'" data-action="set-bgtfy" data-id="'+wfy.id+'" data-fy="'+y+'">'+(cf===y?ICON("check"):'<span class="mi-gap"></span>')+'FY '+y+'</button>';}).join("");}
+    if(pop.type==="bgt-acct"){var wac=find(pop.id),cav=(wac.acctview==="expense")?"expense":"income";return '<div class="cap">Account type</div>'+[["income","Income accounts"],["expense","Expense accounts"]].map(function(o){return '<button class="mi'+(cav===o[0]?" check":"")+'" data-action="set-bgt-acct" data-id="'+wac.id+'" data-v="'+o[0]+'">'+(cav===o[0]?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");}
+    if(pop.type==="bgt-period"){var wpv=find(pop.id),cpv=wpv.bview||"monthly",popts=(wpv.size==="xwide")?[["monthly","Monthly"],["quarterly","Quarterly"]]:[["monthly","Monthly"],["quarterly","Quarterly"],["ytd","Year to date"]];
+      return '<div class="cap">Period view</div>'+popts.map(function(o){return '<button class="mi'+(cpv===o[0]?" check":"")+'" data-action="set-bgt-period" data-id="'+wpv.id+'" data-v="'+o[0]+'">'+(cpv===o[0]?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");}
     if(pop.type==="depfilter"){var wdf=find(pop.id),q=(filterQuery||"").toLowerCase();
       var allSel=(!wdf.acct)&&(wdf.filter||"All types").indexOf("All")===0;
       var types=depByType(wdf).map(function(t){return t.name;});
