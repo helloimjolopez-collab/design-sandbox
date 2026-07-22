@@ -502,8 +502,13 @@
     height: 60px; flex-shrink: 0; display: flex; align-items: center;
     justify-content: space-between; padding: 0 30px;
     background: var(--semantic-color-light-mode-surface-nav-light);
-    transition: background var(--motion-duration-5) var(--motion-easing-standard);
+    transition: background var(--motion-duration-5) var(--motion-easing-standard),
+                padding-left var(--motion-duration-5) var(--motion-easing-inout);
   }
+  /* When the module rail is pinned, the logo must crown the RAIL icons (centre
+     x≈32) rather than the side-nav glyphs (x≈48); pad-left 14 → logo centre 32.
+     Unpinned, it keeps 30 so it still sits over the side-nav glyph. */
+  .spd-shell:has(.spd-mrail:not(.is-collapsed)) .spd-topnav { padding-left: 14px; }
   /* Left cluster aligns over the side-nav column: logo + tight waffle/label. */
   .spd-topnav__lead { display: flex; align-items: center; gap: 3px; min-width: 0; }
   /* Home: mark + "spired" wordmark tight, so they read as the one Spired logo. */
