@@ -968,12 +968,14 @@
     var fy=w.fy||"2026",lbl=(av==="special")?"budget for this report":av+" budget";
     return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No '+lbl+' for FY '+fy+'</div><div class="state-sub">Actuals are posting, but nothing has been entered yet to compare them against.</div><button class="btn outlined" data-action="add-budget" data-id="'+w.id+'">'+ICON("add")+'Set up budget</button></div>';
   }
-  function bgtHeaderBlock(w){
+  function bgtHeaderBlock(w,controlsOnly){
     var av=w.acctview||"income",fy=w.fy||"2026",special=(av==="special");
     var rows=bgtSet(w);
     var fmt=w.bfmt||"chart";
     var fmtToggle=bgtTog([["chart","Chart","bar_chart"],["table","Table","table_rows"]],fmt,w,"bgt-fmt","Format");
     var controls=bgtScopeToggle(w)+(special?bgtReportChip(w):"")+bgtFyChip(w)+((w.size!=="kpi"&&w.size!=="xwide")?bgtPeriodToggle(w):"");
+    /* No-budget scope: show only the controls (so Income/Expense/report/year can still be switched) and let the empty state below carry the message. No KPI heading block — that duplicate "$0 / No budget" heading is what was cluttering the empty view. */
+    if(controlsOnly)return '<div class="dep-hd" style="grid-template-columns:1fr auto"><div class="dep-hd-top"><div class="bgt-ctlrow">'+controls+'</div><div class="dep-hd-toggle">'+fmtToggle+'</div></div></div>';
     /* Headline is always the full fiscal-year-to-date variance in dollars, plus a plain favourable/unfavourable read. No eyebrow (the scope is already named by the controls), no floating % (it read as a mystery comparison), no "% of budget used" line. Dollars are the headline; the % lives in the table under a labelled column where it is unambiguous. */
     var thru=bgtThru(rows),sumB=thru.reduce(function(s,r){return s+r.budget;},0),sumA=thru.reduce(function(s,r){return s+r.actual;},0);
     var variance=thru.length?bgtVariance(av,sumB,sumA):null;
