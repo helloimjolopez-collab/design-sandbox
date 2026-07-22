@@ -94,9 +94,14 @@
     /* Surfaces drawn straight from the warm-neutral ramp so they're guaranteed
        in-family: canvas/nav a light warm neutral (warm-250), the main content
        sheet a near-white (warm-0) so it reads bright. Nothing pure white. */
-    --semantic-color-light-mode-surface-canvas-light: var(--primitive-color-warm-250);
+    /* Layered surface steps (chrome darkest → sheet → cards pure white), like the
+       Figma, so the content area isn't one flat white slab. */
+    --semantic-color-light-mode-surface-canvas-light: var(--primitive-color-warm-250); /* chrome */
     --semantic-color-light-mode-surface-nav-light: var(--primitive-color-warm-250);
-    --semantic-color-light-mode-surface-sheet-base: var(--primitive-color-warm-0);
+    --semantic-color-light-mode-surface-sheet-base: var(--primitive-color-warm-100);   /* main content, warm near-white (not pure white) */
+    /* Search fill (shared by the side-nav search + the People table search): a
+       noticeable light MAUVE (not the neutral grey of the secondary button). */
+    --spd-search-fill: color-mix(in oklch, var(--semantic-color-light-mode-fill-static-accent-mauve-base) 18%, #FFFFFF);
     /* Side-nav ink is SLATE (never the module colour): a readable-but-quiet
        idle slate, and a near-black slate for hover/active. The module/primary
        colour lives only in the fill + stripe. */
