@@ -1626,10 +1626,21 @@ const moduleBadgeFill = (id) => (id === "home"
    happens at the Spired logo (popover) or the pinned rail. */
 function ModuleBadge({ moduleId }) {
   const mod = MODULE_MAP[moduleId];
+  // On Spired Home the identity IS the Spired brand — show the "Spired" wordmark
+  // (the logotype) rather than a home glyph + "Spired Home" in the UI font.
+  if (mod.id === "home") {
+    const h = 17; // wordmark cap height ≈ the module-name text
+    return (
+      <div className="spd-tms__current" aria-label="Spired Home">
+        <svg height={h} width={h * (562 / 190)} viewBox="305 155.5 562 190" fill="none" aria-hidden="true" style={{ display: "block" }}>
+          {LOGO_WORD_PATHS.map((d, i) => <path key={i} d={d} fill="var(--spd-logo-word)" />)}
+        </svg>
+      </div>
+    );
+  }
   return (
-    /* NON-clickable "you are here" label (each module's own side nav has a
-       Dashboard, so this needn't be a shortcut). No background tile — just the
-       module glyph in its high-contrast ink, sized close to the Spired logo. */
+    /* NON-clickable "you are here" label. No background tile — just the module
+       glyph in its high-contrast ink, sized close to the Spired logo. */
     <div className="spd-tms__current" aria-label={"Current module: " + mod.name}>
       <span className="spd-tms__badge">
         <Icon name={mod.icon} filled size={22} style={{ color: moduleInkDeep(mod.id) }} />
