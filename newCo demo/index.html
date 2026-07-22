@@ -1856,14 +1856,14 @@ function HaloSwatch({ kind, size = 66 }) {
   const gid = "hs-" + kind;
   if (kind === "grain") {
     return (
-      <svg viewBox="0 0 210 210" width={size} height={size} fill="none" style={{ display: "block" }}>
+      <svg className="spd-spotmark" viewBox="0 0 210 210" width={size} height={size} fill="none" style={{ display: "block" }}>
         <defs>
           <linearGradient id={gid} x1="0.1" y1="-0.1" x2="0.15" y2="1"><stop offset="0%" stopColor="#FFC864" /><stop offset="36%" stopColor="#E5BA88" /><stop offset="60%" stopColor="#CBADAC" /><stop offset="90%" stopColor="#B09FD1" /></linearGradient>
           <filter id={gid + "n"} x="0" y="0" width="210" height="210"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" stitchTiles="stitch" result="n" /><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0" result="nn" /><feComposite in="nn" in2="SourceGraphic" operator="in" result="grain" /><feMerge><feMergeNode in="SourceGraphic" /><feMergeNode in="grain" /></feMerge></filter>
         </defs>
         <g filter={`url(#${gid}n)`}><circle cx="105" cy="105" r="104.996" fill={`url(#${gid})`} /></g>
-        <path d={HALO_OUTER} stroke="#FFFFFE" strokeWidth={S} fill="none" />
-        <path d={HALO_INNER} stroke="#FFFFFE" strokeWidth={S} fill="none" />
+        <g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke="#FFFFFE" strokeWidth={S} fill="none" /></g>
+        <g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke="#FFFFFE" strokeWidth={S} fill="none" /></g>
       </svg>
     );
   }
