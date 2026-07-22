@@ -1807,6 +1807,57 @@ function HaloAvatar({ initials, index, size = 28 }) {
   );
 }
 
+/* Static Halo renditions for the Design Concept showcase (Jo's variant set):
+   stroke, two-tone stroke, on-brand, filled core, and gradient+grain. */
+function HaloSwatch({ kind, size = 66 }) {
+  const S = 9.5;
+  const gid = "hs-" + kind;
+  if (kind === "grain") {
+    return (
+      <svg viewBox="0 0 210 210" width={size} height={size} fill="none" style={{ display: "block" }}>
+        <defs>
+          <linearGradient id={gid} x1="0.1" y1="-0.1" x2="0.15" y2="1"><stop offset="0%" stopColor="#FFC864" /><stop offset="36%" stopColor="#E5BA88" /><stop offset="60%" stopColor="#CBADAC" /><stop offset="90%" stopColor="#B09FD1" /></linearGradient>
+          <filter id={gid + "n"} x="0" y="0" width="210" height="210"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" stitchTiles="stitch" result="n" /><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0" result="nn" /><feComposite in="nn" in2="SourceGraphic" operator="in" result="grain" /><feMerge><feMergeNode in="SourceGraphic" /><feMergeNode in="grain" /></feMerge></filter>
+        </defs>
+        <g filter={`url(#${gid}n)`}><circle cx="105" cy="105" r="104.996" fill={`url(#${gid})`} /></g>
+        <path d={HALO_OUTER} stroke="#FFFFFE" strokeWidth={S} fill="none" />
+        <path d={HALO_INNER} stroke="#FFFFFE" strokeWidth={S} fill="none" />
+      </svg>
+    );
+  }
+  const map = {
+    mono: { bg: "#F7F5F3", o: "#6E64BE", i: "#6E64BE", fill: false },
+    twotone: { bg: "#F7F5F3", o: "#41377D", i: "#9691F5", fill: false },
+    brand: { bg: "#9691F5", o: "#FFFFFF", i: "#FFFFFF", fill: false },
+    filled: { bg: "#F7F5F3", o: "#41377D", i: "#9691F5", fill: true },
+  };
+  const v = map[kind];
+  return (
+    <svg viewBox="0 0 210 210" width={size} height={size} fill="none" style={{ display: "block" }}>
+      <circle cx="105" cy="105" r="104.996" fill={v.bg} />
+      {v.fill
+        ? (<React.Fragment><path d={HALO_OUTER} fill={v.o} /><path d={HALO_INNER} fill={v.i} /></React.Fragment>)
+        : (<React.Fragment><path d={HALO_OUTER} stroke={v.o} strokeWidth={S} fill="none" /><path d={HALO_INNER} stroke={v.i} strokeWidth={S} fill="none" /></React.Fragment>)}
+    </svg>
+  );
+}
+function SpotShowcase() {
+  const cap = { fontSize: 11.5, fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" };
+  const cell = (label, node) => (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 9 }}>{node}<span style={cap}>{label}</span></div>
+  );
+  return (
+    <div className="spd-card" style={{ padding: "26px 24px", display: "flex", gap: 30, flexWrap: "wrap", alignItems: "flex-start" }}>
+      {cell("Animated (live)", <SpotMark size={66} />)}
+      {cell("Mono stroke", <HaloSwatch kind="mono" />)}
+      {cell("Two-tone", <HaloSwatch kind="twotone" />)}
+      {cell("On brand", <HaloSwatch kind="brand" />)}
+      {cell("Filled core", <HaloSwatch kind="filled" />)}
+      {cell("Gradient + grain", <HaloSwatch kind="grain" />)}
+    </div>
+  );
+}
+
 /* Elegant custom sidebar collapse/expand glyph, a soft rounded panel with a
    left column; when railed, the column fills to show the icon-rail is active.
    Cleaner than the Material left_panel symbol. */
