@@ -1039,8 +1039,8 @@
     function sb(k,label,cls){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<span class="'+cls+'"><button class="wt-sort'+(on?" on":"")+'" data-action="bgt-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button></span>';}
     var head='<div class="wt-row wt-head">'+sb("idx","Period","lr-main")+sb("budget","Budget","wt-c2")+sb("actual","Actual","wt-c2")+sb("variance","Variance","dt-c dt-tr bgt-vardiv")+'<span class="dt-c bgt-favcol">Result</span></div>';
     var body=rows.map(function(r){
-      var v=r.variance;
-      return '<div class="wt-row"><span class="lr-main">'+r.period+'</span><span class="wt-c2">'+money(r.budget)+'</span><span class="wt-c2">'+(r.actual!=null?money(r.actual):"—")+'</span><span class="dt-c dt-tr bgt-vardiv">'+(v==null?"—":bgtRtrend(v))+'</span><span class="dt-c bgt-favcol">'+(v==null?'<span class="bgt-caption">—</span>':bgtFavPill(v))+'</span></div>';}).join("");
+      var v=r.variance,vpct=(v!=null&&r.budget>0)?Math.round(Math.abs(v)/r.budget*1000)/10:null;
+      return '<div class="wt-row"><span class="lr-main">'+r.period+'</span><span class="wt-c2">'+money(r.budget)+'</span><span class="wt-c2">'+(r.actual!=null?money(r.actual):"—")+'</span><span class="dt-c dt-tr bgt-vardiv">'+(v==null?"—":(bgtRtrend(v)+(vpct!=null?'<span class="bgt-caption" style="margin-left:6px">'+vpct+'%</span>':'')))+'</span><span class="dt-c bgt-favcol">'+(v==null?'<span class="bgt-caption">—</span>':bgtFavPill(v))+'</span></div>';}).join("");
     var thru=bgtThru(full),totalV=thru.length?bgtVariance(av,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
     return '<div class="bgt-table-wrap"><div class="scroll">'+head+body+'</div><div class="dep-total"><span>YTD total</span><span>'+(totalV==null?"—":bgtRtrend(totalV))+'</span></div></div>';}
   function bgtGlance(w){
