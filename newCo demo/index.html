@@ -2269,22 +2269,27 @@ function AccountingContextBar() {
 
 function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail }) {
   const [q, setQ] = useState("");
-  if (!mod.nav || !mod.nav.length) return null;
+  const isAcct = mod.id === "accounting";
+  const [acctApp, setAcctApp] = useState(ACCT_APPS[0]);
+  const [acctItem, setAcctItem] = useState(ACCT_APPS[0].nav[0].id);
+  const navSource = isAcct ? acctApp.nav : mod.nav;
+  if (!navSource || !navSource.length) return null;
   const query = rail ? "" : q.trim().toLowerCase(); // no filtering while railed
   // Home's selected-item accent = the Spired purple (mode-aware token).
   const accent = mod.id === "home" ? "var(--spd-home-glyph)" : mod.color;
   const labelOf = (n) => (n.to ? MODULE_MAP[n.to].name : n.label);
-  const visible = mod.nav.filter((n) => !query || labelOf(n).toLowerCase().includes(query));
+  const visible = navSource.filter((n) => !query || labelOf(n).toLowerCase().includes(query));
+  const activeItem = isAcct ? acctItem : item;
+  const pickItem = (id) => { if (isAcct) setAcctItem(id); onSelectItem(id); };
+  const pickApp = (a) => { setAcctApp(a); setAcctItem(a.nav[0].id); onSelectItem(a.nav[0].id); };
   let lastGroup = null;
   return (
     <nav className={"spd-modnav" + (rail ? " is-rail" : "")} aria-label={mod.name + " navigation"}>
-      {/* Accounting has a SECONDARY app switcher (GL / Payroll / AP / AR / …) at
-          the top of its own nav — you're switching sub-apps, not just sections. */}
-      {mod.id === "accounting" && !rail && <AccountingAppSwitcher />}
-      {/* Header: a filter for this area's nav + the collapse/expand control.
-          (No module name/badge here, the top-nav switcher already names the
-          module, so repeating it would be redundant.) */}
-      <div className="spd-modnav__header">
+      {/* Header: for Accounting, the SECONDARY app switcher (GL/Payroll/AP/AR/…)
+          sits inline here — switching apps swaps the sections below. Plus the
+          search (a little icon that takes over the row when tapped) + collapse. */}
+      <div className={"spd-modnav__header" + (isAcct ? " spd-modnav__header--acct" : "")}>
+        {isAcct && !rail && <AccountingAppSwitcher app={acctApp} onPick={pickApp} />}
         {!rail && (
           /* A label so tapping anywhere focuses the input; idle it's a rounded
              square (icon only), on focus it expands into a working field. */
