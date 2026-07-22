@@ -1041,12 +1041,12 @@
   }
   /* Grouped bars from already-grained rows. Two purples only, no red; signed variance under each bar; formatted popover data on the column; full text in an sr-only span. */
   function bgtBars(w,rows,grain){
-    var av=w.acctview||"income",special=(av==="special"),cum=(grain==="ytd");
+    var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral,cum=(grain==="ytd");
     var max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual||0);});max=max*1.15;
     var cols="",xl="";
     rows.forEach(function(r){
-      var vr=r.actual!=null?bgtVariance(av,r.budget,r.actual):null,neg=vr!=null&&vr<0;
-      var favWord=special?(neg?"under budget":"over budget"):(neg?"Unfavourable":"Favourable");
+      var vr=r.actual!=null?bgtVariance(vt,r.budget,r.actual):null,neg=vr!=null&&vr<0;
+      var favWord=neutral?(neg?"under budget":"over budget"):(neg?"Unfavourable":"Favourable");
       var bH=Math.max(1,Math.round(r.budget/max*100)),aH=r.actual!=null?Math.max(1,Math.round(r.actual/max*100)):0;
       var srtxt=(r.actual!=null?('Budget '+money(r.budget)+', Actual '+money(r.actual)+', variance '+(neg?"−":"+")+money(Math.abs(vr))+' '+favWord):('Budget '+money(r.budget)+', actual not posted yet'));
       var dpop=[r.period,r.budget,(r.actual!=null?r.actual:""),(vr!=null?vr:""),(special?"neutral":"fav"),(r.partial?"1":"")].join("|").replace(/"/g,"&quot;");
