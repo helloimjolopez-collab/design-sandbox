@@ -2302,6 +2302,7 @@ function AccountingContextBar() {
 
 function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail }) {
   const [q, setQ] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const isAcct = mod.id === "accounting";
   const [acctApp, setAcctApp] = useState(ACCT_APPS[0]);
   const [acctItem, setAcctItem] = useState(ACCT_APPS[0].nav[0].id);
@@ -2322,8 +2323,27 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
           sits inline here — switching apps swaps the sections below. Plus the
           search (a little icon that takes over the row when tapped) + collapse. */}
       <div className={"spd-modnav__header" + (isAcct ? " spd-modnav__header--acct" : "")}>
-        {isAcct && !rail && <AccountingAppSwitcher app={acctApp} onPick={pickApp} />}
-        {!rail && (
+        {isAcct && !rail ? (
+          /* Accounting: app switcher fills the row + a PLAIN search icon by the
+             collapse toggle. Tapping the icon lets search take over the row;
+             the X closes it back. */
+          searchOpen ? (
+            <label className="spd-modnav__search spd-modnav__search--fill">
+              <Icon name="search" size={19} style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)", flexShrink: 0 }} />
+              <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={"Search " + acctApp.name + "…"} aria-label={"Search " + acctApp.name} />
+              <button type="button" className="spd-modnav__search-clear" onMouseDown={(e) => { e.preventDefault(); setQ(""); setSearchOpen(false); }} aria-label="Close search">
+                <Icon name="close" size={16} />
+              </button>
+            </label>
+          ) : (
+            <React.Fragment>
+              <AccountingAppSwitcher app={acctApp} onPick={pickApp} />
+              <button type="button" className="spd-modnav__searchbtn" onClick={() => setSearchOpen(true)} aria-label={"Search " + acctApp.name}>
+                <Icon name="search" size={19} />
+              </button>
+            </React.Fragment>
+          )
+        ) : (!rail && (
           /* A label so tapping anywhere focuses the input; idle it's a rounded
              square (icon only), on focus it expands into a working field. */
           <label className="spd-modnav__search">
@@ -2335,7 +2355,7 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
               </button>
             )}
           </label>
-        )}
+        ))}
         <button className="spd-modnav__collapse" onClick={onToggleRail}
           aria-label={rail ? "Expand navigation" : "Collapse to rail"}>
           <SidebarToggleIcon collapsed={rail} size={17} />
