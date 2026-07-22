@@ -2134,6 +2134,76 @@ function SectionItem({ icon, label, color, active, onClick, leadColor }) {
 /* The current module's own navigation, the single side nav. On Home, a
    "Modules" group provides one-click access into every module (items with
    `to`); other items navigate within the current module. */
+/* Accounting's SECONDARY app switcher — you switch between the sub-apps of
+   Accounting (GL, Payroll, AP, AR, Deposits). Lives at the top of its side nav. */
+const ACCT_APPS = [
+  { name: "General Ledger", icon: "account_balance" },
+  { name: "Payroll", icon: "payments" },
+  { name: "Accounts Payable", icon: "call_made" },
+  { name: "Accounts Receivable", icon: "call_received" },
+  { name: "Deposits on Hand", icon: "account_balance_wallet" },
+];
+function AccountingAppSwitcher() {
+  const [app, setApp] = useState(ACCT_APPS[0]);
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="spd-acctapp">
+      <button className="spd-acctapp__btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+        <span className="spd-acctapp__glyph"><Icon name={app.icon} filled size={17} /></span>
+        <span className="spd-acctapp__name">{app.name}</span>
+        <Icon name="unfold_more" size={17} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)", flexShrink: 0 }} />
+      </button>
+      {open && (
+        <div className="spd-acctapp__menu spd-fade-in" role="menu">
+          <p className="spd-acctapp__cap">Accounting apps</p>
+          {ACCT_APPS.map((a) => (
+            <button key={a.name} className={"spd-acctapp__opt" + (a.name === app.name ? " is-active" : "")} onClick={() => { setApp(a); setOpen(false); }}>
+              <Icon name={a.icon} filled={a.name === app.name} size={17} style={{ color: a.name === app.name ? "var(--semantic-color-light-mode-fill-static-accent-amber-base)" : "var(--semantic-color-light-mode-text-static-secondary-base)" }} />
+              <span style={{ flex: 1 }}>{a.name}</span>
+              {a.name === app.name && <Icon name="check" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)" }} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* Accounting's CONTEXT toolbar — company (switch this FIRST; the rest depend on
+   it), fiscal period, bank account. Elevated, top-right of the page; each app in
+   Accounting can carry its own context. */
+const ACCT_COMPANIES = ["Grace Community Church", "Grace Kids Foundation", "Grace Missions Intl."];
+function AccountingContextBar() {
+  const [co, setCo] = useState(ACCT_COMPANIES[0]);
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="spd-acctctx">
+      <div className="spd-acctctx__co">
+        <button className="spd-acctctx__cobtn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+          <Icon name="corporate_fare" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)" }} />
+          <span className="spd-acctctx__coname">{co}</span>
+          <Icon name="expand_more" size={16} style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }} />
+        </button>
+        {open && (
+          <div className="spd-acctctx__menu spd-fade-in" role="menu">
+            <p className="spd-acctapp__cap">Switch company</p>
+            {ACCT_COMPANIES.map((c) => (
+              <button key={c} className={"spd-acctapp__opt" + (c === co ? " is-active" : "")} onClick={() => { setCo(c); setOpen(false); }}>
+                <span style={{ flex: 1 }}>{c}</span>
+                {c === co && <Icon name="check" size={16} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-amber-base)" }} />}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <span className="spd-acctctx__sep" />
+      <div className="spd-acctctx__field"><span className="spd-acctctx__lbl">Fiscal period</span><span className="spd-acctctx__val">FY26 · Jul</span></div>
+      <span className="spd-acctctx__sep" />
+      <div className="spd-acctctx__field"><span className="spd-acctctx__lbl">Bank account</span><span className="spd-acctctx__val">Operating ••4021</span></div>
+    </div>
+  );
+}
+
 function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail }) {
   const [q, setQ] = useState("");
   if (!mod.nav || !mod.nav.length) return null;
