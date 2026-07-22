@@ -1729,30 +1729,45 @@ function WaffleMark({ size = 24 }) {
 const HALO_OUTER = "M26.7214 104.926C21.4015 98.2693 22.6056 88.5376 29.3872 83.3776L44.2743 72.0503C45.3022 71.2682 45.9658 70.0992 46.1091 68.8155C48.1928 50.1517 65.2331 36.8631 83.8421 39.3905C85.1219 39.5643 86.4174 39.2065 87.4263 38.4002L102.039 26.7221C108.696 21.402 118.428 22.6059 123.588 29.3878L134.915 44.2749C135.697 45.3027 136.866 45.9655 138.15 46.1088C156.522 48.1599 169.686 64.7044 167.682 82.9713L167.575 83.8418C167.412 85.0417 167.716 86.2555 168.42 87.2338L168.565 87.426L180.243 102.04C185.563 108.697 184.359 118.428 177.577 123.588L162.69 134.915L162.502 135.066C161.582 135.843 160.991 136.946 160.857 138.149C158.773 156.813 141.733 170.102 123.124 167.574C121.844 167.401 120.548 167.759 119.539 168.566L104.926 180.244C98.2685 185.563 88.5368 184.36 83.3769 177.578L72.0506 162.691C71.2685 161.663 70.0995 160.999 68.8158 160.856C50.1519 158.773 36.8634 141.732 39.3908 123.123C39.5647 121.843 39.2059 120.548 38.3996 119.539L26.7214 104.926Z";
 const HALO_INNER = "M59.4149 75.7287C60.353 63.6615 71.042 54.7328 83.0835 55.9577L86.1456 56.2692C87.3813 56.3948 88.6145 56.0088 89.5582 55.2012C100.037 46.2343 115.843 47.6526 124.558 58.3415C125.342 59.3043 126.488 59.903 127.726 59.9993L130.794 60.2385C142.862 61.1765 151.79 71.8654 150.565 83.9071L150.254 86.9686C150.129 88.2044 150.514 89.438 151.322 90.3818C160.289 100.86 158.87 116.666 148.181 125.381C147.279 126.117 146.696 127.17 146.547 128.319L146.524 128.55L146.284 131.618C145.346 143.685 134.658 152.614 122.616 151.389L119.554 151.078L119.323 151.06C118.166 151.002 117.026 151.388 116.141 152.145C105.663 161.112 89.8566 159.694 81.1418 149.005C80.3569 148.042 79.2122 147.443 77.9738 147.347L74.9052 147.108C62.8379 146.17 53.9092 135.481 55.1341 123.439L55.4456 120.377C55.5712 119.142 55.1852 117.908 54.3777 116.965C45.4109 106.486 46.8291 90.6802 57.5179 81.9654C58.4806 81.1805 59.0799 80.0357 59.1763 78.7974L59.4149 75.7287Z";
 
-/* Ask Spot AI mark = the Halo, its two scalloped rings drawn as gradient strokes
-   that slowly counter-rotate (elegant, alive, not a loader spinner). */
+/* The Halo's innermost scalloped core (Group 30.svg) — scales in/out for the
+   animated centre. */
+const HALO_CENTER = "M85.1511 91.7733C85.5134 87.1113 89.6427 83.662 94.2947 84.1354L95.0203 84.2088C96.1701 84.3258 97.3178 83.9666 98.196 83.2153C102.053 79.9149 107.87 80.4369 111.078 84.3711C111.808 85.2668 112.874 85.8244 114.026 85.914L114.754 85.9703C119.416 86.3327 122.865 90.4621 122.392 95.114L122.318 95.8402C122.201 96.99 122.56 98.1378 123.311 99.0159C126.612 102.873 126.09 108.69 122.155 111.898C121.26 112.628 120.702 113.694 120.612 114.846L120.556 115.574C120.194 120.236 116.064 123.685 111.412 123.212L110.686 123.138C109.536 123.021 108.389 123.38 107.511 124.131C103.654 127.431 97.8362 126.91 94.6286 122.975C93.8982 122.08 92.8327 121.522 91.6804 121.432L90.9534 121.375C86.2914 121.013 82.8421 116.884 83.3155 112.232L83.3889 111.506C83.5058 110.356 83.1469 109.209 82.3954 108.33C79.095 104.474 79.617 98.6561 83.5512 95.4485C84.447 94.7181 85.0046 93.6527 85.0941 92.5003L85.1511 91.7733Z";
+
+/* Ask Spot AI mark = the Halo. Per Jo's variants, it ANIMATES: the two scalloped
+   rings slowly counter-rotate AND the whole thing cycles through brand colour
+   combos (swapping stroke colours) while a centre core grows/shrinks/recolours.
+   Colours cross-fade via CSS transitions; timing via React state. */
+const SPOT_COMBOS = [
+  { o: "#6E64BE", i: "#9691F5", c: "transparent", cs: 0 },
+  { o: "#41377D", i: "#9691F5", c: "#F9C56C", cs: 0.78 },
+  { o: "#19143C", i: "#9691F5", c: "#41377D", cs: 1 },
+  { o: "#9691F5", i: "#41377D", c: "#B3A0CD", cs: 0.55 },
+  { o: "#7358E8", i: "#B3A0CD", c: "transparent", cs: 0 },
+];
 function SpotMark({ size = 30 }) {
+  const [f, setF] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setF((x) => (x + 1) % SPOT_COMBOS.length), 2600);
+    return () => clearInterval(id);
+  }, []);
+  const cur = SPOT_COMBOS[f];
+  const tr = "1.4s cubic-bezier(0.4,0,0.2,1)";
   return (
     <svg className="spd-spotmark" viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
-      <defs>
-        <linearGradient id="spd-spotgrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#7358E8" />
-          <stop offset="100%" stopColor="#B98FD8" />
-        </linearGradient>
-      </defs>
-      <g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke="url(#spd-spotgrad)" strokeWidth="8.4" strokeLinejoin="round" /></g>
-      <g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke="url(#spd-spotgrad)" strokeWidth="8.4" strokeLinejoin="round" /></g>
+      <g className="spd-spotmark__ring1"><path d={HALO_OUTER} stroke={cur.o} strokeWidth="8.4" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
+      <g className="spd-spotmark__ring2"><path d={HALO_INNER} stroke={cur.i} strokeWidth="8.4" strokeLinejoin="round" style={{ transition: "stroke " + tr }} /></g>
+      <path d={HALO_CENTER} fill={cur.c} style={{ transformBox: "fill-box", transformOrigin: "center", transform: "scale(" + cur.cs + ")", transition: "transform 1.4s cubic-bezier(0.34,1.25,0.5,1), fill " + tr }} />
     </svg>
   );
 }
 
-/* Avatar treatments Jo designed (Group 18/26/19/23): the Halo overlay on solid
-   or grainy-gradient circles. Cycled across the directory. */
+/* Avatar treatments Jo designed (Group 18/19/23/26 — brand purples): the Halo
+   overlay on solid or gradient circles. Cycled across the directory. */
 const AVATAR_VARIANTS = [
-  { solid: "#3555A0", halo: "#FFFFFF", ink: "#FFFFFF" },
-  { from: "#EEAC8B", to: "#9F98D3", halo: "#FFFFFE", ink: "#FFFFFF" },
-  { solid: "#F7F5F3", halo: "#3555A0", ink: "#3555A0" },
-  { from: "#C6B8AB", to: "#DE8C8C", halo: "#FFFFFE", ink: "#FFFFFF" },
+  { solid: "#9691F5", halo: "#FFFFFF", ink: "#241C4A" },
+  { from: "#FFC864", to: "#B09FD1", halo: "#FFFFFE", ink: "#3A2E5A" },
+  { solid: "#F7F5F3", halo: "#6E64BE", ink: "#41377D" },
+  { from: "#19143C", to: "#9691F5", halo: "#FFFFFE", ink: "#FFFFFF" },
 ];
 function HaloAvatar({ initials, index, size = 28 }) {
   const v = AVATAR_VARIANTS[index % AVATAR_VARIANTS.length];
