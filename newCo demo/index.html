@@ -2077,15 +2077,17 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
           module, so repeating it would be redundant.) */}
       <div className="spd-modnav__header">
         {!rail && (
-          <div className="spd-modnav__search">
+          /* A label so tapping anywhere focuses the input; idle it's a rounded
+             square (icon only), on focus it expands into a working field. */
+          <label className="spd-modnav__search">
             <Icon name="search" size={19} style={{ color: "var(--semantic-color-light-mode-text-static-secondary-base)", flexShrink: 0 }} />
-            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label={"Search " + mod.name} />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={"Search " + mod.name + "…"} aria-label={"Search " + mod.name} />
             {q && (
-              <button className="spd-modnav__search-clear" onClick={() => setQ("")} aria-label="Clear search">
+              <button type="button" className="spd-modnav__search-clear" onMouseDown={(e) => { e.preventDefault(); setQ(""); }} aria-label="Clear search">
                 <Icon name="close" size={16} />
               </button>
             )}
-          </div>
+          </label>
         )}
         <button className="spd-modnav__collapse" onClick={onToggleRail}
           aria-label={rail ? "Expand navigation" : "Collapse to rail"}>
