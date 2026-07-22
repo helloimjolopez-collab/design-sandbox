@@ -1066,6 +1066,8 @@
   /* Glance = headline variance only. Detail (wide) = one chart/table, its grain set by the Period toggle (Month/Quarter bars or the YTD line). Explore (biggest) = TWO panels side by side, each with its OWN period toggle, so you can set e.g. Month bars beside a YTD line, or any combination — the widget-level period control is dropped at this size in favour of the per-panel ones. */
   function budgetContent(w){
     if(w.size==="kpi")return bgtGlance(w);
+    var av=w.acctview||"income";
+    if(!bgtHasBudget(bgtSet(w)))return bgtHeaderBlock(w,true)+bgtNoBudgetState(w,av);
     var mh=bgtHeaderBlock(w),fmt=w.bfmt||"chart";
     if(w.size!=="xwide"){
       var view=w.bview||"month";
