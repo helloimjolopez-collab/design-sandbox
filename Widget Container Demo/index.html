@@ -1081,10 +1081,10 @@
     return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget'+(cum?" (cumulative)":"")+'</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual'+(cum?" (cumulative)":"")+'</span></div>'+plot+'</div>';
   }
   function bgtTable(w,grain){
-    var av=w.acctview||"income",special=(av==="special");
+    var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
     var full=bgtSet(w);
     var base=bgtRowsAt(w,grain);
-    var rows=base.map(function(r,i){return {period:r.period,budget:r.budget,actual:r.actual,idx:i,variance:r.actual!=null?bgtVariance(av,r.budget,r.actual):null};});
+    var rows=base.map(function(r,i){return {period:r.period,budget:r.budget,actual:r.actual,idx:i,variance:r.actual!=null?bgtVariance(vt,r.budget,r.actual):null};});
     var sk=(w.bsort||"idx-asc").split("-"),key=sk[0],dir=sk[1]==="desc"?-1:1;
     function val(x){if(key==="budget")return x.budget;if(key==="actual")return x.actual==null?-Infinity:x.actual;if(key==="variance")return x.variance==null?-Infinity:x.variance;return x.idx;}
     rows.sort(function(a,b){return dir*(val(a)-val(b));});
