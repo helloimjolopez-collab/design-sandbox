@@ -1292,12 +1292,17 @@
       var presetRows=PR_PRESETS.map(function(o){var on=rp===o[0];return '<button class="mi'+(on?" check":"")+'" data-action="pr-range-set" data-id="'+wp.id+'" data-r="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");
       return customRow+'<div class="sep"></div>'+presetRows;}
     if(pop.type==="bgt-scope"){var wsc=find(pop.id),cav=wsc.acctview||"income";
-      var repId=wsc.report||BGT_REPORTS[0].id,curRep=bgtReport(wsc),lineId=(cav==="special"?(wsc.reportLine||curRep.lines[0].id):curRep.lines[0].id);
-      var repOpts=BGT_REPORTS.map(function(o){return '<option value="'+o.id+'"'+(o.id===repId?" selected":"")+'>'+o.name+'</option>';}).join("");
-      var lineOpts=curRep.lines.map(function(l){return '<option value="'+l.id+'"'+(l.id===lineId?" selected":"")+'>'+l.name+'</option>';}).join("");
-      return '<button class="mi'+(cav==="income"?" check":"")+'" data-action="set-bgt-scope" data-id="'+wsc.id+'" data-v="income">'+(cav==="income"?ICON("check"):'<span class="mi-gap"></span>')+'Income accounts</button>'+
-      '<button class="mi'+(cav==="expense"?" check":"")+'" data-action="set-bgt-scope" data-id="'+wsc.id+'" data-v="expense">'+(cav==="expense"?ICON("check"):'<span class="mi-gap"></span>')+'Expense accounts</button>'+
-      '<div class="sep"></div><div class="cap">Special report'+(cav==="special"?" ✓":"")+'</div><div class="bgt-rep-pop"><label>Report</label><select data-action="set-bgt-report" data-id="'+wsc.id+'">'+repOpts+'</select><label>Report line</label><select data-action="set-bgt-repline" data-id="'+wsc.id+'">'+lineOpts+'</select></div>';}
+      function scopeRow(v,lbl){return '<button class="mi'+(cav===v?" check":"")+'" data-action="set-bgt-scope" data-id="'+wsc.id+'" data-v="'+v+'">'+(cav===v?ICON("check"):'<span class="mi-gap"></span>')+lbl+'</button>';}
+      var out='<div class="cap">Show budget vs actual for</div>'+scopeRow("income","Income accounts")+scopeRow("expense","Expense accounts")+scopeRow("special","A special report");
+      if(cav==="special"){var rep=bgtReport(wsc),ln=bgtReportLine(wsc);
+        out+='<div class="sep"></div><div class="bgt-rep-pop"><label>Report name</label><button class="bgt-pick" data-action="bgt-pick-report" data-id="'+wsc.id+'"><span class="bgt-pick-v">'+rep.name+'</span>'+ICON("expand_more")+'</button><label>Report line</label><button class="bgt-pick" data-action="bgt-pick-line" data-id="'+wsc.id+'"><span class="bgt-pick-v">'+ln.name+'</span>'+ICON("expand_more")+'</button></div>';}
+      return out;}
+    if(pop.type==="bgt-replist"){var wrl=find(pop.id),rq=(bgtRepQ||"").toLowerCase(),cur=wrl.report||BGT_REPORTS[0].id;
+      var ms=BGT_REPORTS.filter(function(o){return o.name.toLowerCase().indexOf(rq)>-1;});
+      return '<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="bgtrepq" placeholder="Search reports" value="'+(bgtRepQ||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="cap">Report name</div><div class="menu-scroll" role="listbox">'+(ms.length?ms.map(function(o){return '<button class="mi'+(cur===o.id?" check":"")+'" role="option" data-action="set-bgt-report" data-id="'+wrl.id+'" data-r="'+o.id+'">'+(cur===o.id?ICON("check"):'<span class="mi-gap"></span>')+o.name+'</button>';}).join(""):'<div class="mi-note" style="color:var(--txt-subtle);padding:8px 10px">No reports match “'+(bgtRepQ||"")+'”</div>')+'</div>';}
+    if(pop.type==="bgt-linelist"){var wll=find(pop.id),lq=(bgtLineQ||"").toLowerCase(),rep2=bgtReport(wll),curL=bgtReportLine(wll).id;
+      var ml=rep2.lines.filter(function(l){return l.name.toLowerCase().indexOf(lq)>-1;});
+      return '<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="bgtlineq" placeholder="Search lines" value="'+(bgtLineQ||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="cap">'+rep2.name+' · line</div><div class="menu-scroll" role="listbox">'+(ml.length?ml.map(function(l){return '<button class="mi'+(curL===l.id?" check":"")+'" role="option" data-action="set-bgt-repline" data-id="'+wll.id+'" data-l="'+l.id+'">'+(curL===l.id?ICON("check"):'<span class="mi-gap"></span>')+l.name+'</button>';}).join(""):'<div class="mi-note" style="color:var(--txt-subtle);padding:8px 10px">No lines match “'+(bgtLineQ||"")+'”</div>')+'</div>';}
     if(pop.type==="depfilter"){var wdf=find(pop.id),q=(filterQuery||"").toLowerCase();
       var allSel=(!wdf.acct)&&(wdf.filter||"All types").indexOf("All")===0;
       var types=depByType(wdf).map(function(t){return t.name;});
