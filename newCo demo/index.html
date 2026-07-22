@@ -1683,6 +1683,49 @@ function WaffleMark({ size = 24 }) {
   );
 }
 
+/* Ask Spot AI mark — the "halo" logo Jo designed: an MD3-loading-indicator-style
+   scalloped (N-lobed) rounded shape, filled with the brand WARM gradient
+   (purple→magenta→coral) with a hex core, turning slowly like the Material
+   loader. Elegant and alive — not a sparkle. */
+function SpotMark({ size = 30 }) {
+  const N = 8, C = 24, RO = 22, RI = 16.5;
+  const pts = [];
+  for (let i = 0; i < N * 2; i++) {
+    const a = (Math.PI / N) * i - Math.PI / 2;
+    const r = i % 2 === 0 ? RO : RI;
+    pts.push([C + r * Math.cos(a), C + r * Math.sin(a)]);
+  }
+  const mids = pts.map((p, i) => {
+    const n = pts[(i + 1) % pts.length];
+    return [(p[0] + n[0]) / 2, (p[1] + n[1]) / 2];
+  });
+  let d = `M ${mids[mids.length - 1][0].toFixed(2)} ${mids[mids.length - 1][1].toFixed(2)}`;
+  for (let i = 0; i < pts.length; i++) {
+    d += ` Q ${pts[i][0].toFixed(2)} ${pts[i][1].toFixed(2)} ${mids[i][0].toFixed(2)} ${mids[i][1].toFixed(2)}`;
+  }
+  d += " Z";
+  const hexR = 7.6;
+  let hex = "";
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI / 3) * i - Math.PI / 2;
+    hex += (i === 0 ? "M " : " L ") + (C + hexR * Math.cos(a)).toFixed(2) + " " + (C + hexR * Math.sin(a)).toFixed(2);
+  }
+  hex += " Z";
+  return (
+    <svg className="spd-spotmark" viewBox="0 0 48 48" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
+      <defs>
+        <linearGradient id="spd-spotgrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#6E64BE" />
+          <stop offset="52%" stopColor="#A6438C" />
+          <stop offset="100%" stopColor="#E88A5A" />
+        </linearGradient>
+      </defs>
+      <g className="spd-spotmark__halo"><path d={d} fill="url(#spd-spotgrad)" /></g>
+      <path className="spd-spotmark__core" d={hex} fill="#FFFFFF" fillOpacity="0.92" />
+    </svg>
+  );
+}
+
 /* Elegant custom sidebar collapse/expand glyph — a soft rounded panel with a
    left column; when railed, the column fills to show the icon-rail is active.
    Cleaner than the Material left_panel symbol. */
