@@ -2201,18 +2201,26 @@ const TRIALS = [
 ];
 
 const RECENT_USERS = [
-  { name: "Feargal Phelan", added: "7/15/2026" },
-  { name: "Oisin2 Curran2", added: "7/15/2026" },
-  { name: "Yu-Jay Harris", added: "7/10/2026" },
-  { name: "Kunal Mehta", added: "6/26/2026" },
-  { name: "Krupa Test", added: "6/5/2026" },
+  { name: "Feargal Phelan", added: "7/15/2026", status: "authenticated" },
+  { name: "Oisin2 Curran2", added: "7/15/2026", status: "pending" },
+  { name: "Yu-Jay Harris", added: "7/10/2026", status: "invited" },
+  { name: "Kunal Mehta", added: "6/26/2026", status: "authenticated" },
+  { name: "Krupa Test", added: "6/5/2026", status: "review" },
 ];
 
-function AuthenticatedPill() {
+/* Varied status badges so the column isn't a wall of identical green pills. */
+const USER_STATUS = {
+  authenticated: { label: "Authenticated", tone: "positive" },
+  pending: { label: "Pending", tone: "amber" },
+  invited: { label: "Invited", tone: "navy" },
+  review: { label: "Needs review", tone: "orchid" },
+};
+function StatusPill({ status }) {
+  const s = USER_STATUS[status] || USER_STATUS.authenticated;
   return (
-    <span className="spd-pill" style={{ background: "var(--spd-badge-positive-bg)", color: "var(--spd-badge-positive-fg)" }}>
-      <span className="spd-pill__dot" style={{ background: "var(--spd-badge-positive-dot)", opacity: 1 }} />
-      Authenticated
+    <span className="spd-pill" style={{ background: `var(--spd-badge-${s.tone}-bg)`, color: `var(--spd-badge-${s.tone}-fg)` }}>
+      <span className="spd-pill__dot" style={{ background: s.tone === "positive" ? "var(--spd-badge-positive-dot)" : `var(--spd-badge-${s.tone}-fg)`, opacity: 1 }} />
+      {s.label}
     </span>
   );
 }
