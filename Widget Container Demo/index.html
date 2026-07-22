@@ -986,19 +986,22 @@
     var lbl=(av==="special")?"budget for this report line":av+" budget";
     return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No '+lbl+' set up</div><div class="state-sub">Actuals are posting, but nothing has been entered yet to compare them against.</div><button class="btn outlined" data-action="add-budget" data-id="'+w.id+'">'+ICON("add")+'Set up budget</button></div>';
   }
-  /* Header: account-scope dropdown on the left, the year-to-date headline variance on the right. No FY selector, no eyebrow, no floating %. */
+  /* Header — same two-row grid every other widget uses (Deposits' .dep-hd): row 1 is the toolbar (scope chip on the LEFT, Bar/Line/Table view toggle on the RIGHT); row 2 is the KPI (the year-to-date variance number + badge on the LEFT, the Period/Month/YTD grain toggle on the RIGHT, inline with the number). KPI number and badge always live on the left, never centred or right. At Explore size the global view/grain toggles drop out because each of the two panels carries its own. */
   function bgtHeaderBlock(w,controlsOnly){
-    var av=w.acctview||"income",special=(av==="special");
+    var av=w.acctview||"income",special=(av==="special"),xw=(w.size==="xwide");
     var rows=bgtSet(w);
-    if(controlsOnly)return '<div class="dep-hd" style="grid-template-columns:1fr;padding-bottom:8px"><div class="bgt-ctlrow">'+bgtScopeChip(w)+'</div></div>';
+    var shapeToggle=xw?"":bgtShapeToggle(w,w.bshape||"bar","set-bgt-shape");
+    var grainToggle=xw?"":bgtGrainToggle(w,w.bgrain||"month","set-bgt-grain");
+    if(controlsOnly)return '<div class="dep-hd"><div class="dep-hd-top">'+bgtScopeChip(w)+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div></div>';
     var thru=bgtThru(rows),sumB=thru.reduce(function(s,r){return s+r.budget;},0),sumA=thru.reduce(function(s,r){return s+r.actual;},0);
     var variance=thru.length?bgtVariance(av,sumB,sumA):null;
     var explainTip=(thru.length?(money(Math.abs(variance))+' '+(special?(variance>=0?"over":"under"):(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than")))+' budget, year to date.'):('Nothing posted yet.')).replace(/"/g,"&quot;");
     var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance,special)+'<span class="material-symbols-rounded bgt-info-ic" data-i="info" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
-    return '<div class="dep-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+bgtScopeChip(w)+'</div></div><div class="dep-hd-num">'+numInner+'</div></div>';
+    return '<div class="dep-hd">'+
+    '<div class="dep-hd-top">'+bgtScopeChip(w)+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div>'+
+    '<div class="dep-hd-num">'+numInner+'<div class="dep-hd-r">'+grainToggle+'</div></div>'+
+    '</div>';
   }
-  /* The view bar: grain toggle (left) + shape toggle (right), directly on top of the chart/table it controls. */
-  function bgtViewBar(w){var grain=w.bgrain||"month",fmt=w.bshape||"bar";return '<div class="bgt-viewbar"><div class="bgt-viewbar-l">'+bgtGrainToggle(w,grain,"set-bgt-grain")+'</div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-shape")+'</div></div>';}
   /* Grouped bars from already-grained rows. Two purples only, no red; signed variance under each bar; formatted popover data on the column; full text in an sr-only span. */
   function bgtBars(w,rows,grain){
     var av=w.acctview||"income",special=(av==="special"),cum=(grain==="ytd");
