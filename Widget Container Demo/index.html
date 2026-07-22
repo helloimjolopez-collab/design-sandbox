@@ -1143,10 +1143,9 @@
     var neg=v<0,cls=neutral?"neu":(neg?"neg":"pos"),pct=(budget>0)?(Math.round(Math.abs(v)/budget*1000)/10):null;
     return '<span class="bgt-tv '+cls+'">'+(neg?"−":"+")+money(Math.abs(v))+(pct!=null?'<span class="bgt-tvpct">'+pct+'%</span>':"")+'</span>';
   }
-  function bgtTable(w,grain){
+  function bgtTable(w){
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
-    var full=bgtSet(w);
-    var base=bgtRowsAt(w,grain);
+    var base=bgtViewRows(w);
     var rows=base.map(function(r,i){return {period:r.period,budget:r.budget,actual:r.actual,idx:i,variance:r.actual!=null?bgtVariance(vt,r.budget,r.actual):null};});
     var sk=(w.bsort||"idx-asc").split("-"),key=sk[0],dir=sk[1]==="desc"?-1:1;
     function val(x){if(key==="budget")return x.budget;if(key==="actual")return x.actual==null?-Infinity:x.actual;if(key==="variance")return x.variance==null?-Infinity:x.variance;return x.idx;}
@@ -1155,15 +1154,15 @@
     var head='<div class="bgt-trow bgt-thead">'+sh("idx","Period","bgt-tp")+sh("budget","Budget","bgt-tc")+sh("actual","Actual","bgt-tc")+sh("variance","Variance","bgt-tv")+'</div>';
     var body=rows.map(function(r){
       return '<div class="bgt-trow"><span class="bgt-tp">'+r.period+'</span><span class="bgt-tc">'+money(r.budget)+'</span><span class="bgt-tc">'+(r.actual!=null?money(r.actual):'<span class="bgt-caption">—</span>')+'</span>'+bgtVarCell(r.variance,neutral,r.budget)+'</div>';}).join("");
-    var thru=bgtThru(full),totalV=thru.length?bgtVariance(vt,thru.reduce(function(s,r){return s+r.budget;},0),thru.reduce(function(s,r){return s+r.actual;},0)):null;
-    return '<div class="bgt-tbl"><div class="bgt-tscroll">'+head+body+'</div><div class="bgt-ttot"><span>Year-to-date total</span>'+bgtVarCell(totalV,neutral,thru.reduce(function(s,r){return s+r.budget;},0))+'</div></div>';}
-  /* Render whichever shape at whichever grain — the one place grain × shape combine. */
-  function bgtView(w,grain,fmt){
+    var thruR=base.filter(function(r){return r.actual!=null;}),tB=thruR.reduce(function(s,r){return s+r.budget;},0),totalV=thruR.length?bgtVariance(vt,tB,thruR.reduce(function(s,r){return s+r.actual;},0)):null;
+    return '<div class="bgt-tbl"><div class="bgt-tscroll">'+head+body+'</div><div class="bgt-ttot"><span>Total, posted so far</span>'+bgtVarCell(totalV,neutral,tB)+'</div></div>';}
+  /* Render the chosen shape over the current interval×span rows — the one place they combine. */
+  function bgtView(w,fmt){
     var av=w.acctview||"income";
     if(!bgtHasBudget(bgtSet(w)))return bgtNoBudgetState(w,av);
-    if(fmt==="table")return bgtTable(w,grain);
-    var rows=bgtRowsAt(w,grain);
-    return (fmt==="line")?bgtLine(w,rows,grain):bgtBars(w,rows,grain);
+    if(fmt==="table")return bgtTable(w);
+    var rows=bgtViewRows(w);
+    return (fmt==="line")?bgtLine(w,rows):bgtBars(w,rows);
   }
   function bgtGlance(w){
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
@@ -1172,12 +1171,11 @@
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+label+'</span></span>'+
       '<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div>'+
       '</div></div>';
-    var ytdThru=bgtThru(bgtYTD(rows)),latest=ytdThru.length?ytdThru[ytdThru.length-1]:null;
-    var v=latest?bgtVariance(vt,latest.budget,latest.actual):null;
+    var sv=bgtSpanVariance(w,vt),v=sv.v;
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+label+'</span></span>'+
       '<div class="metric-value">'+money(Math.abs(v||0))+'</div>'+
-      '<div class="gl-sub">'+bgtFavPill(v,neutral)+'<span class="bgt-caption">vs. budget, YTD</span></div>'+
+      '<div class="gl-sub">'+bgtFavPill(v,neutral)+'<span class="bgt-caption">vs. budget, '+bgtSpanLabel(w.bspan||"year")+'</span></div>'+
       '</div></div>';}
   /* Data-fetch loading: scope / report / report-line changes fetch new data, so they flip a transient bloading flag and clear it after a beat — the widget shows a shimmer skeleton meanwhile. Grain / shape / sort are client-side re-renders of data already in hand, so they never trigger a load. */
   function bgtLoad(w){w.bloading=true;clearTimeout(timers["bgt-"+w.id]);timers["bgt-"+w.id]=setTimeout(function(){w.bloading=false;render();},850);}
