@@ -2710,6 +2710,66 @@ function DoDont({ type, points }) {
   );
 }
 
+/* Dedicated tab: every Spired-logo animation in one place. */
+function SpiredLogoPage() {
+  const [run, setRun] = useState(0);
+  const stage = { display: "flex", alignItems: "center", justifyContent: "center", gap: 44, flexWrap: "wrap", padding: "34px 24px" };
+  const cap = { fontSize: 11.5, fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 10, textAlign: "center" };
+  const cell = (label, node) => (<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>{node}<span style={cap}>{label}</span></div>);
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader gradient tone="motion" title="Spired Logo Animation"
+          lead="Every way the Spired mark moves: the boot assembly on app load, the loading marks it becomes, and the hover replay of its ascent."
+          action={<button className="spd-btn spd-btn--onhero" onClick={() => setRun((r) => r + 1)}><Icon name="replay" size={17} /> Replay</button>} />
+
+        <ShowcaseLabel>Boot, the mark assembles on app load</ShowcaseLabel>
+        <div key={"boot" + run} className="spd-card" style={{ ...stage, minHeight: 150 }}><BootLogo /></div>
+
+        <ShowcaseLabel>Loading marks, the logo at work</ShowcaseLabel>
+        <div className="spd-card" style={stage}>
+          {cell("Full colour", <SpiredLoader size={48} />)}
+          {cell("Grayscale (in-container)", <SpiredLoader size={40} mono="var(--primitive-color-neutral-300)" />)}
+          {cell("Ring (buttons)", <RingLoader size={30} />)}
+        </div>
+
+        <ShowcaseLabel>Mark, hover to replay the ascent</ShowcaseLabel>
+        <div className="spd-card" style={stage}>
+          <button className="spd-topnav__logo" style={{ width: 64, height: 64 }} aria-label="Spired mark">
+            <span className="spd-topnav__logo-mark"><LogoMark size={40} /></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Dedicated tab: Spot, the AI assistant mark, and its animations/renditions. */
+function AiMarkPage() {
+  return (
+    <div className="spd-page">
+      <div className="spd-page__inner" style={{ maxWidth: 980 }}>
+        <ConceptHeader gradient tone="feedback" title="AI Assistant Logo, Spot"
+          lead="The Halo. A filled gradient mark whose colours cycle light → yellow → vibrant lilac while the centre grows, shrinks and recolours; hover blooms it with a squash-stretch." />
+
+        <ShowcaseLabel>The living mark</ShowcaseLabel>
+        <div className="spd-card" style={{ display: "flex", alignItems: "center", gap: 40, flexWrap: "wrap", padding: "32px 28px" }}>
+          <SpotMark size={96} />
+          <SpotMark size={56} />
+          <div className="spd-askspot" style={{ maxWidth: 340, margin: 0 }}>
+            <span className="spd-askspot__mark"><SpotMark size={40} /></span>
+            <span className="spd-askspot__text"><strong>Ask Spot</strong>&nbsp;&nbsp;anything…</span>
+            <span className="spd-askspot__go"><Icon name="arrow_upward" size={20} /></span>
+          </div>
+        </div>
+
+        <ShowcaseLabel>Renditions</ShowcaseLabel>
+        <SpotShowcase />
+      </div>
+    </div>
+  );
+}
+
 function MotionPage() {
   const [run, setRun] = useState(0);
   return (
