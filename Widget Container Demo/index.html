@@ -1005,20 +1005,39 @@
     return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No '+lbl+' set up</div><div class="state-sub">Actuals are posting, but nothing has been entered yet to compare them against.</div><button class="btn outlined" data-action="add-budget" data-id="'+w.id+'">'+ICON("add")+'Set up budget</button></div>';
   }
   /* Header — same two-row grid every other widget uses (Deposits' .dep-hd): row 1 is the toolbar (scope chip on the LEFT, Bar/Line/Table view toggle on the RIGHT); row 2 is the KPI (the year-to-date variance number + badge on the LEFT, the Period/Month/YTD grain toggle on the RIGHT, inline with the number). KPI number and badge always live on the left, never centred or right. At Explore size the global view/grain toggles drop out because each of the two panels carries its own. */
-  function bgtHeaderBlock(w,controlsOnly){
-    var av=w.acctview||"income",special=(av==="special"),xw=(w.size==="xwide");
+  /* A plain-language sentence for the headline badge tooltip, e.g. "Favourable: income has come in $5,900 higher than budgeted, year to date." — reads like a person explaining it, not a jargon fragment. */
+  function bgtExplain(w,vt,neutral,variance,sumA,sumB){
+    if(variance==null)return "Nothing posted yet for this scope.";
+    var amt=money(Math.abs(variance));
+    if(neutral){var over=sumA>sumB;return amt+" "+(over?"over":"under")+" budget, year to date.";}
+    var fav=variance>=0;
+    if(vt==="expense")return (fav?"Favourable: spending is ":"Unfavourable: spending is ")+amt+(fav?" under budget":" over budget")+", year to date.";
+    return (fav?"Favourable: income has come in ":"Unfavourable: income has come in ")+amt+(fav?" higher":" lower")+" than budgeted, year to date.";
+  }
+  function bgtHeaderBlock(w,mode){
+    var xw=(w.size==="xwide"),loading=(mode==="loading"),controlsOnly=(mode===true);
+    var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
     var rows=bgtSet(w);
     var shapeToggle=xw?"":bgtShapeToggle(w,w.bshape||"bar","set-bgt-shape");
     var grainToggle=xw?"":bgtGrainToggle(w,w.bgrain||"month","set-bgt-grain");
     if(controlsOnly)return '<div class="dep-hd"><div class="dep-hd-top">'+bgtScopeChip(w)+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div></div>';
-    var thru=bgtThru(rows),sumB=thru.reduce(function(s,r){return s+r.budget;},0),sumA=thru.reduce(function(s,r){return s+r.actual;},0);
-    var variance=thru.length?bgtVariance(av,sumB,sumA):null;
-    var explainTip=(thru.length?(money(Math.abs(variance))+' '+(special?(variance>=0?"over":"under"):(av==="expense"?(variance>=0?"under":"over"):(variance>=0?"more than":"less than")))+' budget, year to date.'):('Nothing posted yet.')).replace(/"/g,"&quot;");
-    var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance,special)+'<span class="material-symbols-rounded bgt-info-ic" data-i="info" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
+    var numInner;
+    if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
+    else{
+      var thru=bgtThru(rows),sumB=thru.reduce(function(s,r){return s+r.budget;},0),sumA=thru.reduce(function(s,r){return s+r.actual;},0);
+      var variance=thru.length?bgtVariance(vt,sumB,sumA):null;
+      var explainTip=bgtExplain(w,vt,neutral,variance,sumA,sumB).replace(/"/g,"&quot;");
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance,neutral)+'<span class="material-symbols-rounded bgt-info-ic" data-i="info" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
+    }
     return '<div class="dep-hd">'+
     '<div class="dep-hd-top">'+bgtScopeChip(w)+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div>'+
     '<div class="dep-hd-num">'+numInner+'<div class="dep-hd-r">'+grainToggle+'</div></div>'+
     '</div>';
+  }
+  /* Skeleton shown while data loads (scope / report / line changes fetch). A gentle shimmer over placeholder bars, matching the real chart's shape, plus a soft spinner and label — reused across widgets. */
+  function bgtSkeleton(){
+    var bars="";[62,80,54,88,70,95,60].forEach(function(h){bars+='<div class="bgt-sk-col"><span class="sk bgt-sk-bar" style="height:'+h+'%"></span></div>';});
+    return '<div class="bgt-skel"><div class="bgt-skel-plot">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';
   }
   /* Grouped bars from already-grained rows. Two purples only, no red; signed variance under each bar; formatted popover data on the column; full text in an sr-only span. */
   function bgtBars(w,rows,grain){
