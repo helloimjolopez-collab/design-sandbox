@@ -1270,7 +1270,16 @@
   .spd-spotmark__core { transform-box: fill-box; transform-origin: center; animation: spd-spot-core 3.8s var(--motion-easing-breath) infinite; }
   @keyframes spd-spot-rock { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
   @keyframes spd-spot-core { 0%,100% { transform: scale(1); opacity: 0.92; } 50% { transform: scale(0.86); opacity: 1; } }
-  @media (prefers-reduced-motion: reduce) { .spd-spotmark__halo, .spd-spotmark__core { animation: none; } .spd-spotmark animate { display: none; } }
+  /* Hover = a delightful bouncy roll + pop of the whole mark. */
+  .spd-askspot { --spot-hover: 0; }
+  .spd-spotmark { transform-box: fill-box; transform-origin: center; }
+  .spd-askspot:hover .spd-spotmark { animation: spd-spot-hover 0.85s var(--motion-easing-spring); }
+  @keyframes spd-spot-hover {
+    0% { transform: rotate(0deg) scale(1); }
+    55% { transform: rotate(210deg) scale(1.14); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) { .spd-spotmark__halo, .spd-spotmark__core { animation: none; } .spd-spotmark animate { display: none; } .spd-askspot:hover .spd-spotmark { animation: none; } }
 
   /* Ask Spot CTA — a LIGHT prompt bar (its own raised paper surface) whose
      primary-coloured send button is the visible primary action that pops. */
