@@ -2274,6 +2274,31 @@ function showConfirm({title, body, cancelLabel, actionLabel, actionStyle, onConf
 }
 function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); }
 
+/* ─── Extend expiry dialog ─────────────────────────────────────────── */
+function openExtendExpiry(cid, currentExpiry){
+  closeAllMenus();
+  const modal = document.getElementById('extend-expiry-modal');
+  const currentDateEl = document.getElementById('extend-current-date');
+  const input = document.getElementById('extend-expiry-input');
+  if(currentDateEl) currentDateEl.textContent = currentExpiry;
+  // Pre-fill the input with a date 90 days from today as a sensible default
+  const d = new Date(); d.setDate(d.getDate()+90);
+  if(input) input.value = d.toISOString().split('T')[0];
+  modal._cid = cid;
+  modal.classList.add('open');
+}
+function closeExtendExpiry(){ document.getElementById('extend-expiry-modal').classList.remove('open'); }
+function confirmExtendExpiry(){
+  const input = document.getElementById('extend-expiry-input');
+  if(input && input.value){
+    const d = new Date(input.value + 'T00:00:00');
+    const label = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    toast('Expiry updated to ' + label);
+  }
+  closeExtendExpiry();
+  if(STATE.currentPerson) openProfile(STATE.currentPerson.id);
+}
+
 /* ─── Cancel invite (invite only — case stays open) ───────────────── */
 function cancelInvite(pid, cid){
   showConfirm({
