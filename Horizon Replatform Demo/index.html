@@ -3005,6 +3005,7 @@ function renderLinkManagement(person, c){
   const isBounced = c.status === 'email-bounced';
   const isExpiring = c.status === 'invite-expiring';
   const isCancelled = c.status === 'invite-cancelled';
+  const isExpired = c.status === 'invite-expired';
   const isEmailInvite = c.via === 'invite';
   const lmMenuId = `lm-menu-${c.id}`;
 
@@ -3012,6 +3013,27 @@ function renderLinkManagement(person, c){
   if(c.via==='invite') deliveredVia = 'Email invite';
   else if(c.via==='flow') deliveredVia = 'Screening flow';
   else if(c.via==='integration') deliveredVia = person.source && person.source!=='PMM' ? person.source : 'CRM integration';
+
+  // Expired state — show its own UI with "Generate new invite" action
+  if(isExpired){
+    return `
+    <div class="link-mgmt">
+      <div style="font-size:12px;font-weight:500;color:var(--fg3);margin-bottom:8px">Invite link</div>
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--fill-static-neutral-subtle);border:1px solid var(--stroke-static-neutral-subtle);border-radius:var(--r6)">
+        <svg width="14" height="14" style="color:var(--fg3);flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><use href="#ms-link-off"/></svg>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;color:var(--fg2)">Link expired ${esc(expiryDate)}</div>
+          <div style="font-size:12px;color:var(--fg3);margin-top:2px">The applicant did not complete the consent form before the link expired.</div>
+          <div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-sm btn-primary" onclick="toast('New invite sent to ${esc(person.email)}');closeAllMenus()">
+              ${isEmailInvite ? 'Resend invite email' : 'Generate new link'}
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="openExtendExpiry('${c.id}','${expiryDate}')">Set new expiry first</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
 
   const expiryColor = isExpiring ? 'var(--amber)' : 'var(--fg3)';
   const expiryWeight = isExpiring ? '600' : '400';
@@ -3040,8 +3062,8 @@ function renderLinkManagement(person, c){
         ${isEmailInvite ? `<div class="drop-item" onclick="toast('Invite resent to ${esc(person.email)}');closeAllMenus()">
           <svg width="13" height="13" viewBox="0 0 24 24"><use href="#ms-mail"/></svg>Resend email
         </div>` : ''}
-        <div class="drop-item" onclick="toast('Expiry extended by 30 days');closeAllMenus()">
-          <svg width="13" height="13" viewBox="0 0 20 20"><use href="#ic-clock"/></svg>Extend expiry
+        <div class="drop-item" onclick="openExtendExpiry('${c.id}','${expiryDate}');closeAllMenus()">
+          <svg width="13" height="13" viewBox="0 0 20 20"><use href="#ic-clock"/></svg>Change expiry date
         </div>
         <div class="drop-sep"></div>
         <div class="drop-item danger" onclick="toast('Invite cancelled');closeAllMenus()">
