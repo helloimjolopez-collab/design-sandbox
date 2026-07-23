@@ -1082,6 +1082,9 @@
     return order.map(function(k){var g=groups[k];return {period:g.period,budget:g.budget,actual:g.anyA?g.actual:null,partial:g.anyA&&!g.allA};});
   }
   function bgtViewRows(w){var span=w.bspan||"year";return bgtAgg(bgtSpanMonthly(w,span),w.binterval||"month",bgtSpanYears(w,span).length>1);}
+  /* A line/trend only makes sense across two or more points, so with a single group (e.g. This fiscal period at Month grain, or any span at Year grain that yields one year) the Line view is not available. We disable it in the toggle AND snap an already-selected Line back to Bar so the user never lands on an empty chart. */
+  function bgtLineOK(w){return bgtViewRows(w).length>=2;}
+  function bgtSnapShape(w){if((w.bshape||"bar")==="line"&&!bgtLineOK(w))w.bshape="bar";}
   /* Variance over the selected span's posted actuals — so the headline KPI reflects exactly what the chart is showing. */
   function bgtSpanVariance(w,vt){var m=bgtSpanMonthly(w,w.bspan||"year").filter(function(r){return r.actual!=null;});if(!m.length)return {v:null,sumA:0,sumB:0};var sumB=m.reduce(function(s,r){return s+r.budget;},0),sumA=m.reduce(function(s,r){return s+r.actual;},0);return {v:bgtVariance(vt,sumB,sumA),sumA:sumA,sumB:sumB};}
   /* Single, self-contained empty state: icon + one line + the set-up-budget action. No header, no eyebrow, no KPI block above it. */
