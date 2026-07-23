@@ -3139,6 +3139,8 @@ function renderPanelBody(person, targetCaseId){
   const pb = document.getElementById('panel-body');
   const hasPastCases = person.cases.length > 1;
   const actionHtml = renderPanelAction(person, c);
+  const caseCancellable = canCancelCase(c) && c.status !== 'case-cancelled';
+  const caseMenuId = `case-hd-menu-${c.id}`;
 
   pb.innerHTML = `<div class="pnl-cards">
     ${actionHtml ? `<div class="pnl-action-card">${actionHtml}</div>` : ''}
@@ -3156,6 +3158,16 @@ function renderPanelBody(person, targetCaseId){
     <div class="pnl-card current-case-card">
       <div class="pnl-card-hd">
         <span class="pnl-card-title">Current case</span>
+        ${caseCancellable ? `<div style="position:relative">
+          <button class="icon-btn" style="width:26px;height:26px" onclick="toggleLmMenu('${caseMenuId}',event)" title="Case options">
+            <svg width="14" height="14" viewBox="0 0 20 20"><use href="#ic-more"/></svg>
+          </button>
+          <div class="drop-menu" id="${caseMenuId}" style="right:0;top:100%;min-width:160px">
+            <div class="drop-item danger" onclick="cancelCase('${person.id}','${c.id}');closeAllMenus()">
+              <svg width="13" height="13" viewBox="0 0 24 24"><use href="#ms-cancel"/></svg>Cancel this case
+            </div>
+          </div>
+        </div>` : ''}
       </div>
       <div class="pnl-card-body">${renderCurrentCase(person, c)}</div>
     </div>
