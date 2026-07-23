@@ -217,8 +217,12 @@
   .bgt-info-ic:hover,.bgt-info-ic:focus-visible{color:var(--txt-primary);}
   /* Controls are real segmented toggles (Account scope, Period) + a Fiscal-year chip. Toggles for the small fixed option sets (2-3 items), a dropdown chip only where the list genuinely grows (fiscal years, special reports). */
   .bgt-ctlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .bgt-legend{display:flex;align-items:center;gap:16px;padding:10px 16px 6px;font-size:12px;color:var(--txt-subtle);flex-wrap:wrap;}
+  /* Legend row now also carries the M/Q/P/Y interval toggle on its right — the legend items sit left, the interval control right, so "what the bars mean" and "how they're sliced" share one line just above the chart. */
+  .bgt-legend{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px 6px;font-size:12px;color:var(--txt-subtle);flex-wrap:wrap;}
+  .bgt-lg-items{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
   .bgt-lg{display:inline-flex;align-items:center;gap:6px;}
+  /* Table view's own little toolbar to hold the interval toggle (the table has no legend). */
+  .bgt-tbar{display:flex;justify-content:flex-end;padding:6px 0 8px;}
   /* Two chart colours only: light purple Budget (the plan), dark purple Actual (the result). No red — favourability is read from the hover popover and the headline pill, never from the bar colour itself. */
   .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;background:var(--am-200);}
   .bgt-sw-actual{background:var(--am-600);}
@@ -1195,8 +1199,11 @@
     var interval=w[side==="a"?"iA":"iB"]||"month";
     var fmt=w[side==="a"?"fA":"fB"]||(side==="a"?"bar":"line");
     var wv=Object.assign({},w,{binterval:interval});
-    var bar='<div class="bgt-panel-hd"><div class="bgt-viewbar-l">'+bgtIntervalToggle(w,interval,"set-bgt-pinterval",' data-panel="'+side+'"')+'</div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-pshape",' data-panel="'+side+'"')+'</div></div>';
-    return '<div class="bgt-explore-col">'+bar+bgtView(wv,fmt)+'</div>';
+    /* Panel toolbar: shape toggle on the left; the M/Q/P/Y interval toggle threaded into the chart legend below (same as single-panel), so each panel's interval sits with its own chart. */
+    var iv=bgtIntervalToggle(w,interval,"set-bgt-pinterval",' data-panel="'+side+'"');
+    var bar='<div class="bgt-panel-hd"><div class="bgt-viewbar-l"></div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-pshape",' data-panel="'+side+'"')+'</div></div>';
+    var chart=(fmt==="table")?bgtTable(wv,iv):(fmt==="line"?bgtLine(wv,bgtViewRows(wv),iv):bgtBars(wv,bgtViewRows(wv),iv));
+    return '<div class="bgt-explore-col">'+bar+chart+'</div>';
   }
   /* Sign-ups: a list with NO natural total, so the optional top metric IS shown (number + trend). Changing the period changes the number/trend only — the list stays "most recent". */
   var SIGNUPS=[{name:"Ava Thompson",group:"Youth",when:"2h ago"},{name:"Liam Carter",group:"Choir",when:"5h ago"},{name:"Noah Bennett",group:"Men's Group",when:"Yesterday"},{name:"Emma Davis",group:"Volunteers",when:"Yesterday"},{name:"Olivia Wright",group:"Youth",when:"2 days ago"},{name:"Mason Reed",group:"Missions",when:"3 days ago"},{name:"Sophia Hughes",group:"Choir",when:"3 days ago"},{name:"Jack Morgan",group:"Youth",when:"4 days ago"}];
