@@ -758,6 +758,54 @@
   function depTypes(w){var seen={},out=["All types"];depData(w).forEach(function(a){if(!seen[a.type]){seen[a.type]=1;out.push(a.type);}});return out;}
   function money(n){return "$"+n.toLocaleString();}
 
+/* === MY STATUS (mys) data === */
+  var MYS_AREA = {GL:"GL and posting", AP:"Accounts Payable", PUR:"Purchasing", HR:"Payroll and HR"};
+  var MYS_QUERIES = [
+    {id:"q_muje",  area:"GL", urgency:"action", name:"My unposted journal entries",           sys:"My Unposted Journal Entries",                    count:7,   click:"nav", navTo:"GL, Unposted Journals"},
+    {id:"q_uje",   area:"GL", urgency:"action", name:"Unposted journal entries (all users)",   sys:"Unposted Journal Entries",                        count:12,  click:"nav", navTo:"GL, Unposted Journals"},
+    {id:"q_mubank",area:"GL", urgency:"action", name:"My unposted bank transactions",          sys:"My Unposted Bank Transactions",                   count:0,   click:"nav", navTo:"Bank Reconciliation, Unposted"},
+    {id:"q_mucc",  area:"GL", urgency:"action", name:"My unposted credit card transactions",   sys:"My Unposted Credit Card Transactions",            count:4,   click:"nav", navTo:"Credit Cards, Unposted"},
+    {id:"q_muap",  area:"GL", urgency:"action", name:"My unposted AP transactions",            sys:"My Unposted AP Transactions",                     count:2,   click:"nav", navTo:"Accounts Payable, Unposted"},
+    {id:"q_mupmc", area:"GL", urgency:"action", name:"My unposted payroll manual checks",      sys:"My Unposted Payroll Manual Checks",               count:1,   click:"nav", navTo:"Payroll, Manual Checks"},
+    {id:"q_glnew", area:"GL", urgency:"info",   name:"GL accounts added in the last 30 days",  sys:"General Ledger Accounts Added Within Last 30 Days",count:6,  click:"detail", records:[
+        {Account:"1055 Operating Checking 2", Type:"Asset", "Added by":"J. Lopez", "Date added":"12 Jul 2026"},
+        {Account:"4120 Youth Camp Income",   Type:"Income","Added by":"A. Reid",   "Date added":"09 Jul 2026"}]},
+    {id:"q_crs",   area:"GL", urgency:"info",   name:"Check register summary",                 sys:"Check Register Summary",                          count:42,  click:"detail", records:[
+        {Date:"18 Jul 2026", "Check #":"10432", Payee:"City Utilities",       Amount:"$1,204.50", Status:"Cleared"},
+        {Date:"17 Jul 2026", "Check #":"10431", Payee:"Grace Media Supplies", Amount:"$389.00",   Status:"Outstanding"},
+        {Date:"15 Jul 2026", "Check #":"10430", Payee:"Faithful Cleaning Co", Amount:"$640.00",   Status:"Cleared"}]},
+    {id:"q_crd",   area:"GL", urgency:"info",   name:"Check register detail",                  sys:"Check Register Detail",                           count:128, click:"detail", records:[
+        {Date:"18 Jul 2026", "Check #":"10432", Account:"6200 Utilities", Amount:"$1,204.50", Memo:"July electric"},
+        {Date:"17 Jul 2026", "Check #":"10431", Account:"6410 Supplies",  Amount:"$389.00",   Memo:"AV cables"}]},
+    {id:"q_apdue", area:"AP", urgency:"action", name:"Unpaid accounts payable by due date",    sys:"Unpaid Accounts Payable by Due Date",             count:5, click:"detail", ctx:"2 overdue, oldest 12 days", records:[
+        {Vendor:"City Utilities",       Invoice:"INV-88213", "Due date":"11 Jul 2026", Amount:"$1,204.50", Status:"Overdue"},
+        {Vendor:"Faithful Cleaning Co", Invoice:"INV-88190", "Due date":"14 Jul 2026", Amount:"$640.00",   Status:"Overdue"},
+        {Vendor:"Grace Media Supplies", Invoice:"INV-88301", "Due date":"28 Jul 2026", Amount:"$389.00",   Status:"Open"}]},
+    {id:"q_aprec", area:"AP", urgency:"action", name:"AP recurring dollars by due date",       sys:"AP Recurring Dollars By Due Date",                count:3, click:"detail", ctx:"$4,120 due", records:[
+        {Vendor:"Insurance Partners", "Due date":"25 Jul 2026", Amount:"$2,500.00", Frequency:"Monthly"},
+        {Vendor:"Landscaping Plus",   "Due date":"30 Jul 2026", Amount:"$820.00",   Frequency:"Monthly"}]},
+    {id:"q_prapp", area:"PUR",urgency:"action", name:"Purchasing requests needing my approval",     sys:"Purchasing Requests Needing My Approval",      count:3, click:"nav", navTo:"Purchasing, My Approvals"},
+    {id:"q_prnext",area:"PUR",urgency:"action", name:"Purchasing requests needing my approval next",sys:"Purchasing Requests Needing My Approval Next", count:2, click:"nav", navTo:"Purchasing, Upcoming Approvals"},
+    {id:"q_revnow",area:"HR", urgency:"action", name:"Employees needing review now",           sys:"Employees Needing Review Now",                    count:2, click:"detail", records:[
+        {Employee:"Dana Whitfield", Role:"Ministry Assistant", "Review due":"20 Jul 2026"},
+        {Employee:"Marcus Lee",     Role:"Facilities",         "Review due":"22 Jul 2026"}]},
+    {id:"q_revmo", area:"HR", urgency:"info",   name:"Employees needing review within next month", sys:"Employees Needing Review Within Next Month",   count:5, click:"detail", records:[
+        {Employee:"Priya Nair", Role:"Accounting Clerk", "Review due":"09 Aug 2026"}]},
+    {id:"q_clock", area:"HR", urgency:"info",   name:"Active employee time clock info",        sys:"Active Employee Time Clock Info",                 count:9, click:"detail", records:[
+        {Employee:"Sam Ortiz", "Clocked in":"08:02", Department:"Childcare"}]},
+    {id:"q_ot",    area:"HR", urgency:"info",   name:"Employee overtime hours last payroll",   sys:"Employee Overtime Hours Last Payroll",            count:4, click:"detail", records:[
+        {Employee:"Marcus Lee", "OT hours":"6.5", "Pay period":"01 to 15 Jul"}]},
+    {id:"q_pto",   area:"HR", urgency:"info",   name:"Scheduled time off",                     sys:"Scheduled Time Off",                              count:3, click:"detail", records:[
+        {Employee:"Dana Whitfield", "From":"28 Jul 2026", "To":"01 Aug 2026", Type:"Vacation"}]},
+    {id:"q_bdmo",  area:"HR", urgency:"info",   name:"Employee birthdays this month",          sys:"Employee Birthdays This Month",                   count:0, click:"detail", records:[]},
+    {id:"q_bdnext",area:"HR", urgency:"info",   name:"Employee birthdays next month",          sys:"Employee Birthdays Next Month",                   count:8, click:"detail", records:[
+        {Employee:"Priya Nair", "Birthday":"03 Aug"}]},
+    {id:"q_bdwk",  area:"HR", urgency:"info",   name:"Employee birthdays next week",           sys:"Employee Birthdays Next Week",                    count:1, click:"detail", records:[
+        {Employee:"Sam Ortiz", "Birthday":"29 Jul"}]}
+  ];
+  var MYS_DEFAULT = ["q_muje","q_prapp","q_apdue","q_crs","q_revnow","q_mubank","q_bdmo"];
+  function mysFind(id){for(var i=0;i<MYS_QUERIES.length;i++)if(MYS_QUERIES[i].id===id)return MYS_QUERIES[i];return null;}
+
   var dashboards=[
     {id:"d1",name:"Dashboard",custom:true,widgets:[
       {id:"dep",title:"Deposits on Hand",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
