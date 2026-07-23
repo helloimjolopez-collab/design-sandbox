@@ -1792,11 +1792,13 @@ function filteredHomePeople(){
   return people;
 }
 
-function renderBadge(statusKey){
+function renderBadge(statusKey, lastUpdated){
   const s = STATUS[statusKey];
   if(!s) return '';
   const icon = s.icon || 'ms-flag';
-  return `<span class="badge ${s.cls}" data-tip="${esc(s.tip)}" style="cursor:pointer"><svg class="bic" viewBox="0 0 24 24"><use href="#${icon}"/></svg>${esc(s.label)}</span>`;
+  const dateLine = lastUpdated ? `&#10;Last updated: ${lastUpdated}` : '';
+  const tip = esc(s.tip) + dateLine;
+  return `<span class="badge ${s.cls}" data-tip="${tip}" style="cursor:pointer"><svg class="bic" viewBox="0 0 24 24"><use href="#${icon}"/></svg>${esc(s.label)}</span>`;
 }
 
 function renderVia(via){
@@ -1906,7 +1908,7 @@ function renderHomeRow(person){
     <td class="home-col-created" style="font-size:13px;color:var(--fg2)">${esc(created)}</td>
     <td class="home-col-updated" style="font-size:13px;color:var(--fg2);${updDisplay}">${esc(updated)}</td>
     <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">
-      ${renderBadge(c.status)}
+      ${renderBadge(c.status, lastUpdatedDate(c))}
     </td>
     <td class="td-act-r" onclick="event.stopPropagation()">
       <div class="act-cell">
