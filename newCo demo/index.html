@@ -3275,7 +3275,7 @@ function CtxFullChat() {
         <span style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}><Icon name="close" size={18} /></span>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 15, padding: "28px 22px", background: "var(--semantic-color-light-mode-surface-sheet-base)" }}>
-        <CollabMark variant="live" size={62} />
+        <CollabMark variant="grain" size={64} />
         <p style={{ fontSize: 19, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>How can I help, Jo?</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", maxWidth: 340 }}>
           <CtxPill tone="soft">Summarize last Sunday</CtxPill>
@@ -3285,7 +3285,7 @@ function CtxFullChat() {
       </div>
       <div style={{ padding: "12px 14px", borderTop: faint }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, padding: "0 6px 0 12px", borderRadius: 999, background: "var(--semantic-color-light-mode-surface-widget-base)", border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)", boxShadow: "var(--spd-elevation-widget)" }}>
-          <CollabMark variant="live" size={22} />
+          <CollabMark variant="solid" size={24} />
           <span style={{ flex: 1, fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)" }}>Ask Collab anything…</span>
           <span style={{ width: 32, height: 32, borderRadius: 999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--semantic-color-light-mode-fill-action-primary-base)", color: "#FFFFFF" }}><Icon name="arrow_upward" size={17} /></span>
         </div>
@@ -3293,32 +3293,41 @@ function CtxFullChat() {
     </CtxFrame>
   );
 }
-/* Working states — thinking / writing / "getting Spired". */
+/* Thinking: the little bars rise (Spired-piece motion); the phrase can vary. */
+function CollabThinking() {
+  const phrases = ["Collab is thinking", "Getting ’spired", "Working on it"];
+  const [i, setI] = useState(0);
+  useEffect(() => { const id = setInterval(() => setI((x) => (x + 1) % 3), 2200); return () => clearInterval(id); }, []);
+  return (
+    <div style={{ padding: "26px 22px", display: "flex", alignItems: "center", gap: 13, minHeight: 96 }}>
+      <span className="spd-thinkbars"><i /><i /><i /></span>
+      <span style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>{phrases[i]}…</span>
+    </div>
+  );
+}
+/* Working states — thinking (rising bars), a spinning mark, and streaming. */
 function CtxWorking() {
   const g = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 18, alignItems: "start" };
   return (
     <div style={g}>
-      <CtxFrame label="Thinking: the mark animates while a typing indicator carries the wait.">
-        <div style={{ padding: "26px 22px", display: "flex", alignItems: "center", gap: 12, minHeight: 96 }}>
-          <CollabMark variant="live" size={30} />
-          <span style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>Collab is thinking</span>
-          <span className="spd-typing"><i /><i /><i /></span>
+      <CtxFrame label="Thinking: three little bars rise like the Spired logo pieces; the phrase can vary (“Collab is thinking”, “Getting ’spired”).">
+        <CollabThinking />
+      </CtxFrame>
+      <CtxFrame label="Working: the mono / two-tone mark spins as a gentle loader.">
+        <div style={{ padding: "26px 22px", display: "flex", alignItems: "center", gap: 13, minHeight: 96 }}>
+          <CollabMark variant="twotone" size={30} spin />
+          <span style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>Summarizing 214 gifts…</span>
         </div>
       </CtxFrame>
-      <CtxFrame label="Writing: streaming a draft, with the content shimmering in.">
+      <CtxFrame label="Writing: streaming a draft, the content shimmering in.">
         <div style={{ padding: "20px 22px", minHeight: 96 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 14 }}>
-            <CollabMark variant="live" size={26} />
+            <CollabMark variant="stroke" size={22} weight={2.1} />
             <span style={{ fontSize: 13.5, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>Writing a welcome email…</span>
           </div>
           <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "92%", marginBottom: 7 }} />
           <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "76%", marginBottom: 7 }} />
           <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "54%" }} />
-        </div>
-      </CtxFrame>
-      <CtxFrame label="“Getting Spired”: the ascending loader, reused as Collab’s working state, on brand.">
-        <div style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 96 }}>
-          <SpiredLoader size={38} label="Getting Spired…" />
         </div>
       </CtxFrame>
     </div>
