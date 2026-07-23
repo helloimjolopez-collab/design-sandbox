@@ -1270,7 +1270,7 @@
       {id:"pto2",title:"Payroll Scheduled Time Off (all approved)",kind:"pto",size:"wide",tiers:["kpi","wide","xwide"],dataset:"approved",ptoView:"pending",ptoExpand:{}},
       {id:"pto3",title:"Payroll Scheduled Time Off (no departments to approve)",kind:"pto",size:"wide",tiers:["kpi","wide","xwide"],ptoView:"pending",ptoExpand:{},state:"empty"},
       {id:"pto4",title:"Payroll Scheduled Time Off (renamed and hidden hour types)",kind:"pto",size:"xwide",tiers:["kpi","wide","xwide"],dataset:"alt",ptoView:"all",ptoExpand:{}},
-      {id:"ap",title:"Accounts Payable By Due Date",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apview:"timeline",apsort:"amt-desc",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"ap",title:"Accounts Payable By Due Date",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apview:"table",apDue:"total",apsort:"due-asc",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"ap2",title:"Accounts Payable By Due Date (Total view)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apDue:"total",apview:"table",apsort:"due-asc",updated:"just now"},
       {id:"ap3",title:"Accounts Payable By Due Date (single due date)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",apview:"timeline",apsort:"amt-desc",updated:"just now"},
       {id:"ap4",title:"Accounts Payable By Due Date (nothing outstanding)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",updated:"just now"},
@@ -2630,7 +2630,7 @@ function arContent(w){
   if(w.arloading)return arHeaderBlock(w,"loading")+arSkeleton();
   var mh=arHeaderBlock(w);
   if(w.size==="xwide")return mh+'<div class="ar-explore"><div class="ar-explore-col ar-tablecol">'+arTable(w)+'</div><div class="ar-explore-col ar-chartcol">'+arChart(w)+'</div></div>';
-  return mh+'<div class="ar-body">'+arTable(w)+arChart(w)+'</div>';
+  return mh+'<div class="ar-body">'+arTable(w)+'</div>';
 }
 /* Drill-to-detail focus overlay: columns Customer, Bill To, Due Date, Invoice #, Days Past Due, Outstanding. Each row expands into 4 tabs. Export to Excel + Close in the header. */
 function arDetailTabs(x){
@@ -2922,7 +2922,7 @@ function arShowPop(row,mx,my){
   function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);return '<span class="ap-pill warn" data-tip="'+apMoney(od)+' across '+n+' invoice'+(n>1?"s":"")+' is past its due date." data-tip-plain>'+ICON("warning")+apMoney(od)+' overdue</span>';}return '<span class="ap-pill pos" data-tip="No outstanding invoice is past its due date." data-tip-plain>'+ICON("check_circle")+'Nothing overdue</span>';}
   function apHeaderBlock(w,mode){
     var loading=(mode==="loading");
-    var toggle=(w.size==="wide")?apViewToggle(w):"";
+    var toggle="";
     var numInner;
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
     else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+apMoney(apTotalDue(w))+'</span>'+apBadge(w)+'</div>';}
@@ -2984,9 +2984,8 @@ function arShowPop(row,mx,my){
     if(w.size==="kpi")return apGlance(w);
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
     if(w.aploading)return apHeaderBlock(w,"loading")+apSkeleton();
-    var mh=apHeaderBlock(w),v=w.apview||"timeline";
-    if(w.size==="xwide")return mh+apFull(w);
-    return mh+((v==="table")?apTable(w,false):apTimeline(w));
+    var mh=apHeaderBlock(w);
+    return mh+apTable(w,false);
   }
   function apLoad(w){w.aploading=true;clearTimeout(timers["ap-"+w.id]);timers["ap-"+w.id]=setTimeout(function(){w.aploading=false;render();},850);}
   function apHideBpop(){if(apPopEl){apPopEl.remove();apPopEl=null;}}
@@ -3096,7 +3095,6 @@ function arShowPop(row,mx,my){
     if(w.size==="kpi")return insGlance(w);
     if(w.insloading)return insHeaderBlock(w,"loading")+insSkeleton();
     var mh=insHeaderBlock(w);
-    if(w.size==="xwide")return mh+'<div class="ins-explore"><div class="ins-explore-col ins-tablecol">'+insTable(w)+'</div><div class="ins-explore-col ins-chartcol">'+insPie(w)+'</div></div>';
     return mh+'<div class="ins-body">'+insTable(w)+'</div>';
   }
   function insLoad(w){w.insloading=true;clearTimeout(timers["ins-"+w.id]);timers["ins-"+w.id]=setTimeout(function(){w.insloading=false;render();},800);}
