@@ -1380,19 +1380,12 @@
         '<div class="pr-pop-dates"><label>From<input type="date" id="'+bId+'" class="pr-date-input" data-id="'+wp.id+'" data-which="begin" value="'+curB.begin+'"></label><label>To<input type="date" id="'+eId+'" class="pr-date-input" data-id="'+wp.id+'" data-which="end" value="'+curB.end+'"></label></div>';
       var presetRows=PR_PRESETS.map(function(o){var on=rp===o[0];return '<button class="mi'+(on?" check":"")+'" data-action="pr-range-set" data-id="'+wp.id+'" data-r="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");
       return customRow+'<div class="sep"></div>'+presetRows;}
-    /* Account scope, one clean popover (no glitchy drill-in / popover-swapping). Standard combobox pattern: two quick account options at top, then a single searchable list of report lines grouped under their report — picking a line sets the special-report scope in one click (report + line together). Search matches report and line names. */
-    if(pop.type==="bgt-scope"){var wsc=find(pop.id),cav=wsc.acctview||"income",sq=(bgtScopeQ||"").toLowerCase(),curL2=(cav==="special"?bgtReportLine(wsc).id:null);
+    /* Account scope: three plain rows. Income and Expense set the scope in one tap. Special report is a two-part choice (report name + report line), so instead of a fragile drill-in inside this small popover it opens a focused dialog on a scrim where both are chosen together, then Done. When special is already active the row shows the current report and line plus an edit affordance to reopen that dialog. */
+    if(pop.type==="bgt-scope"){var wsc=find(pop.id),cav=wsc.acctview||"income";
       function scopeRow(v,lbl){return '<button class="mi'+(cav===v?" check":"")+'" data-action="set-bgt-scope" data-id="'+wsc.id+'" data-v="'+v+'">'+(cav===v?ICON("check"):'<span class="mi-gap"></span>')+lbl+'</button>';}
-      var out='<div class="cap">Account scope</div>'+scopeRow("income","Income accounts")+scopeRow("expense","Expense accounts")+'<div class="sep"></div><div class="cap">Or a special report line</div>'+
-        '<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="bgtScopeQ" placeholder="Search reports and lines" value="'+(bgtScopeQ||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div>';
-      var body="",any=false;
-      BGT_REPORTS.forEach(function(rep){
-        var lines=rep.lines.filter(function(l){return !sq||l.name.toLowerCase().indexOf(sq)>-1||rep.name.toLowerCase().indexOf(sq)>-1;});
-        if(!lines.length)return;any=true;
-        body+='<div class="bgt-optgrp">'+rep.name+'</div>'+lines.map(function(l){var on=(cav==="special"&&wsc.report===rep.id&&curL2===l.id);return '<button class="mi'+(on?" check":"")+'" role="option" data-action="set-bgt-repline-full" data-id="'+wsc.id+'" data-r="'+rep.id+'" data-l="'+l.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+l.name+'</span></button>';}).join("");
-      });
-      out+='<div class="menu-scroll" role="listbox">'+(any?body:'<div class="mi-note" style="color:var(--txt-subtle);padding:8px 10px">No reports or lines match “'+(bgtScopeQ||"")+'”</div>')+'</div>';
-      return out;}
+      var sp=(cav==="special");
+      var specialRow='<button class="mi bgt-special-mi'+(sp?" check":"")+'" data-action="bgt-open-report" data-id="'+wsc.id+'">'+(sp?ICON("check"):'<span class="mi-gap"></span>')+'<span class="bgt-special-lbl"><span class="bgt-special-nm">Special report</span>'+(sp?'<span class="bgt-special-sub">'+bgtReport(wsc).name+' · '+bgtReportLine(wsc).name+'</span>':'')+'</span><span class="bgt-special-edit">'+(sp?ICON("edit"):ICON("chevron_right"))+'</span></button>';
+      return '<div class="cap">Account scope</div>'+scopeRow("income","Income accounts")+scopeRow("expense","Expense accounts")+'<div class="sep"></div>'+specialRow;}
     if(pop.type==="bgt-span"){var wsp2=find(pop.id),cs=wsp2.bspan||"year";return '<div class="cap">Show data over</div>'+[["year","This fiscal year","year to date"],["period","This fiscal period","the current period, e.g. this month"],["last","Last fiscal year",""],["lastperiod","Last fiscal period",""],["all","All time",""]].map(function(o){return '<button class="mi'+(cs===o[0]?" check":"")+'" data-action="set-bgt-span" data-id="'+wsp2.id+'" data-s="'+o[0]+'">'+(cs===o[0]?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+(o[2]?'<span class="mi-sub2">'+o[2]+'</span>':'')+'</span></button>';}).join("");}
     if(pop.type==="depfilter"){var wdf=find(pop.id),q=(filterQuery||"").toLowerCase();
       var allSel=(!wdf.acct)&&(wdf.filter||"All types").indexOf("All")===0;
@@ -1504,7 +1497,7 @@
     if(a==="set-bgt-shape"){var wsh=find(id);if(wsh)wsh.bshape=t.getAttribute("data-v");render();return;}
     if(a==="bgt-span"){pop=(pop&&pop.type==="bgt-span"&&pop.id===id)?null:{type:"bgt-span",id:id};render();return;}
     if(a==="set-bgt-span"){var wss2=find(id);if(wss2){var ns=t.getAttribute("data-s");if(wss2.bspan!==ns){wss2.bspan=ns;if(bgtSpanSingle(ns)){/* coarser intervals make no sense inside a single period — snap them back to Month */ if(wss2.binterval==="quarter"||wss2.binterval==="year")wss2.binterval="month";if(wss2.iA==="quarter"||wss2.iA==="year")wss2.iA="month";if(wss2.iB==="quarter"||wss2.iB==="year")wss2.iB="month";}bgtSnapShape(wss2);["a","b"].forEach(function(sd){var ivk=sd==="a"?"iA":"iB",fmk=sd==="a"?"fA":"fB";var wvv=Object.assign({},wss2,{binterval:wss2[ivk]||"month"});if(wss2[fmk]==="line"&&bgtViewRows(wvv).length<2)wss2[fmk]="bar";});bgtLoad(wss2);}}pop=null;render();return;}
-    if(a==="set-bgt-pinterval"){var wpg=find(id),sg=t.getAttribute("data-panel");if(wpg)wpg[sg==="a"?"iA":"iB"]=t.getAttribute("data-v");render();return;}
+    if(a==="set-bgt-pinterval"){var wpg=find(id),sg=t.getAttribute("data-panel");if(wpg){var ivk2=sg==="a"?"iA":"iB",fmk2=sg==="a"?"fA":"fB";wpg[ivk2]=t.getAttribute("data-v");var wvv2=Object.assign({},wpg,{binterval:wpg[ivk2]});if(wpg[fmk2]==="line"&&bgtViewRows(wvv2).length<2)wpg[fmk2]="bar";}render();return;}
     if(a==="set-bgt-pshape"){var wps=find(id),sf=t.getAttribute("data-panel");if(wps)wps[sf==="a"?"fA":"fB"]=t.getAttribute("data-v");render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
