@@ -282,7 +282,17 @@
   .bgt-tsort.on{color:var(--txt-primary);}.bgt-tsort.on .material-symbols-rounded{opacity:1;}
   .bgt-tsort.bgt-tc,.bgt-tsort.bgt-tv{justify-content:flex-end;}
   .bgt-ttot{display:flex;align-items:center;justify-content:space-between;padding:9px 2px 0;border-top:1.5px solid var(--stroke-widget);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;margin-top:2px;}
-  .bgt-scope-chip{justify-self:start;max-width:180px;}
+  /* Global filter-control styling (shell-wide): every interactive filter/scope dropdown — Deposits' account scope, Payroll's period, Budget's scope + time span, etc. — reads as a secondary-fill button with a leading filter glyph and a trailing chevron, so filters are obviously filters. Non-interactive label chips (no data-action, e.g. the KPI-tile scope label) are left alone. */
+  .filter-chip[data-action],.scope-chip[data-action]{background:var(--wn-200);border-color:var(--wn-300);color:var(--txt-primary);}
+  .filter-chip[data-action]:hover,.scope-chip[data-action]:hover{background:var(--wn-300);border-color:var(--wn-400);}
+  .filter-chip[data-action]::before,.scope-chip[data-action]::before{font-family:'Material Symbols Rounded';content:'filter_list';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;font-size:16px;line-height:1;color:var(--txt-subtle);flex:0 0 auto;margin-right:1px;}
+  .bgt-scope-chip{justify-self:start;max-width:190px;}
+  /* Disabled interval letter (coarser than the chosen span): greyed and unclickable. */
+  .vt.disabled{opacity:.35;cursor:not-allowed;}
+  /* Span chip + M/Q/P/Y toggle kept together, just above the chart. */
+  .bgt-slicer{display:flex;align-items:center;gap:8px;}
+  .mi-nm{display:flex;flex-direction:column;gap:1px;}
+  .mi-sub2{font-size:11px;font-weight:400;color:var(--txt-subtle);}
   /* Quiet special-report context line under the KPI number — small, regular weight, muted. Not a headline. */
   .bgt-numwrap{display:flex;flex-direction:column;gap:2px;min-width:0;}
   .bgt-repctx{font-size:11.5px;color:var(--txt-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
