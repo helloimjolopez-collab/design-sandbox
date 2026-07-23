@@ -1364,6 +1364,112 @@
     var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
   /* No drill-down from category rows/segments: Confluence §10.6/§10.8/§12 mark detail-behind-a-category as explicitly out of scope for this iteration (Bundle, "not in scope"), not something to build a placeholder for. */
 
+/* ---- Main Content Tasks (quick-action launcher) ----
+   A navigational shortcut panel: icon+label tiles, each linking to a real action screen in a NAMED module.
+   No chart, no KPI number, no data-fetch (so no loading skeleton, data is in hand), purely navigational. */
+  var MCT_MODULES=[
+    {id:"all",name:"All modules"},
+    {id:"ap",name:"Accounts Payable"},
+    {id:"pay",name:"Payroll"},
+    {id:"con",name:"Contributions"},
+    {id:"gl",name:"General Ledger"},
+    {id:"pur",name:"Purchasing"},
+    {id:"bank",name:"Bank"}
+  ];
+  var MCT_TASKS=[
+    {id:"apchk", mod:"ap",  label:"Write AP Check",         icon:"payments",           dest:"Accounts Payable, Checks, Write Check",          default:true,  perm:true},
+    {id:"apinv", mod:"ap",  label:"Enter AP Invoice",       icon:"receipt_long",       dest:"Accounts Payable, Invoices, Enter Invoice",      default:true,  perm:true},
+    {id:"appay", mod:"ap",  label:"Pay AP Bills",           icon:"request_quote",      dest:"Accounts Payable, Payments, Pay Bills",          default:true,  perm:true},
+    {id:"apvoid",mod:"ap",  label:"Void AP Check",          icon:"money_off",          dest:"Accounts Payable, Checks, Void Check",           default:true,  perm:false},
+    {id:"prrun", mod:"pay", label:"Run Payroll",            icon:"badge",              dest:"Payroll, Pay Runs, Run Payroll",                 default:true,  perm:true},
+    {id:"premp", mod:"pay", label:"Add Payroll Employee",   icon:"person_add",         dest:"Payroll, Employees, New Employee",               default:false, perm:true},
+    {id:"congv", mod:"con", label:"Enter Contribution",     icon:"volunteer_activism", dest:"Contributions, Enter Contributions",             default:true,  perm:true},
+    {id:"connew",mod:"con", label:"Add Contributor",        icon:"group_add",          dest:"Contributions, Contributors, New Contributor",   default:false, perm:true},
+    {id:"glje",  mod:"gl",  label:"New GL Journal Entry",   icon:"menu_book",          dest:"General Ledger, Journal Entries, New Entry",     default:true,  perm:true},
+    {id:"purpo", mod:"pur", label:"New Purchase Order",     icon:"shopping_cart",      dest:"Purchasing, Purchase Orders, New PO",            default:true,  perm:true},
+    {id:"bankrec",mod:"bank",label:"Reconcile Bank Account",icon:"account_balance",    dest:"Bank, Reconciliation, Reconcile Account",        default:true,  perm:true},
+    {id:"bankdep",mod:"bank",label:"Record Bank Deposit",   icon:"savings",            dest:"Bank, Deposits, Record Deposit",                 default:true,  perm:true}
+  ];
+  var MCT_SAVED=[
+    {id:"sv1", label:"Aged Payables",            icon:"summarize", kindLbl:"Report", dest:"Accounts Payable, Reports, Aged Payables"},
+    {id:"sv2", label:"Monthly Giving Statement", icon:"summarize", kindLbl:"Report", dest:"Contributions, Reports, Giving Statement"},
+    {id:"sv3", label:"Payroll Register",         icon:"summarize", kindLbl:"Report", dest:"Payroll, Reports, Payroll Register"}
+  ];
+  var MCT_CAP=8;
+  function mctScope(w){return w.mod||"all";}
+  function mctPinned(w){return w.mctPin||[];}
+  function mctHidden(w){return w.mctHide||[];}
+  function mctAllForScope(w){var sc=mctScope(w);
+    return MCT_TASKS.filter(function(t){
+      if(!t.perm)return false;
+      if(sc==="all")return t.default;
+      return t.mod===sc;
+    });}
+  function mctVisible(w){var hid=mctHidden(w),pin=mctPinned(w);
+    var list=mctAllForScope(w).filter(function(t){return hid.indexOf(t.id)<0;});
+    list.sort(function(a,b){var pa=pin.indexOf(a.id),pb=pin.indexOf(b.id);
+      if(pa<0&&pb<0)return 0;if(pa<0)return 1;if(pb<0)return -1;return pa-pb;});
+    return list;}
+  function mctModuleName(id){for(var i=0;i<MCT_MODULES.length;i++)if(MCT_MODULES[i].id===id)return MCT_MODULES[i].name;return "All modules";}
+  function mctTask(id){for(var i=0;i<MCT_TASKS.length;i++)if(MCT_TASKS[i].id===id)return MCT_TASKS[i];return null;}
+  function mctSavedRec(id){for(var i=0;i<MCT_SAVED.length;i++)if(MCT_SAVED[i].id===id)return MCT_SAVED[i];return null;}
+  function mctModuleChip(w){return '<button class="filter-chip" data-action="mct-module" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show tasks for, tap to change"><span class="fc-label">'+mctModuleName(mctScope(w))+'</span>'+ICON("expand_more")+'</button>';}
+  function mctCustomiseBtn(w){var on=!!w.mctEdit;return '<button class="btn naked sm mct-cust'+(on?" on":"")+'" data-action="mct-customise" data-id="'+w.id+'" aria-pressed="'+on+'">'+ICON(on?"check":"tune")+(on?"Done":"Customise")+'</button>';}
+  function mctHeader(w){return '<div class="dep-hd"><div class="dep-hd-top">'+mctModuleChip(w)+'<div class="dep-hd-toggle">'+mctCustomiseBtn(w)+'</div></div></div>';}
+  function mctTileNav(w,t){
+    var pinned=mctPinned(w).indexOf(t.id)>-1;
+    var aria=(t.label+", opens "+t.dest).replace(/"/g,"&quot;");
+    var pin=pinned?'<span class="mct-pin-badge material-symbols-rounded" aria-hidden="true">star</span>':"";
+    return '<button class="mct-tile" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'"><span class="mct-tile-ic">'+ICON(t.icon)+pin+'</span><span class="mct-tile-tx"><span class="mct-tile-lbl">'+t.label+'</span><span class="mct-tile-mod">'+mctModuleName(t.mod)+'</span></span></button>';
+  }
+  function mctTileEdit(w,t){
+    var pinned=mctPinned(w).indexOf(t.id)>-1;
+    return '<div class="mct-tile is-edit"><span class="mct-tile-ic">'+ICON(t.icon)+'</span><span class="mct-tile-tx"><span class="mct-tile-lbl">'+t.label+'</span><span class="mct-tile-mod">'+mctModuleName(t.mod)+'</span></span><span class="mct-tile-ctl"><button class="mct-mini'+(pinned?" on":"")+'" data-action="mct-pin" data-id="'+w.id+'" data-t="'+t.id+'" aria-pressed="'+pinned+'" aria-label="'+(pinned?"Unpin ":"Pin ")+t.label+'" data-tip="'+(pinned?"Unpin":"Pin to front")+'">'+ICON(pinned?"star":"star_border")+'</button><button class="mct-mini" data-action="mct-hide" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="Hide '+t.label+'" data-tip="Hide">'+ICON("visibility_off")+'</button></span></div>';
+  }
+  function mctItile(w,t){
+    var aria=(t.label+", opens "+t.dest).replace(/"/g,"&quot;");
+    return '<button class="mct-itile" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'" data-tip="'+t.label.replace(/"/g,"&quot;")+'" data-tip-plain>'+ICON(t.icon)+'<span class="sr-only">'+t.label+'</span></button>';
+  }
+  function mctGrid(w){
+    var vis=mctVisible(w),edit=!!w.mctEdit;
+    if(!edit&&vis.length>MCT_CAP){
+      var shown=vis.slice(0,MCT_CAP-1),extra=vis.length-shown.length;
+      var tiles=shown.map(function(t){return mctTileNav(w,t);}).join("");
+      tiles+='<button class="mct-tile mct-more" data-action="mct-more" data-id="'+w.id+'" aria-label="Show '+extra+' more tasks"><span class="mct-tile-ic">'+ICON("apps")+'</span><span class="mct-tile-tx"><span class="mct-tile-lbl">'+extra+' more</span><span class="mct-tile-mod">Show all tasks</span></span></button>';
+      return '<div class="mct-grid">'+tiles+'</div>';
+    }
+    var body=vis.map(function(t){return edit?mctTileEdit(w,t):mctTileNav(w,t);}).join("");
+    return '<div class="mct-grid">'+body+'</div>';
+  }
+  function mctHiddenTray(w){var hid=mctHidden(w);if(!hid.length)return "";
+    var chips=hid.map(function(hid2){var t=mctTask(hid2);if(!t)return "";return '<button class="mct-restore" data-action="mct-show" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="Show '+t.label+' again">'+ICON("add")+t.label+'</button>';}).join("");
+    return '<div class="mct-hidden"><div class="mct-hidden-h">Hidden</div><div class="mct-hidden-row">'+chips+'</div></div>';
+  }
+  function mctSaved(w){
+    var rows=MCT_SAVED.map(function(s){return '<button class="mct-srow" data-action="mct-open-saved" data-id="'+w.id+'" data-s="'+s.id+'" aria-label="'+(s.label+", "+s.kindLbl+", opens "+s.dest).replace(/"/g,"&quot;")+'">'+ICON(s.icon)+'<span class="mct-srow-lbl">'+s.label+'</span><span class="mct-srow-tag">'+s.kindLbl+'</span></button>';}).join("");
+    return '<div class="mct-saved"><div class="mct-sec-h">My Tasks &amp; Reports</div><div class="mct-slist">'+rows+'</div></div>';
+  }
+  function mctEmpty(w){
+    var sc=mctScope(w);
+    var sub=(sc==="all")?"You do not have access to any quick tasks yet. Tasks appear here once your role has permission to use them.":"You do not have access to any tasks in "+mctModuleName(sc)+".";
+    return '<div class="state" data-kind="empty">'+ICON("apps")+'<div class="state-title">No tasks available</div><div class="state-sub">'+sub+'</div></div>';
+  }
+  function mctContent(w){
+    if(w.state==="empty"||!mctAllForScope(w).length){
+      if(w.size==="kpi")return mctEmpty(w);
+      return mctHeader(w)+mctEmpty(w);
+    }
+    if(w.size==="kpi"){
+      var row=mctVisible(w).map(function(t){return mctItile(w,t);}).join("");
+      return '<div class="mct-glance"><div class="mct-irow">'+row+'</div></div>';
+    }
+    var out=mctHeader(w)+'<div class="mct-scroll">'+mctGrid(w);
+    if(w.mctEdit)out+=mctHiddenTray(w);
+    if(w.size==="xwide"&&!w.mctEdit)out+=mctSaved(w);
+    out+='</div>';
+    return out;
+  }
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
@@ -1497,7 +1603,10 @@
     '</div>';
     var canApply=!!(dr&&dl);
     /* modal body carries a data-action so a click on empty dialog space just closes any open menu (never dismisses the dialog); the dialog shell is data-action="stop" and only the backdrop / Cancel / X dismiss. */
-    var body='<p class="bgt-rm-lead">Pick the report, then the line to compare against budget.</p><div class="bgt-rm-fields">'+repField+lineField+'</div>';
+    var preview=(curRep&&curLine)
+      ? '<div class="bgt-rm-preview">'+ICON("check_circle")+'<span>Comparing <b>'+curLine.name+'</b> from <b>'+curRep.name+'</b> against budget. This line is treated as <b>'+curLine.type+'</b> for favourability.</span></div>'
+      : '<div class="bgt-rm-preview">'+ICON("info")+'<span>Choose a report, then a line within it. That line is what gets compared against its budget.</span></div>';
+    var body='<p class="bgt-rm-lead">Pick a report, then the line within it to compare against budget.</p><div class="bgt-rm-fields">'+repField+lineField+'</div>'+preview;
     return '<div class="modal-backdrop" data-action="bgt-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">summarize</span>Choose a special report</span><button class="iconbtn" data-action="bgt-rm-cancel" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b bgt-rm-b" data-action="bgt-rm-closemenu">'+body+'</div><div class="modal-f"><button class="btn naked sm" data-action="bgt-rm-cancel">Cancel</button><button class="btn primary sm'+(canApply?"":" is-off")+'"'+(canApply?' data-action="bgt-rm-done" data-id="'+w.id+'"':' aria-disabled="true"')+'>Apply</button></div></div></div>';
   }
   /* Freeze the background while any modal is open so scrolling happens inside the dialog, not the page behind it. The main scroller is .appmain; we also pin the sidenav. Restored the moment the modal closes. */
