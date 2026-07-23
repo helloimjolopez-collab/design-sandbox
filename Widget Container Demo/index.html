@@ -1092,9 +1092,12 @@
       var explainTip=bgtExplain(w,vt,neutral,variance,sv.sumA,sv.sumB).replace(/"/g,"&quot;");
       numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(Math.abs(variance||0))+'</span>'+bgtFavPill(variance,neutral)+'<span class="material-symbols-rounded bgt-info-ic" data-i="info" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
     }
+    /* Quiet context line for a special report — the full Report · Report line the chip no longer spells out. Small, regular weight, never a bold headline. */
+    var ctx=bgtScopeContext(w);
+    var ctxLine=ctx?'<div class="bgt-repctx">'+ctx+'</div>':"";
     return '<div class="dep-hd">'+
     '<div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div>'+
-    '<div class="dep-hd-num">'+numInner+'</div>'+
+    '<div class="dep-hd-num"><div class="bgt-numwrap">'+numInner+ctxLine+'</div></div>'+
     '</div>';
   }
   /* Skeleton shown while data loads (scope / report / line changes fetch). A gentle shimmer over placeholder bars, matching the real chart's shape, plus a soft spinner and label — reused across widgets. */
