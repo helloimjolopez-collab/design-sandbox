@@ -4985,6 +4985,94 @@ function toast(msg){
   setTimeout(()=>t.remove(),3600);
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// DEMO MODE SWITCHING
+// ══════════════════════════════════════════════════════════════════════
+
+window.setDemoMode = function(mode){
+  DEMO_MODE = mode;
+
+  // Update demo controls tab UI
+  document.querySelectorAll('.dc-tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.mode===mode);
+  });
+  const desc = document.getElementById('dc-desc');
+  if(desc) desc.textContent = mode==='north-star'
+    ? 'North Star — full architecture vision'
+    : 'Phase 1 MVP — status revamp, order failure flows, revised wizard';
+
+  // Tab bar: hide/show All tab
+  const tabBar = document.getElementById('home-tabs');
+  if(tabBar){
+    const allTab = tabBar.querySelector('[data-tab="all"]');
+    if(allTab) allTab.style.display = mode==='phase-1' ? 'none' : '';
+  }
+
+  // Close any open panel or wizard
+  document.getElementById('panel')?.classList.remove('open');
+  document.getElementById('scrim')?.classList.remove('open');
+  document.getElementById('wz-wrap')?.classList.remove('open');
+  closeP1Wizard && closeP1Wizard();
+
+  // Reset filters and switch to correct tab
+  STATE.homeStatusFilter='';
+  STATE.homeCardFilter='';
+  if(mode==='phase-1') switchTab('bg');
+  else switchTab('all');
+
+  renderHomeTable();
+  renderTable();
+};
+
+// ── Phase 1 email bounce fix ──────────────────────────────────────────
+window.p1ShowEmailFix = function(pid, cid){
+  // Inject the email fix form into the panel action area
+  const container = document.getElementById('p1-email-fix-container-'+cid);
+  if(!container) return;
+  container.innerHTML = `
+    <div class="p1-bounce-box">
+      <div class="p1-bounce-title">Enter corrected email address</div>
+      <input type="email" id="p1-fix-email-${cid}" class="wz-field-input" placeholder="Corrected email address" style="margin-bottom:10px">
+      <div class="p1-email-opts">
+        <label class="p1-email-opt">
+          <input type="radio" name="p1-email-fix-${cid}" value="send-only" checked>
+          Send invite to new email only — keep current email on file unchanged
+        </label>
+        <label class="p1-email-opt">
+          <input type="radio" name="p1-email-fix-${cid}" value="update-and-send">
+          Update email on file to new address and send invite
+        </label>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:12px">
+        <button class="btn btn-primary btn-sm" onclick="p1ConfirmEmailFix('${pid}','${cid}')">Send</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('p1-email-fix-container-${cid}').innerHTML=''">Cancel</button>
+      </div>
+    </div>`;
+};
+
+window.p1ConfirmEmailFix = function(pid, cid){
+  const emailEl = document.getElementById('p1-fix-email-'+cid);
+  const newEmail = (emailEl?.value||'').trim();
+  if(!newEmail||!newEmail.includes('@')){toast('Enter a valid email address');return;}
+  const updateRadio = document.querySelector(`input[name="p1-email-fix-${cid}"][value="update-and-send"]:checked`);
+  const updateOnFile = !!updateRadio;
+  const person = personById(pid);
+  if(person){
+    if(updateOnFile) person.email = newEmail;
+    const c = person.cases.find(x=>x.id===cid);
+    if(c){
+      c.status = 'invite-sent';
+      if(c.p1Status) c.p1Status = 'invite-sent';
+      c.events = c.events||[];
+      c.events.push({type:'done',title:`Invite resent to ${newEmail}${updateOnFile?' — email on file updated':''}`,date:todayStr(),time:'',by:'Admin'});
+    }
+  }
+  renderTable(); renderHomeTable();
+  // Re-render the panel
+  if(STATE.currentPerson) openProfile(pid);
+  toast(updateOnFile?`Email updated to ${newEmail} and invite sent`:`Invite sent to ${newEmail}`);
+};
+
 window.toast = toast;
 window.openReport = openReport;
 window.openProfile = openProfile;
