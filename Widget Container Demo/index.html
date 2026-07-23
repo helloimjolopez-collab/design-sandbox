@@ -1811,6 +1811,17 @@ function mysPopContent(){
     if(a==="noop"){pop=null;render();return;}
     if(a==="stop"){return;}
     if(a==="modal-close"){modal=null;pop=null;render();return;}
+    if(a==="mys-config"){var wc0=find(id);modal={type:"mysconfig",id:id,q:"",draft:(wc0.selected||[]).slice()};modalMounted=false;pop=null;render();return;}
+    if(a==="mys-add"){var wa2=find(modal.id);var qid=t.getAttribute("data-q");if(wa2&&modal.draft.indexOf(qid)<0)modal.draft.push(qid);renderModal();return;}
+    if(a==="mys-remove"){var qidr=t.getAttribute("data-q");if(modal)modal.draft=modal.draft.filter(function(x){return x!==qidr;});renderModal();return;}
+    if(a==="mys-config-done"){var wcd=find(modal.id);var chg=JSON.stringify(wcd.selected)!==JSON.stringify(modal.draft);wcd.selected=modal.draft.slice();modal=null;pop=null;if(chg){wcd.state="loading";render();clearTimeout(timers[wcd.id]);timers[wcd.id]=setTimeout(function(){wcd.state="ready";wcd.updated="just now";render();},700);}else render();return;}
+    if(a==="mys-config-cancel"){modal=null;pop=null;render();return;}
+    if(a==="mys-row"){var qq=t.getAttribute("data-q"),mq=mysFind(qq);if(mq&&mq.count>0){if(mq.click==="detail"){modal={type:"mysdetail",id:id,q:qq};modalMounted=false;pop=null;render();}else{showModal("Opens the "+mq.navTo+" page","This count links out of the dashboard to <b>"+mq.navTo+"</b>, where you can work through these "+mq.count+" records. Use the browser back button to return to the dashboard.");}}return;}
+    if(a==="mys-detail-close"){modal=null;pop=null;render();return;}
+    if(a==="mys-detail-export"){var qe=mysFind(t.getAttribute("data-q"));showModal("Export to Excel","This would export the "+(qe?qe.count:0)+" records in <b>"+(qe?qe.name:"")+"</b> as an Excel file.");return;}
+    if(a==="mys-mode"){var wmm2=find(id);if(wmm2)wmm2.mode=t.getAttribute("data-m");pop=null;render();return;}
+    if(a==="mys-opts"){pop=(pop&&pop.type==="mys-opts"&&pop.id===id)?null:{type:"mys-opts",id:id};render();return;}
+    if(a==="mys-hidezero"){var wmh=find(id);if(wmh)wmh.hideZero=!wmh.hideZero;pop=null;render();return;}
     if(a==="mct-module"){pop=(pop&&pop.type==="mct-module"&&pop.id===id)?null:{type:"mct-module",id:id};render();return;}
     if(a==="mct-set-module"){var wmm=find(id);if(wmm)wmm.mod=t.getAttribute("data-m");pop=null;render();return;}
     if(a==="mct-customise"){var wce=find(id);if(wce)wce.mctEdit=!wce.mctEdit;pop=null;setStatus(wce&&wce.mctEdit?"Customising tasks: pin to reorder, hide to remove.":"Done customising tasks.");render();return;}
