@@ -1563,9 +1563,9 @@ function fmtShort(d){const dt=new Date(d);const m=['Jan','Feb','Mar','Apr','May'
 const STATUS = {
   // Consent collection phase — V1 labels
   'invite-created':       {label:'Invite Link Created',                   cls:'b-neutral', icon:'ms-link',           action:false, tip:'A person-bound invite link has been generated. No email has been sent yet. Admin holds the link and will send it through their own channel.'},
-  'invite-sent':          {label:'Invite Link Sent',                      cls:'b-indigo',  icon:'ms-mail',           action:false, tip:'PMM sent an invite email to the applicant. Waiting for the applicant to submit their consent form.'},
-  'invite-expiring':      {label:'Invite Link Expiring',                  cls:'b-warn',    icon:'ms-schedule',       action:false, tip:'The invite link is approaching its expiry date. Applicant has not yet submitted consent. Resend or extend before the link dies.'},
-  'invite-expired':       {label:'Invite Link Expired',                   cls:'b-warn',    icon:'ms-link-off',       action:true,  tip:'The invite link reached its expiry date with no consent submitted. Re-invite to restart or cancel the case.'},
+  'invite-sent':          {label:'Invite Sent',                           cls:'b-indigo',  icon:'ms-mail',           action:false, tip:'PMM sent an invite email to the applicant. Waiting for the applicant to submit their consent form.'},
+  'invite-expiring':      {label:'Invite Expiring',                       cls:'b-warn',    icon:'ms-schedule',       action:false, tip:'The invite link is approaching its expiry date. Applicant has not yet submitted consent. Resend or extend before the link dies.'},
+  'invite-expired':       {label:'Invite Expired',                        cls:'b-warn',    icon:'ms-link-off',       action:true,  tip:'The invite link reached its expiry date with no consent submitted. Re-invite to restart or cancel the case.'},
   'email-bounced':        {label:'Invite Email Bounced',                  cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'The invite email could not be delivered. Correct the email address and resend, or switch to a generated link.'},
   'invite-cancelled':     {label:'Invite Link Cancelled',                 cls:'b-orange',  icon:'ms-cancel',         action:false, tip:'Admin cancelled this invite link. The case stays open — you can issue a new link.'},
   'case-cancelled':       {label:'Case Cancelled',                        cls:'b-danger',  icon:'ms-cancel',         action:false, tip:'Admin cancelled the entire case. No check will be ordered. Case record is retained for audit history.'},
@@ -2703,7 +2703,7 @@ function renderPanelHead(person){
           <div class="profile-name" style="font-size:18px">${esc(person.name)}</div>
           ${sourceChip}
         </div>
-        <div style="font-size:13px;color:var(--fg2)">${esc(person.position)} &middot; ${esc(person.team)}</div>
+        <div style="font-size:13px;color:var(--fg2)">${esc(person.position)}</div>
         <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           ${renderBadge(c.status)}
           ${c.assessment?`<span style="font-size:11px;color:var(--fg3);padding:2px 0">Assessment: <span style="font-weight:600;color:${c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)'}">${esc(c.assessment.outcome)}</span></span>`:''}
