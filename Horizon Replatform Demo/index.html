@@ -1732,7 +1732,7 @@ function currentCase(p){
 }
 
 function filteredPeople(){
-  let people = PEOPLE.filter(p => p.orgStatus !== 'archived');
+  let people = PEOPLE.filter(p => p.orgStatus !== 'archived' && (DEMO_MODE==='phase-1' || !p.p1Only));
   if(STATE.dept !== 'all') people = people.filter(p => p.team === STATE.dept);
   if(STATE.actionFilter) people = people.filter(p => STATUS[currentCase(p).status]?.action);
   if(STATE.statusFilter) people = people.filter(p => currentCase(p).status === STATE.statusFilter);
@@ -2340,7 +2340,7 @@ function todayStr(){
 }
 
 function renderSummaryStrip(){
-  const all=PEOPLE;
+  const all=PEOPLE.filter(p=>DEMO_MODE==='phase-1'||!p.p1Only);
   const newResults=all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
   const alerts=all.filter(p=>STATUS[currentCase(p).status]?.action).length;
   const expiring=all.filter(p=>currentCase(p).status==='invite-expiring').length;
