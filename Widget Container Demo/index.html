@@ -1491,7 +1491,7 @@
     if(a==="set-bgt-interval"){var wsg=find(id);if(wsg)wsg.binterval=t.getAttribute("data-v");render();return;}
     if(a==="set-bgt-shape"){var wsh=find(id);if(wsh)wsh.bshape=t.getAttribute("data-v");render();return;}
     if(a==="bgt-span"){pop=(pop&&pop.type==="bgt-span"&&pop.id===id)?null:{type:"bgt-span",id:id};render();return;}
-    if(a==="set-bgt-span"){var wss2=find(id);if(wss2){var ns=t.getAttribute("data-s");if(wss2.bspan!==ns){wss2.bspan=ns;bgtLoad(wss2);}}pop=null;render();return;}
+    if(a==="set-bgt-span"){var wss2=find(id);if(wss2){var ns=t.getAttribute("data-s");if(wss2.bspan!==ns){wss2.bspan=ns;if(bgtSpanSingle(ns)){/* coarser intervals make no sense inside a single period — snap them back to Month */ if(wss2.binterval==="quarter"||wss2.binterval==="year")wss2.binterval="month";if(wss2.iA==="quarter"||wss2.iA==="year")wss2.iA="month";if(wss2.iB==="quarter"||wss2.iB==="year")wss2.iB="month";}bgtLoad(wss2);}}pop=null;render();return;}
     if(a==="set-bgt-pinterval"){var wpg=find(id),sg=t.getAttribute("data-panel");if(wpg)wpg[sg==="a"?"iA":"iB"]=t.getAttribute("data-v");render();return;}
     if(a==="set-bgt-pshape"){var wps=find(id),sf=t.getAttribute("data-panel");if(wps)wps[sf==="a"?"fA":"fB"]=t.getAttribute("data-v");render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
