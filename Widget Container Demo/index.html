@@ -804,17 +804,16 @@
   .bank-skel .sk,.bank-sk-bar{background:linear-gradient(100deg,var(--wn-200) 30%,var(--wn-100) 50%,var(--wn-200) 70%);background-size:200% 100%;animation:bgtshimmer 1.5s ease-in-out infinite;}
   .bank-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--txt-subtle);font-size:12px;padding:12px 0 0;}
   @media(prefers-reduced-motion:reduce){.bank-skel .sk,.bank-sk-bar{animation:none!important;}}
-  /* ===== Payroll Distributions (pr): grouping + drill ===== */
+  /* ===== Payroll Distributions (pr): scope dropdown + distribution badges ===== */
   .pr-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
-  .pr-viewby .vt .material-symbols-rounded{font-size:15px;margin-right:2px;}
-  .pr-back{cursor:pointer;}
-  .pr-back .material-symbols-rounded{font-size:17px;margin-right:1px;vertical-align:middle;}
-  .pr-drill-row{display:flex;align-items:center;gap:4px;width:100%;text-align:left;border:0;background:transparent;font-family:inherit;font-size:inherit;font-weight:inherit;color:var(--txt-primary);cursor:pointer;padding:0;min-width:0;}
-  .pr-drill-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .pr-drill-row .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);margin-left:auto;flex:0 0 auto;}
-  .pr-drill-row:hover{color:var(--brand-300);}
-  .pr-drill-row:hover .material-symbols-rounded{color:var(--brand-300);}
-  .pr-scope{font-size:11.5px;color:var(--txt-subtle);margin-top:2px;}
+  .pr-scope-chip{max-width:230px;}
+  .pr-scope-chip .fc-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pr-scope-ctx{font-size:11.5px;color:var(--txt-subtle);margin-top:2px;}
+  .pr-distcol{flex:0 0 168px;min-width:0;display:flex;align-items:center;}
+  .wt-head .pr-distcol{color:var(--txt-subtle);}
+  .pr-dbadge{display:inline-flex;align-items:center;gap:6px;min-width:0;font-size:12px;color:var(--txt-secondary);}
+  .pr-dot{flex:0 0 auto;width:9px;height:9px;border-radius:3px;display:inline-block;}
+  .pr-dbadge-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   /* ===== Purchasing Management (pur) ===== */
   .pur-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;justify-self:start;align-self:center;}
   .pur-status-chip{max-width:210px;}
@@ -1147,9 +1146,9 @@
       {id:"dep",title:"Deposits on Hand",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"dep2",title:"Deposits on Hand — edge cases (120 accounts)",kind:"deposits",size:"wide",dataset:"big",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"dist",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"dep3",title:"Deposits on Hand — no data",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",state:"empty",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"}]},
-      {id:"pr",title:"Payroll Distributions",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prGroup:"dist",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"pr2",title:"Payroll Distributions (by pay type)",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prGroup:"pt"},
-      {id:"pr3",title:"Payroll Distributions (drilled into a distribution)",kind:"payroll",size:"xwide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prGroup:"dist",prDist:"admin"},
+      {id:"pr",title:"Payroll Distributions",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prScope:"all",prSort:"amt-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"pr2",title:"Payroll Distributions (by pay type, grouped)",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prScope:"pt",prSort:"dist-asc"},
+      {id:"pr3",title:"Payroll Distributions (one distribution)",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prScope:"admin",prSort:"amt-desc"},
       {id:"pr4",title:"Payroll Distributions (no history)",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",state:"empty"},
       {id:"bgt",title:"Budget Compared to Actual",kind:"budget",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",fy:"2026",bfmt:"chart",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bgt2",title:"Budget Compared to Actual (no budget set up)",kind:"budget",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",fy:"2026",bfmt:"chart",state:"empty"},
@@ -1775,10 +1774,7 @@
 
   /* ---- Payroll Distributions ---- */
   /* Categories are org-configured in real life (CompensationDistributionID/Name) — this fixed demo list stands in for that; never hardcode assumptions about count or names beyond what's rendered. */
-  /* ===== Payroll Distributions (pr): distribution grain with pay-type second lens ===== */
-  /* Hierarchy (Confluence 10.9): org-defined DISTRIBUTION (GL-mapped) with a standard PAY TYPE underneath.
-     Default grain is distribution; "View by" offers pay type; drilling a distribution shows its pay types.
-     Mirrors Deposits On Hand (all types / accounts within a type / all accounts). */
+  /* ===== Payroll Distributions (pr): dropdown scope, distribution / pay-type ===== */
   var PR_DISTS=[
     {id:"admin",   name:"Administration Staff"},
     {id:"pastoral",name:"Pastoral Staff"},
@@ -1789,15 +1785,10 @@
     {id:"office",  name:"Office & Reception"},
     {id:"missions",name:"Missions & Outreach"}
   ];
+  var PR_DIST_COLORS={admin:"#4b6bbf",pastoral:"#7a5bbf",worship:"#2f8f6b",youth:"#b5822a",children:"#8a3f8f",facilities:"#486b7a",office:"#6b7a2a",missions:"#2a6b8a"};
   var PR_PT=[
-    {id:"reg",name:"Regular Pay"},
-    {id:"ot",name:"Overtime"},
-    {id:"hol",name:"Holiday"},
-    {id:"vac",name:"Vacation"},
-    {id:"sick",name:"Sick"},
-    {id:"housing",name:"Housing Allowance"},
-    {id:"ss",name:"Social Security"},
-    {id:"med",name:"Medicare"}
+    {id:"reg",name:"Regular Pay"},{id:"ot",name:"Overtime"},{id:"hol",name:"Holiday"},{id:"vac",name:"Vacation"},
+    {id:"sick",name:"Sick"},{id:"housing",name:"Housing Allowance"},{id:"ss",name:"Social Security"},{id:"med",name:"Medicare"}
   ];
   var PR_BASE={
     admin:{reg:4200,ot:300,vac:400,sick:150,ss:280,med:66},
@@ -1811,13 +1802,10 @@
   };
   var PR_RUNS=(function(){
     var runs=[],seed=17;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
-    var end=new Date(2026,6,15); // "today" in this demo, matches biweekly pay runs
-    for(var i=11;i>=0;i--){
-      var d=new Date(end.getTime());d.setDate(d.getDate()-i*14);
-      var cells={};
-      PR_DISTS.forEach(function(ds){var b=PR_BASE[ds.id]||{},row={};Object.keys(b).forEach(function(pt){var drift=1+(11-i)*0.006,noise=0.9+r()*0.2;row[pt]=Math.round(b[pt]*drift*noise);});cells[ds.id]=row;});
-      runs.push({date:d,cells:cells});
-    }
+    var end=new Date(2026,6,15);
+    for(var i=11;i>=0;i--){var d=new Date(end.getTime());d.setDate(d.getDate()-i*14);
+      var cells={};PR_DISTS.forEach(function(ds){var b=PR_BASE[ds.id]||{},row={};Object.keys(b).forEach(function(pt){var drift=1+(11-i)*0.006,noise=0.9+r()*0.2;row[pt]=Math.round(b[pt]*drift*noise);});cells[ds.id]=row;});
+      runs.push({date:d,cells:cells});}
     return runs;
   })();
   function prFmtDate(d){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return M[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
@@ -1835,44 +1823,59 @@
   function prRunsInRange(w){var b=prPeriodBounds(w);return PR_RUNS.filter(function(x){return x.date>=b.start&&x.date<=b.end;});}
   function prPeriodLabel(w){var r=w.range||"TY";if(r==="CUSTOM")return "Custom";var m=PR_PRESETS.filter(function(o){return o[0]===r;})[0];return m?m[1]:"This year";}
   function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period, tap to change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
-  /* ---- breakdown: distribution / pay-type aggregation over runs in range ---- */
   function prAgg(w){var runs=prRunsInRange(w),agg={};PR_DISTS.forEach(function(ds){agg[ds.id]={};});
-    runs.forEach(function(run){PR_DISTS.forEach(function(ds){var rc=run.cells[ds.id]||{};Object.keys(rc).forEach(function(pt){agg[ds.id][pt]=(agg[ds.id][pt]||0)+rc[pt];});});});
-    return agg;}
+    runs.forEach(function(run){PR_DISTS.forEach(function(ds){var rc=run.cells[ds.id]||{};Object.keys(rc).forEach(function(pt){agg[ds.id][pt]=(agg[ds.id][pt]||0)+rc[pt];});});});return agg;}
   function prDistName(id){for(var i=0;i<PR_DISTS.length;i++)if(PR_DISTS[i].id===id)return PR_DISTS[i].name;return id;}
   function prPTName(id){for(var i=0;i<PR_PT.length;i++)if(PR_PT[i].id===id)return PR_PT[i].name;return id;}
-  function prDistTotals(w){var agg=prAgg(w);return PR_DISTS.map(function(ds){var t=0,c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){t+=c[pt];});return {id:ds.id,name:ds.name,net:t};}).filter(function(x){return x.net>0;}).sort(function(a,b){return b.net-a.net;});}
-  function prPTTotals(w){var agg=prAgg(w),m={};PR_DISTS.forEach(function(ds){var c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){m[pt]=(m[pt]||0)+c[pt];});});return PR_PT.filter(function(p){return m[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:m[p.id]};}).sort(function(a,b){return b.net-a.net;});}
-  function prDrillRows(w,distId){var agg=prAgg(w),c=agg[distId]||{};return PR_PT.filter(function(p){return c[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:c[p.id]};}).sort(function(a,b){return b.net-a.net;});}
-  /* Current view: drilled distribution -> its pay types; else group by distribution (default) or pay type. */
-  function prMode(w){
-    if(w.prDist)return {rows:prDrillRows(w,w.prDist),col:"Pay type",legend:prDistName(w.prDist)+": pay types",drill:false,scope:prDistName(w.prDist)};
-    if((w.prGroup||"dist")==="pt")return {rows:prPTTotals(w),col:"Pay type",legend:"Pay types",drill:false,scope:null};
-    return {rows:prDistTotals(w),col:"Distribution",legend:"Distributions",drill:true,scope:null};
-  }
-  function prViewBy(w){var g=w.prGroup||"dist";return '<div class="vtoggle pr-viewby" role="group" aria-label="View by">'+[["dist","Distributions","account_tree"],["pt","Pay types","sell"]].map(function(o){return '<button class="vt'+(g===o[0]?" on":"")+'" data-action="pr-groupby" data-id="'+w.id+'" data-g="'+o[0]+'" aria-pressed="'+(g===o[0])+'" data-tip="'+(o[0]==="dist"?"Group by distribution (the org GL-mapped line)":"Group by pay type (Regular, Overtime, Housing Allowance, and so on)")+'" data-tip-plain>'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
-  function prBackChip(w){return '<button class="scope-chip pr-back" data-action="pr-back" data-id="'+w.id+'" aria-label="Back to all distributions"><span class="material-symbols-rounded">chevron_left</span><span class="sc-nm">All distributions</span></button>';}
-  function prToolLeft(w){return w.prDist?prBackChip(w):prViewBy(w);}
-  function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);}
-  function prTableHTML(w){var m=prMode(w),tot=m.rows.reduce(function(s,a){return s+a.net;},0);
-    var head='<div class="wt-row wt-head"><span class="lr-main">'+m.col+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">Amount</span></div>';
-    var body=m.rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
-      var nameCell=m.drill?('<button class="lr-main pr-drill-row" data-action="pr-drill" data-id="'+w.id+'" data-d="'+a.id+'" aria-label="'+a.name.replace(/"/g,"&quot;")+', '+money(a.net)+', view pay types"><span class="pr-drill-nm">'+a.name+'</span>'+ICON("chevron_right")+'</button>'):('<span class="lr-main">'+a.name+'</span>');
-      return '<div class="wt-row wt-rowh">'+nameCell+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'<span class="sr-only"> '+a.name+'</span></span></div>';}).join("");
-    return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
-  function prDonut(w,forceSize){var m=prMode(w),tot=m.rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(m.rows.length);
-    m.rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];var dr=m.drill?(' data-action="pr-drill" data-id="'+w.id+'" data-d="'+a.id+'"'):'';
-      arcs+='<circle class="seg" data-seg="'+i+'"'+dr+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
-      legend+='<div class="leg" data-seg="'+i+'"'+dr+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
+  function prDistTotals(w){var agg=prAgg(w);return PR_DISTS.map(function(ds){var t=0,c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){t+=c[pt];});return {id:ds.id,name:ds.name,net:t};}).filter(function(x){return x.net>0;});}
+  function prPTTotals(w){var agg=prAgg(w),m={};PR_DISTS.forEach(function(ds){var c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){m[pt]=(m[pt]||0)+c[pt];});});return PR_PT.filter(function(p){return m[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:m[p.id]};});}
+  function prDrillRows(w,distId){var agg=prAgg(w),c=agg[distId]||{};return PR_PT.filter(function(p){return c[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:c[p.id]};});}
+  function prPTFlat(w){var agg=prAgg(w),out=[];PR_DISTS.forEach(function(ds){var c=agg[ds.id]||{};PR_PT.forEach(function(p){if(c[p.id]>0)out.push({id:ds.id+"_"+p.id,pt:p.name,ptId:p.id,distId:ds.id,distName:ds.name,net:c[p.id]});});});return out;}
+  function prScopeLabel(w){var sc=w.prScope||"all";if(sc==="all")return "All distributions";if(sc==="pt")return "By pay type";return prDistName(sc);}
+  function prScopeMeta(w){var sc=w.prScope||"all";if(sc==="pt")return {kind:"pt",legend:"Pay types"};if(sc==="all")return {kind:"all",legend:"Distributions"};return {kind:"distpt",legend:prDistName(sc)+": pay types",dist:sc};}
+  function prSortRows(rows,sort,kind){var sk=(sort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    rows.sort(function(a,b){
+      if(key==="amt")return dir*(a.net-b.net);
+      if(key==="dist"&&kind==="pt"){var d=a.distName.localeCompare(b.distName);return dir*d||(b.net-a.net);}
+      if(key==="pt"&&kind==="pt")return dir*a.pt.localeCompare(b.pt);
+      if(key==="name")return dir*a.name.localeCompare(b.name);
+      return b.net-a.net;});
+    return rows;}
+  function prTableRows(w){var sc=w.prScope||"all",rows;
+    if(sc==="all")rows=prDistTotals(w);
+    else if(sc==="pt")rows=prPTFlat(w);
+    else rows=prDrillRows(w,sc);
+    return prSortRows(rows,w.prSort||"amt-desc",sc==="pt"?"pt":"other");}
+  function prChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prPTTotals(w).sort(function(a,b){return b.net-a.net;});return prDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
+  function prScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="pr-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, tap to change what the breakdown is grouped by"><span class="fc-label">'+prScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
+  function prDistBadge(distId){var c=PR_DIST_COLORS[distId]||"#8a8f98";return '<span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+prDistName(distId)+'</span></span>';}
+  function prSortBtn(w,k,label){var sk=(w.prSort||"amt-desc").split("-"),on=sk[0]===k,ic=on?(sk[1]==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pr-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+  function prTableHTML(w){var meta=prScopeMeta(w),rows=prTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
+    if(meta.kind==="pt"){
+      var head='<div class="wt-row wt-head"><span class="lr-main">'+prSortBtn(w,"pt","Pay type")+'</span><span class="pr-distcol">'+prSortBtn(w,"dist","Distribution")+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prSortBtn(w,"amt","Amount")+'</span></div>';
+      var body=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
+        return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.pt+'</span><span class="pr-distcol">'+prDistBadge(a.distId)+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'<span class="sr-only"> '+a.pt+', '+a.distName+'</span></span></div>';}).join("");
+      return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all pay types</span><span>'+money(tot)+'</span></div>';
+    }
+    var col=meta.kind==="distpt"?"Pay type":"Distribution";
+    var head2='<div class="wt-row wt-head"><span class="lr-main">'+prSortBtn(w,"name",col)+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prSortBtn(w,"amt","Amount")+'</span></div>';
+    var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
+      return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.name+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+    return '<div class="scroll">'+head2+body2+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
+  function prDonut(w,forceSize){var meta=prScopeMeta(w),rows=prChartRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length);
+    rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];
+      arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      legend+='<div class="leg" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
     var DS=forceSize||({wide:250,xwide:280}[w.size]||190);
-    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">'+m.legend+'</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
+    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">'+meta.legend+'</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
   function prGlance(w){var tot=prDistTotals(w).reduce(function(s,a){return s+a.net;},0);
     return '<div class="kpi-row"><div class="kpi-num">'+prPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div></div></div>';}
   function prHeaderBlock(w,hideToggle,noTotal){
-    var top='<div class="dep-hd-top"><div class="pr-tools">'+prPeriodChip(w)+prToolLeft(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prToggle(w)+'</div>')+'</div>';
+    var top='<div class="dep-hd-top"><div class="pr-tools">'+prPeriodChip(w)+prScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prToggle(w)+'</div>')+'</div>';
     if(noTotal)return '<div class="dep-hd">'+top+'</div>';
-    var m=prMode(w),tot=m.rows.reduce(function(s,a){return s+a.net;},0);
-    var ctx=w.prDist?('<div class="pr-scope">'+prDistName(w.prDist)+', all pay types for the selected period</div>'):'';
+    var rows=prTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),meta=prScopeMeta(w);
+    var ctx=(meta.kind==="distpt")?('<div class="pr-scope-ctx">'+prDistName(meta.dist)+', all pay types for the selected period</div>'):'';
     return '<div class="dep-hd">'+top+'<div class="dep-hd-num"><span class="metric-value">'+money(tot)+'</span>'+ctx+'</div></div>';}
   function prContent(w){
     if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
@@ -2943,9 +2946,14 @@ function arShowPop(row,mx,my){
     if(pop.type==="ar-rc"||pop.type==="ar-source")return arPopContent();
     if(pop.type==="pto-year"){var wy=find(pop.id),cy=ptoCurYear(wy);return '<div class="cap">Calendar year</div>'+ptoYears(wy).map(function(y){return '<button class="mi'+(cy===y?" check":"")+'" role="option" aria-selected="'+(cy===y)+'" data-action="pto-set-year" data-id="'+wy.id+'" data-y="'+y+'">'+(cy===y?ICON("check"):'<span class="mi-gap"></span>')+y+'</button>';}).join("");}
     if(pop.type==="pto-view"){var wv=find(pop.id),cv=wv.ptoView||"pending";return '<div class="cap">View</div>'+PTO_VIEWS.map(function(o){return '<button class="mi'+(cv===o[0]?" check":"")+'" role="option" aria-selected="'+(cv===o[0])+'" data-action="pto-set-view" data-id="'+wv.id+'" data-v="'+o[0]+'">'+(cv===o[0]?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");}
+    if(pop.type==="pr-scope"){var wsc=find(pop.id),cur=wsc.prScope||"all";
+      function o(v,lbl){var on=cur===v;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="pr-set-scope" data-id="'+wsc.id+'" data-s="'+v+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+lbl+'</span></button>';}
+      var out=o("all","All distributions")+o("pt","By pay type")+'<div class="sep"></div><div class="cap">A specific distribution</div>';
+      out+=PR_DISTS.map(function(ds){var on=cur===ds.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="pr-set-scope" data-id="'+wsc.id+'" data-s="'+ds.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="pr-dot" style="background:'+(PR_DIST_COLORS[ds.id]||"#8a8f98")+'"></span><span class="mi-nm">'+ds.name+'</span></button>';}).join("");
+      return out;}
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
@@ -3117,9 +3125,9 @@ function arShowPop(row,mx,my){
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
     if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
-    if(a==="pr-groupby"){var wg=find(id);if(wg){wg.prGroup=t.getAttribute("data-g");wg.prDist=null;}pop=null;render();return;}
-    if(a==="pr-drill"){var wdd=find(id);if(wdd)wdd.prDist=t.getAttribute("data-d");pop=null;render();return;}
-    if(a==="pr-back"){var wbk=find(id);if(wbk)wbk.prDist=null;pop=null;render();return;}
+    if(a==="pr-scope"){pop=(pop&&pop.type==="pr-scope"&&pop.id===id)?null:{type:"pr-scope",id:id};render();return;}
+    if(a==="pr-set-scope"){var wps=find(id);if(wps)wps.prScope=t.getAttribute("data-s");pop=null;render();return;}
+    if(a==="pr-sort"){var wsr=find(id),k=t.getAttribute("data-k");if(wsr){var cs=(wsr.prSort||"amt-desc").split("-");wsr.prSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="amt")?"desc":"asc"));}render();return;}
     if(a==="pr-range-set"){var wprr=find(id),rset=t.getAttribute("data-r");if(wprr){wprr.range=rset;if(rset==="CUSTOM"&&!wprr.begin){var b0=prRangeBoundsFor("TM",wprr);wprr.begin=b0.begin;wprr.end=b0.end;}}if(rset!=="CUSTOM")pop=null;render();return;}
     if(a==="pr-range-set"){var wprr=find(id);if(wprr){var pb=prPresetBounds(t.getAttribute("data-r"));wprr.begin=pb.begin;wprr.end=pb.end;}pop=null;render();return;}
     if(a==="open-report"){var wo=find(id);showModal("Opens the full page","Tapping this would take you out of the dashboard to the full <b>"+(wo?wo.title:"")+"</b> page in its source module, with the complete data and all controls.");return;}
