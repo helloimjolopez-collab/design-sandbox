@@ -2734,7 +2734,7 @@ function renderPanelAction(person, c){
   } else if(c.status==='invite-expiring'){
     cls='warn';title='Invite expiring in 3 days';
     desc='The applicant has not yet submitted their consent form.';
-    btns=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="toast('Link extended')">Extend expiry</button>`;
+    btns=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent to ${esc(person.email)}')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="openExtendExpiry('${c.id}','${c.inviteExpiry||'Jun 14, 2026'}')">Change expiry date</button>`;
   } else if(c.status==='invite-expired'){
     cls='bad';title='Invite expired — no consent received';
     desc='The invite link expired before the applicant completed the consent form. Renew the link to restart.';
