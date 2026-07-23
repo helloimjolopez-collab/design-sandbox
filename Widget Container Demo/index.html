@@ -1172,12 +1172,13 @@
     var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-id="'+w.id+'" data-multi="0" data-blob="'+blob.replace(/"/g,"&quot;")+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div><div class="tr-xax">'+xl+'</div></div>';
     return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+plot+'</div>';
   }
-  /* One variance cell: signed dollars + a quiet %, coloured green/red by favourability (or neutral grey for a mixed report line). This single column replaces the old $-trend + separate Result-pill pair that was overcrowding the row. */
-  function bgtVarCell(v,neutral,budget){
-    if(v==null)return '<span class="bgt-tv neu">n/a</span>';
+  /* One variance value: signed dollars + a quiet %, coloured green/red by favourability (or neutral grey for a mixed report line). Rendered inside a normal .wt-c2 cell so it sits in the shared table grid. */
+  function bgtVarInner(v,neutral,budget){
+    if(v==null)return '<span class="bgt-vv neu">n/a</span>';
     var neg=v<0,cls=neutral?"neu":(neg?"neg":"pos"),pct=(budget>0)?(Math.round(Math.abs(v)/budget*1000)/10):null;
-    return '<span class="bgt-tv '+cls+'">'+(neg?"−":"+")+money(Math.abs(v))+(pct!=null?'<span class="bgt-tvpct">'+pct+'%</span>':"")+'</span>';
+    return '<span class="bgt-vv '+cls+'">'+(neg?"−":"+")+money(Math.abs(v))+(pct!=null?'<span class="bgt-vp">'+pct+'%</span>':"")+'</span>';
   }
+  /* Table view uses the SAME row primitives as every other widget's table (.wt-row / .wt-head / .lr-main / .wt-c2 / .wt-sort / .scroll / .dep-total) so it matches Deposits and Payroll exactly. Columns: Period, Budget, Actual, Variance. */
   function bgtTable(w,ivHTML){
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
     var base=bgtViewRows(w);
@@ -1185,12 +1186,12 @@
     var sk=(w.bsort||"idx-asc").split("-"),key=sk[0],dir=sk[1]==="desc"?-1:1;
     function val(x){if(key==="budget")return x.budget;if(key==="actual")return x.actual==null?-Infinity:x.actual;if(key==="variance")return x.variance==null?-Infinity:x.variance;return x.idx;}
     rows.sort(function(a,b){return dir*(val(a)-val(b));});
-    function sh(k,label,cls){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="bgt-tsort'+(on?" on":"")+' '+cls+'" data-action="bgt-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+'<span class="material-symbols-rounded" data-i="'+ic+'">'+ic+'</span></button>';}
-    var head='<div class="bgt-trow bgt-thead">'+sh("idx","Period","bgt-tp")+sh("budget","Budget","bgt-tc")+sh("actual","Actual","bgt-tc")+sh("variance","Variance","bgt-tv")+'</div>';
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="bgt-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("idx","Period")+'</span><span class="wt-c2">'+sb("budget","Budget")+'</span><span class="wt-c2">'+sb("actual","Actual")+'</span><span class="wt-c2 bgt-varcol">'+sb("variance","Variance")+'</span></div>';
     var body=rows.map(function(r){
-      return '<div class="bgt-trow"><span class="bgt-tp">'+r.period+'</span><span class="bgt-tc">'+money(r.budget)+'</span><span class="bgt-tc">'+(r.actual!=null?money(r.actual):'<span class="bgt-caption">n/a</span>')+'</span>'+bgtVarCell(r.variance,neutral,r.budget)+'</div>';}).join("");
+      return '<div class="wt-row"><span class="lr-main">'+r.period+'</span><span class="wt-c2">'+money(r.budget)+'</span><span class="wt-c2">'+(r.actual!=null?money(r.actual):'<span class="bgt-caption">n/a</span>')+'</span><span class="wt-c2 bgt-varcol">'+bgtVarInner(r.variance,neutral,r.budget)+'</span></div>';}).join("");
     var thruR=base.filter(function(r){return r.actual!=null;}),tB=thruR.reduce(function(s,r){return s+r.budget;},0),totalV=thruR.length?bgtVariance(vt,tB,thruR.reduce(function(s,r){return s+r.actual;},0)):null;
-    return '<div class="bgt-tbl">'+(ivHTML?'<div class="bgt-tbar">'+ivHTML+'</div>':"")+'<div class="bgt-tscroll">'+head+body+'</div><div class="bgt-ttot"><span>Total, posted so far</span>'+bgtVarCell(totalV,neutral,tB)+'</div></div>';}
+    return (ivHTML?'<div class="bgt-tbar">'+ivHTML+'</div>':"")+'<div class="scroll bgt-tscroll">'+head+body+'</div><div class="dep-total"><span>Total, posted so far</span><span class="bgt-varcol bgt-vartot">'+bgtVarInner(totalV,neutral,tB)+'</span></div>';}
   /* The slicer: the time-span chip on the LEFT and the M/Q/P/Y interval toggle on the RIGHT, kept together just above the chart because they constrain each other (a single-period span greys out Quarter/Year). Threaded into the chart legend row / the table toolbar. */
   function bgtSlicer(w){return '<div class="bgt-slicer">'+bgtSpanChip(w)+bgtIntervalToggle(w,w.binterval||"month","set-bgt-interval")+'</div>';}
   function bgtView(w,fmt){
