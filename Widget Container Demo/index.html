@@ -1097,11 +1097,11 @@
     if(vt==="expense")return (fav?"Favourable: spending is ":"Unfavourable: spending is ")+amt+(fav?" under budget":" over budget")+", "+sp+".";
     return (fav?"Favourable: income has come in ":"Unfavourable: income has come in ")+amt+(fav?" higher":" lower")+" than budgeted, "+sp+".";
   }
-  /* Header — the two-row grid Deposits uses. Row 1: on the left the account-scope chip + the time-span chip (the two "what data" selectors); on the right the Bar/Line/Table view toggle. Row 2: the span's variance number + badge on the LEFT, the Month/Quarter/Period/Year interval toggle on the RIGHT, inline with the number. At Explore size the interval + shape toggles move into each panel; scope + span stay global up here. */
+  /* Header — the two-row grid Deposits uses. Row 1: account-scope chip on the left, Bar/Line/Table view toggle on the right. Row 2: the span's variance number + badge on the left (+ a quiet special-report context line). The time-span chip and the M/Q/P/Y interval toggle live together just above the chart (they constrain each other), not up here — except at Explore size, where the shared span chip stays in the header and each panel carries its own interval. */
   function bgtHeaderBlock(w,mode){
     var xw=(w.size==="xwide"),loading=(mode==="loading"),controlsOnly=(mode===true);
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
-    var leftControls='<div class="bgt-ctlrow">'+bgtScopeChip(w)+bgtSpanChip(w)+'</div>';
+    var leftControls='<div class="bgt-ctlrow">'+bgtScopeChip(w)+(xw?bgtSpanChip(w):"")+'</div>';
     var shapeToggle=xw?"":bgtShapeToggle(w,w.bshape||"bar","set-bgt-shape");
     if(controlsOnly)return '<div class="dep-hd"><div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div></div>';
     var numInner;
