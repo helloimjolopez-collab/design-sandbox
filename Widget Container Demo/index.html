@@ -734,6 +734,54 @@
   .mys-detail-f{display:flex;align-items:center;}
   .mys-detail-spacer{flex:1;}
   .mys-asof{font-size:11px;color:var(--txt-subtle);padding:6px 10px 4px;}
+  /* ===== Bank Balances (prefix: bank): CSS ===== */
+  .bank-neg{color:var(--red-100);}
+  .bank-pill{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;padding:2px 9px 2px 7px;font-variant-numeric:tabular-nums;}
+  .bank-pill .material-symbols-rounded{font-size:15px;color:var(--txt-subtle);}
+  .bank-pill.warn{color:var(--red-100);background:var(--red-10);}
+  .bank-pill.warn .material-symbols-rounded{color:var(--red-100);}
+  .bank-numwrap{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .bank-ctx{font-size:11.5px;font-weight:400;color:var(--txt-subtle);line-height:1.4;max-width:52ch;}
+  .bank-caption{font-size:11px;color:var(--txt-subtle);}
+  .bank-acct-chip{max-width:230px;}
+  .bank-acct-chip .fc-label{display:inline-flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bank-mi-bal{margin-left:auto;padding-left:10px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
+  .bank-tag-over{display:inline-block;margin-right:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--red-100);background:var(--red-10);border-radius:4px;padding:1px 5px;vertical-align:middle;}
+  .bank-dist{padding:2px 0 0;}
+  .bank-pie-title{font-size:12px;font-weight:600;color:var(--txt-secondary);padding:2px 16px 6px;}
+  .bank-pie-note{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--txt-subtle);padding:8px 16px 12px;line-height:1.45;}
+  .bank-pie-note .material-symbols-rounded{font-size:15px;flex:0 0 auto;margin-top:1px;}
+  .bank-7scroll{overflow-y:auto;min-height:0;}
+  .bank-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 10px;}
+  .bank-legend{display:flex;gap:16px;flex-wrap:wrap;padding:2px 16px 10px;font-size:11.5px;color:var(--txt-secondary);}
+  .bank-lg{display:inline-flex;align-items:center;gap:6px;}
+  .bank-sw{width:11px;height:11px;border-radius:2px;display:inline-block;}
+  .bank-sw.in{background:var(--am-600);}
+  .bank-sw.out{background:var(--am-300);}
+  .bank-plotrow{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
+  .bank-yax{flex:0 0 40px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
+  .bank-canvas{flex:1;min-width:0;position:relative;border-bottom:1px solid var(--stroke-widget);}
+  .bank-gl{position:absolute;left:0;right:0;bottom:50%;border-top:1px dashed var(--stroke-widget);opacity:.5;}
+  .bank-cols{position:absolute;inset:0;display:flex;align-items:flex-end;gap:10px;padding:0 4px;}
+  .bank-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;border-radius:6px;transition:background var(--dur,.15s) ease;}
+  .bank-col:hover{background:var(--wn-300);}
+  .bank-barwrap{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;}
+  .bank-bar{width:56%;max-width:46px;border-radius:3px 3px 0 0;min-height:2px;}
+  .bank-col.in .bank-bar{background:var(--am-600);}
+  .bank-col.out .bank-bar{background:var(--am-300);}
+  .bank-xaxrow{display:flex;gap:8px;padding:6px 16px 0;}
+  .bank-yaxsp{flex:0 0 40px;}
+  .bank-xcols{flex:1;min-width:0;display:flex;gap:10px;padding:0 4px;}
+  .bank-xcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .bank-xlbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
+  .bank-xflow{font-size:10px;color:var(--txt-subtle);text-transform:uppercase;letter-spacing:.03em;}
+  .bank-skel{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px;}
+  .bank-skel-plot{flex:1;min-height:120px;display:flex;align-items:flex-end;gap:10px;padding:0 8px;}
+  .bank-sk-col{flex:1 1 0;height:100%;display:flex;align-items:flex-end;}
+  .bank-sk-bar{width:100%;border-radius:4px 4px 0 0;}
+  .bank-skel .sk,.bank-sk-bar{background:linear-gradient(100deg,var(--wn-200) 30%,var(--wn-100) 50%,var(--wn-200) 70%);background-size:200% 100%;animation:bgtshimmer 1.5s ease-in-out infinite;}
+  .bank-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--txt-subtle);font-size:12px;padding:12px 0 0;}
+  @media(prefers-reduced-motion:reduce){.bank-skel .sk,.bank-sk-bar{animation:none!important;}}
 </style>
 </head>
 <body>
@@ -1935,7 +1983,7 @@ function mysPopContent(){
       return '<div class="cap">Show tasks for</div>'+MCT_MODULES.map(function(m){var on=cm===m.id;return '<button class="mi'+(on?" check":"")+'" data-action="mct-set-module" data-id="'+wmd.id+'" data-m="'+m.id+'" role="option" aria-selected="'+on+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+m.name+'</button>';}).join("");}
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="mct-module")return '[data-action="mct-module"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="mct-module")return '[data-action="mct-module"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
