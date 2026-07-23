@@ -383,17 +383,20 @@
     background: var(--primitive-color-warm-300);
     border-radius: 8px;
   }
-  /* Typing indicator: three dots that rise in sequence, for Collab's
-     "thinking" state. */
-  .spd-typing { display: inline-flex; align-items: center; gap: 4px; }
-  .spd-typing i {
-    width: 6px; height: 6px; border-radius: 50%; display: block;
-    background: var(--semantic-color-light-mode-text-static-secondary-subtle);
-    animation: spd-typing 1.25s var(--motion-easing-inout) infinite;
+  /* Collab "thinking": three little rounded bars (echoing the Spired logo
+     pieces) that rise in sequence, the brand's ascent motion in miniature. */
+  .spd-thinkbars { display: inline-flex; align-items: flex-end; gap: 4px; height: 16px; }
+  .spd-thinkbars i {
+    width: 8px; height: 6px; border-radius: 3px; display: block;
+    background: var(--semantic-color-light-mode-fill-action-primary-base);
+    animation: spd-thinkrise 1.15s var(--motion-easing-inout) infinite;
   }
-  .spd-typing i:nth-child(2) { animation-delay: 0.15s; }
-  .spd-typing i:nth-child(3) { animation-delay: 0.3s; }
-  @keyframes spd-typing { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-3px); opacity: 1; } }
+  .spd-thinkbars i:nth-child(2) { animation-delay: 0.14s; }
+  .spd-thinkbars i:nth-child(3) { animation-delay: 0.28s; }
+  @keyframes spd-thinkrise { 0%, 100% { transform: translateY(0); opacity: 0.45; } 45% { transform: translateY(-7px); opacity: 1; } }
+  /* A gentle spin for the mono / two-tone mark used as a loader. */
+  .spd-collabspin { transform-box: fill-box; transform-origin: center; animation: spd-halo-cw 3s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .spd-thinkbars i, .spd-collabspin { animation: none; } }
   /* Shimmer: a lavender-into-gray light travelling diagonally from bottom-left
      up to top-right. The band is oriented at 45° (perpendicular to its travel)
      so it reads as a diagonal sweep rising, not a vertical wipe. */
