@@ -1520,6 +1520,8 @@ tbody tr:hover .row-act-btn{opacity:1}
 // fill-action-primary-base, fill-static-brand-bold, text-static-positive-base,
 // text-static-negative-base, text-static-accent-amethyst-base, text-static-danger-base,
 // text-static-alert-base, icon-static-neutral-base
+let DEMO_MODE = 'north-star'; // 'north-star' | 'phase-1'
+
 const AVATARCOLORS = ['#dce6f8','#e8e2f8','#dde8f8','#e4dcf4','#e2eaf8','#e4ddf4','#dae4f4','#e6e0f6'];/* Pathway very light indigo/lavender palette — 8 shades */
 const esc = s => String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]);
 function initials(n){return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}
@@ -1553,6 +1555,10 @@ const STATUS = {
   'due-rescreening':      {label:'Rescreen Due',                          cls:'b-warn',    icon:'ms-schedule',       action:true,  tip:'The rescreening date is approaching. Current check is still valid — start a new screening case soon.'},
   'screening-overdue':    {label:'Screening Expired',                     cls:'b-danger',  icon:'ms-event-busy',     action:true,  tip:'The rescreen due date has passed. This person\'s screening is no longer current. A new background check is required.'},
   'bg-expired':           {label:'Screening Expired',                     cls:'b-warn',    icon:'ms-link-off',       action:false, tip:'Background check has expired.'},
+  // Phase 1 — order failure scenarios
+  'order-retrying':       {label:'Order Processing — Retrying',           cls:'b-warn',    icon:'ms-sync',           action:false, tip:'The order encountered a technical issue. PMM is automatically retrying in the background. No action needed — you\'ll be notified if this cannot be resolved automatically.'},
+  'order-failed-data':    {label:'Order Failed — Data Issue',             cls:'b-danger',  icon:'ms-error-outline',  action:true,  tip:'One or more checks could not run due to incorrect or missing applicant information. The order has been stopped. Cancel this case, identify what needs correcting, and open a new case with the applicant.'},
+  'order-failed-final':   {label:'Order Failed',                          cls:'b-danger',  icon:'ms-block-fill',     action:true,  tip:'The order failed after multiple retry attempts. Cancel this case and open a new one. Contact support if the issue persists.'},
 };
 
 const PEOPLE = [
