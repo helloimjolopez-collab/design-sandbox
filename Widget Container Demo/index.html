@@ -1155,14 +1155,15 @@
     var body=rows.map(function(r){
       return '<div class="bgt-trow"><span class="bgt-tp">'+r.period+'</span><span class="bgt-tc">'+money(r.budget)+'</span><span class="bgt-tc">'+(r.actual!=null?money(r.actual):'<span class="bgt-caption">—</span>')+'</span>'+bgtVarCell(r.variance,neutral,r.budget)+'</div>';}).join("");
     var thruR=base.filter(function(r){return r.actual!=null;}),tB=thruR.reduce(function(s,r){return s+r.budget;},0),totalV=thruR.length?bgtVariance(vt,tB,thruR.reduce(function(s,r){return s+r.actual;},0)):null;
-    return '<div class="bgt-tbl"><div class="bgt-tscroll">'+head+body+'</div><div class="bgt-ttot"><span>Total, posted so far</span>'+bgtVarCell(totalV,neutral,tB)+'</div></div>';}
-  /* Render the chosen shape over the current interval×span rows — the one place they combine. */
+    return '<div class="bgt-tbl">'+(ivHTML?'<div class="bgt-tbar">'+ivHTML+'</div>':"")+'<div class="bgt-tscroll">'+head+body+'</div><div class="bgt-ttot"><span>Total, posted so far</span>'+bgtVarCell(totalV,neutral,tB)+'</div></div>';}
+  /* Render the chosen shape over the current interval×span rows — the one place they combine. The interval toggle (M/Q/P/Y) is threaded into the chart's legend row / the table's toolbar, so it sits with the thing it controls. */
   function bgtView(w,fmt){
     var av=w.acctview||"income";
     if(!bgtHasBudget(bgtSet(w)))return bgtNoBudgetState(w,av);
-    if(fmt==="table")return bgtTable(w);
+    var iv=bgtIntervalToggle(w,w.binterval||"month","set-bgt-interval");
+    if(fmt==="table")return bgtTable(w,iv);
     var rows=bgtViewRows(w);
-    return (fmt==="line")?bgtLine(w,rows):bgtBars(w,rows);
+    return (fmt==="line")?bgtLine(w,rows,iv):bgtBars(w,rows,iv);
   }
   function bgtGlance(w){
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
