@@ -2040,7 +2040,7 @@ function mysPopContent(){
   function bgtLockBg(on){var v=on?"hidden":"";try{document.documentElement.style.overflow=v;}catch(e){}try{document.body.style.overflow=v;}catch(e2){}var am=document.querySelector(".appmain");if(am)am.style.overflow=v;var sn=document.querySelector(".sidenav");if(sn)sn.style.overflow=v;}
   function renderModal(){var mr=document.getElementById("modalRoot");if(!modal){mr.innerHTML="";modalMounted=false;bgtLockBg(false);return;}
     bgtLockBg(true);
-    if(modal.type==="bgtreport"){mr.innerHTML=bgtReportModalHTML();return;}
+    if(modal.type==="bgtreport"){if(modalMounted){var mm=mr.querySelector(".modal.bgt-rm-modal");if(mm){mm.innerHTML=bgtReportModalInner();return;}}mr.innerHTML=bgtReportModalHTML();modalMounted=true;return;}
     if(modal.type==="mysconfig"){mr.innerHTML=mysConfigModalHTML();return;}
     if(modal.type==="mysdetail"){mr.innerHTML=mysDetailModalHTML();return;}
     var body=(modal.scoped?'<div class="wcontent acct-mw">'+depContent(modal.mw)+'</div>':modal.b);
