@@ -3419,7 +3419,32 @@ function toggleLmMenu(menuId, e){
   if(!menu) return;
   const wasOpen = menu.classList.contains('open');
   closeAllMenus();
-  if(!wasOpen) menu.classList.add('open');
+  if(!wasOpen){
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    menu._menuOrigParent = menu.parentElement;
+    document.body.appendChild(menu);
+    menu.style.position = 'fixed';
+    menu.style.visibility = 'hidden';
+    menu.style.display = 'block';
+    menu.classList.add('open');
+    const menuRect = menu.getBoundingClientRect();
+    menu.style.visibility = '';
+    const menuW = menuRect.width || 180;
+    const menuH = menuRect.height || 160;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    menu.style.zIndex = '9900';
+    const rightPos = window.innerWidth - rect.right;
+    menu.style.right = Math.max(4, rightPos) + 'px';
+    menu.style.left = 'auto';
+    if(spaceBelow < menuH + 8){
+      menu.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+      menu.style.top = 'auto';
+    } else {
+      menu.style.top = (rect.bottom + 4) + 'px';
+      menu.style.bottom = 'auto';
+    }
+  }
 }
 
 function toggleCaseLog(logId, toggleId){
