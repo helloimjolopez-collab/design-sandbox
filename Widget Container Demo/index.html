@@ -2003,11 +2003,16 @@ function mysPopContent(){
   function bgtDDMenu(kind,items,selId,w){
     return '<div class="bgt-dd-menu"><div class="menu-scroll" role="listbox">'+items.map(function(o){var on=o.id===selId;return '<button class="mi'+(on?" check":"")+'" role="option" data-action="'+(kind==="rep"?"bgt-rm-setrep":"bgt-rm-setline")+'" data-id="'+w.id+'" data-'+(kind==="rep"?"r":"l")+'="'+o.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o.name+'</span>'+(o.tag?'<span class="bgt-rm-tag '+o.tag+'">'+o.tag+'</span>':(o.meta?'<span class="bgt-dd-meta">'+o.meta+'</span>':''))+'</button>';}).join("")+'</div></div>';
   }
-  function bgtReportModalHTML(){
+  /* The inner content (header + body + footer) is built separately from the backdrop/modal shell so that interactions patch ONLY the inner HTML of the persistent .modal element. The .modal / .modal-backdrop elements are never re-created, so their entry animation never replays: no flash, no glitch. */
+  function bgtReportModalInner(){
     var w=find(modal.id);if(!w)return "";
     var dr=modal.dr,dl=modal.dl,open=modal.open||null;
     var curRep=null;for(var i=0;i<BGT_REPORTS.length;i++)if(BGT_REPORTS[i].id===dr)curRep=BGT_REPORTS[i];
     var curLine=null;if(curRep&&dl)for(var j=0;j<curRep.lines.length;j++)if(curRep.lines[j].id===dl)curLine=curRep.lines[j];
+    /* Info panel sits ABOVE the dropdowns; it doubles as instruction (before a choice) and confirmation summary (after). */
+    var preview=(curRep&&curLine)
+      ? '<div class="bgt-rm-preview">'+ICON("check_circle")+'<span>Comparing <b>'+curLine.name+'</b> from <b>'+curRep.name+'</b> against budget. This line is treated as <b>'+curLine.type+'</b> for favourability.</span></div>'
+      : '<div class="bgt-rm-preview">'+ICON("info")+'<span>Choose a report, then a line within it. That line is what gets compared against its budget.</span></div>';
     /* Report-name dropdown */
     var repVal=curRep?curRep.name:"Select a report";
     var repField='<div class="bgt-dd-field">'+
@@ -2027,12 +2032,10 @@ function mysPopContent(){
     '</div>';
     var canApply=!!(dr&&dl);
     /* modal body carries a data-action so a click on empty dialog space just closes any open menu (never dismisses the dialog); the dialog shell is data-action="stop" and only the backdrop / Cancel / X dismiss. */
-    var preview=(curRep&&curLine)
-      ? '<div class="bgt-rm-preview">'+ICON("check_circle")+'<span>Comparing <b>'+curLine.name+'</b> from <b>'+curRep.name+'</b> against budget. This line is treated as <b>'+curLine.type+'</b> for favourability.</span></div>'
-      : '<div class="bgt-rm-preview">'+ICON("info")+'<span>Choose a report, then a line within it. That line is what gets compared against its budget.</span></div>';
-    var body='<p class="bgt-rm-lead">Pick a report, then the line within it to compare against budget.</p><div class="bgt-rm-fields">'+repField+lineField+'</div>'+preview;
-    return '<div class="modal-backdrop" data-action="bgt-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">summarize</span>Choose a special report</span><button class="iconbtn" data-action="bgt-rm-cancel" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b bgt-rm-b" data-action="bgt-rm-closemenu">'+body+'</div><div class="modal-f"><button class="btn naked sm" data-action="bgt-rm-cancel">Cancel</button><button class="btn primary sm'+(canApply?"":" is-off")+'"'+(canApply?' data-action="bgt-rm-done" data-id="'+w.id+'"':' aria-disabled="true"')+'>Apply</button></div></div></div>';
+    var body=preview+'<div class="bgt-rm-fields">'+repField+lineField+'</div>';
+    return '<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">summarize</span>Choose a special report</span><button class="iconbtn" data-action="bgt-rm-cancel" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b bgt-rm-b" data-action="bgt-rm-closemenu">'+body+'</div><div class="modal-f"><button class="btn naked sm" data-action="bgt-rm-cancel">Cancel</button><button class="btn primary sm'+(canApply?"":" is-off")+'"'+(canApply?' data-action="bgt-rm-done" data-id="'+w.id+'"':' aria-disabled="true"')+'>Apply</button></div>';
   }
+  function bgtReportModalHTML(){return '<div class="modal-backdrop" data-action="bgt-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report">'+bgtReportModalInner()+'</div></div>';}
   /* Freeze the background while any modal is open so scrolling happens inside the dialog, not the page behind it. The main scroller is .appmain; we also pin the sidenav. Restored the moment the modal closes. */
   function bgtLockBg(on){var v=on?"hidden":"";try{document.documentElement.style.overflow=v;}catch(e){}try{document.body.style.overflow=v;}catch(e2){}var am=document.querySelector(".appmain");if(am)am.style.overflow=v;var sn=document.querySelector(".sidenav");if(sn)sn.style.overflow=v;}
   function renderModal(){var mr=document.getElementById("modalRoot");if(!modal){mr.innerHTML="";modalMounted=false;bgtLockBg(false);return;}
