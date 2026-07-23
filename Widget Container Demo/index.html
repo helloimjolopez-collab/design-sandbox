@@ -1020,6 +1020,51 @@
   .pto-skel{padding:8px 0;}
   .pto-sk-row{gap:10px;padding:7px 14px;}
   .pto-caption{font-size:11px;color:var(--txt-subtle);}
+  /* ===== Accounts Payable By Due Date (ap) ===== */
+  .ap-due-chip{max-width:260px;}
+  .ap-due-chip .fc-label{display:inline-flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ap-pill{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px 2px 7px;font-variant-numeric:tabular-nums;}
+  .ap-pill .material-symbols-rounded{font-size:15px;}
+  .ap-pill.warn{color:var(--red-100);background:var(--red-10);}
+  .ap-pill.pos{color:var(--txt-pos);background:var(--wn-200);}
+  .ap-mi-amt{margin-left:auto;padding-left:10px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
+  .mi-acctno.ap-over{color:var(--red-100);}
+  .ap-c-inv{flex:0 0 96px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+  .ap-c-due{flex:0 0 150px;min-width:0;display:flex;flex-direction:column;}
+  .ap-due-d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ap-due-days{font-size:11px;color:var(--txt-subtle);}
+  .ap-due-days.over{color:var(--red-100);}
+  .wt-head .ap-c-inv,.wt-head .ap-c-due{color:var(--txt-subtle);}
+  .ap-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 10px;}
+  .ap-legend{display:flex;gap:16px;flex-wrap:wrap;padding:2px 16px 10px;font-size:11.5px;color:var(--txt-secondary);}
+  .ap-lg{display:inline-flex;align-items:center;gap:6px;}
+  .ap-sw{width:11px;height:11px;border-radius:2px;display:inline-block;}
+  .ap-sw.over{background:var(--am-600);}
+  .ap-sw.up{background:var(--am-300);}
+  .ap-plotrow{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
+  .ap-yax{flex:0 0 46px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
+  .ap-canvas{flex:1;min-width:0;position:relative;border-bottom:1px solid var(--stroke-widget);}
+  .ap-gl{position:absolute;left:0;right:0;bottom:50%;border-top:1px dashed var(--stroke-widget);opacity:.5;}
+  .ap-cols{position:absolute;inset:0;display:flex;align-items:flex-end;gap:10px;padding:0 4px;}
+  .ap-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:pointer;border:0;background:transparent;padding:0;border-radius:6px;transition:background var(--dur,.15s) ease;}
+  .ap-col:hover{background:var(--wn-300);}
+  .ap-col.sel{background:var(--wn-200);box-shadow:inset 0 0 0 2px var(--am-600);}
+  .ap-col:focus-visible{outline:2px solid var(--am-600);outline-offset:2px;}
+  .ap-barwrap{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;}
+  .ap-bar{width:56%;max-width:46px;border-radius:3px 3px 0 0;min-height:2px;background:var(--am-300);}
+  .ap-col.over .ap-bar{background:var(--am-600);}
+  .ap-col.sel .ap-bar{background:var(--am-700);}
+  .ap-xaxrow{display:flex;gap:8px;padding:6px 16px 0;}
+  .ap-yaxsp{flex:0 0 46px;}
+  .ap-xcols{flex:1;min-width:0;display:flex;gap:10px;padding:0 4px;}
+  .ap-xcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .ap-xcol.sel .ap-xlbl{color:var(--txt-primary);font-weight:700;}
+  .ap-xlbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
+  .ap-xflow{font-size:10px;color:var(--txt-subtle);text-transform:uppercase;letter-spacing:.03em;}
+  .ap-xflow.over{color:var(--red-100);}
+  .ap-tl-note{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--txt-subtle);padding:10px 16px 2px;line-height:1.45;}
+  .ap-tl-note .material-symbols-rounded{font-size:15px;flex:0 0 auto;margin-top:1px;}
+  .ap-pop-over{color:var(--red-100)!important;}
 </style>
 </head>
 <body>
@@ -1177,6 +1222,10 @@
       {id:"pto2",title:"Payroll Scheduled Time Off (all approved)",kind:"pto",size:"wide",tiers:["kpi","wide","xwide"],dataset:"approved",ptoView:"pending",ptoExpand:{}},
       {id:"pto3",title:"Payroll Scheduled Time Off (no departments to approve)",kind:"pto",size:"wide",tiers:["kpi","wide","xwide"],ptoView:"pending",ptoExpand:{},state:"empty"},
       {id:"pto4",title:"Payroll Scheduled Time Off (renamed and hidden hour types)",kind:"pto",size:"xwide",tiers:["kpi","wide","xwide"],dataset:"alt",ptoView:"all",ptoExpand:{}},
+      {id:"ap",title:"Accounts Payable By Due Date",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apview:"timeline",apsort:"amt-desc",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"ap2",title:"Accounts Payable By Due Date (Total view)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apDue:"total",apview:"table",apsort:"due-asc",updated:"just now"},
+      {id:"ap3",title:"Accounts Payable By Due Date (single due date)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",apview:"timeline",apsort:"amt-desc",updated:"just now"},
+      {id:"ap4",title:"Accounts Payable By Due Date (nothing outstanding)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",updated:"just now"},
     ]},
     {id:"d2",name:"Monthly Committee",custom:true,widgets:[
       {id:"m1",title:"Total giving",kind:"metric",size:"kpi",tiers:["kpi","wide"],range:"Q"},
@@ -2835,6 +2884,143 @@ function arShowPop(row,mx,my){
   function ptoLoad(w){w.ptoLoading=true;clearTimeout(timers["pto-"+w.id]);timers["pto-"+w.id]=setTimeout(function(){w.ptoLoading=false;render();},700);}
 
 
+  /* ===== Accounts Payable By Due Date (ap): timeline of when bills are due ===== */
+  EMPTY_COPY.payables={title:"Nothing outstanding",sub:"All supplier invoices are paid. Nothing is due right now."};
+  ERROR_COPY.payables={title:"Couldn’t load payables",sub:"Something went wrong fetching outstanding invoices."};
+  var apDueQuery="",apPopEl=null;
+  var AP_TODAY=new Date(2026,6,23);
+  var AP_INVOICES=[
+    {vendor:"Staples",                 inv:"INV-0003", due:"2026-07-10", amount:5555.00},
+    {vendor:"Grainger Supply",         inv:"INV-2201", due:"2026-07-18", amount:1240.50},
+    {vendor:"City Water & Power",      inv:"INV-2202", due:"2026-07-18", amount:875.00},
+    {vendor:"Faithful Cleaning Co.",   inv:"INV-3310", due:"2026-07-25", amount:2100.00},
+    {vendor:"Lakeside Print & Mail",   inv:"INV-3311", due:"2026-07-25", amount:640.75},
+    {vendor:"Grainger Supply",         inv:"INV-3312", due:"2026-07-25", amount:980.00},
+    {vendor:"Guardian Insurance",      inv:"INV-4400", due:"2026-08-01", amount:8400.00},
+    {vendor:"Summit HVAC Services",    inv:"INV-4401", due:"2026-08-01", amount:3250.00},
+    {vendor:"Cornerstone Landscaping", inv:"INV-5500", due:"2026-08-15", amount:1450.00},
+    {vendor:"Harmony Music Licensing", inv:"INV-6600", due:"2026-09-01", amount:720.00},
+    {vendor:"Guardian Insurance",      inv:"INV-6601", due:"2026-09-01", amount:8400.00},
+    {vendor:"Faithful Cleaning Co.",   inv:"INV-7700", due:"2026-09-30", amount:2100.00}
+  ];
+  var AP_INVOICES_SINGLE=[
+    {vendor:"Guardian Insurance",   inv:"INV-9001", due:"2026-08-05", amount:8400.00},
+    {vendor:"Summit HVAC Services", inv:"INV-9002", due:"2026-08-05", amount:3250.00}
+  ];
+  function apData(w){return (w&&w.dataset==="single")?AP_INVOICES_SINGLE:AP_INVOICES;}
+  function apMoney(n){return "$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var AP_M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function apParse(iso){var p=iso.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+  function apISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+  function apFmtLong(iso){var d=apParse(iso);return AP_M[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
+  function apFmtShort(iso){var d=apParse(iso);return AP_M[d.getMonth()]+" "+d.getDate();}
+  function apDiffDays(iso){var d=apParse(iso),t=new Date(AP_TODAY.getFullYear(),AP_TODAY.getMonth(),AP_TODAY.getDate());return Math.round((d-t)/86400000);}
+  function apIsOverdue(iso){return apDiffDays(iso)<0;}
+  function apDaysLabel(iso){var n=apDiffDays(iso);if(n<0)return "Overdue by "+(-n)+" day"+((-n)===1?"":"s");if(n===0)return "Due today";return "Due in "+n+" day"+(n===1?"":"s");}
+  function apDueDates(w){var seen={},out=[];apData(w).forEach(function(x){if(!seen[x.due]){seen[x.due]=1;out.push(x.due);}});out.sort(function(a,b){return apParse(a)-apParse(b);});return out;}
+  function apDefaultDue(w){var d=apDueDates(w);return d.length?d[0]:null;}
+  function apSel(w){var v=w.apDue;if(v==="total")return "total";var dates=apDueDates(w);if(v&&dates.indexOf(v)>-1)return v;return dates.length?dates[0]:null;}
+  function apByDate(w){var dates=apDueDates(w);return dates.map(function(iso){var inv=apData(w).filter(function(x){return x.due===iso;});var tot=inv.reduce(function(s,x){return s+x.amount;},0);return {iso:iso,total:tot,count:inv.length,overdue:apIsOverdue(iso)};});}
+  function apTotalDue(w){return apData(w).reduce(function(s,x){return s+x.amount;},0);}
+  function apOverdueTotal(w){return apData(w).filter(function(x){return apIsOverdue(x.due);}).reduce(function(s,x){return s+x.amount;},0);}
+  function apOverdueCount(w){return apData(w).filter(function(x){return apIsOverdue(x.due);}).length;}
+  function apRows(w){var sel=apSel(w),list=apData(w).slice();if(sel!=="total"&&sel)list=list.filter(function(x){return x.due===sel;});
+    var sk=(w.apsort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    list.sort(function(a,b){if(key==="vendor")return dir*a.vendor.localeCompare(b.vendor);if(key==="inv")return dir*a.inv.localeCompare(b.inv);if(key==="due"){var dd=apParse(a.due)-apParse(b.due);return dir*(dd||(b.amount-a.amount));}return dir*(a.amount-b.amount);});
+    return list;}
+  function apDueChip(w){var sel=apSel(w),spin=w.aploading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
+    var lbl=(sel==="total")?"Total (all due dates)":(sel?("Due "+apFmtLong(sel)):"No due dates");
+    return '<button class="filter-chip ap-due-chip" data-action="ap-due" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Due date, tap to change"><span class="fc-label">'+spin+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function apViewToggle(w){var v=w.apview||"timeline";var opts=[["table","Table","table_rows"],["timeline","Timeline","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="ap-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+  function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);return '<span class="ap-pill warn" data-tip="'+apMoney(od)+' across '+n+' invoice'+(n>1?"s":"")+' is past its due date." data-tip-plain>'+ICON("warning")+apMoney(od)+' overdue</span>';}return '<span class="ap-pill pos" data-tip="No outstanding invoice is past its due date." data-tip-plain>'+ICON("check_circle")+'Nothing overdue</span>';}
+  function apHeaderBlock(w,mode){
+    var loading=(mode==="loading");
+    var toggle=(w.size==="wide")?apViewToggle(w):"";
+    var numInner;
+    if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
+    else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+apMoney(apTotalDue(w))+'</span>'+apBadge(w)+'</div>';}
+    var n=apData(w).length;
+    var ctx='Outstanding supplier invoices, grouped by due date. '+n+' invoice'+(n===1?"":"s")+' due, data as of '+apFmtLong(apISO(AP_TODAY))+'.';
+    return '<div class="dep-hd">'+
+      '<div class="dep-hd-top">'+apDueChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
+      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div></div></div>'+
+      '</div>';}
+  function apSkeleton(){var bars="";[70,45,85,55,75,50,65].forEach(function(h){bars+='<div class="bank-sk-col"><span class="sk bank-sk-bar" style="height:'+h+'%"></span></div>';});return '<div class="bank-skel"><div class="bank-skel-plot">'+bars+'</div><div class="bank-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+  function apTable(w,full){
+    var rows=apRows(w),sel=apSel(w);
+    var sk=(w.apsort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ap-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+    var showDue=(sel==="total");
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="ap-c-inv">'+sb("inv","Inv. #")+'</span>'+(showDue?'<span class="ap-c-due">'+sb("due","Due date")+'</span>':'')+'<span class="wt-c2">'+sb("amt","Amount")+'</span></div>';
+    var body=rows.map(function(x){var vesc=x.vendor.replace(/"/g,"&quot;"),od=apIsOverdue(x.due);
+      var overTag=od?'<span class="bank-tag-over" data-tip="'+apDaysLabel(x.due)+'." data-tip-plain>Overdue</span>':'';
+      var dueCell=showDue?'<span class="ap-c-due"><span class="ap-due-d">'+apFmtLong(x.due)+'</span><span class="ap-due-days'+(od?" over":"")+'">'+apDaysLabel(x.due)+'</span></span>':'';
+      return '<div class="wt-row" data-acct="'+vesc+'">'+
+        '<span class="lr-main">'+x.vendor+'</span>'+
+        '<span class="ap-c-inv">'+x.inv+'</span>'+
+        dueCell+
+        '<span class="wt-c2">'+overTag+apMoney(x.amount)+'</span></div>';
+    }).join("");
+    var tot=rows.reduce(function(s,x){return s+x.amount;},0);
+    var footLbl=(sel==="total")?("Total, all due dates ("+rows.length+" invoice"+(rows.length===1?"":"s")+")"):("Total due "+apFmtLong(sel)+" ("+rows.length+" invoice"+(rows.length===1?"":"s")+")");
+    var search=(rows.length>6)?'<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search vendors" aria-label="Search vendors"></div></div>':'';
+    return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+footLbl+'</span><span>'+apMoney(tot)+'</span></div>';
+  }
+  function apTimeline(w){
+    var data=apByDate(w),sel=apSel(w);
+    var max=1;data.forEach(function(d){max=Math.max(max,d.total);});max=max*1.15;
+    var cols="",xl="";
+    data.forEach(function(d){var h=Math.max(2,Math.round(d.total/max*100)),isSel=(sel!=="total"&&sel===d.iso);
+      var srtxt=apFmtLong(d.iso)+': '+apMoney(d.total)+' due across '+d.count+' invoice'+(d.count===1?"":"s")+', '+apDaysLabel(d.iso).toLowerCase();
+      var dpop=[apFmtLong(d.iso),d.total,d.count,(d.overdue?"1":"0"),apDaysLabel(d.iso)].join("|").replace(/"/g,"&quot;");
+      cols+='<button class="ap-col'+(d.overdue?" over":"")+(isSel?" sel":"")+'" tabindex="0" aria-label="'+srtxt+', tap to filter the table to this due date" data-action="ap-pick-date" data-id="'+w.id+'" data-iso="'+d.iso+'" data-appop="'+dpop+'"><div class="ap-barwrap"><div class="ap-bar" style="height:'+h+'%"></div></div><span class="sr-only">'+srtxt+'</span></button>';
+      xl+='<div class="ap-xcol'+(isSel?" sel":"")+'"><span class="ap-xlbl">'+apFmtShort(d.iso)+'</span><span class="ap-xflow'+(d.overdue?" over":"")+'">'+(d.overdue?"overdue":(apDiffDays(d.iso)===0?"today":"in "+apDiffDays(d.iso)+"d"))+'</span></div>';
+    });
+    var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
+    var legend='<span class="ap-lg"><span class="ap-sw over"></span>Overdue</span><span class="ap-lg"><span class="ap-sw up"></span>Due later</span>';
+    var note=(sel!=="total")?'<div class="ap-tl-note">'+ICON("filter_list")+'Table shows '+apFmtLong(sel)+'. The highlighted column is the selected due date. Pick any column, or choose Total, to change it.</div>':'<div class="ap-tl-note">'+ICON("info")+'Amount due on each due date. Select a column to filter the table to that date.</div>';
+    return '<div class="ap-chart-wrap"><div class="ap-legend">'+legend+'</div>'+
+      '<div class="ap-plotrow"><div class="ap-yax">'+yl+'</div><div class="ap-canvas"><div class="ap-gl"></div><div class="ap-cols">'+cols+'</div></div></div>'+
+      '<div class="ap-xaxrow"><div class="ap-yaxsp"></div><div class="ap-xcols">'+xl+'</div></div>'+
+      note+'</div>';
+  }
+  function apFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Invoices '+(apSel(w)==="total"?"(all due dates)":("due "+apFmtLong(apSel(w))))+'</div>'+apTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Amount due by date</div>'+apTimeline(w)+'</div></div>';}
+  function apGlance(w){
+    if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div></div>';}
+    var tot=apTotalDue(w);
+    return '<div class="kpi-row"><div class="kpi-num">'+
+      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Accounts payable</span></span>'+
+      '<div class="metric-value">'+apMoney(tot)+'</div>'+
+      '<div class="gl-sub">'+apBadge(w)+'</div>'+
+      '</div></div>';}
+  function apContent(w){
+    if(w.size==="kpi")return apGlance(w);
+    if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
+    if(w.aploading)return apHeaderBlock(w,"loading")+apSkeleton();
+    var mh=apHeaderBlock(w),v=w.apview||"timeline";
+    if(w.size==="xwide")return mh+apFull(w);
+    return mh+((v==="table")?apTable(w,false):apTimeline(w));
+  }
+  function apLoad(w){w.aploading=true;clearTimeout(timers["ap-"+w.id]);timers["ap-"+w.id]=setTimeout(function(){w.aploading=false;render();},850);}
+  function apHideBpop(){if(apPopEl){apPopEl.remove();apPopEl=null;}}
+  function apShowBpop(col,mx,my){
+    var raw=col.getAttribute("data-appop");if(!raw)return;var p=raw.split("|");
+    var date=p[0],amt=+p[1],count=+p[2],over=(p[3]==="1"),days=p[4];
+    apHideBpop();
+    apPopEl=document.createElement("div");apPopEl.className="bgt-pop ap-pop";
+    apPopEl.innerHTML='<div class="bgt-pop-h">'+date+'</div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:'+(over?"var(--am-600)":"var(--am-300)")+'"></span><span class="bgt-pop-lbl">Amount due</span><span class="bgt-pop-v">'+apMoney(amt)+'</span></div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:transparent"></span><span class="bgt-pop-lbl">Invoices</span><span class="bgt-pop-v">'+count+'</span></div>'+
+      '<div class="bgt-pop-note'+(over?" ap-pop-over":"")+'">'+days+'</div>';
+    document.body.appendChild(apPopEl);
+    var bw=apPopEl.offsetWidth,bh=apPopEl.offsetHeight,M=10;
+    var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
+    var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
+    apPopEl.style.left=left+"px";apPopEl.style.top=top+"px";
+  }
+  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".ap-col[data-appop]");if(!col){if(apPopEl)apHideBpop();return;}apShowBpop(col,e.clientX,e.clientY);});
+
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
@@ -2843,6 +3029,7 @@ function arShowPop(row,mx,my){
     if(w.kind==="purchasing")return purContent(w);
     if(w.kind==="ar")return arContent(w);
     if(w.kind==="pto")return ptoContent(w);
+    if(w.kind==="payables")return apContent(w);
     if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.showZero?'<div class="dep-total" style="margin-top:4px"><span>Total</span><span>'+money(0)+'</span></div>':'')+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
     if(w.kind==="mystatus")return mysContent(w);
     if(w.kind==="bank")return bankContent(w);
@@ -2951,9 +3138,19 @@ function arShowPop(row,mx,my){
       var out=o("all","All distributions")+o("pt","By pay type")+'<div class="sep"></div><div class="cap">A specific distribution</div>';
       out+=PR_DISTS.map(function(ds){var on=cur===ds.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="pr-set-scope" data-id="'+wsc.id+'" data-s="'+ds.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="pr-dot" style="background:'+(PR_DIST_COLORS[ds.id]||"#8a8f98")+'"></span><span class="mi-nm">'+ds.name+'</span></button>';}).join("");
       return out;}
+    if(pop.type==="ap-due"){var wap2=find(pop.id),q=(apDueQuery||"").toLowerCase(),cur=apSel(wap2);
+      var dates=apByDate(wap2),grand=apTotalDue(wap2);
+      var totalSel=(cur==="total");
+      var showSearch=dates.length>8;
+      var matches=dates.filter(function(d){return apFmtLong(d.iso).toLowerCase().indexOf(q)>-1;});
+      var out=(showSearch?'<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="apq" placeholder="Search due dates" value="'+(apDueQuery||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div>':'')+'<div class="menu-scroll" role="listbox">';
+      if(!showSearch||!q||"total all due dates".indexOf(q)>-1)out+='<button class="mi'+(totalSel?" check":"")+'" role="option" aria-selected="'+totalSel+'" data-action="ap-set-due" data-due="total" data-id="'+wap2.id+'">'+(totalSel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">Total (all due dates)</span><span class="ap-mi-amt">'+apMoney(grand)+'</span></button>';
+      if(matches.length)out+='<div class="cap">Due date (earliest first)</div>'+matches.map(function(d){var sel=cur===d.iso;return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="ap-set-due" data-due="'+d.iso+'" data-id="'+wap2.id+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm-stack"><span class="mi-nm">'+apFmtLong(d.iso)+'</span><span class="mi-acctno'+(d.overdue?" ap-over":"")+'">'+apDaysLabel(d.iso)+' · '+d.count+' invoice'+(d.count===1?"":"s")+'</span></span>'+(d.overdue?'<span class="bank-tag-over">Overdue</span>':'')+'<span class="ap-mi-amt">'+apMoney(d.total)+'</span></button>';}).join("");
+      if(showSearch&&!matches.length&&q&&"total all due dates".indexOf(q)<0)out+='<div class="mi-note" style="color:var(--txt-subtle)">No due dates match "'+(apDueQuery||"").replace(/"/g,"&quot;")+'"</div>';
+      return out+'</div>';}
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
@@ -2962,11 +3159,11 @@ function arShowPop(row,mx,my){
     var r=trig.getBoundingClientRect(),M=8,pw=el.offsetWidth,ph=el.offsetHeight;var left=r.left;if(left+pw>innerWidth-M)left=r.right-pw;if(left+pw>innerWidth-M)left=innerWidth-M-pw;if(left<M)left=M;var flipped=false;var top=r.bottom+7;if(top+ph>innerHeight-M){var up=r.top-ph-7;if(up>=M){top=up;flipped=true;}else{top=Math.max(M,innerHeight-M-ph);}}var cx=(r.left+r.width/2)-left;cx=Math.max(14,Math.min(pw-14,cx));var dir=flipped?"down":"up";
     pop._pos={left:left,top:top,cx:cx,dir:dir};
     el.style.setProperty("--caret-x",cx+"px");el.setAttribute("data-dir",dir);el.style.left=left+"px";el.style.top=top+"px";el.style.visibility="visible";}
-  function render(){hideTip();if(typeof hideLnTip==="function")hideLnTip();if(typeof dsHide==="function")dsHide();var _ws=cur().widgets,_grid=_ws.map(widgetHTML).join("");if(_ws.length<=1)_grid+=addWidgetPlaceholderHTML();document.getElementById("dashboard").innerHTML=_grid;document.getElementById("tbLeft").innerHTML=tbLeftHTML();document.getElementById("tbRight").innerHTML=tbRightHTML();if(renaming){var el=document.getElementById("rn-"+renaming);if(el){el.focus();el.select();}}if(focusDash){var di=document.getElementById("dashInput");if(di){di.focus();di.select();}focusDash=false;}renderOverlay();if(pop&&pop.type==="companydd"){var _ci=document.getElementById("coq");if(_ci&&document.activeElement!==_ci){_ci.focus();try{_ci.setSelectionRange(_ci.value.length,_ci.value.length);}catch(_e){}}}if(pop&&pop.type==="depfilter"){var _fi=document.getElementById("fq");if(_fi&&document.activeElement!==_fi){_fi.focus();try{_fi.setSelectionRange(_fi.value.length,_fi.value.length);}catch(_e2){}}}if(pop&&pop.type==="bank-acct"){var _bi=document.getElementById("bankq");if(_bi&&document.activeElement!==_bi){_bi.focus();try{_bi.setSelectionRange(_bi.value.length,_bi.value.length);}catch(_e4){}}}if(prFocusId){var _pf=document.getElementById(prFocusId);if(_pf&&document.activeElement!==_pf){_pf.focus();try{var _vl=_pf.value.length;_pf.setSelectionRange(_vl,_vl);}catch(_e3){}}}renderModal();}
+  function render(){hideTip();if(typeof hideLnTip==="function")hideLnTip();if(typeof dsHide==="function")dsHide();var _ws=cur().widgets,_grid=_ws.map(widgetHTML).join("");if(_ws.length<=1)_grid+=addWidgetPlaceholderHTML();document.getElementById("dashboard").innerHTML=_grid;document.getElementById("tbLeft").innerHTML=tbLeftHTML();document.getElementById("tbRight").innerHTML=tbRightHTML();if(renaming){var el=document.getElementById("rn-"+renaming);if(el){el.focus();el.select();}}if(focusDash){var di=document.getElementById("dashInput");if(di){di.focus();di.select();}focusDash=false;}renderOverlay();if(pop&&pop.type==="companydd"){var _ci=document.getElementById("coq");if(_ci&&document.activeElement!==_ci){_ci.focus();try{_ci.setSelectionRange(_ci.value.length,_ci.value.length);}catch(_e){}}}if(pop&&pop.type==="depfilter"){var _fi=document.getElementById("fq");if(_fi&&document.activeElement!==_fi){_fi.focus();try{_fi.setSelectionRange(_fi.value.length,_fi.value.length);}catch(_e2){}}}if(pop&&pop.type==="bank-acct"){var _bi=document.getElementById("bankq");if(_bi&&document.activeElement!==_bi){_bi.focus();try{_bi.setSelectionRange(_bi.value.length,_bi.value.length);}catch(_e4){}}}if(pop&&pop.type==="ap-due"){var _ai=document.getElementById("apq");if(_ai&&document.activeElement!==_ai){_ai.focus();try{_ai.setSelectionRange(_ai.value.length,_ai.value.length);}catch(_e5){}}}if(prFocusId){var _pf=document.getElementById(prFocusId);if(_pf&&document.activeElement!==_pf){_pf.focus();try{var _vl=_pf.value.length;_pf.setSelectionRange(_vl,_vl);}catch(_e3){}}}renderModal();}
   document.addEventListener("focus",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input"))prFocusId=e.target.id;},true);
   document.addEventListener("focusout",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")&&e.target.id===prFocusId)prFocusId=null;},true);
   document.addEventListener("change",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")){var wpc=find(e.target.getAttribute("data-id")),whichc=e.target.getAttribute("data-which");if(wpc&&e.target.value){wpc[whichc]=e.target.value;wpc.range="CUSTOM";render();}}});
-  document.addEventListener("input",function(e){if(purHandleInput(e))return;if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
+  document.addEventListener("input",function(e){if(purHandleInput(e))return;if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="apq"){apDueQuery=e.target.value;var posa=e.target.selectionStart;renderOverlay();var ai=document.getElementById("apq");if(ai){ai.focus();try{ai.setSelectionRange(posa,posa);}catch(_a){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
   var modal=null,modalMounted=false;
   function showModal(t,b){modal={t:t,b:b};modalMounted=false;pop=null;render();}
   /* Special-report picker dialog on a scrim. Exactly two dependent dropdowns: one picks the Report name, one picks the Report line. Changing the report resets the line back to "Select a line". Apply stays disabled until BOTH are chosen. Cancel / close / backdrop all dismiss. The background is frozen while the dialog is open (see renderModal). Rebuilds fully on each interaction so the open/selected state is always correct, and only ONE menu is ever open at a time so nothing overlaps or glitches. */
@@ -3028,6 +3225,11 @@ function arShowPop(row,mx,my){
     if(a==="noop"){pop=null;render();return;}
     if(a==="stop"){return;}
     if(a==="modal-close"){modal=null;pop=null;render();return;}
+    if(a==="ap-due"){apDueQuery="";pop=(pop&&pop.type==="ap-due"&&pop.id===id)?null:{type:"ap-due",id:id};render();return;}
+    if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due");var cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return;}
+    if(a==="ap-view"){var wav=find(id);if(wav)wav.apview=t.getAttribute("data-v");pop=null;render();return;}
+    if(a==="ap-sort"){var was=find(id),k=t.getAttribute("data-k");if(was){var cs=(was.apsort||"amt-desc").split("-");was.apsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="vendor"||k==="inv"||k==="due")?"asc":"desc"));}render();return;}
+    if(a==="ap-pick-date"){var wap=find(id);if(wap){var iso=t.getAttribute("data-iso"),cur=apSel(wap);if(iso!==cur){wap.apDue=iso;apLoad(wap);}}pop=null;render();return;}
     if(a==="pto-expand"){var wpe=find(id),key=t.getAttribute("data-key");if(wpe){wpe.ptoExpand=wpe.ptoExpand||{};wpe.ptoExpand[key]=!wpe.ptoExpand[key];}render();return;}
     if(a==="pto-year"){pop=(pop&&pop.type==="pto-year"&&pop.id===id)?null:{type:"pto-year",id:id};render();return;}
     if(a==="pto-set-year"){var wsy=find(id);if(wsy){var ny=t.getAttribute("data-y");if(ptoCurYear(wsy)!==ny){wsy.ptoYear=ny;ptoLoad(wsy);setStatus("Showing time off for "+ny+".");}}pop=null;render();return;}
