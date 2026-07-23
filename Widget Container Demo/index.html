@@ -1242,8 +1242,9 @@
     var wv=Object.assign({},w,{binterval:interval});
     /* Panel toolbar: shape toggle on the left; the M/Q/P/Y interval toggle threaded into the chart legend below (same as single-panel), so each panel's interval sits with its own chart. */
     var iv=bgtIntervalToggle(w,interval,"set-bgt-pinterval",' data-panel="'+side+'"');
-    var bar='<div class="bgt-panel-hd"><div class="bgt-viewbar-l"></div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-pshape",' data-panel="'+side+'"')+'</div></div>';
-    var chart=(fmt==="table")?bgtTable(wv,iv):(fmt==="line"?bgtLine(wv,bgtViewRows(wv),iv):bgtBars(wv,bgtViewRows(wv),iv));
+    var pRows=bgtViewRows(wv),pLineOK=pRows.length>=2;
+    var bar='<div class="bgt-panel-hd"><div class="bgt-viewbar-l"></div><div class="bgt-viewbar-r">'+bgtShapeToggle(w,fmt,"set-bgt-pshape",' data-panel="'+side+'"',!pLineOK)+'</div></div>';
+    var chart=(fmt==="table")?bgtTable(wv,iv):(fmt==="line"?(pLineOK?bgtLine(wv,pRows,iv):bgtNoTrendState(iv)):bgtBars(wv,pRows,iv));
     return '<div class="bgt-explore-col">'+bar+chart+'</div>';
   }
   /* Sign-ups: a list with NO natural total, so the optional top metric IS shown (number + trend). Changing the period changes the number/trend only — the list stays "most recent". */
