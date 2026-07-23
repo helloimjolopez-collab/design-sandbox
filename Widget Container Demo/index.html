@@ -1468,22 +1468,36 @@
   document.addEventListener("input",function(e){var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
   var modal=null,modalMounted=false;
   function showModal(t,b){modal={t:t,b:b};modalMounted=false;pop=null;render();}
-  /* Special-report picker dialog on a scrim. Two side-by-side columns — report names on the left, that report's lines on the right (a master/detail pattern, the standard usable way to make a dependent two-part choice). Selecting a report shows its lines; selecting a line enables Done. No nested popovers, nothing resizes, nothing swaps. Rebuilds fully on each interaction so selection state is always correct. */
+  /* Special-report picker dialog on a scrim. Exactly two dependent dropdowns: one picks the Report name, one picks the Report line. Changing the report resets the line back to "Select a line". Apply stays disabled until BOTH are chosen. Cancel / close / backdrop all dismiss. The background is frozen while the dialog is open (see renderModal). Rebuilds fully on each interaction so the open/selected state is always correct, and only ONE menu is ever open at a time so nothing overlaps or glitches. */
+  function bgtDDMenu(kind,items,selId,w){
+    return '<div class="bgt-dd-menu"><div class="menu-scroll" role="listbox">'+items.map(function(o){var on=o.id===selId;return '<button class="mi'+(on?" check":"")+'" role="option" data-action="'+(kind==="rep"?"bgt-rm-setrep":"bgt-rm-setline")+'" data-id="'+w.id+'" data-'+(kind==="rep"?"r":"l")+'="'+o.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o.name+'</span>'+(o.tag?'<span class="bgt-rm-tag '+o.tag+'">'+o.tag+'</span>':(o.meta?'<span class="bgt-dd-meta">'+o.meta+'</span>':''))+'</button>';}).join("")+'</div></div>';
+  }
   function bgtReportModalHTML(){
     var w=find(modal.id);if(!w)return "";
-    var q=(modal.q||"").toLowerCase(),dr=modal.dr,dl=modal.dl;
-    var reps=BGT_REPORTS.filter(function(r){return !q||r.name.toLowerCase().indexOf(q)>-1||r.lines.some(function(l){return l.name.toLowerCase().indexOf(q)>-1;});});
-    var repList=reps.length?reps.map(function(r){var on=r.id===dr;return '<button class="bgt-rm-item'+(on?" on":"")+'" data-action="bgt-rm-pickrep" data-id="'+w.id+'" data-r="'+r.id+'"><span class="bgt-rm-nm">'+r.name+'</span><span class="bgt-rm-ct">'+r.lines.length+' lines</span>'+(on?'<span class="material-symbols-rounded bgt-rm-chev">chevron_right</span>':'')+'</button>';}).join(""):'<div class="bgt-rm-empty">No reports match “'+(modal.q||"")+'”</div>';
+    var dr=modal.dr,dl=modal.dl,open=modal.open||null;
     var curRep=null;for(var i=0;i<BGT_REPORTS.length;i++)if(BGT_REPORTS[i].id===dr)curRep=BGT_REPORTS[i];
-    var lineList;
-    if(!curRep){lineList='<div class="bgt-rm-hint">'+ICON("subdirectory_arrow_left")+'<span>Pick a report to see its lines.</span></div>';}
-    else{var lines=curRep.lines.filter(function(l){return !q||l.name.toLowerCase().indexOf(q)>-1||curRep.name.toLowerCase().indexOf(q)>-1;});
-      lineList=lines.length?lines.map(function(l){var on=l.id===dl;return '<button class="bgt-rm-item bgt-rm-line'+(on?" on":"")+'" data-action="bgt-rm-pickline" data-id="'+w.id+'" data-l="'+l.id+'">'+(on?'<span class="material-symbols-rounded bgt-rm-rdon">check_circle</span>':'<span class="bgt-rm-radio"></span>')+'<span class="bgt-rm-nm">'+l.name+'</span><span class="bgt-rm-tag '+l.type+'">'+l.type+'</span></button>';}).join(""):'<div class="bgt-rm-empty">No lines in this report match.</div>';}
-    var canDone=!!(dr&&dl);
-    var body='<div class="bgt-rm-search">'+ICON("search")+'<input class="dd-input" id="bgtRepModalQ" placeholder="Search reports and lines" value="'+(modal.q||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div>'+
-      '<div class="bgt-rm-cols"><div class="bgt-rm-col"><div class="bgt-rm-colh">Report name</div><div class="bgt-rm-scroll">'+repList+'</div></div>'+
-      '<div class="bgt-rm-col"><div class="bgt-rm-colh">Report line</div><div class="bgt-rm-scroll">'+lineList+'</div></div></div>';
-    return '<div class="modal-backdrop" data-action="bgt-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">summarize</span>Choose a special report</span><button class="iconbtn" data-action="bgt-rm-cancel" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b bgt-rm-b">'+body+'</div><div class="modal-f"><button class="btn naked sm" data-action="bgt-rm-cancel">Cancel</button><button class="btn primary sm'+(canDone?"":" is-off")+'"'+(canDone?' data-action="bgt-rm-done" data-id="'+w.id+'"':' aria-disabled="true"')+'>Done</button></div></div></div>';
+    var curLine=null;if(curRep&&dl)for(var j=0;j<curRep.lines.length;j++)if(curRep.lines[j].id===dl)curLine=curRep.lines[j];
+    /* Report-name dropdown */
+    var repVal=curRep?curRep.name:"Select a report";
+    var repField='<div class="bgt-dd-field">'+
+      '<label class="bgt-dd-lbl" id="bgtddRepL">Report name</label>'+
+      '<button class="bgt-dd-trigger'+(open==="rep"?" open":"")+'" data-action="bgt-rm-toggle" data-dd="rep" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(open==="rep")+'" aria-labelledby="bgtddRepL"><span class="bgt-dd-val'+(curRep?"":" ph")+'">'+repVal+'</span>'+ICON("expand_more")+'</button>'+
+      (open==="rep"?bgtDDMenu("rep",BGT_REPORTS.map(function(r){return {id:r.id,name:r.name,meta:r.lines.length+" lines"};}),dr,w):"")+
+    '</div>';
+    /* Report-line dropdown, dependent on the report */
+    var lineVal=curLine?curLine.name:(curRep?"Select a line":"Select a report first");
+    var lineDisabled=!curRep;
+    var lineField='<div class="bgt-dd-field">'+
+      '<label class="bgt-dd-lbl" id="bgtddLineL">Report line</label>'+
+      (lineDisabled
+        ? '<button class="bgt-dd-trigger" aria-disabled="true" tabindex="-1"><span class="bgt-dd-val ph">'+lineVal+'</span>'+ICON("expand_more")+'</button>'
+        : '<button class="bgt-dd-trigger'+(open==="line"?" open":"")+'" data-action="bgt-rm-toggle" data-dd="line" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(open==="line")+'" aria-labelledby="bgtddLineL"><span class="bgt-dd-val'+(curLine?"":" ph")+'">'+lineVal+'</span>'+ICON("expand_more")+'</button>'
+        +(open==="line"?bgtDDMenu("line",curRep.lines.map(function(l){return {id:l.id,name:l.name,tag:l.type};}),dl,w):""))+
+    '</div>';
+    var canApply=!!(dr&&dl);
+    /* modal body carries a data-action so a click on empty dialog space just closes any open menu (never dismisses the dialog); the dialog shell is data-action="stop" and only the backdrop / Cancel / X dismiss. */
+    var body='<p class="bgt-rm-lead">Pick the report, then the line to compare against budget.</p><div class="bgt-rm-fields">'+repField+lineField+'</div>';
+    return '<div class="modal-backdrop" data-action="bgt-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">summarize</span>Choose a special report</span><button class="iconbtn" data-action="bgt-rm-cancel" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b bgt-rm-b" data-action="bgt-rm-closemenu">'+body+'</div><div class="modal-f"><button class="btn naked sm" data-action="bgt-rm-cancel">Cancel</button><button class="btn primary sm'+(canApply?"":" is-off")+'"'+(canApply?' data-action="bgt-rm-done" data-id="'+w.id+'"':' aria-disabled="true"')+'>Apply</button></div></div></div>';
   }
   function renderModal(){var mr=document.getElementById("modalRoot");if(!modal){mr.innerHTML="";modalMounted=false;return;}
     if(modal.type==="bgtreport"){mr.innerHTML=bgtReportModalHTML();return;}
