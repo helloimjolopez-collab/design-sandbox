@@ -2727,10 +2727,13 @@ function renderPanelAction(person, c){
   } else {
     return '';
   }
+  const extraContainer = (DEMO_MODE==='phase-1' && c.status==='email-bounced')
+    ? `<div id="p1-email-fix-container-${c.id}"></div>` : '';
   return `<div class="pnl-action ${cls}">
     <div class="pnl-action-title">${esc(title)}</div>
-    ${desc?`<div class="pnl-action-desc">${esc(desc)}</div>`:''}
+    ${desc?`<div class="pnl-action-desc">${desc}</div>`:''}
     ${btns?`<div class="pnl-action-btns">${btns}</div>`:''}
+    ${extraContainer}
   </div>`;
 }
 
