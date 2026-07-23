@@ -904,6 +904,32 @@
   function aboutOf(w){if(w.kind==="deposits")return {h:w.title,b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."};if(w.kind==="payroll")return {h:w.title,b:"How payroll spend for the selected pay period splits across compensation categories: salary, hourly, benefits, overtime, and similar."};if(w.kind==="budget")return {h:w.title,b:"How actual income or spending compares to your original budget, per period and year‑to‑date. Mid‑year budget revisions are not included."};return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
   var EMPTY_COPY={deposits:{title:"No deposit accounts",sub:"There are no deposit accounts to show here yet.",cta:"Add account",action:"add-acct"},payroll:{title:"No payroll runs in this range",sub:"There's no payroll history for the selected period yet."},budget:{title:"No budget set up",sub:"Once a budget is entered for this fiscal year, actuals will be compared against it here.",cta:"Set up budget",action:"add-budget"}};
   var ERROR_COPY={deposits:{title:"Couldn’t load balances",sub:"Something went wrong fetching account data."},payroll:{title:"Couldn’t load payroll data",sub:"Something went wrong fetching payroll history."},budget:{title:"Couldn’t load budget data",sub:"Something went wrong fetching budget and actual figures."}};
+/* --- Bank Balances additive copy --- */
+  EMPTY_COPY.bank={title:"No bank accounts",sub:"There are no active bank accounts to show here yet."};
+  ERROR_COPY.bank={title:"Couldn’t load bank balances",sub:"Something went wrong fetching account balances."};
+  /* ===== Bank Balances (prefix: bank) — DATA =====
+     a = [begin, deposits, voids, checks, withdrawals, eft]; checks & withdrawals stored NEGATIVE (outflows).
+     Ending balance = sum of the seven. 18 accounts (pie top-N cap + table scroll); Petty Cash Clearing overdrawn. */
+  var BANK_ACCOUNTS=[
+   {id:"bk-op",   name:"Operating Checking",        type:"Checking",     acct:"••4021", acctFull:"0044174021", a:[380000,210500,1200,-142300,-21400,39500]},
+   {id:"bk-gen",  name:"General Fund Checking",     type:"Checking",     acct:"••7710", acctFull:"0044177710", a:[298000,164200,900,-118600,-14300,-2400]},
+   {id:"bk-pay",  name:"Payroll Checking",          type:"Checking",     acct:"••3355", acctFull:"0044173355", a:[104000,96800,0,-83200,-12600,-8900]},
+   {id:"bk-bld",  name:"Building Fund Savings",     type:"Savings",      acct:"••9042", acctFull:"0044179042", a:[812000,58000,0,0,-24500,0]},
+   {id:"bk-mis",  name:"Missions Savings",          type:"Savings",      acct:"••1188", acctFull:"0044171188", a:[121000,26400,0,0,-14000,0]},
+   {id:"bk-ben",  name:"Benevolence Checking",      type:"Checking",     acct:"••6621", acctFull:"0044176621", a:[38500,14200,300,-9600,-1500,0]},
+   {id:"bk-yth",  name:"Youth Ministry Checking",   type:"Checking",     acct:"••8830", acctFull:"0044178830", a:[16200,9800,0,-6400,-900,0]},
+   {id:"bk-rsv",  name:"Reserve Money Market",      type:"Money Market", acct:"••2015", acctFull:"0044172015", a:[540000,32000,0,0,-11700,0]},
+   {id:"bk-cap",  name:"Capital Campaign Savings",  type:"Savings",      acct:"••4477", acctFull:"0044174477", a:[251000,41500,0,0,-18400,0]},
+   {id:"bk-mem",  name:"Memorial Fund Savings",     type:"Savings",      acct:"••5560", acctFull:"0044175560", a:[59800,7200,0,0,-3600,0]},
+   {id:"bk-cem",  name:"Cemetery Trust Checking",   type:"Checking",     acct:"••7093", acctFull:"0044177093", a:[27400,5100,0,-2100,-650,0]},
+   {id:"bk-sch",  name:"Scholarship Savings",       type:"Savings",      acct:"••3312", acctFull:"0044173312", a:[44100,6800,0,0,-3700,0]},
+   {id:"bk-med",  name:"Media Ministry Checking",   type:"Checking",     acct:"••9981", acctFull:"0044179981", a:[11200,4600,0,-2900,-600,0]},
+   {id:"bk-fac",  name:"Facilities Checking",       type:"Checking",     acct:"••2244", acctFull:"0044172244", a:[81000,38900,600,-27400,-4200,0]},
+   {id:"bk-chd",  name:"Childcare Operating",       type:"Checking",     acct:"••6650", acctFull:"0044176650", a:[49500,33200,0,-24100,-4000,0]},
+   {id:"bk-bks",  name:"Bookstore Checking",        type:"Checking",     acct:"••1707", acctFull:"0044171707", a:[8600,5900,0,-4200,-850,0]},
+   {id:"bk-dbt",  name:"Debt Service Reserve",      type:"Money Market", acct:"••8888", acctFull:"0044178888", a:[150000,12400,0,0,-5700,0]},
+   {id:"bk-pty",  name:"Petty Cash Clearing",       type:"Checking",     acct:"••0104", acctFull:"0044170104", a:[5000,800,0,-6900,-2200,50]}
+  ];
   function setStatus(s){document.getElementById("status").textContent=s;}
 
   /* generic content */
