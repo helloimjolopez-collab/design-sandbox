@@ -1120,9 +1120,13 @@
       xl+='<div class="bgt-xcol2"><span class="bgt-xlbl2">'+r.period+'</span>'+(vr!=null?('<span class="bgt-xvar2">'+(neg?"−":"+")+fmtAxis(Math.abs(vr))+'</span>'):'<span class="bgt-xvar2 muted">n/a</span>')+'</div>';
     });
     var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
+    /* When a span produces many groups (e.g. All time × Month = 36), the bars would crush together and the labels overlap. So past ~13 groups the plot gets a fixed min width and scrolls horizontally, keeping each budget/actual pair and its label readable. Up to 13 it fills the width as before (no scroll). */
+    var n=rows.length,innerW=(n>13)?('min-width:'+(46+n*44)+'px'):'';
     return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+
+    '<div class="bgt-scrollx"><div class="bgt-inner2" style="'+innerW+'">'+
     '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
-    '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div></div>';
+    '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div>'+
+    '</div></div></div>';
   }
   /* Line (trend) from the interval rows — budget and actual as two lines. Reuses depTrend's real hover/crosshair. Both lines purple: dashed light Budget, solid dark Actual; no red. */
   function bgtLine(w,rows,ivHTML){
