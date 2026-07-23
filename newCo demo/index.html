@@ -3141,82 +3141,126 @@ function CtxGroup({ title, hint, children }) {
 function VersionLegend() {
   const faint = "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)";
   const rows = [
-    { m: <CollabMark variant="live" size={30} />, n: "Animated gradient", u: "Hero and persona moments: home CTA, full-screen chat, the assistant’s avatar, working states. Big enough to read the motion." },
-    { m: <CollabTile size={34} radius={10} mark={20} />, n: "White on brand", u: "Iconography on a coloured tile: module switcher, top-nav identity, app icons." },
-    { m: <CollabMark variant="solid" size={30} />, n: "Two-tone solid", u: "Medium, static placements on light surfaces, where the gradient would be fussy." },
-    { m: <CollabMark variant="twotone" size={30} />, n: "Two-tone stroke", u: "Medium, low-ink contexts and print." },
-    { m: <CollabMark variant="stroke" size={30} />, n: "Single stroke", u: "Small, dense UI: side-nav item, inline buttons, the command bar. Reads where the gradient would muddy." },
-    { m: <CollabTile size={34} radius={10} mark={20} dark />, n: "White stroke", u: "On dark or coloured fills: a primary button, midnight surfaces." },
+    { m: <CollabMark variant="live" size={32} />, n: "Animated gradient", u: "Hero and persona moments: full-screen chat, the assistant’s avatar, working states." },
+    { m: <CollabMark variant="grain" size={32} />, n: "Gradient + grain", u: "The richest, static brand moment: a large avatar or splash." },
+    { m: <CollabAvatar size={32} tone="brand" />, n: "White on brand", u: "A compact avatar on a brand circle: notifications, where Collab signs its work." },
+    { m: <CollabMark variant="solid" size={32} />, n: "Filled core", u: "Iconography on light tinted surfaces: the module chip, matching every other module icon." },
+    { m: <CollabMark variant="twotone" size={32} />, n: "Two-tone stroke", u: "Medium contexts on light, a touch more detail than mono." },
+    { m: <CollabMark variant="stroke" size={32} color="var(--semantic-color-light-mode-text-static-secondary-base)" />, n: "Mono stroke", u: "Small, dense UI: side-nav (inherits the slate nav ink), inline buttons, the command bar." },
   ];
   return (
     <div className="spd-card" style={{ padding: "2px 0" }}>
       {rows.map((r, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 15, padding: "13px 18px", borderTop: i ? faint : "none" }}>
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, padding: "13px 18px", borderTop: i ? faint : "none" }}>
           <span style={{ width: 40, display: "flex", justifyContent: "center", flexShrink: 0 }}>{r.m}</span>
-          <span style={{ width: 132, flexShrink: 0, fontSize: 13, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>{r.n}</span>
+          <span style={{ width: 130, flexShrink: 0, fontSize: 13, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>{r.n}</span>
           <span style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>{r.u}</span>
         </div>
       ))}
     </div>
   );
 }
-/* Top-nav module identity (icon + name), as other modules appear. */
+/* Top-nav module identity — mark + name share ONE deep ink, exactly like the
+   real ModuleBadge (moduleInkDeep = 44% accent + text-primary). */
 function CtxTopNav() {
+  const ink = "color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 44%, var(--semantic-color-light-mode-text-static-primary-base))";
   return (
-    <CtxFrame label="Top-nav identity: the active module as icon + name. A two-tone solid reads cleanly here.">
+    <CtxFrame label="Top-nav identity: mark and name in one deep ink, exactly as every other module renders.">
       <div style={{ padding: "20px", background: "var(--semantic-color-light-mode-surface-sheet-base)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
           <LogoMark size={20} />
           <span style={{ width: 1, height: 22, background: "var(--semantic-color-light-mode-stroke-static-neutral-light)" }} />
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
-            <CollabMark variant="solid" size={22} />
-            <span style={{ fontSize: 16, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>Collab</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <CollabMark variant="stroke" size={22} color={ink} weight={2.2} />
+            <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.1px", color: ink }}>Collab</span>
           </span>
         </div>
       </div>
     </CtxFrame>
   );
 }
-/* Module switcher tile, beside a neighbouring module for scale. */
+/* Module chip — the filled-core mark on a light tint, matching how EVERY module
+   icon is drawn (no solid-fill tiles exist in the system). */
 function CtxModuleTile() {
-  const tile = { width: 128, padding: "16px 15px", borderRadius: 16, background: "var(--semantic-color-light-mode-surface-widget-base)", display: "flex", flexDirection: "column", gap: 11 };
+  const tile = { width: 128, padding: "16px 15px", borderRadius: 16, border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)", background: "var(--semantic-color-light-mode-surface-widget-base)", display: "flex", flexDirection: "column", gap: 11 };
+  const chip = { width: 44, height: 44, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center" };
   const name = { fontSize: 13.5, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" };
   const sub = { fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 2 };
   return (
-    <CtxFrame label="Module switcher: a white mark on a brand tile, sitting beside the other modules.">
+    <CtxFrame label="Module chip: the filled-core mark on a light tint, drawn like every other module icon (no solid fills).">
       <div style={{ padding: 22, display: "flex", justifyContent: "center", gap: 14, background: "var(--semantic-color-light-mode-surface-sheet-base)" }}>
-        <div style={{ ...tile, border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)", opacity: 0.55 }}>
-          <span style={{ width: 42, height: 42, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", background: "color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-jade-base) 16%, #FFFFFF)", color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)" }}><Icon name="volunteer_activism" filled size={24} /></span>
+        <div style={{ ...tile, opacity: 0.5 }}>
+          <span style={{ ...chip, background: "color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-jade-base) 14%, transparent)" }}><Icon name="volunteer_activism" filled size={24} style={{ color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)" }} /></span>
           <div><p style={name}>Giving</p><p style={sub}>Donations</p></div>
         </div>
-        <div style={{ ...tile, border: "0.5px solid color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 32%, transparent)", boxShadow: "var(--spd-elevation-widget)" }}>
-          <CollabTile size={42} mark={25} />
+        <div style={{ ...tile, boxShadow: "var(--spd-elevation-widget)" }}>
+          <span style={{ ...chip, background: "color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 13%, transparent)" }}><CollabMark variant="solid" size={26} /></span>
           <div><p style={name}>Collab</p><p style={sub}>AI assistant</p></div>
         </div>
       </div>
     </CtxFrame>
   );
 }
-/* Side-nav item — a single stroke in a dense list. */
+/* Side-nav item — the REAL nav item: mark rides the slate `--spd-navink`
+   (never the accent, which drives only fill + stripe); active gets the fully
+   rounded fill + the 5px stripe, like every other item. */
 function CtxSideNav() {
-  const Row = ({ icon, label, active, mark }) => {
-    const ink = active ? "var(--semantic-color-light-mode-fill-action-primary-base)" : "var(--semantic-color-light-mode-text-static-secondary-base)";
-    return (
-      <div style={{ display: "flex", alignItems: "center", gap: 11, height: 40, padding: "0 12px", borderRadius: 11, background: active ? "color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 15%, var(--semantic-color-light-mode-surface-widget-base))" : "transparent" }}>
-        <span style={{ width: 22, display: "flex", justifyContent: "center", flexShrink: 0, color: ink }}>
-          {mark ? <CollabMark variant="stroke" size={20} color={ink} weight={2} /> : <Icon name={icon} size={20} />}
-        </span>
-        <span style={{ fontSize: 13.5, fontWeight: active ? 600 : 500, color: active ? "var(--semantic-color-light-mode-text-static-primary-base)" : "var(--semantic-color-light-mode-text-static-secondary-base)" }}>{label}</span>
-      </div>
-    );
-  };
+  const Item = ({ icon, label, active, mark }) => (
+    <button className={"spd-navitem" + (active ? " is-active" : "")} style={{ "--sel": "var(--semantic-color-light-mode-fill-action-primary-base)", cursor: "default" }}>
+      {active && <span className="spd-navitem__indicator" />}
+      <span className="spd-navitem__glyph">
+        {mark ? <CollabMark variant="stroke" size={19} color="var(--spd-navink)" weight={2.1} /> : <Icon name={icon} filled={active} size={19} style={{ color: "var(--spd-navink)" }} />}
+      </span>
+      <span className="spd-navitem__label">{label}</span>
+    </button>
+  );
   return (
-    <CtxFrame label="Side-nav item: a single stroke that reads in a dense list and can inherit the nav ink.">
-      <div style={{ padding: "14px 12px", display: "flex", flexDirection: "column", gap: 3 }}>
-        <Row icon="dashboard" label="Dashboard" />
-        <Row icon="group" label="People" />
-        <Row label="Collab" mark active />
-        <Row icon="summarize" label="Reports" />
+    <CtxFrame label="Side-nav item: the mono mark inherits the slate nav ink (not purple); active is the rounded fill + stripe, like any item.">
+      <div style={{ padding: "16px 20px 16px 30px", display: "flex", flexDirection: "column", gap: 2 }}>
+        <Item icon="dashboard" label="Dashboard" />
+        <Item icon="group" label="People" />
+        <Item label="Collab" mark active />
+        <Item icon="summarize" label="Reports" />
+      </div>
+    </CtxFrame>
+  );
+}
+/* Notification — white mark on a brand circle, how Collab signs its work. */
+function CtxNotify() {
+  return (
+    <CtxFrame label="Notification: a compact avatar (white mark on a brand circle) is how Collab signs the work it does for you.">
+      <div style={{ padding: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 14, background: "var(--semantic-color-light-mode-surface-widget-base)", boxShadow: "var(--spd-elevation-lift)", border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)" }}>
+          <CollabAvatar size={34} tone="brand" />
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 13.5, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>Collab drafted 3 follow-ups</p>
+            <p style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 1 }}>Ready to review</p>
+          </div>
+          <span style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}><Icon name="close" size={16} /></span>
+        </div>
+      </div>
+    </CtxFrame>
+  );
+}
+/* Neutral surfaces — the mark on slate rather than brand colour. */
+function CtxOnSlate() {
+  return (
+    <CtxFrame label="Neutral surfaces: an activity avatar and an @mention chip put the mark on slate, not brand colour.">
+      <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
+          <CollabAvatar size={32} tone="slate" />
+          <div>
+            <p style={{ fontSize: 13.5, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}><strong style={{ fontWeight: 600 }}>Collab</strong> summarized this week’s giving</p>
+            <p style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 1 }}>2 minutes ago</p>
+          </div>
+        </div>
+        <div style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-base)", lineHeight: 1.7 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 10px 3px 6px", borderRadius: 999, background: "var(--spd-search-fill)", verticalAlign: "middle", marginRight: 4 }}>
+            <CollabMark variant="stroke" size={16} color="var(--semantic-color-light-mode-text-static-secondary-base)" weight={2.1} />
+            <span style={{ fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>@Collab</span>
+          </span>
+          can you turn this into a report?
+        </div>
       </div>
     </CtxFrame>
   );
