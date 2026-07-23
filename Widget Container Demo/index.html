@@ -1110,6 +1110,9 @@
   .wt-head, .wt-head span, .wt-head .wt-sort{font-size:11px;font-weight:600;color:var(--txt-subtle);text-transform:none;letter-spacing:0;}
   .wt-head .wt-sort{background:transparent;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:0;font-family:inherit;}
   .wt-head .wt-sort .material-symbols-rounded{font-size:14px;opacity:.7;}
+  /* Chips size to their content, never stretch to fill the header */
+  .filter-chip,.scope-chip{flex:0 0 auto;width:-moz-fit-content;width:fit-content;max-width:100%;justify-content:flex-start;}
+  .dep-hd-top{min-width:0;}
 </style>
 </head>
 <body>
@@ -3094,7 +3097,7 @@ function arShowPop(row,mx,my){
     if(w.insloading)return insHeaderBlock(w,"loading")+insSkeleton();
     var mh=insHeaderBlock(w);
     if(w.size==="xwide")return mh+'<div class="ins-explore"><div class="ins-explore-col ins-tablecol">'+insTable(w)+'</div><div class="ins-explore-col ins-chartcol">'+insPie(w)+'</div></div>';
-    return mh+'<div class="ins-body">'+insTable(w)+insPie(w)+'</div>';
+    return mh+'<div class="ins-body">'+insTable(w)+'</div>';
   }
   function insLoad(w){w.insloading=true;clearTimeout(timers["ins-"+w.id]);timers["ins-"+w.id]=setTimeout(function(){w.insloading=false;render();},800);}
   function insHandleClick(a,id,t){
