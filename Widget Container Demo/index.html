@@ -643,56 +643,70 @@
   .modal-b{padding:0 18px 16px;font-size:13px;line-height:1.55;color:var(--txt-secondary);}
   .modal-b b{color:var(--txt-primary);}
   .modal-f{display:flex;justify-content:flex-end;gap:8px;padding:0 16px 16px;}
-  /* ---- Main Content Tasks (quick-action launcher) ---- */
-  .mct-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 16px 4px;display:flex;flex-direction:column;gap:14px;}
-  .mct-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-  .widget[data-size="xwide"] .mct-grid{grid-template-columns:repeat(3,1fr);}
-  .mct-tile{display:flex;align-items:center;gap:10px;text-align:left;width:100%;padding:10px 11px;border:1px solid var(--stroke-widget);border-radius:10px;background:var(--surface-widget);cursor:pointer;font-family:inherit;color:var(--txt-primary);transition:background var(--dur),border-color var(--dur),box-shadow var(--dur);}
-  .mct-tile:hover{background:var(--wn-200);border-color:var(--wn-400);box-shadow:0 1px 3px rgba(41,39,36,.06);}
-  .mct-tile:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
-  .mct-tile.is-edit{cursor:default;}
-  .mct-tile.is-edit:hover{background:var(--surface-widget);border-color:var(--stroke-widget);box-shadow:none;}
-  .mct-tile-ic{position:relative;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:var(--brand-10);color:var(--brand-300);}
-  .mct-tile-ic .material-symbols-rounded{font-size:19px;}
-  .mct-tile-tx{display:flex;flex-direction:column;min-width:0;gap:1px;}
-  .mct-tile-lbl{font-size:13px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .mct-tile-mod{font-size:11px;font-weight:400;color:var(--txt-subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .mct-pin-badge{position:absolute;top:-5px;right:-5px;font-size:13px;color:var(--brand-100);background:var(--surface-widget);border-radius:50%;}
-  .mct-more .mct-tile-ic{background:var(--wn-200);color:var(--txt-subtle);}
-  .mct-tile-ctl{margin-left:auto;display:inline-flex;gap:2px;flex:0 0 auto;}
-  .mct-mini{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:none;background:transparent;border-radius:7px;cursor:pointer;color:var(--txt-subtle);}
-  .mct-mini:hover{background:var(--wn-300);color:var(--txt-primary);}
-  .mct-mini.on{color:var(--brand-100);}
-  .mct-mini .material-symbols-rounded{font-size:18px;}
-  .mct-hidden{border-top:1px solid var(--stroke-widget);padding-top:10px;}
-  .mct-hidden-h,.mct-sec-h{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-subtle);margin-bottom:7px;}
-  .mct-hidden-row{display:flex;flex-wrap:wrap;gap:6px;}
-  .mct-restore{display:inline-flex;align-items:center;gap:4px;font-family:inherit;font-size:12px;color:var(--txt-secondary);background:var(--wn-200);border:1px solid var(--stroke-widget);border-radius:999px;padding:4px 10px 4px 7px;cursor:pointer;}
-  .mct-restore:hover{background:var(--wn-300);color:var(--txt-primary);}
-  .mct-restore .material-symbols-rounded{font-size:15px;}
-  .mct-saved{border-top:1px solid var(--stroke-widget);padding-top:12px;}
-  .mct-slist{display:flex;flex-direction:column;gap:3px;}
-  .mct-srow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;font-size:13px;color:var(--txt-primary);background:transparent;border:none;border-radius:8px;padding:8px 9px;cursor:pointer;}
-  .mct-srow:hover{background:var(--wn-200);}
-  .mct-srow .material-symbols-rounded{font-size:18px;color:var(--txt-subtle);}
-  .mct-srow-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .mct-srow-tag{margin-left:auto;flex:0 0 auto;font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--txt-subtle);background:var(--wn-200);border-radius:5px;padding:2px 6px;}
-  .mct-cust.on{color:var(--brand-100);}
-  .mct-glance{padding:6px 12px 10px;min-height:0;overflow:hidden;}
+  /* ===== Main Content Tasks (mct): context-aware launcher ===== */
+  .mct-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 16px 6px;display:flex;flex-direction:column;gap:16px;}
+  .mct-hd .dep-hd-top{align-items:center;}
+  .mct-ctx-chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--txt-primary);min-width:0;}
+  .mct-ctx-ic{font-size:18px;color:var(--txt-subtle);}
+  .mct-ctx-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mct-search{display:flex;flex-direction:column;gap:6px;}
+  .mct-search-lbl{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-subtle);}
+  .mct-search-lbl .material-symbols-rounded{font-size:15px;}
+  .mct-search-box{display:flex;align-items:center;gap:8px;border:1.5px solid var(--wn-400);border-radius:10px;padding:9px 12px;background:var(--surface-widget);transition:border-color var(--dur),box-shadow var(--dur);}
+  .mct-search-box:focus-within{border-color:var(--brand-100);box-shadow:0 0 0 3px var(--brand-10);}
+  .mct-search-ic{font-size:20px;color:var(--txt-subtle);flex:0 0 auto;}
+  .mct-q{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:14px;color:var(--txt-primary);outline:none;}
+  .mct-q::placeholder{color:var(--txt-subtle);}
+  .mct-q-clear{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:none;background:transparent;border-radius:6px;cursor:pointer;color:var(--txt-subtle);flex:0 0 auto;}
+  .mct-q-clear:hover{background:var(--wn-300);color:var(--txt-primary);}
+  .mct-q-clear .material-symbols-rounded{font-size:18px;}
+  .mct-search.compact .mct-search-box{padding:7px 10px;border-radius:9px;}
+  .mct-search.compact .mct-q{font-size:13px;}
+  .mct-sec{display:flex;flex-direction:column;gap:8px;}
+  .mct-sec-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .mct-sec-h{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-subtle);}
+  .mct-sec-empty{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt-subtle);padding:2px 2px 4px;}
+  .mct-sec-empty .material-symbols-rounded{font-size:18px;flex:0 0 auto;}
+  .mct-list{display:flex;flex-direction:column;gap:4px;}
+  .mct-row{display:flex;align-items:stretch;gap:2px;}
+  .mct-row-main{flex:1;min-width:0;display:flex;align-items:center;gap:11px;text-align:left;padding:9px 10px;border:1px solid var(--stroke-widget);border-radius:10px;background:var(--surface-widget);cursor:pointer;font-family:inherit;color:var(--txt-primary);transition:background var(--dur),border-color var(--dur),box-shadow var(--dur);}
+  .mct-row-main:hover{background:var(--wn-200);border-color:var(--wn-400);box-shadow:0 1px 3px rgba(41,39,36,.06);}
+  .mct-row-main:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .mct-row-ic{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:var(--brand-10);color:var(--brand-300);}
+  .mct-row-ic .material-symbols-rounded{font-size:19px;}
+  .mct-row-tx{display:flex;flex-direction:column;min-width:0;gap:1px;flex:1;}
+  .mct-row-lbl{font-size:13px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mct-row-dest{font-size:11px;color:var(--txt-subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mct-star{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:34px;border:none;background:transparent;border-radius:8px;cursor:pointer;color:var(--txt-subtle);}
+  .mct-star:hover{background:var(--wn-300);color:var(--txt-primary);}
+  .mct-star.on{color:var(--brand-100);}
+  .mct-star .material-symbols-rounded{font-size:19px;}
+  .mct-badge{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:30px;padding:2px 6px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.03em;line-height:1.4;background:var(--wn-200);color:var(--txt-secondary);}
+  .mct-badge[data-app="ap"]{background:#eef2fb;color:#345499;}
+  .mct-badge[data-app="ar"]{background:#e9f6ee;color:#1f602e;}
+  .mct-badge[data-app="gl"]{background:var(--am-100);color:var(--am-700);}
+  .mct-badge[data-app="payroll"]{background:#fbeed9;color:#875312;}
+  .mct-badge[data-app="purchasing"]{background:#fce9e0;color:#8f4322;}
+  .mct-badge[data-app="bank"]{background:#eaeef2;color:#3c4855;}
+  .mct-badge[data-app="contributions"]{background:#fbeaf3;color:#8a2f63;}
+  .mct-badge[data-app="assets"]{background:var(--wn-200);color:var(--txt-subtle);}
+  .mct-recents{display:flex;flex-wrap:wrap;gap:7px;}
+  .mct-recent-chip{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:6px 8px 6px 9px;border:1px solid var(--stroke-widget);border-radius:999px;background:var(--surface-widget);cursor:pointer;font-family:inherit;color:var(--txt-primary);}
+  .mct-recent-chip:hover{background:var(--wn-200);border-color:var(--wn-400);}
+  .mct-recent-chip:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .mct-recent-chip .material-symbols-rounded{font-size:17px;color:var(--txt-subtle);}
+  .mct-recent-lbl{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mct-results-h{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--txt-subtle);}
+  .mct-noresult{display:flex;align-items:center;gap:8px;color:var(--txt-subtle);font-size:13px;padding:16px 4px;}
+  .mct-noresult .material-symbols-rounded{font-size:20px;flex:0 0 auto;}
+  .mct-glance{padding:8px 12px 10px;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px;}
   .mct-irow{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:4px;}
-  .mct-itile{position:relative;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border:1px solid var(--stroke-widget);border-radius:10px;background:var(--surface-widget);color:var(--brand-300);cursor:pointer;}
+  .mct-itile{position:relative;flex:0 0 auto;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:52px;height:52px;border:1px solid var(--stroke-widget);border-radius:10px;background:var(--surface-widget);color:var(--brand-300);cursor:pointer;}
   .mct-itile:hover{background:var(--wn-200);border-color:var(--wn-400);}
   .mct-itile:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
   .mct-itile .material-symbols-rounded{font-size:20px;}
-  .mct-grid-modal{grid-template-columns:repeat(3,1fr);}
-  .mct-searchbar{padding:2px 0 8px;}
-  .mct-searchbar .dep-search{position:relative;}
-  .mct-q-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:none;background:transparent;border-radius:6px;cursor:pointer;color:var(--txt-subtle);}
-  .mct-q-clear:hover{background:var(--wn-300);color:var(--txt-primary);}
-  .mct-q-clear .material-symbols-rounded{font-size:17px;}
-  .mct-results-h{font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--txt-subtle);padding:2px 2px 8px;}
-  .mct-noresult{display:flex;align-items:center;gap:8px;color:var(--txt-subtle);font-size:13px;padding:18px 4px;}
-  .mct-noresult .material-symbols-rounded{font-size:20px;}
+  .mct-itile-badge{font-size:8px;font-weight:700;letter-spacing:.02em;line-height:1;padding:1px 3px;border-radius:3px;background:var(--wn-200);color:var(--txt-secondary);}
+  .mct-glance-empty{font-size:12px;color:var(--txt-subtle);padding:6px 2px;}
   /* ===== My Status (mys) ===== */
   .mys-hd .dep-hd-top{align-items:center;}
   .mys-modewrap{min-width:0;justify-self:start;align-self:center;}
@@ -922,13 +936,11 @@
       {id:"bgt2",title:"Budget Compared to Actual (no budget set up)",kind:"budget",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",fy:"2026",bfmt:"chart",state:"empty"},
       /* Distinct from bgt2's "nothing at all" empty state: FY 2027 has a real income budget entered, but nobody's set up an expense budget yet even though expense actuals are already posting. Opens on Expense so the gap is visible immediately; toggling to Income shows the same fiscal year working normally. */
       {id:"bgt3",title:"Budget Compared to Actual (expense budget not set up, FY 2027)",kind:"budget",size:"wide",tiers:["kpi","wide","xwide"],acctview:"expense",fy:"2027",bfmt:"chart"},
-      {id:"cash",title:"Cash on hand",kind:"metric",size:"kpi",tiers:["kpi","wide"],range:"Q"},
-      {id:"pmt",title:"Payments over time",kind:"chart",size:"wide",tiers:["kpi","wide","large"],range:"Q"},
-      {id:"fund",title:"Spend by fund",kind:"table",size:"wide",tiers:["wide","large"]},
-      {id:"signups",title:"New sign-ups",kind:"signups",size:"wide",tiers:["kpi","wide","large"],topMetric:true,range:"M",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"mct",title:"Main Content Tasks",kind:"tasks",size:"wide",tiers:["kpi","wide","xwide"],mod:"all",goto:false},
-      {id:"mct2",title:"Main Content Tasks (Accounts Payable)",kind:"tasks",size:"xwide",tiers:["kpi","wide","xwide"],mod:"ap",goto:false},
-      {id:"mct3",title:"Main Content Tasks (no access)",kind:"tasks",size:"wide",tiers:["kpi","wide","xwide"],mod:"all",state:"empty",goto:false},
+      {id:"mct", title:"Main Content Tasks", kind:"tasks", size:"wide",  tiers:["kpi","wide","xwide"], appContext:"home", goto:false},
+      {id:"mct2",title:"Main Content Tasks (Accounts Payable)", kind:"tasks", size:"xwide", tiers:["kpi","wide","xwide"], appContext:"ap", goto:false},
+      {id:"mct3",title:"Main Content Tasks (new user, nothing saved yet)", kind:"tasks", size:"wide", tiers:["kpi","wide","xwide"], appContext:"home", mctSaved:[], mctRecent:[], goto:false},
+      {id:"mct4",title:"Main Content Tasks (Glance)", kind:"tasks", size:"kpi", tiers:["kpi","wide","xwide"], appContext:"home", goto:false},
+      {id:"mct5",title:"Main Content Tasks (Fixed Assets, nothing set up)", kind:"tasks", size:"wide", tiers:["kpi","wide","xwide"], appContext:"assets", goto:false},
       {id:"mys",title:"My Status",kind:"mystatus",size:"wide",tiers:["wide","xwide"],selected:MYS_DEFAULT.slice(),mode:"urgency",hideZero:false,goto:false},
       {id:"bank",title:"Bank Balances",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",bksort:"bal-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bank2",title:"Bank Balances: Operating Checking",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:"bk-op",bkview:"chart",bksort:"bal-desc"},
@@ -1592,124 +1604,155 @@
     var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
   /* No drill-down from category rows/segments: Confluence §10.6/§10.8/§12 mark detail-behind-a-category as explicitly out of scope for this iteration (Bundle, "not in scope"), not something to build a placeholder for. */
 
-/* ---- Main Content Tasks (quick-action launcher) ----
-   A navigational shortcut panel: icon+label tiles, each linking to a real action screen in a NAMED module.
-   No chart, no KPI number, no data-fetch (so no loading skeleton, data is in hand), purely navigational. */
-  var MCT_MODULES=[
-    {id:"all",name:"All modules"},
-    {id:"ap",name:"Accounts Payable"},
-    {id:"pay",name:"Payroll"},
-    {id:"con",name:"Contributions"},
-    {id:"gl",name:"General Ledger"},
-    {id:"pur",name:"Purchasing"},
-    {id:"bank",name:"Bank"}
+  /* ===== Main Content Tasks (mct): context-aware quick-action launcher ===== */
+  var MCT_APPS=[
+    {id:"ap",           code:"AP",  name:"Accounts Payable"},
+    {id:"ar",           code:"AR",  name:"Accounts Receivable"},
+    {id:"gl",           code:"GL",  name:"General Ledger"},
+    {id:"payroll",      code:"PR",  name:"Payroll"},
+    {id:"purchasing",   code:"PUR", name:"Purchasing"},
+    {id:"bank",         code:"BNK", name:"Bank"},
+    {id:"contributions",code:"CON", name:"Contributions"},
+    {id:"assets",       code:"FA",  name:"Fixed Assets"}
   ];
   var MCT_TASKS=[
-    {id:"apchk", mod:"ap",  label:"Write AP Check",         icon:"payments",           dest:"Accounts Payable, Checks, Write Check",          default:true,  perm:true},
-    {id:"apinv", mod:"ap",  label:"Enter AP Invoice",       icon:"receipt_long",       dest:"Accounts Payable, Invoices, Enter Invoice",      default:true,  perm:true},
-    {id:"appay", mod:"ap",  label:"Pay AP Bills",           icon:"request_quote",      dest:"Accounts Payable, Payments, Pay Bills",          default:true,  perm:true},
-    {id:"apvoid",mod:"ap",  label:"Void AP Check",          icon:"money_off",          dest:"Accounts Payable, Checks, Void Check",           default:true,  perm:false},
-    {id:"prrun", mod:"pay", label:"Run Payroll",            icon:"badge",              dest:"Payroll, Pay Runs, Run Payroll",                 default:true,  perm:true},
-    {id:"premp", mod:"pay", label:"Add Payroll Employee",   icon:"person_add",         dest:"Payroll, Employees, New Employee",               default:false, perm:true},
-    {id:"congv", mod:"con", label:"Enter Contribution",     icon:"volunteer_activism", dest:"Contributions, Enter Contributions",             default:true,  perm:true},
-    {id:"connew",mod:"con", label:"Add Contributor",        icon:"group_add",          dest:"Contributions, Contributors, New Contributor",   default:false, perm:true},
-    {id:"glje",  mod:"gl",  label:"New GL Journal Entry",   icon:"menu_book",          dest:"General Ledger, Journal Entries, New Entry",     default:true,  perm:true},
-    {id:"purpo", mod:"pur", label:"New Purchase Order",     icon:"shopping_cart",      dest:"Purchasing, Purchase Orders, New PO",            default:true,  perm:true},
-    {id:"bankrec",mod:"bank",label:"Reconcile Bank Account",icon:"account_balance",    dest:"Bank, Reconciliation, Reconcile Account",        default:true,  perm:true},
-    {id:"bankdep",mod:"bank",label:"Record Bank Deposit",   icon:"savings",            dest:"Bank, Deposits, Record Deposit",                 default:true,  perm:true}
+    {app:"ap",  id:"ap-check",    label:"Write AP Check",         dest:"Accounts Payable, Checks, Write Check",             icon:"payments",           std:true, dflt:true,  keywords:["pay","payment","invoice","bill","check","cheque","vendor","disbursement","ap"]},
+    {app:"ap",  id:"ap-invoice",  label:"Enter AP Invoice",       dest:"Accounts Payable, Invoices, Enter Invoice",         icon:"receipt_long",       std:true, dflt:true,  keywords:["enter","invoice","bill","vendor","payable","record","ap"]},
+    {app:"ap",  id:"ap-paybills", label:"Pay AP Bills",           dest:"Accounts Payable, Payments, Pay Bills",             icon:"request_quote",      std:true, dflt:true,  keywords:["pay","payment","invoice","bill","bills","vendor","disbursement","ap"]},
+    {app:"ap",  id:"ap-void",     label:"Void AP Check",          dest:"Accounts Payable, Checks, Void Check",              icon:"money_off",          std:true, dflt:false, keywords:["void","cancel","check","payment","reverse","ap"]},
+    {app:"ap",  id:"ap-vendor",   label:"Add AP Vendor",          dest:"Accounts Payable, Vendors, New Vendor",             icon:"storefront",         std:true, dflt:false, keywords:["vendor","supplier","payee","add","new","ap"]},
+    {app:"ap",  id:"ap-aged",     label:"Aged Payables Report",   dest:"Accounts Payable, Reports, Aged Payables",          icon:"summarize",          std:false,dflt:false, saved:true, keywords:["aged","payables","report","outstanding","owe","ap"]},
+
+    {app:"ar",  id:"ar-invoice",  label:"Create AR Invoice",      dest:"Accounts Receivable, Invoices, New Invoice",        icon:"request_page",       std:true, dflt:true,  keywords:["create","invoice","charge","customer","receivable","bill","ar"]},
+    {app:"ar",  id:"ar-payment",  label:"Record Customer Payment",dest:"Accounts Receivable, Payments, Receive Payment",    icon:"attach_money",       std:true, dflt:true,  keywords:["receive","payment","customer","cash","collect","receivable","ar"]},
+    {app:"ar",  id:"ar-customer", label:"Add AR Customer",        dest:"Accounts Receivable, Customers, New Customer",      icon:"person_add",         std:true, dflt:false, keywords:["customer","account","add","new","ar"]},
+    {app:"ar",  id:"ar-statement",label:"Customer Statements",    dest:"Accounts Receivable, Reports, Statements",          icon:"summarize",          std:false,dflt:false, saved:true, keywords:["statement","customer","balance","report","ar"]},
+
+    {app:"gl",  id:"gl-je",       label:"New GL Journal Entry",   dest:"General Ledger, Journal Entries, New Entry",        icon:"menu_book",          std:true, dflt:true,  keywords:["journal","entry","je","post","adjust","ledger","debit","credit","gl"]},
+    {app:"gl",  id:"gl-recur",    label:"Recurring Journal Entry",dest:"General Ledger, Journal Entries, Recurring",        icon:"repeat",             std:true, dflt:false, keywords:["recurring","journal","entry","schedule","ledger","gl"]},
+    {app:"gl",  id:"gl-account",  label:"Add GL Account",         dest:"General Ledger, Chart of Accounts, New Account",    icon:"account_tree",       std:true, dflt:false, keywords:["account","chart","coa","ledger","add","gl"]},
+    {app:"gl",  id:"gl-tb",       label:"Trial Balance",          dest:"General Ledger, Reports, Trial Balance",            icon:"summarize",          std:false,dflt:false, saved:true, keywords:["trial","balance","ledger","report","gl"]},
+
+    {app:"payroll", id:"pr-run",      label:"Run Payroll",         dest:"Payroll, Pay Runs, Run Payroll",                icon:"badge",       std:true, dflt:true,  keywords:["run","payroll","pay","wages","salary","paycheck","employees","pr"]},
+    {app:"payroll", id:"pr-emp",      label:"Add Payroll Employee",dest:"Payroll, Employees, New Employee",              icon:"person_add",  std:true, dflt:false, keywords:["employee","hire","staff","add","new","payroll","pr"]},
+    {app:"payroll", id:"pr-time",     label:"Enter Timecards",     dest:"Payroll, Time, Enter Timecards",                icon:"schedule",    std:true, dflt:false, keywords:["time","timecard","hours","attendance","payroll","pr"]},
+    {app:"payroll", id:"pr-register", label:"Payroll Register",    dest:"Payroll, Reports, Payroll Register",            icon:"summarize",   std:false,dflt:false, saved:true, keywords:["payroll","register","wages","report","pr"]},
+
+    {app:"purchasing", id:"pur-po",      label:"New Purchase Order", dest:"Purchasing, Purchase Orders, New PO",         icon:"shopping_cart", std:true, dflt:true,  keywords:["purchase","order","po","buy","requisition","vendor","pur"]},
+    {app:"purchasing", id:"pur-receive", label:"Receive Purchase Order",dest:"Purchasing, Receiving, Receive PO",       icon:"inventory",     std:true, dflt:false, keywords:["receive","receiving","purchase","order","po","goods","pur"]},
+    {app:"purchasing", id:"pur-req",     label:"Create Requisition", dest:"Purchasing, Requisitions, New Requisition",   icon:"assignment",    std:true, dflt:false, keywords:["requisition","request","purchase","order","pur"]},
+
+    {app:"bank", id:"bank-rec",     label:"Reconcile Bank Account",dest:"Bank, Reconciliation, Reconcile Account",      icon:"account_balance", std:true, dflt:true,  keywords:["reconcile","reconciliation","bank","statement","match","balance","bnk"]},
+    {app:"bank", id:"bank-dep",     label:"Record Bank Deposit",   dest:"Bank, Deposits, Record Deposit",               icon:"savings",         std:true, dflt:true,  keywords:["deposit","bank","cash","record","lodge","bnk"]},
+    {app:"bank", id:"bank-transfer",label:"Bank Transfer",         dest:"Bank, Transfers, New Transfer",                icon:"swap_horiz",      std:true, dflt:false, keywords:["transfer","bank","move","funds","between","bnk"]},
+
+    {app:"contributions", id:"con-enter",   label:"Enter Contribution",      dest:"Contributions, Enter Contributions",          icon:"volunteer_activism", std:true, dflt:true,  keywords:["contribution","giving","donation","gift","tithe","offering","enter","con"]},
+    {app:"contributions", id:"con-batch",   label:"Post Contribution Batch", dest:"Contributions, Batches, Post Batch",          icon:"inventory_2",        std:true, dflt:false, keywords:["batch","contribution","giving","post","donations","con"]},
+    {app:"contributions", id:"con-donor",   label:"Add Contributor",         dest:"Contributions, Contributors, New Contributor",icon:"group_add",          std:true, dflt:false, keywords:["contributor","donor","giver","member","add","new","con"]},
+    {app:"contributions", id:"con-stmt",    label:"Giving Statements",       dest:"Contributions, Reports, Giving Statements",   icon:"summarize",          std:false,dflt:false, saved:true, keywords:["giving","statement","contribution","donor","tax","report","con"]}
   ];
-  var MCT_SAVED=[
-    {id:"sv1", label:"Aged Payables",            icon:"summarize", kindLbl:"Report", dest:"Accounts Payable, Reports, Aged Payables"},
-    {id:"sv2", label:"Monthly Giving Statement", icon:"summarize", kindLbl:"Report", dest:"Contributions, Reports, Giving Statement"},
-    {id:"sv3", label:"Payroll Register",         icon:"summarize", kindLbl:"Report", dest:"Payroll, Reports, Payroll Register"}
-  ];
-  var MCT_CAP=8;
-  function mctScope(w){return w.mod||"all";}
-  function mctPinned(w){return w.mctPin||[];}
-  function mctHidden(w){return w.mctHide||[];}
-  function mctAllForScope(w){var sc=mctScope(w);
-    return MCT_TASKS.filter(function(t){
-      if(!t.perm)return false;
-      if(sc==="all")return t.default;
-      return t.mod===sc;
-    });}
-  function mctVisible(w){var hid=mctHidden(w),pin=mctPinned(w);
-    var list=mctAllForScope(w).filter(function(t){return hid.indexOf(t.id)<0;});
-    list.sort(function(a,b){var pa=pin.indexOf(a.id),pb=pin.indexOf(b.id);
-      if(pa<0&&pb<0)return 0;if(pa<0)return 1;if(pb<0)return -1;return pa-pb;});
-    return list;}
-  function mctModuleName(id){for(var i=0;i<MCT_MODULES.length;i++)if(MCT_MODULES[i].id===id)return MCT_MODULES[i].name;return "All modules";}
+  var MCT_RECENT=["bank-rec","ap-check","con-enter","gl-je","ar-payment"];
+  var MCT_STOP={a:1,an:1,the:1,to:1,my:1,of:1,for:1,in:1,on:1,and:1,or:1,me:1};
+  function mctApp(id){for(var i=0;i<MCT_APPS.length;i++)if(MCT_APPS[i].id===id)return MCT_APPS[i];return null;}
   function mctTask(id){for(var i=0;i<MCT_TASKS.length;i++)if(MCT_TASKS[i].id===id)return MCT_TASKS[i];return null;}
-  function mctSavedRec(id){for(var i=0;i<MCT_SAVED.length;i++)if(MCT_SAVED[i].id===id)return MCT_SAVED[i];return null;}
-  function mctModuleChip(w){return '<button class="filter-chip" data-action="mct-module" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show tasks for, tap to change"><span class="fc-label">'+mctModuleName(mctScope(w))+'</span>'+ICON("expand_more")+'</button>';}
-  function mctCustomiseBtn(w){var on=!!w.mctEdit;return '<button class="btn naked sm mct-cust'+(on?" on":"")+'" data-action="mct-customise" data-id="'+w.id+'" aria-pressed="'+on+'">'+ICON(on?"check":"tune")+(on?"Done":"Customise")+'</button>';}
-  function mctHeader(w){return '<div class="dep-hd"><div class="dep-hd-top">'+mctModuleChip(w)+'</div></div>';}
-  function mctTileNav(w,t){
-    var pinned=mctPinned(w).indexOf(t.id)>-1;
-    var aria=(t.label+", opens "+t.dest).replace(/"/g,"&quot;");
-    var pin=pinned?'<span class="mct-pin-badge material-symbols-rounded" aria-hidden="true">star</span>':"";
-    return '<button class="mct-tile" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'"><span class="mct-tile-ic">'+ICON(t.icon)+pin+'</span><span class="mct-tile-tx"><span class="mct-tile-lbl">'+t.label+'</span><span class="mct-tile-mod">'+mctModuleName(t.mod)+'</span></span></button>';
-  }
-  function mctTileEdit(w,t){
-    var pinned=mctPinned(w).indexOf(t.id)>-1;
-    return '<div class="mct-tile is-edit"><span class="mct-tile-ic">'+ICON(t.icon)+'</span><span class="mct-tile-tx"><span class="mct-tile-lbl">'+t.label+'</span><span class="mct-tile-mod">'+mctModuleName(t.mod)+'</span></span><span class="mct-tile-ctl"><button class="mct-mini'+(pinned?" on":"")+'" data-action="mct-pin" data-id="'+w.id+'" data-t="'+t.id+'" aria-pressed="'+pinned+'" aria-label="'+(pinned?"Unpin ":"Pin ")+t.label+'" data-tip="'+(pinned?"Unpin":"Pin to front")+'">'+ICON(pinned?"star":"star_border")+'</button><button class="mct-mini" data-action="mct-hide" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="Hide '+t.label+'" data-tip="Hide">'+ICON("visibility_off")+'</button></span></div>';
-  }
-  function mctItile(w,t){
-    var aria=(t.label+", opens "+t.dest).replace(/"/g,"&quot;");
-    return '<button class="mct-itile" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'" data-tip="'+t.label.replace(/"/g,"&quot;")+'" data-tip-plain>'+ICON(t.icon)+'<span class="sr-only">'+t.label+'</span></button>';
-  }
-  function mctGrid(w){
-    var vis=mctVisible(w),edit=!!w.mctEdit;
-    if(!edit&&vis.length>MCT_CAP){
-      var shown=vis.slice(0,MCT_CAP-1),extra=vis.length-shown.length;
-      var tiles=shown.map(function(t){return mctTileNav(w,t);}).join("");
-      tiles+='<button class="mct-tile mct-more" data-action="mct-more" data-id="'+w.id+'" aria-label="Show '+extra+' more tasks"><span class="mct-tile-ic">'+ICON("apps")+'</span><span class="mct-tile-tx"><span class="mct-tile-lbl">'+extra+' more</span><span class="mct-tile-mod">Show all tasks</span></span></button>';
-      return '<div class="mct-grid">'+tiles+'</div>';
-    }
-    var body=vis.map(function(t){return edit?mctTileEdit(w,t):mctTileNav(w,t);}).join("");
-    return '<div class="mct-grid">'+body+'</div>';
-  }
-  function mctHiddenTray(w){var hid=mctHidden(w);if(!hid.length)return "";
-    var chips=hid.map(function(hid2){var t=mctTask(hid2);if(!t)return "";return '<button class="mct-restore" data-action="mct-show" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="Show '+t.label+' again">'+ICON("add")+t.label+'</button>';}).join("");
-    return '<div class="mct-hidden"><div class="mct-hidden-h">Hidden</div><div class="mct-hidden-row">'+chips+'</div></div>';
-  }
-  function mctSaved(w){
-    var rows=MCT_SAVED.map(function(s){return '<button class="mct-srow" data-action="mct-open-saved" data-id="'+w.id+'" data-s="'+s.id+'" aria-label="'+(s.label+", "+s.kindLbl+", opens "+s.dest).replace(/"/g,"&quot;")+'">'+ICON(s.icon)+'<span class="mct-srow-lbl">'+s.label+'</span><span class="mct-srow-tag">'+s.kindLbl+'</span></button>';}).join("");
-    return '<div class="mct-saved"><div class="mct-sec-h">My Tasks &amp; Reports</div><div class="mct-slist">'+rows+'</div></div>';
-  }
-  function mctEmpty(w){
-    var sc=mctScope(w);
-    var sub=(sc==="all")?"You do not have access to any quick tasks yet. Tasks appear here once your role has permission to use them.":"You do not have access to any tasks in "+mctModuleName(sc)+".";
-    return '<div class="state" data-kind="empty">'+ICON("apps")+'<div class="state-title">No tasks available</div><div class="state-sub">'+sub+'</div></div>';
-  }
-  /* Smart search: match across ALL modules (permitted, not hidden) by task label or module name. */
-  function mctSearchList(w){var q=(w.mctQ||"").toLowerCase().trim();var hid=mctHidden(w);
-    return MCT_TASKS.filter(function(t){return t.perm&&hid.indexOf(t.id)<0&&(t.label.toLowerCase().indexOf(q)>-1||mctModuleName(t.mod).toLowerCase().indexOf(q)>-1);});}
-  function mctSearchBar(w){var q=w.mctQ||"";
-    return '<div class="mct-searchbar"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q mct-q" id="mctq-'+w.id+'" placeholder="Search all tasks" value="'+q.replace(/"/g,"&quot;")+'" aria-label="Search all tasks" autocomplete="off">'+(q?'<button class="mct-q-clear" data-action="mct-clearq" data-id="'+w.id+'" aria-label="Clear search">'+ICON("close")+'</button>':'')+'</div></div>';}
+  function mctAppHasTasks(id){for(var i=0;i<MCT_TASKS.length;i++)if(MCT_TASKS[i].app===id)return true;return false;}
+  function mctCtx(w){return w.appContext||"home";}
+  function mctInCtx(t,ctx){return ctx==="home"?true:t.app===ctx;}
+  function mctFilter(w){return w.mctFilter||"all";}
+  function mctCtxTasks(w){var ctx=mctCtx(w);return MCT_TASKS.filter(function(t){return mctInCtx(t,ctx);});}
+  function mctCtxName(w){var ctx=mctCtx(w);if(ctx==="home")return "Accounting Home";var a=mctApp(ctx);return a?a.name:"this application";}
+  function mctDefaultSaved(w){var ctx=mctCtx(w),out=[];MCT_TASKS.forEach(function(t){if(!mctInCtx(t,ctx))return;if(t.dflt||t.saved)out.push(t.id);});return out;}
+  function mctSavedIds(w){if(!w.mctSaved)w.mctSaved=mctDefaultSaved(w);return w.mctSaved;}
+  function mctIsSaved(w,t){return mctSavedIds(w).indexOf(t.id)>-1;}
+  function mctMyTasks(w){var ids=mctSavedIds(w),ctx=mctCtx(w);
+    var list=MCT_TASKS.filter(function(t){return mctInCtx(t,ctx)&&ids.indexOf(t.id)>-1;});
+    list.sort(function(a,b){var ad=a.dflt?0:1,bd=b.dflt?0:1;if(ad!==bd)return ad-bd;return MCT_TASKS.indexOf(a)-MCT_TASKS.indexOf(b);});
+    return list;}
+  function mctStandardTasks(w){var ids=mctSavedIds(w),ctx=mctCtx(w),isHome=ctx==="home",f=mctFilter(w);
+    return MCT_TASKS.filter(function(t){
+      if(!t.std)return false;
+      if(ids.indexOf(t.id)>-1)return false;
+      if(isHome){if(f!=="all"&&t.app!==f)return false;}else{if(t.app!==ctx)return false;}
+      return true;});}
+  function mctRecentIds(w){return w.mctRecent||MCT_RECENT;}
+  function mctRecentTasks(w){var ctx=mctCtx(w);return mctRecentIds(w).map(mctTask).filter(function(t){return t&&mctInCtx(t,ctx);});}
+  function mctTokens(q){return q.toLowerCase().split(/[^a-z0-9]+/).filter(function(x){return x&&!MCT_STOP[x];});}
+  function mctSearchList(w){
+    var toks=mctTokens((w.mctQ||"").trim());if(!toks.length)return [];
+    var out=[];
+    MCT_TASKS.forEach(function(t){
+      var a=mctApp(t.app),lbl=t.label.toLowerCase(),kw=(t.keywords||[]);
+      var score=0,matched=0;
+      toks.forEach(function(tk){var hit=false;
+        if(lbl.indexOf(tk)>-1){score+=3;hit=true;}
+        if(kw.some(function(k){return k.toLowerCase().indexOf(tk)>-1;})){score+=2;hit=true;}
+        if(a.name.toLowerCase().indexOf(tk)>-1||a.code.toLowerCase()===tk){score+=1;hit=true;}
+        if(hit)matched++;});
+      if(matched>0){if(t.dflt)score+=0.5;out.push({t:t,score:score,matched:matched});}
+    });
+    out.sort(function(x,y){if(y.matched!==x.matched)return y.matched-x.matched;if(y.score!==x.score)return y.score-x.score;return x.t.label.localeCompare(y.t.label);});
+    return out;}
+  function mctBadge(appId){var a=mctApp(appId);if(!a)return "";
+    return '<span class="mct-badge" data-app="'+a.id+'" title="'+a.name+'" aria-label="'+a.name+'">'+a.code+'</span>';}
+  function mctStarBtn(w,t){var saved=mctIsSaved(w,t),act=saved?"mct-unsave":"mct-save";
+    var lbl=(saved?"Remove "+t.label+" from My Tasks":"Add "+t.label+" to My Tasks");
+    return '<button class="mct-star'+(saved?" on":"")+'" data-action="'+act+'" data-id="'+w.id+'" data-t="'+t.id+'" aria-pressed="'+saved+'" aria-label="'+lbl+'" data-tip="'+(saved?"In My Tasks (remove)":"Add to My Tasks")+'" data-tip-plain>'+ICON(saved?"star":"star_border")+'</button>';}
+  function mctRow(w,t){var a=mctApp(t.app);
+    var aria=(t.label+", "+a.name+", opens "+t.dest).replace(/"/g,"&quot;");
+    return '<div class="mct-row"><button class="mct-row-main" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'"><span class="mct-row-ic">'+ICON(t.icon)+'</span><span class="mct-row-tx"><span class="mct-row-lbl">'+t.label+'</span><span class="mct-row-dest">'+t.dest+'</span></span>'+mctBadge(t.app)+'</button>'+mctStarBtn(w,t)+'</div>';}
+  function mctRecentChip(w,t){var a=mctApp(t.app);
+    var aria=(t.label+", "+a.name+", opens "+t.dest).replace(/"/g,"&quot;");
+    return '<button class="mct-recent-chip" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'">'+ICON(t.icon)+'<span class="mct-recent-lbl">'+t.label+'</span>'+mctBadge(t.app)+'</button>';}
+  function mctItile(w,t){var a=mctApp(t.app);
+    var aria=(t.label+", "+a.name+", opens "+t.dest).replace(/"/g,"&quot;");
+    return '<button class="mct-itile" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'" data-tip="'+(t.label+" ("+a.name+")").replace(/"/g,"&quot;")+'" data-tip-plain>'+ICON(t.icon)+'<span class="mct-itile-badge" data-app="'+a.id+'" aria-hidden="true">'+a.code+'</span><span class="sr-only">'+t.label+", "+a.name+'</span></button>';}
+  function mctSearch(w,compact){var q=w.mctQ||"";
+    var lbl=compact?"":'<label class="mct-search-lbl" for="mctq-'+w.id+'">'+ICON("search")+'Smart search</label>';
+    var clr=q?'<button class="mct-q-clear" data-action="mct-clearq" data-id="'+w.id+'" aria-label="Clear search">'+ICON("close")+'</button>':'';
+    return '<div class="mct-search'+(compact?" compact":"")+'">'+lbl+'<div class="mct-search-box"><span class="material-symbols-rounded mct-search-ic" aria-hidden="true">search</span><input class="mct-q" id="mctq-'+w.id+'" placeholder="Search tasks across all applications (try &quot;pay an invoice&quot;)" value="'+q.replace(/"/g,"&quot;")+'" aria-label="Search tasks across all applications" autocomplete="off">'+clr+'</div></div>';}
+  function mctFilterChip(w){var f=mctFilter(w),lbl=f==="all"?"All applications":(mctApp(f)?mctApp(f).name:"All applications");
+    return '<button class="filter-chip mct-filter" data-action="mct-appfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Filter standard tasks by application, currently '+lbl+'"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function mctHeader(w){var ctx=mctCtx(w),inner;
+    if(ctx==="home"){inner='<span class="mct-ctx-chip"><span class="material-symbols-rounded mct-ctx-ic" aria-hidden="true">home</span><span class="mct-ctx-name">Accounting Home</span></span>';}
+    else{var a=mctApp(ctx);inner='<span class="mct-ctx-chip">'+(a?mctBadge(a.id)+'<span class="mct-ctx-name">'+a.name+'</span>':'<span class="mct-ctx-name">'+ctx+'</span>')+'</span>';}
+    return '<div class="dep-hd mct-hd"><div class="dep-hd-top">'+inner+'</div></div>';}
+  function mctRecentSection(w){var list=mctRecentTasks(w);
+    var head='<div class="mct-sec-h">Recently used</div>';
+    if(!list.length)return '<div class="mct-sec">'+head+'<div class="mct-sec-empty">No recently used tasks yet.</div></div>';
+    return '<div class="mct-sec">'+head+'<div class="mct-recents">'+list.map(function(t){return mctRecentChip(w,t);}).join("")+'</div></div>';}
+  function mctMySection(w){var list=mctMyTasks(w);
+    var head='<div class="mct-sec-h">My Tasks</div>';
+    if(!list.length)return '<div class="mct-sec">'+head+'<div class="mct-sec-empty">'+ICON("star_border")+'<span>No saved tasks yet. Add tasks from Standard tasks below, or use "Add to my tasks" in the app.</span></div></div>';
+    return '<div class="mct-sec">'+head+'<div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
+  function mctStandardSection(w){var list=mctStandardTasks(w),ctx=mctCtx(w),isHome=ctx==="home";
+    var title=isHome?"Standard tasks":(mctApp(ctx).name+" tasks");
+    var head='<div class="mct-sec-head"><div class="mct-sec-h">'+title+'</div>'+(isHome?mctFilterChip(w):"")+'</div>';
+    if(!list.length){var msg=(isHome&&mctFilter(w)!=="all")?("No more standard "+mctApp(mctFilter(w)).name+" tasks to add."):"All standard tasks are already in My Tasks.";
+      return '<div class="mct-sec">'+head+'<div class="mct-sec-empty">'+msg+'</div></div>';}
+    return '<div class="mct-sec">'+head+'<div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
+  function mctResults(w){var res=mctSearchList(w),q=(w.mctQ||"").trim();
+    if(!res.length)return '<div class="mct-noresult">'+ICON("search_off")+'<span>No tasks match "'+q.replace(/"/g,"&quot;")+'". Try a different word, like "check" or "deposit".</span></div>';
+    var head='<div class="mct-results-h">'+res.length+' result'+(res.length>1?"s":"")+' across all applications</div>';
+    return head+'<div class="mct-list">'+res.map(function(r){return mctRow(w,r.t);}).join("")+'</div>';}
+  function mctEmpty(w){var ctx=mctCtx(w);
+    var sub=(ctx==="home")?"You do not have access to any tasks yet. Tasks appear here once your role has permission to use them.":("There are no main content tasks for "+mctCtxName(w)+" yet.");
+    return '<div class="state" data-kind="empty">'+ICON("apps")+'<div class="state-title">No tasks available</div><div class="state-sub">'+sub+'</div></div>';}
+  function mctGlance(w){var q=(w.mctQ||"").trim(),body;
+    if(q){var res=mctSearchList(w);body=res.length?('<div class="mct-irow">'+res.slice(0,8).map(function(r){return mctItile(w,r.t);}).join("")+'</div>'):'<div class="mct-glance-empty">No matches</div>';}
+    else{var list=mctRecentTasks(w);body=list.length?('<div class="mct-irow">'+list.map(function(t){return mctItile(w,t);}).join("")+'</div>'):'<div class="mct-glance-empty">No recently used tasks yet</div>';}
+    return '<div class="mct-glance">'+mctSearch(w,true)+body+'</div>';}
   function mctContent(w){
-    if(w.state==="empty"||!mctAllForScope(w).length){
+    var ctxTasks=mctCtxTasks(w);
+    if(w.state==="empty"||!ctxTasks.length){
       if(w.size==="kpi")return mctEmpty(w);
-      return mctHeader(w)+mctEmpty(w);
-    }
-    if(w.size==="kpi"){
-      var row=mctVisible(w).map(function(t){return mctItile(w,t);}).join("");
-      return '<div class="mct-glance"><div class="mct-irow">'+row+'</div></div>';
-    }
+      return mctHeader(w)+mctEmpty(w);}
+    if(w.size==="kpi")return mctGlance(w);
     var q=(w.mctQ||"").trim();
-    var out=mctHeader(w)+'<div class="mct-scroll">'+mctSearchBar(w);
-    if(q){
-      var res=mctSearchList(w);
-      if(res.length){out+='<div class="mct-results-h">'+res.length+' result'+(res.length>1?"s":"")+' across all modules</div><div class="mct-grid">'+res.map(function(t){return mctTileNav(w,t);}).join("")+'</div>';}
-      else{out+='<div class="mct-noresult">'+ICON("search_off")+'<span>No tasks match "'+q.replace(/"/g,"&quot;")+'".</span></div>';}
-    } else {
-      out+=mctGrid(w);
-      if(w.mctEdit)out+=mctHiddenTray(w);
-      if(w.size==="xwide"&&!w.mctEdit)out+=mctSaved(w);
-    }
+    var out=mctHeader(w)+'<div class="mct-scroll">'+mctSearch(w,false);
+    if(q){out+=mctResults(w);}
+    else{out+=mctRecentSection(w)+mctMySection(w)+mctStandardSection(w);}
     out+='</div>';
-    return out;
-  }
+    return out;}
 
 /* === MY STATUS (mys) render === */
 function mysModeToggle(w){var m=w.mode||"urgency";
@@ -2000,11 +2043,14 @@ function mysPopContent(){
       if(list.length)out+='<div class="cap">Accounts</div>'+list.map(function(a){var sel=curAcct===a.id,end=bankEnding(a),neg=end<0;return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="bank-set-acct" data-acct="'+a.id+'" data-id="'+wbd.id+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">account_balance_wallet</span><span class="mi-nm-stack"><span class="mi-nm">'+a.name+'</span><span class="mi-acctno">'+(a.acctFull||a.acct)+'</span></span><span class="bank-mi-bal'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span></button>';}).join("");
       if(!list.length&&(q&&"all bank accounts".indexOf(q)<0))out+='<div class="mi-note" style="color:var(--txt-subtle)">No accounts match "'+(bankQuery||"").replace(/"/g,"&quot;")+'"</div>';
       return out+'</div>';}
-    if(pop.type==="mct-module"){var wmd=find(pop.id),cm=mctScope(wmd);
-      return '<div class="cap">Show tasks for</div>'+MCT_MODULES.map(function(m){var on=cm===m.id;return '<button class="mi'+(on?" check":"")+'" data-action="mct-set-module" data-id="'+wmd.id+'" data-m="'+m.id+'" role="option" aria-selected="'+on+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+m.name+'</button>';}).join("");}
+    if(pop.type==="mct-appfilter"){var wf=find(pop.id),cf=mctFilter(wf);
+      var opts=[{id:"all",name:"All applications"}].concat(MCT_APPS.filter(function(a){return mctAppHasTasks(a.id)&&a.id!=="assets";}));
+      return '<div class="cap">Filter standard tasks by application</div>'+opts.map(function(o){var on=cf===o.id;
+        return '<button class="mi'+(on?" check":"")+'" data-action="mct-set-filter" data-id="'+wf.id+'" data-f="'+o.id+'" role="option" aria-selected="'+on+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+(o.id==="all"?"":mctBadge(o.id)+" ")+o.name+'</button>';}).join("");}
+
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="mct-module")return '[data-action="mct-module"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
@@ -2093,16 +2139,12 @@ function mysPopContent(){
     if(a==="mys-mode"){var wmm2=find(id);if(wmm2)wmm2.mode=t.getAttribute("data-m");pop=null;render();return;}
     if(a==="mys-opts"){pop=(pop&&pop.type==="mys-opts"&&pop.id===id)?null:{type:"mys-opts",id:id};render();return;}
     if(a==="mys-hidezero"){var wmh=find(id);if(wmh)wmh.hideZero=!wmh.hideZero;pop=null;render();return;}
-    if(a==="mct-module"){pop=(pop&&pop.type==="mct-module"&&pop.id===id)?null:{type:"mct-module",id:id};render();return;}
+    if(a==="mct-appfilter"){pop=(pop&&pop.type==="mct-appfilter"&&pop.id===id)?null:{type:"mct-appfilter",id:id};render();return;}
+    if(a==="mct-set-filter"){var wf=find(id);if(wf)wf.mctFilter=t.getAttribute("data-f");pop=null;render();return;}
     if(a==="mct-clearq"){var wcq=find(id);if(wcq)wcq.mctQ="";render();return;}
-    if(a==="mct-set-module"){var wmm=find(id);if(wmm)wmm.mod=t.getAttribute("data-m");pop=null;render();return;}
-    if(a==="mct-customise"){var wce=find(id);if(wce)wce.mctEdit=!wce.mctEdit;pop=null;setStatus(wce&&wce.mctEdit?"Customising tasks: pin to reorder, hide to remove.":"Done customising tasks.");render();return;}
-    if(a==="mct-pin"){var wpn=find(id),tid=t.getAttribute("data-t");if(wpn){wpn.mctPin=wpn.mctPin||[];var pi=wpn.mctPin.indexOf(tid);if(pi>-1)wpn.mctPin.splice(pi,1);else wpn.mctPin.push(tid);}render();return;}
-    if(a==="mct-hide"){var whd=find(id),htid=t.getAttribute("data-t");if(whd){whd.mctHide=whd.mctHide||[];if(whd.mctHide.indexOf(htid)<0)whd.mctHide.push(htid);var pj=(whd.mctPin||[]).indexOf(htid);if(pj>-1)whd.mctPin.splice(pj,1);}render();return;}
-    if(a==="mct-show"){var wsh2=find(id),stid=t.getAttribute("data-t");if(wsh2&&wsh2.mctHide){var si=wsh2.mctHide.indexOf(stid);if(si>-1)wsh2.mctHide.splice(si,1);}render();return;}
-    if(a==="mct-open"){var wo2=find(id),ot=mctTask(t.getAttribute("data-t"));if(ot)showModal("Opens "+ot.label,"Tapping this shortcut takes you to <b>"+ot.dest+"</b>. Tasks you do not have permission to use are not shown here.");return;}
-    if(a==="mct-open-saved"){var sv=mctSavedRec(t.getAttribute("data-s"));if(sv)showModal("Opens "+sv.label,"This is one of your saved shortcuts ("+sv.kindLbl+"). It takes you to <b>"+sv.dest+"</b>. Saved shortcuts are managed with the “Add to My Tasks” action in the app.");return;}
-    if(a==="mct-more"){var wmr=find(id);if(wmr){var full=mctVisible(wmr).map(function(tt){return '<button class="mct-tile" data-action="mct-open" data-id="'+wmr.id+'" data-t="'+tt.id+'" aria-label="'+(tt.label+", opens "+tt.dest).replace(/"/g,"&quot;")+'"><span class="mct-tile-ic">'+ICON(tt.icon)+'</span><span class="mct-tile-tx"><span class="mct-tile-lbl">'+tt.label+'</span><span class="mct-tile-mod">'+mctModuleName(tt.mod)+'</span></span></button>';}).join("");showModal("All tasks",'<div class="mct-grid mct-grid-modal">'+full+'</div>');}return;}
+    if(a==="mct-open"){var ot=mctTask(t.getAttribute("data-t"));if(ot){var oa=mctApp(ot.app);showModal("Opens "+ot.label,"Tapping this task takes you to <b>"+ot.dest+"</b> in "+oa.name+". Tasks you do not have permission to use are not shown here.");}return;}
+    if(a==="mct-save"){var wsv=find(id),sid=t.getAttribute("data-t");if(wsv){var arr=mctSavedIds(wsv);if(arr.indexOf(sid)<0)arr.push(sid);}setStatus("Added to My Tasks.");render();return;}
+    if(a==="mct-unsave"){var wus=find(id),uid=t.getAttribute("data-t");if(wus){var arr2=mctSavedIds(wus);var ui=arr2.indexOf(uid);if(ui>-1)arr2.splice(ui,1);}setStatus("Removed from My Tasks.");render();return;}
     if(a==="refresh-all"){pop=null;refreshAll();return;}
     if(a==="manage"){manage=true;pop=null;setStatus("Managing “"+cur().name+"”. Rename, drag, resize, duplicate, remove.");render();return;}
     if(a==="cancel"){manage=false;pop=null;setStatus("Discarded changes.");render();return;}
