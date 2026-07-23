@@ -2225,6 +2225,24 @@ function mysPopContent(){
   window.addEventListener("resize",function(){if(pop)renderOverlay();});
   render();
 })();
+  /* Bank Balances: single-account bar hover popover card */
+  var bankPopEl=null;
+  function bankHideBpop(){if(bankPopEl){bankPopEl.remove();bankPopEl=null;}}
+  function bankShowBpop(col,mx,my){
+    var raw=col.getAttribute("data-bankpop");if(!raw)return;var p=raw.split("|");
+    var cat=p[0],amt=+p[1],flow=p[2],out=(flow==="outflow");
+    bankHideBpop();
+    bankPopEl=document.createElement("div");bankPopEl.className="bgt-pop bank-pop";
+    bankPopEl.innerHTML='<div class="bgt-pop-h">'+cat+'</div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:'+(out?"var(--am-300)":"var(--am-600)")+'"></span><span class="bgt-pop-lbl">'+(out?"Money out":"Money in")+'</span><span class="bgt-pop-v">'+money(amt)+'</span></div>'+
+      '<div class="bgt-pop-note">'+(out?"Outflow. Stored as a negative and drawn as a positive bar for readability.":"Inflow, adds to the balance.")+'</div>';
+    document.body.appendChild(bankPopEl);
+    var bw=bankPopEl.offsetWidth,bh=bankPopEl.offsetHeight,M=10;
+    var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
+    var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
+    bankPopEl.style.left=left+"px";bankPopEl.style.top=top+"px";
+  }
+  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".bank-col[data-bankpop]");if(!col){if(bankPopEl)bankHideBpop();return;}bankShowBpop(col,e.clientX,e.clientY);});
 </script>
 </body>
 </html>
