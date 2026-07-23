@@ -1197,12 +1197,17 @@
     return (ivHTML?'<div class="bgt-tbar">'+ivHTML+'</div>':"")+'<div class="scroll bgt-tscroll">'+head+body+'</div><div class="dep-total"><span>Total, posted so far</span><span class="bgt-varcol bgt-vartot">'+bgtVarInner(totalV,neutral,tB)+'</span></div>';}
   /* The slicer: the time-span chip on the LEFT and the M/Q/P/Y interval toggle on the RIGHT, kept together just above the chart because they constrain each other (a single-period span greys out Quarter/Year). Threaded into the chart legend row / the table toolbar. */
   function bgtSlicer(w){return '<div class="bgt-slicer">'+bgtSpanChip(w)+bgtIntervalToggle(w,w.binterval||"month","set-bgt-interval")+'</div>';}
+  /* A single-group cut can't be a line. Shown with the slicer still present so the user can widen the span or change interval right there, plus Bar/Table remain available from the header toggle. */
+  function bgtNoTrendState(slic){
+    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(slic||"")+'</div><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';
+  }
   function bgtView(w,fmt){
     var av=w.acctview||"income";
     if(!bgtHasBudget(bgtSet(w)))return bgtNoBudgetState(w,av);
     var slic=bgtSlicer(w);
     if(fmt==="table")return bgtTable(w,slic);
     var rows=bgtViewRows(w);
+    if(fmt==="line"&&rows.length<2)return bgtNoTrendState(slic);
     return (fmt==="line")?bgtLine(w,rows,slic):bgtBars(w,rows,slic);
   }
   function bgtGlance(w){
