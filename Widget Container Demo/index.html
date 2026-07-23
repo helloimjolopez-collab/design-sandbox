@@ -1724,6 +1724,111 @@ function mysPopContent(){
     return '<div class="cap">Display</div><button class="mi'+(hz?" check":"")+'" data-action="mys-hidezero" data-id="'+wo.id+'">'+ICON(hz?"check_box":"check_box_outline_blank")+'Hide zero-count rows</button><div class="sep"></div><div class="mys-asof">Counts as of '+(wo.updated||"just now")+'</div>';}
   return "";}
 
+/* ===== Bank Balances (prefix: bank) — RENDER ===== */
+  function bankAccounts(w){return BANK_ACCOUNTS;}
+  function bankEnding(a){return a.a[0]+a.a[1]+a.a[2]+a.a[3]+a.a[4]+a.a[5];}
+  function bankSelected(w){if(!w.bkacct)return null;var list=bankAccounts(w);for(var i=0;i<list.length;i++)if(list[i].id===w.bkacct)return list[i];return null;}
+  function bankMoney(n){return n<0?("−$"+Math.abs(n).toLocaleString()):("$"+n.toLocaleString());}
+  function bankTotal(w){return bankAccounts(w).reduce(function(s,a){return s+bankEnding(a);},0);}
+  function bankNegCount(w){return bankAccounts(w).filter(function(a){return bankEnding(a)<0;}).length;}
+  function bankAcctChip(w){var sel=bankSelected(w);var spin=w.bkloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=sel?(sel.name+" "+sel.acct):"All Bank Accounts";return '<button class="filter-chip bank-acct-chip" data-action="bank-acct" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Bank account, tap to change the view"><span class="fc-label">'+spin+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function bankViewToggle(w){var v=w.bkview||"table",single=!!bankSelected(w),chartIc=single?"bar_chart":"donut_small";var opts=[["table","Table","table_rows"],["chart","Chart",chartIc]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="bank-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+  function bankHeaderBlock(w,mode){
+    var loading=(mode==="loading"),sel=bankSelected(w);
+    var toggle=(w.size==="wide")?bankViewToggle(w):"";
+    var numInner;
+    if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
+    else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span><span class="bank-pill">'+ICON("account_balance")+sel.type+'</span></div>';}
+    else{var tot=bankTotal(w),n=bankAccounts(w).length,over=bankNegCount(w);var overPill=over?'<span class="bank-pill warn" data-tip="'+over+' account'+(over>1?"s":"")+' currently overdrawn (a negative balance). Overdrawn accounts stay in the table but are left out of the chart." data-tip-plain>'+ICON("warning")+over+' overdrawn</span>':"";numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span><span class="bank-pill">'+n+' accounts</span>'+overPill+'</div>';}
+    var ctx=sel?('Balance since the last reconciliation (unreconciled activity), account '+(sel.acctFull||sel.acct)+'.'):('Combined balance across all active bank accounts, based on unreconciled activity since the last reconciliation.');
+    return '<div class="dep-hd">'+
+      '<div class="dep-hd-top">'+bankAcctChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
+      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div></div></div>'+
+      '</div>';
+  }
+  function bankSkeleton(){var bars="";[58,82,50,90,66,74,60].forEach(function(h){bars+='<div class="bank-sk-col"><span class="sk bank-sk-bar" style="height:'+h+'%"></span></div>';});return '<div class="bank-skel"><div class="bank-skel-plot">'+bars+'</div><div class="bank-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+  function bankAllTable(w,full){
+    var rows=bankAccounts(w).slice();
+    var sk=(w.bksort||"bal-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    function val(a){if(key==="name")return a.name;if(key==="type")return a.type;return bankEnding(a);}
+    rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="name"||key==="type")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="bank-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Account")+'</span>'+(full?'<span class="wt-type">'+sb("type","Type")+'</span>':'')+'<span class="wt-c2">'+sb("bal","Balance")+'</span></div>';
+    var body=rows.map(function(a){var end=bankEnding(a),neg=end<0,aesc=a.name.replace(/"/g,"&quot;");
+      var tip=aesc+', Account '+(a.acctFull||a.acct)+(neg?'. This account is overdrawn.':'');
+      var over=neg?'<span class="bank-tag-over" data-tip="This account is overdrawn (a negative balance)." data-tip-plain>Overdrawn</span>':'';
+      return '<div class="wt-row" data-acct="'+aesc+'">'+
+        '<span class="lr-main lr-stack lr-link" data-action="bank-set-acct" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.acct+'</span></span>'+
+        (full?'<span class="wt-type">'+a.type+'</span>':'')+
+        '<span class="wt-c2'+(neg?" bank-neg":"")+'">'+over+bankMoney(end)+'</span></div>';
+    }).join("");
+    var tot=bankTotal(w);
+    var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
+    return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
+  }
+  function bankPie(w,big){
+    var maxN={wide:8,xwide:12}[w.size]||8;
+    var all=bankAccounts(w);
+    var pos=all.filter(function(a){return bankEnding(a)>0;}).map(function(a){return {name:a.name,net:bankEnding(a)};});
+    var negOnly=bankNegCount(w);
+    var segs=topN(pos,maxN);
+    var tot=segs.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+    var shownReal=segs.filter(function(a){return !a.others;}).length,ramp=blueRamp(Math.max(1,shownReal)),grouped=pos.length-shownReal;
+    segs.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=a.others?OTHERS_COLOR:ramp[i];
+      arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';
+      off+=len;
+      legend+='<div class="leg" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+(a.others?' <span class="lr-meta">('+grouped+')</span>':'')+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';
+    });
+    var DS={wide:210,xwide:250}[w.size]||190;
+    var note=negOnly?'<div class="bank-pie-note">'+ICON("info")+negOnly+' account'+(negOnly>1?"s":"")+' with a negative balance '+(negOnly>1?"are":"is")+' not shown in the chart. See the table for the full list.</div>':"";
+    return '<div class="dist-wrap bank-dist"><div class="bank-pie-title">All Bank Accounts</div><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+fmtAxis(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">in chart</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">Accounts</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div>'+note+'</div>';
+  }
+  function bankSingleTable(w,sel){
+    var a=sel.a,end=bankEnding(sel);
+    var rowsDef=[["Beginning Balance",a[0]],["Deposits",a[1]],["Voids",a[2]],["Checks",a[3]],["Withdrawals",a[4]],["EFT",a[5]]];
+    var body=rowsDef.map(function(r){var v=r[1],out=(r[0]==="Checks"||r[0]==="Withdrawals"||v<0),inflow=(v>0&&(r[0]==="Deposits"||r[0]==="Voids"||r[0]==="EFT"));
+      var meta=out&&r[0]!=="Beginning Balance"?' <span class="lr-meta">· outflow</span>':(inflow?' <span class="lr-meta">· inflow</span>':'');
+      return '<div class="wt-row"><span class="lr-main">'+r[0]+meta+'</span><span class="wt-c2'+(v<0?" bank-neg":"")+'">'+bankMoney(v)+'</span></div>';
+    }).join("");
+    return '<div class="scroll bank-7scroll">'+body+'</div><div class="dep-total"><span>Ending Balance</span><span'+(end<0?' class="bank-neg"':'')+'>'+bankMoney(end)+'</span></div>';
+  }
+  function bankBars(w,sel){
+    var a=sel.a;
+    var cats=[["Deposits",a[1]],["Voids",a[2]],["Checks",a[3]],["Withdrawals",a[4]]];
+    var max=1;cats.forEach(function(c){max=Math.max(max,Math.abs(c[1]));});max=max*1.15;
+    var cols="",xl="";
+    cats.forEach(function(c){var raw=c[1],mag=Math.abs(raw),out=(c[0]==="Checks"||c[0]==="Withdrawals"||raw<0);
+      var h=Math.max(1,Math.round(mag/max*100)),flow=out?"outflow":"inflow";
+      var srtxt=c[0]+', '+flow+' of '+money(mag)+(out?' (stored as '+bankMoney(raw)+', drawn as a positive bar)':'');
+      var dpop=[c[0],mag,flow].join("|").replace(/"/g,"&quot;");
+      cols+='<div class="bank-col '+(out?"out":"in")+'" role="group" aria-label="'+srtxt+'" data-bankpop="'+dpop+'"><div class="bank-barwrap"><div class="bank-bar" style="height:'+h+'%"></div></div><span class="sr-only">'+srtxt+'</span></div>';
+      xl+='<div class="bank-xcol"><span class="bank-xlbl">'+c[0]+'</span><span class="bank-xflow">'+flow+'</span></div>';
+    });
+    var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
+    return '<div class="bank-chart-wrap"><div class="bank-legend"><span class="bank-lg"><span class="bank-sw in"></span>Inflow (money in)</span><span class="bank-lg"><span class="bank-sw out"></span>Outflow (money out)</span></div>'+
+      '<div class="bank-plotrow"><div class="bank-yax">'+yl+'</div><div class="bank-canvas"><div class="bank-gl"></div><div class="bank-cols">'+cols+'</div></div></div>'+
+      '<div class="bank-xaxrow"><div class="bank-yaxsp"></div><div class="bank-xcols">'+xl+'</div></div>'+
+      '</div>';
+  }
+  function bankAllView(w,v){return (v==="chart")?bankPie(w,false):bankAllTable(w,false);}
+  function bankSingleView(w,v){var sel=bankSelected(w);return (v==="chart")?bankBars(w,sel):bankSingleTable(w,sel);}
+  function bankAllFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+bankAllTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Distribution</div>'+bankPie(w,true)+'</div></div>';}
+  function bankSingleFull(w){var sel=bankSelected(w);return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Activity since last reconciliation</div>'+bankSingleTable(w,sel)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Activity by type</div>'+bankBars(w,sel)+'</div></div>';}
+  function bankGlance(w){var sel=bankSelected(w),lbl=sel?sel.name:"All Bank Accounts",val=sel?bankEnding(sel):bankTotal(w),neg=val<0;
+    return '<div class="kpi-row"><div class="kpi-num">'+
+      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+lbl+'</span></span>'+
+      '<div class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
+      '<div class="gl-sub"><span class="bank-caption">since last reconciliation</span></div>'+
+      '</div></div>';}
+  function bankLoad(w){w.bkloading=true;clearTimeout(timers["bank-"+w.id]);timers["bank-"+w.id]=setTimeout(function(){w.bkloading=false;render();},850);}
+  function bankContent(w){
+    if(w.size==="kpi")return bankGlance(w);
+    if(w.bkloading)return bankHeaderBlock(w,"loading")+bankSkeleton();
+    var mh=bankHeaderBlock(w),sel=bankSelected(w),v=w.bkview||"table";
+    if(w.size==="xwide")return mh+(sel?bankSingleFull(w):bankAllFull(w));
+    return mh+(sel?bankSingleView(w,v):bankAllView(w,v));
+  }
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
