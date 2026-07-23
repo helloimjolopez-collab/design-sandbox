@@ -3407,6 +3407,7 @@ const LEVELS = [
 ];
 
 function openWizard(){
+  if(DEMO_MODE==='phase-1'){openP1Wizard();return;}
   STATE.wzStep=1;STATE.wzMaxStep=1;STATE.wzPeople=[];STATE.wzLevel=null;STATE.wzLvlDropOpen=false;STATE.wzLvlSearch='';STATE.wzLvlExpanded=false;STATE.wzSuccess=false;STATE.wzAdvancedOpen=false;STATE.wzEmailOn=true;STATE.wzApproval=false;STATE.wzCstOn=false;STATE.wzCstType='';STATE.wzEmailTemplate='default-bgcheck';STATE.wzCstTemplate='default-cst';STATE.wzPreviewBgTemplate=false;STATE.wzPreviewCstTemplate=false;STATE.wzEditBgBody=null;STATE.wzEditCstBody=null;STATE.wzReminderInterval='';STATE.wzShowNewPerson=false;STATE.wzNewPerson={fn:'',ln:'',email:'',role:'',dept:''};
   renderWizard();
   document.getElementById('wz-wrap').classList.add('open');
@@ -3415,6 +3416,375 @@ function closeWizard(){document.getElementById('wz-wrap').classList.remove('open
 document.getElementById('wz-close').onclick=closeWizard;
 document.getElementById('wz-cancel').onclick=closeWizard;
 document.getElementById('wz-wrap').addEventListener('click',e=>{if(e.target===document.getElementById('wz-wrap'))closeWizard()});
+
+// ══════════════════════════════════════════════════════════════════════
+// PHASE 1 IN-SCREEN WIZARD
+// ══════════════════════════════════════════════════════════════════════
+
+const P1_WZ_STEPS = ['Person','Screening level','Consent','Review'];
+
+const P1_LEVELS = [
+  {id:'essential',name:'Essential',risk:'low',riskLabel:'Suitable for low-risk roles',
+   sub:'General and administrative volunteer roles',
+   examples:['Ushers','Greeters','Kitchen helpers','Admin support'],
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification']},
+  {id:'preferred',name:'Preferred',risk:'high',riskLabel:'Best for high-risk roles',
+   sub:'Roles with regular contact with children or vulnerable adults',
+   examples:["Children's ministry","Sunday school","Nursery workers","Care team"],
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification','County criminal search (7-year)','Alias search']},
+  {id:'premier',name:'Premier',risk:'high',riskLabel:'Best for high-risk roles',
+   sub:'Leadership, finance, and roles working with children, vulnerable people, and financial assets',
+   examples:['Lead teachers','Youth pastors','Finance volunteers','Staff'],
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification','County criminal search (7-year)','Alias search (extended)','Federal criminal search']},
+  {id:'premier-mvr',name:'Premier + MVR',risk:'high',riskLabel:'Best for high-risk roles',
+   sub:'All Premier checks plus motor vehicle record — for any role involving driving',
+   examples:['Drivers','Transport volunteers','Camp drivers'],
+   checks:['National criminal database','Sex offender registry','SSN trace / identity verification','County criminal search (7-year)','Alias search (extended)','Federal criminal search','Motor vehicle record (MVR)']},
+];
+
+const P1_CST_OPTIONS = [
+  {id:'none',  label:"Don't include CST"},
+  {id:'vol-en',label:'Volunteer (English)'},
+  {id:'vol-es',label:'Volunteer (Spanish)'},
+  {id:'emp-en',label:'Employee (English)'},
+];
+
+let P1STATE = {};
+
+function p1ResetState(){
+  P1STATE = {step:1,maxStep:1,people:[],level:null,cstOption:'none',emailOn:true,advOpen:false,expiry:'30',reminderInterval:'2',billingRef:'',showNewPerson:false,newPerson:{fn:'',ln:'',email:''},p1LvlChecksOpen:{},success:false,successLink:''};
+}
+
+function openP1Wizard(){
+  p1ResetState();
+  const homeView = document.getElementById('home-view');
+  const p1View = document.getElementById('p1-wz-view');
+  if(homeView) homeView.style.display='none';
+  if(p1View) p1View.classList.add('active');
+  renderP1Wizard();
+}
+
+function closeP1Wizard(){
+  const homeView = document.getElementById('home-view');
+  const p1View = document.getElementById('p1-wz-view');
+  if(p1View) p1View.classList.remove('active');
+  if(homeView) homeView.style.display='flex';
+  p1ResetState();
+  renderHomeTable();
+}
+window.closeP1Wizard = closeP1Wizard;
+
+function renderP1Wizard(){
+  if(P1STATE.success){renderP1Success();return;}
+  const s = P1STATE.step;
+  const stepper = P1_WZ_STEPS.map((lbl,i)=>{
+    const n=i+1;
+    const cls = s>n?'done':s===n?'active':'';
+    const nav = n<s?` onclick="p1NavStep(${n})"`:' ';
+    return `<div class="wz-step ${cls}${n<s?' clickable':''}"${nav}><div class="wz-num">${s>n?'✓':n}</div>${lbl}</div>${i<P1_WZ_STEPS.length-1?'<div class="wz-sep"></div>':''}`;
+  }).join('');
+  document.getElementById('p1-wz-stepper').innerHTML=stepper;
+  document.getElementById('p1-wz-back').style.display=s>1?'flex':'none';
+  document.getElementById('p1-wz-next').textContent=s<4?'Next':'Confirm and create';
+  document.getElementById('p1-wz-cancel').textContent='Cancel';
+
+  let body='';
+  if(s===1) body=renderP1Step1();
+  else if(s===2) body=renderP1Step2();
+  else if(s===3) body=renderP1Step3();
+  else body=renderP1Step4();
+  document.getElementById('p1-wz-body').innerHTML=body;
+  bindP1Step(s);
+}
+window.p1NavStep=function(n){if(n>=1&&n<P1STATE.step){P1STATE.step=n;renderP1Wizard();}};
+
+function renderP1Step1(){
+  const added = P1STATE.people.map(p=>`
+    <div class="added-person">
+      <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]};width:32px;height:32px;font-size:12px;flex-shrink:0">${esc(initials(p.name))}</div>
+      <div style="flex:1;min-width:0">
+        <div class="apname">${esc(p.name)}</div>
+        <div class="apemail">${esc(p.email)}</div>
+      </div>
+      <button class="ap-rm" onclick="p1RemovePerson('${esc(p.email)}')">×</button>
+    </div>`).join('');
+
+  const addedSection = P1STATE.people.length ? `
+    <div style="margin-top:20px">
+      <div style="font-size:11px;font-weight:700;color:var(--fg3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Selected (${P1STATE.people.length})</div>
+      ${added}
+    </div>` : '';
+
+  const np = P1STATE.newPerson;
+  const newPersonForm = P1STATE.showNewPerson ? `
+    <div style="background:var(--surf2);border:1px solid var(--border);border-radius:var(--r8);padding:14px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:10px">New person</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div><label class="wz-field-label">First name</label><input class="wz-field-input" id="p1-np-fn" value="${esc(np.fn)}" placeholder="First name"></div>
+        <div><label class="wz-field-label">Last name</label><input class="wz-field-input" id="p1-np-ln" value="${esc(np.ln)}" placeholder="Last name"></div>
+      </div>
+      <div style="margin-bottom:10px"><label class="wz-field-label">Email</label><input class="wz-field-input" id="p1-np-email" value="${esc(np.email)}" type="email" placeholder="Email address"></div>
+      <div style="display:flex;gap:7px">
+        <button class="btn btn-primary btn-sm" onclick="p1AddNewPerson(false)">Add person</button>
+        <button class="btn btn-secondary btn-sm" onclick="p1AddNewPerson(true)">Add and add another</button>
+        <button class="btn btn-ghost btn-sm" onclick="P1STATE.showNewPerson=false;renderP1Wizard()">Cancel</button>
+      </div>
+    </div>` : '';
+
+  return `<div class="wz-section-title">Who needs a background check?</div>
+    <div style="margin-bottom:4px">
+      <label class="wz-field-label">Search existing people</label>
+      <input class="wz-field-input" id="p1-psearch" placeholder="Name or email…">
+      <div id="p1-suggestions" style="margin-top:4px"></div>
+    </div>
+    ${!P1STATE.showNewPerson?`<button class="btn-naked-primary" style="font-size:13px;margin-top:6px" onclick="P1STATE.showNewPerson=true;P1STATE.newPerson={fn:'',ln:'',email:''};renderP1Wizard()">+ Add new person</button>`:''}
+    ${newPersonForm}
+    ${addedSection}`;
+}
+
+function renderP1Step2(){
+  const cards = P1_LEVELS.map(lvl=>{
+    const selected = P1STATE.level===lvl.id;
+    const checksOpen = P1STATE.p1LvlChecksOpen[lvl.id];
+    const riskBadge = lvl.risk==='low'
+      ? `<span class="p1-risk-low">${esc(lvl.riskLabel)}</span>`
+      : `<span class="p1-risk-high">${esc(lvl.riskLabel)}</span>`;
+    const checksList = checksOpen ? `<div class="p1-checks-list">${lvl.checks.map(c=>`<div class="p1-check-item"><div class="p1-check-dot"></div>${esc(c)}</div>`).join('')}</div>` : '';
+    return `
+    <div class="p1-level-card${selected?' p1-selected':''}" onclick="p1SelectLevel('${lvl.id}')">
+      <div class="p1-level-hd">
+        <div class="p1-level-name">${esc(lvl.name)}</div>
+        ${riskBadge}
+      </div>
+      <div class="p1-level-sub">${esc(lvl.sub)}</div>
+      <div class="p1-level-roles">${lvl.examples.map(e=>`<span class="p1-level-role">${esc(e)}</span>`).join('')}</div>
+      <button class="p1-checks-btn" onclick="event.stopPropagation();P1STATE.p1LvlChecksOpen['${lvl.id}']=!P1STATE.p1LvlChecksOpen['${lvl.id}'];renderP1Wizard()">
+        <svg width="11" height="11" style="transition:transform 150ms${checksOpen?';transform:rotate(90deg)':''}"><use href="#ic-chevdown" style="${checksOpen?'transform:rotate(-90deg)':''}"/></svg>
+        ${checksOpen?'Hide checks':'Show checks included'} (${lvl.checks.length})
+      </button>
+      ${checksList}
+    </div>`;
+  }).join('');
+
+  const cstOpts = P1_CST_OPTIONS.map(o=>`
+    <label class="p1-cst-opt${P1STATE.cstOption===o.id?' p1-cst-sel':''}">
+      <input type="radio" name="p1-cst" value="${o.id}" ${P1STATE.cstOption===o.id?'checked':''} onchange="P1STATE.cstOption=this.value;renderP1Wizard()">
+      ${esc(o.label)}
+    </label>`).join('');
+
+  return `<div class="wz-section-title">Screening level</div>
+    <div class="p1-level-grid">${cards}</div>
+    <div class="p1-cst-section">
+      <div class="p1-cst-lbl">Child safety training</div>
+      <div class="p1-cst-desc">Optionally include a CST invite with this case. The training invite will be sent alongside the background check consent.</div>
+      <div class="p1-cst-opts">${cstOpts}</div>
+    </div>`;
+}
+
+function renderP1Step3(){
+  const remOpts=[{val:'1',label:'Every day'},{val:'2',label:'Every 2 days (account default)'},{val:'3',label:'Every 3 days'},{val:'5',label:'Every 5 days'},{val:'7',label:'Every 7 days'}];
+  const expiryOpts=[{val:'7',label:'7 days'},{val:'14',label:'14 days'},{val:'30',label:'30 days (account default)'},{val:'60',label:'60 days'},{val:'90',label:'90 days'}];
+  const bgTpl=(WZ_TEMPLATES.bgcheck||[]).find(t=>t.id===STATE.wzEmailTemplate)||WZ_TEMPLATES.bgcheck[0];
+  const adv = P1STATE.advOpen;
+  return `<div class="wz-section-title">Consent and delivery</div>
+    <div style="margin-bottom:18px">
+      <label class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-lbl">Send invite by email</div>
+          <div class="toggle-desc">PMM sends the consent link to each applicant. Turn off to generate a link for you to share manually.</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="p1-email-toggle" ${P1STATE.emailOn?'checked':''}><span class="toggle-sw"></span></label>
+      </label>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:16px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px">Background check invite email</div>
+      <div style="margin-bottom:8px">
+        <label class="wz-field-label">Template</label>
+        <select id="p1-bg-template" style="border:1px solid var(--border2);border-radius:var(--r6);padding:6px 10px;font-size:13px;color:var(--ink);background:#fff;width:100%">
+          ${WZ_TEMPLATES.bgcheck.map(t=>`<option value="${t.id}"${STATE.wzEmailTemplate===t.id?' selected':''}>${esc(t.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:${STATE.wzPreviewBgTemplate?'10px':'0'}">
+        <button class="btn-naked-primary" style="font-size:12px;padding:0" onclick="STATE.wzPreviewBgTemplate=!STATE.wzPreviewBgTemplate;STATE.wzEditBgBody=null;renderP1Wizard()">${STATE.wzPreviewBgTemplate?'Hide preview':'Preview email'}</button>
+        ${STATE.wzPreviewBgTemplate&&STATE.wzEditBgBody===null?`<button class="btn-naked-secondary" style="font-size:12px;padding:0" onclick="startBgTemplateEdit()">Edit</button>`:''}
+        ${STATE.wzEditBgBody!==null?`<button class="btn-naked-primary" style="font-size:12px;padding:0" onclick="saveBgTemplateEdit()">Save as new template</button><button class="btn-naked-secondary" style="font-size:12px;padding:0;margin-left:6px" onclick="STATE.wzEditBgBody=null;renderP1Wizard()">Cancel</button>`:''}
+      </div>
+      ${STATE.wzPreviewBgTemplate?`<div style="background:#fff;border:1px solid var(--border2);border-radius:var(--r6);padding:12px 14px">
+        ${STATE.wzEditBgBody!==null
+          ?`<textarea id="bg-template-edit" style="width:100%;min-height:130px;border:none;outline:none;font-size:12px;font-family:inherit;color:var(--ink);line-height:1.6;resize:vertical">${esc(STATE.wzEditBgBody)}</textarea>`
+          :`<pre style="font-size:12px;white-space:pre-wrap;word-break:break-word;font-family:inherit;color:var(--ink);line-height:1.6;margin:0">${esc(bgTpl.body)}</pre>`}
+      </div>`:''}
+    </div>
+    <div class="p1-adv">
+      <button class="p1-adv-trigger${adv?' p1-adv-open':''}" onclick="P1STATE.advOpen=!P1STATE.advOpen;renderP1Wizard()">
+        <svg width="12" height="12"><use href="#ic-chevdown"/></svg>
+        Advanced settings <span style="font-size:11px;font-weight:400;color:var(--fg4);margin-left:4px">reminder interval · link expiry · billing reference</span>
+      </button>
+      ${adv?`<div class="p1-adv-body">
+        <div>
+          <label class="wz-field-label">Invite link expires after</label>
+          <select id="p1-expiry" style="border:1px solid var(--border2);border-radius:var(--r6);padding:6px 10px;font-size:13px;color:var(--ink);background:#fff">
+            ${expiryOpts.map(o=>`<option value="${o.val}"${P1STATE.expiry===o.val?' selected':''}>${esc(o.label)}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="wz-field-label">Reminder interval</label>
+          <select id="p1-reminder" style="border:1px solid var(--border2);border-radius:var(--r6);padding:6px 10px;font-size:13px;color:var(--ink);background:#fff">
+            ${remOpts.map(o=>`<option value="${o.val}"${P1STATE.reminderInterval===o.val?' selected':''}>${esc(o.label)}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="wz-field-label">Billing reference</label>
+          <select id="p1-billing" style="border:1px solid var(--border2);border-radius:var(--r6);padding:6px 10px;font-size:13px;color:var(--ink);background:#fff;width:100%">
+            <option value="">No billing code (account default)</option>
+            <option>GEN-2026 — General fund</option>
+            <option>CM-2026 — Children's Ministry</option>
+            <option>STU-2026 — Student Ministry</option>
+          </select>
+        </div>
+      </div>`:''}
+    </div>`;
+}
+
+function renderP1Step4(){
+  const lvl = P1_LEVELS.find(l=>l.id===P1STATE.level);
+  const levelName = lvl?.name||'—';
+  const cstLabel = P1_CST_OPTIONS.find(o=>o.id===P1STATE.cstOption)?.label||'—';
+  const rows = P1STATE.people.map(p=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r6);margin-bottom:6px">
+      <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]};width:28px;height:28px;font-size:10px">${esc(initials(p.name))}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(p.name)}</div><div style="font-size:13px;color:var(--fg2)">${esc(p.email)}</div></div>
+      <div style="font-size:12px;color:var(--fg2)">${esc(levelName)}</div>
+      <div style="font-size:13px;color:var(--fg2)">${P1STATE.emailOn?'Email invite':'Link only'}</div>
+    </div>`).join('');
+  return `<div class="wz-section-title">Review</div>
+    ${rows}
+    <div style="margin-top:14px;padding:10px 14px;background:var(--surf2);border-radius:var(--r8);font-size:13px;color:var(--fg2)">
+      <strong style="font-weight:600;color:var(--ink)">Level:</strong> ${esc(levelName)} &nbsp;·&nbsp;
+      <strong style="font-weight:600;color:var(--ink)">CST:</strong> ${esc(cstLabel)} &nbsp;·&nbsp;
+      <strong style="font-weight:600;color:var(--ink)">Delivery:</strong> ${P1STATE.emailOn?'Email invite sent by PMM':'Invite link generated for admin to share'}
+    </div>`;
+}
+
+function renderP1Success(){
+  const lvl = P1_LEVELS.find(l=>l.id===P1STATE.level);
+  const levelName = lvl?.name||'—';
+  const people = P1STATE.people;
+  const linkRow = !P1STATE.emailOn ? `
+    <div style="background:var(--surf2);border:1px solid var(--border);border-radius:var(--r8);padding:14px 16px;margin-top:20px;max-width:480px;width:100%;text-align:left">
+      <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">Invite link${people.length>1?'s':''} — copy and share with ${people.length>1?'each applicant':'the applicant'}</div>
+      ${people.map(p=>`
+        <div style="margin-bottom:8px">
+          <div style="font-size:12px;color:var(--fg2);margin-bottom:4px">${esc(p.name)}</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <code style="flex:1;font-size:11px;background:#fff;border:1px solid var(--border2);border-radius:var(--r4);padding:6px 10px;color:var(--ink);word-break:break-all">https://horizon-web-prod.protection-services.com/consent/${p.email.split('@')[0]}-${Date.now()}</code>
+            <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent).then(()=>toast('Link copied'))">Copy</button>
+          </div>
+        </div>`).join('')}
+    </div>` : '';
+  document.getElementById('p1-wz-stepper').innerHTML='';
+  document.getElementById('p1-wz-back').style.display='none';
+  document.getElementById('p1-wz-next').style.display='none';
+  document.getElementById('p1-wz-cancel').textContent='Close';
+  document.getElementById('p1-wz-body').innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;padding:40px 28px 32px;text-align:center">
+      <div style="width:60px;height:60px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;margin-bottom:20px;flex-shrink:0">
+        <svg width="28" height="28" style="color:var(--green)"><use href="#ic-check"/></svg>
+      </div>
+      <div style="font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:6px">${people.length===1?'Case created':'Cases created'}</div>
+      <div style="font-size:15px;color:var(--fg2);margin-bottom:24px">${people.length} background check ${people.length===1?'case':'cases'} · ${esc(levelName)} · ${P1STATE.emailOn?'Invite emails sent':'Invite links ready'}</div>
+      <div style="width:100%;max-width:480px;text-align:left">
+        ${people.map(p=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--r6);margin-bottom:6px;background:#fff">
+          <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]}">${esc(initials(p.name))}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:600;color:var(--ink)">${esc(p.name)}</div>
+            <div style="font-size:13px;color:var(--fg2)">${esc(p.email)}</div>
+          </div>
+          <span class="badge b-blue" style="flex-shrink:0"><span class="bdot"></span>${P1STATE.emailOn?'Invite sent':'Link ready'}</span>
+        </div>`).join('')}
+      </div>
+      ${linkRow}
+      <button class="btn btn-primary" style="margin-top:24px" onclick="closeP1Wizard()">View all cases</button>
+    </div>`;
+}
+
+function bindP1Step(s){
+  if(s===1){
+    const input = document.getElementById('p1-psearch');
+    if(input) input.addEventListener('input',()=>{
+      const q = input.value.toLowerCase().trim();
+      const sugg = document.getElementById('p1-suggestions');
+      if(!sugg) return;
+      if(!q){sugg.innerHTML='';return}
+      const pool = DEMO_MODE==='phase-1' ? PEOPLE : PEOPLE.filter(p=>!p.p1Only);
+      const matches = pool.filter(p=>!P1STATE.people.find(x=>x.email===p.email)&&(p.name.toLowerCase().includes(q)||p.email.toLowerCase().includes(q)));
+      const matchRows = matches.slice(0,5).map(p=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--border);border-radius:var(--r6);margin-bottom:4px;cursor:pointer;background:#fff;transition:background 80ms"
+             onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background='#fff'"
+             onclick="p1AddExistingPerson('${p.id}')">
+          <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]};width:28px;height:28px;font-size:10px">${esc(initials(p.name))}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">${esc(p.name)}</div>
+            <div style="font-size:12px;color:var(--fg2)">${esc(p.email)}</div>
+          </div>
+          <div style="font-size:12px;color:var(--fg3)">${esc(p.position||'')}</div>
+        </div>`).join('');
+      const noMatch = !matches.length&&q.length>1?`<div style="padding:7px 11px;font-size:13px;color:var(--fg2)">No match — <span style="color:var(--brand);cursor:pointer;text-decoration:underline" onclick="P1STATE.showNewPerson=true;P1STATE.newPerson={fn:'',ln:'',email:''};renderP1Wizard()">add as a new person</span></div>`:'';
+      sugg.innerHTML=`<div style="margin-top:6px">${matchRows}${noMatch}</div>`;
+    });
+    ['fn','ln','email'].forEach(k=>{
+      const el = document.getElementById(`p1-np-${k}`);
+      if(el) el.addEventListener('input',e=>P1STATE.newPerson[k]=e.target.value);
+    });
+  }
+  if(s===3){
+    const emailTog = document.getElementById('p1-email-toggle');
+    if(emailTog) emailTog.addEventListener('change',()=>{P1STATE.emailOn=emailTog.checked;renderP1Wizard();});
+    const bgT = document.getElementById('p1-bg-template');
+    if(bgT) bgT.addEventListener('change',e=>{STATE.wzEmailTemplate=e.target.value;STATE.wzEditBgBody=null;STATE.wzPreviewBgTemplate=false;renderP1Wizard();});
+    const expiryT = document.getElementById('p1-expiry');
+    if(expiryT) expiryT.addEventListener('change',e=>{P1STATE.expiry=e.target.value;});
+    const remT = document.getElementById('p1-reminder');
+    if(remT) remT.addEventListener('change',e=>{P1STATE.reminderInterval=e.target.value;});
+    const bgEdit = document.getElementById('bg-template-edit');
+    if(bgEdit) bgEdit.addEventListener('input',e=>{STATE.wzEditBgBody=e.target.value;});
+  }
+}
+
+window.p1SelectLevel = function(id){P1STATE.level=id;renderP1Wizard();};
+window.p1RemovePerson = function(email){P1STATE.people=P1STATE.people.filter(p=>p.email!==email);renderP1Wizard();};
+window.p1AddExistingPerson = function(pid){
+  const p=personById(pid);
+  if(!p||P1STATE.people.find(x=>x.email===p.email))return;
+  P1STATE.people.push({name:p.name,email:p.email});
+  renderP1Wizard();
+};
+window.p1AddNewPerson = function(keepOpen){
+  const fn=(document.getElementById('p1-np-fn')?.value||'').trim();
+  const ln=(document.getElementById('p1-np-ln')?.value||'').trim();
+  const email=(document.getElementById('p1-np-email')?.value||'').trim();
+  if(!fn||!ln||!email){toast('First name, last name, and email are required');return;}
+  if(P1STATE.people.find(x=>x.email===email)){toast('This person is already added');return;}
+  P1STATE.people.push({name:`${fn} ${ln}`,email});
+  if(keepOpen){P1STATE.newPerson={fn:'',ln:'',email:''};renderP1Wizard();requestAnimationFrame(()=>{const el=document.getElementById('p1-np-fn');if(el){el.value='';el.focus();}const l=document.getElementById('p1-np-ln');if(l)l.value='';const e=document.getElementById('p1-np-email');if(e)e.value='';});}
+  else{P1STATE.showNewPerson=false;renderP1Wizard();}
+  toast(`${fn} ${ln} added`);
+};
+
+document.getElementById('p1-wz-next').addEventListener('click',()=>{
+  if(P1STATE.success){closeP1Wizard();return;}
+  if(P1STATE.step===1&&P1STATE.people.length===0){toast('Add at least one person to continue');return;}
+  if(P1STATE.step===2&&!P1STATE.level){toast('Select a screening level to continue');return;}
+  if(P1STATE.step<4){
+    P1STATE.step++;
+    if(P1STATE.step>P1STATE.maxStep) P1STATE.maxStep=P1STATE.step;
+    renderP1Wizard();
+  } else {
+    P1STATE.success=true;
+    renderP1Success();
+  }
+});
+document.getElementById('p1-wz-back').addEventListener('click',()=>{if(P1STATE.step>1){P1STATE.step--;renderP1Wizard();}});
 document.getElementById('btn-new').addEventListener('click',openWizard);
 
 function renderWzSuccess(){
