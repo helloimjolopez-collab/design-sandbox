@@ -1075,6 +1075,41 @@
   .ins-caption{font-size:11px;color:var(--txt-subtle);}
   .ins-skel{flex:1;display:flex;flex-direction:column;gap:12px;padding:16px;}
   .ins-sk-row{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  /* ===== Fixed Asset Values (fa) ===== */
+  .fa-ctlrow{display:flex;gap:8px;flex-wrap:wrap;min-width:0;}
+  .fa-numwrap{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .fa-count-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border:1px solid var(--stroke-widget);border-radius:999px;padding:2px 9px 2px 6px;white-space:nowrap;}
+  .fa-count-badge .material-symbols-rounded{font-size:15px;color:var(--txt-subtle);}
+  .fa-ctx{color:var(--txt-subtle);}
+  .fa-full{flex:1;min-height:0;display:flex;gap:12px;padding:12px 14px;}
+  .fa-panel{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border:1px solid var(--stroke-widget);border-radius:9px;overflow:hidden;}
+  .fa-panel-pie{flex:0 1 auto;}
+  .fa-single{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 14px 12px;}
+  .fa-tbl{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .fa-tbl-scroll{overflow:auto;flex:1;min-height:0;}
+  .fa-row{gap:10px;min-width:560px;}
+  .fa-c-tag{flex:0 0 74px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .fa-c-name{flex:1 1 150px;min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+  .fa-c-num{flex:0 0 116px;text-align:right;font-variant-numeric:tabular-nums;color:var(--txt-secondary);white-space:nowrap;}
+  .wt-head .fa-c-num{color:var(--txt-subtle);font-weight:600;font-size:11px;}
+  .fa-c-num.fa-emph{color:var(--txt-primary);font-weight:700;}
+  .wt-head .fa-c-num.fa-emph{color:var(--am-700);}
+  .fa-total{gap:10px;min-width:560px;}
+  .fa-total>span:first-child{flex:0 0 148px;}
+  .fa-total .fa-c-num{flex:0 0 116px;}
+  .fa-pie{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:6px 4px 10px;}
+  .fa-seg{transition:opacity var(--dur,.15s) ease;}
+  .fa-seg-hi{filter:drop-shadow(0 1px 3px rgba(70,63,127,.35));}
+  .fa-leg-hi{background:var(--wn-200);border-radius:6px;font-weight:600;}
+  .fa-inline-empty{flex:1;padding:22px 12px;}
+  .mi .mi-sub{margin-left:auto;font-size:11px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;}
+  .pur-rowclick{cursor:pointer;}
+  .pur-rowclick:hover{background:var(--wn-100);}
+  .pur-rowclick:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;}
+  /* Consistent table header styling across every widget */
+  .wt-head, .wt-head span, .wt-head .wt-sort{font-size:11px;font-weight:600;color:var(--txt-subtle);text-transform:none;letter-spacing:0;}
+  .wt-head .wt-sort{background:transparent;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:0;font-family:inherit;}
+  .wt-head .wt-sort .material-symbols-rounded{font-size:14px;opacity:.7;}
 </style>
 </head>
 <body>
@@ -1240,6 +1275,9 @@
       {id:"ins2",title:"Insurance Billing Plans (no plans set up)",kind:"insurance",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",insType:"All"},
       {id:"ins3",title:"Insurance Billing Plans (Medical only)",kind:"insurance",size:"xwide",tiers:["kpi","wide","xwide"],insType:"Medical",insSort:"count-desc"},
       {id:"ins4",title:"Insurance Billing Plans (a type with no enrolments)",kind:"insurance",size:"wide",tiers:["kpi","wide","xwide"],insType:"Property",insSort:"count-desc"},
+      {id:"fa1",kind:"fixedassets",title:"Fixed Asset Values",size:"wide",updated:"just now",goto:false,tiers:["kpi","wide","xwide"],faGroupBy:"cls",faGroup:"__all",faMeasure:"net"},
+      {id:"fa2",kind:"fixedassets",title:"Fixed Asset Values (Annex, accumulated depreciation)",size:"xwide",updated:"just now",tiers:["kpi","wide","xwide"],faGroupBy:"bld",faGroup:"Annex",faMeasure:"acc"},
+      {id:"fa3",kind:"fixedassets",title:"Fixed Asset Values (nothing set up)",size:"wide",updated:"just now",state:"empty",tiers:["kpi","wide","xwide"]},
     ]},
     {id:"sys",name:"System dashboard",custom:false,widgets:[
       {id:"s1",title:"Deposits on Hand",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q"}
@@ -2135,7 +2173,7 @@ function mysPopContent(){
     var ctx=sel?('Balance since the last reconciliation (unreconciled activity), account '+(sel.acctFull||sel.acct)+'.'):('Combined balance across all active bank accounts, based on unreconciled activity since the last reconciliation.');
     return '<div class="dep-hd">'+
       '<div class="dep-hd-top">'+bankAcctChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
-      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div></div></div>'+
+      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
       '</div>';
   }
   function bankSkeleton(){var bars="";[58,82,50,90,66,74,60].forEach(function(h){bars+='<div class="bank-sk-col"><span class="sk bank-sk-bar" style="height:'+h+'%"></span></div>';});return '<div class="bank-skel"><div class="bank-skel-plot">'+bars+'</div><div class="bank-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
@@ -2268,8 +2306,7 @@ function mysPopContent(){
   function purEncTotal(w){return purEncData(w).reduce(function(s,r){return s+r.amt;},0);}
   function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, tap to change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
   function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
-    if(paths.length<=1){var only=paths.length===1?paths[0]:"All approval paths";
-      return '<span class="scope-chip pur-path-chip is-disabled" aria-disabled="true" title="Only one approval path applies to this status, so there is nothing to filter."><span class="sc-nm">'+only+'</span></span>';}
+    if(paths.length<=1)return "";
     return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, tap to change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
   function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_alt"],["enc","Encumbrance","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
   function purHeaderBlock(w,mode){
@@ -2295,11 +2332,10 @@ function mysPopContent(){
     rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="num"||key==="vendor")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pur-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
     var numLbl=purColLabel(w);
-    var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Outstanding")+'</span><span class="pur-c-act" aria-hidden="true"></span></div>';
+    var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Outstanding")+'</span></div>';
     var body=rows.map(function(o){
-      var edit='<button class="pur-edit" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Open purchase order '+o.num+'" data-tip="Open the full purchase order record" data-tip-plain>'+ICON("edit")+'</button>';
-      var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, outstanding '+money(o.amount)+'.</span>';
-      return '<div class="wt-row"><span class="pur-c-num" data-tip="'+numLbl+' '+o.num+'" data-tip-plain>'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span><span class="pur-c-act">'+edit+'</span></div>';
+      var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, outstanding '+money(o.amount)+'. Opens the purchase order record.</span>';
+      return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', outstanding '+money(o.amount)+', open record"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span></div>';
     }).join("");
     var tot=purSum(rows),n=rows.length;
     var totLbl=(w.pstatus||"mine")==="approved"?(n+" order"+(n===1?"":"s")):(n+" request"+(n===1?"":"s"));
@@ -3073,6 +3109,116 @@ function arShowPop(row,mx,my){
   }
 
 
+  /* ===== Fixed Asset Values (fa, kind:"fixedassets") ===== */
+  var FA_ASSETS=[
+    {tag:"FA-1001",name:"Main Sanctuary Building",cap:2400000,cost:2400000,dep:2400000,acc:480000,net:1920000,cls:"Buildings",bld:"Main Campus",room:null,aacct:"1500 Buildings",dacct:"1591 Accum Deprec - Buildings",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1002",name:"Fellowship Hall",cap:850000,cost:850000,dep:850000,acc:255000,net:595000,cls:"Buildings",bld:"Main Campus",room:null,aacct:"1500 Buildings",dacct:"1591 Accum Deprec - Buildings",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1003",name:"15-Passenger Van",cap:48000,cost:48000,dep:43000,acc:36000,net:12000,cls:"Vehicles",bld:"Main Campus",room:null,aacct:"1520 Vehicles",dacct:"1592 Accum Deprec - Vehicles",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1004",name:"Activity Bus",cap:92000,cost:92000,dep:88000,acc:23000,net:69000,cls:"Vehicles",bld:"Main Campus",room:null,aacct:"1520 Vehicles",dacct:"1592 Accum Deprec - Vehicles",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1005",name:"Commercial Range",cap:18500,cost:18500,dep:16500,acc:12900,net:5600,cls:"Equipment",bld:"Main Campus",room:"Kitchen",aacct:"1530 Equipment",dacct:"1593 Accum Deprec - Equipment",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1006",name:"AV Sound System",cap:64000,cost:64000,dep:60000,acc:40000,net:24000,cls:"Equipment",bld:"Main Campus",room:"Sanctuary",aacct:"1530 Equipment",dacct:"1593 Accum Deprec - Equipment",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1007",name:"Copier / MFP",cap:12000,cost:12000,dep:11000,acc:9600,net:2400,cls:"Equipment",bld:"Annex",room:"Office 201",aacct:"1530 Equipment",dacct:"1593 Accum Deprec - Equipment",eacct:"6650 Office Equipment Deprec"},
+    {tag:"FA-1008",name:"Playground Structure",cap:35000,cost:35000,dep:33000,acc:7000,net:28000,cls:"Equipment",bld:"Main Campus",room:null,aacct:"1530 Equipment",dacct:"1593 Accum Deprec - Equipment",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1009",name:"Parking Lot Land",cap:300000,cost:300000,dep:0,acc:0,net:300000,cls:"Land",bld:null,room:null,aacct:"1510 Land",dacct:null,eacct:null},
+    {tag:"FA-1010",name:"Riding Mower",cap:9800,cost:9800,dep:9000,acc:8200,net:1600,cls:"Equipment",bld:"Annex",room:null,aacct:"1530 Equipment",dacct:"1593 Accum Deprec - Equipment",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1011",name:"Portable Classroom",cap:120000,cost:120000,dep:120000,acc:60000,net:60000,cls:"Buildings",bld:null,room:null,aacct:"1500 Buildings",dacct:"1591 Accum Deprec - Buildings",eacct:"6600 Depreciation Expense"},
+    {tag:"FA-1012",name:"Grand Piano",cap:55000,cost:55000,dep:50000,acc:11000,net:44000,cls:"Equipment",bld:"Main Campus",room:"Sanctuary",aacct:null,dacct:"1593 Accum Deprec - Equipment",eacct:"6600 Depreciation Expense"}
+  ];
+  var FA_DIMS=[["cls","Class"],["bld","Building"],["room","Room"],["aacct","Asset Account"],["dacct","Accumulated Depreciation Account"],["eacct","Expense Account"]];
+  var FA_MEASURES=[["cap","Capitalized Value"],["cost","Cost"],["dep","Depreciable Value"],["acc","Accumulated Depreciation"],["net","Net Value"]];
+  var FA_CATALOG={
+    cls:["Buildings","Vehicles","Equipment","Land","Furniture & Fixtures"],
+    bld:["Main Campus","Annex","Off-site Storage"],
+    room:["Sanctuary","Kitchen","Office 201","Choir Room"],
+    aacct:["1500 Buildings","1510 Land","1520 Vehicles","1530 Equipment","1540 Furniture & Fixtures"],
+    dacct:["1591 Accum Deprec - Buildings","1592 Accum Deprec - Vehicles","1593 Accum Deprec - Equipment"],
+    eacct:["6600 Depreciation Expense","6650 Office Equipment Deprec"]
+  };
+  var FA_NA="__na",FA_ALL="__all",FA_NA_LABEL="Not assigned";
+  var FA_PIE=["var(--am-600)","var(--am-400)","var(--am-300)","var(--am-500)","var(--am-200)","var(--am-700)","var(--am-100)"];
+  function faDimLabel(d){for(var i=0;i<FA_DIMS.length;i++)if(FA_DIMS[i][0]===d)return FA_DIMS[i][1];return "Class";}
+  function faMeasureLabel(m){for(var i=0;i<FA_MEASURES.length;i++)if(FA_MEASURES[i][0]===m)return FA_MEASURES[i][1];return "Net Value";}
+  function faDim(w){return w.faGroupBy||"cls";}
+  function faMeasure(w){return w.faMeasure||"net";}
+  function faGroup(w){return w.faGroup||FA_ALL;}
+  function faHasNA(dim){return FA_ASSETS.some(function(a){return a[dim]==null;});}
+  function faTableAssets(w){var dim=faDim(w),g=faGroup(w);
+    if(g===FA_ALL)return FA_ASSETS.slice();
+    if(g===FA_NA)return FA_ASSETS.filter(function(a){return a[dim]==null;});
+    return FA_ASSETS.filter(function(a){return a[dim]===g;});}
+  function faGroupOptions(w){var dim=faDim(w),out=[{v:FA_ALL,label:"All groups",count:FA_ASSETS.length}];
+    FA_CATALOG[dim].forEach(function(name){out.push({v:name,label:name,count:FA_ASSETS.filter(function(a){return a[dim]===name;}).length});});
+    if(faHasNA(dim))out.push({v:FA_NA,label:FA_NA_LABEL,count:FA_ASSETS.filter(function(a){return a[dim]==null;}).length,na:true});
+    return out;}
+  function faGroupLabel(w){var g=faGroup(w);if(g===FA_ALL)return "All groups";if(g===FA_NA)return FA_NA_LABEL;return g;}
+  function faSum(list,m){return list.reduce(function(s,a){return s+(a[m]||0);},0);}
+  function faPieData(w){var dim=faDim(w),m=faMeasure(w),rows=[];
+    FA_CATALOG[dim].forEach(function(name){var v=faSum(FA_ASSETS.filter(function(a){return a[dim]===name;}),m);if(v>0)rows.push({name:name,val:v});});
+    if(faHasNA(dim)){var vn=faSum(FA_ASSETS.filter(function(a){return a[dim]==null;}),m);if(vn>0)rows.push({name:FA_NA_LABEL,val:vn,na:true});}
+    rows.sort(function(a,b){return b.val-a.val;});return rows;}
+  function faColumns(w){var sel=faMeasure(w),cols=[sel];FA_MEASURES.forEach(function(mm){if(mm[0]!==sel)cols.push(mm[0]);});return cols;}
+  function faChip(action,id,label){return '<button class="filter-chip fa-chip" data-action="'+action+'" data-id="'+id+'" aria-haspopup="listbox" aria-label="'+label.replace(/"/g,"&quot;")+', tap to change"><span class="fc-label">'+label+'</span>'+ICON("expand_more")+'</button>';}
+  function faControls(w){return '<div class="bgt-ctlrow fa-ctlrow">'+
+    faChip("fa-groupby",w.id,"Group by: "+faDimLabel(faDim(w)))+
+    faChip("fa-group",w.id,faGroupLabel(w))+
+    faChip("fa-measure",w.id,faMeasureLabel(faMeasure(w)))+'</div>';}
+  function faHeader(w){var m=faMeasure(w),list=faTableAssets(w),total=faSum(list,m),n=list.length,numInner;
+    if(w.faLoading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
+    else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(total)+'</span><span class="fa-count-badge">'+ICON("inventory_2")+n+(n===1?" asset":" assets")+'</span></div>';}
+    var ctx='<div class="gl-sub fa-ctx">'+faMeasureLabel(m)+' · '+faGroupLabel(w)+' · grouped by '+faDimLabel(faDim(w))+'</div>';
+    return '<div class="dep-hd fa-hd"><div class="dep-hd-top">'+faControls(w)+'</div>'+
+      '<div class="dep-hd-num"><div class="fa-numwrap">'+numInner+ctx+'</div></div></div>';}
+  function faTable(w){var cols=faColumns(w),sel=faMeasure(w),list=faTableAssets(w);
+    if(!list.length)return '<div class="fa-tbl"><div class="state fa-inline-empty" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No assets in this group</div><div class="state-sub">Nothing is assigned to '+faGroupLabel(w)+' under '+faDimLabel(faDim(w))+' yet.</div></div></div>';
+    var head='<div class="wt-row wt-head fa-row"><span class="fa-c-tag">Tag #</span><span class="fa-c-name">Name</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+faMeasureLabel(c)+'</span>';}).join("")+'</div>';
+    var body=list.map(function(a){return '<div class="wt-row fa-row" data-acct="'+a.name.replace(/"/g,"&quot;")+'"><span class="fa-c-tag">'+a.tag+'</span><span class="fa-c-name">'+a.name+'</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+money(a[c])+'</span>';}).join("")+'</div>';}).join("");
+    var totals='<div class="dep-total fa-total"><span>Total ('+list.length+')</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+money(faSum(list,c))+'</span>';}).join("")+'</div>';
+    return '<div class="fa-tbl"><div class="scroll fa-tbl-scroll">'+head+body+'</div>'+totals+'</div>';}
+  function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){return s+r.val;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+    var selName=(faGroup(w)===FA_NA)?FA_NA_LABEL:(faGroup(w)===FA_ALL?null:faGroup(w));
+    if(!rows.length)return '<div class="fa-pie"><div class="state fa-inline-empty" data-kind="empty">'+ICON("donut_large")+'<div class="state-title">Nothing to chart</div><div class="state-sub">No group has a '+faMeasureLabel(faMeasure(w)).toLowerCase()+' above zero.</div></div></div>';
+    rows.forEach(function(r,i){var frac=tot?r.val/tot:0,len=frac*C,c=FA_PIE[i%FA_PIE.length],hi=(selName!=null&&r.name===selName);
+      arcs+='<circle class="fa-seg'+(hi?" fa-seg-hi":"")+'" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="'+(hi?24:20)+'" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      legend+='<div class="leg fa-leg'+(hi?" fa-leg-hi":"")+'" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+r.name+'</span><span class="lg-meta">'+money(r.val)+' · '+Math.round(frac*100)+'%</span></div>';});
+    var DS=size||210;
+    return '<div class="fa-pie"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">'+faMeasureLabel(faMeasure(w)).toLowerCase()+'</text></svg><div class="legend-col"><div class="legend-head"><span class="legend-hd">'+faMeasureLabel(faMeasure(w))+' by '+faDimLabel(faDim(w))+'</span></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
+  function faEmptyState(w){return '<div class="state" data-kind="empty">'+ICON("inventory_2")+'<div class="state-title">No fixed assets yet</div><div class="state-sub">When assets are added to the Fixed Assets module they will show here, grouped and valued.</div></div>';}
+  function faSkeletonBody(big){var t='<div class="fa-tbl"><div class="skeleton" aria-busy="true"><div class="sk" style="width:60%"></div><div class="sk" style="flex:1"></div><div class="sk" style="flex:1"></div></div></div>';
+    if(!big)return t;return '<div class="fa-full">'+t+'<div class="fa-pie"><div class="skeleton" aria-busy="true"><div class="sk" style="width:70%"></div><div class="sk" style="flex:1"></div></div></div></div>';}
+  function faContent(w){
+    if(w.state==="empty")return faEmptyState(w);
+    var sz=w.size,big=(sz==="large"||sz==="xwide"||sz==="detail");
+    if(sz==="kpi"){var m=faMeasure(w),list=faTableAssets(w),total=faSum(list,m),n=list.length;
+      var num=w.faLoading?'<div class="dep-hd-kpigrp"><span class="sk" style="width:110px;height:24px;border-radius:6px"></span></div>':'<div class="metric-value" data-total="'+money(total)+'">'+money(total)+'</div>';
+      return '<div class="kpi-row"><div class="kpi-num">'+num+'<div class="gl-sub fa-ctx">'+faMeasureLabel(m)+' · '+n+(n===1?" asset":" assets")+' · '+faDimLabel(faDim(w))+'</div></div></div>';}
+    var head=faHeader(w);
+    if(w.faLoading)return head+faSkeletonBody(big);
+    if(big)return head+'<div class="fa-full"><div class="fa-panel"><div class="dep-col-h">Assets in '+faGroupLabel(w)+'</div>'+faTable(w)+'</div><div class="fa-panel fa-panel-pie"><div class="dep-col-h">'+faMeasureLabel(faMeasure(w))+' by '+faDimLabel(faDim(w))+'</div>'+faPie(w,220)+'</div></div>';
+    return head+'<div class="fa-single">'+faTable(w)+'</div>';
+  }
+  function faLoad(w){w.faLoading=true;render();clearTimeout(timers["fa-"+w.id]);timers["fa-"+w.id]=setTimeout(function(){w.faLoading=false;w.updated="just now";render();},700);}
+  function faHandleClick(a,id,t){
+    if(a==="fa-groupby"){pop=(pop&&pop.type==="fa-groupby"&&pop.id===id)?null:{type:"fa-groupby",id:id};render();return true;}
+    if(a==="fa-set-groupby"){var wg=find(id);if(wg){var nd=t.getAttribute("data-d");if(faDim(wg)!==nd){wg.faGroupBy=nd;wg.faGroup=FA_ALL;faLoad(wg);}}pop=null;render();return true;}
+    if(a==="fa-group"){pop=(pop&&pop.type==="fa-group"&&pop.id===id)?null:{type:"fa-group",id:id};render();return true;}
+    if(a==="fa-set-group"){var wg2=find(id);if(wg2){var ng=t.getAttribute("data-g");if(faGroup(wg2)!==ng){wg2.faGroup=ng;faLoad(wg2);}}pop=null;render();return true;}
+    if(a==="fa-measure"){pop=(pop&&pop.type==="fa-measure"&&pop.id===id)?null:{type:"fa-measure",id:id};render();return true;}
+    if(a==="fa-set-measure"){var wg3=find(id);if(wg3){var nm=t.getAttribute("data-m");if(faMeasure(wg3)!==nm){wg3.faMeasure=nm;faLoad(wg3);}}pop=null;render();return true;}
+    return false;
+  }
+  function faPopContent(){
+    if(pop.type==="fa-groupby"){var wg=find(pop.id),cd=faDim(wg);
+      return '<div class="cap">Group assets by</div>'+FA_DIMS.map(function(o){var on=cd===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="fa-set-groupby" data-id="'+wg.id+'" data-d="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+'</span></button>';}).join("");}
+    if(pop.type==="fa-group"){var wg2=find(pop.id),cg=faGroup(wg2),opts=faGroupOptions(wg2),all=opts[0],rest=opts.slice(1);
+      var out='<div class="cap">Show group</div><button class="mi'+(cg===all.v?" check":"")+'" role="option" aria-selected="'+(cg===all.v)+'" data-action="fa-set-group" data-id="'+wg2.id+'" data-g="'+all.v+'">'+(cg===all.v?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+all.label+'</span><span class="mi-sub">'+all.count+'</span></button>';
+      out+='<div class="sep"></div><div class="menu-scroll" role="listbox">'+rest.map(function(o){var on=cg===o.v;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="fa-set-group" data-id="'+wg2.id+'" data-g="'+String(o.v).replace(/"/g,"&quot;")+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">'+(o.na?"help":"folder")+'</span><span class="mi-nm">'+o.label+'</span><span class="mi-sub">'+(o.count?o.count:"no assets")+'</span></button>';}).join("")+'</div>';
+      return out;}
+    if(pop.type==="fa-measure"){var wg3=find(pop.id),cm=faMeasure(wg3);
+      return '<div class="cap">Financial measure</div>'+FA_MEASURES.map(function(o){var on=cm===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="fa-set-measure" data-id="'+wg3.id+'" data-m="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+'</span></button>';}).join("");}
+    return "";
+  }
+
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
@@ -3083,6 +3229,7 @@ function arShowPop(row,mx,my){
     if(w.kind==="pto")return ptoContent(w);
     if(w.kind==="payables")return apContent(w);
     if(w.kind==="insurance")return insContent(w);
+    if(w.kind==="fixedassets")return faContent(w);
     if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.showZero?'<div class="dep-total" style="margin-top:4px"><span>Total</span><span>'+money(0)+'</span></div>':'')+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
     if(w.kind==="mystatus")return mysContent(w);
     if(w.kind==="bank")return bankContent(w);
@@ -3202,9 +3349,10 @@ function arShowPop(row,mx,my){
       if(showSearch&&!matches.length&&q&&"total all due dates".indexOf(q)<0)out+='<div class="mi-note" style="color:var(--txt-subtle)">No due dates match "'+(apDueQuery||"").replace(/"/g,"&quot;")+'"</div>';
       return out+'</div>';}
     if(pop.type==="ins-type")return insPopContent();
+    if(pop.type==="fa-groupby"||pop.type==="fa-group"||pop.type==="fa-measure")return faPopContent();
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="ins-type")return '[data-action="ins-type"][data-id="'+pop.id+'"]';if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="fa-groupby")return '[data-action="fa-groupby"][data-id="'+pop.id+'"]';if(pop.type==="fa-group")return '[data-action="fa-group"][data-id="'+pop.id+'"]';if(pop.type==="fa-measure")return '[data-action="fa-measure"][data-id="'+pop.id+'"]';if(pop.type==="ins-type")return '[data-action="ins-type"][data-id="'+pop.id+'"]';if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
@@ -3279,6 +3427,7 @@ function arShowPop(row,mx,my){
     if(a==="noop"){pop=null;render();return;}
     if(a==="stop"){return;}
     if(a==="modal-close"){modal=null;pop=null;render();return;}
+    if(faHandleClick(a,id,t))return;
     if(a&&a.indexOf("ins-")===0&&insHandleClick(a,id,t))return;
     if(a==="ap-due"){apDueQuery="";pop=(pop&&pop.type==="ap-due"&&pop.id===id)?null:{type:"ap-due",id:id};render();return;}
     if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due");var cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return;}
