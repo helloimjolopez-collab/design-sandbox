@@ -1563,6 +1563,91 @@
     return out;
   }
 
+/* === MY STATUS (mys) render === */
+function mysModeToggle(w){var m=w.mode||"urgency";
+  return '<div class="vtoggle mys-modetog" role="group" aria-label="Group by">'+[["urgency","By urgency","priority_high"],["area","By area","category"]].map(function(o){
+    return '<button class="vt'+(m===o[0]?" on":"")+'" data-action="mys-mode" data-id="'+w.id+'" data-m="'+o[0]+'" aria-pressed="'+(m===o[0])+'" data-tip="'+(o[0]==="urgency"?"Group action items above information items":"Group by area: GL, AP, Purchasing, Payroll and HR")+'" data-tip-plain>'+ICON(o[2])+o[1]+'</button>';
+  }).join("")+'</div>';}
+function mysConfigBtn(w){return '<button class="btn naked sm mys-cfg-btn" data-action="mys-config" data-id="'+w.id+'" aria-haspopup="dialog">'+ICON("checklist")+'Configure</button>';}
+function mysOptsBtn(w){return '<button class="iconbtn" data-action="mys-opts" data-id="'+w.id+'" aria-haspopup="menu" data-tip="Display options" aria-label="Display options">'+ICON("tune")+'</button>';}
+function mysHeaderBlock(w){
+  return '<div class="dep-hd mys-hd"><div class="dep-hd-top"><div class="mys-modewrap">'+mysModeToggle(w)+'</div><div class="dep-hd-toggle mys-hd-actions">'+mysOptsBtn(w)+mysConfigBtn(w)+'</div></div></div>';}
+function mysGroups(w,sel){var mode=w.mode||"urgency";var groups=[];
+  if(mode==="area"){["GL","AP","PUR","HR"].forEach(function(ar){var items=sel.filter(function(q){return q.area===ar;});if(items.length)groups.push({label:MYS_AREA[ar],items:items});});}
+  else{var act=sel.filter(function(q){return q.urgency==="action";}),inf=sel.filter(function(q){return q.urgency==="info";});
+    if(act.length)groups.push({label:"Needs action",items:act});if(inf.length)groups.push({label:"For information",items:inf});}
+  groups.forEach(function(g){g.items=g.items.slice().sort(function(a,b){if((a.count>0)!==(b.count>0))return a.count>0?-1:1;return b.count-a.count;});});
+  return groups;}
+function mysRowHTML(w,q){
+  var zero=q.count<=0, clickable=!zero;
+  var overdue=!!(q.ctx&&q.ctx.indexOf("overdue")>-1);
+  var aff=zero?"":(q.click==="nav"
+      ?'<span class="mys-aff mys-aff-nav material-symbols-rounded" aria-hidden="true" data-tip="Opens the '+q.navTo+' page (leaves the dashboard)" data-tip-plain>arrow_outward</span>'
+      :'<span class="mys-aff mys-aff-detail material-symbols-rounded" aria-hidden="true" data-tip="Opens a record list here in the widget" data-tip-plain>list_alt</span>');
+  var ctx=q.ctx?'<span class="mys-ctx'+(overdue?" mys-ctx-urgent":"")+'">'+q.ctx+'</span>':"";
+  var dot='<span class="mys-dot mys-dot-'+q.urgency+'" aria-hidden="true"></span>';
+  var srClick=clickable?(q.click==="nav"?", opens the "+q.navTo+" page":", opens a record list"):", nothing to open";
+  var nm='<span class="lr-main lr-stack mys-nmwrap">'+dot+'<span class="mys-nmtext"><span class="mys-nm">'+q.name+'</span>'+ctx+'</span></span>';
+  var count='<span class="wt-c2 mys-count'+(zero?" mys-count-zero":"")+(overdue?" mys-count-urgent":"")+'">'+q.count+'<span class="sr-only"> records'+srClick+'</span></span>';
+  var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+q.count+' records'+srClick+'"':' aria-disabled="true"';
+  return '<div class="wt-row mys-row'+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+' mys-'+q.urgency+'"'+attrs+'>'+nm+aff+count+'</div>';}
+function mysContent(w){
+  var sel=(w.selected||[]).map(mysFind).filter(Boolean);
+  if(!sel.length){
+    return '<div class="state mys-empty" data-kind="empty">'+ICON("checklist")+
+      '<div class="state-title">No records to display</div>'+
+      '<div class="state-sub">Choose the queries you want to keep an eye on. Their live counts show up here.</div>'+
+      '<button class="btn outlined" data-action="mys-config" data-id="'+w.id+'">'+ICON("checklist")+'Configure</button></div>';}
+  var vis=w.hideZero?sel.filter(function(q){return q.count>0;}):sel;
+  if(!vis.length){
+    return mysHeaderBlock(w)+'<div class="state mys-empty" data-kind="empty">'+ICON("check_circle")+'<div class="state-title">Nothing needs attention</div><div class="state-sub">All of your tracked queries are at zero. Turn off "Hide zero-count rows" to see them.</div></div>';}
+  var groups=mysGroups(w,vis);
+  var head='<div class="wt-row wt-head mys-headrow"><span class="lr-main">Query</span><span class="wt-c2 mys-countcol">Count</span></div>';
+  var body=groups.map(function(g){return '<div class="cap mys-grp">'+g.label+'</div>'+g.items.map(function(q){return mysRowHTML(w,q);}).join("");}).join("");
+  return mysHeaderBlock(w)+'<div class="scroll mys-list">'+head+body+'</div>';}
+function mysConfigModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  var draft=modal.draft||[],q=(modal.q||"").toLowerCase();
+  var avail=MYS_QUERIES.filter(function(x){return draft.indexOf(x.id)<0;});
+  var availM=avail.filter(function(x){return !q||x.name.toLowerCase().indexOf(q)>-1||x.sys.toLowerCase().indexOf(q)>-1||MYS_AREA[x.area].toLowerCase().indexOf(q)>-1;});
+  var availHTML="";
+  ["GL","AP","PUR","HR"].forEach(function(ar){var items=availM.filter(function(x){return x.area===ar;});if(!items.length)return;
+    availHTML+='<div class="cap">'+MYS_AREA[ar]+'</div>'+items.map(function(x){
+      return '<button class="mi mys-avail" data-action="mys-add" data-q="'+x.id+'" data-id="'+w.id+'"><span class="mys-dot mys-dot-'+x.urgency+'" aria-hidden="true"></span><span class="mi-nm">'+x.name+'</span><span class="mys-add-ic" aria-hidden="true">'+ICON("add")+'</span></button>';}).join("");});
+  if(!availM.length)availHTML='<div class="mi-note" style="color:var(--txt-subtle)">'+(q?('No queries match "'+(modal.q||"").replace(/"/g,"&quot;")+'"'):'All available queries are already showing.')+'</div>';
+  var selHTML=draft.length?draft.map(function(qid){var x=mysFind(qid);if(!x)return "";
+      return '<button class="mi mys-selrow" data-action="mys-remove" data-q="'+x.id+'" data-id="'+w.id+'"><span class="mys-dot mys-dot-'+x.urgency+'" aria-hidden="true"></span><span class="mi-nm">'+x.name+'</span><span class="mys-rm-ic" aria-hidden="true" title="Remove">'+ICON("close")+'</span></button>';}).join("")
+    :'<div class="mys-empty-col">'+ICON("checklist")+'<span>Nothing selected yet. Add queries from the left.</span></div>';
+  var body='<div class="mys-cfg">'+
+      '<div class="mys-cfg-col mys-cfg-avail"><div class="mys-cfg-h">Available queries</div>'+
+        '<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="mysConfigQ" placeholder="Search queries or areas" value="'+(modal.q||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div>'+
+        '<div class="menu-scroll mys-cfg-scroll" role="listbox">'+availHTML+'</div></div>'+
+      '<div class="mys-cfg-col mys-cfg-sel"><div class="mys-cfg-h">Showing on my dashboard <span class="mys-cfg-n">'+draft.length+'</span></div>'+
+        '<div class="menu-scroll mys-cfg-scroll">'+selHTML+'</div></div></div>';
+  return '<div class="modal-backdrop" data-action="mys-config-cancel"><div class="modal modal-wide mys-cfg-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Configure My Status">'+
+    '<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">tune</span>Configure My Status</span><button class="iconbtn" data-action="mys-config-cancel" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b mys-cfg-b">'+body+'</div>'+
+    '<div class="modal-f"><button class="btn naked sm" data-action="mys-config-cancel">Cancel</button><button class="btn primary sm" data-action="mys-config-done" data-id="'+w.id+'">Done</button></div></div></div>';}
+function mysDetailModalHTML(){
+  var q=mysFind(modal.q);if(!q)return "";
+  var recs=q.records||[],cols=recs.length?Object.keys(recs[0]):[];
+  var table;
+  if(recs.length){
+    var head='<div class="wt-row wt-head mys-dhead">'+cols.map(function(c){return '<span class="mys-dc">'+c+'</span>';}).join("")+'</div>';
+    var rows=recs.map(function(r){return '<div class="wt-row mys-drow">'+cols.map(function(c){var v=String(r[c]);var urgent=(c==="Status"&&v==="Overdue");return '<span class="mys-dc'+(urgent?" mys-ctx-urgent":"")+'">'+v+'</span>';}).join("")+'</div>';}).join("");
+    table='<div class="scroll mys-detail-tbl">'+head+rows+'</div>';
+  } else {
+    table='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No records to display</div></div>';
+  }
+  return '<div class="modal-backdrop" data-action="mys-detail-close"><div class="modal modal-wide mys-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="'+q.name.replace(/"/g,"&quot;")+'">'+
+    '<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">list_alt</span>'+q.name+'</span><button class="iconbtn" data-action="mys-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b">'+table+'</div>'+
+    '<div class="modal-f mys-detail-f"><button class="btn naked sm" data-action="mys-detail-export" data-q="'+q.id+'">'+ICON("download")+'Export to Excel</button><span class="mys-detail-spacer"></span><button class="btn primary sm" data-action="mys-detail-close">Close</button></div></div></div>';}
+function mysPopContent(){
+  if(pop.type==="mys-opts"){var wo=find(pop.id),hz=!!wo.hideZero;
+    return '<div class="cap">Display</div><button class="mi'+(hz?" check":"")+'" data-action="mys-hidezero" data-id="'+wo.id+'">'+ICON(hz?"check_box":"check_box_outline_blank")+'Hide zero-count rows</button><div class="sep"></div><div class="mys-asof">Counts as of '+(wo.updated||"just now")+'</div>';}
+  return "";}
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
