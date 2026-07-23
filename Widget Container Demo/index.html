@@ -1674,6 +1674,11 @@
     var sub=(sc==="all")?"You do not have access to any quick tasks yet. Tasks appear here once your role has permission to use them.":"You do not have access to any tasks in "+mctModuleName(sc)+".";
     return '<div class="state" data-kind="empty">'+ICON("apps")+'<div class="state-title">No tasks available</div><div class="state-sub">'+sub+'</div></div>';
   }
+  /* Smart search: match across ALL modules (permitted, not hidden) by task label or module name. */
+  function mctSearchList(w){var q=(w.mctQ||"").toLowerCase().trim();var hid=mctHidden(w);
+    return MCT_TASKS.filter(function(t){return t.perm&&hid.indexOf(t.id)<0&&(t.label.toLowerCase().indexOf(q)>-1||mctModuleName(t.mod).toLowerCase().indexOf(q)>-1);});}
+  function mctSearchBar(w){var q=w.mctQ||"";
+    return '<div class="mct-searchbar"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q mct-q" id="mctq-'+w.id+'" placeholder="Search all tasks" value="'+q.replace(/"/g,"&quot;")+'" aria-label="Search all tasks" autocomplete="off">'+(q?'<button class="mct-q-clear" data-action="mct-clearq" data-id="'+w.id+'" aria-label="Clear search">'+ICON("close")+'</button>':'')+'</div></div>';}
   function mctContent(w){
     if(w.state==="empty"||!mctAllForScope(w).length){
       if(w.size==="kpi")return mctEmpty(w);
@@ -1683,9 +1688,17 @@
       var row=mctVisible(w).map(function(t){return mctItile(w,t);}).join("");
       return '<div class="mct-glance"><div class="mct-irow">'+row+'</div></div>';
     }
-    var out=mctHeader(w)+'<div class="mct-scroll">'+mctGrid(w);
-    if(w.mctEdit)out+=mctHiddenTray(w);
-    if(w.size==="xwide"&&!w.mctEdit)out+=mctSaved(w);
+    var q=(w.mctQ||"").trim();
+    var out=mctHeader(w)+'<div class="mct-scroll">'+mctSearchBar(w);
+    if(q){
+      var res=mctSearchList(w);
+      if(res.length){out+='<div class="mct-results-h">'+res.length+' result'+(res.length>1?"s":"")+' across all modules</div><div class="mct-grid">'+res.map(function(t){return mctTileNav(w,t);}).join("")+'</div>';}
+      else{out+='<div class="mct-noresult">'+ICON("search_off")+'<span>No tasks match "'+q.replace(/"/g,"&quot;")+'".</span></div>';}
+    } else {
+      out+=mctGrid(w);
+      if(w.mctEdit)out+=mctHiddenTray(w);
+      if(w.size==="xwide"&&!w.mctEdit)out+=mctSaved(w);
+    }
     out+='</div>';
     return out;
   }
@@ -2073,6 +2086,7 @@ function mysPopContent(){
     if(a==="mys-opts"){pop=(pop&&pop.type==="mys-opts"&&pop.id===id)?null:{type:"mys-opts",id:id};render();return;}
     if(a==="mys-hidezero"){var wmh=find(id);if(wmh)wmh.hideZero=!wmh.hideZero;pop=null;render();return;}
     if(a==="mct-module"){pop=(pop&&pop.type==="mct-module"&&pop.id===id)?null:{type:"mct-module",id:id};render();return;}
+    if(a==="mct-clearq"){var wcq=find(id);if(wcq)wcq.mctQ="";render();return;}
     if(a==="mct-set-module"){var wmm=find(id);if(wmm)wmm.mod=t.getAttribute("data-m");pop=null;render();return;}
     if(a==="mct-customise"){var wce=find(id);if(wce)wce.mctEdit=!wce.mctEdit;pop=null;setStatus(wce&&wce.mctEdit?"Customising tasks: pin to reorder, hide to remove.":"Done customising tasks.");render();return;}
     if(a==="mct-pin"){var wpn=find(id),tid=t.getAttribute("data-t");if(wpn){wpn.mctPin=wpn.mctPin||[];var pi=wpn.mctPin.indexOf(tid);if(pi>-1)wpn.mctPin.splice(pi,1);else wpn.mctPin.push(tid);}render();return;}
