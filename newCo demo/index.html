@@ -2941,7 +2941,146 @@ function SpiredLogoPage() {
   );
 }
 
-/* Dedicated tab: Spot, the AI assistant mark, and its animations/renditions. */
+/* ── In-context mockups: how the Collab name + mark would actually show up in
+   the product. Illustrative scenarios, not pixel-final screens. ─────────── */
+function CtxPill({ children, tone = "primary", lead }) {
+  const P = "var(--semantic-color-light-mode-fill-action-primary-base)";
+  const tones = {
+    primary: { background: P, color: "#FFFFFF", border: "none" },
+    soft: { background: "color-mix(in srgb, " + P + " 11%, #FFFFFF)", color: P, border: "0.5px solid color-mix(in srgb, " + P + " 30%, #FFFFFF)" },
+    ghost: { background: "transparent", color: "var(--semantic-color-light-mode-text-static-secondary-base)", border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)" },
+  };
+  return (
+    <button style={{ display: "inline-flex", alignItems: "center", gap: 6, height: 32, padding: "0 13px", borderRadius: 999, fontSize: 12.5, fontWeight: 600, fontFamily: "inherit", cursor: "pointer", whiteSpace: "nowrap", ...tones[tone] }}>
+      {lead}{children}
+    </button>
+  );
+}
+function CtxFrame({ label, tall, children }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div className="spd-card" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column", minHeight: tall ? 372 : 0 }}>
+        {children}
+      </div>
+      <p style={{ fontSize: 12, lineHeight: 1.45, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", paddingLeft: 2 }}>{label}</p>
+    </div>
+  );
+}
+/* 1 — a docked copilot conversation panel */
+function CtxSidePanel() {
+  const faint = "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)";
+  return (
+    <CtxFrame tall label="Docked copilot — the full conversation surface, opened from anywhere in the product.">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 15px", borderBottom: faint }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><SpotMark size={22} /><span style={{ fontWeight: 600, fontSize: 14, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>Collab</span></span>
+        <span style={{ display: "inline-flex", gap: 6, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}><Icon name="add" size={18} /><Icon name="close" size={18} /></span>
+      </div>
+      <div style={{ flex: 1, padding: 15, display: "flex", flexDirection: "column", gap: 13, background: "var(--semantic-color-light-mode-surface-sheet-base)" }}>
+        <div style={{ alignSelf: "flex-end", maxWidth: "82%", padding: "9px 13px", borderRadius: "15px 15px 5px 15px", fontSize: 13, lineHeight: 1.45, background: "color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 13%, #FFFFFF)", color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>
+          Who visited for the first time last Sunday?
+        </div>
+        <div style={{ display: "flex", gap: 9, maxWidth: "94%" }}>
+          <span style={{ flexShrink: 0, marginTop: 1 }}><SpotMark size={24} /></span>
+          <div style={{ padding: "10px 13px", borderRadius: "15px 15px 15px 5px", fontSize: 13, lineHeight: 1.5, background: "#FFFFFF", color: "var(--semantic-color-light-mode-text-static-primary-base)", boxShadow: "var(--spd-elevation-widget)" }}>
+            14 people checked in as first-time guests on <strong style={{ fontWeight: 600 }}>Jul 20</strong>. Nine left contact details.
+            <div style={{ display: "flex", gap: 7, marginTop: 11, flexWrap: "wrap" }}>
+              <CtxPill tone="primary">Draft welcome emails</CtxPill>
+              <CtxPill tone="soft">Add to follow-up list</CtxPill>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style={{ padding: "12px 14px", borderTop: faint }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, padding: "0 6px 0 12px", borderRadius: 999, background: "#FFFFFF", border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)", boxShadow: "var(--spd-elevation-widget)" }}>
+          <SpotMark size={22} />
+          <span style={{ flex: 1, fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)" }}>Ask Collab anything…</span>
+          <span style={{ width: 32, height: 32, borderRadius: 999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--semantic-color-light-mode-fill-action-primary-base)", color: "#FFFFFF" }}><Icon name="arrow_upward" size={17} /></span>
+        </div>
+      </div>
+    </CtxFrame>
+  );
+}
+/* 2 — a proactive insight inside a dashboard widget */
+function CtxInsight() {
+  return (
+    <CtxFrame label="Proactive insight — Collab surfaces something worth acting on, right inside a dashboard widget.">
+      <div style={{ padding: "17px 18px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 11 }}>
+          <SpotMark size={20} />
+          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.5px", textTransform: "uppercase", color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>Collab noticed</span>
+        </div>
+        <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>
+          Recurring giving is up <strong style={{ fontWeight: 600 }}>8%</strong> this month, but <strong style={{ fontWeight: 600 }}>23 scheduled gifts</strong> failed to process this week.
+        </p>
+        <div style={{ display: "flex", gap: 8, marginTop: 15 }}>
+          <CtxPill tone="primary">Review failed gifts</CtxPill>
+          <CtxPill tone="ghost">Dismiss</CtxPill>
+        </div>
+      </div>
+    </CtxFrame>
+  );
+}
+/* 3 — an inline "Ask Collab" affordance built into a report/list header */
+function CtxInline() {
+  const row = (w) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 0", borderTop: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)" }}>
+      <span style={{ width: 22, height: 22, borderRadius: 999, flexShrink: 0, background: "var(--semantic-color-light-mode-fill-contextual-avatar-base)" }} />
+      <span style={{ height: 8, borderRadius: 4, width: w, background: "var(--semantic-color-light-mode-fill-static-neutral-subtle)" }} />
+      <span style={{ height: 8, borderRadius: 4, width: 46, marginLeft: "auto", background: "var(--semantic-color-light-mode-fill-static-neutral-subtle)" }} />
+    </div>
+  );
+  return (
+    <CtxFrame label="Inline entry point — an “Ask Collab” control lives in a report or list header, in context.">
+      <div style={{ padding: "16px 18px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 6 }}>
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>Giving · July 2026</p>
+            <p style={{ fontSize: 12, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 2 }}>1,204 gifts · $86,540</p>
+          </div>
+          <CtxPill tone="soft" lead={<SpotMark size={16} />}>Ask Collab</CtxPill>
+        </div>
+        {row("58%")}{row("72%")}{row("44%")}
+      </div>
+    </CtxFrame>
+  );
+}
+/* 4 — the global ask/command bar + a live "thinking" state */
+function CtxOmnibox() {
+  return (
+    <CtxFrame label="Global ask bar + working state — Collab shares the command bar, and the mark animates while it works.">
+      <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, height: 44, padding: "0 8px 0 13px", borderRadius: 12, background: "var(--spd-search-fill)" }}>
+          <SpotMark size={18} />
+          <span style={{ flex: 1, fontSize: 13.5, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)" }}>Ask Collab or jump to anything…</span>
+          <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 7px", borderRadius: 6, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", background: "var(--semantic-color-light-mode-fill-static-neutral-subtle)" }}>⌘K</span>
+        </div>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 11 }}>
+            <SpotMark size={22} />
+            <span style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>Collab is drafting 3 follow-ups…</span>
+          </div>
+          <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "90%", marginBottom: 7 }} />
+          <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "62%" }} />
+        </div>
+      </div>
+    </CtxFrame>
+  );
+}
+function CollabContexts() {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, alignItems: "start" }}>
+      <CtxSidePanel />
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <CtxInsight />
+        <CtxInline />
+      </div>
+      <CtxOmnibox />
+    </div>
+  );
+}
+
+/* Dedicated tab: Collab, the AI assistant mark, its animations/renditions and
+   a few in-context scenarios. */
 function AiMarkPage() {
   return (
     <div className="spd-page">
