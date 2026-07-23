@@ -1033,7 +1033,8 @@
        TIME SPAN = how far back the data runs — this fiscal year, this fiscal period, last fiscal year, or all time.
      The chart is "each [interval] over [time span]". Interval is a segmented toggle (fixed set); time span is a dropdown chip (reads as a phrase). */
   var BGT_ALL_FYS=["2024","2025","2026"],BGT_CUR_FY="2026";
-  function bgtIntervalToggle(w,interval,action,extra){return bgtTog([["month","Month","","Each bar is one month"],["quarter","Quarter","","Each bar is one quarter"],["period","Period","","Each bar is one fiscal period"],["year","Year","","Each bar is one fiscal year"]],interval,w,action,"Interval",extra);}
+  /* Compact single-letter interval toggle (M/Q/P/Y) — it lives inline with the chart legend, not up in the header with the KPI, so it reads as "how the chart below is sliced". Tooltips spell each out. */
+  function bgtIntervalToggle(w,interval,action,extra){return bgtTog([["month","M","","Month — each bar is one month"],["quarter","Q","","Quarter — each bar is one quarter"],["period","P","","Fiscal period — each bar is one period"],["year","Y","","Year — each bar is one fiscal year"]],interval,w,action,"Interval",extra);}
   function bgtSpanLabel(s){return s==="period"?"This period":s==="last"?"Last year":s==="all"?"All time":"This year";}
   function bgtSpanFull(s){return s==="period"?"This fiscal period":s==="last"?"Last fiscal year":s==="all"?"All time":"This fiscal year";}
   function bgtSpanChip(w,extra){return '<button class="filter-chip" data-action="bgt-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, tap to change"><span class="material-symbols-rounded" data-i="calendar_month" style="font-size:15px">calendar_month</span><span class="fc-label">'+bgtSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
@@ -1451,9 +1452,11 @@
     if(a==="bgt-pick-line"){bgtLineQ="";pop={type:"bgt-linelist",id:id};render();return;}
     if(a==="set-bgt-report"){var wsr=find(id);if(wsr){var nr=t.getAttribute("data-r");if(wsr.report!==nr){wsr.report=nr;wsr.reportLine=bgtReport(wsr).lines[0].id;bgtLoad(wsr);}}pop={type:"bgt-scope",id:id};render();return;}
     if(a==="set-bgt-repline"){var wsl=find(id);if(wsl){var nl=t.getAttribute("data-l");if(wsl.reportLine!==nl){wsl.reportLine=nl;bgtLoad(wsl);}}pop={type:"bgt-scope",id:id};render();return;}
-    if(a==="set-bgt-grain"){var wsg=find(id);if(wsg)wsg.bgrain=t.getAttribute("data-v");render();return;}
+    if(a==="set-bgt-interval"){var wsg=find(id);if(wsg)wsg.binterval=t.getAttribute("data-v");render();return;}
     if(a==="set-bgt-shape"){var wsh=find(id);if(wsh)wsh.bshape=t.getAttribute("data-v");render();return;}
-    if(a==="set-bgt-pgrain"){var wpg=find(id),sg=t.getAttribute("data-panel");if(wpg)wpg[sg==="a"?"gA":"gB"]=t.getAttribute("data-v");render();return;}
+    if(a==="bgt-span"){pop=(pop&&pop.type==="bgt-span"&&pop.id===id)?null:{type:"bgt-span",id:id};render();return;}
+    if(a==="set-bgt-span"){var wss2=find(id);if(wss2){var ns=t.getAttribute("data-s");if(wss2.bspan!==ns){wss2.bspan=ns;bgtLoad(wss2);}}pop=null;render();return;}
+    if(a==="set-bgt-pinterval"){var wpg=find(id),sg=t.getAttribute("data-panel");if(wpg)wpg[sg==="a"?"iA":"iB"]=t.getAttribute("data-v");render();return;}
     if(a==="set-bgt-pshape"){var wps=find(id),sf=t.getAttribute("data-panel");if(wps)wps[sf==="a"?"fA":"fB"]=t.getAttribute("data-v");render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
