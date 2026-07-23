@@ -1510,7 +1510,11 @@
     if(a==="bgt-scope"){pop=(pop&&pop.type==="bgt-scope"&&pop.id===id)?null:{type:"bgt-scope",id:id};render();return;}
     if(a==="set-bgt-scope"){var wsac=find(id);if(wsac){var nv=t.getAttribute("data-v");if(wsac.acctview!==nv){wsac.acctview=nv;bgtLoad(wsac);}}pop=null;render();return;}
     /* One-click special-report pick: choosing a report line sets scope=special + report + line together, then closes. No drill-in, no popover swapping. */
-    if(a==="set-bgt-repline-full"){var wsf=find(id);if(wsf){var nr=t.getAttribute("data-r"),nl=t.getAttribute("data-l");if(wsf.acctview!=="special"||wsf.report!==nr||wsf.reportLine!==nl){wsf.acctview="special";wsf.report=nr;wsf.reportLine=nl;bgtLoad(wsf);}}pop=null;render();return;}
+    if(a==="bgt-open-report"){var wor=find(id);if(wor){var isSp=(wor.acctview==="special");modal={type:"bgtreport",id:id,dr:(isSp?wor.report:null),dl:(isSp?wor.reportLine:null),q:""};modalMounted=false;pop=null;render();}return;}
+    if(a==="bgt-rm-pickrep"){if(modal){var pr2=t.getAttribute("data-r");if(modal.dr!==pr2){modal.dr=pr2;var rp3=null;for(var ii=0;ii<BGT_REPORTS.length;ii++)if(BGT_REPORTS[ii].id===pr2)rp3=BGT_REPORTS[ii];var has=false;if(rp3)for(var jj=0;jj<rp3.lines.length;jj++)if(rp3.lines[jj].id===modal.dl)has=true;if(!has)modal.dl=null;}renderModal();}return;}
+    if(a==="bgt-rm-pickline"){if(modal){modal.dl=t.getAttribute("data-l");renderModal();}return;}
+    if(a==="bgt-rm-cancel"){modal=null;pop=null;render();return;}
+    if(a==="bgt-rm-done"){var wd=find(id);if(wd&&modal&&modal.dr&&modal.dl){var chg=(wd.acctview!=="special"||wd.report!==modal.dr||wd.reportLine!==modal.dl);wd.acctview="special";wd.report=modal.dr;wd.reportLine=modal.dl;if(chg)bgtLoad(wd);}modal=null;pop=null;render();return;}
     if(a==="set-bgt-interval"){var wsg=find(id);if(wsg){wsg.binterval=t.getAttribute("data-v");bgtSnapShape(wsg);}render();return;}
     if(a==="set-bgt-shape"){var wsh=find(id);if(wsh)wsh.bshape=t.getAttribute("data-v");render();return;}
     if(a==="bgt-span"){pop=(pop&&pop.type==="bgt-span"&&pop.id===id)?null:{type:"bgt-span",id:id};render();return;}
