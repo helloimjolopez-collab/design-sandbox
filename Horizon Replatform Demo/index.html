@@ -2276,13 +2276,33 @@ function cancelInvite(pid, cid){
 function cancelCase(pid, cid){
   const person = personById(pid);
   if(!person) return;
+  // Use raw cases (not currentCase()) to get original status
   const c = person.cases.find(x=>x.id===cid);
   if(!c) return;
 
-  // Guard: consent submitted and order is not gated = cannot cancel
-  const consentSubmitted = c.consentForm && c.consentForm.submittedDate;
-  const approvalGated = c.approvalGate;
-  const orderPlaced = ['screening-progress','order-submitted','order-failed','awaiting-assessment','cleared','needs-review','escalated'].includes(c.status);
+  // Resolve effective status (Phase 1 may override)
+  const effectiveStatus = (DEMO_MODE==='phase-1' && c.p1Status) ? c.p1Status : c.status;
+
+  // Guard: determine if cancel is allowed
+  // Phase 1 rules: cancel allowed before consent received, OR if order failed (any failure status)
+  // North Star rules: cancel blocked once order is in progress / complete
+  const blockingStatuses = ['screening-progress','order-submitted','awaiting-assessment','cleared','needs-review','escalated'];
+  const p1OrderFailedStatuses = ['order-failed-data','order-failed-final'];
+  const orderPlaced = blockingStatuses.includes(effectiveStatus);
+  // In Phase 1, order-retrying blocks cancel (still auto-processing); data/final failure allows cancel
+  const p1BlockRetrying = DEMO_MODE==='phase-1' && effectiveStatus==='order-retrying';
+
+  if(p1BlockRetrying){
+    showConfirm({
+      title: 'Cannot cancel while retrying',
+      body: 'PMM is automatically retrying this order. Wait for the retry process to complete or fail before taking action. You\'ll be notified when it resolves.',
+      cancelLabel: 'Close',
+      actionLabel: 'OK',
+      actionStyle: 'background:var(--brand);color:#fff',
+      onConfirm(){}
+    });
+    return;
+  }
 
   if(orderPlaced){
     showConfirm({
@@ -2292,6 +2312,29 @@ function cancelCase(pid, cid){
       actionLabel: 'OK',
       actionStyle: 'background:var(--brand);color:#fff',
       onConfirm(){}
+    });
+    return;
+  }
+
+  // Phase 1: special cancel message for order failure cases
+  if(DEMO_MODE==='phase-1' && p1OrderFailedStatuses.includes(effectiveStatus)){
+    const isDataFailure = effectiveStatus==='order-failed-data';
+    showConfirm({
+      title: 'Cancel this case?',
+      body: isDataFailure
+        ? `<strong>${person.name}</strong>'s order failed due to a data issue.<br><br>${c.orderFailureReason||'The applicant information could not be verified.'}<br><br>Cancelling will close this case permanently. Open a new case once the issue is corrected — make sure to communicate to the applicant what needs to be fixed before resubmitting.`
+        : `The order for <strong>${person.name}</strong> failed after multiple retry attempts. Cancelling will close this case permanently. You can open a new case to restart the screening process.<br><br>Contact support if the issue persists.`,
+      cancelLabel: 'Keep case',
+      actionLabel: 'Cancel case',
+      actionStyle: 'background:var(--red);color:#fff',
+      onConfirm(){
+        c.status = 'case-cancelled';
+        if(c.p1Status) c.p1Status = 'case-cancelled';
+        c.events = c.events||[];
+        c.events.push({type:'none',title:'Case cancelled by admin',date:todayStr(),time:'',by:'Admin'});
+        renderTable(); renderHomeTable();
+        toast(`Case cancelled for ${person.name}.`);
+      }
     });
     return;
   }
