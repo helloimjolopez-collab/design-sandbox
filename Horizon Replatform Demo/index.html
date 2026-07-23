@@ -2790,7 +2790,6 @@ function renderIdentityCompact(person){
     <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Full legal name</div><div class="pnl-meta-val muted">${esc(person.fullLegal||person.name)}</div></div>
     <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Preferred name</div><div class="pnl-meta-val muted">${esc(person.preferredName||'—')}</div></div>
     ${person.rescreenDue?`<div class="pnl-meta-cell full"><div class="pnl-meta-lbl">Rescreening due</div><div class="pnl-meta-val warn">${esc(person.rescreenDue)}</div></div>`:''}
-    ${person.tags&&person.tags.length?`<div class="pnl-meta-cell full"><div class="pnl-meta-lbl">Tags</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:3px">${person.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>`:''}
   </div>`;
 }
 
@@ -2930,11 +2929,7 @@ function renderScreeningHistory(person){
     const s = STATUS[c.status];
     const itemId = `hist-body-${c.id}`;
     const chevId = `hist-chev-${c.id}`;
-    // Use the case-level position/team if stored, else fall back to person's current
-    const roleAtTime = c.position || person.position;
-    const teamAtTime = c.team || person.team;
-
-    // Outcome pill (compact, not full badge — just colored dot + text)
+      // Outcome pill (compact, not full badge — just colored dot + text)
     const outColor = c.assessment
       ? (c.assessment.outcome==='Complete: Cleared'||c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Complete: Escalated'||c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)')
       : 'var(--fg4)';
@@ -2979,7 +2974,6 @@ function renderScreeningHistory(person){
             <span style="font-size:11px;color:var(--fg4)">·</span>
             <span style="font-size:11px;color:var(--fg3)">${fmtShort(c.dateInitiated)}</span>
           </div>
-          <div style="font-size:11px;color:var(--fg4);margin-top:3px">${esc(roleAtTime)} · ${esc(teamAtTime)}</div>
         </div>
         <div style="display:flex;align-items:center;gap:7px;flex-shrink:0">
           <span style="font-size:11px;font-weight:600;color:${outColor}">${esc(outcomeLabel)}</span>
