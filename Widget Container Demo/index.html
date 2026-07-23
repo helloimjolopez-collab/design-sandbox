@@ -804,6 +804,17 @@
   .bank-skel .sk,.bank-sk-bar{background:linear-gradient(100deg,var(--wn-200) 30%,var(--wn-100) 50%,var(--wn-200) 70%);background-size:200% 100%;animation:bgtshimmer 1.5s ease-in-out infinite;}
   .bank-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--txt-subtle);font-size:12px;padding:12px 0 0;}
   @media(prefers-reduced-motion:reduce){.bank-skel .sk,.bank-sk-bar{animation:none!important;}}
+  /* ===== Payroll Distributions (pr): grouping + drill ===== */
+  .pr-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
+  .pr-viewby .vt .material-symbols-rounded{font-size:15px;margin-right:2px;}
+  .pr-back{cursor:pointer;}
+  .pr-back .material-symbols-rounded{font-size:17px;margin-right:1px;vertical-align:middle;}
+  .pr-drill-row{display:flex;align-items:center;gap:4px;width:100%;text-align:left;border:0;background:transparent;font-family:inherit;font-size:inherit;font-weight:inherit;color:var(--txt-primary);cursor:pointer;padding:0;min-width:0;}
+  .pr-drill-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pr-drill-row .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);margin-left:auto;flex:0 0 auto;}
+  .pr-drill-row:hover{color:var(--brand-300);}
+  .pr-drill-row:hover .material-symbols-rounded{color:var(--brand-300);}
+  .pr-scope{font-size:11.5px;color:var(--txt-subtle);margin-top:2px;}
 </style>
 </head>
 <body>
@@ -930,8 +941,10 @@
       {id:"dep",title:"Deposits on Hand",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"dep2",title:"Deposits on Hand — edge cases (120 accounts)",kind:"deposits",size:"wide",dataset:"big",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"dist",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"dep3",title:"Deposits on Hand — no data",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",state:"empty",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"}]},
-      {id:"pr",title:"Payroll Distributions",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"pr2",title:"Payroll Distributions, no history",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",state:"empty"},
+      {id:"pr",title:"Payroll Distributions",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prGroup:"dist",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"pr2",title:"Payroll Distributions (by pay type)",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prGroup:"pt"},
+      {id:"pr3",title:"Payroll Distributions (drilled into a distribution)",kind:"payroll",size:"xwide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",prGroup:"dist",prDist:"admin"},
+      {id:"pr4",title:"Payroll Distributions (no history)",kind:"payroll",size:"wide",tiers:["kpi","wide","xwide"],range:"TY",view:"table",state:"empty"},
       {id:"bgt",title:"Budget Compared to Actual",kind:"budget",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",fy:"2026",bfmt:"chart",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bgt2",title:"Budget Compared to Actual (no budget set up)",kind:"budget",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",fy:"2026",bfmt:"chart",state:"empty"},
       /* Distinct from bgt2's "nothing at all" empty state: FY 2027 has a real income budget entered, but nobody's set up an expense budget yet even though expense actuals are already posting. Opens on Expense so the gap is visible immediately; toggling to Income shows the same fiscal year working normally. */
@@ -1542,67 +1555,111 @@
 
   /* ---- Payroll Distributions ---- */
   /* Categories are org-configured in real life (CompensationDistributionID/Name) — this fixed demo list stands in for that; never hardcode assumptions about count or names beyond what's rendered. */
-  var PR_CATS=["Salary","Hourly","Benefits","Housing Allowance","Overtime"];
+  /* ===== Payroll Distributions (pr): distribution grain with pay-type second lens ===== */
+  /* Hierarchy (Confluence 10.9): org-defined DISTRIBUTION (GL-mapped) with a standard PAY TYPE underneath.
+     Default grain is distribution; "View by" offers pay type; drilling a distribution shows its pay types.
+     Mirrors Deposits On Hand (all types / accounts within a type / all accounts). */
+  var PR_DISTS=[
+    {id:"admin",   name:"Administration Staff"},
+    {id:"pastoral",name:"Pastoral Staff"},
+    {id:"worship", name:"Worship & Music"},
+    {id:"youth",   name:"Youth Ministry"},
+    {id:"children",name:"Children's Ministry"},
+    {id:"facilities",name:"Facilities"},
+    {id:"office",  name:"Office & Reception"},
+    {id:"missions",name:"Missions & Outreach"}
+  ];
+  var PR_PT=[
+    {id:"reg",name:"Regular Pay"},
+    {id:"ot",name:"Overtime"},
+    {id:"hol",name:"Holiday"},
+    {id:"vac",name:"Vacation"},
+    {id:"sick",name:"Sick"},
+    {id:"housing",name:"Housing Allowance"},
+    {id:"ss",name:"Social Security"},
+    {id:"med",name:"Medicare"}
+  ];
+  var PR_BASE={
+    admin:{reg:4200,ot:300,vac:400,sick:150,ss:280,med:66},
+    pastoral:{reg:5200,housing:1800,vac:500,sick:120},
+    worship:{reg:2600,ot:180,vac:200,ss:174,med:41},
+    youth:{reg:1800,ot:120,sick:90,ss:120,med:28},
+    children:{reg:1500,hol:100,vac:150,ss:100,med:24},
+    facilities:{reg:2200,ot:420,sick:110,ss:175,med:41},
+    office:{reg:1900,ot:90,vac:180,ss:126,med:30},
+    missions:{reg:1400,vac:120,ss:93,med:22}
+  };
   var PR_RUNS=(function(){
     var runs=[],seed=17;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
-    var base={Salary:68000,Hourly:34000,Benefits:21000,"Housing Allowance":9000,Overtime:6000};
-    var end=new Date(2026,6,15); // "today" in this demo — Jul 15, 2026, matches biweekly pay runs
+    var end=new Date(2026,6,15); // "today" in this demo, matches biweekly pay runs
     for(var i=11;i>=0;i--){
       var d=new Date(end.getTime());d.setDate(d.getDate()-i*14);
-      var byCat={};PR_CATS.forEach(function(c){var drift=1+(11-i)*0.006,noise=0.9+r()*0.2;byCat[c]=Math.round(base[c]*drift*noise);});
-      runs.push({date:d,byCat:byCat});
+      var cells={};
+      PR_DISTS.forEach(function(ds){var b=PR_BASE[ds.id]||{},row={};Object.keys(b).forEach(function(pt){var drift=1+(11-i)*0.006,noise=0.9+r()*0.2;row[pt]=Math.round(b[pt]*drift*noise);});cells[ds.id]=row;});
+      runs.push({date:d,cells:cells});
     }
     return runs;
   })();
   function prFmtDate(d){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return M[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
-  var PR_TODAY=new Date(2026,6,15); // "today" in this demo
+  var PR_TODAY=new Date(2026,6,15);
   function prISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
-  /* Named periods, in display order — Custom is handled separately (§10.2/§10.1: custom must always be reachable, never a second click deep). Default is "This year" (w.range="TY" if unset). */
-  var PR_PRESETS=[["TM","This month"],["TQ","This quarter"],["ALL","All time"],["TY","This year"]]; // "Year to date" dropped — "This year" now means Jan 1 through today, so it was an exact duplicate
+  var PR_PRESETS=[["TM","This month"],["TQ","This quarter"],["ALL","All time"],["TY","This year"]];
   function prRangeBoundsFor(r,w){var t=PR_TODAY;
     if(r==="TM")return {begin:prISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prISO(t)};
     if(r==="TQ"){var q=Math.floor(t.getMonth()/3);return {begin:prISO(new Date(t.getFullYear(),q*3,1)),end:prISO(t)};}
     if(r==="ALL")return {begin:prISO(PR_RUNS[0].date),end:prISO(t)};
-    if(r==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)}; // "this year" = Jan 1 through today, not through Dec 31 — matches how people actually mean it
-    return {begin:w.begin||prISO(t),end:w.end||prISO(t)}; // CUSTOM — whatever's already in the fields
+    if(r==="TY")return {begin:prISO(new Date(t.getFullYear(),0,1)),end:prISO(t)};
+    return {begin:w.begin||prISO(t),end:w.end||prISO(t)};
   }
   function prPeriodBounds(w){var b=prRangeBoundsFor(w.range||"TY",w);return {start:new Date(b.begin),end:new Date(b.end)};}
   function prRunsInRange(w){var b=prPeriodBounds(w);return PR_RUNS.filter(function(x){return x.date>=b.start&&x.date<=b.end;});}
-  function prRowsFor(runsArr){var m={};PR_CATS.forEach(function(c){m[c]=0;});runsArr.forEach(function(run){PR_CATS.forEach(function(c){m[c]+=(run.byCat[c]||0);});});
-    var rows=PR_CATS.map(function(c){return {name:c,net:m[c]};});rows.sort(function(a,b){return b.net-a.net;});return rows;} // default sort amount-desc (resolves F6)
-  function prTotal(rows){return rows.reduce(function(s,a){return s+a.net;},0);}
-  function prRowsWithShare(w){var cur=prRowsFor(prRunsInRange(w)),tot=prTotal(cur);
-    return cur.map(function(a){return {name:a.name,net:a.net,pct:tot?(a.net/tot*100):0};});}
   function prPeriodLabel(w){var r=w.range||"TY";if(r==="CUSTOM")return "Custom";var m=PR_PRESETS.filter(function(o){return o[0]===r;})[0];return m?m[1]:"This year";}
-  function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period — tap to change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
-  function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);} // reuses the generic dep-view action, kind-agnostic
-  function prTableHTML(w){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
-    var head='<div class="wt-row wt-head"><span class="lr-main">Category</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">Amount</span></div>';
-    var body=rows.map(function(a){var pctR=Math.round(a.pct);
-      return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.name+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+  function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period, tap to change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  /* ---- breakdown: distribution / pay-type aggregation over runs in range ---- */
+  function prAgg(w){var runs=prRunsInRange(w),agg={};PR_DISTS.forEach(function(ds){agg[ds.id]={};});
+    runs.forEach(function(run){PR_DISTS.forEach(function(ds){var rc=run.cells[ds.id]||{};Object.keys(rc).forEach(function(pt){agg[ds.id][pt]=(agg[ds.id][pt]||0)+rc[pt];});});});
+    return agg;}
+  function prDistName(id){for(var i=0;i<PR_DISTS.length;i++)if(PR_DISTS[i].id===id)return PR_DISTS[i].name;return id;}
+  function prPTName(id){for(var i=0;i<PR_PT.length;i++)if(PR_PT[i].id===id)return PR_PT[i].name;return id;}
+  function prDistTotals(w){var agg=prAgg(w);return PR_DISTS.map(function(ds){var t=0,c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){t+=c[pt];});return {id:ds.id,name:ds.name,net:t};}).filter(function(x){return x.net>0;}).sort(function(a,b){return b.net-a.net;});}
+  function prPTTotals(w){var agg=prAgg(w),m={};PR_DISTS.forEach(function(ds){var c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){m[pt]=(m[pt]||0)+c[pt];});});return PR_PT.filter(function(p){return m[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:m[p.id]};}).sort(function(a,b){return b.net-a.net;});}
+  function prDrillRows(w,distId){var agg=prAgg(w),c=agg[distId]||{};return PR_PT.filter(function(p){return c[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:c[p.id]};}).sort(function(a,b){return b.net-a.net;});}
+  /* Current view: drilled distribution -> its pay types; else group by distribution (default) or pay type. */
+  function prMode(w){
+    if(w.prDist)return {rows:prDrillRows(w,w.prDist),col:"Pay type",legend:prDistName(w.prDist)+": pay types",drill:false,scope:prDistName(w.prDist)};
+    if((w.prGroup||"dist")==="pt")return {rows:prPTTotals(w),col:"Pay type",legend:"Pay types",drill:false,scope:null};
+    return {rows:prDistTotals(w),col:"Distribution",legend:"Distributions",drill:true,scope:null};
+  }
+  function prViewBy(w){var g=w.prGroup||"dist";return '<div class="vtoggle pr-viewby" role="group" aria-label="View by">'+[["dist","Distributions","account_tree"],["pt","Pay types","sell"]].map(function(o){return '<button class="vt'+(g===o[0]?" on":"")+'" data-action="pr-groupby" data-id="'+w.id+'" data-g="'+o[0]+'" aria-pressed="'+(g===o[0])+'" data-tip="'+(o[0]==="dist"?"Group by distribution (the org GL-mapped line)":"Group by pay type (Regular, Overtime, Housing Allowance, and so on)")+'" data-tip-plain>'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+  function prBackChip(w){return '<button class="scope-chip pr-back" data-action="pr-back" data-id="'+w.id+'" aria-label="Back to all distributions"><span class="material-symbols-rounded">chevron_left</span><span class="sc-nm">All distributions</span></button>';}
+  function prToolLeft(w){return w.prDist?prBackChip(w):prViewBy(w);}
+  function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Distribution","donut_small"]],v,w);}
+  function prTableHTML(w){var m=prMode(w),tot=m.rows.reduce(function(s,a){return s+a.net;},0);
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+m.col+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">Amount</span></div>';
+    var body=m.rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
+      var nameCell=m.drill?('<button class="lr-main pr-drill-row" data-action="pr-drill" data-id="'+w.id+'" data-d="'+a.id+'" aria-label="'+a.name.replace(/"/g,"&quot;")+', '+money(a.net)+', view pay types"><span class="pr-drill-nm">'+a.name+'</span>'+ICON("chevron_right")+'</button>'):('<span class="lr-main">'+a.name+'</span>');
+      return '<div class="wt-row wt-rowh">'+nameCell+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'<span class="sr-only"> '+a.name+'</span></span></div>';}).join("");
     return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
-  function prDonut(w,forceSize){var rows=prRowsWithShare(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length);
-    rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];
-      arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
-      legend+='<div class="leg" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
+  function prDonut(w,forceSize){var m=prMode(w),tot=m.rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(m.rows.length);
+    m.rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];var dr=m.drill?(' data-action="pr-drill" data-id="'+w.id+'" data-d="'+a.id+'"'):'';
+      arcs+='<circle class="seg" data-seg="'+i+'"'+dr+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      legend+='<div class="leg" data-seg="'+i+'"'+dr+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';});
     var DS=forceSize||({wide:250,xwide:280}[w.size]||190);
-    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">Compensation Categories</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
-  /* Glance (§10.8): grand total for the selected period + the period control. No trend, no comparison, no mini-chart-over-time (§10.3 rejects these at every size). */
-  function prGlance(w){var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows);
+    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">'+m.legend+'</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
+  function prGlance(w){var tot=prDistTotals(w).reduce(function(s,a){return s+a.net;},0);
     return '<div class="kpi-row"><div class="kpi-num">'+prPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div></div></div>';}
-  function prHeaderBlock(w,hideToggle,noTotal){var top='<div class="dep-hd-top">'+prPeriodChip(w)+(hideToggle?"":'<div class="dep-hd-toggle">'+prToggle(w)+'</div>')+'</div>';
-    if(noTotal)return '<div class="dep-hd">'+top+'</div>'; // no runs in range: there's nothing to total, so we show no figure at all rather than a misleading "$0" (a real zero total and "no data" are two different situations)
-    var rows=prRowsFor(prRunsInRange(w)),tot=prTotal(rows);
-    return '<div class="dep-hd">'+top+'<div class="dep-hd-num"><span class="metric-value">'+money(tot)+'</span></div></div>';}
-  /* Largest size: table and donut shown together, side by side — there's room for both, so the Table/Distribution toggle (a choice that only exists because smaller sizes can't fit both) is pointless here and removed. */
+  function prHeaderBlock(w,hideToggle,noTotal){
+    var top='<div class="dep-hd-top"><div class="pr-tools">'+prPeriodChip(w)+prToolLeft(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prToggle(w)+'</div>')+'</div>';
+    if(noTotal)return '<div class="dep-hd">'+top+'</div>';
+    var m=prMode(w),tot=m.rows.reduce(function(s,a){return s+a.net;},0);
+    var ctx=w.prDist?('<div class="pr-scope">'+prDistName(w.prDist)+', all pay types for the selected period</div>'):'';
+    return '<div class="dep-hd">'+top+'<div class="dep-hd-num"><span class="metric-value">'+money(tot)+'</span>'+ctx+'</div></div>';}
   function prContent(w){
     if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
-      // the toolbar (period chip + Table/Distribution toggle) always stays — an empty result for the chosen period is not a reason to take away the controls that got you here
       return prHeaderBlock(w,(w.size==="xwide"||w.size==="kpi"),true)+body;}
     if(w.size==="kpi")return prGlance(w);
     if(w.size==="xwide")return prHeaderBlock(w,true)+'<div class="pr-split"><div class="pr-split-table">'+prTableHTML(w)+'</div><div class="pr-split-chart">'+prDonut(w,196)+'</div></div>';
     var v=w.view||"table";return prHeaderBlock(w)+(v==="dist"?prDonut(w):prTableHTML(w));}
-  /* No drill-down from category rows/segments: Confluence §10.6/§10.8/§12 mark detail-behind-a-category as explicitly out of scope for this iteration (Bundle, "not in scope"), not something to build a placeholder for. */
 
   /* ===== Main Content Tasks (mct): context-aware quick-action launcher ===== */
   var MCT_APPS=[
@@ -2212,6 +2269,9 @@ function mysPopContent(){
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
     if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
+    if(a==="pr-groupby"){var wg=find(id);if(wg){wg.prGroup=t.getAttribute("data-g");wg.prDist=null;}pop=null;render();return;}
+    if(a==="pr-drill"){var wdd=find(id);if(wdd)wdd.prDist=t.getAttribute("data-d");pop=null;render();return;}
+    if(a==="pr-back"){var wbk=find(id);if(wbk)wbk.prDist=null;pop=null;render();return;}
     if(a==="pr-range-set"){var wprr=find(id),rset=t.getAttribute("data-r");if(wprr){wprr.range=rset;if(rset==="CUSTOM"&&!wprr.begin){var b0=prRangeBoundsFor("TM",wprr);wprr.begin=b0.begin;wprr.end=b0.end;}}if(rset!=="CUSTOM")pop=null;render();return;}
     if(a==="pr-range-set"){var wprr=find(id);if(wprr){var pb=prPresetBounds(t.getAttribute("data-r"));wprr.begin=pb.begin;wprr.end=pb.end;}pop=null;render();return;}
     if(a==="open-report"){var wo=find(id);showModal("Opens the full page","Tapping this would take you out of the dashboard to the full <b>"+(wo?wo.title:"")+"</b> page in its source module, with the complete data and all controls.");return;}
