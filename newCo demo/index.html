@@ -3072,29 +3072,41 @@ function CtxOmnibox() {
     </CtxFrame>
   );
 }
-/* One mark, several renditions. `variant` picks the treatment; `live` is the
-   animated gradient, the rest are static and stay legible at small sizes.
-   `weight` is the on-screen stroke thickness in px, held roughly constant. */
-function CollabMark({ variant = "live", size = 24, color, weight = 1.9 }) {
+/* One mark, several renditions. To stay legible at small sizes the stroked
+   renditions draw ONE scalloped ring + a solid centre dot (the two concentric
+   rings merged into a blob when small). `solid` keeps all three filled; `live`
+   is the animated gradient; `grain` is the rich gradient+grain circle. `spin`
+   turns any of them into a gentle loader. */
+function CollabMark({ variant = "live", size = 24, color, weight = 1.8, spin }) {
   if (variant === "live") return <SpotMark size={size} />;
-  const S = weight * 210 / size;
   const P = "var(--semantic-color-light-mode-fill-action-primary-base)";
-  const strokes = (c) => (
+  const S = weight * 210 / size;
+  const cls = spin ? "spd-collabspin" : undefined;
+  if (variant === "grain") {
+    const gid = "cm-grain-" + size;
+    return (
+      <svg className={cls} viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
+        <defs>
+          <linearGradient id={gid} x1="0.1" y1="-0.1" x2="0.15" y2="1"><stop offset="0%" stopColor="#FFC864" /><stop offset="36%" stopColor="#E5BA88" /><stop offset="60%" stopColor="#CBADAC" /><stop offset="90%" stopColor="#B09FD1" /></linearGradient>
+          <filter id={gid + "n"} x="0" y="0" width="210" height="210"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" stitchTiles="stitch" result="n" /><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0" result="nn" /><feComposite in="nn" in2="SourceGraphic" operator="in" result="grain" /><feMerge><feMergeNode in="SourceGraphic" /><feMergeNode in="grain" /></feMerge></filter>
+        </defs>
+        <g filter={`url(#${gid}n)`}><circle cx="105" cy="105" r="104" fill={`url(#${gid})`} /></g>
+        <path d={HALO_OUTER} stroke="#FFFFFF" strokeWidth="8.5" fill="none" />
+        <path d={HALO_CENTER} fill="#FFFFFF" />
+      </svg>
+    );
+  }
+  const ringDot = (ringColor, dotColor) => (
     <React.Fragment>
-      <path d={HALO_OUTER} stroke={c} strokeWidth={S} fill="none" />
-      <path d={HALO_INNER} stroke={c} strokeWidth={S} fill="none" />
+      <path d={HALO_OUTER} stroke={ringColor} strokeWidth={S} fill="none" />
+      <path d={HALO_CENTER} fill={dotColor} />
     </React.Fragment>
   );
   return (
-    <svg viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
-      {variant === "stroke" && strokes(color || P)}
-      {variant === "white" && strokes("#FFFFFF")}
-      {variant === "twotone" && (
-        <React.Fragment>
-          <path d={HALO_OUTER} stroke="#41377D" strokeWidth={S} fill="none" />
-          <path d={HALO_INNER} stroke="#9691F5" strokeWidth={S} fill="none" />
-        </React.Fragment>
-      )}
+    <svg className={cls} viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
+      {variant === "stroke" && ringDot(color || P, color || P)}
+      {variant === "white" && ringDot("#FFFFFF", "#FFFFFF")}
+      {variant === "twotone" && ringDot("#5B51A6", "#9691F5")}
       {variant === "solid" && (
         <React.Fragment>
           <path d={HALO_OUTER} fill="#5B51A6" />
@@ -3105,11 +3117,14 @@ function CollabMark({ variant = "live", size = 24, color, weight = 1.9 }) {
     </svg>
   );
 }
-/* A brand tile with the white mark, for module/app iconography. */
-function CollabTile({ size = 42, radius = 13, mark = 25, dark }) {
+/* A round Collab avatar: white mark on a brand circle, gradient+grain, or the
+   mark on a neutral slate circle. */
+function CollabAvatar({ size = 40, tone = "brand" }) {
+  if (tone === "grain") return <CollabMark variant="grain" size={size} />;
+  const slate = tone === "slate";
   return (
-    <span style={{ width: size, height: size, borderRadius: radius, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: dark ? "#2A2633" : "var(--semantic-color-light-mode-fill-action-primary-base)" }}>
-      <CollabMark variant="white" size={mark} />
+    <span style={{ width: size, height: size, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: slate ? "var(--semantic-color-light-mode-fill-contextual-avatar-base)" : "var(--semantic-color-light-mode-fill-action-primary-base)" }}>
+      <CollabMark variant={slate ? "stroke" : "white"} size={Math.round(size * 0.56)} color={slate ? "var(--semantic-color-light-mode-text-contextual-avatar-base)" : undefined} weight={2} />
     </span>
   );
 }
