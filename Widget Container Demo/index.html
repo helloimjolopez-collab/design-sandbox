@@ -1499,7 +1499,10 @@
     var body='<p class="bgt-rm-lead">Pick the report, then the line to compare against budget.</p><div class="bgt-rm-fields">'+repField+lineField+'</div>';
     return '<div class="modal-backdrop" data-action="bgt-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">summarize</span>Choose a special report</span><button class="iconbtn" data-action="bgt-rm-cancel" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b bgt-rm-b" data-action="bgt-rm-closemenu">'+body+'</div><div class="modal-f"><button class="btn naked sm" data-action="bgt-rm-cancel">Cancel</button><button class="btn primary sm'+(canApply?"":" is-off")+'"'+(canApply?' data-action="bgt-rm-done" data-id="'+w.id+'"':' aria-disabled="true"')+'>Apply</button></div></div></div>';
   }
-  function renderModal(){var mr=document.getElementById("modalRoot");if(!modal){mr.innerHTML="";modalMounted=false;return;}
+  /* Freeze the background while any modal is open so scrolling happens inside the dialog, not the page behind it. The main scroller is .appmain; we also pin the sidenav. Restored the moment the modal closes. */
+  function bgtLockBg(on){var am=document.querySelector(".appmain");if(am)am.style.overflow=on?"hidden":"";var sn=document.querySelector(".sidenav");if(sn)sn.style.overflow=on?"hidden":"";}
+  function renderModal(){var mr=document.getElementById("modalRoot");if(!modal){mr.innerHTML="";modalMounted=false;bgtLockBg(false);return;}
+    bgtLockBg(true);
     if(modal.type==="bgtreport"){mr.innerHTML=bgtReportModalHTML();return;}
     var body=(modal.scoped?'<div class="wcontent acct-mw">'+depContent(modal.mw)+'</div>':modal.b);
     if(modalMounted){var bEl=mr.querySelector(".modal-b");if(bEl){bEl.innerHTML=body;return;}}
