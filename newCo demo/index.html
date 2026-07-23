@@ -1784,6 +1784,9 @@ const MODULE_MAP = Object.fromEntries(MODULES.map((m) => [m.id, m]));
 /* Order shown in the Home launcher rail (Admin is pinned separately below). */
 
 function firstItemOf(id) {
+  // Accounting's real sections live in ACCT_APPS (per-app), not the module's
+  // legacy nav — its home is the first app's Dashboard.
+  if (id === "accounting") return ACCT_APPS[0].nav[0].id;
   const m = MODULE_MAP[id];
   return m && m.nav && m.nav.length ? m.nav[0].id : null;
 }
@@ -2952,7 +2955,7 @@ function AiMarkPage() {
           <SpotMark size={56} />
           <div className="spd-askspot" style={{ maxWidth: 340, margin: 0 }}>
             <span className="spd-askspot__mark"><SpotMark size={40} /></span>
-            <span className="spd-askspot__text"><strong>Ask Spot</strong>&nbsp;&nbsp;anything…</span>
+            <span className="spd-askspot__text"><strong>Ask Collab</strong>&nbsp;&nbsp;anything…</span>
             <span className="spd-askspot__go"><Icon name="arrow_upward" size={20} /></span>
           </div>
         </div>
