@@ -815,6 +815,55 @@
   .pr-drill-row:hover{color:var(--brand-300);}
   .pr-drill-row:hover .material-symbols-rounded{color:var(--brand-300);}
   .pr-scope{font-size:11.5px;color:var(--txt-subtle);margin-top:2px;}
+  /* ===== Purchasing Management (pur) ===== */
+  .pur-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;justify-self:start;align-self:center;}
+  .pur-status-chip{max-width:210px;}
+  .pur-path-chip{max-width:220px;}
+  .pur-path-chip.is-disabled{opacity:.6;cursor:not-allowed;background:transparent;}
+  .pur-path-chip.is-disabled:hover{background:transparent;color:var(--txt-secondary);}
+  .pur-count-lbl{font-size:12.5px;color:var(--txt-secondary);font-weight:500;}
+  .pur-status-chip .bgt-spin{margin-right:2px;}
+  .pur-c-num{flex:0 0 104px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);}
+  .wt-head .pur-c-num{font-weight:inherit;color:inherit;}
+  .pur-c-date{flex:0 0 92px;min-width:0;white-space:nowrap;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+  .pur-c-age{flex:0 0 66px;display:inline-flex;align-items:center;gap:2px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+  .pur-c-age .material-symbols-rounded{font-size:14px;opacity:.55;}
+  .pur-age-warn{color:var(--txt-primary);font-weight:600;}
+  .pur-c-act{flex:0 0 34px;display:flex;justify-content:flex-end;}
+  .pur-edit{border:0;background:transparent;cursor:pointer;color:var(--txt-subtle);border-radius:6px;padding:3px;display:inline-flex;align-items:center;}
+  .pur-edit:hover{background:var(--wn-200);color:var(--txt-primary);}
+  .pur-edit .material-symbols-rounded{font-size:17px;}
+  .pur-subbar{display:flex;justify-content:flex-end;padding:4px 14px 8px;}
+  .pur-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 4px;}
+  .pur-enc-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 16px 8px;}
+  .pur-enc-title{font-size:12px;font-weight:600;color:var(--txt-secondary);}
+  .pur-enc-tot{font-size:12px;font-weight:600;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+  .pur-plotrow{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
+  .pur-yax{flex:0 0 44px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
+  .pur-canvas{flex:1;min-width:0;position:relative;border-bottom:1px solid var(--stroke-widget);overflow-x:auto;overflow-y:hidden;}
+  .pur-gl{position:absolute;left:0;right:0;bottom:50%;border-top:1px dashed var(--stroke-widget);opacity:.5;}
+  .pur-cols{position:absolute;inset:0;display:flex;align-items:flex-end;gap:12px;padding:0 6px;}
+  .pur-cols.many{position:relative;min-width:max-content;height:100%;}
+  .pur-cols.many .pur-col{flex:0 0 46px;}
+  .pur-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;border-radius:6px;transition:background var(--dur,.15s) ease;}
+  .pur-col:hover{background:var(--wn-300);}
+  .pur-barwrap{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;}
+  .pur-bar{width:58%;max-width:44px;min-height:2px;border-radius:3px 3px 0 0;background:var(--am-600);transition:background var(--dur,.15s) ease;}
+  .pur-col:hover .pur-bar{background:var(--am-700,var(--am-600));}
+  .pur-xaxrow{display:flex;gap:8px;padding:6px 16px 0;}
+  .pur-yaxsp{flex:0 0 44px;}
+  .pur-xcols{flex:1;min-width:0;display:flex;gap:12px;padding:0 6px;}
+  .pur-xcols.many{min-width:max-content;}
+  .pur-xcols.many .pur-xcol{flex:0 0 46px;}
+  .pur-xcol{flex:1 1 0;min-width:0;display:flex;justify-content:center;}
+  .pur-xlbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
+  .pur-enc-note{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--txt-subtle);padding:9px 16px 12px;line-height:1.45;}
+  .pur-enc-note .material-symbols-rounded{font-size:15px;flex:0 0 auto;margin-top:1px;color:var(--txt-subtle);}
+  .pur-skel{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 16px 16px;}
+  .pur-skel-rows{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;}
+  .pur-sk-line{display:flex;align-items:center;gap:12px;}
+  .pur-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--txt-subtle);font-size:12px;padding:12px 0 0;}
+  .pur-pop{min-width:210px;}
 </style>
 </head>
 <body>
@@ -958,6 +1007,11 @@
       {id:"bank",title:"Bank Balances",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",bksort:"bal-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bank2",title:"Bank Balances: Operating Checking",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:"bk-op",bkview:"chart",bksort:"bal-desc"},
       {id:"bank3",title:"Bank Balances (no accounts)",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",state:"empty"}
+      {id:"pur",title:"Purchasing Management",kind:"purchasing",size:"wide",tiers:["kpi","wide","xwide"],admin:true,pstatus:"mine",ppath:null,purview:"queue",encview:"chart",psort:"age-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"pur2",title:"Purchasing Management (approved orders, detail)",kind:"purchasing",size:"xwide",tiers:["kpi","wide","xwide"],admin:true,pstatus:"approved",ppath:null,encview:"chart",psort:"age-desc"},
+      {id:"pur3",title:"Purchasing Management (single approval path)",kind:"purchasing",size:"wide",tiers:["kpi","wide","xwide"],admin:false,dataset:"single",pstatus:"mine",ppath:null,purview:"queue",encview:"chart",psort:"age-desc"},
+      {id:"pur4",title:"Purchasing Management (nothing awaiting me)",kind:"purchasing",size:"wide",tiers:["kpi","wide","xwide"],admin:false,dataset:"caught",pstatus:"mine",ppath:null,purview:"queue"},
+      {id:"pur5",title:"Purchasing Management (not on an approval path)",kind:"purchasing",size:"wide",tiers:["kpi","wide","xwide"],admin:false,dataset:"empty",pstatus:"mine",ppath:null,state:"empty"},
     ]},
     {id:"d2",name:"Monthly Committee",custom:true,widgets:[
       {id:"m1",title:"Total giving",kind:"metric",size:"kpi",tiers:["kpi","wide"],range:"Q"},
@@ -977,7 +1031,7 @@
   function cur(){for(var i=0;i<dashboards.length;i++)if(dashboards[i].id===currentId)return dashboards[i];return dashboards[0];}
   function isSystem(){return !cur().custom;}
   function find(id){if(modal&&modal.mw&&modal.mw.id===id)return modal.mw;var ws=cur().widgets;for(var i=0;i<ws.length;i++)if(ws[i].id===id)return ws[i];}
-  var manage=false,pop=null,renaming=null,dragId=null,addCount=0,timers={},focusDash=false,dashRenaming=false,infoTimer=null,companyQuery="",filterQuery="",prFocusId=null,bankQuery="";
+  var manage=false,pop=null,renaming=null,dragId=null,addCount=0,timers={},focusDash=false,dashRenaming=false,infoTimer=null,companyQuery="",filterQuery="",prFocusId=null,bankQuery="",purQuery="",purPopEl=null;
   var ABOUT={
     dep:{h:"Deposits on Hand",b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."},
     cash:{h:"Cash on hand",b:"Money available right now across your operating accounts."},
@@ -2001,11 +2055,193 @@ function mysPopContent(){
     return mh+(sel?bankSingleView(w,v):bankAllView(w,v));
   }
 
+  /* ===== Purchasing Management (pur): approval queue + encumbrance ===== */
+  var PUR_STATUS=[["next","Awaiting my approval next"],["mine","Awaiting my approval"],["unapproved","Unapproved"],["approved","Approved"]];
+  var PUR_PERIODS=["Apr","May","Jun","Jul","Aug","Sep"];
+  var PUR_ORDERS_ALL=[
+    {id:"po1", num:"REQ-4821", vendor:"Grainger Facilities",   issued:"Jul 18, 2026", age:5,  amount:2450,  status:"next",       path:"Facilities and maintenance", per:3},
+    {id:"po2", num:"REQ-4830", vendor:"Guardian Security",     issued:"Jul 20, 2026", age:3,  amount:1180,  status:"next",       path:"Technology and media",       per:3},
+    {id:"po3", num:"REQ-4805", vendor:"Cokesbury Books",       issued:"Jul 09, 2026", age:14, amount:640,   status:"mine",       path:"Missions and outreach",      per:3},
+    {id:"po4", num:"REQ-4788", vendor:"Sysco Food Services",   issued:"Jun 28, 2026", age:25, amount:3320,  status:"mine",       path:"General operating",          per:2},
+    {id:"po5", num:"REQ-4795", vendor:"Home Depot Pro",        issued:"Jul 02, 2026", age:21, amount:1875,  status:"mine",       path:"Facilities and maintenance", per:3},
+    {id:"po6", num:"REQ-4770", vendor:"Office Depot",          issued:"Jun 15, 2026", age:38, amount:520,   status:"unapproved", path:"General operating",          per:2},
+    {id:"po7", num:"REQ-4762", vendor:"LifeWay Worship",       issued:"Jun 10, 2026", age:43, amount:1290,  status:"unapproved", path:"Missions and outreach",      per:2},
+    {id:"po8", num:"REQ-4744", vendor:"Dell Technologies",     issued:"May 29, 2026", age:55, amount:8600,  status:"unapproved", path:"Technology and media",       per:1},
+    {id:"po9", num:"REQ-4801", vendor:"Amazon Business",       issued:"Jul 05, 2026", age:18, amount:415,   status:"unapproved", path:"Youth ministry",             per:3},
+    {id:"po10",num:"PO-10233", vendor:"Thomas Bus Sales",      issued:"May 12, 2026", age:72, amount:12400, status:"approved",   path:"Youth ministry",             per:1},
+    {id:"po11",num:"PO-10251", vendor:"CDW Government",        issued:"Jun 03, 2026", age:50, amount:5240,  status:"approved",   path:"Technology and media",       per:2},
+    {id:"po12",num:"PO-10260", vendor:"Sherwin-Williams",      issued:"Jun 22, 2026", age:31, amount:1960,  status:"approved",   path:"Facilities and maintenance", per:2},
+    {id:"po13",num:"PO-10275", vendor:"Sysco Food Services",   issued:"Jul 08, 2026", age:15, amount:2780,  status:"approved",   path:"General operating",          per:3},
+    {id:"po14",num:"PO-10199", vendor:"Ministry Grid",         issued:"Apr 26, 2026", age:88, amount:990,   status:"approved",   path:"Missions and outreach",      per:0},
+    {id:"po15",num:"REQ-4756", vendor:"Luxury Coaches Intl",   issued:"Jun 08, 2026", age:45, amount:31000, status:"unapproved", path:"Youth ministry",             per:2, rej:true},
+    {id:"po16",num:"REQ-4712", vendor:"Overstock Vendor",      issued:"May 20, 2026", age:64, amount:7400,  status:"mine",       path:"General operating",          per:1, rej:true}
+  ];
+  var PUR_ORDERS_SINGLE=[
+    {id:"ps1",num:"REQ-5001",vendor:"Sysco Food Services",issued:"Jul 15, 2026",age:8, amount:1420,status:"mine",      path:"General operating",per:3},
+    {id:"ps2",num:"REQ-4990",vendor:"Office Depot",       issued:"Jul 01, 2026",age:22,amount:380, status:"mine",      path:"General operating",per:3},
+    {id:"ps3",num:"REQ-4975",vendor:"Amazon Business",    issued:"Jun 20, 2026",age:33,amount:910, status:"unapproved",path:"General operating",per:2},
+    {id:"ps4",num:"PO-10300", vendor:"Thomas Bus Sales",  issued:"Jun 05, 2026",age:48,amount:4200,status:"approved",  path:"General operating",per:2}
+  ];
+  var PUR_ORDERS_CAUGHT=[
+    {id:"pc1",num:"REQ-6001",vendor:"Office Depot",  issued:"Jul 10, 2026",age:13,amount:300, status:"unapproved",path:"General operating",   per:3},
+    {id:"pc2",num:"PO-10400", vendor:"CDW Government",issued:"Jun 18, 2026",age:35,amount:2600,status:"approved",  path:"Technology and media",per:2}
+  ];
+  EMPTY_COPY.purchasing={title:"Nothing needs your approval",sub:"You are not on any approval path yet, so there are no purchase requests to review here. When you are added to a path, anything that needs you will show up."};
+  ERROR_COPY.purchasing={title:"Could not load purchase orders",sub:"Something went wrong fetching approval requests."};
+  function purOrders(w){var d=w.dataset;if(d==="single")return PUR_ORDERS_SINGLE;if(d==="caught")return PUR_ORDERS_CAUGHT;if(d==="empty")return [];return PUR_ORDERS_ALL;}
+  function purVisible(w){return purOrders(w).filter(function(o){return !o.rej;});}
+  function purStatusLabel(s){for(var i=0;i<PUR_STATUS.length;i++)if(PUR_STATUS[i][0]===s)return PUR_STATUS[i][1];return PUR_STATUS[1][1];}
+  function purForStatus(w){var s=w.pstatus||"mine";return purVisible(w).filter(function(o){return o.status===s;});}
+  function purPathsForStatus(w){var seen={},out=[];purForStatus(w).forEach(function(o){if(!seen[o.path]){seen[o.path]=1;out.push(o.path);}});return out;}
+  function purPathCur(w){var paths=purPathsForStatus(w);if(w.ppath&&paths.indexOf(w.ppath)>-1)return w.ppath;return "All approval paths";}
+  function purFiltered(w){var fs=purForStatus(w),cp=purPathCur(w);if(cp==="All approval paths")return fs;return fs.filter(function(o){return o.path===cp;});}
+  function purSum(list){return list.reduce(function(s,o){return s+o.amount;},0);}
+  function purColLabel(w){return (w.pstatus||"mine")==="approved"?"Order#":"Requisition#";}
+  function purCountLabel(w){var s=w.pstatus||"mine";return s==="approved"?"approved orders":s==="unapproved"?"unapproved requests":s==="next"?"awaiting my approval next":"awaiting my approval";}
+  function purEncData(w){var vis=purVisible(w),map={};vis.forEach(function(o){map[o.per]=(map[o.per]||0)+o.amount;});var out=[];PUR_PERIODS.forEach(function(lbl,i){if(map[i]>0)out.push({per:lbl,i:i,amt:map[i]});});return out;}
+  function purEncTotal(w){return purEncData(w).reduce(function(s,r){return s+r.amt;},0);}
+  function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, tap to change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
+  function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
+    if(paths.length<=1){var only=paths.length===1?paths[0]:"All approval paths";
+      return '<span class="scope-chip pur-path-chip is-disabled" aria-disabled="true" title="Only one approval path applies to this status, so there is nothing to filter."><span class="sc-nm">'+only+'</span></span>';}
+    return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, tap to change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
+  function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_alt"],["enc","Encumbrance","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+  function purHeaderBlock(w,mode){
+    var loading=(mode==="loading");
+    var toggle=(w.size==="wide")?purViewToggle(w):"";
+    var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered),enc=purEncTotal(w);
+    var numInner;
+    if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:52px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:16px;border-radius:6px"></span><span class="sk" style="width:110px;height:20px;border-radius:999px"></span></div>';}
+    else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="pur-count-lbl">'+purCountLabel(w)+'</span><span class="bank-pill">'+ICON("payments")+money(out)+' outstanding</span></div>';}
+    var scope=w.admin?"Administrator view: every approval path.":"Approval paths you are part of.";
+    var ctx=scope+" Rejected requests are never shown. Encumbrance shows "+money(enc)+" committed but not yet paid.";
+    return '<div class="dep-hd">'+
+      '<div class="dep-hd-top"><div class="pur-filters">'+purStatusChip(w)+purPathChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
+      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div></div></div>'+
+      '</div>';
+  }
+  function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="pur-sk-line"><span class="sk" style="height:12px;flex:1"></span><span class="sk" style="height:12px;width:74px"></span></div>';}).join("");return '<div class="pur-skel"><div class="pur-skel-rows">'+rows+'</div><div class="pur-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+  function purAgeCell(o){var warn=o.age>=30;return '<span class="pur-c-age'+(warn?" pur-age-warn":"")+'" data-tip="Waiting '+o.age+' day'+(o.age===1?"":"s")+' since it was issued." data-tip-plain>'+ICON("schedule")+o.age+'d<span class="sr-only"> waiting</span></span>';}
+  function purTable(w,full){
+    var rows=purFiltered(w).slice();
+    var sk=(w.psort||"age-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    function val(o){if(key==="num")return o.num;if(key==="vendor")return o.vendor;if(key==="amount")return o.amount;return o.age;}
+    rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="num"||key==="vendor")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pur-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+    var numLbl=purColLabel(w);
+    var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Outstanding")+'</span><span class="pur-c-act" aria-hidden="true"></span></div>';
+    var body=rows.map(function(o){
+      var edit='<button class="pur-edit" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Open purchase order '+o.num+'" data-tip="Open the full purchase order record" data-tip-plain>'+ICON("edit")+'</button>';
+      var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, outstanding '+money(o.amount)+'.</span>';
+      return '<div class="wt-row"><span class="pur-c-num" data-tip="'+numLbl+' '+o.num+'" data-tip-plain>'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span><span class="pur-c-act">'+edit+'</span></div>';
+    }).join("");
+    var tot=purSum(rows),n=rows.length;
+    var totLbl=(w.pstatus||"mine")==="approved"?(n+" order"+(n===1?"":"s")):(n+" request"+(n===1?"":"s"));
+    return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+totLbl+'</span><span>'+money(tot)+'</span></div>';
+  }
+  function purCaughtUp(w){var s=w.pstatus||"mine",pos=(s==="mine"||s==="next");
+    var phrase=s==="approved"?"No approved orders match this filter yet.":s==="unapproved"?"No unapproved requests match this filter.":"Nothing is awaiting your approval right now.";
+    return '<div class="state" data-kind="empty"'+(pos?' style="color:var(--txt-pos)"':'')+'>'+ICON(pos?"task_alt":"inbox")+'<div class="state-title">'+(pos?"You are all caught up":"Nothing to show")+'</div><div class="state-sub">'+phrase+'</div></div>';}
+  function purQueueView(w){return purFiltered(w).length?purTable(w,false):purCaughtUp(w);}
+  function purEnc(w){
+    var data=purEncData(w);
+    if(!data.length)return '<div class="bgt-notrend">'+ICON("insights")+'<div class="bgt-notrend-t">No commitments</div><div class="bgt-notrend-s">There are no outstanding purchase orders, so nothing is committed against the budget right now.</div></div>';
+    var max=1;data.forEach(function(r){max=Math.max(max,r.amt);});max=max*1.15;
+    var many=data.length>13,cols="",xl="";
+    data.forEach(function(r){var h=Math.max(1,Math.round(r.amt/max*100));
+      var srtxt='Accounting period '+r.per+', '+money(r.amt)+' committed, not yet paid.';
+      var dpop=[r.per,r.amt].join("|").replace(/"/g,"&quot;");
+      cols+='<div class="pur-col" role="group" aria-label="'+srtxt+'" data-purpop="'+dpop+'"><div class="pur-barwrap"><div class="pur-bar" style="height:'+h+'%"></div></div><span class="sr-only">'+srtxt+'</span></div>';
+      xl+='<div class="pur-xcol"><span class="pur-xlbl">'+r.per+'</span></div>';
+    });
+    var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
+    var tot=purEncTotal(w);
+    var note='<div class="pur-enc-note">'+ICON("info")+'Committed, not yet paid. Shows every outstanding purchase order, so it is not narrowed by the status or approval path filter above.</div>';
+    return '<div class="pur-chart-wrap"><div class="pur-enc-head"><span class="pur-enc-title">Encumbrances</span><span class="pur-enc-tot">'+money(tot)+' committed</span></div>'+
+      '<div class="pur-plotrow"><div class="pur-yax">'+yl+'</div><div class="pur-canvas"><div class="pur-gl"></div><div class="pur-cols'+(many?" many":"")+'">'+cols+'</div></div></div>'+
+      '<div class="pur-xaxrow"><div class="pur-yaxsp"></div><div class="pur-xcols'+(many?" many":"")+'">'+xl+'</div></div>'+note+'</div>';
+  }
+  function purEncTable(w){
+    var data=purEncData(w),tot=purEncTotal(w);
+    var head='<div class="wt-row wt-head"><span class="lr-main">Accounting period</span><span class="wt-c2">Committed</span></div>';
+    var body=data.map(function(r){return '<div class="wt-row"><span class="lr-main">'+r.per+'</span><span class="wt-c2">'+money(r.amt)+'</span></div>';}).join("");
+    if(!data.length)body='<div class="wt-row"><span class="lr-main" style="color:var(--txt-subtle)">No outstanding commitments</span><span class="wt-c2">'+money(0)+'</span></div>';
+    return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total committed, not yet paid</span><span>'+money(tot)+'</span></div>';
+  }
+  function purEncView(w){var v=w.encview||"chart";
+    var toggle='<div class="pur-subbar"><div class="vtoggle" role="group" aria-label="Encumbrance display">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div></div>';
+    return toggle+(v==="table"?purEncTable(w):purEnc(w));}
+  function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(w);
+    return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Encumbrances</div>'+purEnc(w)+'</div></div>';}
+  function purGlance(w){var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered),enc=purEncTotal(w);
+    return '<div class="kpi-row"><div class="kpi-num">'+
+      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+purStatusLabel(w.pstatus||"mine")+'</span></span>'+
+      '<div class="metric-value">'+count+'</div>'+
+      '<div class="gl-sub"><span class="bank-caption">'+purCountLabel(w)+' · '+money(out)+' outstanding</span></div>'+
+      '<div class="gl-sub"><span class="bank-caption">'+money(enc)+' committed, not yet paid</span></div>'+
+      '</div></div>';}
+  function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
+  function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
+  function purContent(w){
+    if(w.state==="empty")return purEmptyState(w);
+    if(w.size==="kpi")return purGlance(w);
+    if(w.purloading)return purHeaderBlock(w,"loading")+purSkeleton();
+    var mh=purHeaderBlock(w);
+    if(w.size==="xwide")return mh+purFull(w);
+    return mh+((w.purview||"queue")==="enc"?purEncView(w):purQueueView(w));
+  }
+  function purPopContent(){
+    if(pop.type==="pur-status"){var wps=find(pop.id),cs=wps.pstatus||"mine";
+      return '<div class="cap">Approval status</div>'+PUR_STATUS.map(function(o){var on=cs===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="set-pur-status" data-id="'+wps.id+'" data-s="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+'</span></button>';}).join("");}
+    if(pop.type==="pur-path"){var wpp=find(pop.id),q=(purQuery||"").toLowerCase(),curp=purPathCur(wpp),paths=purPathsForStatus(wpp);
+      var list=paths.filter(function(p){return p.toLowerCase().indexOf(q)>-1;});
+      var allSel=(curp==="All approval paths");
+      var out='<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="purpathq" placeholder="Search approval paths" value="'+(purQuery||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="menu-scroll" role="listbox">';
+      if(!q||"all approval paths".indexOf(q)>-1)out+='<button class="mi'+(allSel?" check":"")+'" role="option" aria-selected="'+allSel+'" data-action="set-pur-path" data-p="all" data-id="'+wpp.id+'">'+(allSel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All approval paths</span></button>';
+      if(list.length)out+='<div class="cap">Approval paths</div>'+list.map(function(p){var sel=curp===p,esc=p.replace(/"/g,"&quot;");return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="set-pur-path" data-p="'+esc+'" data-id="'+wpp.id+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">account_tree</span><span class="mi-nm">'+p+'</span></button>';}).join("");
+      if(!list.length&&(q&&"all approval paths".indexOf(q)<0))out+='<div class="mi-note" style="color:var(--txt-subtle)">No approval paths match "'+(purQuery||"").replace(/"/g,"&quot;")+'"</div>';
+      return out+'</div>';}
+    return "";
+  }
+  function purHandleClick(a,t,id){
+    if(a==="pur-status"){purQuery="";pop=(pop&&pop.type==="pur-status"&&pop.id===id)?null:{type:"pur-status",id:id};render();return true;}
+    if(a==="set-pur-status"){var wss=find(id);if(wss){var ns=t.getAttribute("data-s");if(wss.pstatus!==ns){wss.pstatus=ns;wss.ppath=null;purLoad(wss);}}pop=null;render();return true;}
+    if(a==="pur-path"){purQuery="";pop=(pop&&pop.type==="pur-path"&&pop.id===id)?null:{type:"pur-path",id:id};render();return true;}
+    if(a==="set-pur-path"){var wsp=find(id);if(wsp){var np=t.getAttribute("data-p");var nv=(np==="all"||!np)?null:np;if(wsp.ppath!==nv){wsp.ppath=nv;purLoad(wsp);}}pop=null;render();return true;}
+    if(a==="pur-view"){var wv=find(id);if(wv)wv.purview=t.getAttribute("data-v");pop=null;render();return true;}
+    if(a==="pur-encview"){var we=find(id);if(we)we.encview=t.getAttribute("data-v");pop=null;render();return true;}
+    if(a==="pur-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.psort||"age-desc").split("-");wso.psort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="num"||k==="vendor")?"asc":"desc"));}render();return true;}
+    if(a==="pur-open"){var wpo=find(id),oid=t.getAttribute("data-oid"),o=null,list=purOrders(wpo);for(var i=0;i<list.length;i++)if(list[i].id===oid)o=list[i];
+      if(o)showModal("Opens purchase order "+o.num,"This takes you out of the dashboard to the full purchase order record for <b>"+o.vendor+"</b> ("+o.num+"), where you can review and act on it across its tabs: <b>Detail</b>, <b>Approvals</b>, <b>Attachments</b>, <b>Note</b> and <b>Payment Approval</b>. Use the browser back button to return to the dashboard.");return true;}
+    return false;
+  }
+  function purHandleInput(e){
+    if(e.target.id==="purpathq"){purQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var pi=document.getElementById("purpathq");if(pi){pi.focus();try{pi.setSelectionRange(pos,pos);}catch(_p){}}return true;}
+    return false;
+  }
+  function purHideBpop(){if(purPopEl){purPopEl.remove();purPopEl=null;}}
+  function purShowBpop(col,mx,my){
+    var raw=col.getAttribute("data-purpop");if(!raw)return;var p=raw.split("|");var per=p[0],amt=+p[1];
+    purHideBpop();
+    purPopEl=document.createElement("div");purPopEl.className="bgt-pop pur-pop";
+    purPopEl.innerHTML='<div class="bgt-pop-h">'+per+'</div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600)"></span><span class="bgt-pop-lbl">Committed</span><span class="bgt-pop-v">'+money(amt)+'</span></div>'+
+      '<div class="bgt-pop-note">Encumbrance for this accounting period: committed by an outstanding purchase order, not yet paid.</div>';
+    document.body.appendChild(purPopEl);
+    var bw=purPopEl.offsetWidth,bh=purPopEl.offsetHeight,M=10;
+    var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
+    var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
+    purPopEl.style.left=left+"px";purPopEl.style.top=top+"px";
+  }
+  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".pur-col[data-purpop]");if(!col){if(purPopEl)purHideBpop();return;}purShowBpop(col,e.clientX,e.clientY);});
+
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
     if(w.kind==="payroll")return prContent(w); // prContent renders its own toolbar even when state==="empty" — the toolbar never disappears just because the chosen period has no data
     if(w.kind==="tasks")return mctContent(w);
+    if(w.kind==="purchasing")return purContent(w);
     if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.showZero?'<div class="dep-total" style="margin-top:4px"><span>Total</span><span>'+money(0)+'</span></div>':'')+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
     if(w.kind==="mystatus")return mysContent(w);
     if(w.kind==="bank")return bankContent(w);
@@ -2105,9 +2341,10 @@ function mysPopContent(){
       return '<div class="cap">Filter standard tasks by application</div>'+opts.map(function(o){var on=cf===o.id;
         return '<button class="mi'+(on?" check":"")+'" data-action="mct-set-filter" data-id="'+wf.id+'" data-f="'+o.id+'" role="option" aria-selected="'+on+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+(o.id==="all"?"":mctBadge(o.id)+" ")+o.name+'</button>';}).join("");}
 
+    if(pop.type==="pur-status"||pop.type==="pur-path")return purPopContent();
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
@@ -2120,7 +2357,7 @@ function mysPopContent(){
   document.addEventListener("focus",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input"))prFocusId=e.target.id;},true);
   document.addEventListener("focusout",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")&&e.target.id===prFocusId)prFocusId=null;},true);
   document.addEventListener("change",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")){var wpc=find(e.target.getAttribute("data-id")),whichc=e.target.getAttribute("data-which");if(wpc&&e.target.value){wpc[whichc]=e.target.value;wpc.range="CUSTOM";render();}}});
-  document.addEventListener("input",function(e){if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
+  document.addEventListener("input",function(e){if(purHandleInput(e))return;if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
   var modal=null,modalMounted=false;
   function showModal(t,b){modal={t:t,b:b};modalMounted=false;pop=null;render();}
   /* Special-report picker dialog on a scrim. Exactly two dependent dropdowns: one picks the Report name, one picks the Report line. Changing the report resets the line back to "Select a line". Apply stays disabled until BOTH are chosen. Cancel / close / backdrop all dismiss. The background is frozen while the dialog is open (see renderModal). Rebuilds fully on each interaction so the open/selected state is always correct, and only ONE menu is ever open at a time so nothing overlaps or glitches. */
@@ -2181,6 +2418,7 @@ function mysPopContent(){
     if(a==="noop"){pop=null;render();return;}
     if(a==="stop"){return;}
     if(a==="modal-close"){modal=null;pop=null;render();return;}
+    if(purHandleClick(a,t,id))return;
     if(a==="bank-acct"){bankQuery="";pop=(pop&&pop.type==="bank-acct"&&pop.id===id)?null:{type:"bank-acct",id:id};render();return;}
     if(a==="bank-set-acct"){var wba=find(id);if(wba){var na=t.getAttribute("data-acct");var nv=(na==="all"||!na)?null:na;if(wba.bkacct!==nv){wba.bkacct=nv;bankLoad(wba);}}pop=null;render();return;}
     if(a==="bank-view"){var wbv=find(id);if(wbv)wbv.bkview=t.getAttribute("data-v");pop=null;render();return;}
