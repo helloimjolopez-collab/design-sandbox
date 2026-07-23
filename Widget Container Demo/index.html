@@ -1054,6 +1054,27 @@
   .ap-tl-note{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--txt-subtle);padding:10px 16px 2px;line-height:1.45;}
   .ap-tl-note .material-symbols-rounded{font-size:15px;flex:0 0 auto;margin-top:1px;}
   .ap-pop-over{color:var(--red-100)!important;}
+  /* ===== Insurance Billing Plans (ins) ===== */
+  .ins-numwrap{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .ins-ctx{font-size:11px;color:var(--txt-subtle);line-height:1.4;max-width:58ch;}
+  .ins-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding:0 2px 8px;overflow:auto;}
+  .ins-explore{flex:1;min-height:0;display:flex;gap:12px;padding:2px 6px 8px;}
+  .ins-explore-col{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
+  .ins-plan{display:flex;flex-direction:column;gap:1px;}
+  .ins-plan-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ins-plan-ty{font-size:10.5px;color:var(--txt-subtle);}
+  .wt-row.ins-zero .lr-main .ins-plan-nm{color:var(--txt-secondary);}
+  .wt-row.ins-zero .wt-c2{color:var(--txt-subtle);font-weight:600;}
+  .ins-zero-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--txt-subtle);background:var(--wn-200);border-radius:999px;padding:1px 6px;margin-left:6px;}
+  .ins-dist{flex:1;min-height:0;}
+  .ins-pie-title{font-size:12px;font-weight:600;color:var(--txt-secondary);padding:2px 4px 8px;}
+  .ins-pie-empty{flex:1;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;color:var(--txt-subtle);padding:16px;}
+  .ins-pie-empty .material-symbols-rounded{font-size:30px;opacity:.7;}
+  .ins-pie-empty-t{font-size:13px;font-weight:600;color:var(--txt-secondary);}
+  .ins-pie-empty-s{font-size:11.5px;line-height:1.45;max-width:34ch;}
+  .ins-caption{font-size:11px;color:var(--txt-subtle);}
+  .ins-skel{flex:1;display:flex;flex-direction:column;gap:12px;padding:16px;}
+  .ins-sk-row{display:flex;align-items:center;justify-content:space-between;gap:16px;}
 </style>
 </head>
 <body>
@@ -1215,6 +1236,10 @@
       {id:"ap2",title:"Accounts Payable By Due Date (Total view)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apDue:"total",apview:"table",apsort:"due-asc",updated:"just now"},
       {id:"ap3",title:"Accounts Payable By Due Date (single due date)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",apview:"timeline",apsort:"amt-desc",updated:"just now"},
       {id:"ap4",title:"Accounts Payable By Due Date (nothing outstanding)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",updated:"just now"},
+      {id:"ins",title:"Insurance Billing Plans",kind:"insurance",size:"wide",tiers:["kpi","wide","xwide"],insType:"All",insSort:"count-desc"},
+      {id:"ins2",title:"Insurance Billing Plans (no plans set up)",kind:"insurance",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",insType:"All"},
+      {id:"ins3",title:"Insurance Billing Plans (Medical only)",kind:"insurance",size:"xwide",tiers:["kpi","wide","xwide"],insType:"Medical",insSort:"count-desc"},
+      {id:"ins4",title:"Insurance Billing Plans (a type with no enrolments)",kind:"insurance",size:"wide",tiers:["kpi","wide","xwide"],insType:"Property",insSort:"count-desc"},
     ]},
     {id:"sys",name:"System dashboard",custom:false,widgets:[
       {id:"s1",title:"Deposits on Hand",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q"}
@@ -2944,6 +2969,110 @@ function arShowPop(row,mx,my){
   document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".ap-col[data-appop]");if(!col){if(apPopEl)apHideBpop();return;}apShowBpop(col,e.clientX,e.clientY);});
 
 
+  /* ===== Insurance Billing Plans (ins, kind:"insurance") ===== */
+  var INS_TYPES=["All","Dental","Medical","Property","Vision"];
+  var INS_PLANS=[
+    {plan:"Medical Base",   type:"Medical",  enroll:128},
+    {plan:"Medical Buy Up", type:"Medical",  enroll:54},
+    {plan:"Delta Dental",   type:"Dental",   enroll:96},
+    {plan:"Vision",         type:"Vision",   enroll:71},
+    {plan:"Building",       type:"Property", enroll:0}
+  ];
+  var INS_PLANS_EMPTY=[];
+  function insEsc(s){return String(s).replace(/"/g,"&quot;");}
+  function insNum(n){return Number(n).toLocaleString();}
+  function insDataset(w){return (w.dataset==="none")?INS_PLANS_EMPTY:INS_PLANS;}
+  function insFiltered(w){var ty=w.insType||"All";return insDataset(w).filter(function(p){return ty==="All"||p.type===ty;});}
+  function insTotal(w){return insFiltered(w).reduce(function(s,p){return s+p.enroll;},0);}
+  function insPlanCount(w){return insFiltered(w).length;}
+  function insZeroCount(w){return insFiltered(w).filter(function(p){return p.enroll===0;}).length;}
+  function insTypeLabel(w){var ty=w.insType||"All";return ty==="All"?"All Types":ty;}
+  function insTypeChip(w){var spin=w.insloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip ins-chip" data-action="ins-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Insurance type, tap to change the view">'+spin+'<span class="fc-label">'+insTypeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function insRows(w){
+    var rows=insFiltered(w).slice();
+    var sk=(w.insSort||"count-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    rows.sort(function(a,b){
+      if(key==="plan")return dir*a.plan.localeCompare(b.plan);
+      if((a.enroll===0)!==(b.enroll===0))return a.enroll===0?1:-1;
+      return dir*(a.enroll-b.enroll);
+    });
+    return rows;
+  }
+  function insTable(w){
+    var rows=insRows(w),tot=insTotal(w);
+    var sk=(w.insSort||"count-desc").split("-"),key=sk[0],dir=sk[1];
+    function sb(k,label){var on=key===k,ic=on?(dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ins-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("plan","Insurance Plan")+'</span><span class="wt-c2">'+sb("count","Number Enrolled")+'</span></div>';
+    var body=rows.map(function(p){var zero=p.enroll===0;
+      var tip=p.plan+", "+p.type+". "+(zero?"No one is enrolled in this plan yet.":insNum(p.enroll)+" enrolled, counting employees and their dependents.");
+      return '<div class="wt-row ins-row'+(zero?" ins-zero":"")+'" data-tip="'+insEsc(tip)+'" data-tip-plain>'+
+        '<span class="lr-main ins-plan"><span class="ins-plan-nm">'+p.plan+'</span><span class="ins-plan-ty">'+p.type+'</span></span>'+
+        '<span class="wt-c2">'+insNum(p.enroll)+(zero?' <span class="ins-zero-tag">none</span>':'')+'</span></div>';
+    }).join("");
+    if(!rows.length)body='<div class="wt-row ins-row"><span class="lr-main" style="color:var(--txt-subtle)">No plans of this type.</span></div>';
+    return '<div class="scroll ins-tscroll">'+head+body+'</div><div class="dep-total ins-total"><span>Total enrolled</span><span>'+insNum(tot)+'</span></div>';
+  }
+  function insPie(w){
+    var funded=insFiltered(w).filter(function(p){return p.enroll>0;}).slice().sort(function(a,b){return b.enroll-a.enroll;});
+    var zero=insZeroCount(w);
+    var DS={wide:200,xwide:240}[w.size]||190;
+    if(!funded.length){
+      var none='<div class="ins-pie-empty"><span class="material-symbols-rounded">donut_large</span><div class="ins-pie-empty-t">Nothing to chart yet</div><div class="ins-pie-empty-s">No plan in this view has any enrolments, so the chart is empty. The plans still appear in the table on the left.</div></div>';
+      return '<div class="dist-wrap ins-dist"><div class="ins-pie-title">Enrolment by plan</div>'+none+'</div>';
+    }
+    var tot=funded.reduce(function(s,p){return s+p.enroll;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(funded.length);
+    funded.forEach(function(p,i){var frac=tot?p.enroll/tot:0,len=frac*C,c=ramp[i];
+      arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';
+      off+=len;
+      legend+='<div class="leg" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+p.plan+'</span><span class="lg-meta">'+insNum(p.enroll)+' · '+Math.round(frac*100)+'%</span></div>';
+    });
+    var note=zero?'<div class="bank-pie-note">'+ICON("info")+zero+' plan'+(zero>1?"s":"")+' with zero enrolments '+(zero>1?"are":"is")+' listed in the table but not shown in the chart.</div>':"";
+    return '<div class="dist-wrap ins-dist"><div class="ins-pie-title">Enrolment by plan</div><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+insNum(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">enrolled</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">Plans</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div>'+note+'</div>';
+  }
+  function insHeaderBlock(w,mode){
+    var loading=(mode==="loading"),numInner;
+    if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:74px;height:20px;border-radius:999px"></span></div>';}
+    else{var tot=insTotal(w),n=insPlanCount(w);
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+insNum(tot)+'</span><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span></div>';}
+    var scope=(w.insType&&w.insType!=="All")?(insTypeLabel(w)+" plans. "):"All insurance types. ";
+    var ctx=scope+'Counts include employees and their dependents, not employees only.';
+    return '<div class="dep-hd ins-hd">'+
+      '<div class="dep-hd-top">'+insTypeChip(w)+'<div class="dep-hd-toggle"></div></div>'+
+      '<div class="dep-hd-num"><div class="ins-numwrap">'+numInner+'<div class="ins-ctx">'+ctx+'</div></div></div>'+
+    '</div>';
+  }
+  function insGlance(w){var tot=insTotal(w),n=insPlanCount(w);
+    return '<div class="kpi-row"><div class="kpi-num">'+
+      '<div class="dep-hd-kpigrp"><span class="metric-value">'+insNum(tot)+'</span><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span></div>'+
+      '<div class="gl-sub"><span class="ins-caption">enrolled across '+insTypeLabel(w).toLowerCase()+', employees and dependents</span></div>'+
+    '</div></div>';
+  }
+  function insEmpty(w){
+    if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No plans</span></div><div class="gl-sub"><span class="ins-caption">no insurance plans set up yet</span></div></div></div>';
+    return '<div class="state ins-empty" data-kind="empty">'+ICON("shield_person")+'<div class="state-title">No insurance plans yet</div><div class="state-sub">No insurance plans have been set up for this organisation. Once plans exist, enrolment counts (employees and dependents) will appear here.</div></div>';
+  }
+  function insSkeleton(){var rows="";[92,70,52,34].forEach(function(wd){rows+='<div class="ins-sk-row"><span class="sk" style="width:130px;height:12px;border-radius:4px"></span><span class="sk" style="width:'+wd+'px;height:12px;border-radius:4px"></span></div>';});return '<div class="ins-skel">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+  function insContent(w){
+    if(w.state==="empty")return insEmpty(w);
+    if(w.size==="kpi")return insGlance(w);
+    if(w.insloading)return insHeaderBlock(w,"loading")+insSkeleton();
+    var mh=insHeaderBlock(w);
+    if(w.size==="xwide")return mh+'<div class="ins-explore"><div class="ins-explore-col ins-tablecol">'+insTable(w)+'</div><div class="ins-explore-col ins-chartcol">'+insPie(w)+'</div></div>';
+    return mh+'<div class="ins-body">'+insTable(w)+insPie(w)+'</div>';
+  }
+  function insLoad(w){w.insloading=true;clearTimeout(timers["ins-"+w.id]);timers["ins-"+w.id]=setTimeout(function(){w.insloading=false;render();},800);}
+  function insHandleClick(a,id,t){
+    if(a==="ins-type"){pop=(pop&&pop.type==="ins-type"&&pop.id===id)?null:{type:"ins-type",id:id};render();return true;}
+    if(a==="ins-set-type"){var wt=find(id);if(wt){var nv=t.getAttribute("data-v");if((wt.insType||"All")!==nv){wt.insType=nv;insLoad(wt);}}pop=null;render();return true;}
+    if(a==="ins-sort"){var ws=find(id);if(ws){var k=t.getAttribute("data-k"),parts=(ws.insSort||"count-desc").split("-");ws.insSort=(parts[0]===k)?(k+"-"+(parts[1]==="desc"?"asc":"desc")):(k+"-"+(k==="plan"?"asc":"desc"));}pop=null;render();return true;}
+    return false;
+  }
+  function insPopContent(){
+    if(pop.type==="ins-type"){var w=find(pop.id),curT=w.insType||"All";return '<div class="cap">Insurance type</div>'+INS_TYPES.map(function(o){var on=curT===o;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="ins-set-type" data-id="'+w.id+'" data-v="'+insEsc(o)+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+(o==="All"?"All Types":o)+'</button>';}).join("");}
+    return "";
+  }
+
+
   function contentHTML(w){
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
@@ -2953,6 +3082,7 @@ function arShowPop(row,mx,my){
     if(w.kind==="ar")return arContent(w);
     if(w.kind==="pto")return ptoContent(w);
     if(w.kind==="payables")return apContent(w);
+    if(w.kind==="insurance")return insContent(w);
     if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.showZero?'<div class="dep-total" style="margin-top:4px"><span>Total</span><span>'+money(0)+'</span></div>':'')+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
     if(w.kind==="mystatus")return mysContent(w);
     if(w.kind==="bank")return bankContent(w);
@@ -3071,9 +3201,10 @@ function arShowPop(row,mx,my){
       if(matches.length)out+='<div class="cap">Due date (earliest first)</div>'+matches.map(function(d){var sel=cur===d.iso;return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="ap-set-due" data-due="'+d.iso+'" data-id="'+wap2.id+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm-stack"><span class="mi-nm">'+apFmtLong(d.iso)+'</span><span class="mi-acctno'+(d.overdue?" ap-over":"")+'">'+apDaysLabel(d.iso)+' · '+d.count+' invoice'+(d.count===1?"":"s")+'</span></span>'+(d.overdue?'<span class="bank-tag-over">Overdue</span>':'')+'<span class="ap-mi-amt">'+apMoney(d.total)+'</span></button>';}).join("");
       if(showSearch&&!matches.length&&q&&"total all due dates".indexOf(q)<0)out+='<div class="mi-note" style="color:var(--txt-subtle)">No due dates match "'+(apDueQuery||"").replace(/"/g,"&quot;")+'"</div>';
       return out+'</div>';}
+    if(pop.type==="ins-type")return insPopContent();
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="ins-type")return '[data-action="ins-type"][data-id="'+pop.id+'"]';if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
@@ -3148,6 +3279,7 @@ function arShowPop(row,mx,my){
     if(a==="noop"){pop=null;render();return;}
     if(a==="stop"){return;}
     if(a==="modal-close"){modal=null;pop=null;render();return;}
+    if(a&&a.indexOf("ins-")===0&&insHandleClick(a,id,t))return;
     if(a==="ap-due"){apDueQuery="";pop=(pop&&pop.type==="ap-due"&&pop.id===id)?null:{type:"ap-due",id:id};render();return;}
     if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due");var cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return;}
     if(a==="ap-view"){var wav=find(id);if(wav)wav.apview=t.getAttribute("data-v");pop=null;render();return;}
