@@ -3069,15 +3069,219 @@ function CtxOmnibox() {
     </CtxFrame>
   );
 }
-function CollabContexts() {
+/* One mark, several renditions. `variant` picks the treatment; `live` is the
+   animated gradient, the rest are static and stay legible at small sizes.
+   `weight` is the on-screen stroke thickness in px, held roughly constant. */
+function CollabMark({ variant = "live", size = 24, color, weight = 1.9 }) {
+  if (variant === "live") return <SpotMark size={size} />;
+  const S = weight * 210 / size;
+  const P = "var(--semantic-color-light-mode-fill-action-primary-base)";
+  const strokes = (c) => (
+    <React.Fragment>
+      <path d={HALO_OUTER} stroke={c} strokeWidth={S} fill="none" />
+      <path d={HALO_INNER} stroke={c} strokeWidth={S} fill="none" />
+    </React.Fragment>
+  );
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, alignItems: "start" }}>
-      <CtxSidePanel />
-      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-        <CtxInsight />
-        <CtxInline />
+    <svg viewBox="0 0 210 210" width={size} height={size} fill="none" aria-hidden="true" style={{ display: "block" }}>
+      {variant === "stroke" && strokes(color || P)}
+      {variant === "white" && strokes("#FFFFFF")}
+      {variant === "twotone" && (
+        <React.Fragment>
+          <path d={HALO_OUTER} stroke="#41377D" strokeWidth={S} fill="none" />
+          <path d={HALO_INNER} stroke="#9691F5" strokeWidth={S} fill="none" />
+        </React.Fragment>
+      )}
+      {variant === "solid" && (
+        <React.Fragment>
+          <path d={HALO_OUTER} fill="#5B51A6" />
+          <path d={HALO_INNER} fill="#9691F5" />
+          <path d={HALO_CENTER} fill="#FFFFFF" />
+        </React.Fragment>
+      )}
+    </svg>
+  );
+}
+/* A brand tile with the white mark, for module/app iconography. */
+function CollabTile({ size = 42, radius = 13, mark = 25, dark }) {
+  return (
+    <span style={{ width: size, height: size, borderRadius: radius, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: dark ? "#2A2633" : "var(--semantic-color-light-mode-fill-action-primary-base)" }}>
+      <CollabMark variant="white" size={mark} />
+    </span>
+  );
+}
+function CtxGroup({ title, hint, children }) {
+  return (
+    <div style={{ marginBottom: 30 }}>
+      <p style={{ fontSize: 11.5, fontWeight: 600, letterSpacing: "0.6px", textTransform: "uppercase", color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginBottom: hint ? 5 : 13 }}>{title}</p>
+      {hint && <p style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)", marginBottom: 14, maxWidth: 640 }}>{hint}</p>}
+      {children}
+    </div>
+  );
+}
+/* Legend: which rendition to reach for, and where. */
+function VersionLegend() {
+  const faint = "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)";
+  const rows = [
+    { m: <CollabMark variant="live" size={30} />, n: "Animated gradient", u: "Hero and persona moments: home CTA, full-screen chat, the assistant’s avatar, working states. Big enough to read the motion." },
+    { m: <CollabTile size={34} radius={10} mark={20} />, n: "White on brand", u: "Iconography on a coloured tile: module switcher, top-nav identity, app icons." },
+    { m: <CollabMark variant="solid" size={30} />, n: "Two-tone solid", u: "Medium, static placements on light surfaces, where the gradient would be fussy." },
+    { m: <CollabMark variant="twotone" size={30} />, n: "Two-tone stroke", u: "Medium, low-ink contexts and print." },
+    { m: <CollabMark variant="stroke" size={30} />, n: "Single stroke", u: "Small, dense UI: side-nav item, inline buttons, the command bar. Reads where the gradient would muddy." },
+    { m: <CollabTile size={34} radius={10} mark={20} dark />, n: "White stroke", u: "On dark or coloured fills: a primary button, midnight surfaces." },
+  ];
+  return (
+    <div className="spd-card" style={{ padding: "2px 0" }}>
+      {rows.map((r, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 15, padding: "13px 18px", borderTop: i ? faint : "none" }}>
+          <span style={{ width: 40, display: "flex", justifyContent: "center", flexShrink: 0 }}>{r.m}</span>
+          <span style={{ width: 132, flexShrink: 0, fontSize: 13, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>{r.n}</span>
+          <span style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>{r.u}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+/* Top-nav module identity (icon + name), as other modules appear. */
+function CtxTopNav() {
+  return (
+    <CtxFrame label="Top-nav identity: the active module as icon + name. A two-tone solid reads cleanly here.">
+      <div style={{ padding: "20px", background: "var(--semantic-color-light-mode-surface-sheet-base)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <LogoMark size={20} />
+          <span style={{ width: 1, height: 22, background: "var(--semantic-color-light-mode-stroke-static-neutral-light)" }} />
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
+            <CollabMark variant="solid" size={22} />
+            <span style={{ fontSize: 16, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>Collab</span>
+          </span>
+        </div>
       </div>
-      <CtxOmnibox />
+    </CtxFrame>
+  );
+}
+/* Module switcher tile, beside a neighbouring module for scale. */
+function CtxModuleTile() {
+  const tile = { width: 128, padding: "16px 15px", borderRadius: 16, background: "var(--semantic-color-light-mode-surface-widget-base)", display: "flex", flexDirection: "column", gap: 11 };
+  const name = { fontSize: 13.5, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" };
+  const sub = { fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 2 };
+  return (
+    <CtxFrame label="Module switcher: a white mark on a brand tile, sitting beside the other modules.">
+      <div style={{ padding: 22, display: "flex", justifyContent: "center", gap: 14, background: "var(--semantic-color-light-mode-surface-sheet-base)" }}>
+        <div style={{ ...tile, border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)", opacity: 0.55 }}>
+          <span style={{ width: 42, height: 42, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", background: "color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-jade-base) 16%, #FFFFFF)", color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)" }}><Icon name="volunteer_activism" filled size={24} /></span>
+          <div><p style={name}>Giving</p><p style={sub}>Donations</p></div>
+        </div>
+        <div style={{ ...tile, border: "0.5px solid color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 32%, transparent)", boxShadow: "var(--spd-elevation-widget)" }}>
+          <CollabTile size={42} mark={25} />
+          <div><p style={name}>Collab</p><p style={sub}>AI assistant</p></div>
+        </div>
+      </div>
+    </CtxFrame>
+  );
+}
+/* Side-nav item — a single stroke in a dense list. */
+function CtxSideNav() {
+  const Row = ({ icon, label, active, mark }) => {
+    const ink = active ? "var(--semantic-color-light-mode-fill-action-primary-base)" : "var(--semantic-color-light-mode-text-static-secondary-base)";
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: 11, height: 40, padding: "0 12px", borderRadius: 11, background: active ? "color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 15%, var(--semantic-color-light-mode-surface-widget-base))" : "transparent" }}>
+        <span style={{ width: 22, display: "flex", justifyContent: "center", flexShrink: 0, color: ink }}>
+          {mark ? <CollabMark variant="stroke" size={20} color={ink} weight={2} /> : <Icon name={icon} size={20} />}
+        </span>
+        <span style={{ fontSize: 13.5, fontWeight: active ? 600 : 500, color: active ? "var(--semantic-color-light-mode-text-static-primary-base)" : "var(--semantic-color-light-mode-text-static-secondary-base)" }}>{label}</span>
+      </div>
+    );
+  };
+  return (
+    <CtxFrame label="Side-nav item: a single stroke that reads in a dense list and can inherit the nav ink.">
+      <div style={{ padding: "14px 12px", display: "flex", flexDirection: "column", gap: 3 }}>
+        <Row icon="dashboard" label="Dashboard" />
+        <Row icon="group" label="People" />
+        <Row label="Collab" mark active />
+        <Row icon="summarize" label="Reports" />
+      </div>
+    </CtxFrame>
+  );
+}
+/* Full-screen chat — the assistant as a destination. */
+function CtxFullChat() {
+  const faint = "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint)";
+  return (
+    <CtxFrame tall label="Full-screen chat: the assistant as a destination, the animated mark large enough to breathe.">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 16px", borderBottom: faint }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}><CollabMark variant="live" size={22} /><span style={{ fontWeight: 600, fontSize: 14, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>Collab</span></span>
+        <span style={{ color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}><Icon name="close" size={18} /></span>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 15, padding: "28px 22px", background: "var(--semantic-color-light-mode-surface-sheet-base)" }}>
+        <CollabMark variant="live" size={62} />
+        <p style={{ fontSize: 19, fontWeight: 600, color: "var(--semantic-color-light-mode-text-static-primary-base)" }}>How can I help, Jo?</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", maxWidth: 340 }}>
+          <CtxPill tone="soft">Summarize last Sunday</CtxPill>
+          <CtxPill tone="soft">Draft a newsletter</CtxPill>
+          <CtxPill tone="soft">Find lapsed donors</CtxPill>
+        </div>
+      </div>
+      <div style={{ padding: "12px 14px", borderTop: faint }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, padding: "0 6px 0 12px", borderRadius: 999, background: "var(--semantic-color-light-mode-surface-widget-base)", border: "0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light)", boxShadow: "var(--spd-elevation-widget)" }}>
+          <CollabMark variant="live" size={22} />
+          <span style={{ flex: 1, fontSize: 13, color: "var(--semantic-color-light-mode-text-static-secondary-subtle)" }}>Ask Collab anything…</span>
+          <span style={{ width: 32, height: 32, borderRadius: 999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--semantic-color-light-mode-fill-action-primary-base)", color: "#FFFFFF" }}><Icon name="arrow_upward" size={17} /></span>
+        </div>
+      </div>
+    </CtxFrame>
+  );
+}
+/* Working states — thinking / writing / "getting Spired". */
+function CtxWorking() {
+  const g = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 18, alignItems: "start" };
+  return (
+    <div style={g}>
+      <CtxFrame label="Thinking: the mark animates while a typing indicator carries the wait.">
+        <div style={{ padding: "26px 22px", display: "flex", alignItems: "center", gap: 12, minHeight: 96 }}>
+          <CollabMark variant="live" size={30} />
+          <span style={{ fontSize: 14, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>Collab is thinking</span>
+          <span className="spd-typing"><i /><i /><i /></span>
+        </div>
+      </CtxFrame>
+      <CtxFrame label="Writing: streaming a draft, with the content shimmering in.">
+        <div style={{ padding: "20px 22px", minHeight: 96 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 14 }}>
+            <CollabMark variant="live" size={26} />
+            <span style={{ fontSize: 13.5, color: "var(--semantic-color-light-mode-text-static-secondary-base)" }}>Writing a welcome email…</span>
+          </div>
+          <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "92%", marginBottom: 7 }} />
+          <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "76%", marginBottom: 7 }} />
+          <div className="spd-skeleton" style={{ height: 9, borderRadius: 5, width: "54%" }} />
+        </div>
+      </CtxFrame>
+      <CtxFrame label="“Getting Spired”: the ascending loader, reused as Collab’s working state, on brand.">
+        <div style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 96 }}>
+          <SpiredLoader size={38} label="Getting Spired…" />
+        </div>
+      </CtxFrame>
+    </div>
+  );
+}
+function CollabContexts() {
+  const g3 = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 18, alignItems: "start" };
+  const g2 = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 20, alignItems: "start" };
+  return (
+    <div>
+      <CtxGroup title="Which version goes where" hint="One mark, several renditions. The animated gradient is for big, expressive moments; the strokes and solids carry the small, dense, and on-colour placements where the gradient would not read.">
+        <VersionLegend />
+      </CtxGroup>
+      <CtxGroup title="Brand & navigation">
+        <div style={g3}><CtxTopNav /><CtxModuleTile /><CtxSideNav /></div>
+      </CtxGroup>
+      <CtxGroup title="Entry points">
+        <div style={g3}><CtxInline /><CtxOmnibox /><CtxInsight /></div>
+      </CtxGroup>
+      <CtxGroup title="Conversation">
+        <div style={g2}><CtxSidePanel /><CtxFullChat /></div>
+      </CtxGroup>
+      <CtxGroup title="Working states" hint="When Collab is busy, the animated mark does the talking, with a phrase that leans into the brand.">
+        <CtxWorking />
+      </CtxGroup>
     </div>
   );
 }
