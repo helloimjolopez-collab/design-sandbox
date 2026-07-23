@@ -1775,7 +1775,7 @@ function mysPopContent(){
     return '<div class="cap">Display</div><button class="mi'+(hz?" check":"")+'" data-action="mys-hidezero" data-id="'+wo.id+'">'+ICON(hz?"check_box":"check_box_outline_blank")+'Hide zero-count rows</button><div class="sep"></div><div class="mys-asof">Counts as of '+(wo.updated||"just now")+'</div>';}
   return "";}
 
-/* ===== Bank Balances (prefix: bank) — RENDER ===== */
+/* ===== Bank Balances (prefix: bank), RENDER ===== */
   function bankAccounts(w){return BANK_ACCOUNTS;}
   function bankEnding(a){return a.a[0]+a.a[1]+a.a[2]+a.a[3]+a.a[4]+a.a[5];}
   function bankSelected(w){if(!w.bkacct)return null;var list=bankAccounts(w);for(var i=0;i<list.length;i++)if(list[i].id===w.bkacct)return list[i];return null;}
@@ -2223,8 +2223,6 @@ function mysPopContent(){
   document.addEventListener("click",function(e){var cv=e.target.closest&&e.target.closest(".tr-canvas");if(!cv||cv.getAttribute("data-multi")!=="1")return;if(lnActive==null)return;var wid=cv.getAttribute("data-id"),wc=find(wid);if(wc){wc.trIso=(wc.trIso===lnActive)?null:lnActive;hideLnTip();render();}},true);
   window.addEventListener("scroll",function(e){var t=e.target;if(t&&t.closest&&(t.closest("#overlay")||t.closest(".menu-scroll")||t.closest(".scroll")))return;hideTip();if(pop){pop=null;render();}},true);
   window.addEventListener("resize",function(){if(pop)renderOverlay();});
-  render();
-})();
   /* Bank Balances: single-account bar hover popover card */
   var bankPopEl=null;
   function bankHideBpop(){if(bankPopEl){bankPopEl.remove();bankPopEl=null;}}
@@ -2243,6 +2241,8 @@ function mysPopContent(){
     bankPopEl.style.left=left+"px";bankPopEl.style.top=top+"px";
   }
   document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".bank-col[data-bankpop]");if(!col){if(bankPopEl)bankHideBpop();return;}bankShowBpop(col,e.clientX,e.clientY);});
+  render();
+})();
 </script>
 </body>
 </html>
