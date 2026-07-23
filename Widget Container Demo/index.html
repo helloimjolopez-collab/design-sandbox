@@ -1065,7 +1065,10 @@
   /* "This period" = the latest posted period; "Last period" = the one before it. */
   function bgtSeriesFor(w,fy){if(w.acctview==="special")return (fy===BGT_CUR_FY)?bgtReportLine(w).rows:null;var t=(w.acctview==="expense")?BUDGET_EXPENSE_BY_FY:BUDGET_INCOME_BY_FY;return t[fy]||null;}
   /* Flat monthly rows across the span's years, each tagged with its year and its index within that year. "This period" collapses to just the latest posted month. */
-  function bgtSpanMonthly(w,span){var years=bgtSpanYears(w,span),out=[];years.forEach(function(fy){var s=bgtSeriesFor(w,fy)||[];s.forEach(function(r,i){out.push({m:r.period,y:fy,i:i,budget:r.budget,actual:r.actual});});});if(span==="period"){var thru=out.filter(function(r){return r.actual!=null;});out=thru.length?[thru[thru.length-1]]:out.slice(0,1);}return out;}
+  function bgtSpanMonthly(w,span){var years=bgtSpanYears(w,span),out=[];years.forEach(function(fy){var s=bgtSeriesFor(w,fy)||[];s.forEach(function(r,i){out.push({m:r.period,y:fy,i:i,budget:r.budget,actual:r.actual});});});
+    if(span==="period"){var thru=out.filter(function(r){return r.actual!=null;});out=thru.length?[thru[thru.length-1]]:out.slice(0,1);}
+    else if(span==="lastperiod"){var t2=out.filter(function(r){return r.actual!=null;});out=(t2.length>=2)?[t2[t2.length-2]]:(t2.length?[t2[t2.length-1]]:out.slice(0,1));}
+    return out;}
   /* Aggregate the monthly rows to the chosen interval. Month/Period = one bar each; Quarter = groups of three within a year; Year = one bar per year. Labels gain a ’YY suffix only when the span crosses years. */
   function bgtAgg(rows,interval,multiY){
     function suf(y){return multiY?(" ’"+y.slice(2)):"";}
