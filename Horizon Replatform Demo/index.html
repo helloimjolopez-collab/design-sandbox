@@ -250,7 +250,7 @@ input,select,textarea{font-family:inherit}
 table{width:100%;border-collapse:collapse;min-width:860px}
 thead th{padding:10px 14px;text-align:left;font-size:11.5px;font-weight:500;color:#928B92;text-transform:none;letter-spacing:0;border-bottom:0.5px solid rgba(58,50,62,.06);background:#fff;white-space:nowrap}
 .th-check{width:38px}.th-av{width:42px}.th-name{min-width:170px;position:sticky;left:0;background:#fff;z-index:3}
-.th-pos{min-width:120px}.th-type{min-width:120px}.th-date{min-width:110px}.th-status{min-width:190px}.th-act{width:120px;text-align:right}
+.th-type{min-width:120px}.th-date{min-width:110px}.th-status{min-width:190px}.th-act{width:120px;text-align:right}
 tbody tr{border-bottom:0.5px solid rgba(58,50,62,.05);cursor:pointer;transition:background 80ms}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:#f7f4f4}
@@ -4016,7 +4016,6 @@ function renderWzStep1(){
       <div style="flex:1;min-width:0">
         <div class="apname">${esc(p.name)}</div>
         <div class="apemail">${esc(p.email)}</div>
-        ${(p.role||p.dept)?`<div class="tag-row" style="margin-top:5px">${[p.role,p.dept].filter(Boolean).map(v=>`<span class="tag" style="font-size:11px;padding:2px 8px">${esc(v)}</span>`).join('')}</div>`:''}
       </div>
       <button class="ap-rm" onclick="removeWzPerson('${esc(p.email)}')">×</button>
     </div>`).join('');
@@ -4329,7 +4328,6 @@ function bindWzStep(s){
             <div style="font-size:13px;font-weight:500;color:var(--ink)">${esc(p.name)}</div>
             <div style="font-size:13px;color:var(--fg2)">${esc(p.email)}</div>
           </div>
-          <div style="font-size:13px;color:var(--fg3);flex-shrink:0">${esc(p.position)}</div>
         </div>`).join('');
       const noMatch = !matches.length && q.length > 1 ?
         `<div style="padding:7px 11px;font-size:13px;color:var(--fg2)">No match — <span style="color:var(--brand);cursor:pointer;text-decoration:underline" onclick="STATE.wzShowNewPerson=true;STATE.wzNewPerson={fn:'',ln:'',email:'',role:'',dept:''};renderWizard()">add as a new person</span></div>` : '';
