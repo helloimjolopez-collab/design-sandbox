@@ -2863,43 +2863,16 @@ function renderCurrentCase(person, c){
       </div>
     </div>`).join('');
 
-  // Consent form block
-  let consentHtml = '';
-  if(c.consentForm){
-    const mm = c.consentForm.mismatch;
-    consentHtml = `<div style="margin-top:10px;padding:10px 12px;background:${mm?'var(--fill-static-danger-subtle)':'var(--fill-static-neutral-subtle)'};border-radius:var(--r8);${mm?'border:1px solid var(--stroke-static-negative-base)':'border:1px solid var(--stroke-static-neutral-subtle)'}">
-      <div style="font-size:12px;font-weight:700;color:${mm?'var(--red)':'var(--fg2)'};margin-bottom:2px">Consent form${mm?' — name mismatch':' received'}</div>
-      <div style="font-size:12px;color:var(--fg2)">Submitted ${esc(c.consentForm.submittedDate)} · Name on form: <strong>${esc(c.consentForm.nameOnForm)}</strong></div>
-      ${mm?`<div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-xs btn-secondary" onclick="toast('Mismatch acknowledged — proceeding')">Acknowledge &amp; proceed</button>
-        <button class="btn btn-xs btn-ghost" onclick="toast('Correction request sent to applicant')">Request correction</button>
-      </div>`:''}
-    </div>`;
-  }
-
-  // Report block
-  let reportHtml = '';
-  if(c.report){
-    reportHtml = `<div style="margin-top:10px;padding:10px 12px;background:var(--fill-static-neutral-subtle);border:1px solid var(--stroke-static-neutral-subtle);border-radius:var(--r8);display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <div>
-        <div style="font-size:13px;font-weight:600;color:var(--ink)">Report received ${esc(c.report.receivedDate)}</div>
-        <div style="font-size:12px;color:var(--fg2);margin-top:1px">${esc(c.report.refId)} · ${esc(c.report.hits)}</div>
-      </div>
-      <button class="btn btn-xs btn-secondary" data-open-report="${c.id}">View report</button>
-    </div>`;
-  }
-
-  // Assessment block
+  // Assessment block — shown only after report received; just outcome text, no box
   let assessHtml = '';
   if(c.assessment){
     const outColor = c.assessment.outcome==='Complete: Cleared'||c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Complete: Escalated'||c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)';
-    assessHtml = `<div class="assess-row" style="margin-top:10px">
-      <div style="flex:1">
+    assessHtml = `<div style="margin-top:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+      <div>
         <div style="font-size:13px;font-weight:600;color:${outColor}">${esc(c.assessment.outcome)}</div>
         ${c.assessment.notes?`<div style="font-size:12px;color:var(--fg2);margin-top:2px;line-height:1.4">"${esc(c.assessment.notes)}"</div>`:''}
-        <div class="assess-actor">By ${esc(c.assessment.author)} · ${esc(c.assessment.date)}</div>
+        <div style="font-size:11px;color:var(--fg4);margin-top:3px">By ${esc(c.assessment.author)} · ${esc(c.assessment.date)}</div>
       </div>
-      <button class="btn btn-xs btn-secondary" data-open-report="${c.id}">View report</button>
     </div>`;
   }
 
@@ -2912,8 +2885,6 @@ function renderCurrentCase(person, c){
     </div>
     ${renderBadge(c.status, lastUpdatedDate(c))}
 
-    ${consentHtml}
-    ${reportHtml}
     ${assessHtml}
     ${showLink ? renderLinkManagement(person, c) : ''}
 
