@@ -3466,7 +3466,7 @@ function openReport(caseId, e){
       ${existing?`<div class="ra-hist">
         <div class="ra-hist-lbl">Assessment history</div>
         <div class="ra-entry">
-          <div class="ra-entry-out" style="color:${entryColor}">${esc(existing.outcome)} — ${esc(existing.date)}</div>
+          <div class="ra-entry-out" style="color:${entryColor}">${esc(existing.outcome)} · ${esc(existing.date)}</div>
           <div class="ra-entry-meta">By ${esc(existing.author)}${existing.notes?' · "'+existing.notes+'"':''}</div>
         </div>
       </div>`:''}`;
@@ -3936,7 +3936,7 @@ function bindP1Step(s){
             <div style="font-size:12px;color:var(--fg2)">${esc(p.email)}</div>
           </div>
         </div>`).join('');
-      const noMatch = !matches.length&&q.length>1?`<div style="padding:7px 11px;font-size:13px;color:var(--fg2)">No match — <span style="color:var(--brand);cursor:pointer;text-decoration:underline" onclick="P1STATE.showNewPerson=true;P1STATE.newPerson={fn:'',ln:'',email:''};renderP1Wizard()">add as a new person</span></div>`:'';
+      const noMatch = !matches.length&&q.length>1?`<div style="padding:7px 11px;font-size:13px;color:var(--fg2)">No match. <span style="color:var(--brand);cursor:pointer;text-decoration:underline" onclick="P1STATE.showNewPerson=true;P1STATE.newPerson={fn:'',ln:'',email:''};renderP1Wizard()">add as a new person</span></div>`:'';
       sugg.innerHTML=`<div style="margin-top:6px">${matchRows}${noMatch}</div>`;
     });
     ['fn','ln','email'].forEach(k=>{
@@ -4388,7 +4388,7 @@ function bindWzStep(s){
           </div>
         </div>`).join('');
       const noMatch = !matches.length && q.length > 1 ?
-        `<div style="padding:7px 11px;font-size:13px;color:var(--fg2)">No match — <span style="color:var(--brand);cursor:pointer;text-decoration:underline" onclick="STATE.wzShowNewPerson=true;STATE.wzNewPerson={fn:'',ln:'',email:'',role:'',dept:''};renderWizard()">add as a new person</span></div>` : '';
+        `<div style="padding:7px 11px;font-size:13px;color:var(--fg2)">No match. <span style="color:var(--brand);cursor:pointer;text-decoration:underline" onclick="STATE.wzShowNewPerson=true;STATE.wzNewPerson={fn:'',ln:'',email:'',role:'',dept:''};renderWizard()">add as a new person</span></div>` : '';
       suggestions.innerHTML = `<div style="margin-top:6px">${matchRows}${noMatch}</div>`;
     });
     // Bind new person text fields (role and dept use combo, not text inputs)
