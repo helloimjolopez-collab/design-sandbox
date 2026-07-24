@@ -4415,7 +4415,11 @@ function mysPopContent(){
         (full?'<span class="wt-type">'+a.type+'</span>':'')+
         '<span class="wt-c2'+(neg?" bank-neg":"")+'">'+over+bankMoney(end)+'</span></div>';
     }).join("");
-    var tot=bankTotal(w);
+    var shownTot=rows.reduce(function(s,a){return s+bankEnding(a);},0),tot=bankTotal(w);
+    if(w.bkOver){
+      var bar='<div class="bank-filterbar">'+ICON("warning")+'<span>Showing '+rows.length+' overdrawn account'+(rows.length===1?"":"s")+'</span><button class="btn naked sm" data-action="bank-overdrawn" data-id="'+w.id+'">Show all accounts</button></div>';
+      return bar+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Overdrawn total</span><span class="bank-neg">'+bankMoney(shownTot)+'</span></div>';
+    }
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
     return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
   }
@@ -4463,7 +4467,7 @@ function mysPopContent(){
       '<div class="bank-xaxrow"><div class="bank-yaxsp"></div><div class="bank-xcols">'+xl+'</div></div>'+
       '</div>';
   }
-  function bankAllView(w,v){return (v==="chart")?bankPie(w,false):bankAllTable(w,false);}
+  function bankAllView(w,v){return bankAllTable(w,false);}
   function bankSingleView(w,v){var sel=bankSelected(w);return (v==="chart")?bankBars(w,sel):bankSingleTable(w,sel);}
   function bankAllFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+bankAllTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Distribution</div>'+bankPie(w,true)+'</div></div>';}
   function bankSingleFull(w){var sel=bankSelected(w);return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Activity since last reconciliation</div>'+bankSingleTable(w,sel)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Activity by type</div>'+bankBars(w,sel)+'</div></div>';}
