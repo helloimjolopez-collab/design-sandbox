@@ -5923,51 +5923,16 @@ function renderPanelAction(person, c){
 }
 
 function renderIdentityCompact(person){
-  const isIntegration = person.source && person.source !== 'PMM';
-  const orgColor = person.orgStatus==='Active'?'var(--green)':person.orgStatus==='Archived'?'var(--fg4)':'var(--amber)';
-
-  // Full legal name from latest consent form on file
-  const latestConsentCase = person.cases.find(c=>c.consentForm && c.consentForm.nameOnForm);
-  const consentLegalName = latestConsentCase ? latestConsentCase.consentForm.nameOnForm : null;
-  const consentDate = latestConsentCase ? latestConsentCase.consentForm.submittedDate : null;
-
-  return `
-    <!-- Basic info -->
-    <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);margin-bottom:6px">Basic Info</div>
-    <div class="pnl-meta-grid" style="margin-bottom:0">
-      <div class="pnl-meta-cell full"><div class="pnl-meta-lbl">Full name</div><div class="pnl-meta-val">${esc(person.name)}</div></div>
-      <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Gender</div><div class="pnl-meta-val muted">${esc(person.gender||'—')}</div></div>
-      <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Date of birth</div><div class="pnl-meta-val muted">${esc(person.dob||'—')}</div></div>
-      <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Preferred name</div><div class="pnl-meta-val muted">${esc(person.preferredName||'—')}</div></div>
-      <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Org status</div><div class="pnl-meta-val" style="color:${orgColor}">${esc(person.orgStatus||'—')}</div></div>
-    </div>
-
-    <!-- Contact info -->
-    <div style="border-top:1px solid var(--border);margin:10px 0 8px"></div>
-    <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);margin-bottom:6px">Contact Info</div>
-    <div class="pnl-meta-grid" style="margin-bottom:0">
-      <div class="pnl-meta-cell full"><div class="pnl-meta-lbl">Email${isIntegration?` <span style="font-weight:400;color:var(--fg4)">· synced from ${esc(person.source)}</span>`:''}
-      </div><div class="pnl-meta-val">${esc(person.email)}</div></div>
-      <div class="pnl-meta-cell"><div class="pnl-meta-lbl">Phone</div><div class="pnl-meta-val muted">${esc(person.phone||'—')}</div></div>
-    </div>
-
-    ${consentLegalName ? `
-    <!-- Full legal name from consent form -->
-    <div style="border-top:1px solid var(--border);margin:10px 0 8px"></div>
-    <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);margin-bottom:6px">From consent form</div>
-    <div class="pnl-meta-grid" style="margin-bottom:0">
-      <div class="pnl-meta-cell full">
-        <div class="pnl-meta-lbl">Full legal name <span style="font-weight:400;color:var(--fg4)">· as submitted by applicant${consentDate?' on '+consentDate:''}</span></div>
-        <div class="pnl-meta-val">${esc(consentLegalName)}</div>
-      </div>
-    </div>` : ''}
-
-    ${person.rescreenDue?`
-    <div style="border-top:1px solid var(--border);margin:10px 0 8px"></div>
-    <div class="pnl-meta-grid" style="margin-bottom:0">
-      <div class="pnl-meta-cell full"><div class="pnl-meta-lbl">Rescreening due</div><div class="pnl-meta-val" style="color:var(--amber)">${esc(person.rescreenDue)}</div></div>
-    </div>`:''}
-  `;
+  const rows = [
+    ['Name', esc(person.name)],
+    ['Gender', esc(person.gender||'—')],
+    ['DOB', esc(person.dob||'—')],
+    ['Email', esc(person.email||'—')],
+    ['Phone', esc(person.phone||'—')],
+    ['Address', esc(person.address||'—')],
+  ];
+  return `<div class="id-list">${rows.map(r=>`
+    <div class="id-row"><div class="id-lbl">${r[0]}</div><div class="id-val">${r[1]}</div></div>`).join('')}</div>`;
 }
 
 // ── Case detail blocks (reused in current case section) ──────────────────
