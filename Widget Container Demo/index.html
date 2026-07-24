@@ -2552,7 +2552,7 @@ function remContent(w){
   if(w.size==="kpi")return remGlance(w);
   if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
   var mh=remHeaderBlock(w);
-  if(w.size==="xwide")return mh+'<div class="rem-body"><section class="dep-col rem-col"><div class="dep-col-h">Pacing by activity</div>'+remTable(w,true)+'</section></div>';
+  if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by activity</div>'+remTable(w,true)+'</div></div>';
   return mh+'<div class="rem-body">'+remTable(w,false)+'</div>';
 }
 
@@ -3271,7 +3271,6 @@ function loanMiniBar(frac,color){var pct=Math.max(3,Math.round(frac*100));return
 function loanAgingPanel(w){
   var sel=loanSel(w),grand=loanTotal(w),bs=loanBuckets(w),n=loanCount(w);
   var out='<div class="loan-panel">';
-  out+='<div class="loan-panel-sub">How overdue the loan book is. Pick a band to filter the list.</div>';
   var allSel=(sel==="total");
   out+='<button class="loan-band-row loan-band-all'+(allSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="loan-band-main"><span class="loan-band-lbl">'+ICON("account_balance")+'All aging bands</span><span class="loan-band-meta">'+n+' loan'+(n===1?"":"s")+' with a balance</span></span><span class="loan-band-val">'+loanMoney(grand)+'</span></button>';
   bs.forEach(function(r){
