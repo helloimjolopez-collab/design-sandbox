@@ -4072,42 +4072,83 @@ function renderP1Step1(){
     ${addedSection}`;
 }
 
-function renderP1Step2(){
-  const cards = P1_LEVELS.map(lvl=>{
-    const selected = P1STATE.level===lvl.id;
-    const checksOpen = P1STATE.p1LvlChecksOpen[lvl.id];
-    const riskBadge = lvl.risk==='low'
-      ? `<span class="p1-risk-low">${esc(lvl.riskLabel)}</span>`
-      : `<span class="p1-risk-high">${esc(lvl.riskLabel)}</span>`;
-    const checksList = checksOpen ? `<div class="p1-checks-list">${lvl.checks.map(c=>`<div class="p1-check-item"><div class="p1-check-dot"></div>${esc(c)}</div>`).join('')}</div>` : '';
-    return `
-    <div class="p1-level-card${selected?' p1-selected':''}" onclick="p1SelectLevel('${lvl.id}')">
-      <div class="p1-level-hd">
-        <div class="p1-level-name">${esc(lvl.name)}</div>
-        ${riskBadge}
-      </div>
-      <div class="p1-level-sub">${esc(lvl.sub)}</div>
-      <div class="p1-level-roles">${lvl.examples.map(e=>`<span class="p1-level-role">${esc(e)}</span>`).join('')}</div>
-      <button class="p1-checks-btn" onclick="event.stopPropagation();P1STATE.p1LvlChecksOpen['${lvl.id}']=!P1STATE.p1LvlChecksOpen['${lvl.id}'];renderP1Wizard()">
-        <svg width="11" height="11" style="transition:transform 150ms${checksOpen?';transform:rotate(90deg)':''}"><use href="#ic-chevdown" style="${checksOpen?'transform:rotate(-90deg)':''}"/></svg>
-        ${checksOpen?'Hide checks':'Show checks included'} (${lvl.checks.length})
-      </button>
-      ${checksList}
-    </div>`;
-  }).join('');
+function renderP1LvlOpts(q){
+  const filtered = q ? LEVELS.filter(l=>
+    l.name.toLowerCase().includes(q)||
+    l.rolefit.toLowerCase().includes(q)||
+    l.examples.some(e=>e.toLowerCase().includes(q))||
+    (l.tag&&l.tag.toLowerCase().includes(q))
+  ) : LEVELS;
+  if(!filtered.length) return `<div style="padding:14px;font-size:13px;color:var(--fg3)">No levels match.</div>`;
+  const byGroup={};
+  filtered.forEach(l=>{(byGroup[l.group]=byGroup[l.group]||[]).push(l)});
+  return Object.entries(byGroup).map(([g,levels])=>`
+    <div class="lvl-group-label">${esc(g)}</div>
+    ${levels.map(l=>{
+      const sel=P1STATE.level===l.id;
+      return `<div class="lvl-opt${sel?' sel':''}" onclick="p1SelectLvl('${l.id}')">
+        <div class="lvl-opt-icon" style="background:${l.bg};color:${l.color}">
+          <svg width="15" height="15"><use href="#ic-shield"/></svg>
+        </div>
+        <div class="lvl-opt-body">
+          <div class="lvl-opt-row1">
+            <span class="lvl-opt-name">${esc(l.name)}</span>
+            ${l.tier==='custom'?`<span class="lvl-tier-badge lvl-tier-custom">Custom</span>`:''}
+            ${l.tag?`<span class="lvl-opt-tag">${esc(l.tag)}</span>`:''}
+          </div>
+          <div class="lvl-opt-fit">${esc(l.rolefit)}</div>
+          <div class="lvl-opt-roles">e.g. ${l.examples.slice(0,3).map(esc).join(', ')}</div>
+        </div>
+      </div>`;
+    }).join('')}
+  `).join('');
+}
 
-  const cstOpts = P1_CST_OPTIONS.map(o=>`
-    <label class="p1-cst-opt${P1STATE.cstOption===o.id?' p1-cst-sel':''}">
-      <input type="radio" name="p1-cst" value="${o.id}" ${P1STATE.cstOption===o.id?'checked':''} onchange="P1STATE.cstOption=this.value;renderP1Wizard()">
-      ${esc(o.label)}
-    </label>`).join('');
+function renderP1Step2(){
+  const sel = LEVELS.find(l=>l.id===P1STATE.level);
+  const isOpen = P1STATE.lvlDropOpen;
+  const triggerContent = sel ? `
+    <div class="lvl-trigger-inner">
+      <div class="lvl-trigger-icon" style="background:${sel.bg};color:${sel.color}">
+        <svg width="16" height="16"><use href="#ic-shield"/></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="lvl-trigger-name">${esc(sel.name)}</div>
+        <div class="lvl-trigger-fit">${esc(sel.rolefit)}</div>
+      </div>
+      ${sel.tier==='custom'?`<span class="lvl-tier-badge lvl-tier-custom" style="flex-shrink:0">Custom</span>`:''}
+    </div>
+  ` : `<span class="lvl-trigger-placeholder">Choose a screening level…</span>`;
+
+  const summary = sel ? `<div style="margin-top:10px;padding:12px 14px;background:var(--surf2);border-radius:var(--r8);border:1px solid var(--border)">
+    <div style="font-size:13px;color:var(--fg2);margin-bottom:6px">Commonly used for: ${sel.examples.slice(0,3).map(esc).join(', ')}</div>
+    <div style="display:flex;flex-direction:column;gap:3px">
+      ${sel.checks.map(ch=>`<div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--fg2)"><svg width="12" height="12" style="color:var(--green);flex-shrink:0"><use href="#ic-check"/></svg>${esc(ch)}</div>`).join('')}
+    </div>
+  </div>` : '';
 
   return `<div class="wz-section-title">Screening level</div>
-    <div class="p1-level-grid">${cards}</div>
-    <div class="p1-cst-section">
-      <div class="p1-cst-lbl">Child safety training</div>
-      <div class="p1-cst-desc">Optionally include a CST invite with this case. The training invite will be sent alongside the background check consent.</div>
-      <div class="p1-cst-opts">${cstOpts}</div>
+    <div class="lvl-picker" id="p1-lvl-picker">
+      <div class="lvl-trigger${sel?' has-val':''}${isOpen?' open':''}" id="p1-lvl-trigger" onclick="toggleP1LvlDrop()">
+        ${triggerContent}
+        <svg width="12" height="12" style="flex-shrink:0;color:var(--fg4);transition:transform 150ms${isOpen?';transform:rotate(180deg)':''}"><use href="#ic-chevdown"/></svg>
+      </div>
+      <div class="lvl-drop${isOpen?' open':''}" id="p1-lvl-drop">
+        <div class="lvl-search-wrap">
+          <div class="lvl-search">
+            <svg width="13" height="13" style="color:var(--fg4);flex-shrink:0"><use href="#ic-search"/></svg>
+            <input id="p1-lvl-search" placeholder="Search by name, role, or use case…" value="${esc(P1STATE.lvlSearch||'')}">
+          </div>
+        </div>
+        <div class="lvl-opts" id="p1-lvl-opts">${renderP1LvlOpts(P1STATE.lvlSearch||'')}</div>
+      </div>
+    </div>
+    ${summary}
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+      <label class="wz-field-label" style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:8px;display:block">Child safety training <span style="font-size:13px;font-weight:400;color:var(--fg3)">(optional)</span></label>
+      <select id="p1-cst-select" style="border:1px solid var(--border2);border-radius:var(--r6);padding:8px 10px;font-size:13px;color:var(--ink);background:#fff;width:100%;cursor:pointer">
+        ${P1_CST_OPTIONS.map(o=>`<option value="${o.id}"${P1STATE.cstOption===o.id?' selected':''}>${esc(o.label)}</option>`).join('')}
+      </select>
     </div>`;
 }
 
