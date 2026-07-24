@@ -2741,10 +2741,6 @@ function renderPanelAction(person, c){
     cls='bad';title='Order failed — max retries reached';
     desc='PMM could not process this order after multiple automatic retry attempts. Cancel this case and open a new one to restart. If the problem continues, contact support.';
     btns=`<button class="btn btn-sm btn-primary" style="background:var(--red)" onclick="cancelCase('${person.id}','${c.id}')">Cancel case</button><button class="btn btn-sm btn-secondary" onclick="openWizard()">Open new case</button>`;
-  } else if(DEMO_MODE==='phase-1' && (c.status==='consent-received'||c.p1Status==='consent-received') && c.consentForm?.mismatch){
-    cls='warn';title='Consent received — name mismatch';
-    desc=`The name on the consent form ("<strong>${esc(c.consentForm.nameOnForm)}</strong>") does not match the record ("<strong>${esc(c.consentForm.nameOnRecord)}</strong>"). Acknowledge and proceed, or request a correction from the applicant. The order will be placed once you choose.`;
-    btns=`<button class="btn btn-sm btn-primary" onclick="toast('Mismatch acknowledged — order placed')">Acknowledge &amp; place order</button><button class="btn btn-sm btn-secondary" onclick="toast('Correction request sent to applicant')">Request correction</button>`;
   } else if(c.status==='due-rescreening'){
     cls='warn';title='Rescreening due soon';
     desc='This person\'s background check is due for renewal.';
