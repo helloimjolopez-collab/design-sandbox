@@ -2855,8 +2855,9 @@ function gftTable(w){
       '<span class="gft-c-n gft-c-pct">'+gftPct(p.fulfilled)+'</span></div>';
   }).join("");
   var o=gftOverall(w);
-  return '<div class="scroll">'+head+body+'</div>'+
-    '<div class="dep-total gft-total"><span>'+o.n+' purpose'+(o.n===1?"":"s")+'</span><span class="gft-total-nums"><span class="gft-c-n">'+money(o.pledgeTotal)+'</span><span class="gft-c-n">'+money(o.due)+'</span><span class="gft-c-n">'+money(o.received)+'</span><span class="gft-c-n">'+gftRemainingCell(o)+'</span><span class="gft-c-n gft-c-pct">'+gftPct(o.fulfilled)+'</span></span></div>';
+  return '<div class="scroll">'+head+body+
+    '<div class="gft-trow gft-total-row"><span class="gft-c-nm">'+o.n+' purpose'+(o.n===1?"":"s")+'</span><span class="gft-c-n">'+money(o.pledgeTotal)+'</span><span class="gft-c-n">'+money(o.due)+'</span><span class="gft-c-n">'+money(o.received)+'</span><span class="gft-c-n">'+gftRemainingCell(o)+'</span><span class="gft-c-n gft-c-pct">'+gftPct(o.fulfilled)+'</span></div>'+
+    '</div>';
 }
 function gftRemainingText(p){if(p.remaining>0)return money(p.remaining)+" behind";if(p.remaining<0)return money(Math.abs(p.remaining))+" ahead";return "on track";}
 function gftRemainingCell(p){if(p.remaining>0)return '<span class="gft-rem gft-rem-behind">'+money(p.remaining)+'</span>';if(p.remaining<0)return '<span class="gft-rem gft-rem-ahead">&minus;'+money(Math.abs(p.remaining))+'</span>';return '<span class="gft-rem gft-rem-ok">'+money(0)+'</span>';}
