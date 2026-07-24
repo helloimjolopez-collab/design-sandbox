@@ -113,6 +113,7 @@ body{font-family:var(--font);font-size:14px;line-height:1.6;color:var(--text);ba
 .tb.active{color:var(--text);border-bottom-color:var(--text);font-weight:500}
 .fp{display:none}.fp.active{display:block}
 .mv{display:none}.mv.visible{display:block}
+.cc ol{margin:4px 0 0;padding-left:16px}.cc ol li{margin-bottom:3px;font-size:12px;line-height:1.45}
 .ctx{background:var(--sb-bg);border-bottom:1px solid var(--border);padding:16px 28px}
 .ctx-label{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;margin-bottom:12px}
 .pg{display:flex;gap:12px;flex-wrap:wrap}
@@ -765,23 +766,24 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 </tbody></table></div>
 </div><!-- end invite current -->
 
+
 <!-- INVITE ORDER PHASE 1 -->
 <div class="mv p1">
 <div class="prio">
   <div class="prio-hd">Phase 1 improvements — Invite Order</div>
-  <div class="prc"><h5>Unified status column</h5><div class="prb">Current: one field conflates invite state, consent state, order state, and assessment state. "Pending" means at least three different things.</div><div class="prh">Phase 1 change: single unambiguous lifecycle status badge per case. New values cover every distinct case state without overlap.</div></div>
-  <div class="prc"><h5>Table context columns</h5><div class="prb">Current: no column showing how a case was initiated or what package was ordered. Admin must open each row to find out.</div><div class="prh">Phase 1 change: new Initiated column (Email Invite / Link Created / Manual / Rock CRM / Screening Flow) and Package column visible at a glance. Name column stacks email below name.</div></div>
-  <div class="prc"><h5>Applicant entry</h5><div class="prb">Current: one-at-a-time text entry, no screening history at selection, no bulk path, abandoned wizard saves nothing.</div><div class="prh">Phase 1 change: search from existing People database with last case status visible. Add new person inline. CSV bulk import. Duplicate check before confirm.</div></div>
-  <div class="prc"><h5>Package selection</h5><div class="prb">Current: undescribed dropdown. Most common pre-order support contact is "which package should I use?"</div><div class="prh">Phase 1 change: three standard package cards (Essential / Preferred / Comprehensive) each with a risk label, role examples, and expandable search disclosure. Custom packages tab for account-configured packages.</div></div>
-  <div class="prc"><h5>Delivery choice and invite management</h5><div class="prb">Current: only PMM-sent email. No link-only option. No invite management once sent — no resend, no expiry extension, no cancel path.</div><div class="prh">Phase 1 change: email vs link-only toggle. Invite management in person profile: copy link, resend, extend expiry, cancel invite (eligible window only). Cancel moves case to Case History.</div></div>
-  <div class="prc"><h5>Order failure handling</h5><div class="prb">Current: "Incomplete" status with no explanation. No cancel path. Admin must call support to understand what happened.</div><div class="prh">Phase 1 change: "Order Failed" status with failure type (technical error or information issue). Backend auto-cancels. Admin sees Close Case action. Case moves to Case History on close.</div></div>
+  <div class="prc"><h5>Unified status column</h5><div class="prb">One field conflates invite state, consent state, order state, and report state. "Pending" means at least three different things.</div><div class="prh">Single unambiguous lifecycle status per case using the V1 status names.</div></div>
+  <div class="prc"><h5>Table context columns</h5><div class="prb">No column showing how a case was initiated or what package was ordered. Admin must open every row to find out.</div><div class="prh">New Initiated column (Email Invite / Link Created / Manual / Rock CRM / Screening Flow) and Package column visible at a glance. Name stacks email below.</div></div>
+  <div class="prc"><h5>Applicant entry</h5><div class="prb">One-at-a-time text entry, no screening history at selection, no bulk path, abandoned wizard saves nothing.</div><div class="prh">Search existing People with last case status visible. Add new inline. CSV bulk import. Duplicate check before confirm.</div></div>
+  <div class="prc"><h5>Package selection</h5><div class="prb">Undescribed dropdown. Most common pre-order support contact is "which package should I use?"</div><div class="prh">Three standard cards (Essential / Preferred / Comprehensive) with risk label, role examples, and expandable search list. Custom packages tab.</div></div>
+  <div class="prc"><h5>Delivery choice and invite management</h5><div class="prb">Only PMM-sent email. No link-only option. No resend, no expiry extension, no cancel path after sending.</div><div class="prh">Email vs link-only toggle. Invite management in person profile: copy, resend, extend, cancel (before consent received). Cancel moves case to Case Cancelled.</div></div>
+  <div class="prc"><h5>Order failure handling</h5><div class="prb">"Incomplete" with no explanation. No cancel path. Admin must call support to understand what happened.</div><div class="prh">Order Failed status with failure type (technical or information). Backend auto-cancels. Admin closes case. Case moves to Case Cancelled.</div></div>
 </div>
 <div class="sb">
-  <div class="sc blue"><h4>Status and table</h4><p>One unambiguous status badge per case. New Initiated column and Package column eliminate the need to open every row. Redesigned filter cards show readable status labels and counts. Action-required rows highlighted with amber accent.</p></div>
-  <div class="sc green"><h4>Applicant entry</h4><p>Search existing applicants showing their last case status and date. Add new person inline with a short form. CSV bulk import with column mapping and preview. Duplicate detection before confirm prevents accidental double-orders.</p></div>
-  <div class="sc amber"><h4>Delivery and invite lifecycle</h4><p>Email or link-only are explicit choices at step 3. After confirm, invite management lives in the person profile: copy, resend, extend, cancel. Cancel is only available before consent is received. Order failures surface clearly with explanation and a Close Case action.</p></div>
+  <div class="sc blue"><h4>Status and table</h4><p>One unambiguous V1 lifecycle status per case. New Initiated and Package columns. Readable filter cards with counts. Action-required rows highlighted.</p></div>
+  <div class="sc green"><h4>Applicant entry</h4><p>Search existing People with last case status visible. Add new inline. CSV bulk import with column mapping. Duplicate detection before commit.</p></div>
+  <div class="sc amber"><h4>Delivery and invite lifecycle</h4><p>Email or link-only is an explicit choice. After confirm, invite management in person profile: copy, resend, extend, cancel. Cancel only available before consent received. Order failure has explanation and a close action.</p></div>
 </div>
-<div class="tn-note"><div class="tni">Phase 1 improvements: unified status column, Initiated column, Package column, applicant search + add + CSV import, package cards (Essential/Preferred/Comprehensive), CST label update, delivery toggle, link management in person profile, invite cancel in eligible window, order failure status, close case action. Not in Phase 1: approval gate, consent on file (manual path improvement), full event log audit trail, per-role rescreen interval config — those are End Vision.</div></div>
+<div class="tn-note"><div class="tni">Phase 1 improvements: V1 unified status column, Initiated column, Package column, applicant search + add + CSV import, package cards (Essential / Preferred / Comprehensive), CST label update (Employee Spanish / English, Volunteer Spanish), delivery toggle, invite management in person profile, order failure handling, case cancel action. Not in Phase 1: approval gate (Consent Received — Awaiting Approval), consent on file as logged event, full event log, per-role rescreen interval — End Vision.</div></div>
 <div class="tw"><table class="jt"><tbody>
 
 <tr class="rStp">
@@ -792,18 +794,57 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="cc"><span class="sn">4.</span><span class="st">Select package</span><span class="su">Wizard — Step 2: Package</span></td>
   <td class="cc"><span class="sn">5.</span><span class="st">Set delivery and options</span><span class="su">Wizard — Step 3: Delivery</span></td>
   <td class="cc"><span class="sn">6.</span><span class="st">Review and confirm</span><span class="su">Wizard — Step 4: Review</span></td>
-  <td class="cc"><span class="sn">7.</span><span class="st">Monitor, manage, handle failure</span><span class="su">Person profile — Current Case</span></td>
+  <td class="cc"><span class="sn">7.</span><span class="st">Monitor case — manage invite or handle failure</span><span class="su">Person profile — Current Case</span></td>
 </tr>
 
 <tr class="rUsr">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-person"/></svg></span><span class="ltxt">Admin Actions</span></div></td>
-  <td class="cc">Lands on the Screenings table. Status column shows one unambiguous badge per case: Consent Pending (amber — invite sent or link created, awaiting applicant), Invite Link Created (slate — link generated, not yet emailed), Consent Received (teal — applicant submitted), Order Processing (blue — check in flight), Order Failed (red — action needed), Report Ready (purple — report back, awaiting assessment), Cleared (green), Needs Review (amber), Escalated (red), Invite Cancelled (grey), Case Closed (grey), Screening Expired (amber). New Initiated column shows icon + label: Email Invite / Link Created / Manual / Rock CRM / Screening Flow. New Package column shows Essential, Preferred, Comprehensive, or custom package name. Name column shows full name on line one with email grayed below. Filter cards at top show readable status labels and counts. Action-required rows carry a subtle amber left border.</td>
-  <td class="cc">Clicks "New background check" button in the top right of the Screenings table. Wizard opens as an overlay panel. Header reads "New background check." Four step indicators are visible at the top: People · Package · Delivery · Review.</td>
-  <td class="cc">At Step 1: People. Sees a search field and an empty applicant list. Types a name or email — live results appear from the People database. Each result shows name, email, role/department, and a last case status chip ("Cleared · 8 months ago," "Order Processing," "No previous case"). Clicks a result to add. Can add multiple. If no match, "Add new person" option appears — clicking expands a short inline form (First name, Last name, Email, Role/serving context, Department). New people are staged, not created until confirm. CSV import button at top right: opens modal with upload, column mapping (Name, Email, Role, Dept), row preview, and Confirm import. All imported rows appear in the list. Duplicate check: if a staged person already has an active case of the same type being ordered, a yellow warning pill "Active case" appears — admin can remove them or proceed.</td>
-  <td class="cc">At Step 2: Package. Three standard package cards. Essential: "Low-risk roles — ushers, greeters, A/V team, parking. Includes national criminal, sex offender registry, identity verification." Preferred: "Standard-risk roles — children's ministry volunteer, youth group leader, camp counselor, Sunday school teacher. Adds county criminal and alias searches." Comprehensive: "Highest-risk roles — finance team, drivers, camp directors, senior leadership. Adds MVR, employment verification, education verification." Each card has an expandable "What's included" disclosure listing searches in plain language. Custom packages tab shows account-configured packages with their base package, risk label, and role suitability. Below: Child Safety Training with four radio options — Employee (Spanish), Employee (English), Volunteer (Spanish), None (default).</td>
-  <td class="cc">At Step 3: Delivery. Two option cards. "Send invite email" (selected by default): PMM sends invite directly to applicant's email address. Expiry selector: 7 / 14 / 30 / 60 / 90 days (default 90). "Create link only": admin copies link and sends it themselves — by text, WhatsApp, or their own email. Case status will show "Invite Link Created." Same expiry selector. Advanced settings accordion (collapsed by default): Auto-reminders toggle — on by default; when on, system sends reminders to applicant at 50% and 80% of expiry window; toggling off disables all reminders for this batch. Note below: "If creating links for multiple applicants, all links appear on the success screen."</td>
-  <td class="cc">At Step 4: Review. One row per person: name stacked over email, package, CST selection, delivery method, expiry date. Each row has an Edit link that jumps back to that person in step 1. Billing reference field (free text, optional). Line above the confirm button: "Confirming creates one background check case per person listed. This is a billable action." Confirm button label adapts: "Send invites" (email mode), "Create links" (link-only mode), or "Send invites and create links" (mixed batch). Can navigate back to any step by clicking its header.</td>
-  <td class="cc">On confirm, all cases appear in the table immediately. Email delivery: status "Consent Pending." Link-only: status "Invite Link Created"; success screen shows all links in a list, each with applicant name and a copy button. Opening a person profile: Current Case section shows case status, package, expiry countdown, and — while status is Consent Pending or Invite Link Created — an Invite &amp; Link Management section with buttons: Copy link, Resend invite (email mode), Extend expiry (opens date picker), Cancel invite. Cancel invite is only available before consent is received or an order is placed. Cancelling shows a confirmation ("This will expire the link and move the case to Case History. The applicant cannot complete their form.") — on confirm, case status = Invite Cancelled, case moves to Case History, Current Case shows empty state. Once the applicant submits their consent form: Current Case → Consent Details shows the full legal name exactly as the applicant typed it on the form, the date submitted, and a match indicator. This name is displayed separately from the profile name — it does not overwrite or replace the name in file. If the two names differ, a name mismatch warning appears prominently: "Name on consent form does not match profile name" with two action buttons: Approve and proceed (admin confirms the consent name is an acceptable variant or legal name and clears the mismatch) or Request correction (sends a message asking the applicant to resubmit with the correct name). Order failure: if applicant submits consent and check fails, admin receives in-app notification. Current Case shows "Order Failed" with explanation: "Technical error — our team has been notified" or "Information issue — [field] was invalid or missing; a new order is required." Admin clicks Close Case; status = Case Closed; case moves to Case History.</td>
+  <td class="cc"><ol>
+    <li>Table now shows one V1 lifecycle status badge per case — no conflation.</li>
+    <li>New Initiated column: Email Invite / Link Created / Manual / Rock CRM / Screening Flow.</li>
+    <li>New Package column: Essential, Preferred, Comprehensive, or custom package name.</li>
+    <li>Name column: full name on line one, email grayed below.</li>
+    <li>Filter cards show readable status labels with counts. Action-required rows have an amber left border.</li>
+    <li>"+ Background Check" split button in the top right: main area opens the invite flow; dropdown arrow reveals "Manual Order."</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Clicks the "+ Background Check" button in the top right. It is a split button: the main area triggers the invite flow directly; clicking the dropdown arrow reveals a "Manual Order" option.</li>
+    <li>The invite flow wizard opens as a full-page screen. Header: "New background check."</li>
+    <li>Four step indicators visible: People · Package · Delivery · Review.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Types name or email — live results from the People database appear. Each result shows name, email, role/department, and last case status ("Report Complete — Eligible · 8 months ago," "Order Processing," "No previous case").</li>
+    <li>Clicks a result to add. Repeat for multiple people.</li>
+    <li>No match: "Add new person" option appears. Expands a short inline form (name, email, role, department). Person staged until confirm.</li>
+    <li>CSV import button: upload file, map columns (name, email, role, dept), preview rows, confirm. All rows added to the list.</li>
+    <li>Duplicate check: if a staged person already has an active case of the same type, a warning pill "Active case" appears on their row.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Three standard package cards: Essential (low-risk roles — ushers, greeters, A/V), Preferred (standard-risk — children's ministry, youth group, camp counselors), Comprehensive (highest-risk — finance, drivers, leadership).</li>
+    <li>Each card shows a risk label, role examples, and an expandable "What's included" disclosure listing searches in plain language.</li>
+    <li>Custom packages tab: account-configured packages with their base package, risk label, and suitability.</li>
+    <li>Child Safety Training: radio buttons — Employee (Spanish), Employee (English), Volunteer (Spanish), None (default).</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Two option cards: "Send invite email" (default) — PMM sends invite directly; "Create link only" — admin copies and sends themselves.</li>
+    <li>Expiry selector on both: 7 / 14 / 30 / 60 / 90 days (default 90).</li>
+    <li>Advanced settings accordion (collapsed): auto-reminders toggle — on by default; turns off system reminders at 50% and 80% of expiry.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>One row per person: name + email, package, CST, delivery method, expiry date.</li>
+    <li>Billing reference field (free text, optional).</li>
+    <li>Above button: "Confirming creates one case per person listed. This is a billable action."</li>
+    <li>Confirm button label adapts: "Send invites," "Create links," or both.</li>
+    <li>Can click any step header to go back and edit.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Cases appear in the table immediately. Email mode: status "Invite Link Sent." Link-only mode: status "Invite Link Created"; success screen shows all links with copy buttons.</li>
+    <li>Person profile → Current Case: status badge, package, expiry countdown. While status is Invite Link Sent or Invite Link Created: Invite &amp; Link Management section — Copy link, Resend invite (email mode), Extend expiry, Cancel invite.</li>
+    <li>Cancel invite is only available before consent is received. Cancelling: confirmation shown ("Link will expire. Case moves to Case Cancelled.") → on confirm, status = Invite Cancelled, case = Case Cancelled.</li>
+    <li>After applicant submits consent: status = Consent Received → system auto-places order → Order Processing. Invite management section disappears (link has been used).</li>
+    <li>Consent Details in profile shows the applicant's full legal name exactly as entered on the form, and date submitted — displayed separately from the profile name, never overwrites it. If the two names differ, a name mismatch warning appears with Approve and proceed / Request correction buttons.</li>
+    <li>Order failure: status = Order Failed with explanation (technical error or information issue with field details). Admin clicks Close Case → status moves to Case Cancelled.</li>
+  </ol></td>
 </tr>
 
 <tr class="rSec">
@@ -813,13 +854,13 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-auto_stories"/></svg></span><span class="ltxt">Storyboard</span></div></td>
-  <td class="cc">Monday morning. Sarah opens the table. Every badge says something specific — Consent Pending, Report Ready, Screening Expired. No guessing what "Pending" means today.</td>
-  <td class="cc">She clicks New background check. A clean overlay appears. Four steps visible at the top. She knows exactly where she is headed.</td>
-  <td class="cc">Types "Marcus." Marcus Williams appears — Preferred · Cleared 10 months ago. She adds him, types two more names, then uploads a CSV with eight names from the summer camp roster. All eleven appear in the list with status chips.</td>
-  <td class="cc">She opens the Preferred card. "Most used for roles working with children or vulnerable adults. Children's ministry volunteer, youth group leader, camp counselor." She clicks Preferred. Closes it confident. No call to support needed.</td>
-  <td class="cc">She leaves Send invite email selected. Sets 90 days. Leaves auto-reminders on. Done in ten seconds.</td>
-  <td class="cc">Eleven rows. Preferred. 90 days. "Confirming creates one case per person. A billable action." She clicks Send invites. Table updates immediately.</td>
-  <td class="cc">Eleven rows in the table showing Consent Pending. Three weeks later she notices one link hasn't been clicked. She opens the profile and clicks Extend expiry — the applicant gets four more weeks.</td>
+  <td class="cc">Monday morning. Sarah opens the table. The status column says something specific for each row. No guessing what "Pending" means today.</td>
+  <td class="cc">She clicks "+ Background Check." The wizard opens as a full-page screen. Four steps ahead. She knows where she is going.</td>
+  <td class="cc">Types "Marcus." Marcus Williams appears — Report Complete — Eligible · 10 months ago. Adds him, types two more names, uploads a CSV of eight from the camp roster. All eleven in the list with status chips.</td>
+  <td class="cc">Opens the Preferred card. "Most used for roles working with children or vulnerable adults." Clicks it. Closes it confident. No call to support.</td>
+  <td class="cc">Leaves Send invite email selected. Sets 90 days. Auto-reminders stay on. Done in ten seconds.</td>
+  <td class="cc">Eleven rows. Preferred. 90 days. "Confirming creates one case per person. Billable." Clicks Send invites.</td>
+  <td class="cc">Eleven rows: Invite Link Sent. Three weeks later one link hasn't been clicked. She opens the profile and clicks Extend expiry.</td>
 </tr>
 
 <tr class="rEmo">
@@ -831,63 +872,64 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-mail"/></svg></span><span class="ltxt">Communications</span></div></td>
   <td class="cc">No new communications — admin scanning the table.</td>
   <td class="cc"><span class="empty">—</span></td>
-  <td class="cc">No outbound yet. CSV import: server validates each row against People database and flags email-format errors before confirm.</td>
+  <td class="cc">Server validates CSV rows against People database — email-format errors flagged before confirm.</td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
-  <td class="cc">On confirm (email mode): invite dispatched to each applicant from [org_name]@protectmyministry.net with working logo, applicant name, expiry date, and CTA "Complete your background check." Admin receives confirmation summary: people ordered, package, CST, delivery method, expiry date. On confirm (link-only mode): no applicant email; admin confirmation still sent with full link list.</td>
-  <td class="cc">Email mode: system sends auto-reminders to applicant at 50% and 80% of expiry window (unless disabled in advanced settings). Order failure: in-app notification to admin. No automatic email to applicant on failure.</td>
+  <td class="cc">On confirm (email): invite sent per applicant from [org_name]@protectmyministry.net — working logo, expiry date, clear CTA. Admin confirmation email: full order summary (people, package, CST, delivery, expiry).</td>
+  <td class="cc">Email mode: auto-reminders at 50% and 80% of expiry (unless disabled). Order failure: in-app notification to admin only.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-settings"/></svg></span><span class="ltxt">Backend</span></div></td>
-  <td class="cc">Cases API returns unified status field and new Initiated and Package fields per case. Table renders on load with no secondary API calls.</td>
-  <td class="cc">Wizard session initialized. No writes until confirm. Back-navigation preserved across all steps.</td>
-  <td class="cc">People search queries /api/people. No writes on this step. CSV processed server-side on import confirm: each row validated, duplicates flagged, rows staged. Duplicate check runs per-person against active cases of same package type.</td>
-  <td class="cc">Package cards hydrate from account config: platform levels plus custom packages. No pricing call per card expansion — disclosure is client-side toggle. CST options hydrate from account config.</td>
-  <td class="cc">Delivery mode and expiry stored in wizard session state. No API call at this step. Advanced settings stored per-batch, applied on confirm.</td>
-  <td class="cc">On confirm: Person records created for new people (or matched for existing). One Case record created per person. Invite links generated — person-bound UUIDs. Digital Delve receives order payload. No orphaned records from abandoned wizards. Cases written to table immediately.</td>
-  <td class="cc">Invite cancel: Digital Delve API call revokes link. Case status updated to Invite Cancelled. Case moved to Case History. Order failure: Digital Delve pushes failure webhook with type (technical / information) and field-level details. PMM sets status to Order Failed, marks order auto-cancelled. Close Case: admin action sets status to Case Closed, moves case to history.</td>
+  <td class="cc">Cases API returns V1 unified status field plus Initiated and Package per case. Single call on load.</td>
+  <td class="cc">Wizard session initialized. No writes until confirm.</td>
+  <td class="cc">People search queries /api/people. No writes on this step. CSV validated and staged server-side on import confirm. Duplicate check runs per-person against active cases of same package type.</td>
+  <td class="cc">Package cards hydrate from account config. Disclosure toggle is client-side only.</td>
+  <td class="cc">Delivery mode and expiry stored in wizard session state. No API call at this step.</td>
+  <td class="cc">On confirm: Person records created or matched. One Case record per person. Invite links generated (person-bound). Digital Delve receives order payload. Cases written to table immediately.</td>
+  <td class="cc">Invite cancel: Digital Delve API revokes link. Case status → Case Cancelled. Consent Received triggers auto-order to Digital Delve → Order Processing. Order failure: webhook from Digital Delve sets Order Failed. Close case: admin action → Case Cancelled.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-headset_mic"/></svg></span><span class="ltxt">Support</span></div></td>
-  <td class="cc">Readable status badges eliminate "what does this status mean" support contacts. Filter cards with readable labels reduce "how do I find cases that need attention" contacts.</td>
+  <td class="cc">Readable status badges reduce "what does this status mean" contacts. Filter cards reduce "how do I find cases needing attention."</td>
   <td class="cc"><span class="empty">—</span></td>
-  <td class="cc">Duplicate detection at add-time prevents "I accidentally ordered twice" support tickets.</td>
-  <td class="cc">Package cards with role examples eliminate package selection support calls — the most common pre-order contact type.</td>
+  <td class="cc">Duplicate detection prevents "I accidentally ordered twice" tickets.</td>
+  <td class="cc">Package cards with role examples eliminate package selection calls — the most common pre-order contact type.</td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
-  <td class="cc">Order failure explanations eliminate "my order is stuck, what do I do" contacts. Close Case gives admins a clean exit without calling support. Invite management in profile eliminates "how do I resend / cancel an invite" contacts.</td>
+  <td class="cc">Order failure explanation eliminates "my order is stuck as Incomplete" contacts. Invite management in profile eliminates "how do I resend / cancel" contacts.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-church"/></svg></span><span class="ltxt">ChMS Host</span></div></td>
-  <td class="cc">Table embedded in Rock, PCO, or CCB. Initiated column shows "Rock CRM" for integration-sourced cases, giving host embed users context about case origin.</td>
+  <td class="cc">Initiated column shows "Rock CRM" for integration-sourced cases — gives embedded users case origin context.</td>
   <td class="cc"><span class="empty">—</span></td>
-  <td class="cc">People search queries ChMS person sync for integrated accounts. Serving context (role, dept) from host visible at selection.</td>
+  <td class="cc">People search queries ChMS person sync for integrated accounts.</td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
-  <td class="cc">On confirm: case status written back to host person record immediately. No empty-table anomaly after confirm.</td>
-  <td class="cc">Invite Cancelled and Order Failed statuses synced back to host person record. Case Closed also synced.</td>
+  <td class="cc">On confirm: case status written back to host person record immediately.</td>
+  <td class="cc">Invite Link Sent, Invite Cancelled, Order Failed, Case Cancelled all sync back to host record.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-manage_search"/></svg></span><span class="ltxt">Digital Delve</span></div></td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
-  <td class="cc">Receives order on confirm. Generates person-bound registration URL. Dispatches invite email (email mode) with working logo and expiry date. Link-only: generates URL, does not dispatch email.</td>
-  <td class="cc">On invite cancel: revokes link. On order failure: pushes failure webhook with type (technical / information) and field-level details for information-type failures.</td>
+  <td class="cc">On confirm: receives order, generates person-bound registration URL, dispatches invite email (email mode).</td>
+  <td class="cc">On invite cancel: revokes link. On Consent Received: receives auto-placed order, begins processing. On order failure: pushes failure webhook with type and field-level details.</td>
 </tr>
 
 <tr class="rChg">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-task_alt"/></svg></span><span class="ltxt">What Changes</span></div></td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Single unified status column. Statuses are unambiguous. Initiated column shows Email Invite / Link Created / Manual / Rock CRM / Screening Flow. Package column. Stacked name + email. Readable filter cards with status counts. Amber accent on action-required rows.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> V1 unified status column. Initiated column. Package column. Stacked name + email. Readable filter cards.</td>
   <td class="cc">Wizard entry point unchanged.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Applicant search shows last case status at selection. Add new person inline. CSV bulk import with column mapping and preview. Duplicate warning before confirm.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Package cards replace undescribed dropdown. Essential / Preferred / Comprehensive with role-risk labels and role examples. Expandable disclosure. Custom packages tab. CST relabeled: Employee (Spanish), Employee (English), Volunteer (Spanish), None.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Email vs link-only is an explicit delivery choice. Auto-reminder override per batch. Invite management lives in person profile after confirm.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Commit labeled as billable. Per-person review list. Free-text billing reference. Button label reflects delivery method.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Invite management in Current Case section: copy, resend, extend, cancel (eligible window only). Cancel moves case to Case History. Order failure surfaces with explanation type. Close Case action gives clean exit. Current Case shows empty state after cancel.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Search shows last case status. Add new inline. CSV bulk import. Duplicate warning before commit.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Package cards with risk labels and role examples. Custom packages tab. CST relabeled (Employee Spanish / English, Volunteer Spanish, None).</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Email vs link-only explicit choice. Auto-reminder override per batch.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Commit labeled as billable. Per-person review list. Free-text billing reference.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Invite management in Current Case (copy, resend, extend, cancel — before consent received). Consent Details shows full legal name from form, separate from profile name, with mismatch warning. Order Failed with explanation. Close case action.</td>
 </tr>
 
 </tbody></table></div>
 </div><!-- end invite phase 1 -->
+
 
 <!-- INVITE ORDER VISION (End Vision) -->
 <div class="mv vis">
@@ -1176,39 +1218,62 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 </tbody></table></div>
 </div><!-- end results current -->
 
+
 <!-- RESULTS REVIEW PHASE 1 -->
 <div class="mv p1">
 <div class="prio">
   <div class="prio-hd">Phase 1 improvements — Results Review</div>
-  <div class="prc"><h5>Status clarity at results stage</h5><div class="prb">Current: "Completed" appears for both reports awaiting admin assessment and reports that have already been cleared. Admin must check the Assessment column separately.</div><div class="prh">Phase 1 change: "Report Ready" status means exactly one thing — report is back, admin assessment is pending. "Cleared," "Needs Review," and "Escalated" each correspond to a distinct admin decision. No ambiguity.</div></div>
-  <div class="prc"><h5>Person profile structure</h5><div class="prb">Current: "Applicant History" section shows only profile creation date. No case history, no prior assessments, no screening record.</div><div class="prh">Phase 1 change: person profile has two sections — Current Case (up to Screening Expired) and Case History (all prior or closed cases). Each past case shows check type, date, lifecycle status, assessment outcome, and a View report link where available.</div></div>
-  <div class="prc"><h5>Actionable filter cards</h5><div class="prb">Current: filter cards are not filterable by assessment-pending state. Admin must scan the full table to find reports needing review.</div><div class="prh">Phase 1 change: filter cards include "Report Ready" as a distinct, tappable filter. Tapping it shows only cases awaiting assessment. Action-required rows highlighted in table.</td></div></div>
-  <div class="prc"><h5>Assessment section in profile</h5><div class="prb">Current: assessment modal uses the same title for read and edit modes. No prior assessment history shown. No note required on Escalate.</div><div class="prh">Phase 1 change: assessment section in person profile shows current case status, three assessment buttons (Cleared / Needs Review / Escalated), and a notes textarea. Assessment is clearly tied to the current case, visually distinct from lifecycle status. Prior assessments visible in Case History.</div></div>
+  <div class="prc"><h5>Report Complete — Awaiting Review</h5><div class="prb">"Completed" appears for both reports waiting for admin assessment and already-cleared cases. Admin must check a second column.</div><div class="prh">"Report Complete — Awaiting Review" means exactly one thing: report is back, assessment is pending. Terminal outcomes (Report Complete — Eligible, Report Complete — Escalated) fold the assessment into the lifecycle status.</div></div>
+  <div class="prc"><h5>Person profile structure</h5><div class="prb">"Applicant History" shows only profile creation. No screening history, no prior assessments.</div><div class="prh">Person profile has Current Case (up to Screening Expired) and Case History (all prior and closed cases). Each past case shows check type, date, status, assessment, and a View report link.</div></div>
+  <div class="prc"><h5>Consent Details in Current Case</h5><div class="prb">No record of the name the applicant entered on their consent form. Admin has no way to check for mismatches from the profile.</div><div class="prh">Current Case shows applicant's full legal name from the consent form, date submitted, and a match indicator. Mismatch surfaces a warning with Approve and proceed / Request correction actions.</div></div>
+  <div class="prc"><h5>Filter and table</h5><div class="prb">No filter for "reports needing review." Admin must scan the full table for cases requiring assessment.</div><div class="prh">Filter card for "Report Complete — Awaiting Review." Action-required rows have an amber left border. Tapping the card shows only cases with pending assessment.</div></div>
 </div>
 <div class="sb">
-  <div class="sc blue"><h4>Report Ready is unambiguous</h4><p>"Report Ready" means one thing: the report is back and admin assessment is pending. Selecting a filter card or spotting the amber tint on an action-required row takes the admin directly to the cases that need attention.</p></div>
-  <div class="sc green"><h4>Person profile structure</h4><p>Current Case section shows everything active. Case History shows all prior and closed cases — each with check type, date, status, assessment, and a View report link. Admin can see the full screening record for any person without leaving the profile.</p></div>
-  <div class="sc amber"><h4>Assessment tied to case</h4><p>Assessment section sits inside the person profile, below the current case details. Three buttons (Cleared / Needs Review / Escalated) and a notes textarea. Selecting an option highlights it. Notes field is visible. Saving updates the case status and reflects immediately in the table row.</p></div>
+  <div class="sc blue"><h4>Status clarity</h4><p>"Report Complete — Awaiting Review" is action-required and unambiguous. Terminal outcomes Report Complete — Eligible and Report Complete — Escalated fold the assessment into the case status — no separate column to check.</p></div>
+  <div class="sc green"><h4>Person profile</h4><p>Current Case + Case History structure. Consent Details shows the applicant's full legal name from the form (separate from profile name, with mismatch warning). Prior checks visible in Case History with View report links.</p></div>
+  <div class="sc amber"><h4>Assessment section</h4><p>Three buttons: Eligible (→ Report Complete — Eligible), Escalate (→ Report Complete — Escalated), and Hold for further review. Notes textarea visible. Selecting an option highlights it. Saving updates the case status and reflects in the table immediately.</p></div>
 </div>
-<div class="tn-note"><div class="tni">Phase 1 improvements: Report Ready status, assessment status clarity, Current Case + Case History profile sections, filter card for Report Ready, action-required row highlighting. Not in Phase 1: required notes on Escalate, full event log audit trail, role-scoped admin visibility, Assessment history within Current Case — those are End Vision.</div></div>
+<div class="tn-note"><div class="tni">Phase 1 improvements: Report Complete — Awaiting Review status, Report Complete — Eligible and Report Complete — Escalated as terminal lifecycle statuses, Current Case + Case History structure, Consent Details with full legal name and mismatch warning, filter card for awaiting review. Not in Phase 1: required notes on Escalate, adverse action notification, full event log audit trail — End Vision.</div></div>
 <div class="tw"><table class="jt"><tbody>
 
 <tr class="rStp">
   <td class="lc"></td>
-  <td class="cc"><span class="sn">1.</span><span class="st">Identify reports ready for review</span><span class="su">/user/background-checks</span></td>
-  <td class="cc"><span class="sn">2.</span><span class="st">Open person profile</span><span class="su">Detail panel or full-screen overlay</span></td>
-  <td class="cc"><span class="sn">3.</span><span class="st">View current case and open report</span><span class="su">Person profile — Current Case section</span></td>
+  <td class="cc"><span class="sn">1.</span><span class="st">Identify reports needing review</span><span class="su">/user/background-checks</span></td>
+  <td class="cc"><span class="sn">2.</span><span class="st">Open person profile</span><span class="su">Detail panel — full-screen on mobile</span></td>
+  <td class="cc"><span class="sn">3.</span><span class="st">Review Current Case and open report</span><span class="su">Person profile — Current Case</span></td>
   <td class="cc"><span class="sn">4.</span><span class="st">Record assessment</span><span class="su">Person profile — Assessment section</span></td>
   <td class="cc"><span class="sn">5.</span><span class="st">Status reflects in table</span><span class="su">/user/background-checks</span></td>
 </tr>
 
 <tr class="rUsr">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-person"/></svg></span><span class="ltxt">Admin Actions</span></div></td>
-  <td class="cc">Scans the Screenings table. Filter cards at top include "Report Ready" as a tappable option — clicking it filters the table to cases where the report has returned and assessment is pending. Action-required rows (Report Ready, Needs Review, Escalated) carry an amber left border. Status column shows "Report Ready" (purple badge) for reports awaiting assessment. Assessment column is empty for these rows — admin has not yet acted. Clicks "Report Ready" filter card or scans the table for amber rows.</td>
-  <td class="cc">Clicks a row. Person profile opens as a side panel (desktop) or full-screen overlay (mobile). Profile header shows person's full legal name, preferred name if different, email, role, and department. Source chip indicates whether identity fields come from Rock CRM or PMM. Below the header, two clearly separated sections are visible: Current Case and Case History.</td>
-  <td class="cc">Current Case section shows: lifecycle status badge ("Report Ready" — purple dot), package name, date order was placed, date report was received, and an action banner ("Report received — your assessment is pending"). Consent Details sub-section shows: the applicant's full legal name exactly as they entered it on the consent form, the date the consent was submitted, and a name match indicator. This name is displayed separately from the profile name — it does not overwrite the name in file. If the two differ, a name mismatch warning is shown prominently: "Name on consent form does not match profile name" with action buttons Approve and proceed (admin confirms the name is acceptable) or Request correction. Admin resolves any mismatch before or alongside their assessment. Opens the report using a "View report" button in the current case section. Admin reads the report. Notes any flags, hits, or findings.</td>
-  <td class="cc">Scrolls to the Assessment section below the current case details. Three tappable buttons: Cleared (green), Needs Review (amber), Escalated (red). Admin clicks one — it highlights. Notes textarea appears below the buttons. Admin types notes (optional in Phase 1; required on Escalate in End Vision). Clicks Save Assessment. Assessment is recorded.</td>
-  <td class="cc">On save: current case lifecycle status updates to match the assessment — "Cleared" (green), "Needs Review" (amber), or "Escalated" (red). Assessment label appears as a secondary badge below the lifecycle status in the person profile. Row in the table updates immediately: status badge changes, assessment value appears in assessment column if visible. If Escalated: row carries a red accent. Closes the panel and returns to the table.</td>
+  <td class="cc"><ol>
+    <li>Taps the "Report Complete — Awaiting Review" filter card at the top of the Screenings table.</li>
+    <li>Table filters to only cases with reports back and assessment pending.</li>
+    <li>Each row shows an amber left border. Status badge: "Report Complete — Awaiting Review."</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Clicks a row. Person profile opens as a side panel on desktop, full-screen on mobile.</li>
+    <li>Profile header: full legal name, preferred name if different, email, role, department, source chip (Rock CRM or PMM).</li>
+    <li>Two sections clearly visible: Current Case and Case History.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Current Case shows: status badge ("Report Complete — Awaiting Review"), package name, date report received, and an action banner ("Report received — assessment pending").</li>
+    <li>Consent Details: applicant's full legal name exactly as entered on the consent form, date submitted, and a name match indicator. Displayed separately from the profile name — does not overwrite it. If names differ: mismatch warning with Approve and proceed / Request correction buttons.</li>
+    <li>Admin resolves any mismatch, then opens the report via "View report" button. Report opens in a new tab or inline viewer.</li>
+    <li>Case History below: all prior cases with check type, dates, lifecycle status, assessment outcome, and View report links where available.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Scrolls to the Assessment section. Three tappable buttons: "Eligible" (sets status to Report Complete — Eligible), "Escalate" (sets status to Report Complete — Escalated), and "Hold for further review" (keeps Report Complete — Awaiting Review).</li>
+    <li>Clicks one — it highlights. Notes textarea appears below.</li>
+    <li>Types notes (optional in Phase 1; required on Escalate in End Vision).</li>
+    <li>Clicks Save assessment.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Case status updates to Report Complete — Eligible (green) or Report Complete — Escalated (red).</li>
+    <li>Row in the Screenings table updates immediately — status badge changes, row exits the "Report Complete — Awaiting Review" filter.</li>
+    <li>Admin closes the panel and moves to the next row.</li>
+  </ol></td>
 </tr>
 
 <tr class="rSec">
@@ -1218,11 +1283,11 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-auto_stories"/></svg></span><span class="ltxt">Storyboard</span></div></td>
-  <td class="cc">Maggie taps the "Report Ready" filter card. Fourteen rows appear, all with amber left borders. No more scanning the full table and guessing which "Completed" row still needs her attention.</td>
-  <td class="cc">She opens the first row: James Chen, Children's Ministry. Profile opens. Current Case shows "Report Ready" with the date the report arrived. Case History shows his last check — Cleared 14 months ago.</td>
-  <td class="cc">She clicks View report. The report opens. County criminal: one hit from seven years ago — a minor traffic offense. No sex offender registry match. She reads the full context.</td>
-  <td class="cc">She scrolls to the Assessment section. Clicks "Cleared." Adds a short note. Clicks Save. The badge changes to green instantly.</td>
-  <td class="cc">She returns to the table. James's row now shows "Cleared" — no longer amber. She moves to the next Report Ready row.</td>
+  <td class="cc">Maggie taps "Report Complete — Awaiting Review." Fourteen rows. All with amber left borders. No more hunting through "Completed" rows.</td>
+  <td class="cc">Opens James Chen, Children's Ministry. Current Case: report back yesterday. Case History: two prior checks, both Report Complete — Eligible.</td>
+  <td class="cc">She reads the Consent Details — name on form matches. Opens the report. One county criminal hit — minor, seven years old. She reads the full context.</td>
+  <td class="cc">Scrolls to Assessment. Clicks Report Complete — Eligible. Adds a short note. Saves.</td>
+  <td class="cc">James's row shows Report Complete — Eligible — green. No longer in the filter. She moves to the next.</td>
 </tr>
 
 <tr class="rEmo">
@@ -1232,59 +1297,60 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-mail"/></svg></span><span class="ltxt">Communications</span></div></td>
-  <td class="cc">No outbound communication from admin at this step. Report arrived via Digital Delve callback — admin sees it as "Report Ready" in the table.</td>
-  <td class="cc">No communication at this step.</td>
-  <td class="cc">Report delivered via Digital Delve secure viewer. No new communications — admin reading the report.</td>
-  <td class="cc">No outbound communication triggered by assessment in Phase 1. Assessment logged internally. Future: adverse action notification workflow is End Vision.</td>
-  <td class="cc">No communication triggered on status change in Phase 1. Adverse action notice and pre-adverse action sequencing are End Vision items.</td>
+  <td class="cc">No outbound. Report arrived via Digital Delve webhook — status updated automatically.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Report served from Digital Delve secure viewer. No new communications.</td>
+  <td class="cc">No outbound communication on assessment in Phase 1. Adverse action notification is End Vision.</td>
+  <td class="cc">No communication on status change in Phase 1. Pre-adverse and adverse action sequencing is End Vision.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-settings"/></svg></span><span class="ltxt">Backend</span></div></td>
-  <td class="cc">Cases API returns Report Ready status for cases where Digital Delve callback has been received and assessment is null. Filter card count accurate against this query.</td>
-  <td class="cc">Person profile API returns person record, current case, and case history in a single call. Case history returns all prior cases with check type, dates, lifecycle status, assessment, and report URL where available.</td>
-  <td class="cc">Report URL generated by Digital Delve and stored on the case record. View report opens authenticated URL. No re-fetch needed after profile load.</td>
-  <td class="cc">Assessment saved via PATCH on the case record. Lifecycle status updated atomically with assessment. Assessment logged with actor ID and timestamp. Notes field stored on case record.</td>
-  <td class="cc">Table row re-fetches on panel close or via WebSocket update. Cleared cases no longer appear in the Report Ready filter. Escalated cases appear in a dedicated filter card if configured.</td>
+  <td class="cc">Cases API returns Report Complete — Awaiting Review for cases where Digital Delve callback received and assessment is null. Filter card count accurate.</td>
+  <td class="cc">Person profile API returns person record, current case, and case history in a single call.</td>
+  <td class="cc">Report URL stored on case record from Digital Delve callback. View report opens authenticated URL. Consent Details: applicant name from consent form stored on the case, compared against person record name at display time.</td>
+  <td class="cc">Assessment saved via PATCH on case record. Status updated atomically. Notes stored on case. Actor ID and timestamp recorded.</td>
+  <td class="cc">Table row updated via API response on save. Row exits Report Complete — Awaiting Review filter immediately.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-headset_mic"/></svg></span><span class="ltxt">Support</span></div></td>
-  <td class="cc">Report Ready filter card eliminates "how do I find reports that need my review" support contacts.</td>
-  <td class="cc">Current Case + Case History structure eliminates "where do I find this applicant's old check" contacts.</td>
-  <td class="cc">Clear report access from Current Case section eliminates "where is the report for this applicant" contacts.</td>
-  <td class="cc">Assessment section with three explicit buttons reduces ambiguity about how to record a decision. Notes field captures reasoning in the system rather than in a separate email chain.</td>
-  <td class="cc">Immediate table update confirms the assessment was saved — eliminates "did my assessment save?" contacts.</td>
+  <td class="cc">Filter card eliminates "how do I find reports needing review" contacts.</td>
+  <td class="cc">Current Case + Case History eliminates "where is this applicant's old check" contacts.</td>
+  <td class="cc">Consent Details with name mismatch warning surfaces a previously hidden issue — reduces "this person's name is wrong in the system" contacts post-assessment.</td>
+  <td class="cc">Explicit assessment buttons reduce ambiguity about how to record a decision.</td>
+  <td class="cc">Immediate table update confirms assessment saved — eliminates "did my assessment go through" contacts.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-church"/></svg></span><span class="ltxt">ChMS Host</span></div></td>
-  <td class="cc">Digital Delve report callback is triggered independently of ChMS. Table embedded in host shows same Report Ready status.</td>
-  <td class="cc">Person profile pulls from PMM's person record — identity fields show source chip (Rock CRM or PMM) to clarify data ownership.</td>
-  <td class="cc">Report is stored in PMM via Digital Delve — not written back to host at this step.</td>
-  <td class="cc">Assessment outcome is written back to host person record on save: Cleared, Needs Review, or Escalated status synced to ChMS person record field.</td>
-  <td class="cc">Table in ChMS embed reflects updated status immediately on sync.</td>
+  <td class="cc">Digital Delve callback is independent of ChMS. Host embed shows same Report Complete — Awaiting Review status.</td>
+  <td class="cc">Profile identity fields show source chip — role from ChMS, screening history from PMM.</td>
+  <td class="cc"><span class="empty">—</span></td>
+  <td class="cc">Assessment outcome written back to host person record: Report Complete — Eligible or Report Complete — Escalated.</td>
+  <td class="cc">Host embed reflects updated status on next sync.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-manage_search"/></svg></span><span class="ltxt">Digital Delve</span></div></td>
-  <td class="cc">Digital Delve sent report callback when check completed. PMM updated case status to Report Ready at that point. No further Digital Delve interaction at this step.</td>
+  <td class="cc">Digital Delve sent report callback earlier. Case status set to Report Complete — Awaiting Review at that point. No further interaction here.</td>
   <td class="cc"><span class="empty">—</span></td>
-  <td class="cc">Report viewer authenticated via Digital Delve secure URL. Report content served from Digital Delve's platform.</td>
+  <td class="cc">Report viewer authenticated via Digital Delve secure URL.</td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
 </tr>
 
 <tr class="rChg">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-task_alt"/></svg></span><span class="ltxt">What Changes</span></div></td>
-  <td class="cc"><span class="vtag">RESOLVED</span> "Report Ready" is unambiguous — means report is back and assessment is pending. Filter card for Report Ready. Action-required rows have amber accent. No more scanning the full table for "Completed" rows that still need attention.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Current Case and Case History are two distinct sections. Prior assessments and check types visible in Case History. No more empty "Applicant History" section.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Report access is a button in the Current Case section — not a separate navigation step. Current case shows date report arrived.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Assessment section with three explicit buttons tied to the current case. Notes textarea visible. Assessment visually distinct from lifecycle status — secondary badge, different weight. Not yet: required notes on Escalate (End Vision).</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Table updates immediately on assessment save. Cleared cases exit Report Ready filter automatically.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> "Report Complete — Awaiting Review" is unambiguous and filterable. Action-required rows highlighted. No more scanning "Completed" rows.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Current Case + Case History structure. Prior assessments and check types visible. No more empty "Applicant History."</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Consent Details shows applicant's full legal name from form separately from profile name — with mismatch warning and resolve actions. Report access as a button in Current Case.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Assessment outcomes (Report Complete — Eligible, Report Complete — Escalated) fold into lifecycle status — no separate column. Notes visible. Not yet: required notes on Escalate — End Vision.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Table updates immediately on save. Case exits awaiting-review filter automatically.</td>
 </tr>
 
 </tbody></table></div>
 </div><!-- end results phase 1 -->
+
 
 <!-- RESULTS REVIEW VISION (End Vision) -->
 <div class="mv vis">
@@ -1522,21 +1588,22 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 </tbody></table></div>
 </div><!-- end manual current -->
 
+
 <!-- MANUAL ORDER PHASE 1 -->
 <div class="mv p1">
 <div class="prio">
   <div class="prio-hd">Phase 1 improvements — Manual Order</div>
-  <div class="prc"><h5>Same improved wizard and package cards</h5><div class="prb">Current: manual order is a separate flow with a different UI and no package guidance. Coordinators don't know when to use it.</div><div class="prh">Phase 1 change: manual order uses the same improved wizard. Package selection uses the same Essential / Preferred / Comprehensive cards with role-risk labels. Same applicant search and CSV bulk import available at step 1.</div></div>
-  <div class="prc"><h5>Order failure handling</h5><div class="prb">Current: if an order fails due to incorrect PII (wrong name, bad SSN, address mismatch), the row stays as "Incomplete" indefinitely. Admin cannot cancel it or understand why it failed.</div><div class="prh">Phase 1 change: if an order fails due to a technical error, it auto-cancels in the backend. If it fails due to information issues, admin is informed of which fields caused the failure. Admin can close the case and start a new order with corrected data.</div></div>
-  <div class="prc"><h5>Status clarity at manual order stage</h5><div class="prb">Current: "Pending" after a manual order is submitted means the check is in progress — but "Pending" is also used for consent-pending cases. No distinction.</div><div class="prh">Phase 1 change: "Order Processing" is the unambiguous status for a check that has been placed and is in flight with Digital Delve, regardless of whether it came via invite or manual order.</div></div>
-  <div class="prc"><h5>Applicant entry improvements</h5><div class="prb">Current: manual order requires full PII entry (SSN, DOB, address history) by the admin. Admin re-keys data that the applicant should enter themselves.</div><div class="prh">Phase 1 scope note: SSN entry before FCRA certification gate remains in Phase 1 (known compliance risk, not resolved until End Vision). Applicant search and add inline improvement applies — admin can search existing People to pre-fill name and email before PII entry.</div></div>
+  <div class="prc"><h5>Same improved wizard and package cards</h5><div class="prb">Manual order is a separate flow with a different UI and no package guidance. Coordinators don't know when to use it.</div><div class="prh">Manual order uses the same 4-step wizard. Same package cards. Same applicant search and CSV import at step 1. The entry point is "New background check" — not a separate path to discover.</div></div>
+  <div class="prc"><h5>Order failure handling</h5><div class="prb">If an order fails due to incorrect PII, the row shows "Incomplete" indefinitely. No cancel path, no explanation.</div><div class="prh">Order Failed with type: technical error (auto-cancel, admin retries) or information issue (field-level details shown, admin closes and retries with corrected data).</div></div>
+  <div class="prc"><h5>Status clarity at manual order stage</h5><div class="prb">"Pending" after a manual order is submitted is the same badge as consent-pending cases. No distinction.</div><div class="prh">"Order Processing" is the unambiguous status for a check placed and in flight — regardless of whether it came via invite or manual order.</div></div>
+  <div class="prc"><h5>Known Phase 1 limitation</h5><div class="prb">SSN is collected by the admin before the FCRA certification gate — a compliance risk present in current production.</div><div class="prh">Not resolved in Phase 1. Acknowledged on screen. Resolved in End Vision: SSN collection moves to Digital Delve's secure applicant form.</div></div>
 </div>
 <div class="sb">
-  <div class="sc blue"><h4>Unified wizard</h4><p>Manual order uses the same 4-step wizard as invite order. Package cards apply equally. Applicant search (with last case status) and CSV bulk import available at step 1. The entry point is the same "New background check" button — not a separate path the coordinator has to discover.</p></div>
-  <div class="sc green"><h4>Order failure</h4><p>Technical failures are auto-cancelled by the backend. Information failures surface with field-level detail so admin knows exactly what to correct on the next attempt. Close Case gives a clean exit. Case moves to Case History. New order must be started separately.</p></div>
-  <div class="sc amber"><h4>Known Phase 1 limitation</h4><p>SSN is still collected by the admin before the FCRA certification gate — the same compliance risk as current. This is acknowledged as a known issue in Phase 1 and is resolved in End Vision where SSN collection moves to Digital Delve's secure applicant form.</p></div>
+  <div class="sc blue"><h4>Unified wizard</h4><p>Same 4-step wizard as invite order. Same package cards. Same applicant search and CSV import. "New background check" is the only entry point for both paths.</p></div>
+  <div class="sc green"><h4>Order failure</h4><p>Technical failures auto-cancel. Information failures surface with field-level detail. Close Case gives a clean exit. New order required for retry.</p></div>
+  <div class="sc amber"><h4>Known limitation</h4><p>SSN still collected by admin before FCRA gate — same as current production. Flagged on-screen. End Vision fix: SSN moved to Digital Delve's secure form.</p></div>
 </div>
-<div class="tn-note"><div class="tni">Phase 1 improvements: unified wizard entry point, package cards, applicant search at step 1, new Order Processing status, order failure handling (technical + information types), close case action. Known Phase 1 limitation not resolved: SSN collected before FCRA certification gate — End Vision fix. Not in Phase 1: consent on file logged as first-class event, FCRA compliance gate before SSN entry — those are End Vision.</div></div>
+<div class="tn-note"><div class="tni">Phase 1 improvements: unified wizard entry, package cards, applicant search at step 1, Order Processing status, Order Failed with type and field details, close case action. Known limitation not resolved: SSN collected before FCRA gate — End Vision. Not in Phase 1: consent on file as logged first-class event — End Vision.</div></div>
 <div class="tw"><table class="jt"><tbody>
 
 <tr class="rStp">
@@ -1550,11 +1617,33 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rUsr">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-person"/></svg></span><span class="ltxt">Admin Actions</span></div></td>
-  <td class="cc">Clicks "New background check" — same button as invite order. At Step 1: People, uses the same applicant search as the invite flow: types name or email, sees existing People records with last case status chips. If the person already exists, selects them (name and email pre-populated). If not, adds new person inline. Can use CSV bulk import for batch manual orders. Staged applicants shown in the list with their serving role and last case status. Duplicate warning if an active case of the same type exists.</td>
-  <td class="cc">Same Step 2: Package experience as invite order. Three standard cards — Essential, Preferred, Comprehensive — with role-risk labels, role examples, and expandable search disclosures. Custom packages tab for account-configured packages. Child Safety Training options: Employee (Spanish), Employee (English), Volunteer (Spanish), None. No difference between the package step for manual vs invite orders.</td>
-  <td class="cc">At Step 3: Manual consent. Admin selects "Consent on file" delivery method card. Required acknowledgment text: "I confirm that a valid FCRA authorization form and the Summary of Rights have been provided to this applicant and are retained in our organization's records." Admin ticks confirmation and continues. Below the confirmation: PII entry fields — First name, Last name, Date of birth, SSN, current address, prior addresses (up to 7 years). Note: SSN is collected here before the FCRA gate in Phase 1 — known compliance risk, flagged on screen as "This information is transmitted securely to Digital Delve."</td>
-  <td class="cc">Step 4: Review. One row per person with name, email, package, CST, delivery method (Manual — consent on file). Line above confirm: "Confirming places this order immediately. No invite email will be sent to the applicant. This is a billable action." Confirm button: "Place order." Can navigate back to any step.</td>
-  <td class="cc">On confirm: order dispatched to Digital Delve immediately. Case created with status "Order Processing." Case appears in Screenings table with Initiated column showing "Manual" and Package column showing selected package. Admin receives confirmation email with order details. Opening person profile: Current Case shows "Order Processing," package, date placed. Order failure: if check fails (technical error or information issue), admin receives in-app notification. Current Case shows "Order Failed" with explanation type and field-level details if information-related. Admin clicks Close Case: status = Case Closed, case moves to Case History. New order must be started with corrected information.</td>
+  <td class="cc"><ol>
+    <li>Clicks the dropdown arrow on the "+ Background Check" split button and selects "Manual Order." Same button — no separate entry point to discover.</li>
+    <li>The manual order wizard opens as a full-page screen. At Step 1: People, same applicant search as the invite flow — results show name, email, role, department, last case status chip.</li>
+    <li>Selects existing person or adds new inline. CSV bulk import available for batch manual orders.</li>
+    <li>Duplicate warning if an active case of the same type already exists.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Same Step 2: Package as invite order. Three standard cards — Essential, Preferred, Comprehensive — with risk labels, role examples, and expandable disclosures.</li>
+    <li>Custom packages tab for account-configured packages.</li>
+    <li>Child Safety Training: Employee (Spanish), Employee (English), Volunteer (Spanish), None.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Step 3: selects "Consent on file" delivery card.</li>
+    <li>Required acknowledgment text: "I confirm a valid FCRA authorization form and Summary of Rights have been provided to this applicant and are in our records." Admin ticks confirmation.</li>
+    <li>PII entry fields: First name, Last name, DOB, SSN, current and prior addresses (7 years). Note on screen: "SSN is transmitted securely to Digital Delve and not stored in PMM." Known limitation: SSN collected here before FCRA gate — not resolved in Phase 1.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Step 4: Review. One row per person — name, email, package, CST, delivery (Manual — consent on file).</li>
+    <li>Above confirm: "Confirming places this order immediately. No invite email will be sent. This is a billable action."</li>
+    <li>Confirm button: "Place order." Can navigate back to any step.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>On confirm: order dispatched to Digital Delve immediately. Case created with status "Order Processing." Initiated column shows "Manual." Package column shows selected package.</li>
+    <li>Person profile → Current Case: status "Order Processing," package, date placed.</li>
+    <li>Order failure — technical: status = Order Failed, explanation "Technical error — our team has been notified." Backend auto-cancels. Admin clicks Close Case → status = Case Cancelled.</li>
+    <li>Order failure — information: status = Order Failed, explanation shows which fields were invalid or missing. Admin closes case, corrects data, starts a new order.</li>
+  </ol></td>
 </tr>
 
 <tr class="rSec">
@@ -1564,11 +1653,11 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-auto_stories"/></svg></span><span class="ltxt">Storyboard</span></div></td>
-  <td class="cc">Pastor Tom calls to say a new hire starts Monday and needs a check today. Sarah opens the wizard — same one she uses for invites. No need to find a different menu. She searches the new hire's name and sees "No previous case."</td>
-  <td class="cc">She opens the Comprehensive card — "For roles involving finance, driving, supervision, or oversight." The new hire is a finance coordinator. Perfect match. Selects it.</td>
-  <td class="cc">She selects "Consent on file." She reads the acknowledgment carefully — the paper authorization form is in the file cabinet. Ticks it. Enters the applicant's PII. The SSN field notes it's transmitted securely. She fills in the address history.</td>
-  <td class="cc">Review: one row, Comprehensive, Manual — consent on file. "Placing order immediately. No invite email. Billable." She clicks Place order.</td>
-  <td class="cc">Case appears in the table — "Order Processing" with a Manual tag. Three days later she opens the profile. Current Case: "Order Processing" — still in flight. One week later it updates to "Report Ready."</td>
+  <td class="cc">New hire starts Monday. Sarah opens the same New background check wizard she uses for invites. No hidden path to find. Searches the name. No previous case.</td>
+  <td class="cc">Opens Comprehensive — "For finance, drivers, leadership." Finance coordinator. She selects it, confident.</td>
+  <td class="cc">Selects Consent on file. Reads the acknowledgment. Paper form is in the file cabinet. Ticks it. Enters PII. The SSN note says "transmitted securely."</td>
+  <td class="cc">Review: one row, Comprehensive, Manual — consent on file. "Placing order immediately. No invite email. Billable." Clicks Place order.</td>
+  <td class="cc">Case: Order Processing · Manual. One week later: Report Complete — Awaiting Review.</td>
 </tr>
 
 <tr class="rEmo">
@@ -1578,58 +1667,59 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-mail"/></svg></span><span class="ltxt">Communications</span></div></td>
-  <td class="cc">No communications to applicant at this step — admin is entering their information on their behalf.</td>
+  <td class="cc">No communications to applicant — admin entering data on their behalf.</td>
   <td class="cc"><span class="empty">—</span></td>
-  <td class="cc">No outbound to applicant at PII entry. FCRA acknowledgment captured internally with actor and timestamp (Phase 1 implementation — not yet a first-class event log entry as in End Vision).</td>
-  <td class="cc">On confirm: no invite email to applicant. Admin receives confirmation email: applicant name, package, CST, delivery method (manual), order date.</td>
-  <td class="cc">Order failure: in-app notification to admin. If information-related failure, field-level details included in notification. No outbound email to applicant on failure in Phase 1.</td>
+  <td class="cc">FCRA acknowledgment captured with actor and timestamp. Not yet a first-class event log entry (End Vision).</td>
+  <td class="cc">No invite email to applicant. Admin receives confirmation: applicant name, package, CST, delivery method, order date.</td>
+  <td class="cc">Order failure: in-app notification to admin only. No outbound to applicant in Phase 1.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-settings"/></svg></span><span class="ltxt">Backend</span></div></td>
   <td class="cc">Same People search API as invite wizard. No writes until confirm.</td>
-  <td class="cc">Same package cards hydration as invite wizard. No API call at this step.</td>
-  <td class="cc">PII entered client-side and transmitted to Digital Delve encrypted. SSN is not stored in PMM's database — passed directly to Digital Delve on submit. FCRA confirmation stored as a field on the case record in Phase 1 (not as a first-class event log entry — End Vision improvement).</td>
-  <td class="cc">On confirm: Person record created or matched. Case record created with delivery method = manual. Order dispatched to Digital Delve immediately. Case status set to Order Processing.</td>
-  <td class="cc">Digital Delve pushes status updates via webhook: processing, completed, or failed. On failure: failure type and field details pushed to PMM. PMM sets status to Order Failed, marks order auto-cancelled. Close Case: admin action sets status to Case Closed, moves to Case History.</td>
+  <td class="cc">Same package card hydration as invite wizard.</td>
+  <td class="cc">PII transmitted to Digital Delve encrypted. SSN not stored in PMM. FCRA confirmation stored as a field on the case record.</td>
+  <td class="cc">On confirm: Person record created or matched. Case created with delivery = manual. Order dispatched to Digital Delve immediately. Status = Order Processing.</td>
+  <td class="cc">Digital Delve pushes status webhooks. On failure: type and field details pushed to PMM. PMM sets Order Failed, auto-cancels. Close Case: admin action → Case Cancelled.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-headset_mic"/></svg></span><span class="ltxt">Support</span></div></td>
-  <td class="cc">Unified wizard eliminates "when should I use manual vs invite" support contacts — the choice is consent method at step 3, not a separate flow.</td>
-  <td class="cc">Same package cards eliminate package selection contacts on the manual path.</td>
-  <td class="cc">On-screen note about SSN security reduces "is this safe to enter" contacts. Known compliance limitation still generates some contacts until End Vision fix.</td>
-  <td class="cc">Clear commit label and admin confirmation email eliminate "did my order go through" contacts.</td>
-  <td class="cc">Order failure explanation eliminates "my order is stuck as Incomplete, what do I do" contacts — most common manual order support contact type.</td>
+  <td class="cc">Unified wizard eliminates "when do I use manual vs invite" contacts — consent method is chosen at step 3, not before entering the wizard.</td>
+  <td class="cc">Package cards eliminate selection support contacts on the manual path.</td>
+  <td class="cc">On-screen SSN note reduces "is this safe to enter" contacts. Known compliance limitation may still generate some contacts until End Vision.</td>
+  <td class="cc">Commit label and admin confirmation email eliminate "did my order go through" contacts.</td>
+  <td class="cc">Order failure explanation eliminates "my order is stuck as Incomplete" contacts — most common manual order support type.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-church"/></svg></span><span class="ltxt">ChMS Host</span></div></td>
-  <td class="cc">Same People search for integrated accounts — serving context from ChMS visible at selection.</td>
+  <td class="cc">Same People search for integrated accounts — serving context from ChMS visible.</td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
-  <td class="cc">On confirm: case created in PMM and Order Processing status written back to host person record. Manual tag in Initiated column synced back.</td>
-  <td class="cc">On order failure: Order Failed status synced back to host. On case close: Case Closed status synced.</td>
+  <td class="cc">On confirm: case created and Order Processing status written back to host record. Manual tag in Initiated column synced.</td>
+  <td class="cc">Order Failed and Case Cancelled statuses synced to host record.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-manage_search"/></svg></span><span class="ltxt">Digital Delve</span></div></td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
-  <td class="cc">Receives PII via encrypted transmission when admin submits PII fields in Step 3. Does not store PII in PMM.</td>
-  <td class="cc">Receives full order on confirm. Processes check immediately — no registration URL generated (no invite). Begins running searches.</td>
-  <td class="cc">Returns status updates via webhook. On failure: returns type (technical / information) and field-level details for information failures (e.g., "SSN does not match provided name").</td>
+  <td class="cc">Receives PII via encrypted transmission from Step 3 PII fields.</td>
+  <td class="cc">Receives full order on confirm. Processes immediately — no registration URL. Begins running searches.</td>
+  <td class="cc">Returns status webhooks. On failure: type (technical / information) and field-level details for information failures.</td>
 </tr>
 
 <tr class="rChg">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-task_alt"/></svg></span><span class="ltxt">What Changes</span></div></td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Same unified wizard entry point as invite. Applicant search with last case status. Add new inline. CSV bulk import applies to manual orders too. Duplicate check before confirm.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Same package cards as invite flow. No degraded experience for manual orders. Role-risk labels and role examples apply equally.</td>
-  <td class="cc"><span class="vtag">PARTIAL</span> Consent acknowledgment now explicit and timestamped. PII transmitted securely to Digital Delve. Known limitation: SSN entry still occurs before FCRA gate — End Vision fix. FCRA acknowledgment not yet a first-class event log entry — End Vision.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Commit label explicitly states order places immediately, no invite email, billable action. No ambiguity about what Confirm does.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Order Processing status replaces ambiguous "Pending." Order Failed status appears with failure explanation. Auto-cancel on failure. Close Case action. Case Closed status. Case History updated. New order required for retry.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Same unified wizard entry point as invite. Applicant search with last case status. Add new inline. CSV bulk import. Duplicate check before confirm.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Same package cards as invite flow. Risk labels and role examples apply equally to manual orders.</td>
+  <td class="cc"><span class="vtag">PARTIAL</span> Consent acknowledgment explicit and timestamped. PII transmitted securely. Known limitation: SSN entry still before FCRA gate — End Vision fix.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Commit label explicit — order places immediately, no invite email, billable.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Order Processing replaces ambiguous "Pending." Order Failed surfaces with explanation type. Auto-cancel on failure. Close Case action → Case Cancelled.</td>
 </tr>
 
 </tbody></table></div>
 </div><!-- end manual phase 1 -->
+
 
 <!-- MANUAL ORDER VISION (End Vision) -->
 <div class="mv vis">
@@ -1896,21 +1986,22 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 </tbody></table></div>
 </div><!-- end rescreen current -->
 
+
 <!-- RESCREEN PHASE 1 -->
 <div class="mv p1">
 <div class="prio">
   <div class="prio-hd">Phase 1 improvements — Rescreen</div>
-  <div class="prc"><h5>Screening Expired status is findable</h5><div class="prb">Current: "Due for Rescreen" and "Expired" (invite-link expired) are both shown in the same status column. Admin cannot distinguish "this person needs a new check" from "this person's invite link expired."</div><div class="prh">Phase 1 change: "Screening Expired" is an unambiguous status meaning the background check period has lapsed and a new check is needed. It is filterable via the filter cards — admin can tap "Screening Expired" to see exactly who needs rescreening.</div></div>
-  <div class="prc"><h5>Bulk selection and batch reorder</h5><div class="prb">Current: no bulk path. Rescreening 40 people requires 40 separate wizard runs, each starting from scratch with no pre-filled data.</div><div class="prh">Phase 1 change: filter to Screening Expired, select all (or selected rows), and initiate rescreen for the batch. The same improved wizard handles the batch — package pre-suggested from the last cleared check for each person. Admin confirms or changes per person.</div></div>
-  <div class="prc"><h5>Close case action for expired screenings</h5><div class="prb">Current: no way to close out an expired case when the person is no longer active or rescreening is not needed. The row stays indefinitely.</div><div class="prh">Phase 1 change: admin can close a case with "Screening Expired" status — this moves it to Case History with status "Case Closed." Separate from archive (which removes the person from active views). Close case = this case is done, no rescreen. Archive = this person is no longer active.</div></div>
-  <div class="prc"><h5>Person profile: Current Case + Case History</h5><div class="prb">Current: "Applicant History" shows only profile creation. No visibility into screening history across multiple check cycles.</div><div class="prh">Phase 1 change: Case History section shows all prior cases — check type, date, lifecycle status, assessment, and a View report link. Admin reviewing a rescreen request can see the full prior screening record before initiating a new order.</div></div>
+  <div class="prc"><h5>Screening Expired is findable</h5><div class="prb">"Due for Rescreen" and "Expired" (invite link expired) sit in the same status column. Admin cannot tell them apart at a glance.</div><div class="prh">"Screening Expired" is an unambiguous V1 status. Filterable via filter card. Amber accent on expired rows.</div></div>
+  <div class="prc"><h5>Bulk select and batch reorder</h5><div class="prb">No bulk path. Rescreening 40 people requires 40 separate wizard runs with no pre-filled data.</div><div class="prh">Filter to Screening Expired, select all (or selected rows), trigger rescreen for the batch. Package pre-suggested from the last Report Complete — Eligible case per person.</div></div>
+  <div class="prc"><h5>Close case for expired screenings</h5><div class="prb">No way to close an expired case when the person is no longer serving. The row sits in the table indefinitely.</div><div class="prh">Close Case available when status is Screening Expired (or Order Failed). Moves case to Case Cancelled. Distinct from Archive — archive removes the person from active views; close case only closes this case.</div></div>
+  <div class="prc"><h5>Person profile — Current Case + Case History</h5><div class="prb">"Applicant History" shows only profile creation. No visibility into prior check cycles.</div><div class="prh">Case History shows all prior cases — check type, dates, status, assessment, View report links. Admin has full screening record before initiating a rescreen.</div></div>
 </div>
 <div class="sb">
-  <div class="sc blue"><h4>Screening Expired is findable</h4><p>"Screening Expired" is a first-class status badge. Filter cards include it as a tappable option. Admin sees exactly who needs rescreening without scanning the full table for ambiguous "Due for Rescreen" rows.</p></div>
-  <div class="sc green"><h4>Bulk reorder</h4><p>Filter to Screening Expired, select all or selected rows, and trigger a batch reorder. The improved wizard handles the batch — package pre-suggested from the last cleared check per person. Admin can confirm as-is or adjust per person before committing.</p></div>
-  <div class="sc amber"><h4>Close case vs archive</h4><p>Close Case is available when status is Screening Expired (or Order Failed). It moves the case to Case History as "Case Closed" — person remains active. Archive is a separate action on the person record — removes them from active views. These two actions are distinct and labeled clearly in the UI.</p></div>
+  <div class="sc blue"><h4>Screening Expired is findable</h4><p>"Screening Expired" is a first-class V1 status badge. Filter card shows a count. Admin sees exactly who needs rescreening without scanning for ambiguous rows.</p></div>
+  <div class="sc green"><h4>Bulk reorder</h4><p>Filter to Screening Expired, select, trigger batch reorder. Package pre-suggested from last Report Complete — Eligible case. One confirm for the whole batch.</p></div>
+  <div class="sc amber"><h4>Close case vs archive</h4><p>Close Case = done with this expired case, no rescreen. Archive = person is no longer active. Both actions labeled clearly and kept separate in the UI.</p></div>
 </div>
-<div class="tn-note"><div class="tni">Phase 1 improvements: Screening Expired status (unambiguous, filterable), bulk select + batch reorder for expired cases, package pre-suggestion from last cleared check, close case action for expired cases, Current Case + Case History profile structure for rescreening context. Not in Phase 1: proactive rescreen notification before expiry, per-role interval configuration, continuous monitoring between rescreens — those are End Vision.</div></div>
+<div class="tn-note"><div class="tni">Phase 1 improvements: Screening Expired status (filterable), bulk select + batch reorder, package pre-suggestion from last cleared case, close case action, Current Case + Case History for rescreening context. Not in Phase 1: proactive rescreen notification before expiry, per-role interval config, continuous monitoring — End Vision.</div></div>
 <div class="tw"><table class="jt"><tbody>
 
 <tr class="rStp">
@@ -1924,11 +2015,33 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rUsr">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-person"/></svg></span><span class="ltxt">Admin Actions</span></div></td>
-  <td class="cc">Opens the Screenings table. Sees "Screening Expired" status badge (amber dot) on rows where the background check period has lapsed and a new check is needed. This status is distinct from "Invite Cancelled" and "Case Closed" — it specifically means the check was once active and has now expired. Filter cards at the top include a "Screening Expired" card showing a count. Action-required rows with Screening Expired have an amber left border. Note: no proactive notification in Phase 1 — admin still discovers this by checking the table. Proactive alerts before expiry are End Vision.</td>
-  <td class="cc">Taps the "Screening Expired" filter card. Table filters to show only expired cases. Each row shows: Name + email (stacked), Package (last check's package), Initiated (Email Invite / Manual / Rock CRM etc.), and status "Screening Expired." Admin reviews the list. Can sort by name, department, or date expired. Opens a person profile before deciding: Current Case shows the expired case with its original package and expiry date. Case History shows all prior checks — type, dates, assessment outcomes, and View report links. Admin can see the full screening record to inform their rescreen decision.</td>
-  <td class="cc">For each person in the expired list, admin decides: rescreen or close case. Rescreen: person still serves in the organization, a new check is needed. Close Case: person is no longer serving, or admin does not intend to rescreen. Close case is available via a button in Current Case ("Close this case") or via a bulk action ("Close selected cases"). Closing a case: status changes to "Case Closed," case moves to Case History, Current Case shows empty state. Person remains visible in the People database and is not archived. Archive is a separate action for when the person is no longer active in the organization.</td>
-  <td class="cc">For rescreens: admin selects one or more people and clicks "New background check" (single) or triggers a batch via bulk action menu ("Rescreen selected — N people"). The improved wizard opens. Step 1: People shows all selected people in the list — pre-populated with name, email, role, and a status chip showing their last case. Step 2: Package shows each person's last cleared package as the pre-selected suggestion — admin can confirm or change per person. Step 3: Delivery — same email vs link-only choice. Step 4: Review — one row per person with confirmed package and delivery method. Confirm: "Confirming creates one new case per person. A billable action."</td>
-  <td class="cc">On confirm: new cases created for each person. Cases appear in table immediately with status "Consent Pending" (email mode) or "Invite Link Created" (link-only). Original expired cases move to Case History when new case is created. Person profile: Current Case now shows the new active case. Case History shows the previous expired case alongside all prior history. Admin can track consent submission and order status from the table or individual profiles. Invite management (copy, resend, extend, cancel) available in Current Case while in invite phase.</td>
+  <td class="cc"><ol>
+    <li>Opens the Screenings table. "Screening Expired" status badge (amber dot) visible on rows where the check period has lapsed.</li>
+    <li>Filter card at top shows "Screening Expired" with a count.</li>
+    <li>Note: no proactive alert before expiry in Phase 1 — admin discovers this by checking the table. Proactive notifications are End Vision.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Taps the "Screening Expired" filter card. Table shows only expired cases.</li>
+    <li>Each row shows name + email, last Package, Initiated method, and "Screening Expired" status badge.</li>
+    <li>Admin opens individual profiles before deciding: Current Case shows the expired case. Case History shows all prior checks — type, dates, assessment, View report links. Admin can see the full record before acting.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>For each person in the expired list: decide rescreen (person still serving) or close case (no longer serving, or admin does not intend to rescreen).</li>
+    <li>Close Case available as a button in Current Case, or via bulk action menu ("Close selected cases"). Status → Case Cancelled. Case moves to Case History. Current Case shows empty state.</li>
+    <li>Person remains active and visible in the People database. Archive is a separate action for when the person is no longer in the organization.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>Selects people to rescreen. Clicks "New background check" (single) or bulk action "Rescreen selected — N people."</li>
+    <li>Wizard opens. Step 1: People — all selected pre-populated with name, email, role, last case status chip.</li>
+    <li>Step 2: Package — each person's last Report Complete — Eligible package pre-selected as a suggestion. Admin confirms or changes per person.</li>
+    <li>Step 3: Delivery — same email vs link-only choice. Expiry selector.</li>
+    <li>Step 4: Review — one row per person. "Confirming creates one new case per person. Billable." Confirm.</li>
+  </ol></td>
+  <td class="cc"><ol>
+    <li>On confirm: new cases created. Each appears in the table immediately with status "Invite Link Sent" (email) or "Invite Link Created" (link-only).</li>
+    <li>Person profile: Current Case now shows the new active case. Case History shows the expired case and all prior history.</li>
+    <li>Invite management (copy, resend, extend, cancel) available in Current Case while in the invite phase.</li>
+  </ol></td>
 </tr>
 
 <tr class="rSec">
@@ -1938,11 +2051,11 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-auto_stories"/></svg></span><span class="ltxt">Storyboard</span></div></td>
-  <td class="cc">It is the first Monday of the month. Sarah opens the table and taps the "Screening Expired" filter card. Twenty-three names appear. She did not have to go hunting — they are right there, labeled clearly.</td>
-  <td class="cc">She opens Marcus Chen's profile. Current Case: Preferred · Expired June 2026. Case History: two prior checks, both Cleared. She knows what package he had and when it expired. Confident decision: rescreen.</td>
-  <td class="cc">She selects eighteen people who are still actively serving. Five she is not sure about — she opens each profile, checks Case History, and closes those cases. Five go to Case History as "Case Closed."</td>
-  <td class="cc">She selects all eighteen and clicks "Rescreen selected." Wizard opens with eighteen rows pre-populated. Each shows their last package as the suggestion. She confirms all as Preferred and sets email delivery at 90 days. Clicks Confirm.</td>
-  <td class="cc">Eighteen new rows in the table — "Consent Pending." Eighteen emails in applicants' inboxes. Case History for each person now shows the expired case plus the new active one. She is done in twelve minutes.</td>
+  <td class="cc">First Monday of the month. Sarah taps "Screening Expired." Twenty-three names. No hunting. They are right there, labeled clearly.</td>
+  <td class="cc">She opens Marcus Chen's profile. Current Case: Preferred, expired June 2026. Case History: two prior checks, both Report Complete — Eligible. Confident: rescreen.</td>
+  <td class="cc">She selects 18 people who are still serving. Closes 5 cases — those people have left. Five rows move to Case Cancelled.</td>
+  <td class="cc">Selects all 18. "Rescreen selected." Wizard opens with 18 rows pre-populated, Preferred pre-selected for each. Confirms. Clicks Send invites.</td>
+  <td class="cc">18 new rows: Invite Link Sent. Case History for each shows the old expired case and the new active one. Done in twelve minutes.</td>
 </tr>
 
 <tr class="rEmo">
@@ -1952,58 +2065,59 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-mail"/></svg></span><span class="ltxt">Communications</span></div></td>
-  <td class="cc">No new communications — admin discovering expired screenings by table scan. Note: no proactive alert before expiry in Phase 1. End Vision adds expiry notifications.</td>
-  <td class="cc">No communications at this step — admin reviewing profiles.</td>
-  <td class="cc">Close Case: no outbound communication. Admin action recorded internally. Person not notified of case closure in Phase 1.</td>
-  <td class="cc">On confirm (email mode): invite email dispatched to each applicant — same improved email as invite order flow, with working logo, expiry date, applicant name. Admin receives confirmation summary for the batch.</td>
-  <td class="cc">Email mode: auto-reminders at 50% and 80% of expiry (unless disabled). Invite management actions (resend, extend) trigger same communications as invite order flow.</td>
+  <td class="cc">No outbound. Admin discovering expired cases by table scan. No proactive alert in Phase 1.</td>
+  <td class="cc">No communications — admin reviewing profiles.</td>
+  <td class="cc">Close Case: no outbound. Person not notified of closure in Phase 1.</td>
+  <td class="cc">On confirm (email): invite sent per applicant — same improved email as invite order flow. Admin batch confirmation email.</td>
+  <td class="cc">Auto-reminders at 50% and 80% of expiry (unless disabled). Invite management actions trigger same communications as invite order flow.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-settings"/></svg></span><span class="ltxt">Backend</span></div></td>
-  <td class="cc">Cases API returns Screening Expired status for cases where the check's rescreen due date has passed. Filter card count accurate against this query. No separate "due for rescreen" calculation — rescreen due date stored on the case record and checked on table load.</td>
-  <td class="cc">Person profile API returns current expired case and full case history in one call. Last package returned as a field on each historical case for pre-selection in rescreen wizard.</td>
-  <td class="cc">Close Case: PATCH on case record sets status = Case Closed. Case moved to history. Current Case returns null for this person. Person record itself is not modified — still active.</td>
-  <td class="cc">Batch rescreen wizard: People step pre-populated from selected case IDs. Package step pre-fills suggested package from last cleared case per person. On confirm: same case creation, invite dispatch, and ChMS sync as invite order flow.</td>
-  <td class="cc">New cases appear in table immediately on confirm. Expired cases transition to Case History on confirm (not on close — close is an explicit admin action). Person profile reflects both: new Current Case and prior Case History entries.</td>
+  <td class="cc">Cases API returns Screening Expired for cases where rescreen due date has passed. Filter card count accurate.</td>
+  <td class="cc">Person profile API returns current expired case and full case history in one call. Last package returned per historical case for wizard pre-selection.</td>
+  <td class="cc">Close Case: PATCH on case record → Case Cancelled. Case moved to history. Current Case returns null. Person record itself unchanged.</td>
+  <td class="cc">Batch rescreen wizard: Step 1 pre-populated from selected case IDs. Step 2 pre-fills suggested package from last Report Complete — Eligible case per person. On confirm: same case creation and invite dispatch as invite order flow.</td>
+  <td class="cc">New cases appear in table immediately. Expired cases move to Case History on confirm (not on close — close is an explicit admin action).</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-headset_mic"/></svg></span><span class="ltxt">Support</span></div></td>
-  <td class="cc">"Screening Expired" filter card makes the rescreen queue self-discoverable — reduces "how do I find who needs rescreening" contacts.</td>
-  <td class="cc">Case History in person profile gives admin context before deciding — reduces "what was this person's last check" contacts.</td>
-  <td class="cc">Close Case vs archive distinction labeled in UI — reduces "I archived someone by mistake when I just wanted to close their expired case" contacts.</td>
-  <td class="cc">Package pre-suggestion from last cleared check reduces "which package should I use for this rescreen" contacts.</td>
-  <td class="cc">Batch confirm eliminates the need for 1-at-a-time wizard runs. Immediate table update after confirm reduces "did my batch rescreen go through" contacts.</td>
+  <td class="cc">Screening Expired filter card makes the rescreen queue self-discoverable — reduces "how do I find who needs rescreening" contacts.</td>
+  <td class="cc">Case History in profile gives context before deciding — reduces "what was this person's last check" contacts.</td>
+  <td class="cc">Close Case vs archive distinction labeled in UI — reduces "I archived someone when I just wanted to close their expired case" contacts.</td>
+  <td class="cc">Package pre-suggestion reduces "which package for this rescreen" contacts.</td>
+  <td class="cc">Batch confirm eliminates one-at-a-time wizard runs. Immediate update reduces "did my batch go through" contacts.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-church"/></svg></span><span class="ltxt">ChMS Host</span></div></td>
-  <td class="cc">Screening Expired status synced to host person record. Embedded table in ChMS shows same expired status.</td>
-  <td class="cc">Person profile identity fields show source chip — serving role from ChMS, screening history from PMM.</td>
+  <td class="cc">Screening Expired synced to host person record. Host embed shows same status.</td>
+  <td class="cc">Profile identity fields show source chip. Case History from PMM.</td>
   <td class="cc"><span class="empty">—</span></td>
-  <td class="cc">Rescreen order uses same People lookup as invite order — serving context from ChMS visible. New cases synced back to host on confirm.</td>
-  <td class="cc">New case status (Consent Pending / Invite Link Created) written back to host person record. Expired case moved to history in PMM and in host.</td>
+  <td class="cc">People search queries ChMS for integrated accounts. New cases synced to host on confirm.</td>
+  <td class="cc">New case status (Invite Link Sent / Created) written back to host. Expired case reflected in history.</td>
 </tr>
 
 <tr class="rSec">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-manage_search"/></svg></span><span class="ltxt">Digital Delve</span></div></td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
-  <td class="cc">Receives batch rescreen order on confirm. Generates person-bound registration URLs per person. Dispatches invite emails (email mode). Same callback mechanism as invite order.</td>
-  <td class="cc">Returns status updates per person via webhook. Report callbacks trigger Report Ready status per person as checks complete.</td>
+  <td class="cc">Receives batch rescreen order on confirm. Generates person-bound registration URLs. Dispatches invite emails (email mode).</td>
+  <td class="cc">Returns status webhooks per person. Report callbacks trigger Report Complete — Awaiting Review per person as checks complete.</td>
 </tr>
 
 <tr class="rChg">
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-task_alt"/></svg></span><span class="ltxt">What Changes</span></div></td>
-  <td class="cc"><span class="vtag">RESOLVED</span> "Screening Expired" is an unambiguous first-class status — clearly distinct from "Invite Expired" and "Case Closed." Filterable via filter card. Amber accent on expired rows in table. Count shown on filter card.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Current Case + Case History structure gives admin full screening record before making a rescreen decision. Last package visible in Case History for pre-suggestion.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Close Case action clearly separated from Archive. Close Case = done with this expired case, no rescreen. Archive = person no longer active. Both labeled explicitly in UI. Close Case available in bulk via action menu.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Batch rescreen via improved wizard. Package pre-suggested from last cleared check per person. Same package cards, same delivery toggle, same applicant list experience. One confirm for the whole batch.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> New cases appear immediately on confirm. Expired cases move to Case History. Current Case in person profile shows the new active case. Invite management in Current Case while in invite phase. Not yet: proactive notification before expiry, per-role interval, continuous monitoring — End Vision.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> "Screening Expired" is unambiguous and filterable. Distinct from Invite Link Expired. Filter card with count. Amber accent on expired rows.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Current Case + Case History gives full record before deciding. Last package visible in Case History for pre-suggestion.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Close Case and Archive are distinct, clearly labeled actions. Close Case available in bulk.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Batch rescreen via improved wizard. Package pre-suggested from last Report Complete — Eligible case. One confirm for the whole batch.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> New cases appear immediately. Expired cases move to Case History on confirm. Not yet: proactive notification, per-role interval, continuous monitoring — End Vision.</td>
 </tr>
 
 </tbody></table></div>
 </div><!-- end rescreen phase 1 -->
+
 
 <!-- RESCREEN VISION (End Vision) -->
 <div class="mv vis">
