@@ -2773,16 +2773,12 @@ function gftBar(w,p,clickable){
   var thru=gftThru(w);
   var rPct=p.pledgeTotal>0?Math.min(100,p.received/p.pledgeTotal*100):0;
   var dPct=p.pledgeTotal>0?Math.min(100,p.due/p.pledgeTotal*100):0;
-  var gap=(dPct>rPct)?(dPct-rPct):0;
-  var expected=gap>0?'<div class="gft-expected" style="left:'+rPct.toFixed(2)+'%;width:'+gap.toFixed(2)+'%"></div>':"";
-  var marker=p.pledgeTotal>0?'<div class="gft-marker" style="left:'+dPct.toFixed(2)+'%" data-tip="'+gftEsc("Due by now: "+money(p.due)+" expected by "+gftFmtDate(thru)+".")+'" data-tip-plain></div>':"";
   var srtxt=p.purpose+": "+money(p.received)+" received of "+money(p.pledgeTotal)+" pledged, "+gftPct(p.fulfilled)+" fulfilled, "+money(p.due)+" expected by "+gftFmtDate(thru)+".";
+  var pop=[p.purpose,p.pledgeTotal,p.received,p.due,(p.pledgeTotal-p.received),Math.round(rPct),Math.round(dPct),p.status].join("|");
   var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(p.purpose+", "+gftPct(p.fulfilled)+" fulfilled, open the donors behind this purpose")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
   return '<div class="gft-prow'+(clickable?" gft-clickable":"")+'"'+attr+'>'+
     '<div class="gft-prow-top"><span class="gft-p-nm">'+p.purpose+'</span><span class="gft-p-pct">'+gftPct(p.fulfilled)+'</span></div>'+
-    '<div class="gft-track">'+
-      '<div class="gft-fill" style="width:'+Math.max(rPct>0?1.5:0,rPct).toFixed(2)+'%"></div>'+expected+marker+
-    '</div>'+
+    pbarHTML({fill:rPct,mark:dPct,pop:gftEsc(pop),aria:""})+
     '<div class="gft-prow-foot"><span class="gft-p-amt">'+money(p.received)+' of '+money(p.pledgeTotal)+'</span>'+gftStatusPill(p.status,Math.abs(p.remaining),thru)+(clickable?'<span class="gft-p-go" aria-hidden="true">'+ICON("chevron_right")+'</span>':'')+'</div>'+
     '<span class="sr-only">'+srtxt+'</span>'+
   '</div>';
