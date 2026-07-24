@@ -4474,6 +4474,46 @@ window.p1LvlSearchInput = function(v){
   if(opts) opts.innerHTML = renderP1LvlOpts(v);
 };
 
+function p1CreateCases(){
+  // Actually create the screening cases so they appear on the dashboard
+  const lvl = LEVELS.find(l=>l.id===P1STATE.level);
+  const checkType = lvl ? lvl.name : 'Standard';
+  const emailOn = P1STATE.emailOn;
+  const expiryDays = parseInt(P1STATE.expiry||'30',10);
+  const exp = new Date(); exp.setDate(exp.getDate()+expiryDays);
+  const expiryStr = exp.toISOString().split('T')[0];
+  const via = STATE.wzManualMode ? 'manual' : 'invite';
+
+  P1STATE.people.forEach((wp,i)=>{
+    let person = PEOPLE.find(p=>p.email===wp.email);
+    if(!person){
+      person = {
+        id:'p'+Date.now()+i, name:wp.name, fullLegal:wp.name, gender:'', email:wp.email,
+        phone:'', position:'', team:'', source:'PMM', dob:'', preferredName:'',
+        orgStatus:'Pending activation', rescreenDue:null, p1Only:true,
+        cst:{status: P1STATE.cstOption && P1STATE.cstOption!=='none' ? 'cst-invited' : 'cst-not-sent'},
+        tags:[], cases:[]
+      };
+      PEOPLE.push(person);
+    }
+    const status = emailOn ? 'invite-sent' : 'invite-created';
+    const events = [{type:'done',title:'Invite link created',date:todayStr(),time:'',by:'Admin'}];
+    if(emailOn) events.push({type:'done',title:'Invite email sent to '+wp.email,date:todayStr(),time:'',by:'PMM'});
+    person.cases.unshift({
+      id:'c'+Date.now()+i, checkType, dateInitiated: new Date().toISOString().split('T')[0],
+      via, status, p1Status: status,
+      inviteExpiry: expiryStr,
+      inviteLink: 'https://horizon-web-prod.protection-services.com/consent/'+wp.email.split('@')[0]+'-'+Date.now(),
+      inviteDeliveredTo: emailOn ? wp.email : null,
+      inviteSentDate: new Date().toISOString().split('T')[0],
+      approvalGate:false, report:null, consentForm:null,
+      events
+    });
+  });
+  STATE.wzManualMode = false;
+  renderHomeTable(); renderTable();
+}
+
 document.getElementById('p1-wz-next').addEventListener('click',()=>{
   if(P1STATE.success){closeP1Wizard();return;}
   if(P1STATE.step===1&&P1STATE.people.length===0){toast('Add at least one person to continue');return;}
@@ -4483,6 +4523,7 @@ document.getElementById('p1-wz-next').addEventListener('click',()=>{
     if(P1STATE.step>P1STATE.maxStep) P1STATE.maxStep=P1STATE.step;
     renderP1Wizard();
   } else {
+    p1CreateCases();
     P1STATE.success=true;
     renderP1Success();
   }
