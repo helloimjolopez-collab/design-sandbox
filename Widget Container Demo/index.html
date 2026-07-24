@@ -2751,17 +2751,17 @@ function gftViewToggle(w){var v=w.gftView||"progress",opts=[["progress","Progres
 
 function gftHeaderBlock(w,mode){
   var loading=(mode==="loading"),o=gftOverall(w),thru=gftThru(w);
-  var numInner;
-  if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:64px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:20px;border-radius:999px"></span></div>';}
-  else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+gftPct(o.fulfilled)+'</span>'+gftStatusPill(o.status,Math.abs(o.remaining),thru)+'</div>';}
-  var ctx1='<div class="gft-ctx">'+money(o.received)+' received of '+money(o.pledgeTotal)+' pledged</div>';
-  var ctx2='<div class="gft-ctx gft-ctx2">'+money(o.outstanding)+' still to come, as of '+gftFmtDate(thru)+'</div>';
   /* Explore shows progress + follow-up side by side, so the view toggle is hidden there. */
   var toggle=(w.size==="xwide")?"":gftViewToggle(w);
-  return '<div class="dep-hd gft-hd">'+
-    '<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
-    '<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+(loading?"":ctx1+ctx2)+'</div></div>'+
-  '</div>';
+  var top='<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>';
+  if(loading){var numL='<div class="dep-hd-kpigrp"><span class="sk" style="width:64px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:20px;border-radius:999px"></span></div>';
+    return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numL+'</div></div></div>';}
+  var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+gftPct(o.fulfilled)+'</span>'+gftStatusPill(o.status,Math.abs(o.remaining),thru)+'</div>';
+  var rPct=o.pledgeTotal>0?o.received/o.pledgeTotal*100:0,dPct=o.pledgeTotal>0?o.due/o.pledgeTotal*100:0;
+  var pop=["All purposes",o.pledgeTotal,o.received,o.due,o.outstanding,Math.round(rPct),Math.round(dPct),o.status].join("|");
+  var bar='<div class="pbar-hd">'+pbarHTML({fill:rPct,mark:dPct,pop:gftEsc(pop),aria:gftEsc("Overall progress")})+
+    '<div class="pbar-lg"><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-recv"></span>Received '+gftPct(o.fulfilled)+'</span><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-exp"></span>Due by now '+gftPct(o.pledgeTotal>0?o.due/o.pledgeTotal:0)+'</span></div></div>';
+  return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+bar+'</div></div></div>';
 }
 
 function gftSkeleton(){var rows=[92,70,54,38].map(function(wd){return '<div class="gft-sk-row"><span class="sk" style="width:120px;height:12px;border-radius:4px"></span><span class="sk gft-sk-bar" style="width:'+wd+'%"></span></div>';}).join("");return '<div class="gft-skel"><div class="gft-skel-rows">'+rows+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
