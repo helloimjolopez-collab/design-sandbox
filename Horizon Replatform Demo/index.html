@@ -2367,17 +2367,17 @@ function cancelCase(pid, cid){
     : '';
 
   showConfirm({
-    title: 'Cancel this case?',
+    title: 'Close this case?',
     body: `This will permanently close the <strong>${checkType}</strong> case for <strong>${name}</strong>. The case cannot be reopened.${consentNote}<br><br>The person record and case history are retained. A new case can be opened if screening is needed in future.`,
-    cancelLabel: 'Keep case',
-    actionLabel: 'Cancel case',
-    actionStyle: 'background:var(--red);color:#fff',
+    cancelLabel: 'Keep open',
+    actionLabel: 'Close case',
+    actionStyle: 'background:var(--brand);color:#fff',
     onConfirm(){
       c.status = 'case-cancelled';
       c.events = c.events||[];
-      c.events.push({type:'none',title:'Case cancelled by admin',date:todayStr(),time:'',by:'Admin'});
+      c.events.push({type:'none',title:'Case closed by admin',date:todayStr(),time:'',by:'Admin'});
       renderTable(); renderHomeTable();
-      toast(`Case cancelled for ${name}.`);
+      toast(`Case closed for ${name}.`);
     }
   });
 }
