@@ -2805,14 +2805,15 @@ function gftBar(w,p,clickable){
   return '<div class="gft-prow'+(clickable?" gft-clickable":"")+'"'+attr+'>'+
     '<div class="gft-prow-top"><span class="gft-p-nm">'+p.purpose+'</span><span class="gft-p-pct">'+gftPct(p.fulfilled)+'</span></div>'+
     pbarHTML({fill:rPct,mark:dPct,pop:gftEsc(pop),aria:""})+
-    '<div class="gft-prow-foot"><span class="gft-p-amt">'+money(p.received)+' of '+money(p.pledgeTotal)+'</span>'+gftStatusPill(p.status,Math.abs(p.remaining),thru)+(clickable?'<span class="gft-p-go" aria-hidden="true">'+ICON("chevron_right")+'</span>':'')+'</div>'+
+    '<div class="gft-prow-foot"><span class="gft-p-amt">'+money(p.received)+' received of '+money(p.pledgeTotal)+'</span>'+gftStatusPill(p.status,Math.abs(p.remaining),thru)+'</div>'+
     '<span class="sr-only">'+srtxt+'</span>'+
   '</div>';
 }
 function gftProgress(w){
   var ps=gftPurposes(w);
   if(!ps.length)return '<div class="gft-zeroline">'+ICON("info")+'No pledge purposes match this selection.</div>';
-  return '<div class="gft-bars">'+ps.map(function(p){return gftBar(w,p,true);}).join("")+'</div>';
+  var legend='<div class="gft-bars-legend"><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-recv"></span>Received</span><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-exp"></span>Expected by today</span></div>';
+  return legend+'<div class="gft-bars">'+ps.map(function(p){return gftBar(w,p,true);}).join("")+'</div>';
 }
 
 /* Table view , the five verified columns, "% Fulfilled" reframed from the old
