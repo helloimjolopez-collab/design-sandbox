@@ -2924,11 +2924,11 @@ function renderViaBadge(c, person){
 
 // ── Cancel case eligibility ──────────────────────────────────────────────
 function canCancelCase(c){
-  // Use effective status (Phase 1 may override)
+  // Use effective status
   const s = (DEMO_MODE==='phase-1' && c.p1Status) ? c.p1Status : c.status;
-  const locked = ['order-processing','order-processing','screening-error','order-failed','awaiting-assessment','complete-cleared','complete-needs-review','complete-escalated'];
-  // Phase 1: allow cancel on order-failed-data and order-failed-final
-  if(DEMO_MODE==='phase-1' && (s==='order-failed'||s==='order-failed')) return true;
+  // Allow close on order-failed so admin can clear failed cases
+  if(s==='order-failed') return true;
+  const locked = ['order-processing','awaiting-assessment','complete-cleared','complete-needs-review','complete-escalated'];
   return !locked.includes(s);
 }
 
