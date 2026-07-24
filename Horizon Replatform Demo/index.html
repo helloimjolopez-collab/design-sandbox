@@ -7,87 +7,102 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  /* ── Pathway Design System — Token Values (light mode) ───────────────────
-     Source: helloimjolopez-collab.github.io/pathway-ds — src/tokens/tokens.css
-     Values extracted from computed styles on deployed Storybook (2026-05).
-     Token naming follows Style Dictionary output from pathway-design-tokens.json.
+  /* ── Pathway Design System — short alias layer ───────────────────────────
+     The full built token set (src/tokens/tokens.css from the pathway-ds repo)
+     is embedded in the <style id="pathway-tokens"> block above this one.
+     These short names are kept because the prototype CSS/JS reference them;
+     each now resolves through the real Pathway semantic token.
   ─────────────────────────────────────────────────────────────────────── */
 
   /* Brand */
-  --fill-static-brand-base:#3a5aaa;
-  --fill-static-brand-bold:#2d4889;
-  --fill-static-brand-dark:#22386b;
-  --fill-static-brand-black:#1b2d57;
-  --fill-static-brand-light:#5475c6;
-  --fill-static-brand-subtle:#4b6ec3;
-  --fill-action-primary-base:#345499;
-  --fill-action-primary-hover:#4364b6;
-  --stroke-static-brand-base:#86a0dd;
-  --icon-static-brand-base:#3a5aaa;
+  --fill-static-brand-base:var(--semantic-color-light-mode-fill-static-brand-base,#2d4889);
+  --fill-static-brand-bold:var(--semantic-color-light-mode-fill-static-brand-bold,#1b2d57);
+  --fill-static-brand-dark:var(--semantic-color-light-mode-fill-static-brand-dark,#152343);
+  --fill-static-brand-black:var(--semantic-color-light-mode-fill-static-brand-black,#0a1223);
+  --fill-static-brand-light:var(--semantic-color-light-mode-fill-static-brand-light,#6e8bd4);
+  --fill-static-brand-subtle:var(--semantic-color-light-mode-fill-static-brand-subtle,#3a5aaa);
+  --fill-action-primary-base:var(--semantic-color-light-mode-fill-action-primary-base,#3a5aaa);
+  --fill-action-primary-hover:var(--semantic-color-light-mode-fill-action-primary-hover,#4364b6);
+  --fill-action-primary-pressed:var(--semantic-color-light-mode-fill-action-primary-pressed,#345499);
+  --stroke-static-brand-base:var(--semantic-color-light-mode-stroke-static-brand-base,#86a0dd);
+  --icon-static-brand-base:var(--semantic-color-light-mode-icon-static-brand-base,#3a5aaa);
 
   /* Text — primary / secondary */
-  --text-static-primary-base:#202020;
-  --text-static-secondary-base:#363636;
-  --text-static-secondary-subtle:#565656;
-  --text-static-secondary-light:#6b6b6b;
-  --text-static-info-base:#2d4889;
+  --text-static-primary-base:var(--semantic-color-light-mode-text-static-primary-base,#202020);
+  --text-static-secondary-base:var(--semantic-color-light-mode-text-static-secondary-base,#484848);
+  --text-static-secondary-subtle:var(--semantic-color-light-mode-text-static-secondary-subtle,#606060);
+  --text-static-secondary-light:var(--semantic-color-light-mode-text-static-secondary-light,#7b7b7b);
+  --text-static-info-base:var(--semantic-color-light-mode-text-static-info-base,#2d4889);
+
+  /* Action text / strokes (Pathway button + checkbox tokens) */
+  --text-action-secondary-base:var(--semantic-color-light-mode-text-action-secondary-base,#292724);
+  --text-action-secondaryinverse-base:var(--semantic-color-light-mode-text-action-secondaryinverse-base,#545454);
+  --stroke-action-secondary-base:var(--semantic-color-light-mode-stroke-action-secondary-base,#b0aaa2);
+  --stroke-action-secondary-hover:var(--semantic-color-light-mode-stroke-action-secondary-hover,#9b968e);
+  --stroke-action-secondary-inverse-base:var(--semantic-color-light-mode-stroke-action-secondary-inverse-base,#d2d2d2);
+  --stroke-contextual-focusring-base:var(--semantic-color-light-mode-stroke-contextual-focusring-base,#6e8bd4);
 
   /* Icon neutral */
-  --icon-static-neutral-light:#7b7b7b;
-  --icon-static-neutral-subtle:#606060;
-  --icon-static-neutral-base:#4b4b4b;
+  --icon-static-neutral-light:var(--semantic-color-light-mode-icon-static-neutral-light,#7b7b7b);
+  --icon-static-neutral-subtle:var(--semantic-color-light-mode-icon-static-neutral-subtle,#606060);
+  --icon-static-neutral-base:var(--semantic-color-light-mode-icon-static-neutral-base,#484848);
 
   /* Neutral fill / surface */
-  --fill-static-neutral-light:#ffffff;
-  --fill-static-neutral-subtle:#fbfbfb;
-  --fill-static-neutral-base:#f6f6f6;
-  --fill-action-secondary-base:#ededed;
+  --fill-static-neutral-light:var(--semantic-color-light-mode-fill-static-neutral-light,#fefefd);
+  --fill-static-neutral-subtle:var(--semantic-color-light-mode-fill-static-neutral-subtle,#fbfaf8);
+  --fill-static-neutral-base:var(--semantic-color-light-mode-fill-static-neutral-base,#f7f5f3);
+  --fill-action-secondary-base:var(--semantic-color-light-mode-fill-action-secondary-base,#f6f6f6);
+  --fill-action-secondary-hover:var(--semantic-color-light-mode-fill-action-secondary-hover,#ededed);
+  --fill-action-secondary-pressed:var(--semantic-color-light-mode-fill-action-secondary-pressed,#e1e1e1);
 
   /* Neutral stroke */
-  --stroke-static-neutral-subtle:#ededed;
-  --stroke-static-neutral-light:#f6f6f6;
-  --stroke-static-neutral-base:#e1e1e1;
-  --stroke-static-neutral-bold:#6b6b6b;
+  --stroke-static-neutral-subtle:var(--semantic-color-light-mode-stroke-static-neutral-subtle,#ededed);
+  --stroke-static-neutral-light:var(--semantic-color-light-mode-stroke-static-neutral-light,#f6f6f6);
+  --stroke-static-neutral-base:var(--semantic-color-light-mode-stroke-static-neutral-base,#e1e1e1);
+  --stroke-static-neutral-bold:var(--semantic-color-light-mode-stroke-static-neutral-bold,#6b6b6b);
 
-  /* Surface (nav / canvas) */
+  /* Surface (nav / canvas) — Figma-only tokens, no tokens.css equivalent */
+  --surface-nav-light:#fafafa;
   --surface-nav-base:#eef2fb;
   --surface-canvas-light:#fafafa;
 
   /* Info tints (light brand backgrounds) */
-  --fill-static-info-light:#eef2fb;
-  --fill-static-info-subtle:#e9eef9;
-  --fill-static-info-base:#c0ceef;
+  --fill-static-info-light:var(--semantic-color-light-mode-fill-static-info-light,#eef2fb);
+  --fill-static-info-subtle:var(--semantic-color-light-mode-fill-static-info-subtle,#e9eef9);
+  --fill-static-info-base:var(--semantic-color-light-mode-fill-static-info-base,#c0ceef);
 
   /* Positive */
-  --fill-static-positive-light:#f0faf1;
-  --fill-static-positive-subtle:#dff6e2;
-  --fill-static-positive-base:#c9edce;
-  --text-static-positive-base:#1f602e;
-  --stroke-static-positive-base:#b4e4b9;
+  --fill-static-positive-light:var(--semantic-color-light-mode-fill-static-positive-light,#f0faf1);
+  --fill-static-positive-subtle:var(--semantic-color-light-mode-fill-static-positive-subtle,#dff6e2);
+  --fill-static-positive-base:var(--semantic-color-light-mode-fill-static-positive-base,#c9edce);
+  --text-static-positive-base:var(--semantic-color-light-mode-text-static-positive-base,#1f602e);
+  --stroke-static-positive-base:var(--semantic-color-light-mode-stroke-static-positive-base,#b4e4b9);
 
   /* Negative */
-  --fill-static-negative-light:#fdfafa;
-  --fill-static-negative-subtle:#faefef;
-  --fill-static-negative-base:#f5dfdf;
-  --text-static-negative-base:#882727;
-  --stroke-static-negative-base:#cf6e6e;
+  --fill-static-negative-light:var(--semantic-color-light-mode-fill-static-negative-light,#fdfafa);
+  --fill-static-negative-subtle:var(--semantic-color-light-mode-fill-static-negative-subtle,#faefef);
+  --fill-static-negative-base:var(--semantic-color-light-mode-fill-static-negative-base,#f5dfdf);
+  --text-static-negative-base:var(--semantic-color-light-mode-text-static-negative-base,#882727);
+  --stroke-static-negative-base:var(--semantic-color-light-mode-stroke-static-negative-base,#cf6e6e);
 
   /* Warning (Pathway: fill-static-warning + text-static-alert) */
-  --fill-static-warning-light:#fdfbf2;
-  --fill-static-warning-subtle:#fcf7e3;
-  --fill-static-warning-base:#fcf3d4;
-  --text-static-alert-base:#55290c;
+  --fill-static-warning-light:var(--semantic-color-light-mode-fill-static-warning-light,#fdfbf2);
+  --fill-static-warning-subtle:var(--semantic-color-light-mode-fill-static-warning-subtle,#fcf7e3);
+  --fill-static-warning-base:var(--semantic-color-light-mode-fill-static-warning-base,#fcf3d4);
+  --fill-static-warning-contrast:var(--semantic-color-light-mode-fill-static-warning-contrast,#fbeab1);
+  --text-static-alert-base:var(--semantic-color-light-mode-text-static-alert-base,#55290c);
+  --stroke-static-alert-contrast:var(--semantic-color-light-mode-stroke-static-alert-contrast,#fade89);
 
   /* Danger / caution */
-  --fill-static-danger-light:#fcfafa;
-  --fill-static-danger-subtle:#f9e2d6;
-  --fill-static-danger-base:#f9d2bc;
-  --text-static-danger-base:#a5420d;
-  --stroke-static-danger-base:#fda97b;
+  --fill-static-danger-light:var(--semantic-color-light-mode-fill-static-danger-light,#f9f1ed);
+  --fill-static-danger-subtle:var(--semantic-color-light-mode-fill-static-danger-subtle,#f9e2d6);
+  --fill-static-danger-base:var(--semantic-color-light-mode-fill-static-danger-base,#f9d2bc);
+  --text-static-danger-base:var(--semantic-color-light-mode-text-static-danger-base,#a5420d);
+  --stroke-static-danger-base:var(--semantic-color-light-mode-stroke-static-danger-base,#fda97b);
 
   /* Accent / amethyst */
-  --text-static-accent-amethyst-base:#353063;
-  --text-static-accent-amethyst-subtle:#464080;
+  --text-static-accent-amethyst-base:var(--semantic-color-light-mode-text-static-accent-amethyst-base,#353063);
+  --text-static-accent-amethyst-subtle:var(--semantic-color-light-mode-text-static-accent-amethyst-subtle,#464080);
 
   /* Elevation */
   --elevation-low:0 1px 3px rgba(0,0,0,.08);
