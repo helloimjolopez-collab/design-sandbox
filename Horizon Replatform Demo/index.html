@@ -2075,7 +2075,6 @@ function renderHomeRow(person){
 
   return `<tr class="${ar?'ar':''}" data-pid="${person.id}" onclick="openProfileAtCase('${person.id}','${c.id}',event)" style="cursor:pointer">
     <td onclick="event.stopPropagation()"><div class="cb ${STATE.selectedPeople.has(person.id)?'on':''}" onclick="toggleSelect('${person.id}')"></div></td>
-    <td><div class="av" style="background:${ac}">${esc(initials(person.name))}</div></td>
     <td class="td-name">
       <div class="name-main">${esc(person.name)}</div>
       <div class="name-email">${esc(person.email)}</div>
@@ -2083,11 +2082,10 @@ function renderHomeRow(person){
     <td class="home-col-type">
       <span class="chip"><svg width="11" height="11" viewBox="0 0 20 20" style="flex-shrink:0;color:var(--fg4)"><use href="#ic-shield-fill"/></svg>BG</span>
     </td>
+    <td class="home-col-created" style="font-size:13px;color:var(--fg2)">${esc(created)}</td>
     <td class="home-col-detail td-level">${renderCheckTypeChip(c.checkType)}</td>
     <td class="home-col-initiated">${renderInitiatedCell(c, person)}</td>
-    <td class="home-col-created" style="font-size:13px;color:var(--fg2)">${esc(created)}</td>
     <td class="home-col-updated" style="font-size:13px;color:var(--fg2);${updDisplay}">${esc(updated)}</td>
-    <td class="home-col-orderedby" style="font-size:13px;color:var(--fg2)">${c.orderedBy?esc(c.orderedBy):'<span style="color:var(--fg4)">—</span>'}</td>
     <td onclick="openProfileAtCase('${person.id}','${c.id}',event)">
       ${renderBadge(c.status, lastUpdatedDate(c))}
     </td>
