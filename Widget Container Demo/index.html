@@ -5794,7 +5794,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(pop.type==="rem-thru")return remPopContent();
     if(pop.type==="gft-date"||pop.type==="gft-purpose")return gftPopContent();
     if(pop.type==="loan-type")return loanPopContent();
-    if(pop.type==="wfind"){var dwf=cur(),qwf=widgetFindQuery.trim().toLowerCase(),SZ={kpi:"Glance",wide:"Detail",large:"Large",xwide:"Explore"};
+    if(pop.type==="wfind"){var dwf=null;for(var _di=0;_di<dashboards.length;_di++){if(dashboards[_di].id===currentId){dwf=dashboards[_di];break;}}if(!dwf)dwf=dashboards[0];var qwf=widgetFindQuery.trim().toLowerCase(),SZ={kpi:"Glance",wide:"Detail",large:"Large",xwide:"Explore"};
       var listwf=dwf.widgets.filter(function(w){return !qwf||(w.title||"").toLowerCase().indexOf(qwf)>-1;});
       var rowswf=listwf.length
         ? listwf.map(function(w){return '<button class="mi wfind-opt" role="option" data-action="wfind-go" data-id="'+w.id+'"><span class="wfind-nm">'+w.title+'</span><span class="wfind-sz">'+(SZ[w.size]||w.size)+'</span></button>';}).join("")
