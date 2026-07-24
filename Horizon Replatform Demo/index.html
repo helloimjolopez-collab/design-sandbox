@@ -1687,26 +1687,26 @@ function fmtShort(d){const dt=new Date(d);const m=['Jan','Feb','Mar','Apr','May'
 
 const STATUS = {
   // Consent collection phase
-  'invite-created':        {label:'Invite Link Created',              cls:'v-blue',   icon:'ms-link',           action:false, tip:'A person-bound invite link has been generated. No email has been sent yet. Admin holds the link and will deliver it themselves.'},
-  'invite-sent':           {label:'Invite Sent',                      cls:'v-blue',   icon:'ms-mail',           action:false, tip:'PMM dispatched an invite email to the applicant. Waiting for the applicant to submit their consent form.'},
-  'invite-expiring':       {label:'Invite Link Expiring',             cls:'v-amber',  icon:'ms-schedule',       action:false, tip:'The invite link is within its expiry warning window and no consent has been submitted. Resend or extend before the link dies.'},
-  'invite-expired':        {label:'Invite Link Expired',              cls:'v-red',    icon:'ms-link-off',       action:true,  tip:'The invite link hit its expiry date with no consent submitted. The case is stalled. Re-invite the applicant or close the case.'},
-  'email-bounced':         {label:'Invite Email Bounced',             cls:'v-red',    icon:'ms-error-outline',  action:true,  tip:'The invite email could not be delivered. Correct the address and resend, or switch to a generated link.'},
-  'invite-cancelled':      {label:'Invite Cancelled',                 cls:'v-grey',   icon:'ms-cancel',         action:false, tip:'Admin cancelled this specific invite. The case stays open. Issue a new invite when ready.'},
-  'case-closed':           {label:'Case Closed',                      cls:'v-grey',   icon:'ms-cancel',         action:false, tip:'Admin closed this screening case. No check will be ordered. The case moves to screening history as an audit record.'},
+  'invite-created':        {label:'Invite Link Created',              cls:'v-neutral',     icon:'ms-check-circle',   action:false, tip:'A person-bound invite link has been generated. No email has been sent yet. Admin holds the link and will deliver it themselves.'},
+  'invite-sent':           {label:'Invite Link Sent',                 cls:'v-neutral',     icon:'ms-send',           action:false, tip:'PMM dispatched an invite email to the applicant. Waiting for the applicant to submit their consent form.'},
+  'invite-expiring':       {label:'Invite Link Expiring',             cls:'v-amber',       icon:'ms-warning',        action:false, tip:'The invite link is within its expiry warning window and no consent has been submitted. Resend or extend before the link dies.'},
+  'invite-expired':        {label:'Invite Link Expired',              cls:'v-red',         icon:'ms-error-fill',     action:true,  tip:'The invite link hit its expiry date with no consent submitted. The case is stalled. Re-invite the applicant or close the case.'},
+  'email-bounced':         {label:'Invite Email Bounced',             cls:'v-red-line',    icon:'ms-error-fill',     action:true,  tip:'The invite email could not be delivered. Correct the address and resend, or switch to a generated link.'},
+  'invite-cancelled':      {label:'Invite Cancelled',                 cls:'v-grey',        icon:'ms-cancel',         action:false, tip:'Admin cancelled this specific invite. The case stays open. Issue a new invite when ready.'},
+  'case-closed':           {label:'Case Closed',                      cls:'v-grey',        icon:'ms-minus-circle',   action:false, tip:'Admin closed this screening case. No check will be ordered. The case moves to screening history as an audit record.'},
   // Consent received
-  'consent-received':      {label:'Consent Received',                 cls:'v-teal',   icon:'ms-check-circle',   action:false, tip:'Applicant submitted their consent form. No approval gate is active. The order will be placed automatically.'},
+  'consent-received':      {label:'Consent Received',                 cls:'v-green',       icon:'ms-check-circle',   action:false, tip:'Applicant submitted their consent form. No approval gate is active. The order will be placed automatically.'},
   // Processing
-  'order-processing':      {label:'Order Processing',                 cls:'v-blue',   icon:'ms-sync',           action:false, tip:'Background check order has been submitted to Digital Delve and is actively being processed.'},
-  'order-failed':          {label:'Order Failed',                     cls:'v-red',    icon:'ms-error-outline',  action:true,  tip:'The order could not be submitted to or processed by Digital Delve. The transaction has been cancelled. Retry the order or close the case.'},
+  'order-processing':      {label:'Order Processing',                 cls:'v-blue',        icon:'ms-sync',           action:false, tip:'Background check order has been submitted to Digital Delve and is actively being processed.'},
+  'order-failed':          {label:'Order Failed',                     cls:'v-red-line',    icon:'ms-cancel',         action:true,  tip:'The order could not be submitted to or processed by Digital Delve. The transaction has been cancelled. Retry the order or close the case.'},
   // Report complete
-  'awaiting-assessment':   {label:'Report Complete: Awaiting Review', cls:'v-purple', icon:'ms-hourglass-fill', action:true,  tip:'Digital Delve returned the completed report. Review it and record an assessment outcome.'},
-  'complete-cleared':      {label:'Complete: Cleared',                cls:'v-green',  icon:'ms-thumb-up-fill',  action:false, tip:'Admin reviewed the report and found no disqualifying information. This person is cleared for the role.'},
-  'complete-needs-review': {label:'Complete: Needs Review',           cls:'v-orange', icon:'ms-flag',           action:true,  tip:'Admin flagged the report for further review. Not a final outcome. The case remains active until a final outcome is recorded.'},
-  'complete-escalated':    {label:'Complete: Escalated',              cls:'v-red',    icon:'ms-block-fill',     action:true,  tip:'Admin reviewed the report and escalated. This person must not be placed in the role. FCRA adverse action process may apply.'},
+  'awaiting-assessment':   {label:'Complete- Awaiting Review',        cls:'v-yellow',      icon:'ms-pending',        action:true,  tip:'Digital Delve returned the completed report. Review it and record an assessment outcome.'},
+  'complete-cleared':      {label:'Complete-Cleared',                 cls:'v-green',       icon:'ms-thumb-up-fill',  action:false, tip:'Admin reviewed the report and found no disqualifying information. This person is cleared for the role.'},
+  'complete-needs-review': {label:'Complete: Needs Review',           cls:'v-yellow',      icon:'ms-flag',           action:true,  tip:'Admin flagged the report for further review. Not a final outcome. The case remains active until a final outcome is recorded.'},
+  'complete-escalated':    {label:'Complete-Escalated',               cls:'v-red',         icon:'ms-error-fill',     action:true,  tip:'Admin reviewed the report and escalated. This person must not be placed in the role. FCRA adverse action process may apply.'},
   // Rescreening health
-  'rescreen-due':          {label:'Rescreen Due',                     cls:'v-amber',  icon:'ms-schedule',       action:true,  tip:'The rescreening date is approaching. Current check is still valid. Start a new screening case soon to avoid a gap.'},
-  'screening-expired':     {label:'Screening Expired',                cls:'v-red',    icon:'ms-event-busy',     action:true,  tip:"The rescreen due date has passed. This person's screening is no longer current. A new background check is required."},
+  'rescreen-due':          {label:'Rescreening Due',                  cls:'v-orange-line', icon:'ms-error-fill',     action:true,  tip:'The rescreening date is approaching. Current check is still valid. Start a new screening case soon to avoid a gap.'},
+  'screening-expired':     {label:'Screening Expired',                cls:'v-red-line',    icon:'ms-error-fill',     action:true,  tip:"The rescreen due date has passed. This person's screening is no longer current. A new background check is required."},
 };
 
 
