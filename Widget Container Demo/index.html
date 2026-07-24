@@ -2599,8 +2599,7 @@ function remPopContent(){
   var out='<div class="cap">Count receipts through</div>';
   out+=presets.map(function(p){var on=cur===p[1];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="rem-set-thru" data-id="'+w.id+'" data-iso="'+p[1]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+p[0]+'</span><span class="rem-mi-date">'+remFmtDate(p[1])+'</span></button>';}).join("");
   out+='<div class="sep"></div><div class="cap">Or choose a date</div>'+
-    '<div class="rem-datepick"><input type="date" id="remq-'+w.id+'" class="rem-date-input" value="'+cur+'" max="'+todayIso+'" aria-label="Receipts through date"><button class="btn primary sm" data-action="rem-refresh" data-id="'+w.id+'">'+ICON("refresh")+'Refresh</button></div>'+
-    '<div class="rem-pop-note">'+remPct(py)+' of the '+y+' calendar year completed as of '+remFmtDate(cur)+'. Only receipts on or before this date are counted.</div>';
+    '<div class="rem-datepick"><input type="date" id="remq-'+w.id+'" class="rem-date-input" value="'+cur+'" max="'+todayIso+'" aria-label="Receipts through date"><button class="btn primary sm" data-action="rem-refresh" data-id="'+w.id+'">'+ICON("refresh")+'Refresh</button></div>';
   return out;
 }
 
@@ -2826,7 +2825,7 @@ function gftTable(w){
   var sk=(w.gftSort||"fulfilled-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
   function val(p){if(key==="purpose")return p.purpose;if(key==="total")return p.pledgeTotal;if(key==="due")return p.due;if(key==="received")return p.received;if(key==="remaining")return p.remaining;return p.fulfilled;}
   ps.sort(function(a,b){var av=val(a),bv=val(b);if(key==="purpose")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
-  function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="gft-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+  function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="gft-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
   var head='<div class="wt-row wt-head gft-trow"><span class="gft-c-nm">'+sb("purpose","Purpose")+'</span><span class="gft-c-n">'+sb("total","Pledged")+'</span><span class="gft-c-n">'+sb("due","Due by date")+'</span><span class="gft-c-n">'+sb("received","Received")+'</span><span class="gft-c-n">'+sb("remaining","Remaining")+'</span><span class="gft-c-n">'+sb("fulfilled","% Fulfilled")+'</span><span class="gft-c-go" aria-hidden="true"></span></div>';
   var body=ps.map(function(p){
     var remCell=gftRemainingCell(p);
