@@ -2320,21 +2320,6 @@ function cancelCase(pid, cid){
   const blockingStatuses = ['screening-progress','order-submitted','awaiting-assessment','cleared','needs-review','escalated'];
   const p1OrderFailedStatuses = ['order-failed-data','order-failed-final'];
   const orderPlaced = blockingStatuses.includes(effectiveStatus);
-  // In Phase 1, order-retrying blocks cancel (still auto-processing); data/final failure allows cancel
-  const p1BlockRetrying = DEMO_MODE==='phase-1' && effectiveStatus==='order-retrying';
-
-  if(p1BlockRetrying){
-    showConfirm({
-      title: 'Cannot cancel while retrying',
-      body: 'PMM is automatically retrying this order. Wait for the retry process to complete or fail before taking action. You\'ll be notified when it resolves.',
-      cancelLabel: 'Close',
-      actionLabel: 'OK',
-      actionStyle: 'background:var(--brand);color:#fff',
-      onConfirm(){}
-    });
-    return;
-  }
-
   if(orderPlaced){
     showConfirm({
       title: 'Cannot cancel this case',
