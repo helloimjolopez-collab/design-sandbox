@@ -6012,33 +6012,33 @@ function renderCurrentCase(person, c){
     </div>`;
   }
 
-  return `
-    <!-- Status badge — hero -->
-    <div style="margin-bottom:14px">${renderBadge(c.status, lastUpdatedDate(c))}</div>
+  const initiatedIcon = VIA_ICONS[c.via] || 'ic-link';
+  const initiatedLabel = viaLabel(c, person);
 
-    <!-- Check type + via + date -->
-    <div style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <svg width="13" height="13" viewBox="0 0 20 20" style="color:var(--brand);flex-shrink:0"><use href="#ic-shield-fill"/></svg>
-        <span style="font-size:13px;font-weight:500;color:var(--ink)">${esc(c.checkType)}</span>
-        <span style="font-size:12px;color:var(--fg4)">·</span>
-        ${renderViaBadge(c, person)}
-        <span style="font-size:12px;color:var(--fg4)">·</span>
-        <span style="font-size:13px;color:var(--fg3)">${fmtShort(c.dateInitiated)}</span>
-      </div>
+  return `
+    <!-- ACTIVE CASE -->
+    <div class="pnl-sec-lbl">Active case</div>
+    <div class="id-list" style="margin-bottom:2px">
+      <div class="id-row"><div class="id-lbl">Package</div><div class="id-val"><span class="pkg-pill"><span class="pkg-pill-dot"></span>${esc(c.checkType)}</span></div></div>
+      <div class="id-row"><div class="id-lbl">Initiated</div><div class="id-val" style="display:flex;align-items:center;gap:6px;font-weight:400"><svg width="13" height="13" viewBox="0 0 20 20" style="color:var(--fg3);flex-shrink:0"><use href="#${initiatedIcon}"/></svg>${esc(initiatedLabel)}</div></div>
+      <div class="id-row"><div class="id-lbl">Created</div><div class="id-val" style="font-weight:400">${fmtShort(c.dateInitiated)}</div></div>
     </div>
 
     ${assessHtml}
     ${showLink ? renderLinkManagement(person, c) : ''}
 
     ${eventsHtml ? `
-    <button class="case-log-toggle" id="${logToggleId}" onclick="toggleCaseLog('${logId}','${logToggleId}')">
-      <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><use href="#ic-clock"/></svg>
-      View case timeline
-      <svg width="11" height="11" viewBox="0 0 20 20" fill="none" id="${logToggleId}-chev"><use href="#ic-chevdown"/></svg>
-    </button>
-    <div class="case-log-wrap" id="${logId}">
-      <div class="elog" style="margin-top:2px">${eventsHtml}</div>
+    <div style="border-top:1px solid var(--stroke-static-neutral-subtle);margin:14px 0 12px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="pnl-sec-lbl" style="margin-bottom:0">Timeline</div>
+      <button class="case-log-toggle" id="${logToggleId}" onclick="toggleCaseLog('${logId}','${logToggleId}')" style="width:auto;border:none;margin:0;padding:0;gap:5px;font-size:12px">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><use href="#ic-clock"/></svg>
+        Hide timeline
+        <svg width="11" height="11" viewBox="0 0 20 20" fill="none" id="${logToggleId}-chev" style="transform:rotate(180deg)"><use href="#ic-chevdown"/></svg>
+      </button>
+    </div>
+    <div class="case-log-wrap open" id="${logId}">
+      <div class="elog">${eventsHtml}</div>
     </div>` : ''}
     ${renderCaseDocs(c)}`;
 }
