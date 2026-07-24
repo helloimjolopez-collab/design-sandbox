@@ -3032,9 +3032,8 @@ function renderPanelAction(person, c){
     btns=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent to ${esc(person.email)}')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="openExtendExpiry('${c.id}','${c.inviteExpiry||'Jun 14, 2026'}')">Change expiry date</button>`;
   } else if(c.status==='invite-expired'){
     cls='bad';title='Invite expired: no consent received';
-    desc='The invite link expired before the applicant completed the consent form. Renew the link to restart.';
-    const expiredViaEmail = c.via==='invite';
-    btns=`<button class="btn btn-sm btn-primary" onclick="toast('${expiredViaEmail?'New invite link sent to '+esc(person.email):'Link renewed. Copy and send to applicant.'}')">${expiredViaEmail?'Renew Link &amp; Resend Invite':'Renew Link'}</button>`;
+    desc='The invite link expired before the applicant completed the consent form. Send a new invite to restart.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="openReinviteModal('${person.id}','${c.id}')">Re-invite applicant</button>`;
   } else if(c.status==='email-bounced'){
     cls='warn';title='Invite email bounced';
     if(DEMO_MODE==='phase-1'){
