@@ -2871,37 +2871,30 @@ function renderCurrentCase(person, c){
     </div>`;
   }
 
-  // Expandable check type section
+  // Expandable check type details
   const ctInfo = CHECK_TYPE_INFO[c.checkType];
   const ctId = `ct-expand-${c.id}`;
-  const checkTypeSection = `
-    <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--stroke-static-neutral-subtle)">
-      <div style="font-size:11.5px;font-weight:600;color:var(--fg3);letter-spacing:.02em;margin-bottom:5px">CHECK TYPE</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <div style="display:flex;align-items:center;gap:7px">
-          <svg width="15" height="15" viewBox="0 0 20 20" style="color:var(--brand);flex-shrink:0"><use href="#ic-shield-fill"/></svg>
-          <span style="font-size:15px;font-weight:600;color:var(--ink)">${esc(c.checkType)}</span>
-        </div>
-        ${ctInfo ? `<button onclick="document.getElementById('${ctId}').style.display=document.getElementById('${ctId}').style.display==='block'?'none':'block'" class="btn btn-ghost btn-xs" style="font-size:11px;color:var(--fg3);padding:2px 8px">Details</button>` : ''}
-      </div>
-      ${ctInfo ? `<div id="${ctId}" style="display:none;margin-top:8px;padding:8px 10px;background:var(--fill-static-neutral-subtle);border-radius:var(--r6)">
-        ${ctInfo.checks.map(ch=>`<div style="display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--fg2);padding:2px 0;line-height:1.4">
-          <span style="color:var(--brand);flex-shrink:0;margin-top:1px">&#10003;</span>${esc(ch)}
-        </div>`).join('')}
-      </div>` : ''}
-    </div>`;
+  const ctDetails = ctInfo ? `<div id="${ctId}" style="display:none;margin-top:6px;padding:8px 10px;background:var(--fill-static-neutral-subtle);border-radius:var(--r6)">
+    ${ctInfo.checks.map(ch=>`<div style="display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--fg2);padding:2px 0;line-height:1.4"><span style="color:var(--brand);flex-shrink:0;margin-top:1px">&#10003;</span>${esc(ch)}</div>`).join('')}
+  </div>` : '';
 
   return `
-    ${checkTypeSection}
-    <!-- Status + via + date -->
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+    <!-- Status badge — hero -->
+    <div style="margin-bottom:14px">${renderBadge(c.status, lastUpdatedDate(c))}</div>
+
+    <!-- Check type + via + date — all at the same weight and size -->
+    <div style="margin-bottom:${ctDetails?'2px':'14px'}">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <svg width="13" height="13" viewBox="0 0 20 20" style="color:var(--brand);flex-shrink:0"><use href="#ic-shield-fill"/></svg>
+        <span style="font-size:13px;font-weight:500;color:var(--ink)">${esc(c.checkType)}</span>
+        ${ctInfo ? `<button onclick="var el=document.getElementById('${ctId}');el.style.display=el.style.display==='block'?'none':'block'" style="font-size:12px;color:var(--brand);background:none;border:none;padding:0;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">details</button>` : ''}
+        <span style="font-size:12px;color:var(--fg4)">·</span>
         ${renderViaBadge(c, person)}
-        <span style="font-size:12px;color:var(--fg3)">Started</span>
-        <span style="font-size:13px;font-weight:600;color:var(--fg2)">${fmtShort(c.dateInitiated)}</span>
+        <span style="font-size:12px;color:var(--fg4)">·</span>
+        <span style="font-size:13px;color:var(--fg3)">${fmtShort(c.dateInitiated)}</span>
       </div>
+      ${ctDetails}
     </div>
-    <div style="margin-bottom:4px">${renderBadge(c.status, lastUpdatedDate(c))}</div>
 
     ${assessHtml}
     ${showLink ? renderLinkManagement(person, c) : ''}
