@@ -2702,14 +2702,7 @@ function renderPanelAction(person, c){
   const s = STATUS[c.status];
   if(!s) return '';
   let cls='', title='', desc='', btns='';
-  if(c.status==='consent-signed-action'){
-    cls='action';
-    title='Consent received — approval required';
-    desc=c.consentForm?.mismatch
-      ? `Name on consent form ("${c.consentForm.nameOnForm}") does not match record ("${c.consentForm.nameOnRecord}"). Review before approving.`
-      : 'Approval gate is on for this department. Review consent and approve to place the order.';
-    btns=`<button class="btn btn-sm btn-primary" onclick="toast('Order placed for ${person.name}')">Approve and place order</button><button class="btn btn-sm btn-secondary" onclick="toast('Opening consent form…')">View consent form</button>`;
-  } else if(c.status==='awaiting-assessment'){
+  if(c.status==='awaiting-assessment'){
     cls='action';title='Report received — record your assessment';
     desc='The background check report has been returned. Review it before recording your decision.';
     btns=`<button class="btn btn-sm btn-primary" data-open-report="${c.id}">Review report &amp; assess</button>`;
