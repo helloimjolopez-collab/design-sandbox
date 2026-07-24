@@ -5154,6 +5154,54 @@ window.p1ConfirmEmailFix = function(pid, cid){
   toast(updateOnFile?`Email updated to ${newEmail} and invite sent`:`Invite sent to ${newEmail}`);
 };
 
+// ── North-star email bounce fix ──────────────────────────────────────────
+window.nsShowEmailFix = function(pid, cid){
+  const container = document.getElementById('ns-email-fix-container-'+cid);
+  if(!container) return;
+  const person = personById(pid);
+  const currentEmail = person ? person.email : '';
+  container.innerHTML = `
+    <div class="p1-bounce-box" style="margin-top:10px">
+      <div class="p1-bounce-title">Enter corrected email address</div>
+      <input type="email" id="ns-fix-email-${cid}" class="wz-field-input" placeholder="Corrected email address" value="${esc(currentEmail)}" style="margin-bottom:10px">
+      <div class="p1-email-opts">
+        <label class="p1-email-opt">
+          <input type="radio" name="ns-email-fix-${cid}" value="send-only" checked>
+          Send invite to new address only — keep current email on file
+        </label>
+        <label class="p1-email-opt">
+          <input type="radio" name="ns-email-fix-${cid}" value="update-and-send">
+          Update email on file and send invite
+        </label>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:12px">
+        <button class="btn btn-primary btn-sm" onclick="nsConfirmEmailFix('${pid}','${cid}')">Send invite</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ns-email-fix-container-${cid}').innerHTML=''">Cancel</button>
+      </div>
+    </div>`;
+};
+
+window.nsConfirmEmailFix = function(pid, cid){
+  const emailEl = document.getElementById('ns-fix-email-'+cid);
+  const newEmail = (emailEl?.value||'').trim();
+  if(!newEmail||!newEmail.includes('@')){toast('Enter a valid email address');return;}
+  const updateRadio = document.querySelector(`input[name="ns-email-fix-${cid}"][value="update-and-send"]:checked`);
+  const updateOnFile = !!updateRadio;
+  const person = personById(pid);
+  if(person){
+    if(updateOnFile) person.email = newEmail;
+    const c = person.cases.find(x=>x.id===cid);
+    if(c){
+      c.status = 'invite-sent';
+      c.events = c.events||[];
+      c.events.push({type:'done',title:`Invite resent to ${newEmail}${updateOnFile?' — email on file updated':''}`,date:todayStr(),time:'',by:'Admin'});
+    }
+  }
+  renderTable(); renderHomeTable();
+  if(STATE.currentPerson) openProfile(pid);
+  toast(updateOnFile ? `Email updated to ${newEmail} and invite sent` : `Invite sent to ${newEmail}`);
+};
+
 window.toast = toast;
 window.openReport = openReport;
 window.openProfile = openProfile;
