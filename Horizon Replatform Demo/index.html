@@ -3699,9 +3699,42 @@ function renderCases(person, targetCaseId){
 }
 
 // Documents for a specific case (used within each case card)
+function renderAgreementsCard(person){
+  // Collect all agreement docs across all cases
+  const docs = [];
+  person.cases.forEach(c => {
+    if(c.consentForm){
+      docs.push({label:'Authorization for background investigation',date:c.consentForm.submittedDate,caseId:null,checkType:c.checkType});
+      docs.push({label:'FCRA notice - background investigation',date:c.consentForm.submittedDate,caseId:null,checkType:c.checkType});
+    }
+  });
+  if(!docs.length) return '';
+  const rows = docs.map(d=>`
+    <div class="doc-row" onclick="toast('Opening document…')">
+      <div class="doc-icon"><svg width="14" height="14" style="color:var(--brand)"><use href="#ic-report"/></svg></div>
+      <div style="flex:1;min-width:0">
+        <div class="doc-name" style="font-size:13px">${esc(d.label)}</div>
+        <div class="doc-meta">${esc(d.checkType)} &nbsp;·&nbsp; Added ${esc(d.date)}</div>
+      </div>
+    </div>`).join('');
+  return `<div class="pnl-card">
+    <div class="pnl-card-hd">
+      <span class="pnl-card-title">Agreements</span>
+      <button class="btn btn-xs btn-secondary" onclick="toast('Upload agreement…')">
+        <svg width="11" height="11" viewBox="0 0 20 20"><path d="M10 3v11M5 8l5-5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Upload
+      </button>
+    </div>
+    <div class="pnl-card-body">${rows}</div>
+  </div>`;
+}
+
 function renderCaseDocs(c){
   const docs = [];
-  if(c.consentForm) docs.push({type:'Consent & authorization form',date:c.consentForm.submittedDate,caseId:null});
+  if(c.consentForm){
+    docs.push({type:'Authorization for background investigation',date:c.consentForm.submittedDate,caseId:null});
+    docs.push({type:'FCRA notice',date:c.consentForm.submittedDate,caseId:null});
+  }
   if(c.report) docs.push({type:'Background check report',date:c.report.receivedDate,caseId:c.id});
   if(!docs.length) return '';
   const rows = docs.map(d=>`
@@ -3713,7 +3746,7 @@ function renderCaseDocs(c){
       </div>
     </div>`).join('');
   return `<div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-    <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);margin-bottom:6px">Documents</div>
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);margin-bottom:6px">Documents</div>
     ${rows}
   </div>`;
 }
