@@ -2789,11 +2789,9 @@ function caseExtraBlocks(c, person){
     </div>`;
   }
   if(c.consentForm){
-    const mm = c.consentForm.mismatch;
-    h += `<div style="margin-top:8px;padding:9px 12px;background:${mm?'var(--orange-bg)':'var(--surf2)'};border-radius:var(--r6);${mm?'border-left:3px solid var(--orange)':''}">
-      <div style="font-size:13px;font-weight:600;color:var(--ink)">Consent form${mm?' — name mismatch':''}</div>
-      <div style="font-size:12px;color:var(--fg2);margin-top:1px">Submitted ${c.consentForm.submittedDate} · Name on form: "${c.consentForm.nameOnForm}"</div>
-      ${mm?`<div style="margin-top:7px;display:flex;gap:6px"><button class="btn btn-xs btn-secondary" onclick="toast('Mismatch acknowledged')">Acknowledge</button><button class="btn btn-xs btn-ghost" onclick="toast('Correction requested')">Request correction</button></div>`:''}
+    h += `<div style="margin-top:8px;padding:9px 12px;background:var(--surf2);border-radius:var(--r6)">
+      <div style="font-size:13px;font-weight:600;color:var(--ink)">Consent form received</div>
+      <div style="font-size:12px;color:var(--fg2);margin-top:1px">Submitted ${c.consentForm.submittedDate}</div>
     </div>`;
   }
   if(c.assessment){
@@ -3169,12 +3167,7 @@ function renderSituation(person, c){
   const s = STATUS[c.status];
   const assess = c.assessment;
   let cls='sit-progress', title='', desc='', acts='';
-  if(c.status==='consent-signed-action'){
-    cls='sit-action';
-    title='Consent received — action required before order can be placed.';
-    desc= c.consentForm?.mismatch ? `Name on consent form ("${c.consentForm.nameOnForm}") does not match record ("${c.consentForm.nameOnRecord}"). Acknowledge or request correction, then approve the order.` : 'Approval gate is on for this department.';
-    acts=`<button class="btn btn-sm btn-primary" onclick="toast('Order placed for ${person.name}')">Approve and place order</button><button class="btn btn-sm btn-secondary" onclick="toast('Opening consent form…')">View consent form</button>`;
-  } else if(c.status==='awaiting-assessment'){
+  if(c.status==='awaiting-assessment'){
     cls='sit-action';title='Report received — record your assessment.';
     desc='The background check report has been returned. Review it and record Cleared or Escalated.';
     acts=`<button class="btn btn-sm btn-primary" data-open-report="${c.id}">Review report &amp; assess</button>`;
