@@ -1623,7 +1623,7 @@ const STATUS = {
   'needs-review':         {label:'Complete: Needs Review',                cls:'b-orange',  icon:'ms-flag',           action:true,  tip:'Admin flagged this case for further review. A follow-up decision is required before the person is placed.'},
   'escalated':            {label:'Complete: Escalated',                   cls:'b-danger',  icon:'ms-block-fill',     action:true,  tip:'Admin reviewed the report and escalated. This person must not be placed in the role. FCRA adverse action process may apply.'},
   // Rescreening health
-  'due-rescreening':      {label:'Rescreen Due',                          cls:'b-warn',    icon:'ms-schedule',       action:true,  tip:'The rescreening date is approaching. Current check is still valid — start a new screening case soon.'},
+  'due-rescreening':      {label:'Rescreen Due',                          cls:'b-warn',    icon:'ms-schedule',       action:true,  tip:'The rescreening date is approaching. Current check is still valid. Start a new screening case soon.'},
   'screening-overdue':    {label:'Screening Expired',                     cls:'b-danger',  icon:'ms-event-busy',     action:true,  tip:'The rescreen due date has passed. This person\'s screening is no longer current. A new background check is required.'},
   'bg-expired':           {label:'Screening Expired',                     cls:'b-warn',    icon:'ms-link-off',       action:false, tip:'Background check has expired.'},
   // Phase 1 — order failure scenarios
@@ -2169,7 +2169,7 @@ function getInlineAction(person, c){
   }
   if(s==='invite-expiring'){
     const label = c.via==='invite' ? 'Renew and resend' : 'Renew invite link';
-    return `<button class="row-act-btn row-act-warn" onclick="toast('${label === 'Renew and resend' ? 'Invite renewed and resent to ' + person.email : 'Invite link renewed — copy new link to resend'}');event.stopPropagation()">${label}</button>`;
+    return `<button class="row-act-btn row-act-warn" onclick="toast('${label === 'Renew and resend' ? 'Invite renewed and resent to ' + person.email : 'Invite link renewed. Copy the new link to resend.'}');event.stopPropagation()">${label}</button>`;
   }
   if(s==='invite-expired'){
     const label = c.via==='invite' ? 'Generate and send' : 'Generate new link';
@@ -2250,7 +2250,7 @@ function getActions(person, c){
     if(via==='invite'){
       acts.push({label:'Renew and resend',cls:'pri',fn:`toast('Invite renewed and resent to ${person.email}');event.stopPropagation()`});
     } else {
-      acts.push({label:'Renew invite link',cls:'pri',fn:`toast('Invite link renewed — copy new link to resend');event.stopPropagation()`});
+      acts.push({label:'Renew invite link',cls:'pri',fn:`toast('Invite link renewed. Copy the new link to resend.');event.stopPropagation()`});
     }
     acts.push({label:'Copy invite link',fn:`toast('Invite link copied');event.stopPropagation()`});
     acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
