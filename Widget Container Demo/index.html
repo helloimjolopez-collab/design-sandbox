@@ -2824,7 +2824,7 @@ function gftTable(w){
   function val(p){if(key==="purpose")return p.purpose;if(key==="total")return p.pledgeTotal;if(key==="due")return p.due;if(key==="received")return p.received;if(key==="remaining")return p.remaining;return p.fulfilled;}
   ps.sort(function(a,b){var av=val(a),bv=val(b);if(key==="purpose")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
   function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="gft-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
-  var head='<div class="wt-row wt-head gft-trow"><span class="gft-c-nm">'+sb("purpose","Purpose")+'</span><span class="gft-c-n">'+sb("total","Pledged")+'</span><span class="gft-c-n">'+sb("due","Due by date")+'</span><span class="gft-c-n">'+sb("received","Received")+'</span><span class="gft-c-n">'+sb("remaining","Remaining")+'</span><span class="gft-c-n">'+sb("fulfilled","% Fulfilled")+'</span><span class="gft-c-go" aria-hidden="true"></span></div>';
+  var head='<div class="wt-row wt-head gft-trow"><span class="gft-c-nm">'+sb("purpose","Purpose")+'</span><span class="gft-c-n">'+sb("total","Pledged")+'</span><span class="gft-c-n">'+sb("due","Due by date")+'</span><span class="gft-c-n">'+sb("received","Received")+'</span><span class="gft-c-n">'+sb("remaining","Remaining")+'</span><span class="gft-c-n">'+sb("fulfilled","% Fulfilled")+'</span></div>';
   var body=ps.map(function(p){
     var remCell=gftRemainingCell(p);
     var sr='<span class="sr-only">'+p.purpose+', pledged '+money(p.pledgeTotal)+', due by date '+money(p.due)+', received '+money(p.received)+', '+gftRemainingText(p)+', '+gftPct(p.fulfilled)+' fulfilled. Opens the donors behind this purpose.</span>';
@@ -2834,8 +2834,7 @@ function gftTable(w){
       '<span class="gft-c-n">'+money(p.due)+'</span>'+
       '<span class="gft-c-n">'+money(p.received)+'</span>'+
       '<span class="gft-c-n">'+remCell+'</span>'+
-      '<span class="gft-c-n gft-c-pct">'+gftPct(p.fulfilled)+'</span>'+
-      '<span class="gft-c-go" aria-hidden="true">'+ICON("chevron_right")+'</span></div>';
+      '<span class="gft-c-n gft-c-pct">'+gftPct(p.fulfilled)+'</span></div>';
   }).join("");
   var o=gftOverall(w);
   return '<div class="scroll">'+head+body+'</div>'+
