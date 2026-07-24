@@ -2267,8 +2267,9 @@ function renderHomeStats(){
   if(!strip) return;
   const tab = STATE.mainTab;
   const f = STATE.homeCardFilter;
-  const tile=(val,label,cls,key)=>`<div class="ss-tile${f===key?' active':''}" onclick="setHomeCardFilter('${key}')">
-    <div><div class="ss-num ${val?cls:'zero'}">${val}</div><div class="ss-lbl">${label}</div></div>
+  const tile=(val,label,iconCls,icon,key)=>`<div class="ss-tile${f===key?' active':''}" onclick="setHomeCardFilter('${key}')">
+    <div class="ss-head"><span class="ss-ic ${iconCls}"><svg viewBox="0 0 24 24"><use href="#${icon}"/></svg></span><span class="ss-lbl">${label}</span></div>
+    <div class="ss-num ${val?'':'zero'}">${val}</div>
   </div>`;
   if(tab==='cst'){
     const cstCompleted = all.filter(p=>p.cst&&p.cst.status==='cst-completed').length;
@@ -2276,22 +2277,22 @@ function renderHomeStats(){
     const cstNotSent = all.filter(p=>p.cst&&p.cst.status==='cst-not-sent').length;
     const cstNa = all.filter(p=>p.cst&&p.cst.status==='cst-na').length;
     strip.innerHTML =
-      tile(cstCompleted,'Completed','grey','cst-done') +
-      tile(cstInvited,'Invite sent','warn','cst-invited') +
-      tile(cstNotSent,'Not sent','alert','cst-not-sent') +
-      tile(cstNa,'Not required','grey','cst-na');
+      tile(cstCompleted,'Completed','green','ms-check-circle','cst-done') +
+      tile(cstInvited,'Invite Sent','grey','ms-send','cst-invited') +
+      tile(cstNotSent,'Not Sent','orange','ms-error-fill','cst-not-sent') +
+      tile(cstNa,'Not Required','grey','ms-minus-circle','cst-na');
   } else {
-    const actionNeeded = all.filter(p=>STATUS[currentCase(p).status]?.action).length;
     const newResults = all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
-    const inviteExpiring = all.filter(p=>currentCase(p).status==='invite-expiring').length;
+    const awaitingReview = all.filter(p=>currentCase(p).status==='awaiting-assessment'||currentCase(p).status==='complete-needs-review').length;
+    const actionNeeded = all.filter(p=>STATUS[currentCase(p).status]?.action).length;
+    const inviteExpired = all.filter(p=>currentCase(p).status==='invite-expired'||currentCase(p).status==='invite-expiring').length;
     const rescreenDue = all.filter(p=>currentCase(p).status==='rescreen-due'||currentCase(p).status==='screening-expired').length;
-    const cstInviteSent = all.filter(p=>p.cst && p.cst.status==='cst-invited').length;
     strip.innerHTML =
-      tile(actionNeeded,'Action needed','alert','action') +
-      tile(newResults,'New results','violet','new-results') +
-      tile(inviteExpiring,'Invite expiring','warn','expiring') +
-      tile(rescreenDue,'Rescreen due','warn','rescreen') +
-      (STATE.mainTab==='all' ? tile(cstInviteSent,'CST invite sent','grey','cst-invited') : '');
+      tile(newResults,'New Results','green','ms-check-circle','new-results') +
+      tile(awaitingReview,'Awaiting Review','yellow','ms-pending','awaiting-review') +
+      tile(actionNeeded,'Action Needed','orange','ms-error-fill','action') +
+      tile(inviteExpired,'Invite Expired','red','ms-error-fill','expiring') +
+      tile(rescreenDue,'Rescreening Due','amber','ms-error-fill','rescreen');
   }
 }
 
