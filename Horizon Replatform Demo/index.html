@@ -3157,10 +3157,13 @@ function renderPanelBody(person, targetCaseId){
       <div class="pnl-card-body">${renderCSTCompact(person)}</div>
     </div>
 
-    <!-- Documents card -->
+    <!-- Notes card -->
     <div class="pnl-card">
-      <div class="pnl-card-hd"><span class="pnl-card-title">Documents</span></div>
-      <div class="pnl-card-body">${renderDocuments(person)}</div>
+      <div class="pnl-card-hd"><span class="pnl-card-title">Notes</span></div>
+      <div class="pnl-card-body">
+        <textarea id="person-notes-${person.id}" class="ra-notes" style="width:100%;min-height:80px;resize:vertical" placeholder="Add internal notes about this person…" onchange="savePersonNote('${person.id}',this.value)">${esc(person.notes||'')}</textarea>
+        <div style="font-size:11px;color:var(--fg4);margin-top:4px">Notes are internal only. Not visible to the applicant.</div>
+      </div>
     </div>
 
     <!-- Danger zone card -->
@@ -3515,6 +3518,11 @@ function toggleHistItem(bodyId, chevId){
   if(!body) return;
   const open = body.classList.toggle('open');
   if(chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function savePersonNote(pid, val){
+  const p = personById(pid);
+  if(p) p.notes = val;
 }
 
 function closePanel(){
