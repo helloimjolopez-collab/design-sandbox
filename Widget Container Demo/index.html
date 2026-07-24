@@ -2036,6 +2036,40 @@ function penBadge(w){
    total annual contribution + appointee badge on the LEFT, one quiet
    context line under it (plan-type count, the active-appointments basis,
    and data-as-of). No redundant total up here , the table owns the Total. */
+/* ===== Shared progress bar (Gifts, Remittance, and anywhere pacing shows) ==
+   ONE component everywhere: an amethyst received-fill on the full pledged
+   track, a light "expected but not yet in" segment up to a labelled pace
+   marker at "expected by now". Values live as text in the row + sr-only; the
+   bar is hoverable for a formatted read. Status is carried by the chip and the
+   visible gap, never by colour alone. o={fill,mark,pop,aria,sm}. */
+function pbarHTML(o){
+  var fill=Math.max(0,Math.min(100,o.fill||0));
+  var mark=(o.mark==null)?null:Math.max(0,Math.min(100,o.mark));
+  var shown=fill>0?Math.max(1.5,fill):0;
+  var gap=(mark!=null&&mark>fill)?'<span class="pbar-gap" style="left:'+fill.toFixed(2)+'%;width:'+(mark-fill).toFixed(2)+'%"></span>':"";
+  var marker=(mark!=null)?'<span class="pbar-mark" style="left:'+mark.toFixed(2)+'%"></span>':"";
+  return '<span class="pbar'+(o.sm?" pbar-sm":"")+'"'+(o.pop?(' data-pbar="'+o.pop+'"'):"")+' role="img" aria-label="'+(o.aria||"")+'"><span class="pbar-track"><span class="pbar-fill" style="width:'+shown.toFixed(2)+'%"></span>'+gap+'</span>'+marker+'</span>';
+}
+var pbarPopEl=null;
+function pbarHide(){if(pbarPopEl){pbarPopEl.remove();pbarPopEl=null;}}
+function pbarShow(el,mx,my){
+  var raw=el.getAttribute("data-pbar");if(!raw)return;var p=raw.split("|");
+  if(!pbarPopEl){pbarPopEl=document.createElement("div");pbarPopEl.className="bgt-pop";document.body.appendChild(pbarPopEl);}
+  var pctF=+p[5],pctM=+p[6],st=p[7];
+  var favTxt=st==="behind"?"Behind pace":(st==="full"?"Paid in full":(st==="none"?"No pledge":"On track"));
+  var favCls=st==="behind"?"neg":(st==="none"?"neutral":"");
+  pbarPopEl.innerHTML='<div class="bgt-pop-h">'+p[0]+'</div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Pledged</span><span class="bgt-pop-v">'+money(+p[1])+'</span></div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Received</span><span class="bgt-pop-v">'+money(+p[2])+'</span></div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Expected by now</span><span class="bgt-pop-v">'+money(+p[3])+'</span></div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Remaining</span><span class="bgt-pop-v">'+money(+p[4])+'</span></div>'+
+    '<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">'+pctF+'% received, '+pctM+'% expected</span><span class="bgt-pop-fav '+favCls+'">'+favTxt+'</span></div>';
+  var bw=pbarPopEl.offsetWidth,bh=pbarPopEl.offsetHeight,M=10;
+  var left=mx+14,top=my-bh-10;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;if(top<M)top=my+16;
+  pbarPopEl.style.left=left+"px";pbarPopEl.style.top=top+"px";
+}
+document.addEventListener("mousemove",function(e){var el=e.target.closest&&e.target.closest(".pbar[data-pbar]");if(!el){pbarHide();return;}pbarShow(el,e.clientX,e.clientY);});
+
 function penHeader(w,mode){
   var numInner,ctx;
   if(mode==="loading"){
