@@ -2488,19 +2488,19 @@ function remTable(w,full){
 
 /* ---- header (Detail / Explore): two-row .dep-hd --------------- */
 function remHeaderBlock(w,mode){
-  var t=remTotals(w),numInner,ctx;
+  var t=remTotals(w),numInner;
   if(mode==="loading"){
     numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:76px;height:22px;border-radius:6px"></span><span class="sk" style="width:112px;height:20px;border-radius:999px"></span></div>';
-    ctx="Updating for the new receipts-through date.";
-  }else{
-    numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+(t.annual>0?remPct(t.pctPaid):"n/a")+'</span>'+remPaceBadge(t)+'</div>';
-    ctx=money(t.paid)+' paid of '+money(t.annual)+' pledged. '+remPct(t.pctYear)+' of the calendar year has elapsed'+
-      (t.allPaid?', with everything paid':(t.status==="behind"?(', so this is about '+money(t.shortfall)+' behind the expected pace'):', keeping pace'))+
-      '. '+money(t.out)+' outstanding, '+t.daysLeft+' day'+(t.daysLeft===1?"":"s")+' to year end.';
+    return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remThruChip(w)+'</div><div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div></div>';
   }
+  var expTot=Math.round(t.annual*t.pctYear);
+  numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+(t.annual>0?remPct(t.pctPaid):"n/a")+'</span>'+remPaceBadge(t)+'</div>';
+  var pop=["All pledges",t.annual,t.paid,expTot,t.out,(t.annual>0?Math.round(t.pctPaid*100):0),Math.round(t.pctYear*100),(t.allPaid?"full":t.status)].join("|");
+  var bar='<div class="pbar-hd">'+pbarHTML({fill:t.pctPaid*100,mark:t.pctYear*100,pop:remEsc(pop),aria:remEsc("Overall pacing")})+
+    '<div class="pbar-lg"><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-recv"></span>Received '+remPct(t.pctPaid)+'</span><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-exp"></span>Expected by now '+remPct(t.pctYear)+'</span></div></div>';
   return '<div class="dep-hd rem-hd">'+
-    '<div class="dep-hd-top">'+remThruChip(w)+'<div class="dep-hd-toggle rem-asof">Data as of '+(w.updated||"just now")+'</div></div>'+
-    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div><span class="sr-only">'+remPct(t.pctPaid)+' of the total pledged is paid; '+remPct(t.pctYear)+' of the calendar year has elapsed.</span></div></div>'+
+    '<div class="dep-hd-top">'+remThruChip(w)+'</div>'+
+    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+bar+'<span class="sr-only">'+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year.</span></div></div>'+
   '</div>';}
 
 /* ---- Glance (kpi) -------------------------------------------- */
