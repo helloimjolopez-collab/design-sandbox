@@ -2483,9 +2483,24 @@ function openExtendExpiry(cid, currentExpiry){
 function closeExtendExpiry(){ document.getElementById('extend-expiry-modal').classList.remove('open'); }
 function confirmExtendExpiry(){
   const input = document.getElementById('extend-expiry-input');
+  const modal = document.getElementById('extend-expiry-modal');
   if(input && input.value){
     const d = new Date(input.value + 'T00:00:00');
     const label = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    // Persist the new expiry on the case and clear the expiring state
+    const cid = modal ? modal._cid : null;
+    if(cid){
+      const found = caseById(cid);
+      if(found){
+        const c = found.kase;
+        c.inviteExpiry = input.value;
+        if(c.status==='invite-expiring'){ c.status='invite-sent'; }
+        if(c.p1Status==='invite-expiring'){ c.p1Status='invite-sent'; }
+        c.events = c.events||[];
+        c.events.push({type:'done',title:'Invite expiry extended to '+label,date:todayStr(),time:nowTime(),by:'Admin'});
+        renderTable(); renderHomeTable();
+      }
+    }
     toast('Expiry updated to ' + label);
   }
   closeExtendExpiry();
