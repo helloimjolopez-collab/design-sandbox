@@ -3120,8 +3120,8 @@ function renderPanelAction(person, c){
     btns=`<button class="btn btn-sm btn-primary" onclick="retryOrder('${person.id}','${c.id}')">Retry order</button><button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button>`;
   } else if(c.status==='invite-cancelled'){
     cls='warn';title='Invite cancelled';
-    desc='The applicant\'s invite link has been invalidated. Issue a new invite to continue with this case.';
-    btns=`<button class="btn btn-sm btn-primary" onclick="toast('Opening invite options...')">Issue new invite</button>`;
+    desc='The applicant\'s invite link has been invalidated. Issue a new invite to continue with this case, or close it.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="openReinviteModal('${person.id}','${c.id}')">Issue new invite</button><button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button>`;
   } else if(c.status==='rescreen-due'){
     cls='warn';title='Rescreening due soon';
     desc='This person\'s background check is due for renewal.';
