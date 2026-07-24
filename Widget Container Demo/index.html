@@ -803,55 +803,126 @@
   .pr-dbadge{display:inline-flex;align-items:center;gap:6px;min-width:0;font-size:12px;color:var(--txt-secondary);}
   .pr-dot{flex:0 0 auto;width:9px;height:9px;border-radius:3px;display:inline-block;}
   .pr-dbadge-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  /* ===== Purchasing Management (pur) ===== */
-  .pur-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;justify-self:start;align-self:center;}
-  .pur-status-chip{max-width:210px;}
-  .pur-path-chip{max-width:220px;}
-  .pur-path-chip.is-disabled{opacity:.6;cursor:not-allowed;background:transparent;}
-  .pur-path-chip.is-disabled:hover{background:transparent;color:var(--txt-secondary);}
-  .pur-count-lbl{font-size:12.5px;color:var(--txt-secondary);font-weight:500;}
-  .pur-status-chip .bgt-spin{margin-right:2px;}
-  .pur-c-num{flex:0 0 104px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);}
-  .wt-head .pur-c-num{font-weight:inherit;color:inherit;}
-  .pur-c-date{flex:0 0 92px;min-width:0;white-space:nowrap;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
-  .pur-c-age{flex:0 0 66px;display:inline-flex;align-items:center;gap:2px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
-  .pur-c-age .material-symbols-rounded{font-size:14px;opacity:.55;}
-  .pur-age-warn{color:var(--txt-primary);font-weight:600;}
-  .pur-c-act{flex:0 0 34px;display:flex;justify-content:flex-end;}
-  .pur-edit{border:0;background:transparent;cursor:pointer;color:var(--txt-subtle);border-radius:6px;padding:3px;display:inline-flex;align-items:center;}
-  .pur-edit:hover{background:var(--wn-200);color:var(--txt-primary);}
-  .pur-edit .material-symbols-rounded{font-size:17px;}
-  .pur-subbar{display:flex;justify-content:flex-end;padding:4px 14px 8px;}
-  .pur-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 4px;}
-  .pur-enc-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 16px 8px;}
-  .pur-enc-title{font-size:12px;font-weight:600;color:var(--txt-secondary);}
-  .pur-enc-tot{font-size:12px;font-weight:600;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
-  .pur-plotrow{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
-  .pur-yax{flex:0 0 44px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
-  .pur-canvas{flex:1;min-width:0;position:relative;border-bottom:1px solid var(--stroke-widget);overflow-x:auto;overflow-y:hidden;}
-  .pur-gl{position:absolute;left:0;right:0;bottom:50%;border-top:1px dashed var(--stroke-widget);opacity:.5;}
-  .pur-cols{position:absolute;inset:0;display:flex;align-items:flex-end;gap:12px;padding:0 6px;}
-  .pur-cols.many{position:relative;min-width:max-content;height:100%;}
-  .pur-cols.many .pur-col{flex:0 0 46px;}
-  .pur-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;border-radius:6px;transition:background var(--dur,.15s) ease;}
-  .pur-col:hover{background:var(--wn-300);}
-  .pur-barwrap{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;}
-  .pur-bar{width:58%;max-width:44px;min-height:2px;border-radius:3px 3px 0 0;background:var(--am-600);transition:background var(--dur,.15s) ease;}
-  .pur-col:hover .pur-bar{background:var(--am-700,var(--am-600));}
-  .pur-xaxrow{display:flex;gap:8px;padding:6px 16px 0;}
-  .pur-yaxsp{flex:0 0 44px;}
-  .pur-xcols{flex:1;min-width:0;display:flex;gap:12px;padding:0 6px;}
-  .pur-xcols.many{min-width:max-content;}
-  .pur-xcols.many .pur-xcol{flex:0 0 46px;}
-  .pur-xcol{flex:1 1 0;min-width:0;display:flex;justify-content:center;}
-  .pur-xlbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
-  .pur-enc-note{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--txt-subtle);padding:9px 16px 12px;line-height:1.45;}
-  .pur-enc-note .material-symbols-rounded{font-size:15px;flex:0 0 auto;margin-top:1px;color:var(--txt-subtle);}
-  .pur-skel{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 16px 16px;}
-  .pur-skel-rows{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;}
-  .pur-sk-line{display:flex;align-items:center;gap:12px;}
-  .pur-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--txt-subtle);font-size:12px;padding:12px 0 0;}
-  .pur-pop{min-width:210px;}
+  /* =======================================================================
+   Purchasing Management (pur) , v2 styles
+   Append to the shell <style> in widget-container.html.
+   Reuses shell classes: .dep-hd .dep-hd-top .dep-hd-num .dep-hd-toggle
+   .dep-hd-kpigrp .metric-value .bank-pill .bank-numwrap .filter-chip
+   .vtoggle/.vt .wt-row/.wt-head/.lr-main/.wt-c2/.wt-sort .scroll .dep-total
+   .dep-full/.dep-col/.dep-col-h .kpi-row/.kpi-num .gl-sub .bank-caption
+   .state/.state-title/.state-sub .bgt-pop* .bgt-notrend* .sk/.bgt-spin
+   .modal/.modal-backdrop/.modal-h/.modal-b/.modal-f .btn* .mi .dd-search
+   All colours are shell tokens (amethyst chart, no red on data).
+   ======================================================================= */
+
+/* ---- Header ---------------------------------------------------------- */
+.pur-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;justify-self:start;align-self:center;}
+.pur-status-chip{max-width:210px;}
+.pur-path-chip{max-width:220px;}
+.pur-count-lbl{font-size:12.5px;color:var(--txt-secondary);font-weight:500;}
+.pur-status-chip .bgt-spin{margin-right:2px;}
+.pur-subline{margin-top:2px;}
+
+/* ---- Queue table (over shell .wt-row primitives) --------------------- */
+.pur-c-num{flex:0 0 104px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);}
+.wt-head .pur-c-num{font-weight:inherit;color:inherit;}
+.pur-c-date{flex:0 0 92px;min-width:0;white-space:nowrap;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+.pur-c-age{flex:0 0 62px;display:inline-flex;align-items:center;gap:2px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+.pur-c-age .material-symbols-rounded{font-size:14px;opacity:.55;}
+.pur-age-warn{color:var(--txt-primary);font-weight:600;}
+.pur-c-go{flex:0 0 20px;display:flex;justify-content:flex-end;color:var(--txt-subtle);}
+.pur-c-go .material-symbols-rounded{font-size:18px;}
+.pur-rowclick{cursor:pointer;}
+.pur-rowclick:hover{background:var(--wn-100);}
+.pur-rowclick:hover .pur-c-go{color:var(--txt-secondary);}
+.pur-rowclick:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;}
+
+/* ---- Encumbrance ("Committed") chart --------------------------------- */
+.pur-subbar{display:flex;justify-content:flex-end;padding:4px 14px 8px;}
+.pur-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 4px;}
+.pur-enc-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 16px 8px;}
+.pur-enc-title{font-size:12px;font-weight:600;color:var(--txt-secondary);}
+.pur-enc-tot{font-size:12px;font-weight:700;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+.pur-plotrow{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
+.pur-yax{flex:0 0 44px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
+.pur-canvas{flex:1;min-width:0;position:relative;border-bottom:1px solid var(--stroke-widget);overflow-x:auto;overflow-y:hidden;}
+.pur-gl{position:absolute;left:0;right:0;bottom:50%;border-top:1px dashed var(--stroke-widget);opacity:.5;}
+.pur-cols{position:absolute;inset:0;display:flex;align-items:flex-end;gap:12px;padding:0 6px;}
+.pur-cols.many{position:relative;min-width:max-content;height:100%;}
+.pur-cols.many .pur-col{flex:0 0 46px;}
+.pur-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;border-radius:6px;transition:background var(--dur,.15s) ease;}
+.pur-col:hover{background:var(--wn-300);}
+.pur-barwrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;width:100%;height:100%;}
+.pur-val{font-size:10px;line-height:1.3;color:var(--txt-subtle);font-variant-numeric:tabular-nums;margin-bottom:3px;white-space:nowrap;}
+.pur-col:hover .pur-val{color:var(--txt-secondary);}
+.pur-bar{width:58%;max-width:44px;min-height:2px;border-radius:3px 3px 0 0;background:var(--am-600);transition:background var(--dur,.15s) ease;}
+.pur-col:hover .pur-bar{background:var(--am-700);}
+.pur-xaxrow{display:flex;gap:8px;padding:6px 16px 0;}
+.pur-yaxsp{flex:0 0 44px;}
+.pur-xcols{flex:1;min-width:0;display:flex;gap:12px;padding:0 6px;}
+.pur-xcols.many{min-width:max-content;}
+.pur-xcols.many .pur-xcol{flex:0 0 46px;}
+.pur-xcol{flex:1 1 0;min-width:0;display:flex;justify-content:center;}
+.pur-xlbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
+.pur-enc-cap{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt-subtle);padding:9px 16px 4px;}
+.pur-enc-cap .material-symbols-rounded{font-size:14px;flex:0 0 auto;color:var(--txt-subtle);}
+.pur-pop{min-width:210px;}
+
+/* ---- Loading skeleton ------------------------------------------------ */
+.pur-skel{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 16px 16px;}
+.pur-skel-rows{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;}
+.pur-sk-line{display:flex;align-items:center;gap:12px;}
+.pur-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--txt-subtle);font-size:12px;padding:12px 0 0;}
+
+/* ---- Caught-up / positive state tint --------------------------------- */
+.state[data-tone="pos"]{color:var(--txt-pos);}
+.state[data-tone="pos"] .state-sub{color:var(--txt-secondary);}
+
+/* ---- Focus overlay: purchase-order detail (approve/reject inline) ----- */
+.pur-po-modal{max-width:460px;width:calc(100vw - 32px);}
+.pur-po-title-ic{font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle);}
+.pur-po-status{margin-left:8px;padding:1px 9px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap;vertical-align:1px;}
+.pur-po-status[data-tone="act"]{background:var(--am-50);color:var(--am-700);}
+.pur-po-status[data-tone="pos"]{background:var(--pos-10);color:var(--txt-pos);}
+.pur-po-status[data-tone="neutral"]{background:var(--wn-200);color:var(--txt-secondary);}
+.pur-po-status[data-tone="rej"]{background:var(--red-10);color:var(--red-130);}
+.pur-po-b{display:flex;flex-direction:column;gap:16px;}
+.pur-po-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;}
+.pur-po-fact{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.pur-po-fact-k{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
+.pur-po-fact-v{font-size:13px;color:var(--txt-primary);font-weight:500;overflow:hidden;text-overflow:ellipsis;}
+.pur-po-sec{display:flex;flex-direction:column;gap:8px;}
+.pur-po-sec-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
+.pur-po-lines{border:1px solid var(--stroke-widget);border-radius:9px;overflow:hidden;}
+.pur-po-line{display:flex;align-items:center;gap:12px;padding:8px 12px;border-bottom:1px solid var(--stroke-widget);font-size:13px;}
+.pur-po-line:last-child{border-bottom:0;}
+.pur-po-line-d{flex:1;min-width:0;color:var(--txt-primary);}
+.pur-po-line-q{flex:0 0 auto;color:var(--txt-subtle);font-size:12px;font-variant-numeric:tabular-nums;}
+.pur-po-line-a{flex:0 0 92px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-primary);}
+.pur-po-line-tot{background:var(--wn-100);font-weight:700;}
+.pur-po-trail{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;}
+.pur-po-step{display:flex;align-items:flex-start;gap:10px;padding:2px 0;position:relative;}
+.pur-po-step:not(:last-child)::before{content:"";position:absolute;left:9px;top:22px;bottom:-2px;width:2px;background:var(--stroke-widget);}
+.pur-po-step-ic{font-size:20px;flex:0 0 auto;color:var(--wn-400);}
+.pur-po-step.done .pur-po-step-ic{color:var(--am-600);}
+.pur-po-step-tx{display:flex;flex-direction:column;gap:0;padding-top:1px;}
+.pur-po-step-l{font-size:13px;font-weight:600;color:var(--txt-primary);}
+.pur-po-step-w{font-size:12px;color:var(--txt-subtle);}
+.pur-po-f{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.pur-po-f-btns{display:flex;align-items:center;gap:8px;}
+.pur-po-reject-btn{color:var(--red-130);border-color:var(--wn-400);}
+.pur-po-reject-btn:hover{background:var(--red-10);border-color:var(--red-100);}
+.pur-po-danger{background:var(--red-100);color:#fff;}
+.pur-po-danger:hover{background:var(--red-130);}
+.pur-po-f-reject{flex-direction:column;align-items:stretch;gap:10px;}
+.pur-po-note{width:100%;box-sizing:border-box;border:1px solid var(--stroke-widget);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:13px;color:var(--txt-primary);background:var(--surface-widget);outline:none;}
+.pur-po-note:focus{border-color:var(--focus);}
+.pur-po-f-reject .pur-po-f-btns{justify-content:flex-end;}
+
+/* ---- Narrow viewport: stack the fact grid --------------------------- */
+@media (max-width:520px){
+  .pur-po-facts{grid-template-columns:1fr;}
+}
   /* ===== Receivable Invoices Outstanding v2 (prefix: ar) , CSS =====
    All ar-* rules the v2 block uses. Shared shell classes it also relies on
    (.dep-hd*, .kpi-row/.kpi-num, .dep-hd-kpigrp/.metric-value, .gl-sub/.bgt-caption,
@@ -1012,51 +1083,84 @@
   .pto-skel{padding:8px 0;}
   .pto-sk-row{gap:10px;padding:7px 14px;}
   .pto-caption{font-size:11px;color:var(--txt-subtle);}
-  /* ===== Accounts Payable By Due Date (ap) ===== */
-  .ap-due-chip{max-width:260px;}
-  .ap-due-chip .fc-label{display:inline-flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .ap-pill{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px 2px 7px;font-variant-numeric:tabular-nums;}
-  .ap-pill .material-symbols-rounded{font-size:15px;}
-  .ap-pill.warn{color:var(--red-100);background:var(--red-10);}
-  .ap-pill.pos{color:var(--txt-pos);background:var(--wn-200);}
-  .ap-mi-amt{margin-left:auto;padding-left:10px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
-  .mi-acctno.ap-over{color:var(--red-100);}
-  .ap-c-inv{flex:0 0 96px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
-  .ap-c-due{flex:0 0 150px;min-width:0;display:flex;flex-direction:column;}
-  .ap-due-d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .ap-due-days{font-size:11px;color:var(--txt-subtle);}
-  .ap-due-days.over{color:var(--red-100);}
-  .wt-head .ap-c-inv,.wt-head .ap-c-due{color:var(--txt-subtle);}
-  .ap-chart-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 10px;}
-  .ap-legend{display:flex;gap:16px;flex-wrap:wrap;padding:2px 16px 10px;font-size:11.5px;color:var(--txt-secondary);}
-  .ap-lg{display:inline-flex;align-items:center;gap:6px;}
-  .ap-sw{width:11px;height:11px;border-radius:2px;display:inline-block;}
-  .ap-sw.over{background:var(--am-600);}
-  .ap-sw.up{background:var(--am-300);}
-  .ap-plotrow{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
-  .ap-yax{flex:0 0 46px;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--txt-subtle);text-align:right;font-variant-numeric:tabular-nums;padding:2px 0;}
-  .ap-canvas{flex:1;min-width:0;position:relative;border-bottom:1px solid var(--stroke-widget);}
-  .ap-gl{position:absolute;left:0;right:0;bottom:50%;border-top:1px dashed var(--stroke-widget);opacity:.5;}
-  .ap-cols{position:absolute;inset:0;display:flex;align-items:flex-end;gap:10px;padding:0 4px;}
-  .ap-col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:pointer;border:0;background:transparent;padding:0;border-radius:6px;transition:background var(--dur,.15s) ease;}
-  .ap-col:hover{background:var(--wn-300);}
-  .ap-col.sel{background:var(--wn-200);box-shadow:inset 0 0 0 2px var(--am-600);}
-  .ap-col:focus-visible{outline:2px solid var(--am-600);outline-offset:2px;}
-  .ap-barwrap{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;}
-  .ap-bar{width:56%;max-width:46px;border-radius:3px 3px 0 0;min-height:2px;background:var(--am-300);}
-  .ap-col.over .ap-bar{background:var(--am-600);}
-  .ap-col.sel .ap-bar{background:var(--am-700);}
-  .ap-xaxrow{display:flex;gap:8px;padding:6px 16px 0;}
-  .ap-yaxsp{flex:0 0 46px;}
-  .ap-xcols{flex:1;min-width:0;display:flex;gap:10px;padding:0 4px;}
-  .ap-xcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
-  .ap-xcol.sel .ap-xlbl{color:var(--txt-primary);font-weight:700;}
-  .ap-xlbl{font-size:11px;color:var(--txt-secondary);white-space:nowrap;}
-  .ap-xflow{font-size:10px;color:var(--txt-subtle);text-transform:uppercase;letter-spacing:.03em;}
-  .ap-xflow.over{color:var(--red-100);}
-  .ap-tl-note{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--txt-subtle);padding:10px 16px 2px;line-height:1.45;}
-  .ap-tl-note .material-symbols-rounded{font-size:15px;flex:0 0 auto;margin-top:1px;}
-  .ap-pop-over{color:var(--red-100)!important;}
+  /* ===== Accounts Payable By Due Date (ap) , v2 : aging + cash requirements =====
+   Replaces the old `.ap-*` block in widget-container.html (the chart/pie/timeline
+   rules are removed; nothing else references them once the render block is swapped).
+   Reuses shell classes (no restyle needed):
+     .dep-hd .dep-hd-top .dep-hd-num .dep-hd-toggle .dep-hd-kpigrp .metric-value
+     .filter-chip .fc-label .wt-row .wt-head .wt-sort .lr-main .wt-c2 .dep-total
+     .scroll .dep-full .dep-col .dep-col-h .bank-numwrap .bank-ctx .bank-tag-over
+     .kpi-row .kpi-num .gl-sub .scope-chip .sc-nm .mi .mi-nm .mi-nm-stack
+     .mi-acctno .mi-gap .cap .dd-search .menu-scroll .dep-search .dep-q .sk
+     .tbl-search .bgt-spin
+   Tokens only (--am-*, --wn-*, --red-100, --red-10, --txt-*, --stroke-widget,
+   --surface-widget). No hard-coded colours. */
+
+/* filter chip , sized to content, capped so long dates ellipse */
+.ap-due-chip{max-width:280px;}
+.ap-due-chip .fc-label{display:inline-flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* KPI overdue / nothing-overdue pill */
+.ap-pill{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px 2px 7px;font-variant-numeric:tabular-nums;}
+.ap-pill .material-symbols-rounded{font-size:15px;}
+.ap-pill.warn{color:var(--red-100);background:var(--red-10);}
+.ap-pill.pos{color:var(--txt-pos,#2f7d46);background:var(--wn-200);}
+
+/* glance caption (cash needed soon) */
+.ap-glance-cap{font-size:11px;color:var(--txt-subtle);margin-top:4px;}
+
+/* dropdown right-aligned amount; overdue amounts/subtitles in red */
+.ap-mi-amt{margin-left:auto;padding-left:10px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
+.ap-mi-amt.ap-over{color:var(--red-100);}
+.mi-acctno.ap-over{color:var(--red-100);}
+.ap-over{color:var(--red-100);}
+
+/* ---- table columns ---- */
+.ap-c-inv{flex:0 0 92px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+.ap-c-due{flex:0 0 158px;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.ap-due-d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ap-due-days{font-size:11px;color:var(--txt-subtle);display:inline-flex;align-items:center;gap:3px;}
+.ap-due-days .material-symbols-rounded{font-size:13px;}
+.ap-due-days.over{color:var(--red-100);font-weight:600;}
+.wt-head .ap-c-inv,.wt-head .ap-c-due{color:var(--txt-subtle);}
+
+/* ---- aging band subheader inside the table ---- */
+.wt-row.ap-grp{gap:12px;background:var(--wn-100);padding-top:8px;padding-bottom:8px;}
+.ap-grp-nm{flex:1;min-width:0;display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ap-grp-nm.over{color:var(--red-100);}
+.ap-grp-nm .material-symbols-rounded{font-size:15px;flex:0 0 auto;}
+.ap-grp-ct{font-weight:500;text-transform:none;letter-spacing:0;color:var(--txt-subtle);font-size:11px;}
+.ap-grp-amt{flex:0 0 auto;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--txt-primary);}
+.ap-grp-amt.over{color:var(--red-100);}
+
+/* ---- explore right column: cash requirements + vendor rollup ---- */
+.ap-col-cash{flex:0 0 300px;}
+.ap-panel{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:2px 12px 12px;}
+.ap-sum-sub{font-size:11px;color:var(--txt-subtle);line-height:1.45;padding:2px 2px 8px;}
+.ap-sum-h{padding:8px 2px 2px;}
+.ap-sum-row{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;font-family:inherit;text-align:left;padding:8px;border-radius:8px;color:var(--txt-primary);cursor:pointer;}
+.ap-sum-row[data-action]:hover{background:var(--wn-100);}
+.ap-sum-row.sel{background:var(--wn-200);box-shadow:inset 0 0 0 1px var(--wn-400);}
+.ap-sum-row.ap-static,.ap-sum-row[disabled]{cursor:default;}
+.ap-sum-row[disabled]{opacity:.55;}
+.ap-sum-all{border-bottom:1px solid var(--stroke-widget);border-radius:8px 8px 0 0;margin-bottom:2px;}
+.ap-sum-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+.ap-sum-lbl{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ap-sum-lbl .material-symbols-rounded{font-size:15px;flex:0 0 auto;color:var(--txt-subtle);}
+.ap-sum-lbl.over{color:var(--red-100);}
+.ap-sum-lbl.over .material-symbols-rounded{color:var(--red-100);}
+.ap-sum-meta{font-size:11px;color:var(--txt-subtle);}
+.ap-sum-track{width:100%;height:5px;border-radius:999px;background:var(--wn-200);overflow:hidden;}
+.ap-sum-fill{display:block;height:100%;border-radius:999px;background:var(--am-300);}
+.ap-sum-fill.over{background:var(--am-600);}
+.ap-sum-fill.zero{background:var(--wn-300);}
+.ap-sum-val{flex:0 0 auto;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;}
+.ap-sum-val.over{color:var(--red-100);}
+.ap-sum-sep{height:1px;background:var(--stroke-widget);margin:10px 2px 2px;}
+
+/* ---- loading skeleton (table rows) ---- */
+.ap-skel{padding:6px 0;}
+.ap-sk-row{display:flex;align-items:center;gap:12px;padding:8px 14px;}
   /* =====================================================================
    Insurance Billing Plans (ins) , v2 styles
    Paste into the widget-container.html <style> block, replacing the old
@@ -1340,7 +1444,7 @@
     fund:{h:"Spend by fund",b:"How spending breaks down across your restricted and unrestricted funds."},
     signups:{h:"New sign-ups",b:"People who recently joined a group or ministry. The number is the total for the period you choose; the list shows the most recent sign-ups regardless of period."}
   };
-  function aboutOf(w){if(w.kind==="deposits")return {h:w.title,b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."};if(w.kind==="payroll")return {h:w.title,b:"How payroll spend for the selected pay period splits across compensation categories: salary, hourly, benefits, overtime, and similar."};if(w.kind==="budget")return {h:w.title,b:"How actual income or spending compares to your original budget, per period and year‑to‑date. Mid‑year budget revisions are not included."};if(w.kind==="bank")return {h:w.title,b:"The current balance of each active bank account, based on unreconciled activity since the last reconciliation. Select one account to see what has moved (deposits, voids, checks, withdrawals, EFT) since then."};return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
+  function aboutOf(w){if(w.kind==="deposits")return {h:w.title,b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."};if(w.kind==="payroll")return {h:w.title,b:"How payroll spend for the selected pay period splits across compensation categories: salary, hourly, benefits, overtime, and similar."};if(w.kind==="budget")return {h:w.title,b:"How actual income or spending compares to your original budget, per period and year‑to‑date. Mid‑year budget revisions are not included."};if(w.kind==="bank")return {h:w.title,b:"The current balance of each active bank account, based on unreconciled activity since the last reconciliation. Select one account to see what has moved (deposits, voids, checks, withdrawals, EFT) since then."};if(w.kind==="purchasing")return {h:w.title,b:PUR_ABOUT_BODY};return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
   var EMPTY_COPY={deposits:{title:"No deposit accounts",sub:"There are no deposit accounts to show here yet.",cta:"Add account",action:"add-acct"},payroll:{title:"No payroll runs in this range",sub:"There's no payroll history for the selected period yet."},budget:{title:"No budget set up",sub:"Once a budget is entered for this fiscal year, actuals will be compared against it here.",cta:"Set up budget",action:"add-budget"}};
   var ERROR_COPY={deposits:{title:"Couldn’t load balances",sub:"Something went wrong fetching account data."},payroll:{title:"Couldn’t load payroll data",sub:"Something went wrong fetching payroll history."},budget:{title:"Couldn’t load budget data",sub:"Something went wrong fetching budget and actual figures."}};
 /* --- Bank Balances additive copy --- */
@@ -2306,185 +2410,283 @@ function mysPopContent(){
     return mh+(sel?bankSingleView(w,v):bankAllView(w,v));
   }
 
-  /* ===== Purchasing Management (pur): approval queue + encumbrance ===== */
-  var PUR_STATUS=[["next","Awaiting my approval next"],["mine","Awaiting my approval"],["unapproved","Unapproved"],["approved","Approved"]];
-  var PUR_PERIODS=["Apr","May","Jun","Jul","Aug","Sep"];
-  var PUR_ORDERS_ALL=[
-    {id:"po1", num:"REQ-4821", vendor:"Grainger Facilities",   issued:"Jul 18, 2026", age:5,  amount:2450,  status:"next",       path:"Facilities and maintenance", per:3},
-    {id:"po2", num:"REQ-4830", vendor:"Guardian Security",     issued:"Jul 20, 2026", age:3,  amount:1180,  status:"next",       path:"Technology and media",       per:3},
-    {id:"po3", num:"REQ-4805", vendor:"Cokesbury Books",       issued:"Jul 09, 2026", age:14, amount:640,   status:"mine",       path:"Missions and outreach",      per:3},
-    {id:"po4", num:"REQ-4788", vendor:"Sysco Food Services",   issued:"Jun 28, 2026", age:25, amount:3320,  status:"mine",       path:"General operating",          per:2},
-    {id:"po5", num:"REQ-4795", vendor:"Home Depot Pro",        issued:"Jul 02, 2026", age:21, amount:1875,  status:"mine",       path:"Facilities and maintenance", per:3},
-    {id:"po6", num:"REQ-4770", vendor:"Office Depot",          issued:"Jun 15, 2026", age:38, amount:520,   status:"unapproved", path:"General operating",          per:2},
-    {id:"po7", num:"REQ-4762", vendor:"LifeWay Worship",       issued:"Jun 10, 2026", age:43, amount:1290,  status:"unapproved", path:"Missions and outreach",      per:2},
-    {id:"po8", num:"REQ-4744", vendor:"Dell Technologies",     issued:"May 29, 2026", age:55, amount:8600,  status:"unapproved", path:"Technology and media",       per:1},
-    {id:"po9", num:"REQ-4801", vendor:"Amazon Business",       issued:"Jul 05, 2026", age:18, amount:415,   status:"unapproved", path:"Youth ministry",             per:3},
-    {id:"po10",num:"PO-10233", vendor:"Thomas Bus Sales",      issued:"May 12, 2026", age:72, amount:12400, status:"approved",   path:"Youth ministry",             per:1},
-    {id:"po11",num:"PO-10251", vendor:"CDW Government",        issued:"Jun 03, 2026", age:50, amount:5240,  status:"approved",   path:"Technology and media",       per:2},
-    {id:"po12",num:"PO-10260", vendor:"Sherwin-Williams",      issued:"Jun 22, 2026", age:31, amount:1960,  status:"approved",   path:"Facilities and maintenance", per:2},
-    {id:"po13",num:"PO-10275", vendor:"Sysco Food Services",   issued:"Jul 08, 2026", age:15, amount:2780,  status:"approved",   path:"General operating",          per:3},
-    {id:"po14",num:"PO-10199", vendor:"Ministry Grid",         issued:"Apr 26, 2026", age:88, amount:990,   status:"approved",   path:"Missions and outreach",      per:0},
-    {id:"po15",num:"REQ-4756", vendor:"Luxury Coaches Intl",   issued:"Jun 08, 2026", age:45, amount:31000, status:"unapproved", path:"Youth ministry",             per:2, rej:true},
-    {id:"po16",num:"REQ-4712", vendor:"Overstock Vendor",      issued:"May 20, 2026", age:64, amount:7400,  status:"mine",       path:"General operating",          per:1, rej:true}
-  ];
-  var PUR_ORDERS_SINGLE=[
-    {id:"ps1",num:"REQ-5001",vendor:"Sysco Food Services",issued:"Jul 15, 2026",age:8, amount:1420,status:"mine",      path:"General operating",per:3},
-    {id:"ps2",num:"REQ-4990",vendor:"Office Depot",       issued:"Jul 01, 2026",age:22,amount:380, status:"mine",      path:"General operating",per:3},
-    {id:"ps3",num:"REQ-4975",vendor:"Amazon Business",    issued:"Jun 20, 2026",age:33,amount:910, status:"unapproved",path:"General operating",per:2},
-    {id:"ps4",num:"PO-10300", vendor:"Thomas Bus Sales",  issued:"Jun 05, 2026",age:48,amount:4200,status:"approved",  path:"General operating",per:2}
-  ];
-  var PUR_ORDERS_CAUGHT=[
-    {id:"pc1",num:"REQ-6001",vendor:"Office Depot",  issued:"Jul 10, 2026",age:13,amount:300, status:"unapproved",path:"General operating",   per:3},
-    {id:"pc2",num:"PO-10400", vendor:"CDW Government",issued:"Jun 18, 2026",age:35,amount:2600,status:"approved",  path:"Technology and media",per:2}
-  ];
-  EMPTY_COPY.purchasing={title:"Nothing needs your approval",sub:"You are not on any approval path yet, so there are no purchase requests to review here. When you are added to a path, anything that needs you will show up."};
-  ERROR_COPY.purchasing={title:"Could not load purchase orders",sub:"Something went wrong fetching approval requests."};
-  function purOrders(w){var d=w.dataset;if(d==="single")return PUR_ORDERS_SINGLE;if(d==="caught")return PUR_ORDERS_CAUGHT;if(d==="empty")return [];return PUR_ORDERS_ALL;}
-  function purVisible(w){return purOrders(w).filter(function(o){return !o.rej;});}
-  function purStatusLabel(s){for(var i=0;i<PUR_STATUS.length;i++)if(PUR_STATUS[i][0]===s)return PUR_STATUS[i][1];return PUR_STATUS[1][1];}
-  function purForStatus(w){var s=w.pstatus||"mine";return purVisible(w).filter(function(o){return o.status===s;});}
-  function purPathsForStatus(w){var seen={},out=[];purForStatus(w).forEach(function(o){if(!seen[o.path]){seen[o.path]=1;out.push(o.path);}});return out;}
-  function purPathCur(w){var paths=purPathsForStatus(w);if(w.ppath&&paths.indexOf(w.ppath)>-1)return w.ppath;return "All approval paths";}
-  function purFiltered(w){var fs=purForStatus(w),cp=purPathCur(w);if(cp==="All approval paths")return fs;return fs.filter(function(o){return o.path===cp;});}
-  function purSum(list){return list.reduce(function(s,o){return s+o.amount;},0);}
-  function purColLabel(w){return (w.pstatus||"mine")==="approved"?"Order#":"Requisition#";}
-  function purCountLabel(w){var s=w.pstatus||"mine";return s==="approved"?"approved orders":s==="unapproved"?"unapproved requests":s==="next"?"awaiting my approval next":"awaiting my approval";}
-  function purEncData(w){var vis=purVisible(w),map={};vis.forEach(function(o){map[o.per]=(map[o.per]||0)+o.amount;});var out=[];PUR_PERIODS.forEach(function(lbl,i){if(map[i]>0)out.push({per:lbl,i:i,amt:map[i]});});return out;}
-  function purEncTotal(w){return purEncData(w).reduce(function(s,r){return s+r.amt;},0);}
-  function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, tap to change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
-  function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
-    if(paths.length<=1)return "";
-    return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, tap to change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
-  function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_alt"],["enc","Encumbrance","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
-  function purHeaderBlock(w,mode){
-    var loading=(mode==="loading");
-    var toggle=(w.size==="wide")?purViewToggle(w):"";
-    var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered),enc=purEncTotal(w);
-    var numInner;
-    if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:52px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:16px;border-radius:6px"></span><span class="sk" style="width:110px;height:20px;border-radius:999px"></span></div>';}
-    else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="pur-count-lbl">'+purCountLabel(w)+'</span><span class="bank-pill">'+ICON("payments")+money(out)+' outstanding</span></div>';}
-    var scope=w.admin?"Administrator view: every approval path.":"Approval paths you are part of.";
-    var ctx=scope+" Rejected requests are never shown. Encumbrance shows "+money(enc)+" committed but not yet paid.";
-    return '<div class="dep-hd">'+
-      '<div class="dep-hd-top"><div class="pur-filters">'+purStatusChip(w)+purPathChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
-      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
-      '</div>';
-  }
-  function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="pur-sk-line"><span class="sk" style="height:12px;flex:1"></span><span class="sk" style="height:12px;width:74px"></span></div>';}).join("");return '<div class="pur-skel"><div class="pur-skel-rows">'+rows+'</div><div class="pur-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
-  function purAgeCell(o){var warn=o.age>=30;return '<span class="pur-c-age'+(warn?" pur-age-warn":"")+'" data-tip="Waiting '+o.age+' day'+(o.age===1?"":"s")+' since it was issued." data-tip-plain>'+ICON("schedule")+o.age+'d<span class="sr-only"> waiting</span></span>';}
-  function purTable(w,full){
-    var rows=purFiltered(w).slice();
-    var sk=(w.psort||"age-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    function val(o){if(key==="num")return o.num;if(key==="vendor")return o.vendor;if(key==="amount")return o.amount;return o.age;}
-    rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="num"||key==="vendor")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
-    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pur-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
-    var numLbl=purColLabel(w);
-    var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Outstanding")+'</span></div>';
-    var body=rows.map(function(o){
-      var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, outstanding '+money(o.amount)+'. Opens the purchase order record.</span>';
-      return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', outstanding '+money(o.amount)+', open record"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span></div>';
-    }).join("");
-    var tot=purSum(rows),n=rows.length;
-    var totLbl=(w.pstatus||"mine")==="approved"?(n+" order"+(n===1?"":"s")):(n+" request"+(n===1?"":"s"));
-    return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+totLbl+'</span><span>'+money(tot)+'</span></div>';
-  }
-  function purCaughtUp(w){var s=w.pstatus||"mine",pos=(s==="mine"||s==="next");
-    var phrase=s==="approved"?"No approved orders match this filter yet.":s==="unapproved"?"No unapproved requests match this filter.":"Nothing is awaiting your approval right now.";
-    return '<div class="state" data-kind="empty"'+(pos?' style="color:var(--txt-pos)"':'')+'>'+ICON(pos?"task_alt":"inbox")+'<div class="state-title">'+(pos?"You are all caught up":"Nothing to show")+'</div><div class="state-sub">'+phrase+'</div></div>';}
-  function purQueueView(w){return purFiltered(w).length?purTable(w,false):purCaughtUp(w);}
-  function purEnc(w){
-    var data=purEncData(w);
-    if(!data.length)return '<div class="bgt-notrend">'+ICON("insights")+'<div class="bgt-notrend-t">No commitments</div><div class="bgt-notrend-s">There are no outstanding purchase orders, so nothing is committed against the budget right now.</div></div>';
-    var max=1;data.forEach(function(r){max=Math.max(max,r.amt);});max=max*1.15;
-    var many=data.length>13,cols="",xl="";
-    data.forEach(function(r){var h=Math.max(1,Math.round(r.amt/max*100));
-      var srtxt='Accounting period '+r.per+', '+money(r.amt)+' committed, not yet paid.';
-      var dpop=[r.per,r.amt].join("|").replace(/"/g,"&quot;");
-      cols+='<div class="pur-col" role="group" aria-label="'+srtxt+'" data-purpop="'+dpop+'"><div class="pur-barwrap"><div class="pur-bar" style="height:'+h+'%"></div></div><span class="sr-only">'+srtxt+'</span></div>';
-      xl+='<div class="pur-xcol"><span class="pur-xlbl">'+r.per+'</span></div>';
-    });
-    var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
-    var tot=purEncTotal(w);
-    var note='<div class="pur-enc-note">'+ICON("info")+'Committed, not yet paid. Shows every outstanding purchase order, so it is not narrowed by the status or approval path filter above.</div>';
-    return '<div class="pur-chart-wrap"><div class="pur-enc-head"><span class="pur-enc-title">Encumbrances</span><span class="pur-enc-tot">'+money(tot)+' committed</span></div>'+
-      '<div class="pur-plotrow"><div class="pur-yax">'+yl+'</div><div class="pur-canvas"><div class="pur-gl"></div><div class="pur-cols'+(many?" many":"")+'">'+cols+'</div></div></div>'+
-      '<div class="pur-xaxrow"><div class="pur-yaxsp"></div><div class="pur-xcols'+(many?" many":"")+'">'+xl+'</div></div>'+note+'</div>';
-  }
-  function purEncTable(w){
-    var data=purEncData(w),tot=purEncTotal(w);
-    var head='<div class="wt-row wt-head"><span class="lr-main">Accounting period</span><span class="wt-c2">Committed</span></div>';
-    var body=data.map(function(r){return '<div class="wt-row"><span class="lr-main">'+r.per+'</span><span class="wt-c2">'+money(r.amt)+'</span></div>';}).join("");
-    if(!data.length)body='<div class="wt-row"><span class="lr-main" style="color:var(--txt-subtle)">No outstanding commitments</span><span class="wt-c2">'+money(0)+'</span></div>';
-    return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total committed, not yet paid</span><span>'+money(tot)+'</span></div>';
-  }
-  function purEncView(w){var v=w.encview||"chart";
-    var toggle='<div class="pur-subbar"><div class="vtoggle" role="group" aria-label="Encumbrance display">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div></div>';
-    return toggle+(v==="table"?purEncTable(w):purEnc(w));}
-  function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(w);
-    return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Encumbrances</div>'+purEnc(w)+'</div></div>';}
-  function purGlance(w){var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered),enc=purEncTotal(w);
-    return '<div class="kpi-row"><div class="kpi-num">'+
-      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+purStatusLabel(w.pstatus||"mine")+'</span></span>'+
-      '<div class="metric-value">'+count+'</div>'+
-      '<div class="gl-sub"><span class="bank-caption">'+purCountLabel(w)+' · '+money(out)+' outstanding</span></div>'+
-      '<div class="gl-sub"><span class="bank-caption">'+money(enc)+' committed, not yet paid</span></div>'+
-      '</div></div>';}
-  function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
-  function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
-  function purContent(w){
-    if(w.state==="empty")return purEmptyState(w);
-    if(w.size==="kpi")return purGlance(w);
-    if(w.purloading)return purHeaderBlock(w,"loading")+purSkeleton();
-    var mh=purHeaderBlock(w);
-    if(w.size==="xwide")return mh+purFull(w);
-    return mh+((w.purview||"queue")==="enc"?purEncView(w):purQueueView(w));
-  }
-  function purPopContent(){
-    if(pop.type==="pur-status"){var wps=find(pop.id),cs=wps.pstatus||"mine";
-      return '<div class="cap">Approval status</div>'+PUR_STATUS.map(function(o){var on=cs===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="set-pur-status" data-id="'+wps.id+'" data-s="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+'</span></button>';}).join("");}
-    if(pop.type==="pur-path"){var wpp=find(pop.id),q=(purQuery||"").toLowerCase(),curp=purPathCur(wpp),paths=purPathsForStatus(wpp);
-      var list=paths.filter(function(p){return p.toLowerCase().indexOf(q)>-1;});
-      var allSel=(curp==="All approval paths");
-      var out='<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="purpathq" placeholder="Search approval paths" value="'+(purQuery||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="menu-scroll" role="listbox">';
-      if(!q||"all approval paths".indexOf(q)>-1)out+='<button class="mi'+(allSel?" check":"")+'" role="option" aria-selected="'+allSel+'" data-action="set-pur-path" data-p="all" data-id="'+wpp.id+'">'+(allSel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All approval paths</span></button>';
-      if(list.length)out+='<div class="cap">Approval paths</div>'+list.map(function(p){var sel=curp===p,esc=p.replace(/"/g,"&quot;");return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="set-pur-path" data-p="'+esc+'" data-id="'+wpp.id+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">account_tree</span><span class="mi-nm">'+p+'</span></button>';}).join("");
-      if(!list.length&&(q&&"all approval paths".indexOf(q)<0))out+='<div class="mi-note" style="color:var(--txt-subtle)">No approval paths match "'+(purQuery||"").replace(/"/g,"&quot;")+'"</div>';
-      return out+'</div>';}
-    return "";
-  }
-  function purHandleClick(a,t,id){
-    if(a==="pur-status"){purQuery="";pop=(pop&&pop.type==="pur-status"&&pop.id===id)?null:{type:"pur-status",id:id};render();return true;}
-    if(a==="set-pur-status"){var wss=find(id);if(wss){var ns=t.getAttribute("data-s");if(wss.pstatus!==ns){wss.pstatus=ns;wss.ppath=null;purLoad(wss);}}pop=null;render();return true;}
-    if(a==="pur-path"){purQuery="";pop=(pop&&pop.type==="pur-path"&&pop.id===id)?null:{type:"pur-path",id:id};render();return true;}
-    if(a==="set-pur-path"){var wsp=find(id);if(wsp){var np=t.getAttribute("data-p");var nv=(np==="all"||!np)?null:np;if(wsp.ppath!==nv){wsp.ppath=nv;purLoad(wsp);}}pop=null;render();return true;}
-    if(a==="pur-view"){var wv=find(id);if(wv)wv.purview=t.getAttribute("data-v");pop=null;render();return true;}
-    if(a==="pur-encview"){var we=find(id);if(we)we.encview=t.getAttribute("data-v");pop=null;render();return true;}
-    if(a==="pur-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.psort||"age-desc").split("-");wso.psort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="num"||k==="vendor")?"asc":"desc"));}render();return true;}
-    if(a==="pur-open"){var wpo=find(id),oid=t.getAttribute("data-oid"),o=null,list=purOrders(wpo);for(var i=0;i<list.length;i++)if(list[i].id===oid)o=list[i];
-      if(o)showModal("Opens purchase order "+o.num,"This takes you out of the dashboard to the full purchase order record for <b>"+o.vendor+"</b> ("+o.num+"), where you can review and act on it across its tabs: <b>Detail</b>, <b>Approvals</b>, <b>Attachments</b>, <b>Note</b> and <b>Payment Approval</b>. Use the browser back button to return to the dashboard.");return true;}
-    return false;
-  }
-  function purHandleInput(e){
-    if(e.target.id==="purpathq"){purQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var pi=document.getElementById("purpathq");if(pi){pi.focus();try{pi.setSelectionRange(pos,pos);}catch(_p){}}return true;}
-    return false;
-  }
-  function purHideBpop(){if(purPopEl){purPopEl.remove();purPopEl=null;}}
-  function purShowBpop(col,mx,my){
-    var raw=col.getAttribute("data-purpop");if(!raw)return;var p=raw.split("|");var per=p[0],amt=+p[1];
-    purHideBpop();
-    purPopEl=document.createElement("div");purPopEl.className="bgt-pop pur-pop";
-    purPopEl.innerHTML='<div class="bgt-pop-h">'+per+'</div>'+
-      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600)"></span><span class="bgt-pop-lbl">Committed</span><span class="bgt-pop-v">'+money(amt)+'</span></div>'+
-      '<div class="bgt-pop-note">Encumbrance for this accounting period: committed by an outstanding purchase order, not yet paid.</div>';
-    document.body.appendChild(purPopEl);
-    var bw=purPopEl.offsetWidth,bh=purPopEl.offsetHeight,M=10;
-    var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
-    var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
-    purPopEl.style.left=left+"px";purPopEl.style.top=top+"px";
-  }
-  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".pur-col[data-purpop]");if(!col){if(purPopEl)purHideBpop();return;}purShowBpop(col,e.clientX,e.clientY);});
+  /* =======================================================================
+   Purchasing Management (pur) , v2
+   Approval queue (lead) + inline approve/reject + encumbrance (committed).
+   Drop-in replacement for the current `pur` block in widget-container.html.
+   Lives in the shell <script> scope: relies on money, fmtAxis, ICON, find,
+   render, renderOverlay, renderModal, showModal, setStatus, and the globals
+   pop / modal / modalMounted / timers / purQuery / purPopEl.
 
+   FIVE PIECES:
+     (1) DATA + derivations
+     (2) RENDER  , single entry purContent(w) + size/view builders
+     (3) POPOVERS , purPopContent()
+     (4) HANDLERS , purHandleClick / purHandleInput / mousemove hover card
+     (5) FOCUS OVERLAY , purPoModalInner / purPoModalHTML (renderModal branch)
+   ======================================================================= */
 
+/* (1) DATA -------------------------------------------------------------- */
+var PUR_STATUS=[["next","Awaiting my approval next"],["mine","Awaiting my approval"],["unapproved","Unapproved"],["approved","Approved"]];
+var PUR_PERIODS=["Apr","May","Jun","Jul","Aug","Sep"];
+/* Line-item categories + a requester, keyed by approval path, used to build a
+   rich (but synthesised) focus overlay without bloating each row. */
+var PUR_PATH_META={
+  "Facilities and maintenance":{req:"Marcus Reed",cat:"Facilities supplies"},
+  "Technology and media":{req:"Dana Kim",cat:"Technology"},
+  "Missions and outreach":{req:"Priya Anand",cat:"Outreach materials"},
+  "General operating":{req:"Sam Ortiz",cat:"Operating supplies"},
+  "Youth ministry":{req:"Chris Bell",cat:"Youth program"}
+};
+var PUR_ORDERS_ALL=[
+  {id:"po1", num:"REQ-4821", vendor:"Grainger Facilities",   issued:"Jul 18, 2026", age:5,  amount:2450,  status:"next",       path:"Facilities and maintenance", per:3},
+  {id:"po2", num:"REQ-4830", vendor:"Guardian Security",     issued:"Jul 20, 2026", age:3,  amount:1180,  status:"next",       path:"Technology and media",       per:3},
+  {id:"po3", num:"REQ-4805", vendor:"Cokesbury Books",       issued:"Jul 09, 2026", age:14, amount:640,   status:"mine",       path:"Missions and outreach",      per:3},
+  {id:"po4", num:"REQ-4788", vendor:"Sysco Food Services",   issued:"Jun 28, 2026", age:25, amount:3320,  status:"mine",       path:"General operating",          per:2},
+  {id:"po5", num:"REQ-4795", vendor:"Home Depot Pro",        issued:"Jul 02, 2026", age:21, amount:1875,  status:"mine",       path:"Facilities and maintenance", per:3},
+  {id:"po6", num:"REQ-4770", vendor:"Office Depot",          issued:"Jun 15, 2026", age:38, amount:520,   status:"unapproved", path:"General operating",          per:2},
+  {id:"po7", num:"REQ-4762", vendor:"LifeWay Worship",       issued:"Jun 10, 2026", age:43, amount:1290,  status:"unapproved", path:"Missions and outreach",      per:2},
+  {id:"po8", num:"REQ-4744", vendor:"Dell Technologies",     issued:"May 29, 2026", age:55, amount:8600,  status:"unapproved", path:"Technology and media",       per:1},
+  {id:"po9", num:"REQ-4801", vendor:"Amazon Business",       issued:"Jul 05, 2026", age:18, amount:415,   status:"unapproved", path:"Youth ministry",             per:3},
+  {id:"po10",num:"PO-10233", vendor:"Thomas Bus Sales",      issued:"May 12, 2026", age:72, amount:12400, status:"approved",   path:"Youth ministry",             per:1},
+  {id:"po11",num:"PO-10251", vendor:"CDW Government",        issued:"Jun 03, 2026", age:50, amount:5240,  status:"approved",   path:"Technology and media",       per:2},
+  {id:"po12",num:"PO-10260", vendor:"Sherwin-Williams",      issued:"Jun 22, 2026", age:31, amount:1960,  status:"approved",   path:"Facilities and maintenance", per:2},
+  {id:"po13",num:"PO-10275", vendor:"Sysco Food Services",   issued:"Jul 08, 2026", age:15, amount:2780,  status:"approved",   path:"General operating",          per:3},
+  {id:"po14",num:"PO-10199", vendor:"Ministry Grid",         issued:"Apr 26, 2026", age:88, amount:990,   status:"approved",   path:"Missions and outreach",      per:0},
+  {id:"po15",num:"REQ-4756", vendor:"Luxury Coaches Intl",   issued:"Jun 08, 2026", age:45, amount:31000, status:"unapproved", path:"Youth ministry",             per:2, rej:true},
+  {id:"po16",num:"REQ-4712", vendor:"Overstock Vendor",      issued:"May 20, 2026", age:64, amount:7400,  status:"mine",       path:"General operating",          per:1, rej:true}
+];
+var PUR_ORDERS_SINGLE=[
+  {id:"ps1",num:"REQ-5001",vendor:"Sysco Food Services",issued:"Jul 15, 2026",age:8, amount:1420,status:"mine",      path:"General operating",per:3},
+  {id:"ps2",num:"REQ-4990",vendor:"Office Depot",       issued:"Jul 01, 2026",age:22,amount:380, status:"mine",      path:"General operating",per:3},
+  {id:"ps3",num:"REQ-4975",vendor:"Amazon Business",    issued:"Jun 20, 2026",age:33,amount:910, status:"unapproved",path:"General operating",per:2},
+  {id:"ps4",num:"PO-10300", vendor:"Thomas Bus Sales",  issued:"Jun 05, 2026",age:48,amount:4200,status:"approved",  path:"General operating",per:2}
+];
+var PUR_ORDERS_CAUGHT=[
+  {id:"pc1",num:"REQ-6001",vendor:"Office Depot",  issued:"Jul 10, 2026",age:13,amount:300, status:"unapproved",path:"General operating",   per:3},
+  {id:"pc2",num:"PO-10400", vendor:"CDW Government",issued:"Jun 18, 2026",age:35,amount:2600,status:"approved",  path:"Technology and media",per:2}
+];
+EMPTY_COPY.purchasing={title:"Nothing needs your approval",sub:"You are not on an approval path yet, so there are no purchase requests to review here. When you are added to a path, anything that needs you shows up."};
+ERROR_COPY.purchasing={title:"Could not load purchase orders",sub:"Something went wrong fetching approval requests."};
+/* Plain-language context for the info affordance , see integration note (aboutOf).
+   This is where "admins see all / others see their paths / rejected never shown /
+   the chart shows all commitments" lives, so it stays OUT of the widget's copy. */
+var PUR_ABOUT_BODY="Purchase requests grouped by where they are in the approval process: what is awaiting you, what has been submitted, and what is approved. Administrators see every approval path; everyone else sees only the paths they are on. Rejected requests are never shown. The Committed view sums every outstanding purchase order per accounting period (money reserved against the budget but not yet paid), so it always covers all commitments, not just the filtered view.";
+
+function purOrders(w){var d=w.dataset;if(d==="single")return PUR_ORDERS_SINGLE;if(d==="caught")return PUR_ORDERS_CAUGHT;if(d==="empty")return [];return PUR_ORDERS_ALL;}
+function purVisible(w){return purOrders(w).filter(function(o){return !o.rej;});}
+function purStatusLabel(s){for(var i=0;i<PUR_STATUS.length;i++)if(PUR_STATUS[i][0]===s)return PUR_STATUS[i][1];return PUR_STATUS[1][1];}
+function purForStatus(w){var s=w.pstatus||"mine";return purVisible(w).filter(function(o){return o.status===s;});}
+function purPathsForStatus(w){var seen={},out=[];purForStatus(w).forEach(function(o){if(!seen[o.path]){seen[o.path]=1;out.push(o.path);}});return out;}
+function purPathCur(w){var paths=purPathsForStatus(w);if(w.ppath&&paths.indexOf(w.ppath)>-1)return w.ppath;return "All approval paths";}
+function purFiltered(w){var fs=purForStatus(w),cp=purPathCur(w);if(cp==="All approval paths")return fs;return fs.filter(function(o){return o.path===cp;});}
+function purSum(list){return list.reduce(function(s,o){return s+o.amount;},0);}
+function purFindOrder(w,oid){var list=purOrders(w);for(var i=0;i<list.length;i++)if(list[i].id===oid)return list[i];return null;}
+function purColLabel(w){return (w.pstatus||"mine")==="approved"?"Order#":"Requisition#";}
+function purCountLabel(w){var s=w.pstatus||"mine";return s==="approved"?"approved orders":s==="unapproved"?"unapproved requests":s==="next"?"awaiting my approval next":"awaiting my approval";}
+function purCanAct(o){return !o.rej&&(o.status==="next"||o.status==="mine");}
+function purEncData(w){var vis=purVisible(w),map={};vis.forEach(function(o){map[o.per]=(map[o.per]||0)+o.amount;});var out=[];PUR_PERIODS.forEach(function(lbl,i){if(map[i]>0)out.push({per:lbl,i:i,amt:map[i]});});return out;}
+function purEncTotal(w){return purEncData(w).reduce(function(s,r){return s+r.amt;},0);}
+/* Synthesised detail for the focus overlay (kept out of row data to stay lean). */
+function purReq(o){var m=PUR_PATH_META[o.path];return o.req||(m?m.req:"Ministry staff");}
+function purLines(o){
+  if(o.lines)return o.lines;
+  var m=PUR_PATH_META[o.path],cat=m?m.cat:"Purchase";
+  if(o.amount>=2000){var a=Math.round(o.amount*0.6/5)*5,b=o.amount-a;return [{desc:cat+" (bulk order)",qty:1,unit:a},{desc:cat+", delivery and setup",qty:1,unit:b}];}
+  return [{desc:cat,qty:1,unit:o.amount}];
+}
+
+/* (2) RENDER ------------------------------------------------------------ */
+function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, tap to change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
+function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
+  if(paths.length<=1)return ""; /* never a dead control: one path -> omit */
+  return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, tap to change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
+function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_alt"],["enc","Committed","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+function purHeaderBlock(w,mode){
+  var loading=(mode==="loading");
+  var toggle=(w.size==="wide")?purViewToggle(w):"";
+  var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);
+  var numInner;
+  if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:46px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:15px;border-radius:6px"></span></div>';}
+  else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="pur-count-lbl">'+purCountLabel(w)+'</span></div>'+
+    '<div class="pur-subline"><span class="bank-pill">'+ICON("payments")+money(out)+' outstanding</span></div>';}
+  return '<div class="dep-hd pur-hd">'+
+    '<div class="dep-hd-top"><div class="pur-filters">'+purStatusChip(w)+purPathChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
+    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
+    '</div>';
+}
+function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="pur-sk-line"><span class="sk" style="height:12px;flex:1"></span><span class="sk" style="height:12px;width:74px"></span></div>';}).join("");return '<div class="pur-skel"><div class="pur-skel-rows">'+rows+'</div><div class="pur-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+function purAgeCell(o){var warn=o.age>=30;return '<span class="pur-c-age'+(warn?" pur-age-warn":"")+'" data-tip="Waiting '+o.age+' day'+(o.age===1?"":"s")+' since it was issued." data-tip-plain>'+ICON("schedule")+o.age+'d<span class="sr-only"> waiting</span></span>';}
+function purTable(w,full){
+  var rows=purFiltered(w).slice();
+  var sk=(w.psort||"age-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  function val(o){if(key==="num")return o.num;if(key==="vendor")return o.vendor;if(key==="amount")return o.amount;return o.age;}
+  rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="num"||key==="vendor")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
+  function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pur-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+  var numLbl=purColLabel(w);
+  var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Outstanding")+'</span><span class="pur-c-go" aria-hidden="true"></span></div>';
+  var body=rows.map(function(o){
+    var act=purCanAct(o);
+    var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, outstanding '+money(o.amount)+'. '+(act?"Opens to approve or reject.":"Opens the purchase order.")+'</span>';
+    var chev='<span class="pur-c-go" aria-hidden="true">'+ICON(act?"rule":"chevron_right")+'</span>';
+    return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', outstanding '+money(o.amount)+(act?', open to approve or reject':', open record')+'"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span>'+chev+'</div>';
+  }).join("");
+  var tot=purSum(rows),n=rows.length;
+  var totLbl=(w.pstatus||"mine")==="approved"?(n+" order"+(n===1?"":"s")):(n+" request"+(n===1?"":"s"));
+  return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+totLbl+'</span><span>'+money(tot)+'</span></div>';
+}
+function purCaughtUp(w){var s=w.pstatus||"mine",pos=(s==="mine"||s==="next");
+  var phrase=s==="approved"?"No approved orders match this filter yet.":s==="unapproved"?"No unapproved requests match this filter.":"Nothing is awaiting your approval right now.";
+  return '<div class="state" data-kind="empty"'+(pos?' data-tone="pos"':'')+'>'+ICON(pos?"task_alt":"inbox")+'<div class="state-title">'+(pos?"You are all caught up":"Nothing to show")+'</div><div class="state-sub">'+phrase+'</div></div>';}
+function purQueueView(w){return purFiltered(w).length?purTable(w,false):purCaughtUp(w);}
+function purEnc(w){
+  var data=purEncData(w);
+  if(!data.length)return '<div class="bgt-notrend">'+ICON("insights")+'<div class="bgt-notrend-t">Nothing committed</div><div class="bgt-notrend-s">There are no outstanding purchase orders, so no budget is committed right now.</div></div>';
+  var max=1;data.forEach(function(r){max=Math.max(max,r.amt);});max=max*1.18;
+  var many=data.length>13,cols="",xl="";
+  data.forEach(function(r){var h=Math.max(1,Math.round(r.amt/max*100));
+    var srtxt='Accounting period '+r.per+', '+money(r.amt)+' committed, not yet paid.';
+    var dpop=[r.per,r.amt].join("|").replace(/"/g,"&quot;");
+    cols+='<div class="pur-col" role="group" aria-label="'+srtxt+'" data-purpop="'+dpop+'"><div class="pur-barwrap"><span class="pur-val" aria-hidden="true">'+fmtAxis(r.amt)+'</span><div class="pur-bar" style="height:'+h+'%"></div></div><span class="sr-only">'+srtxt+'</span></div>';
+    xl+='<div class="pur-xcol"><span class="pur-xlbl">'+r.per+'</span></div>';
+  });
+  var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
+  var tot=purEncTotal(w);
+  var cap='<div class="pur-enc-cap">'+ICON("info")+'All outstanding orders, not narrowed by the filter above.</div>';
+  return '<div class="pur-chart-wrap"><div class="pur-enc-head"><span class="pur-enc-title">Committed, not yet paid</span><span class="pur-enc-tot">'+money(tot)+'</span></div>'+
+    '<div class="pur-plotrow"><div class="pur-yax">'+yl+'</div><div class="pur-canvas"><div class="pur-gl"></div><div class="pur-cols'+(many?" many":"")+'">'+cols+'</div></div></div>'+
+    '<div class="pur-xaxrow"><div class="pur-yaxsp"></div><div class="pur-xcols'+(many?" many":"")+'">'+xl+'</div></div>'+cap+'</div>';
+}
+function purEncTable(w){
+  var data=purEncData(w),tot=purEncTotal(w);
+  var head='<div class="wt-row wt-head"><span class="lr-main">Accounting period</span><span class="wt-c2">Committed</span></div>';
+  var body=data.map(function(r){return '<div class="wt-row"><span class="lr-main">'+r.per+'</span><span class="wt-c2">'+money(r.amt)+'</span></div>';}).join("");
+  if(!data.length)body='<div class="wt-row"><span class="lr-main" style="color:var(--txt-subtle)">No outstanding commitments</span><span class="wt-c2">'+money(0)+'</span></div>';
+  return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total committed, not yet paid</span><span>'+money(tot)+'</span></div>';
+}
+function purEncView(w){var v=w.encview||"chart";
+  var toggle='<div class="pur-subbar"><div class="vtoggle" role="group" aria-label="Committed display">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div></div>';
+  return toggle+(v==="table"?purEncTable(w):purEnc(w));}
+function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(w);
+  return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Committed, not yet paid</div>'+purEnc(w)+'</div></div>';}
+function purGlance(w){var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered),enc=purEncTotal(w);
+  return '<div class="kpi-row"><div class="kpi-num">'+
+    '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+purStatusLabel(w.pstatus||"mine")+'</span></span>'+
+    '<div class="metric-value">'+count+'</div>'+
+    '<div class="gl-sub"><span class="bank-caption">'+purCountLabel(w)+' · '+money(out)+' outstanding</span></div>'+
+    '<div class="gl-sub"><span class="bank-caption">'+money(enc)+' committed, not yet paid</span></div>'+
+    '</div></div>';}
+function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
+function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
+function purContent(w){
+  if(w.state==="empty")return purEmptyState(w);
+  if(w.size==="kpi")return purGlance(w);
+  if(w.purloading)return purHeaderBlock(w,"loading")+purSkeleton();
+  var mh=purHeaderBlock(w);
+  if(w.size==="xwide")return mh+purFull(w);
+  return mh+((w.purview||"queue")==="enc"?purEncView(w):purQueueView(w));
+}
+
+/* (3) POPOVERS ---------------------------------------------------------- */
+function purPopContent(){
+  if(pop.type==="pur-status"){var wps=find(pop.id),cs=wps.pstatus||"mine";
+    return '<div class="cap">Approval status</div>'+PUR_STATUS.map(function(o){var on=cs===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="set-pur-status" data-id="'+wps.id+'" data-s="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+'</span></button>';}).join("");}
+  if(pop.type==="pur-path"){var wpp=find(pop.id),q=(purQuery||"").toLowerCase(),curp=purPathCur(wpp),paths=purPathsForStatus(wpp);
+    var list=paths.filter(function(p){return p.toLowerCase().indexOf(q)>-1;});
+    var allSel=(curp==="All approval paths");
+    var out='<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="purpathq" placeholder="Search approval paths" value="'+(purQuery||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="menu-scroll" role="listbox">';
+    if(!q||"all approval paths".indexOf(q)>-1)out+='<button class="mi'+(allSel?" check":"")+'" role="option" aria-selected="'+allSel+'" data-action="set-pur-path" data-p="all" data-id="'+wpp.id+'">'+(allSel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All approval paths</span></button>';
+    if(list.length)out+='<div class="cap">Approval paths</div>'+list.map(function(p){var sel=curp===p,esc=p.replace(/"/g,"&quot;");return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="set-pur-path" data-p="'+esc+'" data-id="'+wpp.id+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">account_tree</span><span class="mi-nm">'+p+'</span></button>';}).join("");
+    if(!list.length&&(q&&"all approval paths".indexOf(q)<0))out+='<div class="mi-note" style="color:var(--txt-subtle)">No approval paths match "'+(purQuery||"").replace(/"/g,"&quot;")+'"</div>';
+    return out+'</div>';}
+  return "";
+}
+
+/* (4) HANDLERS ---------------------------------------------------------- */
+function purHandleClick(a,t,id){
+  if(a==="pur-status"){purQuery="";pop=(pop&&pop.type==="pur-status"&&pop.id===id)?null:{type:"pur-status",id:id};render();return true;}
+  if(a==="set-pur-status"){var wss=find(id);if(wss){var ns=t.getAttribute("data-s");if(wss.pstatus!==ns){wss.pstatus=ns;wss.ppath=null;purLoad(wss);}}pop=null;render();return true;}
+  if(a==="pur-path"){purQuery="";pop=(pop&&pop.type==="pur-path"&&pop.id===id)?null:{type:"pur-path",id:id};render();return true;}
+  if(a==="set-pur-path"){var wsp=find(id);if(wsp){var np=t.getAttribute("data-p");var nv=(np==="all"||!np)?null:np;if(wsp.ppath!==nv){wsp.ppath=nv;purLoad(wsp);}}pop=null;render();return true;}
+  if(a==="pur-view"){var wv=find(id);if(wv)wv.purview=t.getAttribute("data-v");pop=null;render();return true;}
+  if(a==="pur-encview"){var we=find(id);if(we)we.encview=t.getAttribute("data-v");pop=null;render();return true;}
+  if(a==="pur-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.psort||"age-desc").split("-");wso.psort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="num"||k==="vendor")?"asc":"desc"));}render();return true;}
+  /* Whole-row tap -> in-widget focus overlay (approve/reject inline). */
+  if(a==="pur-open"){var oid=t.getAttribute("data-oid");modal={type:"pur-po",id:id,oid:oid,confirmReject:false,note:""};modalMounted=false;pop=null;render();return true;}
+  if(a==="pur-approve"){var wa=find(id),oa=purFindOrder(wa,t.getAttribute("data-oid"));if(oa){oa.status="approved";oa.approvedByMe=true;setStatus("Approved "+oa.num+". It has moved to approved orders.");}modal=null;modalMounted=false;pop=null;render();return true;}
+  if(a==="pur-reject"){if(modal){modal.confirmReject=true;renderModal();}return true;}
+  if(a==="pur-reject-cancel"){if(modal){modal.confirmReject=false;renderModal();}return true;}
+  if(a==="pur-reject-confirm"){var wr=find(id),or=purFindOrder(wr,t.getAttribute("data-oid"));if(or){or.rej=true;setStatus("Rejected "+or.num+". It has been removed from the queue.");}modal=null;modalMounted=false;pop=null;render();return true;}
+  if(a==="pur-open-record"){var wpo=find(id),o=purFindOrder(wpo,t.getAttribute("data-oid"));
+    if(o)showModal("Open purchase order "+o.num,"This leaves the dashboard for the full purchase order record for <b>"+o.vendor+"</b> ("+o.num+"), with its tabs: <b>Detail</b>, <b>Approvals</b>, <b>Attachments</b>, <b>Note</b> and <b>Payment Approval</b>. Use the browser back button to return.");return true;}
+  return false;
+}
+function purHandleInput(e){
+  if(e.target.id==="purpathq"){purQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var pi=document.getElementById("purpathq");if(pi){pi.focus();try{pi.setSelectionRange(pos,pos);}catch(_p){}}return true;}
+  if(e.target.id==="purNote"){if(modal)modal.note=e.target.value;return true;} /* free-text reject note; no re-render needed */
+  return false;
+}
+
+/* (5) FOCUS OVERLAY (renderModal branch: modal.type==="pur-po") --------- */
+function purPoStatusChip(o){
+  var lbl=o.rej?"Rejected":(o.status==="approved"?(o.approvedByMe?"Approved by you":"Approved"):(o.status==="unapproved"?"Unapproved":purStatusLabel(o.status)));
+  var tone=o.rej?"rej":(o.status==="approved"?"pos":(purCanAct(o)?"act":"neutral"));
+  return '<span class="pur-po-status" data-tone="'+tone+'">'+lbl+'</span>';
+}
+function purPoTrail(o){
+  var steps=[{ic:"edit_note",done:true,label:"Requested",who:purReq(o)+" · "+o.issued}];
+  if(o.status==="approved"){steps.push({ic:"check_circle",done:true,label:"Approved",who:(o.approvedByMe?"You · just now":"Approver")});}
+  else{steps.push({ic:purCanAct(o)?"pending":"schedule",done:false,label:purCanAct(o)?"Your approval":"Awaiting approver",who:purCanAct(o)?"Pending your decision":"On "+o.path});}
+  return '<ol class="pur-po-trail">'+steps.map(function(s){return '<li class="pur-po-step'+(s.done?" done":"")+'"><span class="pur-po-step-ic material-symbols-rounded">'+s.ic+'</span><span class="pur-po-step-tx"><span class="pur-po-step-l">'+s.label+'</span><span class="pur-po-step-w">'+s.who+'</span></span></li>';}).join("")+'</ol>';
+}
+function purPoModalInner(){
+  var w=find(modal.id);if(!w)return "";
+  var o=purFindOrder(w,modal.oid);if(!o)return "";
+  var numLbl=(o.status==="approved")?"Order":"Requisition";
+  var lines=purLines(o),lineTot=lines.reduce(function(s,l){return s+l.qty*l.unit;},0);
+  var lineRows=lines.map(function(l){return '<div class="pur-po-line"><span class="pur-po-line-d">'+l.desc+'</span><span class="pur-po-line-q">'+l.qty+' &times; '+money(l.unit)+'</span><span class="pur-po-line-a">'+money(l.qty*l.unit)+'</span></div>';}).join("");
+  var facts='<div class="pur-po-facts">'+
+    '<div class="pur-po-fact"><span class="pur-po-fact-k">Vendor</span><span class="pur-po-fact-v">'+o.vendor+'</span></div>'+
+    '<div class="pur-po-fact"><span class="pur-po-fact-k">'+numLbl+' #</span><span class="pur-po-fact-v">'+o.num+'</span></div>'+
+    '<div class="pur-po-fact"><span class="pur-po-fact-k">Approval path</span><span class="pur-po-fact-v">'+o.path+'</span></div>'+
+    '<div class="pur-po-fact"><span class="pur-po-fact-k">Issued</span><span class="pur-po-fact-v">'+o.issued+' ('+o.age+' day'+(o.age===1?"":"s")+' ago)</span></div>'+
+    '<div class="pur-po-fact"><span class="pur-po-fact-k">Requested by</span><span class="pur-po-fact-v">'+purReq(o)+'</span></div>'+
+    '</div>';
+  var lineBlock='<div class="pur-po-sec"><div class="pur-po-sec-h">Line items</div><div class="pur-po-lines">'+lineRows+'<div class="pur-po-line pur-po-line-tot"><span class="pur-po-line-d">Outstanding total</span><span class="pur-po-line-q"></span><span class="pur-po-line-a">'+money(lineTot)+'</span></div></div></div>';
+  var trailBlock='<div class="pur-po-sec"><div class="pur-po-sec-h">Approvals</div>'+purPoTrail(o)+'</div>';
+  var body='<div class="modal-b pur-po-b" data-action="stop">'+facts+lineBlock+trailBlock+'</div>';
+  var canAct=purCanAct(o);
+  var recordBtn='<button class="btn naked sm" data-action="pur-open-record" data-id="'+w.id+'" data-oid="'+o.id+'">'+ICON("open_in_new")+'Open full record</button>';
+  var footer;
+  if(modal.confirmReject){
+    footer='<div class="modal-f pur-po-f pur-po-f-reject"><input id="purNote" class="pur-po-note" placeholder="Reason (optional), shared with the requester" value="'+(modal.note||"").replace(/"/g,"&quot;")+'" autocomplete="off"><div class="pur-po-f-btns"><button class="btn naked sm" data-action="pur-reject-cancel">Cancel</button><button class="btn sm pur-po-danger" data-action="pur-reject-confirm" data-id="'+w.id+'" data-oid="'+o.id+'">'+ICON("do_not_disturb_on")+'Confirm reject</button></div></div>';
+  } else if(canAct){
+    footer='<div class="modal-f pur-po-f">'+recordBtn+'<div class="pur-po-f-btns"><button class="btn outlined sm pur-po-reject-btn" data-action="pur-reject">'+ICON("close")+'Reject</button><button class="btn primary sm" data-action="pur-approve" data-id="'+w.id+'" data-oid="'+o.id+'">'+ICON("check")+'Approve</button></div></div>';
+  } else {
+    footer='<div class="modal-f pur-po-f">'+recordBtn+'<button class="btn primary sm" data-action="modal-close">Close</button></div>';
+  }
+  var head='<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded pur-po-title-ic">receipt_long</span>'+o.num+' · '+o.vendor+purPoStatusChip(o)+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div>';
+  return head+body+footer;
+}
+function purPoModalHTML(){return '<div class="modal-backdrop" data-action="modal-close"><div class="modal pur-po-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Purchase order">'+purPoModalInner()+'</div></div>';}
+
+/* mousemove hover card for the encumbrance bars (formatted popover, not a
+   one-line tooltip). Guarded so it only appears over a real bar. */
+function purHideBpop(){if(purPopEl){purPopEl.remove();purPopEl=null;}}
+function purShowBpop(col,mx,my){
+  var raw=col.getAttribute("data-purpop");if(!raw)return;var p=raw.split("|");var per=p[0],amt=+p[1];
+  purHideBpop();
+  purPopEl=document.createElement("div");purPopEl.className="bgt-pop pur-pop";
+  purPopEl.innerHTML='<div class="bgt-pop-h">'+per+'</div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600)"></span><span class="bgt-pop-lbl">Committed</span><span class="bgt-pop-v">'+money(amt)+'</span></div>'+
+    '<div class="bgt-pop-note">Reserved by outstanding purchase orders this accounting period, not yet paid.</div>';
+  document.body.appendChild(purPopEl);
+  var bw=purPopEl.offsetWidth,bh=purPopEl.offsetHeight,M=10;
+  var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
+  var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
+  purPopEl.style.left=left+"px";purPopEl.style.top=top+"px";
+}
+document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".pur-col[data-purpop]");if(!col){if(purPopEl)purHideBpop();return;}purShowBpop(col,e.clientX,e.clientY);});
   /* ===== Receivable Invoices Outstanding (prefix: ar) , v2 redesign =====
      Drop-in replacement for the existing ar block (data + render + handlers).
      Keeps the shell contract identical: contentHTML->arContent(w); every action
@@ -2940,11 +3142,63 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function ptoLoad(w){w.ptoLoading=true;clearTimeout(timers["pto-"+w.id]);timers["pto-"+w.id]=setTimeout(function(){w.ptoLoading=false;render();},700);}
 
 
-  /* ===== Accounts Payable By Due Date (ap): timeline of when bills are due ===== */
+  /* =====================================================================
+   Accounts Payable By Due Date  (ap, kind:"payables")  ,  v2 redesign
+   =====================================================================
+   Drop-in replacement for the existing `ap` block in widget-container.html
+   (from `EMPTY_COPY.payables=` through the old `.ap-col` mousemove handler).
+   Relies on shell globals already present:
+     ICON(name), find(id), render(), pop, timers, setTimeout, clearTimeout,
+     EMPTY_COPY, ERROR_COPY.
+
+   WHAT CHANGED vs the old version, and WHY (grounded in Confluence 7371554882
+   Part C: reframe as payables *aging + cash requirements*, decisions 11.1/11.3/
+   11.4/11.5, and the JTBD table sec.6):
+     - The amount-labelled pie / unsynced "timeline" bar chart is GONE. The old
+       chart never earned its place (it did not sync to the filter , confirmed
+       by the live interaction test , and left dead space at explore). Its job
+       (cash-out-over-time) is now done by a values-as-text Cash-requirements
+       panel that IS synced (it acts as the selector and highlights the filter).
+     - The HERO is a dense due-date table, grouped into aging bands
+       (Overdue / Due this week / Due this month / Due later) with per-band
+       subtotals , the standard AP aging read.
+     - Overdue is emphasised with a leading warning glyph + red "Overdue by N
+       days" label + a red band header , sign + label, never colour alone,
+       and no red on a chart (there is no chart).
+     - Filter chip offers Total, the four aging bands, and every specific due
+       date; it is sized to its content (shell .filter-chip fit-width rule).
+     - Explore (xwide) fills the width purposefully with two columns that map
+       to the SME role split: LEFT = the full invoice list (the AP clerk /
+       invoice-enterer verifies what is entered and due); RIGHT = Cash
+       requirements + Top-vendors-owed (the treasurer / approver reads how much
+       cash is needed and to whom). No dead area.
+     - Glance = total payable + overdue badge + cash-needed-within-7-days.
+     - Plain language throughout; values in the DOM as text; one clean positive
+       empty state; loading only on a data-fetch (filter change), never on sort.
+
+   FIVE INTEGRATION PIECES (see the wiring notes returned with this file):
+     1. RENDER BLOCK ................ everything below (single apContent(w))
+     2. contentHTML() dispatch ...... if(w.kind==="payables")return apContent(w);   (UNCHANGED)
+     3. click-handler dispatch ...... if(a&&a.indexOf("ap-")===0&&apHandleClick(a,id,t))return;
+     4. popContent() dispatch ....... if(pop.type==="ap-due")return apPopContent();
+     5. triggerSelector() branch .... if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';   (UNCHANGED, already present)
+        (+ registry entries ap / ap2 / ap3 / ap4 , unchanged, still valid;
+         + the old inline ap- click branches and the `.ap-col` mousemove handler
+           are DELETED , replaced by the single dispatch line in piece 3;
+         + render() `apq` focus line and the input handler `apq` branch stay as-is)
+   ===================================================================== */
+
+  /* ---- states copy (kept; referenced by the shell fallback too) ------ */
   EMPTY_COPY.payables={title:"Nothing outstanding",sub:"All supplier invoices are paid. Nothing is due right now."};
   ERROR_COPY.payables={title:"Couldn’t load payables",sub:"Something went wrong fetching outstanding invoices."};
-  var apDueQuery="",apPopEl=null;
-  var AP_TODAY=new Date(2026,6,23);
+
+  /* ---- 1. DATA ------------------------------------------------------- */
+  /* Only posted invoices with a due date and an outstanding balance (paid
+     excluded), per Part A.2. Demo set fixed to AP_TODAY so the aging bands are
+     deterministic. Currency is $ (the live £ hard-coding is the localisation
+     defect the brief says to fix; the shell demo is a US org). */
+  var apDueQuery="";
+  var AP_TODAY=new Date(2026,6,23); /* 23 Jul 2026 */
   var AP_INVOICES=[
     {vendor:"Staples",                 inv:"INV-0003", due:"2026-07-10", amount:5555.00},
     {vendor:"Grainger Supply",         inv:"INV-2201", due:"2026-07-18", amount:1240.50},
@@ -2964,116 +3218,210 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     {vendor:"Summit HVAC Services", inv:"INV-9002", due:"2026-08-05", amount:3250.00}
   ];
   function apData(w){return (w&&w.dataset==="single")?AP_INVOICES_SINGLE:AP_INVOICES;}
+
+  /* aging bands , plain language, earliest first */
+  var AP_BANDS=[
+    {id:"overdue",label:"Overdue",glyph:"warning"},
+    {id:"week",   label:"Due this week",  glyph:"event"},
+    {id:"month",  label:"Due this month", glyph:"calendar_month"},
+    {id:"later",  label:"Due later",      glyph:"schedule"}
+  ];
+
+  /* ---- helpers ------------------------------------------------------- */
   function apMoney(n){return "$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
   var AP_M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function apParse(iso){var p=iso.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
   function apISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
   function apFmtLong(iso){var d=apParse(iso);return AP_M[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
-  function apFmtShort(iso){var d=apParse(iso);return AP_M[d.getMonth()]+" "+d.getDate();}
   function apDiffDays(iso){var d=apParse(iso),t=new Date(AP_TODAY.getFullYear(),AP_TODAY.getMonth(),AP_TODAY.getDate());return Math.round((d-t)/86400000);}
   function apIsOverdue(iso){return apDiffDays(iso)<0;}
   function apDaysLabel(iso){var n=apDiffDays(iso);if(n<0)return "Overdue by "+(-n)+" day"+((-n)===1?"":"s");if(n===0)return "Due today";return "Due in "+n+" day"+(n===1?"":"s");}
+  function apBandOf(iso){var n=apDiffDays(iso);if(n<0)return "overdue";if(n<=7)return "week";if(n<=30)return "month";return "later";}
+  function apEsc(s){return String(s).replace(/"/g,"&quot;");}
+
   function apDueDates(w){var seen={},out=[];apData(w).forEach(function(x){if(!seen[x.due]){seen[x.due]=1;out.push(x.due);}});out.sort(function(a,b){return apParse(a)-apParse(b);});return out;}
-  function apDefaultDue(w){var d=apDueDates(w);return d.length?d[0]:null;}
-  function apSel(w){var v=w.apDue;if(v==="total")return "total";var dates=apDueDates(w);if(v&&dates.indexOf(v)>-1)return v;return dates.length?dates[0]:null;}
   function apByDate(w){var dates=apDueDates(w);return dates.map(function(iso){var inv=apData(w).filter(function(x){return x.due===iso;});var tot=inv.reduce(function(s,x){return s+x.amount;},0);return {iso:iso,total:tot,count:inv.length,overdue:apIsOverdue(iso)};});}
+  function apBandData(w){var res={overdue:{total:0,count:0},week:{total:0,count:0},month:{total:0,count:0},later:{total:0,count:0}};apData(w).forEach(function(x){var b=apBandOf(x.due);res[b].total+=x.amount;res[b].count++;});return res;}
   function apTotalDue(w){return apData(w).reduce(function(s,x){return s+x.amount;},0);}
   function apOverdueTotal(w){return apData(w).filter(function(x){return apIsOverdue(x.due);}).reduce(function(s,x){return s+x.amount;},0);}
   function apOverdueCount(w){return apData(w).filter(function(x){return apIsOverdue(x.due);}).length;}
-  function apRows(w){var sel=apSel(w),list=apData(w).slice();if(sel!=="total"&&sel)list=list.filter(function(x){return x.due===sel;});
-    var sk=(w.apsort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    list.sort(function(a,b){if(key==="vendor")return dir*a.vendor.localeCompare(b.vendor);if(key==="inv")return dir*a.inv.localeCompare(b.inv);if(key==="due"){var dd=apParse(a.due)-apParse(b.due);return dir*(dd||(b.amount-a.amount));}return dir*(a.amount-b.amount);});
+  function apDueWithin(w,lo,hi){return apData(w).filter(function(x){var d=apDiffDays(x.due);return d>=lo&&d<=hi;}).reduce(function(s,x){return s+x.amount;},0);}
+  function apVendors(w){var m={},order=[];apData(w).forEach(function(x){if(!m[x.vendor]){m[x.vendor]={vendor:x.vendor,total:0,count:0,over:0};order.push(x.vendor);}var e=m[x.vendor];e.total+=x.amount;e.count++;if(apIsOverdue(x.due))e.over+=x.amount;});var arr=order.map(function(k){return m[k];});arr.sort(function(a,b){return b.total-a.total;});return arr;}
+
+  /* current selection: "total" | band id | ISO date. Defaults to Total. */
+  function apIsBand(v){return v==="overdue"||v==="week"||v==="month"||v==="later";}
+  function apSel(w){var v=w&&w.apDue;if(v==null||v==="total")return "total";if(apIsBand(v))return v;var dates=apDueDates(w);return dates.indexOf(v)>-1?v:"total";}
+  function apSelLabel(w){var s=apSel(w);if(s==="total")return "All due dates";if(apIsBand(s)){for(var i=0;i<AP_BANDS.length;i++)if(AP_BANDS[i].id===s)return AP_BANDS[i].label;}return "Due "+apFmtLong(s);}
+
+  function apRows(w){var sel=apSel(w),list=apData(w).slice();
+    if(apIsBand(sel))list=list.filter(function(x){return apBandOf(x.due)===sel;});
+    else if(sel!=="total")list=list.filter(function(x){return x.due===sel;});
+    var sk=(w.apsort||"due-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    list.sort(function(a,b){
+      if(key==="vendor")return dir*a.vendor.localeCompare(b.vendor);
+      if(key==="inv")return dir*a.inv.localeCompare(b.inv);
+      if(key==="due"){var dd=apParse(a.due)-apParse(b.due);return dir*(dd||(b.amount-a.amount));}
+      return dir*(a.amount-b.amount);
+    });
     return list;}
-  function apDueChip(w){var sel=apSel(w),spin=w.aploading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-    var lbl=(sel==="total")?"Total (all due dates)":(sel?("Due "+apFmtLong(sel)):"No due dates");
-    return '<button class="filter-chip ap-due-chip" data-action="ap-due" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Due date, tap to change"><span class="fc-label">'+spin+lbl+'</span>'+ICON("expand_more")+'</button>';}
-  function apViewToggle(w){var v=w.apview||"timeline";var opts=[["table","Table","table_rows"],["timeline","Timeline","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="ap-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
-  function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);return '<span class="ap-pill warn" data-tip="'+apMoney(od)+' across '+n+' invoice'+(n>1?"s":"")+' is past its due date." data-tip-plain>'+ICON("warning")+apMoney(od)+' overdue</span>';}return '<span class="ap-pill pos" data-tip="No outstanding invoice is past its due date." data-tip-plain>'+ICON("check_circle")+'Nothing overdue</span>';}
+
+  /* ---- controls ----------------------------------------------------- */
+  /* Due-date filter chip: secondary-fill (via .filter-chip[data-action]),
+     leading filter glyph + trailing chevron from the shell, sized to content,
+     capped so a long date ellipses rather than stretching the toolbar. */
+  function apDueChip(w){var spin=w.aploading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
+    return '<button class="filter-chip ap-due-chip" data-action="ap-due" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="ap-due"&&pop.id===w.id?"true":"false")+'" aria-label="Filter by due date, currently '+apEsc(apSelLabel(w))+'"><span class="fc-label">'+spin+apSelLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+
+  /* KPI badge: overdue money (warn) or a positive "Nothing overdue". */
+  function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);return '<span class="ap-pill warn" data-tip="'+apMoney(od)+' across '+n+' invoice'+(n===1?"":"s")+' is past its due date." data-tip-plain>'+ICON("warning")+apMoney(od)+' overdue</span>';}return '<span class="ap-pill pos" data-tip="No outstanding invoice is past its due date." data-tip-plain>'+ICON("check_circle")+'Nothing overdue</span>';}
+
+  /* ---- header (Detail / Explore) : two-row .dep-hd ------------------- */
+  /* Row 1: due-date chip (left), empty toggle slot (right). Row 2: total
+     payable + overdue badge (LEFT), one quiet context line under it stating
+     count, cash-needed-within-7-days, and "as of". */
   function apHeaderBlock(w,mode){
-    var loading=(mode==="loading");
-    var toggle="";
-    var numInner;
-    if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
-    else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+apMoney(apTotalDue(w))+'</span>'+apBadge(w)+'</div>';}
-    var n=apData(w).length;
-    var ctx='Outstanding supplier invoices, grouped by due date. '+n+' invoice'+(n===1?"":"s")+' due, data as of '+apFmtLong(apISO(AP_TODAY))+'.';
+    var numInner,ctx;
+    if(mode==="loading"){
+      numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:110px;height:20px;border-radius:999px"></span></div>';
+      ctx="Updating outstanding invoices…";
+    }else{
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+apMoney(apTotalDue(w))+'</span>'+apBadge(w)+'</div>';
+      var n=apData(w).length,week=apDueWithin(w,0,7);
+      ctx=n+' invoice'+(n===1?"":"s")+' outstanding. '+(week>0?(apMoney(week)+' due within the next 7 days.'):'Nothing due within the next 7 days.')+' As of '+apFmtLong(apISO(AP_TODAY))+'.';
+    }
     return '<div class="dep-hd">'+
-      '<div class="dep-hd-top">'+apDueChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
+      '<div class="dep-hd-top">'+apDueChip(w)+'<div class="dep-hd-toggle"></div></div>'+
       '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div></div></div>'+
       '</div>';}
-  function apSkeleton(){var bars="";[70,45,85,55,75,50,65].forEach(function(h){bars+='<div class="bank-sk-col"><span class="sk bank-sk-bar" style="height:'+h+'%"></span></div>';});return '<div class="bank-skel"><div class="bank-skel-plot">'+bars+'</div><div class="bank-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
-  function apTable(w,full){
-    var rows=apRows(w),sel=apSel(w);
-    var sk=(w.apsort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ap-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
-    var showDue=(sel==="total");
-    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="ap-c-inv">'+sb("inv","Inv. #")+'</span>'+(showDue?'<span class="ap-c-due">'+sb("due","Due date")+'</span>':'')+'<span class="wt-c2">'+sb("amt","Amount")+'</span></div>';
-    var body=rows.map(function(x){var vesc=x.vendor.replace(/"/g,"&quot;"),od=apIsOverdue(x.due);
-      var overTag=od?'<span class="bank-tag-over" data-tip="'+apDaysLabel(x.due)+'." data-tip-plain>Overdue</span>':'';
-      var dueCell=showDue?'<span class="ap-c-due"><span class="ap-due-d">'+apFmtLong(x.due)+'</span><span class="ap-due-days'+(od?" over":"")+'">'+apDaysLabel(x.due)+'</span></span>':'';
-      return '<div class="wt-row" data-acct="'+vesc+'">'+
-        '<span class="lr-main">'+x.vendor+'</span>'+
-        '<span class="ap-c-inv">'+x.inv+'</span>'+
-        dueCell+
-        '<span class="wt-c2">'+overTag+apMoney(x.amount)+'</span></div>';
-    }).join("");
+
+  /* ---- the hero: dense due-date table, grouped by aging band --------- */
+  function apRowHTML(x){var od=apIsOverdue(x.due),n=apDiffDays(x.due);
+    var daysIcon=od?"warning":(n===0?"today":"schedule");
+    return '<div class="wt-row" data-acct="'+apEsc(x.vendor)+'">'+
+      '<span class="lr-main">'+x.vendor+'</span>'+
+      '<span class="ap-c-inv">'+x.inv+'</span>'+
+      '<span class="ap-c-due"><span class="ap-due-d">'+apFmtLong(x.due)+'</span><span class="ap-due-days'+(od?" over":"")+'">'+ICON(daysIcon)+apDaysLabel(x.due)+'</span></span>'+
+      '<span class="wt-c2">'+apMoney(x.amount)+'</span></div>';}
+  function apTable(w){
+    var sel=apSel(w),rows=apRows(w);
+    var sk=(w.apsort||"due-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ap-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="ap-c-inv">'+sb("inv","Invoice")+'</span><span class="ap-c-due">'+sb("due","Due date")+'</span><span class="wt-c2">'+sb("amt","Amount")+'</span></div>';
+    var body;
+    if(sel==="total"){
+      /* grouped: one subheader per non-empty aging band + its subtotal. Rows
+         keep the current sort within each band. This is the aging report. */
+      body=AP_BANDS.map(function(b){
+        var br=rows.filter(function(x){return apBandOf(x.due)===b.id;});
+        if(!br.length)return "";
+        var st=br.reduce(function(s,x){return s+x.amount;},0),over=(b.id==="overdue");
+        var gh='<div class="wt-row ap-grp"><span class="ap-grp-nm'+(over?" over":"")+'">'+ICON(b.glyph)+b.label+' <span class="ap-grp-ct">'+br.length+' invoice'+(br.length===1?"":"s")+'</span></span><span class="ap-grp-amt'+(over?" over":"")+'">'+apMoney(st)+'</span></div>';
+        return gh+br.map(apRowHTML).join("");
+      }).join("");
+    }else{
+      body=rows.map(apRowHTML).join("");
+    }
     var tot=rows.reduce(function(s,x){return s+x.amount;},0);
-    var footLbl=(sel==="total")?("Total, all due dates ("+rows.length+" invoice"+(rows.length===1?"":"s")+")"):("Total due "+apFmtLong(sel)+" ("+rows.length+" invoice"+(rows.length===1?"":"s")+")");
+    var footLbl=apSelLabel(w)+' ('+rows.length+' invoice'+(rows.length===1?"":"s")+')';
     var search=(rows.length>6)?'<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search vendors" aria-label="Search vendors"></div></div>':'';
     return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+footLbl+'</span><span>'+apMoney(tot)+'</span></div>';
   }
-  function apTimeline(w){
-    var data=apByDate(w),sel=apSel(w);
-    var max=1;data.forEach(function(d){max=Math.max(max,d.total);});max=max*1.15;
-    var cols="",xl="";
-    data.forEach(function(d){var h=Math.max(2,Math.round(d.total/max*100)),isSel=(sel!=="total"&&sel===d.iso);
-      var srtxt=apFmtLong(d.iso)+': '+apMoney(d.total)+' due across '+d.count+' invoice'+(d.count===1?"":"s")+', '+apDaysLabel(d.iso).toLowerCase();
-      var dpop=[apFmtLong(d.iso),d.total,d.count,(d.overdue?"1":"0"),apDaysLabel(d.iso)].join("|").replace(/"/g,"&quot;");
-      cols+='<button class="ap-col'+(d.overdue?" over":"")+(isSel?" sel":"")+'" tabindex="0" aria-label="'+srtxt+', tap to filter the table to this due date" data-action="ap-pick-date" data-id="'+w.id+'" data-iso="'+d.iso+'" data-appop="'+dpop+'"><div class="ap-barwrap"><div class="ap-bar" style="height:'+h+'%"></div></div><span class="sr-only">'+srtxt+'</span></button>';
-      xl+='<div class="ap-xcol'+(isSel?" sel":"")+'"><span class="ap-xlbl">'+apFmtShort(d.iso)+'</span><span class="ap-xflow'+(d.overdue?" over":"")+'">'+(d.overdue?"overdue":(apDiffDays(d.iso)===0?"today":"in "+apDiffDays(d.iso)+"d"))+'</span></div>';
+
+  /* ---- explore right column: Cash requirements + Top vendors owed ----
+     Answers the approver JTBD (how much cash this week/month, to whom). The
+     four band rows double as the selector: clicking one filters the table and
+     the row shows the current selection , the chart/table sync the brief asked
+     for (11.4), done as synced values-as-text, not an un-synced chart. The
+     share bars are aria-hidden magnitude cues (amethyst; overdue a step
+     darker), never the sole signal , sign + label carry overdue. */
+  function apMiniBar(frac,cls){var pct=Math.max(3,Math.round(frac*100));return '<span class="ap-sum-track" aria-hidden="true"><span class="ap-sum-fill'+(cls?" "+cls:"")+'" style="width:'+pct+'%"></span></span>';}
+  function apPanel(w){
+    var sel=apSel(w),grand=apTotalDue(w),bd=apBandData(w),n=apData(w).length;
+    var out='<div class="ap-panel">';
+    out+='<div class="ap-sum-sub">How much cash is needed, and when. Pick a band to filter the invoice list.</div>';
+    var allSel=(sel==="total");
+    out+='<button class="ap-sum-row ap-sum-all'+(allSel?" sel":"")+'" data-action="ap-set-due" data-due="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="ap-sum-main"><span class="ap-sum-lbl">'+ICON("account_balance_wallet")+'All due dates</span><span class="ap-sum-meta">'+n+' invoice'+(n===1?"":"s")+' outstanding</span></span><span class="ap-sum-val">'+apMoney(grand)+'</span></button>';
+    AP_BANDS.forEach(function(b){var d=bd[b.id],over=(b.id==="overdue"),has=d.count>0,frac=grand>0?d.total/grand:0,isSel=(sel===b.id);
+      out+='<button class="ap-sum-row'+(isSel?" sel":"")+(has?"":" ap-static")+'"'+(has?' data-action="ap-set-due" data-due="'+b.id+'" data-id="'+w.id+'" aria-pressed="'+isSel+'"':' disabled aria-disabled="true"')+'>'+
+        '<span class="ap-sum-main">'+
+          '<span class="ap-sum-lbl'+(over&&has?" over":"")+'">'+ICON(b.glyph)+b.label+'</span>'+
+          apMiniBar(frac,(over?"over":"")+(has?"":" zero"))+
+          '<span class="ap-sum-meta">'+(has?(d.count+' invoice'+(d.count===1?"":"s")+', '+Math.round(frac*100)+'% of total'):'nothing due')+'</span>'+
+        '</span>'+
+        '<span class="ap-sum-val'+(over&&has?" over":"")+'">'+apMoney(d.total)+'</span></button>';
     });
-    var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
-    var legend='<span class="ap-lg"><span class="ap-sw over"></span>Overdue</span><span class="ap-lg"><span class="ap-sw up"></span>Due later</span>';
-    var note=(sel!=="total")?'<div class="ap-tl-note">'+ICON("filter_list")+'Table shows '+apFmtLong(sel)+'. The highlighted column is the selected due date. Pick any column, or choose Total, to change it.</div>':'<div class="ap-tl-note">'+ICON("info")+'Amount due on each due date. Select a column to filter the table to that date.</div>';
-    return '<div class="ap-chart-wrap"><div class="ap-legend">'+legend+'</div>'+
-      '<div class="ap-plotrow"><div class="ap-yax">'+yl+'</div><div class="ap-canvas"><div class="ap-gl"></div><div class="ap-cols">'+cols+'</div></div></div>'+
-      '<div class="ap-xaxrow"><div class="ap-yaxsp"></div><div class="ap-xcols">'+xl+'</div></div>'+
-      note+'</div>';
+    var vend=apVendors(w).slice(0,5),vmax=vend.length?vend[0].total:1;
+    out+='<div class="ap-sum-sep"></div><div class="dep-col-h ap-sum-h">Top vendors owed</div>';
+    vend.forEach(function(v){var frac=vmax>0?v.total/vmax:0;
+      out+='<div class="ap-sum-row ap-static"><span class="ap-sum-main"><span class="ap-sum-lbl">'+v.vendor+'</span>'+
+        apMiniBar(frac,"")+
+        '<span class="ap-sum-meta">'+v.count+' invoice'+(v.count===1?"":"s")+(v.over>0?', <span class="ap-over">'+apMoney(v.over)+' overdue</span>':'')+'</span></span>'+
+        '<span class="ap-sum-val">'+apMoney(v.total)+'</span></div>';
+    });
+    return out+'</div>';
   }
-  function apFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Invoices '+(apSel(w)==="total"?"(all due dates)":("due "+apFmtLong(apSel(w))))+'</div>'+apTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Amount due by date</div>'+apTimeline(w)+'</div></div>';}
+  function apFull(w){
+    return '<div class="dep-full">'+
+      '<div class="dep-col"><div class="dep-col-h">Outstanding invoices</div>'+apTable(w)+'</div>'+
+      '<div class="dep-col ap-col-cash"><div class="dep-col-h">Cash requirements</div>'+apPanel(w)+'</div>'+
+      '</div>';}
+
+  /* ---- Glance ------------------------------------------------------- */
   function apGlance(w){
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div></div>';}
-    var tot=apTotalDue(w);
+    var tot=apTotalDue(w),week=apDueWithin(w,0,7);
+    var cap=week>0?(apMoney(week)+' due within the next 7 days'):'nothing due in the next 7 days';
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Accounts payable</span></span>'+
       '<div class="metric-value">'+apMoney(tot)+'</div>'+
       '<div class="gl-sub">'+apBadge(w)+'</div>'+
+      '<div class="ap-glance-cap">'+cap+'</div>'+
       '</div></div>';}
+
+  /* ---- skeleton (table rows; loading is data-fetch only) ------------ */
+  function apSkeleton(){var rows="";[82,58,70,48,64].forEach(function(wd){rows+='<div class="ap-sk-row"><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:72px;height:12px;border-radius:4px"></span><span class="sk" style="width:'+wd+'px;height:12px;border-radius:4px"></span></div>';});return '<div class="ap-skel">'+rows+'</div>';}
+
+  /* ---- entry point (single apContent) ------------------------------- */
   function apContent(w){
     if(w.size==="kpi")return apGlance(w);
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
     if(w.aploading)return apHeaderBlock(w,"loading")+apSkeleton();
     var mh=apHeaderBlock(w);
-    return mh+apTable(w,false);
+    if(w.size==="xwide")return mh+apFull(w);
+    return mh+apTable(w);
   }
-  function apLoad(w){w.aploading=true;clearTimeout(timers["ap-"+w.id]);timers["ap-"+w.id]=setTimeout(function(){w.aploading=false;render();},850);}
-  function apHideBpop(){if(apPopEl){apPopEl.remove();apPopEl=null;}}
-  function apShowBpop(col,mx,my){
-    var raw=col.getAttribute("data-appop");if(!raw)return;var p=raw.split("|");
-    var date=p[0],amt=+p[1],count=+p[2],over=(p[3]==="1"),days=p[4];
-    apHideBpop();
-    apPopEl=document.createElement("div");apPopEl.className="bgt-pop ap-pop";
-    apPopEl.innerHTML='<div class="bgt-pop-h">'+date+'</div>'+
-      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:'+(over?"var(--am-600)":"var(--am-300)")+'"></span><span class="bgt-pop-lbl">Amount due</span><span class="bgt-pop-v">'+apMoney(amt)+'</span></div>'+
-      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:transparent"></span><span class="bgt-pop-lbl">Invoices</span><span class="bgt-pop-v">'+count+'</span></div>'+
-      '<div class="bgt-pop-note'+(over?" ap-pop-over":"")+'">'+days+'</div>';
-    document.body.appendChild(apPopEl);
-    var bw=apPopEl.offsetWidth,bh=apPopEl.offsetHeight,M=10;
-    var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
-    var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
-    apPopEl.style.left=left+"px";apPopEl.style.top=top+"px";
+
+  /* ---- loading: only on a data-fetch (filter change), never on sort -- */
+  function apLoad(w){w.aploading=true;clearTimeout(timers["ap-"+w.id]);timers["ap-"+w.id]=setTimeout(function(){w.aploading=false;w.updated="just now";render();},800);}
+
+  /* ---- 3. CLICK HANDLER (branch: a starts with "ap-") ---------------- */
+  function apHandleClick(a,id,t){
+    if(a==="ap-due"){apDueQuery="";pop=(pop&&pop.type==="ap-due"&&pop.id===id)?null:{type:"ap-due",id:id};render();return true;}
+    if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due"),cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return true;}
+    if(a==="ap-sort"){var was=find(id),k=t.getAttribute("data-k");if(was){var cs=(was.apsort||"due-asc").split("-");was.apsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="vendor"||k==="inv"||k==="due")?"asc":"desc"));}render();return true;}
+    if(a==="ap-pick-date"){var wap=find(id);if(wap){var iso=t.getAttribute("data-iso"),cur=apSel(wap);if(iso!==cur){wap.apDue=iso;apLoad(wap);}}pop=null;render();return true;}
+    return false;
   }
-  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".ap-col[data-appop]");if(!col){if(apPopEl)apHideBpop();return;}apShowBpop(col,e.clientX,e.clientY);});
+
+  /* ---- 4. POPOVER CONTENT (pop.type==="ap-due") ---------------------- */
+  /* Total, then the aging bands (with counts + subtotals, overdue tagged),
+     then every specific due date (earliest first). Branded searchable list
+     when there are many dates (reuses .dd-search / #apq input handling). */
+  function apPopContent(){
+    var w=find(pop.id),sel=apSel(w),q=(apDueQuery||"").toLowerCase();
+    var grand=apTotalDue(w),bd=apBandData(w),dates=apByDate(w);
+    var showSearch=dates.length>8;
+    var out=(showSearch?'<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="apq" placeholder="Search due dates" value="'+apEsc(apDueQuery||"")+'" autocomplete="off"></div>':'')+'<div class="menu-scroll" role="listbox">';
+    if(!q||"all due dates total".indexOf(q)>-1){var aOn=(sel==="total");out+='<button class="mi'+(aOn?" check":"")+'" role="option" aria-selected="'+aOn+'" data-action="ap-set-due" data-due="total" data-id="'+w.id+'">'+(aOn?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All due dates</span><span class="ap-mi-amt">'+apMoney(grand)+'</span></button>';}
+    var bMatch=AP_BANDS.filter(function(b){return bd[b.id].count>0&&(!q||b.label.toLowerCase().indexOf(q)>-1);});
+    if(bMatch.length){out+='<div class="cap">By aging</div>'+bMatch.map(function(b){var d=bd[b.id],on=sel===b.id,over=(b.id==="overdue");
+      return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="ap-set-due" data-due="'+b.id+'" data-id="'+w.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm-stack"><span class="mi-nm">'+b.label+'</span><span class="mi-acctno'+(over?" ap-over":"")+'">'+d.count+' invoice'+(d.count===1?"":"s")+'</span></span>'+(over?'<span class="bank-tag-over">Overdue</span>':'')+'<span class="ap-mi-amt'+(over?" ap-over":"")+'">'+apMoney(d.total)+'</span></button>';}).join("");}
+    var dMatch=dates.filter(function(d){return !q||apFmtLong(d.iso).toLowerCase().indexOf(q)>-1;});
+    if(dMatch.length){out+='<div class="cap">Specific due date (earliest first)</div>'+dMatch.map(function(d){var on=sel===d.iso;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="ap-set-due" data-due="'+d.iso+'" data-id="'+w.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm-stack"><span class="mi-nm">'+apFmtLong(d.iso)+'</span><span class="mi-acctno'+(d.overdue?" ap-over":"")+'">'+apDaysLabel(d.iso)+', '+d.count+' invoice'+(d.count===1?"":"s")+'</span></span>'+(d.overdue?'<span class="bank-tag-over">Overdue</span>':'')+'<span class="ap-mi-amt'+(d.overdue?" ap-over":"")+'">'+apMoney(d.total)+'</span></button>';}).join("");}
+    if(showSearch&&q&&!bMatch.length&&!dMatch.length&&"all due dates total".indexOf(q)<0)out+='<div class="mi-note" style="color:var(--txt-subtle);padding:8px 10px">No due dates match "'+apEsc(apDueQuery||"")+'"</div>';
+    return out+'</div>';
+  }
+
 
 
   /* =====================================================================
@@ -3478,16 +3826,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       var out=o("all","All distributions")+o("pt","By pay type")+'<div class="sep"></div><div class="cap">A specific distribution</div>';
       out+=PR_DISTS.map(function(ds){var on=cur===ds.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="pr-set-scope" data-id="'+wsc.id+'" data-s="'+ds.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="pr-dot" style="background:'+(PR_DIST_COLORS[ds.id]||"#8a8f98")+'"></span><span class="mi-nm">'+ds.name+'</span></button>';}).join("");
       return out;}
-    if(pop.type==="ap-due"){var wap2=find(pop.id),q=(apDueQuery||"").toLowerCase(),cur=apSel(wap2);
-      var dates=apByDate(wap2),grand=apTotalDue(wap2);
-      var totalSel=(cur==="total");
-      var showSearch=dates.length>8;
-      var matches=dates.filter(function(d){return apFmtLong(d.iso).toLowerCase().indexOf(q)>-1;});
-      var out=(showSearch?'<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="apq" placeholder="Search due dates" value="'+(apDueQuery||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div>':'')+'<div class="menu-scroll" role="listbox">';
-      if(!showSearch||!q||"total all due dates".indexOf(q)>-1)out+='<button class="mi'+(totalSel?" check":"")+'" role="option" aria-selected="'+totalSel+'" data-action="ap-set-due" data-due="total" data-id="'+wap2.id+'">'+(totalSel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">Total (all due dates)</span><span class="ap-mi-amt">'+apMoney(grand)+'</span></button>';
-      if(matches.length)out+='<div class="cap">Due date (earliest first)</div>'+matches.map(function(d){var sel=cur===d.iso;return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="ap-set-due" data-due="'+d.iso+'" data-id="'+wap2.id+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm-stack"><span class="mi-nm">'+apFmtLong(d.iso)+'</span><span class="mi-acctno'+(d.overdue?" ap-over":"")+'">'+apDaysLabel(d.iso)+' · '+d.count+' invoice'+(d.count===1?"":"s")+'</span></span>'+(d.overdue?'<span class="bank-tag-over">Overdue</span>':'')+'<span class="ap-mi-amt">'+apMoney(d.total)+'</span></button>';}).join("");
-      if(showSearch&&!matches.length&&q&&"total all due dates".indexOf(q)<0)out+='<div class="mi-note" style="color:var(--txt-subtle)">No due dates match "'+(apDueQuery||"").replace(/"/g,"&quot;")+'"</div>';
-      return out+'</div>';}
+    if(pop.type==="ap-due")return apPopContent();
     if(pop.type==="ins-type")return insPopContent();
     if(pop.type==="fa-groupby"||pop.type==="fa-group"||pop.type==="fa-measure")return faPopContent();
     return "";
@@ -3551,6 +3890,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     bgtLockBg(true);
     if(modal.type==="bgtreport"){if(modalMounted){var mm=mr.querySelector(".modal.bgt-rm-modal");if(mm){mm.innerHTML=bgtReportModalInner();return;}}mr.innerHTML=bgtReportModalHTML();modalMounted=true;return;}
     if(modal.type==="mysconfig"){mr.innerHTML=mysConfigModalHTML();return;}
+    if(modal.type==="pur-po"){if(modalMounted){var _pm=mr.querySelector(".modal.pur-po-modal");if(_pm){_pm.innerHTML=purPoModalInner();return;}}mr.innerHTML=purPoModalHTML();modalMounted=true;return;}
     if(modal.type==="mysdetail"){mr.innerHTML=mysDetailModalHTML();return;}
     if(modal.type==="artdetail"){mr.innerHTML=arDetailModalHTML();return;}
     var body=(modal.scoped?'<div class="wcontent acct-mw">'+depContent(modal.mw)+'</div>':modal.b);
@@ -3569,11 +3909,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(a==="modal-close"){modal=null;pop=null;render();return;}
     if(faHandleClick(a,id,t))return;
     if(a&&a.indexOf("ins-")===0&&insHandleClick(a,id,t))return;
-    if(a==="ap-due"){apDueQuery="";pop=(pop&&pop.type==="ap-due"&&pop.id===id)?null:{type:"ap-due",id:id};render();return;}
-    if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due");var cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return;}
-    if(a==="ap-view"){var wav=find(id);if(wav)wav.apview=t.getAttribute("data-v");pop=null;render();return;}
-    if(a==="ap-sort"){var was=find(id),k=t.getAttribute("data-k");if(was){var cs=(was.apsort||"amt-desc").split("-");was.apsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="vendor"||k==="inv"||k==="due")?"asc":"desc"));}render();return;}
-    if(a==="ap-pick-date"){var wap=find(id);if(wap){var iso=t.getAttribute("data-iso"),cur=apSel(wap);if(iso!==cur){wap.apDue=iso;apLoad(wap);}}pop=null;render();return;}
+    if(a&&a.indexOf("ap-")===0&&apHandleClick(a,id,t))return;
     if(a==="pto-expand"){var wpe=find(id),key=t.getAttribute("data-key");if(wpe){wpe.ptoExpand=wpe.ptoExpand||{};wpe.ptoExpand[key]=!wpe.ptoExpand[key];}render();return;}
     if(a==="pto-year"){pop=(pop&&pop.type==="pto-year"&&pop.id===id)?null:{type:"pto-year",id:id};render();return;}
     if(a==="pto-set-year"){var wsy=find(id);if(wsy){var ny=t.getAttribute("data-y");if(ptoCurYear(wsy)!==ny){wsy.ptoYear=ny;ptoLoad(wsy);setStatus("Showing time off for "+ny+".");}}pop=null;render();return;}
