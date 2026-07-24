@@ -2119,9 +2119,6 @@ function renderHomeTable(){
 
 function getInlineAction(person, c){
   const s = c.status;
-  if(s==='consent-signed-action'){
-    return `<button class="row-act-btn row-act-primary" onclick="openProfileAtCase('${person.id}','${c.id}',event)">Approve order</button>`;
-  }
   if(s==='awaiting-assessment'){
     return `<button class="row-act-btn row-act-primary" onclick="openReport('${c.id}',event)">Assess</button>`;
   }
@@ -2195,11 +2192,6 @@ function getActions(person, c){
     acts.push({label:s==='awaiting-assessment'?'Record assessment':'View / edit assessment',cls:'pri',fn:`openReport('${c.id}',event)`});
   }
 
-  // Pending approval (consent received, approval gate on)
-  if(s==='consent-signed-action'){
-    acts.push({label:'Approve and place order',cls:'pri',fn:`toast('Order placed for ${person.name}');event.stopPropagation()`});
-    acts.push({label:'View consent form',fn:`toast('Opening consent form…');event.stopPropagation()`});
-  }
 
   // Active invite — sent or just link created
   if(s==='invite-sent'||s==='invite-created'){
