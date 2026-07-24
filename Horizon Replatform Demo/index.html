@@ -3001,32 +3001,8 @@ function openProfile(pid, targetCaseId){
 }
 
 function renderPanelHead(person){
-  const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
-  const c = currentCase(person);
-  const s = STATUS[c.status];
-  const srcMap = {'Rock CRM':'rock','PCO':'pco','PMM':'pmm'};
-  const srcKey = srcMap[person.source||'PMM']||'pmm';
-  const srcTips = {
-    'PMM':'Record is owned and managed directly in Protect My Ministry. Identity fields can be edited here.',
-    'Rock CRM':'Identity data synced from Rock CRM. Fields are read-only in PMM; edits must be made in Rock.',
-    'PCO':'Identity data synced from Planning Center Online. Fields are read-only in PMM.',
-  };
-  const sourceChip = `<span class="source-chip ${srcKey}">${esc(person.source||'PMM')}</span>`;
-  document.getElementById('panel-head-content').innerHTML = `
-    <div style="display:flex;align-items:flex-start;gap:14px">
-      <div class="profile-av" style="background:${ac};width:44px;height:44px;font-size:15px;flex-shrink:0">${esc(initials(person.name))}</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
-          <div class="profile-name" style="font-size:18px">${esc(person.name)}</div>
-          ${sourceChip}
-        </div>
-        <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          ${renderBadge(c.status)}
-          ${c.assessment?`<span style="font-size:12px;color:var(--fg3);padding:2px 0">Assessment: <span style="font-weight:600;color:${c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)'}">${esc(c.assessment.outcome)}</span></span>`:''}
-          ${person.rescreenDue?`<span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--amber-bg);color:var(--amber)">Rescreen due ${esc(person.rescreenDue)}</span>`:''}
-        </div>
-      </div>
-    </div>`;
+  // Head just holds the back-nav breadcrumb. Person info is in the hero block inside renderPanelBody.
+  document.getElementById('panel-head-content').innerHTML = '';
 }
 
 function renderPanelAction(person, c){
