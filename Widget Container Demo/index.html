@@ -1149,6 +1149,7 @@
   /* Chips size to their content, never stretch to fill the header */
   .filter-chip,.scope-chip{flex:0 0 auto;width:-moz-fit-content;width:fit-content;max-width:100%;justify-content:flex-start;}
   .dep-hd-top{min-width:0;}
+  .mct-filterrow{display:flex;}
 </style>
 </head>
 <body>
@@ -2078,7 +2079,7 @@
   function mctSavedIds(w){if(!w.mctSaved)w.mctSaved=mctDefaultSaved(w);return w.mctSaved;}
   function mctIsSaved(w,t){return mctSavedIds(w).indexOf(t.id)>-1;}
   function mctMyTasks(w){var ids=mctSavedIds(w),ctx=mctCtx(w);
-    var list=MCT_TASKS.filter(function(t){return mctInCtx(t,ctx)&&ids.indexOf(t.id)>-1;});
+    var list=MCT_TASKS.filter(function(t){return mctInCtx(t,ctx)&&ids.indexOf(t.id)>-1&&mctPassFilter(w,t);});
     list.sort(function(a,b){var ad=a.dflt?0:1,bd=b.dflt?0:1;if(ad!==bd)return ad-bd;return MCT_TASKS.indexOf(a)-MCT_TASKS.indexOf(b);});
     return list;}
   function mctStandardTasks(w){var ids=mctSavedIds(w),ctx=mctCtx(w),isHome=ctx==="home",f=mctFilter(w);
@@ -2088,7 +2089,8 @@
       if(isHome){if(f!=="all"&&t.app!==f)return false;}else{if(t.app!==ctx)return false;}
       return true;});}
   function mctRecentIds(w){return w.mctRecent||MCT_RECENT;}
-  function mctRecentTasks(w){var ctx=mctCtx(w);return mctRecentIds(w).map(mctTask).filter(function(t){return t&&mctInCtx(t,ctx);});}
+  function mctPassFilter(w,t){if(mctCtx(w)!=="home")return true;var f=mctFilter(w);return f==="all"||t.app===f;}
+  function mctRecentTasks(w){var ctx=mctCtx(w);return mctRecentIds(w).map(mctTask).filter(function(t){return t&&mctInCtx(t,ctx)&&mctPassFilter(w,t);});}
   function mctTokens(q){return q.toLowerCase().split(/[^a-z0-9]+/).filter(function(x){return x&&!MCT_STOP[x];});}
   function mctSearchList(w){
     var toks=mctTokens((w.mctQ||"").trim());if(!toks.length)return [];
@@ -2112,14 +2114,14 @@
   function mctRow(w,t,force){var a=mctApp(t.app);var badge=(force||mctCtx(w)==="home")?mctBadge(t.app):"";var aria=(t.label+", "+a.name+", opens "+t.dest).replace(/"/g,"&quot;");return '<div class="mct-row"><button class="mct-row-main" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'"><span class="mct-row-ic">'+ICON(t.icon)+'</span><span class="mct-row-tx"><span class="mct-row-lbl">'+t.label+'</span><span class="mct-row-dest">'+t.dest+'</span></span>'+badge+'</button></div>';}
   function mctItile(w,t){var a=mctApp(t.app);var badge=(mctCtx(w)==="home")?'<span class="mct-itile-badge" data-app="'+a.id+'" aria-hidden="true">'+a.code+'</span>':"";var aria=(t.label+", "+a.name+", opens "+t.dest).replace(/"/g,"&quot;");return '<button class="mct-itile" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'" data-tip="'+(t.label+" ("+a.name+")").replace(/"/g,"&quot;")+'" data-tip-plain>'+ICON(t.icon)+badge+'<span class="sr-only">'+t.label+", "+a.name+'</span></button>';}
   function mctSearch(w){var q=w.mctQ||"";var clr=q?'<button class="mct-q-clear" data-action="mct-clearq" data-id="'+w.id+'" aria-label="Clear search">'+ICON("close")+'</button>':'';return '<div class="mct-search"><input class="mct-q" id="mctq-'+w.id+'" placeholder="Search tasks across all applications" value="'+q.replace(/"/g,"&quot;")+'" aria-label="Search tasks across all applications" autocomplete="off">'+clr+'</div>';}
-  function mctFilterChip(w){var f=mctFilter(w),lbl=f==="all"?"All applications":(mctApp(f)?mctApp(f).name:"All applications");return '<button class="filter-chip mct-filter" data-action="mct-appfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Filter standard tasks by application, currently '+lbl+'"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
-  function mctRecentSection(w){var list=mctRecentTasks(w);if(!list.length)return "";return '<div class="mct-sec"><div class="mct-sec-h">Recently used</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
-  function mctMySection(w){var list=mctMyTasks(w);if(!list.length)return "";return '<div class="mct-sec"><div class="mct-sec-h">My tasks</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
-  function mctStandardSection(w){var list=mctStandardTasks(w),ctx=mctCtx(w),isHome=ctx==="home";var title=isHome?"Standard tasks":(mctApp(ctx).name+" tasks");var head='<div class="mct-sec-head"><div class="mct-sec-h">'+title+'</div>'+(isHome?mctFilterChip(w):"")+'</div>';if(!list.length){var msg=(isHome&&mctFilter(w)!=="all")?("No more standard "+mctApp(mctFilter(w)).name+" tasks to add."):"All standard tasks are already in My tasks.";return '<div class="mct-sec">'+head+'<div class="mct-sec-empty">'+msg+'</div></div>';}return '<div class="mct-sec">'+head+'<div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
+  function mctFilterChip(w){var f=mctFilter(w),lbl=f==="all"?"All applications":(mctApp(f)?mctApp(f).name:"All applications");return '<button class="filter-chip mct-filter" data-action="mct-appfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Filter tasks by application, currently '+lbl+'"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function mctRecentSection(w){var list=mctRecentTasks(w);if(!list.length)return "";return '<div class="mct-sec"><div class="mct-sec-h">Recent Tasks</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
+  function mctMySection(w){var list=mctMyTasks(w);if(!list.length)return "";return '<div class="mct-sec"><div class="mct-sec-h">My Tasks</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
+  function mctStandardSection(w){var list=mctStandardTasks(w);if(!list.length){var msg=(mctCtx(w)==="home"&&mctFilter(w)!=="all")?("No more "+mctApp(mctFilter(w)).name+" content tasks to add."):"All content tasks are already in My Tasks.";return '<div class="mct-sec"><div class="mct-sec-h">Content Tasks</div><div class="mct-sec-empty">'+msg+'</div></div>';}return '<div class="mct-sec"><div class="mct-sec-h">Content Tasks</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
   function mctResults(w){var res=mctSearchList(w),q=(w.mctQ||"").trim();if(!res.length)return '<div class="mct-sec"><div class="mct-noresult">No tasks match "'+q.replace(/"/g,"&quot;")+'". Try another word, like "check" or "deposit".</div></div>';return '<div class="mct-sec"><div class="mct-sec-h">'+res.length+' result'+(res.length>1?"s":"")+' across all applications</div><div class="mct-list">'+res.map(function(r){return mctRow(w,r.t,true);}).join("")+'</div></div>';}
   function mctEmpty(w){var ctx=mctCtx(w);var sub=(ctx==="home")?"You do not have access to any tasks yet. Tasks appear here once your role has permission to use them.":("There are no main content tasks for "+mctCtxName(w)+" yet.");return '<div class="state" data-kind="empty">'+ICON("apps")+'<div class="state-title">No tasks available</div><div class="state-sub">'+sub+'</div></div>';}
   function mctGlance(w){var q=(w.mctQ||"").trim(),body;if(q){var res=mctSearchList(w);body=res.length?('<div class="mct-irow">'+res.slice(0,8).map(function(r){return mctItile(w,r.t);}).join("")+'</div>'):'<div class="mct-glance-empty">No matches</div>';}else{var list=mctRecentTasks(w);body=list.length?('<div class="mct-irow">'+list.map(function(t){return mctItile(w,t);}).join("")+'</div>'):'<div class="mct-glance-empty">No recently used tasks yet</div>';}return '<div class="mct-glance">'+mctSearch(w)+body+'</div>';}
-  function mctContent(w){var ctxTasks=mctCtxTasks(w);if(w.state==="empty"||!ctxTasks.length)return mctEmpty(w);if(w.size==="kpi")return mctGlance(w);var q=(w.mctQ||"").trim();var out='<div class="mct-scroll">'+mctSearch(w);if(q)out+=mctResults(w);else out+=mctRecentSection(w)+mctMySection(w)+mctStandardSection(w);out+='</div>';return out;}
+  function mctContent(w){var ctxTasks=mctCtxTasks(w);if(w.state==="empty"||!ctxTasks.length)return mctEmpty(w);if(w.size==="kpi")return mctGlance(w);var q=(w.mctQ||"").trim();var out='<div class="mct-scroll">'+mctSearch(w)+(mctCtx(w)==="home"?('<div class="mct-filterrow">'+mctFilterChip(w)+'</div>'):"");if(q)out+=mctResults(w);else out+=mctRecentSection(w)+mctMySection(w)+mctStandardSection(w);out+='</div>';return out;}
 
   /* === MY STATUS (mys) render === */
 function mysConfigBtn(w){return '<button class="btn naked sm mys-cfg-btn" data-action="mys-config" data-id="'+w.id+'" aria-haspopup="dialog">'+ICON("checklist")+'Configure</button>';}
