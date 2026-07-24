@@ -2505,16 +2505,12 @@ function remHeaderBlock(w,mode){
 
 /* ---- Glance (kpi) -------------------------------------------- */
 function remGlance(w){
-  var t=remTotals(w);
-  var fill=Math.min(100,Math.max(2,Math.round(t.pctPaid*100))),mark=Math.min(100,Math.round(t.pctYear*100));
-  var col=t.allPaid?"--am-600":(t.status==="behind"?"--am-300":"--am-500");
-  var bar='<div class="rem-gbar" aria-hidden="true"><div class="rem-bar-fill" style="width:'+fill+'%;background:var('+col+')"></div><span class="rem-bar-mark" style="left:'+mark+'%"></span></div>';
-  var line=remPct(t.pctYear)+' of the year elapsed, '+t.daysLeft+' day'+(t.daysLeft===1?"":"s")+' to year end';
+  var t=remTotals(w),expTot=Math.round(t.annual*t.pctYear);
+  var pop=["All pledges",t.annual,t.paid,expTot,t.out,(t.annual>0?Math.round(t.pctPaid*100):0),Math.round(t.pctYear*100),(t.allPaid?"full":t.status)].join("|");
   return '<div class="kpi-row"><div class="kpi-num">'+
     '<div class="dep-hd-kpigrp"><span class="metric-value">'+(t.annual>0?remPct(t.pctPaid):"n/a")+'</span>'+remPaceBadge(t)+'</div>'+
-    '<div class="gl-sub"><span class="bgt-caption">'+money(t.paid)+' paid of '+money(t.annual)+' pledged</span></div>'+
-    '<div class="rem-glance-read">'+bar+'<span class="rem-glance-cap">'+line+'</span></div>'+
-    '<span class="sr-only">'+remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the calendar year elapsed. '+money(t.out)+' outstanding.</span>'+
+    '<div class="rem-glance-read">'+pbarHTML({fill:t.pctPaid*100,mark:t.pctYear*100,sm:true,pop:remEsc(pop),aria:remEsc("Overall pacing")})+'<span class="rem-glance-cap"><span class="pbar-lg-swatch pbar-lg-recv"></span>Received '+remPct(t.pctPaid)+'<span class="pbar-lg-swatch pbar-lg-exp"></span>Expected '+remPct(t.pctYear)+'</span></div>'+
+    '<span class="sr-only">'+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year elapsed. '+money(t.out)+' outstanding.</span>'+
   '</div></div>';}
 
 /* ---- empty state (denominational default) -------------------- */
