@@ -3326,6 +3326,26 @@ function renderCases(person, targetCaseId){
   }).join('');
 }
 
+// Documents for a specific case (used within each case card)
+function renderCaseDocs(c){
+  const docs = [];
+  if(c.consentForm) docs.push({type:'Consent & authorization form',date:c.consentForm.submittedDate,caseId:null});
+  if(c.report) docs.push({type:'Background check report',date:c.report.receivedDate,caseId:c.id});
+  if(!docs.length) return '';
+  const rows = docs.map(d=>`
+    <div class="doc-row" onclick="${d.caseId?`openReport('${d.caseId}',event)`:`toast('Opening document…')`}">
+      <div class="doc-icon"><svg width="14" height="14" style="color:var(--brand)"><use href="#ic-report"/></svg></div>
+      <div>
+        <div class="doc-name" style="font-size:12px">${esc(d.type)}</div>
+        <div class="doc-meta">${esc(d.date)}</div>
+      </div>
+    </div>`).join('');
+  return `<div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--fg4);margin-bottom:6px">Documents</div>
+    ${rows}
+  </div>`;
+}
+
 function renderDocuments(person){
   const docs = [];
   person.cases.forEach(c=>{
