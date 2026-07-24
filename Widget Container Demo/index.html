@@ -3451,7 +3451,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function cur(){for(var i=0;i<dashboards.length;i++)if(dashboards[i].id===currentId)return dashboards[i];return dashboards[0];}
   function isSystem(){return !cur().custom;}
   function find(id){if(modal&&modal.mw&&modal.mw.id===id)return modal.mw;var ws=cur().widgets;for(var i=0;i<ws.length;i++)if(ws[i].id===id)return ws[i];}
-  var manage=false,pop=null,renaming=null,dragId=null,addCount=0,timers={},focusDash=false,dashRenaming=false,infoTimer=null,companyQuery="",filterQuery="",prFocusId=null,bankQuery="",purQuery="",purPopEl=null;
+  var manage=false,pop=null,renaming=null,dragId=null,addCount=0,timers={},focusDash=false,dashRenaming=false,infoTimer=null,companyQuery="",filterQuery="",prFocusId=null,bankQuery="",purQuery="",purPopEl=null,widgetFindQuery="";
   var ABOUT={
     dep:{h:"Deposits on Hand",b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."},
     cash:{h:"Cash on hand",b:"Money available right now across your operating accounts."},
@@ -5782,6 +5782,12 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(pop.type==="rem-thru")return remPopContent();
     if(pop.type==="gft-date"||pop.type==="gft-purpose")return gftPopContent();
     if(pop.type==="loan-type")return loanPopContent();
+    if(pop.type==="wfind"){var dwf=cur(),qwf=widgetFindQuery.trim().toLowerCase(),SZ={kpi:"Glance",wide:"Detail",large:"Large",xwide:"Explore"};
+      var listwf=dwf.widgets.filter(function(w){return !qwf||(w.title||"").toLowerCase().indexOf(qwf)>-1;});
+      var rowswf=listwf.length
+        ? listwf.map(function(w){return '<button class="mi wfind-opt" role="option" data-action="wfind-go" data-id="'+w.id+'"><span class="wfind-nm">'+w.title+'</span><span class="wfind-sz">'+(SZ[w.size]||w.size)+'</span></button>';}).join("")
+        : '<div class="wfind-none">No widgets on this dashboard match "'+widgetFindQuery.replace(/</g,"&lt;").replace(/"/g,"&quot;")+'". Add one below.</div>';
+      return '<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="wfindq" placeholder="Search widgets on this dashboard" value="'+widgetFindQuery.replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="menu-scroll wfind-scroll" role="listbox">'+rowswf+'</div><div class="sep"></div><button class="mi wfind-add" data-action="add-widget">'+ICON("add")+'Add widget</button>';}
     if(pop.type==="winfo"){var wi=find(pop.id),ab=aboutOf(wi);return '<div class="wtip-h">'+ab.h+'</div><div class="wtip-b">'+ab.b+'</div><div class="sep"></div><button class="mi wtip-link" data-action="noop">'+ICON("open_in_new")+'Learn more in user guides</button>';}
     if(pop.type==="wmenu"){var wm=find(pop.id);var expH=(wm&&wm.actions&&wm.actions.length)?([["CSV","Export as CSV","table_view"],["XLSX","Export as Excel","grid_on"],["PDF","Export as PDF","picture_as_pdf"],["PNG","Export as image","image"]].map(function(o){return '<button class="mi" data-action="export-do" data-id="'+pop.id+'" data-fmt="'+o[0]+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'<div class="sep"></div>'):"";return expH+'<button class="mi" data-action="duplicate" data-id="'+pop.id+'">'+ICON("content_copy")+'Duplicate widget</button><button class="mi" data-danger data-action="remove" data-id="'+pop.id+'">'+ICON("delete")+'Remove widget</button>';}
     if(pop.type==="expmenu"){var xf=[["CSV","Export as CSV","table_view"],["XLSX","Export as Excel","grid_on"],["PNG","Export chart as image","image"],["PDF","Download as PDF","picture_as_pdf"]];return '<div class="cap">Export this view</div>'+xf.map(function(o){return '<button class="mi" data-action="export-do" data-id="'+pop.id+'" data-fmt="'+o[0]+'">'+ICON(o[2])+o[1]+'</button>';}).join("");}
