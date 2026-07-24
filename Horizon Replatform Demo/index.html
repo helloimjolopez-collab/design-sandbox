@@ -3605,16 +3605,13 @@ function renderSituation(person, c){
 function renderIdentity(person){
   const tagsHtml = person.tags.length ? person.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('') : `<span style="font-size:13px;color:var(--fg3)">No tags</span>`;
   const isIntegration = person.source && person.source !== 'PMM';
-  const sourceKey = (person.source||'PMM').toLowerCase().replace(' ','').replace('crm','');
-  const srcCls = sourceKey === 'rock' ? 'rock' : sourceKey === 'pco' ? 'pco' : 'pmm';
-  const sourceChip = `<span class="source-chip ${srcCls}">${esc(person.source||'PMM')}</span>`;
   const readOnly = isIntegration ? '' : ' contenteditable="true" spellcheck="false"';
   const fieldNote = isIntegration ? `<span style="font-size:11px;color:var(--fg4);margin-left:6px">Read-only, synced from ${esc(person.source)}</span>` : '';
   const orgStatusColor = person.orgStatus==='Active' ? 'var(--green)' : person.orgStatus==='Archived' ? 'var(--grey)' : 'var(--amber)';
   const rescreenRow = person.rescreenDue ? `<div class="ident-field"><div class="ident-lbl">Rescreening due</div><div class="ident-val" style="color:var(--amber)">${esc(person.rescreenDue)}</div></div>` : '';
   return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
     <div class="sec-lbl" style="margin-bottom:0">Identity</div>
-    ${sourceChip}${fieldNote}
+    ${fieldNote}
   </div>
   <div class="ident-grid">
     <div class="ident-field"><div class="ident-lbl">Full legal name</div><div class="ident-val${isIntegration?'':' edit'}"${readOnly}>${esc(person.fullLegal)}</div></div>
