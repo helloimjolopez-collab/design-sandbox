@@ -4694,22 +4694,53 @@ function renderWzStep3(){
 }
 
 function renderWzStep4(){
-  const levelName = LEVELS.find(l=>l.id===STATE.wzLevel)?.name||'—';
-  const rows = STATE.wzPeople.map(p=>`
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r6);margin-bottom:6px">
-      <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]};width:28px;height:28px;font-size:10px">${esc(initials(p.name))}</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(p.name)}</div><div style="font-size:13px;color:var(--fg2)">${esc(p.email)}</div></div>
-      <div style="font-size:12px;color:var(--fg2)">${esc(levelName)}</div>
-      <div style="font-size:13px;color:var(--fg2)">${STATE.wzEmailOn?'Email invite':'Link only'}</div>
-    </div>`).join('');
+  if(!STATE.wzPersonOverrides) STATE.wzPersonOverrides={};
+  const globalLvl = LEVELS.find(l=>l.id===STATE.wzLevel);
+  const globalLevelName = globalLvl?.name||'—';
+  const rows = STATE.wzPeople.map((p,i)=>{
+    const overrideId = STATE.wzPersonOverrides[p.email];
+    const effLvl = overrideId ? LEVELS.find(l=>l.id===overrideId) : globalLvl;
+    const effName = effLvl?.name||globalLevelName;
+    const hasOverride = !!overrideId;
+    const overrideEdit = STATE.wzEditOverride===p.email;
+    const overrideRow = overrideEdit ? `
+      <div style="margin-top:8px;padding:10px;background:var(--surf2);border-radius:var(--r6);border:1px solid var(--border)">
+        <label class="wz-field-label" style="margin-bottom:6px">Override level for ${esc(p.name)}</label>
+        <select onchange="setWzPersonOverride('${esc(p.email)}',this.value)" style="width:100%;border:1px solid var(--border2);border-radius:var(--r6);padding:7px 10px;font-size:13px;color:var(--ink);background:#fff">
+          <option value="">Use default (${esc(globalLevelName)})</option>
+          ${LEVELS.map(l=>`<option value="${l.id}"${(overrideId||'')===(l.id)?'selected':''}>${esc(l.name)}${l.tier==='custom'?' (Custom)':''}</option>`).join('')}
+        </select>
+        <button class="btn-naked-secondary" style="font-size:12px;padding:2px 0;margin-top:6px" onclick="STATE.wzEditOverride=null;renderWizard()">Close</button>
+      </div>` : '';
+    return `
+    <div style="border:1px solid var(--border);border-radius:var(--r6);margin-bottom:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 13px">
+        <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]};width:28px;height:28px;font-size:10px;flex-shrink:0">${esc(initials(p.name))}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">${esc(p.name)}</div>
+          <div style="font-size:12px;color:var(--fg2)">${esc(p.email)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span style="font-size:12px;color:${hasOverride?'var(--brand)':'var(--fg2)'}">${esc(effName)}${hasOverride?' (custom)':''}</span>
+          <button class="btn-naked-secondary" style="font-size:12px;padding:2px 6px" onclick="STATE.wzEditOverride=STATE.wzEditOverride==='${esc(p.email)}'?null:'${esc(p.email)}';renderWizard()">Change</button>
+        </div>
+      </div>
+      ${overrideRow}
+    </div>`;
+  }).join('');
   return `<div class="wz-section-title">Review</div>
     ${rows}
     <div style="margin-top:14px;padding:10px 14px;background:var(--surf2);border-radius:var(--r8);font-size:13px;color:var(--fg2)">
-      <strong style="font-weight:600;color:var(--ink)">Screening level:</strong> ${esc(levelName)} &nbsp;·&nbsp;
-      <strong style="font-weight:600;color:var(--ink)">Delivery:</strong> ${STATE.wzEmailOn?'Email invite sent by PMM':'Invite link generated for admin to share'}
-    </div>
-`;
+      <strong style="font-weight:600;color:var(--ink)">Delivery:</strong> ${STATE.wzEmailOn?'Email invites sent by PMM':'Invite links generated for admin to share'}
+    </div>`;
 }
+
+window.setWzPersonOverride=function(email,lvlId){
+  if(!STATE.wzPersonOverrides) STATE.wzPersonOverrides={};
+  if(!lvlId){delete STATE.wzPersonOverrides[email];}
+  else{STATE.wzPersonOverrides[email]=lvlId;}
+  renderWizard();
+};
 
 let _lvlDropOutsideHandler = null;
 
