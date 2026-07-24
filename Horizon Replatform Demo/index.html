@@ -2811,15 +2811,16 @@ function renderPanelAction(person, c){
       desc='The invite email was not delivered to <strong>' + esc(person.email) + '</strong>. Enter a corrected address to resend, or copy the invite link below to share via another channel.';
       btns=`<button class="btn btn-sm btn-primary" onclick="nsShowEmailFix('${person.id}','${c.id}')">Fix email address</button>`;
     }
-  } else if(DEMO_MODE==='phase-1' && c.status==='order-failed'){
-    cls='bad';title='Order failed: data issue';
-    const reason = c.orderFailureReason||'The applicant information could not be verified by the provider.';
-    desc=reason+' Close this case, communicate the issue to the applicant, and open a new case once the information is corrected.';
-    btns=`<button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button>`;
-  } else if(DEMO_MODE==='phase-1' && c.status==='order-failed'){
-    cls='bad';title='Order failed';
-    desc='PMM could not process this order. Close this case and open a new one to restart. If the problem continues, contact support.';
-    btns=`<button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button><button class="btn btn-sm btn-secondary" onclick="openWizard()">Open new case</button>`;
+  } else if(c.status==='order-failed'){
+    cls='bad';
+    const reason = c.orderFailureReason||'The order could not be processed by Digital Delve. The transaction has been cancelled.';
+    title='Order failed';
+    desc=reason+' Retry the order or close this case.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="retryOrder('${person.id}','${c.id}')">Retry order</button><button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button>`;
+  } else if(c.status==='invite-cancelled'){
+    cls='warn';title='Invite cancelled';
+    desc='The applicant\'s invite link has been invalidated. Issue a new invite to continue with this case.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="toast('Opening invite options...')">Issue new invite</button>`;
   } else if(c.status==='rescreen-due'){
     cls='warn';title='Rescreening due soon';
     desc='This person\'s background check is due for renewal.';
