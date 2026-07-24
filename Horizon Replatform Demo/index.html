@@ -3032,7 +3032,15 @@ function renderLinkManagement(person, c){
   else if(c.via==='flow') deliveredVia = 'Screening flow';
   else if(c.via==='integration') deliveredVia = person.source && person.source!=='PMM' ? person.source : 'CRM integration';
 
-  // Expired state
+  // URL field — grayed and non-interactive if expired
+  const urlField = `
+    <div style="display:flex;align-items:center;border:1px solid ${isExpired?'var(--stroke-static-neutral-subtle)':'var(--stroke-static-neutral-base)'};border-radius:var(--r6);background:${isExpired?'var(--fill-static-neutral-subtle)':'#fff'};overflow:hidden;margin-bottom:8px;${isExpired?'opacity:0.55':''}">
+      <span style="flex:1;font-size:11.5px;color:var(--fg2);padding:6px 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'SF Mono','Fira Code',monospace;min-width:0">${esc(fakeLink)}</span>
+      <button title="Copy link" ${isExpired?'disabled':'onclick="toast(\'Link copied to clipboard\')"'} style="flex-shrink:0;width:32px;height:30px;display:flex;align-items:center;justify-content:center;border:none;border-left:1px solid var(--stroke-static-neutral-subtle);background:var(--fill-static-neutral-subtle);${isExpired?'cursor:not-allowed;':'cursor:pointer;'}color:var(--fg${isExpired?'4':'2'});transition:background 100ms" ${isExpired?'':' onmouseover="this.style.background=\'var(--fill-static-neutral-base)\'" onmouseout="this.style.background=\'var(--fill-static-neutral-subtle)\'"'}>
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="10" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M4 13H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>`;
+
   if(isExpired){
     const defaultExpiry = c.originalExpiry || '90 days';
     const renewLabel = isEmailInvite ? 'Renew Link &amp; Resend Invite' : 'Renew Link';
@@ -3042,33 +3050,28 @@ function renderLinkManagement(person, c){
     return `
     <div class="link-mgmt">
       <div style="font-size:12px;font-weight:500;color:var(--fg3);margin-bottom:8px">Invite link</div>
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--fill-static-neutral-subtle);border:1px solid var(--stroke-static-neutral-subtle);border-radius:var(--r6)">
-        <svg width="14" height="14" style="color:var(--fg3);flex-shrink:0;margin-top:2px" viewBox="0 0 24 24"><use href="#ms-link-off"/></svg>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:500;color:var(--ink)">Link expired <span style="color:var(--fg3);font-weight:400">${esc(expiryDate)}</span></div>
-          <div style="font-size:12px;color:var(--fg3);margin-top:2px;line-height:1.4">The applicant did not complete the consent form before the link expired.</div>
-          <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start">
-            <button class="btn btn-sm btn-primary" onclick="toast('${renewToast}');closeAllMenus()">${renewLabel}</button>
-            <button class="btn btn-ghost btn-xs" style="color:var(--fg3);padding:0;font-size:12px" onclick="openExtendExpiry('${c.id}','${expiryDate}')">Use a different expiry date</button>
-          </div>
+      ${urlField}
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--fg3)">
+          ${esc(deliveredVia)} &nbsp;·&nbsp; <span style="color:var(--red);font-weight:500">Expired ${esc(expiryDate)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-primary" onclick="toast('${renewToast}')">${renewLabel}</button>
+          <button class="btn btn-ghost btn-xs" style="color:var(--fg3);font-size:12px" onclick="openExtendExpiry('${c.id}','${expiryDate}')">Different expiry</button>
         </div>
       </div>
     </div>`;
   }
 
+  // Bounced: link is still valid — note it above the URL field, no duplicate "fix email" button (that's in the action banner)
+  const bounceNote = isBounced ? `
+    <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--fill-static-neutral-subtle);border-radius:var(--r6);margin-bottom:8px">
+      <svg width="12" height="12" style="color:var(--fg3);flex-shrink:0" viewBox="0 0 24 24"><use href="#ms-info"/></svg>
+      <span style="font-size:12px;color:var(--fg3)">The invite link is still valid — copy it below to share via another channel.</span>
+    </div>` : '';
+
   const expiryColor = isExpiring ? 'var(--amber)' : 'var(--fg3)';
   const expiryWeight = isExpiring ? '600' : '400';
-
-  const bounceAlert = isBounced ? `
-    <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--fill-static-negative-subtle);border:1px solid var(--stroke-static-negative-base);border-radius:var(--r6);margin-bottom:10px">
-      <svg width="14" height="14" style="color:var(--red);flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><use href="#ms-error-outline"/></svg>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:600;color:var(--red)">Email not delivered to ${esc(person.email)}</div>
-        <div style="margin-top:7px;display:flex;gap:5px;flex-wrap:wrap">
-          <button class="btn btn-sm btn-primary" onclick="toast('Opening email editor…')">Fix address &amp; resend</button>
-        </div>
-      </div>
-    </div>` : '';
 
   const moreMenu = !isCancelled ? `
     <div style="position:relative;display:inline-block">
@@ -3080,7 +3083,7 @@ function renderLinkManagement(person, c){
         <div class="drop-item" onclick="toast('Link copied to clipboard');closeAllMenus()">
           <svg width="13" height="13" viewBox="0 0 20 20"><use href="#ic-link"/></svg>Copy link
         </div>
-        ${isEmailInvite ? `<div class="drop-item" onclick="toast('Invite resent to ${esc(person.email)}');closeAllMenus()">
+        ${isEmailInvite && !isBounced ? `<div class="drop-item" onclick="toast('Invite resent to ${esc(person.email)}');closeAllMenus()">
           <svg width="13" height="13" viewBox="0 0 24 24"><use href="#ms-mail"/></svg>Resend email
         </div>` : ''}
         <div class="drop-item" onclick="openExtendExpiry('${c.id}','${expiryDate}');closeAllMenus()">
@@ -3096,14 +3099,8 @@ function renderLinkManagement(person, c){
   return `
     <div class="link-mgmt">
       <div style="font-size:12px;font-weight:500;color:var(--fg3);margin-bottom:8px">Invite link</div>
-      ${bounceAlert}
-      <!-- URL field with inline copy icon -->
-      <div style="display:flex;align-items:center;border:1px solid var(--stroke-static-neutral-base);border-radius:var(--r6);background:#fff;overflow:hidden;margin-bottom:8px">
-        <span style="flex:1;font-size:11.5px;color:var(--fg2);padding:6px 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'SF Mono','Fira Code',monospace;min-width:0">${esc(fakeLink)}</span>
-        <button title="Copy link" onclick="toast('Link copied to clipboard')" style="flex-shrink:0;width:32px;height:30px;display:flex;align-items:center;justify-content:center;border:none;border-left:1px solid var(--stroke-static-neutral-subtle);background:var(--fill-static-neutral-subtle);cursor:pointer;color:var(--fg2);transition:background 100ms" onmouseover="this.style.background='var(--fill-static-neutral-base)'" onmouseout="this.style.background='var(--fill-static-neutral-subtle)'">
-          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="10" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M4 13H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        </button>
-      </div>
+      ${bounceNote}
+      ${urlField}
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
         <div style="font-size:12px;color:var(--fg3)">
           ${esc(deliveredVia)} &nbsp;·&nbsp;
