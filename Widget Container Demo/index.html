@@ -199,6 +199,11 @@
   .scope-chip .sc-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .dep-hd-top .scope-chip{min-width:0;flex:0 1 auto;align-self:center;justify-self:start;}
   .dep-hd-toggle{display:flex;justify-content:flex-end;align-self:center;}
+  /* KPI number/badge always starts in column 1 (left), even when the header top row has nothing in column 2 (e.g. Remittance, Fixed Assets) */
+  .dep-hd-num>*:first-child{grid-column:1;justify-self:start;}
+  /* Multi-column table totals reuse the row column structure so numbers sit under their columns */
+  .gft-total-row{border-top:1.5px solid var(--stroke-widget);font-weight:600;padding-top:9px;margin-top:2px;}
+  .fa-total-row{border-top:1.5px solid var(--stroke-widget);font-weight:600;padding-top:8px;margin-top:2px;}
   .tbl-search{display:flex;justify-content:flex-end;padding:2px 14px 8px;}
   .tbl-search .dep-search{flex:0 0 auto;width:230px;max-width:60%;}
   .dep-search{flex:1 1 auto;min-width:70px;max-width:240px;display:flex;align-items:center;gap:5px;border:1px solid var(--stroke-widget);border-radius:8px;padding:4px 8px;background:var(--surface-widget);}
@@ -5722,8 +5727,8 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(!list.length)return '<div class="fa-tbl"><div class="state fa-inline-empty" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No assets in this group</div><div class="state-sub">Nothing is assigned to '+faGroupLabel(w)+' under '+faDimLabel(faDim(w))+' yet.</div></div></div>';
     var head='<div class="wt-row wt-head fa-row"><span class="fa-c-tag">Tag #</span><span class="fa-c-name">Name</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+faMeasureLabel(c)+'</span>';}).join("")+'</div>';
     var body=list.map(function(a){return '<div class="wt-row fa-row" data-acct="'+a.name.replace(/"/g,"&quot;")+'"><span class="fa-c-tag">'+a.tag+'</span><span class="fa-c-name">'+a.name+'</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+money(a[c])+'</span>';}).join("")+'</div>';}).join("");
-    var totals='<div class="dep-total fa-total"><span>Total ('+list.length+')</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+money(faSum(list,c))+'</span>';}).join("")+'</div>';
-    return '<div class="fa-tbl"><div class="scroll fa-tbl-scroll">'+head+body+'</div>'+totals+'</div>';}
+    var totals='<div class="fa-row fa-total-row"><span class="fa-c-tag"></span><span class="fa-c-name">Total ('+list.length+(list.length===1?" asset":" assets")+')</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+money(faSum(list,c))+'</span>';}).join("")+'</div>';
+    return '<div class="fa-tbl"><div class="scroll fa-tbl-scroll">'+head+body+totals+'</div></div>';}
   function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){return s+r.val;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
     var selName=(faGroup(w)===FA_NA)?FA_NA_LABEL:(faGroup(w)===FA_ALL?null:faGroup(w));
     if(!rows.length)return '<div class="fa-pie"><div class="state fa-inline-empty" data-kind="empty">'+ICON("donut_large")+'<div class="state-title">Nothing to chart</div><div class="state-sub">No group has a '+faMeasureLabel(faMeasure(w)).toLowerCase()+' above zero.</div></div></div>';
