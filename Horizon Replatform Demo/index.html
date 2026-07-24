@@ -192,42 +192,38 @@ input,select,textarea{font-family:inherit}
 /* App body — horizontal flex below topnav */
 .app-body{flex:1;display:flex;overflow:hidden;min-height:0;background:#eef2fb}
 
-/* Sidebar — Pathway SideNav tokens (verified from Storybook computed CSS + sidenav.html spec)
-   Surface/Nav/Light                       #fafafa  ← SideNav container background
-   Fill/Contextual/NavItem/Base            #fafafa  (transparent at rest)
-   Fill/Contextual/NavItem/Hover           rgba(17,17,17,.04)   brand-900 @ 4%
-   Fill/Contextual/NavItem/Active          rgba(10,18,35,.08)   brand-900 @ 8%
-   Fill/Contextual/NavItem/Trail           rgba(17,17,17,.02)
-   Fill/Static/Info/Subtle                 #edf0f9  ← divider + nav border-right
-   Text/Contextual/NavItem/Base            #363636  brand-cool-neutral-170
-   Text/Contextual/NavItem/Hover           #252525
-   Text/Contextual/NavItem/Active          #22386b  brand-600
-   Icon/Contextual/NavItem/Base            #4b4b4b
-   Icon/Contextual/NavItem/Hover           #363636
-   Icon/Contextual/NavItem/Active          #345499  brand-400 (also indicator stripe)
-   Label/Menu/L/Medium                     16px / 500 / 22px / Red Hat Text / 0px ls
-   Item min-height: 48px · Radius: 8px · Container H-pad: 12px · Icon size: 24px */
-/* SideNav — Pathway DS contract: 240px expanded, 72px collapsed rail, semantic navitem tokens */
-.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #f6f6f6;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;transition:width 250ms cubic-bezier(.2,0,0,1),min-width 250ms cubic-bezier(.2,0,0,1)}
-.nav-header{display:flex;align-items:center;justify-content:flex-end;padding:8px 10px;border-bottom:1px solid #f6f6f6;position:sticky;top:0;background:#fff;z-index:2;flex-shrink:0}
-.nav-header-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:none;background:transparent;color:#6b6b6b;cursor:pointer;border-radius:6px}
-.nav-header-btn:hover{background:rgba(17,17,17,.04);color:#313131}
-.nav-section{padding:8px 0 4px;display:flex;flex-direction:column;gap:6px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:0 8px 0 16px;min-height:44px;border-radius:8px;margin:0 8px;color:#313131;font-size:14px;font-weight:500;line-height:20px;letter-spacing:.3px;cursor:pointer;transition:background 200ms cubic-bezier(.4,0,.2,1);border:none;background:transparent;width:calc(100% - 16px);text-align:left;position:relative;overflow:hidden;white-space:nowrap}
-/* indicator stripe — always present, painted only when active (Pathway sidenav spec §7) */
-.nav-item::before{content:'';display:block;position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:4px;background:transparent}
+/* SideNav — Pathway SideNav.Local (components/sidenav/sidenav-spec.md)
+   Surface/Nav/Light                #fafafa   container background
+   Stroke/Static/Neutral/Light      #f6f6f6   0.5px border-right (stroked variant) + NavHeader divider
+   Fill/Contextual/NavItem/Hover    rgba(17,17,17,.02)
+   Fill/Contextual/NavItem/Active   rgba(160,181,230,.16)
+   Text base #313131 / hover #252525 / active #1b2d57
+   Icon base #484848 / hover #313131 / active #2d4889 (also indicator stripe)
+   Label/Menu/Base/Medium           14px / 500 / 20px / 0.3px
+   Item min-height 44px · radius 8px · gap 6px · expanded 240px px-16 · rail 72px px-12 */
+.sidebar{width:240px;min-width:240px;background:#fafafa;border-right:0.5px solid #f6f6f6;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;transition:width var(--motion-duration-6,460ms) var(--motion-easing-emphasized,cubic-bezier(.32,.72,0,1)),min-width var(--motion-duration-6,460ms) var(--motion-easing-emphasized,cubic-bezier(.32,.72,0,1))}
+/* NavHeader — 48px pinned row, 12x12 action icon right-aligned (expanded) / centered (collapsed), 1px divider below */
+.nav-header{display:flex;align-items:center;justify-content:flex-end;height:48px;min-height:48px;padding:0 16px;border-bottom:1px solid #f6f6f6;position:sticky;top:0;background:#fafafa;z-index:2;flex-shrink:0}
+.nav-header-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:none;background:transparent;color:#6b6b6b;cursor:pointer;border-radius:8px}
+.nav-header-btn:hover{background:rgba(17,17,17,.02)}
+.nav-section{padding:8px 16px 4px;display:flex;flex-direction:column;gap:6px;transition:padding var(--motion-duration-6,460ms) var(--motion-easing-emphasized,cubic-bezier(.32,.72,0,1))}
+.nav-item{display:flex;align-items:center;gap:10px;padding:0 8px 0 12px;min-height:44px;border-radius:8px;margin:0;color:#313131;font-family:var(--font-family);font-size:14px;font-weight:500;line-height:20px;letter-spacing:.3px;cursor:pointer;transition:background var(--motion-duration-2,150ms) var(--motion-easing-standard,cubic-bezier(.4,0,.2,1));border:none;background:transparent;width:100%;text-align:left;position:relative;overflow:hidden;white-space:nowrap}
+/* indicator.stripe — always present in DOM, painted only when active (sidenav-spec §7): 4px wide, r 0 8 8 0, 4px v-inset */
+.nav-item::before{content:'';display:block;position:absolute;left:0;top:4px;bottom:4px;width:4px;border-radius:0 8px 8px 0;background:transparent}
 .nav-item:hover{background:rgba(17,17,17,.02);color:#252525}
 .nav-item.active{background:rgba(160,181,230,.16);color:#1b2d57}
 .nav-item.active::before{background:#2d4889}
-.nav-icon{width:20px;height:20px;flex-shrink:0;color:#484848}
+/* Icon.Leading — 16px glyph (24px wrapper equivalent achieved via item padding + gap) */
+.nav-icon{width:16px;height:16px;flex-shrink:0;color:#484848;transition:color var(--motion-duration-2,150ms) var(--motion-easing-standard,cubic-bezier(.4,0,.2,1))}
 .nav-item:hover .nav-icon{color:#313131}
 .nav-item.active .nav-icon{color:#2d4889}
-.nav-lbl{overflow:hidden;text-overflow:ellipsis;transition:opacity 150ms}
-/* Collapsed 72px rail — icons only */
+.nav-lbl{overflow:hidden;text-overflow:ellipsis;max-width:200px;transition:opacity var(--motion-duration-3,200ms) var(--motion-easing-standard,cubic-bezier(.4,0,.2,1)),max-width var(--motion-duration-6,460ms) var(--motion-easing-emphasized,cubic-bezier(.32,.72,0,1))}
+/* Collapsed 72px rail — 12px padding + 48px icon-only items, 44px tall */
 .sidebar.collapsed{width:72px;min-width:72px}
-.sidebar.collapsed .nav-lbl{opacity:0;width:0}
-.sidebar.collapsed .nav-item{padding:0;justify-content:center;gap:0}
-.sidebar.collapsed .nav-header{justify-content:center}
+.sidebar.collapsed .nav-lbl{opacity:0;max-width:0}
+.sidebar.collapsed .nav-section{padding:8px 12px 4px}
+.sidebar.collapsed .nav-item{padding:0;width:48px;justify-content:center;gap:0}
+.sidebar.collapsed .nav-header{justify-content:center;padding:0}
 
 /* Main */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:#fff;border-radius:16px 16px 0 0;box-shadow:rgba(0,0,0,.04) 0 1px 3px,rgba(0,0,0,.08) 0 8px 24px -12px;position:relative}
