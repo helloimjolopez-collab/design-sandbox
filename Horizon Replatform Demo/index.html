@@ -2544,6 +2544,176 @@ function retryOrder(pid, cid){
   if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
 }
 
+/* ─── Invite management helpers ──────────────────────────────────── */
+function copyInviteLink(pid, cid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases.find(x=>x.id===cid);
+  const link = (c && c.inviteLink) ? c.inviteLink : `https://screening.pmm.com/consent/${pid.substring(1)}a4f9c`;
+  toast('Invite link copied: ' + link);
+}
+
+function showResendConfirm(pid, cid){
+  const person = personById(pid);
+  if(!person) return;
+  showConfirm({
+    title: 'Resend invite email?',
+    body: `A fresh invite email will be sent to <strong>${esc(person.email)}</strong>. The same invite link will be used. The expiry date does not change.`,
+    cancelLabel: 'Cancel',
+    actionLabel: 'Resend',
+    actionStyle: 'background:var(--brand);color:#fff',
+    onConfirm(){
+      const c = person.cases.find(x=>x.id===cid);
+      if(c){ c.events = c.events||[]; c.events.push({type:'done',title:'Invite email resent by admin',date:todayStr(),time:'',by:'Admin'}); }
+      renderTable(); renderHomeTable();
+      toast(`Invite resent to ${person.email}.`);
+      if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+    }
+  });
+}
+
+function showSendDifferentEmail(pid, cid){
+  closeAllMenus();
+  const person = personById(pid);
+  if(!person) return;
+  // Reuse confirm dialog with a custom body that has an input field
+  const inputId = `sed-input-${cid}`;
+  document.getElementById('confirm-title').textContent = 'Send to a different email';
+  document.getElementById('confirm-body').innerHTML = `
+    <div style="margin-bottom:10px">Enter an alternate email address. The same invite link will be delivered there. The person record email is not changed.</div>
+    <input id="${inputId}" type="email" placeholder="alternate@email.com" style="width:100%;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--r6);font-size:14px;box-sizing:border-box" autofocus>
+    <div style="font-size:12px;color:var(--fg3);margin-top:6px">Record email: ${esc(person.email)}</div>`;
+  const cancelBtn = document.querySelector('#confirm-modal .modal-foot .btn-secondary');
+  cancelBtn.textContent = 'Cancel';
+  const btn = document.getElementById('confirm-action-btn');
+  btn.textContent = 'Send';
+  btn.style.cssText = 'background:var(--brand);color:#fff';
+  btn.onclick = ()=>{
+    const altEmail = document.getElementById(inputId)?.value?.trim();
+    if(!altEmail){ alert('Please enter a valid email address.'); return; }
+    closeConfirm();
+    const c = person.cases.find(x=>x.id===cid);
+    if(c){ c.events = c.events||[]; c.events.push({type:'done',title:`Invite sent to alternate address: ${altEmail}`,date:todayStr(),time:'',by:'Admin'}); }
+    renderTable(); renderHomeTable();
+    toast(`Invite sent to ${altEmail}.`);
+    if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+  };
+  document.getElementById('confirm-modal').classList.add('open');
+  setTimeout(()=>document.getElementById(inputId)?.focus(), 100);
+}
+
+/* ─── Happy-path demo simulation for Jordan Lee ─────────────────── */
+function simulateConsentSubmitted(pid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases[0];
+  if(!c) return;
+  c.status = 'consent-received';
+  c.consentForm = {submittedDate: todayStr(), nameOnForm: person.fullLegal, nameOnRecord: person.fullLegal, mismatch: false};
+  c.events = c.events||[];
+  c.events.push({type:'done',title:'Consent form submitted',date:todayStr(),time:'',by:'Applicant'});
+  c.events.push({type:'done',title:'Order placed automatically',date:todayStr(),time:'',by:'Auto'});
+  renderTable(); renderHomeTable();
+  toast('Consent received. Order placed automatically.');
+  // Auto-advance to order-processing after a beat
+  setTimeout(()=>{
+    c.status = 'order-processing';
+    if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+    renderTable(); renderHomeTable();
+  }, 800);
+  if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+}
+
+function simulateReportReceived(pid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases[0];
+  if(!c) return;
+  c.status = 'awaiting-assessment';
+  c.report = {refId:'DD-2026-JL01',receivedDate:todayStr(),hits:'No disqualifying records found'};
+  c.events = c.events||[];
+  c.events.push({type:'done',title:'Report received from Digital Delve',date:todayStr(),time:'',by:'System'});
+  renderTable(); renderHomeTable();
+  toast('Report received. Assessment required.');
+  if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+}
+
+/* ─── Re-invite modal (for expired invites) ─────────────────────── */
+function openReinviteModal(pid, cid){
+  closeAllMenus();
+  const person = personById(pid);
+  if(!person) return;
+  const modalId = 'reinvite-modal';
+  let modal = document.getElementById(modalId);
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = modalId;
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `<div class="modal-box" style="max-width:440px">
+      <div class="modal-hd"><span class="modal-title" id="reinvite-modal-title">Re-invite applicant</span><button class="icon-btn" onclick="document.getElementById('${modalId}').classList.remove('open')"><svg width="16" height="16" viewBox="0 0 20 20"><use href="#ic-x"/></svg></button></div>
+      <div class="modal-body" id="reinvite-modal-body"></div>
+      <div class="modal-foot" id="reinvite-modal-foot"></div>
+    </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('reinvite-modal-title').textContent = `Re-invite ${person.name}`;
+  document.getElementById('reinvite-modal-body').innerHTML = `
+    <p style="font-size:14px;color:var(--fg2);margin-bottom:18px">The previous invite link has expired. Choose how to send the new invite link to the applicant.</p>
+    <div id="reinvite-method" style="display:flex;flex-direction:column;gap:8px">
+      <label style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border2);border-radius:var(--r8);cursor:pointer;background:#fff" id="reinvite-opt-email">
+        <input type="radio" name="reinvite-method" value="email" checked style="margin-top:2px;accent-color:var(--brand)">
+        <div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink)">Send email invite</div>
+          <div style="font-size:12px;color:var(--fg3);margin-top:2px">PMM sends a new invite email to <strong>${esc(person.email)}</strong></div>
+        </div>
+      </label>
+      <label style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border2);border-radius:var(--r8);cursor:pointer;background:#fff" id="reinvite-opt-link">
+        <input type="radio" name="reinvite-method" value="link" style="margin-top:2px;accent-color:var(--brand)">
+        <div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink)">Generate a person-bound link</div>
+          <div style="font-size:12px;color:var(--fg3);margin-top:2px">Copy and send the link yourself. The link is tied to this person.</div>
+        </div>
+      </label>
+    </div>
+    <div style="margin-top:14px">
+      <label class="wz-field-label">Expiry</label>
+      <select id="reinvite-expiry" style="width:100%;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--r6);font-size:13px;background:#fff">
+        <option value="30">30 days</option>
+        <option value="60">60 days</option>
+        <option value="90" selected>90 days</option>
+      </select>
+    </div>`;
+  document.getElementById('reinvite-modal-foot').innerHTML = `
+    <button class="btn btn-secondary" onclick="document.getElementById('${modalId}').classList.remove('open')">Cancel</button>
+    <button class="btn btn-primary" onclick="confirmReinvite('${pid}','${cid}')">Send invite</button>`;
+  modal.classList.add('open');
+}
+
+function confirmReinvite(pid, cid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases.find(x=>x.id===cid);
+  if(!c) return;
+  const method = document.querySelector('input[name="reinvite-method"]:checked')?.value || 'email';
+  const expiry = document.getElementById('reinvite-expiry')?.value || '90';
+  const expiryLabel = `${expiry} days`;
+  c.status = 'invite-sent';
+  if(c.p1Status) c.p1Status = 'invite-sent';
+  c.inviteExpiry = expiryLabel;
+  c.via = method === 'email' ? 'invite' : 'manual';
+  c.events = c.events||[];
+  c.events.push({type:'done',title:`New invite ${method==='email'?'email sent':'link generated'} (expires in ${expiryLabel})`,date:todayStr(),time:'',by:'Admin'});
+  document.getElementById('reinvite-modal').classList.remove('open');
+  renderTable(); renderHomeTable();
+  if(method === 'email'){
+    toast(`New invite sent to ${person.email}.`);
+  } else {
+    const newLink = `https://screening.pmm.com/consent/${pid.substring(1)}-${Date.now().toString(36)}`;
+    toast(`New invite link generated. Copy: ${newLink}`);
+  }
+  if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+}
+
 /* ─── Archive person ──────────────────────────────────────────────── */
 function archivePerson(pid){
   const person = personById(pid);
