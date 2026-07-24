@@ -185,24 +185,27 @@ input,select,textarea{font-family:inherit}
    Icon/Contextual/NavItem/Active          #345499  brand-400 (also indicator stripe)
    Label/Menu/L/Medium                     16px / 500 / 22px / Red Hat Text / 0px ls
    Item min-height: 48px · Radius: 8px · Container H-pad: 12px · Icon size: 24px */
-.sidebar{width:250px;min-width:250px;background:#fafafa;border-right:1px solid #edf0f9;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-.nav-section{padding:8px 0 4px}
-.nav-sep{font-size:12px;font-weight:600;color:#606060;text-transform:uppercase;letter-spacing:.06em;padding:8px 4px 4px 20px;min-height:40px;display:flex;align-items:flex-end}
-.nav-item{display:flex;align-items:center;gap:10px;padding:0 8px 0 12px;min-height:44px;border-radius:8px;margin:1px 8px;color:#313131;font-size:14px;font-weight:500;line-height:20px;letter-spacing:.3px;cursor:pointer;transition:background 200ms cubic-bezier(.4,0,.2,1);border:none;background:transparent;width:calc(100% - 16px);text-align:left;position:relative}
-.nav-item::before{display:none}
-.nav-item:hover{background:rgba(17,17,17,.04);color:#252525}
+/* SideNav — Pathway DS contract: 240px expanded, 72px collapsed rail, semantic navitem tokens */
+.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #f6f6f6;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;transition:width 250ms cubic-bezier(.2,0,0,1),min-width 250ms cubic-bezier(.2,0,0,1)}
+.nav-header{display:flex;align-items:center;justify-content:flex-end;padding:8px 10px;border-bottom:1px solid #f6f6f6;position:sticky;top:0;background:#fff;z-index:2;flex-shrink:0}
+.nav-header-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:none;background:transparent;color:#6b6b6b;cursor:pointer;border-radius:6px}
+.nav-header-btn:hover{background:rgba(17,17,17,.04);color:#313131}
+.nav-section{padding:8px 0 4px;display:flex;flex-direction:column;gap:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:0 8px 0 16px;min-height:44px;border-radius:8px;margin:0 8px;color:#313131;font-size:14px;font-weight:500;line-height:20px;letter-spacing:.3px;cursor:pointer;transition:background 200ms cubic-bezier(.4,0,.2,1);border:none;background:transparent;width:calc(100% - 16px);text-align:left;position:relative;overflow:hidden;white-space:nowrap}
+/* indicator stripe — always present, painted only when active (Pathway sidenav spec §7) */
+.nav-item::before{content:'';display:block;position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:4px;background:transparent}
+.nav-item:hover{background:rgba(17,17,17,.02);color:#252525}
 .nav-item.active{background:rgba(160,181,230,.16);color:#1b2d57}
-.nav-item.active::before{display:none}
+.nav-item.active::before{background:#2d4889}
 .nav-icon{width:20px;height:20px;flex-shrink:0;color:#484848}
 .nav-item:hover .nav-icon{color:#313131}
 .nav-item.active .nav-icon{color:#2d4889}
-.dept-section{padding:12px 0 8px;border-top:1px solid #edf0f9;margin-top:4px}
-.dept-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 8px 20px;border-radius:0;color:#363636;font-size:14px;cursor:pointer;transition:background 100ms;min-height:40px}
-.dept-item:hover{background:rgba(17,17,17,.04);color:#252525}
-.dept-item.active{background:rgba(10,18,35,.08);color:#22386b;font-weight:600}
-.dept-count{font-size:12px;font-weight:600;background:rgba(52,84,153,.12);color:#345499;border-radius:10px;padding:1px 7px}
-.nav-collapse{display:flex;align-items:center;gap:8px;padding:12px 12px 12px 20px;color:#4b4b4b;font-size:14px;font-weight:500;background:transparent;border:none;border-top:1px solid #edf0f9;width:100%;cursor:pointer;transition:background 100ms;margin-top:auto}
-.nav-collapse:hover{background:rgba(17,17,17,.04);color:#252525}
+.nav-lbl{overflow:hidden;text-overflow:ellipsis;transition:opacity 150ms}
+/* Collapsed 72px rail — icons only */
+.sidebar.collapsed{width:72px;min-width:72px}
+.sidebar.collapsed .nav-lbl{opacity:0;width:0}
+.sidebar.collapsed .nav-item{padding:0;justify-content:center;gap:0}
+.sidebar.collapsed .nav-header{justify-content:center}
 
 /* Main */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:#fff;border-radius:16px 16px 0 0;box-shadow:rgba(0,0,0,.04) 0 1px 3px,rgba(0,0,0,.08) 0 8px 24px -12px;position:relative}
