@@ -3171,7 +3171,7 @@ function renderSituation(person, c){
     desc=`${c.assessment?.notes||'This person should not be activated in this role.'}`;
     acts=`<button class="btn btn-sm btn-secondary" data-open-report="${c.id}">View report</button><button class="btn btn-sm btn-ghost" onclick="toast('Adverse action process started')">Begin adverse action</button>`;
   } else if(c.status==='cleared'){
-    cls='sit-cleared';title=`Cleared for ${c.checkType} — ${c.assessment?.date||''}.`;
+    cls='sit-cleared';title=`Cleared for ${c.checkType}, ${c.assessment?.date||''}.`;
     desc='This person\'s current check is on file and valid.';
   } else if(c.status==='due-rescreening'){
     cls='sit-warn';title='Rescreening due soon.';
@@ -3182,14 +3182,14 @@ function renderSituation(person, c){
     desc='The applicant has not yet submitted their consent form. Resend or extend the link.';
     acts=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent to ${esc(person.email)}')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="openExtendExpiry('${c.id}','${c.inviteExpiry||'in 3 days'}')">Change expiry date</button>`;
   } else if(c.status==='invite-expired'){
-    cls='sit-bad';title='Invite link expired — no consent received.';
+    cls='sit-bad';title='Invite link expired. No consent received.';
     desc='Re-invite this person to start a new consent collection.';
     acts=`<button class="btn btn-sm btn-primary" onclick="toast('New invite sent')">Re-invite</button>`;
   } else if(c.status==='screening-progress'){
     cls='sit-progress';title='Background check in progress.';
     desc='The check has been submitted to the provider. Waiting for the report.';
   } else if(c.status==='email-bounced'){
-    cls='sit-action';title='Invite email bounced — not delivered.';
+    cls='sit-action';title='Invite email bounced: not delivered.';
     desc='Correct the email address and resend, or copy the link to share another way.';
     acts=`<button class="btn btn-sm btn-primary" onclick="toast('Opening email correction…')">Fix email and resend</button>`;
   } else {
