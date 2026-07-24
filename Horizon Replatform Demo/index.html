@@ -2640,6 +2640,7 @@ function copyInviteLink(pid, cid){
   if(!person) return;
   const c = person.cases.find(x=>x.id===cid);
   const link = (c && c.inviteLink) ? c.inviteLink : `https://pmm.ministrybrands.com/consent/${pid.substring(1)}a4f9c`;
+  if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
   toast('Invite link copied to clipboard.');
 }
 
