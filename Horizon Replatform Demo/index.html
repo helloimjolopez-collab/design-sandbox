@@ -6281,10 +6281,15 @@ function renderPanelBody(person, targetCaseId){
           <div class="pnl-card-body">${renderIdentityCompact(person)}</div>
         </div>
         <div class="pnl-card">
-          <div class="pnl-card-hd"><span class="pnl-card-title">Notes</span></div>
+          <div class="pnl-card-hd">
+            <span class="pnl-card-title">Notes</span>
+            <div class="seg-toggle">
+              <button class="active" onclick="this.classList.add('active');this.nextElementSibling.classList.remove('active')">Newest First</button>
+              <button onclick="this.classList.add('active');this.previousElementSibling.classList.remove('active')">Oldest First</button>
+            </div>
+          </div>
           <div class="pnl-card-body">
-            <textarea id="person-notes-${person.id}" class="ra-notes" style="width:100%;min-height:72px;resize:vertical" placeholder="Add internal notes about this person…" onchange="savePersonNote('${person.id}',this.value)">${esc(person.notes||'')}</textarea>
-            <div style="font-size:12px;color:var(--fg4);margin-top:4px">Internal only, not visible to the applicant.</div>
+            <textarea id="person-notes-${person.id}" class="note-input" placeholder="Add new note..." onchange="savePersonNote('${person.id}',this.value)">${esc(person.notes||'')}</textarea>
           </div>
         </div>
       </div>
