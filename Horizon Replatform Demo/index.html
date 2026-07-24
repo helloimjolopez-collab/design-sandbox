@@ -2789,7 +2789,7 @@ function renderViaBadge(c, person){
 function canCancelCase(c){
   // Use effective status (Phase 1 may override)
   const s = (DEMO_MODE==='phase-1' && c.p1Status) ? c.p1Status : c.status;
-  const locked = ['order-submitted','screening-progress','screening-error','order-failed','awaiting-assessment','cleared','needs-review','escalated','order-retrying'];
+  const locked = ['order-submitted','screening-progress','screening-error','order-failed','awaiting-assessment','cleared','needs-review','escalated'];
   // Phase 1: allow cancel on order-failed-data and order-failed-final
   if(DEMO_MODE==='phase-1' && (s==='order-failed-data'||s==='order-failed-final')) return true;
   return !locked.includes(s);
@@ -3163,7 +3163,7 @@ function renderSituation(person, c){
   const assess = c.assessment;
   let cls='sit-progress', title='', desc='', acts='';
   if(c.status==='awaiting-assessment'){
-    cls='sit-action';title='Report received — record your assessment.';
+    cls='sit-action';title='Report received. Record your assessment.';
     desc='The background check report has been returned. Review it and record Cleared or Escalated.';
     acts=`<button class="btn btn-sm btn-primary" data-open-report="${c.id}">Review report &amp; assess</button>`;
   } else if(c.status==='escalated'){
