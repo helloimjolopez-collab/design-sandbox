@@ -3910,7 +3910,11 @@ function openReport(caseId, e){
     const notes = document.getElementById('ra-notes-input').value;
     if((selE||selNR) && !notes){toast('Notes required for this outcome');return}
     c.assessment = {outcome, date: fmtDate(new Date()), author:'Admin', notes};
-    c.status = selC ? 'complete-cleared' : selNR ? 'complete-needs-review' : 'complete-escalated';
+    const newStatus = selC ? 'complete-cleared' : selNR ? 'complete-needs-review' : 'complete-escalated';
+    c.status = newStatus;
+    if(c.p1Status) c.p1Status = newStatus;
+    c.events = c.events||[];
+    c.events.push({type:'done',title:'Assessment recorded: '+outcome,date:todayStr(),time:nowTime(),by:'Admin'});
     renderHomeTable();
     if(STATE.currentPerson) renderPanelBody(STATE.currentPerson);
     closeReport();
