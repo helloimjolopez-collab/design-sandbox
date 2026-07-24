@@ -2526,7 +2526,8 @@ function remContent(w){
   if(w.size==="kpi")return remGlance(w);
   if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
   var mh=remHeaderBlock(w);
-  return mh+'<div class="rem-body">'+remTable(w,w.size==="xwide")+'</div>';
+  if(w.size==="xwide")return mh+'<div class="rem-body"><section class="dep-col rem-col"><div class="dep-col-h">Pacing by activity</div>'+remTable(w,true)+'</section></div>';
+  return mh+'<div class="rem-body">'+remTable(w,false)+'</div>';
 }
 
 /* ---- drill: payment history focus overlay (modal.type "remdetail") --- */
