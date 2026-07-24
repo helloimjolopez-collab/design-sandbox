@@ -2012,9 +2012,10 @@ const CST_STATUS_LABELS = {
 
 function renderCheckTypeChip(checkType){
   const info = CHECK_TYPE_INFO[checkType];
-  if(!info) return `<span class="chip chip-trunc"><span class="chip-txt">${esc(checkType)}</span></span>`;
+  const dot = `<span style="width:6px;height:6px;border-radius:50%;background:#717680;flex-shrink:0"></span>`;
+  if(!info) return `<span class="chip chip-trunc">${dot}<span class="chip-txt">${esc(checkType)}</span></span>`;
   const tipText = info.checks.map(c=>`• ${c}`).join('\n');
-  return `<span class="chip chip-trunc" data-tip="${esc(tipText)}" style="cursor:help"><svg width="11" height="11" viewBox="0 0 20 20" style="flex-shrink:0;color:var(--fg4)"><use href="#ic-shield-fill"/></svg><span class="chip-txt">${esc(checkType)}</span></span>`;
+  return `<span class="chip chip-trunc" data-tip="${esc(tipText)}" style="cursor:help">${dot}<span class="chip-txt">${esc(checkType)}</span></span>`;
 }
 
 function renderCstTypeChip(typeId){
