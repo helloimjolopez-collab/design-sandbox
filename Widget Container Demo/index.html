@@ -2411,10 +2411,9 @@ function remPaceBadge(t){
    reinforces status (paid-in-full deepest, behind lightest); it is not the
    sole signal. aria-hidden: the figures are text in the row + sr-only. */
 function remBar(r){
-  var fill=Math.min(100,Math.max(2,Math.round((r.pctPaid==null?0:r.pctPaid)*100)));
-  var mark=Math.min(100,Math.round(r.pctYear*100));
-  var col=r.status==="full"?"--am-600":(r.status==="behind"?"--am-300":"--am-500");
-  return '<div class="rem-bar" aria-hidden="true"><div class="rem-bar-fill" style="width:'+fill+'%;background:var('+col+')"></div><span class="rem-bar-mark" style="left:'+mark+'%"></span></div>';}
+  var fill=(r.pctPaid==null?0:r.pctPaid)*100,mark=r.pctYear*100;
+  var pop=[r.name,r.annual,r.paid,r.expected,r.outstanding,(r.pctPaid==null?0:Math.round(r.pctPaid*100)),Math.round(r.pctYear*100),r.status].join("|");
+  return pbarHTML({fill:fill,mark:mark,pop:remEsc(pop),aria:remEsc(remRowSr(r))});}
 
 function remStatusChip(r){
   if(r.status==="none")return '<span class="rem-chip rem-chip-none" data-tip="No pledge amount is set for this activity, so there is nothing to pace against." data-tip-plain>No pledge</span>';
