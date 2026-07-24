@@ -2413,7 +2413,7 @@ function todayStr(){
 }
 
 function renderSummaryStrip(){
-  const all=PEOPLE.filter(p=>DEMO_MODE==='phase-1'||!p.p1Only);
+  const all=PEOPLE.filter(p=>p.orgStatus!=='archived'&&(DEMO_MODE==='phase-1'||!p.p1Only)&&(STATE.dept==='all'||p.team===STATE.dept));
   const newResults=all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
   const alerts=all.filter(p=>STATUS[currentCase(p).status]?.action).length;
   const expiring=all.filter(p=>currentCase(p).status==='invite-expiring').length;
@@ -3173,7 +3173,7 @@ function renderSituation(person, c){
   } else if(c.status==='invite-expiring'){
     cls='sit-warn';title='Invite link expiring in 3 days.';
     desc='The applicant has not yet submitted their consent form. Resend or extend the link.';
-    acts=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="toast('Link extended')">Extend expiry</button>`;
+    acts=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent to ${esc(person.email)}')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="openExtendExpiry('${c.id}','${c.inviteExpiry||'in 3 days'}')">Change expiry date</button>`;
   } else if(c.status==='invite-expired'){
     cls='sit-bad';title='Invite link expired — no consent received.';
     desc='Re-invite this person to start a new consent collection.';
