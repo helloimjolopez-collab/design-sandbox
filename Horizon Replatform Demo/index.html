@@ -6541,8 +6541,7 @@ function renderAgreementsCard(person){
   const docs = [];
   person.cases.forEach(c => {
     if(c.consentForm){
-      docs.push({label:'Authorization for background investigation',date:c.consentForm.submittedDate,caseId:null,checkType:c.checkType});
-      docs.push({label:'FCRA notice - background investigation',date:c.consentForm.submittedDate,caseId:null,checkType:c.checkType});
+      docs.push({label:'Consent & Disclosure',date:fmtTableDate(c.consentForm.submittedDate),caseId:null});
     }
   });
   if(!docs.length) return '';
@@ -6551,7 +6550,7 @@ function renderAgreementsCard(person){
       <div class="doc-icon"><svg width="14" height="14" style="color:var(--brand)"><use href="#ic-report"/></svg></div>
       <div style="flex:1;min-width:0">
         <div class="doc-name" style="font-size:13px">${esc(d.label)}</div>
-        <div class="doc-meta">${esc(d.checkType)} &nbsp;·&nbsp; Added ${esc(d.date)}</div>
+        <div class="doc-meta">${esc(d.date)}</div>
       </div>
     </div>`).join('');
   return `<div class="pnl-card">
