@@ -2228,13 +2228,6 @@ function getActions(person, c){
   // View profile — always
   acts.push({label:'View profile',fn:`openProfile('${person.id}');event.stopPropagation()`});
 
-  // Archive — completed or dead-end cases only
-  const archivable = ['cleared','escalated','needs-review','invite-expired','invite-cancelled','case-cancelled','bg-expired','due-rescreening','screening-overdue'].includes(s);
-  if(archivable){
-    acts.push({label:'',fn:'',cls:'drop-sep'});
-    acts.push({label:'Archive person',fn:`archivePerson('${person.id}');event.stopPropagation()`});
-  }
-
   return acts.filter(a=>a.label||a.cls==='drop-sep');
 }
 
