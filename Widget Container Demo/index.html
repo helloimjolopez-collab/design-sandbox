@@ -5170,7 +5170,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var kpi,pend=ptoPending(w);
     if(w.ptoLoading){kpi='<div class="dep-hd-kpigrp"><span class="sk" style="width:52px;height:24px;border-radius:6px"></span><span class="sk" style="width:110px;height:20px;border-radius:999px"></span></div>';}
     else{var badge='<span class="pto-pill '+(pend.records?"warn":"ok")+'">'+ICON(pend.records?"pending_actions":"check_circle")+pend.records+' pending</span>';kpi='<div class="dep-hd-kpigrp"><span class="metric-value">'+pend.records+'</span>'+badge+'</div>';}
-    var ctx=pend.records?('Time off days awaiting your approval, across '+pend.employees+' employee'+(pend.employees===1?"":"s")+', for '+ptoCurYear(w)+'.'):('No time off is awaiting your approval for '+ptoCurYear(w)+'.');
+    var ctx=pend.records?'Awaiting your approval':'Nothing awaiting your approval';
     return '<div class="dep-hd pto-hd"><div class="dep-hd-top">'+chips+'</div><div class="dep-hd-num"><div class="pto-numwrap">'+kpi+'<div class="pto-ctx">'+ctx+'</div></div></div></div>';
   }
   function ptoSkeleton(){var rows="";for(var i=0;i<4;i++)rows+='<div class="wt-row pto-sk-row"><span class="sk" style="width:18px;height:18px;border-radius:4px"></span><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:72px;height:12px;border-radius:4px"></span></div>';return '<div class="pto-skel" aria-busy="true">'+rows+'</div>';}
@@ -5732,7 +5732,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function faHeader(w){var m=faMeasure(w),list=faTableAssets(w),total=faSum(list,m),n=list.length,numInner;
     if(w.faLoading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
     else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(total)+'</span><span class="fa-count-badge">'+ICON("inventory_2")+n+(n===1?" asset":" assets")+'</span></div>';}
-    var ctx='<div class="gl-sub fa-ctx">'+faMeasureLabel(m)+' · '+faGroupLabel(w)+' · grouped by '+faDimLabel(faDim(w))+'</div>';
+    var ctx='';
     return '<div class="dep-hd fa-hd"><div class="dep-hd-top">'+faControls(w)+'</div>'+
       '<div class="dep-hd-num"><div class="fa-numwrap">'+numInner+ctx+'</div></div></div>';}
   function faTable(w){var cols=faColumns(w),sel=faMeasure(w),list=faTableAssets(w);
