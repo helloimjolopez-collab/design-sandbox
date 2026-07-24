@@ -6255,19 +6255,14 @@ function renderPanelBody(person, targetCaseId){
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
 
   pb.innerHTML = `
-    <!-- Profile hero -->
+    <!-- Header actions -->
     <div class="profile-hero">
-      <div class="profile-hero-av" style="background:${ac}">${esc(initials(person.name))}</div>
-      <div class="profile-hero-info">
-        <div class="profile-hero-name">${esc(person.name)}</div>
-        <div class="profile-hero-sub">${esc(person.role||'—')}${person.dept ? ' &nbsp;·&nbsp; '+esc(person.dept) : ''}</div>
-        <div class="profile-hero-meta">
-          ${person.rescreenDue ? `<span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--amber-bg);color:var(--amber)">Rescreen due ${esc(person.rescreenDue)}</span>` : ''}
-        </div>
-      </div>
       <div class="profile-hero-actions">
-        <button class="btn btn-secondary btn-sm" onclick="openWizard()">
-          <svg width="12" height="12"><use href="#ic-plus"/></svg>New background check
+        <button class="btn btn-secondary btn-sm" onclick="openWizardManual()">
+          <svg width="12" height="12"><use href="#ic-plus"/></svg>Manual Order
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openWizard()">
+          <svg width="12" height="12"><use href="#ic-plus"/></svg>Background Check
         </button>
       </div>
     </div>
