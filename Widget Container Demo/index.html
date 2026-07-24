@@ -4899,7 +4899,7 @@ function arHeaderBlock(w,mode){
   if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';}
   else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(arTotal(w))+'</span>'+arOverduePill(w)+'</div>';}
   var n=arCount(w);
-  var ctx='Owed to you across '+n+' unpaid invoice'+(n===1?"":"s")+', oldest balances first.';
+  var ctx='Owed to you, oldest balances first.';
   /* Explore shows both cuts side by side, so the group toggle is hidden there. */
   var toggle=(w.size==="xwide")?"":arGroupToggle(w);
   return '<div class="dep-hd">'+
@@ -5148,7 +5148,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.ptoLoading){kpi='<div class="dep-hd-kpigrp"><span class="sk" style="width:52px;height:24px;border-radius:6px"></span><span class="sk" style="width:110px;height:20px;border-radius:999px"></span></div>';}
     else{var badge='<span class="pto-pill '+(pend.records?"warn":"ok")+'">'+ICON(pend.records?"pending_actions":"check_circle")+pend.records+' pending</span>';kpi='<div class="dep-hd-kpigrp"><span class="metric-value">'+pend.records+'</span>'+badge+'</div>';}
     var ctx=pend.records?('Time off days awaiting your approval, across '+pend.employees+' employee'+(pend.employees===1?"":"s")+', for '+ptoCurYear(w)+'.'):('No time off is awaiting your approval for '+ptoCurYear(w)+'.');
-    return '<div class="dep-hd pto-hd"><div class="dep-hd-top">'+chips+'<div class="dep-hd-toggle pto-asof">Data as of '+(w.updated||"just now")+'</div></div><div class="dep-hd-num"><div class="pto-numwrap">'+kpi+'<div class="pto-ctx">'+ctx+'</div></div></div></div>';
+    return '<div class="dep-hd pto-hd"><div class="dep-hd-top">'+chips+'</div><div class="dep-hd-num"><div class="pto-numwrap">'+kpi+'<div class="pto-ctx">'+ctx+'</div></div></div></div>';
   }
   function ptoSkeleton(){var rows="";for(var i=0;i<4;i++)rows+='<div class="wt-row pto-sk-row"><span class="sk" style="width:18px;height:18px;border-radius:4px"></span><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:72px;height:12px;border-radius:4px"></span></div>';return '<div class="pto-skel" aria-busy="true">'+rows+'</div>';}
   function ptoChev(open){return '<span class="pto-chev'+(open?" open":"")+'" aria-hidden="true">'+ICON("chevron_right")+'</span>';}
@@ -5608,7 +5608,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var ctx;
     if(mode==="loading"){ctx="Updating the enrolment breakdown…";}
     else{var n=insPlanCount(w),lead=(w.insType&&w.insType!=="All")?insTypeLabel(w):"All insurance types";
-      ctx=lead+", "+n+" plan"+(n===1?"":"s")+". Counts include employees and their dependents.";}
+      ctx="Counts include employees and their dependents.";}
     return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insTypeChip(w)+'<div class="dep-hd-toggle"></div></div>'+
       '<div class="dep-hd-num"><div class="ins-ctx">'+ctx+'</div></div></div>';
   }
