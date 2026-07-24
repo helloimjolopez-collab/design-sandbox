@@ -4383,15 +4383,19 @@ function mysPopContent(){
   function bankViewToggle(w){var v=w.bkview||"table",single=!!bankSelected(w),chartIc=single?"bar_chart":"donut_small";var opts=[["table","Table","table_rows"],["chart","Chart",chartIc]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="bank-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
   function bankHeaderBlock(w,mode){
     var loading=(mode==="loading"),sel=bankSelected(w);
-    var toggle=(w.size==="wide")?bankViewToggle(w):"";
+    /* Only the single-account activity view has two representations (table / bar),
+       so the toggle lives there. All-Accounts is a table only (Confluence 10.2:
+       drop the pie). No mismatched chart icons across the two views. */
+    var toggle=(sel&&w.size==="wide")?bankViewToggle(w):"";
     var numInner;
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
-    else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span><span class="bank-pill">'+ICON("account_balance")+sel.type+'</span></div>';}
-    else{var tot=bankTotal(w),n=bankAccounts(w).length,over=bankNegCount(w);var overPill=over?'<span class="bank-pill warn" data-tip="'+over+' account'+(over>1?"s":"")+' currently overdrawn (a negative balance). Overdrawn accounts stay in the table but are left out of the chart." data-tip-plain>'+ICON("warning")+over+' overdrawn</span>':"";numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span><span class="bank-pill">'+n+' accounts</span>'+overPill+'</div>';}
-    var ctx=sel?('Balance since the last reconciliation (unreconciled activity), account '+(sel.acctFull||sel.acct)+'.'):('Combined balance across all active bank accounts, based on unreconciled activity since the last reconciliation.');
+    else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?'<span class="bank-pill warn">'+ICON("warning")+'Overdrawn</span>':'')+'</div>';}
+    else{var tot=bankTotal(w),n=bankAccounts(w).length,over=bankNegCount(w);
+      var overPill=over?'<button class="bank-pill warn bank-overpill" data-action="bank-overdrawn" data-id="'+w.id+'" aria-pressed="'+(w.bkOver?"true":"false")+'" data-tip="Show only the '+over+' overdrawn account'+(over>1?"s":"")+'" data-tip-plain>'+ICON("warning")+over+' overdrawn</button>':"";
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span><span class="bank-pill">'+n+' accounts</span>'+overPill+'</div>';}
     return '<div class="dep-hd">'+
       '<div class="dep-hd-top">'+bankAcctChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
-      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div></div></div>'+
+      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
       '</div>';
   }
   function bankSkeleton(){var bars="";[58,82,50,90,66,74,60].forEach(function(h){bars+='<div class="bank-sk-col"><span class="sk bank-sk-bar" style="height:'+h+'%"></span></div>';});return '<div class="bank-skel"><div class="bank-skel-plot">'+bars+'</div><div class="bank-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
