@@ -4401,6 +4401,7 @@ function mysPopContent(){
   function bankSkeleton(){var bars="";[58,82,50,90,66,74,60].forEach(function(h){bars+='<div class="bank-sk-col"><span class="sk bank-sk-bar" style="height:'+h+'%"></span></div>';});return '<div class="bank-skel"><div class="bank-skel-plot">'+bars+'</div><div class="bank-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
   function bankAllTable(w,full){
     var rows=bankAccounts(w).slice();
+    if(w.bkOver)rows=rows.filter(function(a){return bankEnding(a)<0;});
     var sk=(w.bksort||"bal-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
     function val(a){if(key==="name")return a.name;if(key==="type")return a.type;return bankEnding(a);}
     rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="name"||key==="type")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
