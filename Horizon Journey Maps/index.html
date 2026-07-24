@@ -851,7 +851,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
     <li>Cancel invite is only available before consent is received. Cancelling: confirmation shown ("Link will expire. Case moves to Case Cancelled.") → on confirm, status = Invite Cancelled, case = Case Cancelled.</li>
     <li>After applicant submits consent: status = Consent Received → system auto-places order → Order Processing. Invite management section disappears (link has been used).</li>
     <li>Consent Details in profile shows the applicant's full legal name exactly as entered on the form, and date submitted — displayed separately from the profile name, never overwrites it. If the two names differ, a name mismatch warning appears with Approve and proceed / Request correction buttons.</li>
-    <li>Order failure: status = Order Failed with explanation (technical error or information issue with field details). Admin clicks Close Case → status moves to Case Cancelled.</li>
+    <li>Order failure: status = Order Failed with explanation (technical error or information issue with field details). Admin clicks Cancel Case → status moves to Case Cancelled.</li>
   </ol></td>
 </tr>
 
@@ -1608,7 +1608,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
 </div>
 <div class="sb">
   <div class="sc blue"><h4>Unified wizard</h4><p>Same 4-step wizard as invite order. Same package cards. Same applicant search and CSV import. "New background check" is the only entry point for both paths.</p></div>
-  <div class="sc green"><h4>Order failure</h4><p>Technical failures auto-cancel. Information failures surface with field-level detail. Close Case gives a clean exit. New order required for retry.</p></div>
+  <div class="sc green"><h4>Order failure</h4><p>Technical failures auto-cancel. Information failures surface with field-level detail. Cancel Case gives a clean exit. New order required for retry.</p></div>
   <div class="sc amber"><h4>Known limitation</h4><p>SSN still collected by admin before FCRA gate — same as current production. Flagged on-screen. End Vision fix: SSN moved to Digital Delve's secure form.</p></div>
 </div>
 <div class="tn-note"><div class="tni">Phase 1 improvements: unified wizard entry, package cards, applicant search at step 1, Order Processing status, Order Failed with type and field details, close case action. Known limitation not resolved: SSN collected before FCRA gate — End Vision. Not in Phase 1: consent on file as logged first-class event — End Vision.</div></div>
@@ -1649,7 +1649,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="cc"><ol>
     <li>On confirm: order dispatched to Digital Delve immediately. Case created with status "Order Processing." Initiated column shows "Manual." Package column shows selected package.</li>
     <li>Person profile → Current Case: status "Order Processing," package, date placed.</li>
-    <li>Order failure — technical: status = Order Failed, explanation "Technical error — our team has been notified." Backend auto-cancels. Admin clicks Close Case → status = Case Cancelled.</li>
+    <li>Order failure — technical: status = Order Failed, explanation "Technical error — our team has been notified." Backend auto-cancels. Admin clicks Cancel Case → status = Case Cancelled.</li>
     <li>Order failure — information: status = Order Failed, explanation shows which fields were invalid or missing. Admin closes case, corrects data, starts a new order.</li>
   </ol></td>
 </tr>
@@ -1688,7 +1688,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="cc">Same package card hydration as invite wizard.</td>
   <td class="cc">PII transmitted to Digital Delve encrypted. SSN not stored in PMM. FCRA confirmation stored as a field on the case record.</td>
   <td class="cc">On confirm: Person record created or matched. Case created with delivery = manual. Order dispatched to Digital Delve immediately. Status = Order Processing.</td>
-  <td class="cc">Digital Delve pushes status webhooks. On failure: type and field details pushed to PMM. PMM sets Order Failed, auto-cancels. Close Case: admin action → Case Cancelled.</td>
+  <td class="cc">Digital Delve pushes status webhooks. On failure: type and field details pushed to PMM. PMM sets Order Failed, auto-cancels. Cancel Case: admin action → Case Cancelled.</td>
 </tr>
 
 <tr class="rSec">
@@ -1722,7 +1722,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="cc"><span class="vtag">RESOLVED</span> Same package cards as invite flow. Risk labels and role examples apply equally to manual orders.</td>
   <td class="cc"><span class="vtag">PARTIAL</span> Consent acknowledgment explicit and timestamped. PII transmitted securely. Known limitation: SSN entry still before FCRA gate — End Vision fix.</td>
   <td class="cc"><span class="vtag">RESOLVED</span> Commit label explicit — order places immediately, no invite email, billable.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Order Processing replaces ambiguous "Pending." Order Failed surfaces with explanation type. Auto-cancel on failure. Close Case action → Case Cancelled.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Order Processing replaces ambiguous "Pending." Order Failed surfaces with explanation type. Auto-cancel on failure. Cancel Case action → Case Cancelled.</td>
 </tr>
 
 </tbody></table></div>
@@ -2001,13 +2001,13 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <div class="prio-hd">Phase 1 improvements — Rescreen</div>
   <div class="prc"><h5>Screening Expired is findable</h5><div class="prb">"Due for Rescreen" and "Expired" (invite link expired) sit in the same status column. Admin cannot tell them apart at a glance.</div><div class="prh">"Screening Expired" is an unambiguous V1 status. Filterable via filter card. Amber accent on expired rows.</div></div>
   <div class="prc"><h5>Bulk select and batch reorder</h5><div class="prb">No bulk path. Rescreening 40 people requires 40 separate wizard runs with no pre-filled data.</div><div class="prh">Filter to Screening Expired, select all (or selected rows), trigger rescreen for the batch. Package pre-suggested from the last Complete — Eligible case per person.</div></div>
-  <div class="prc"><h5>Close case for expired screenings</h5><div class="prb">No way to close an expired case when the person is no longer serving. The row sits in the table indefinitely.</div><div class="prh">Close Case available when status is Screening Expired (or Order Failed). Moves case to Case Cancelled. Distinct from Archive — archive removes the person from active views; close case only closes this case.</div></div>
+  <div class="prc"><h5>Close case for expired screenings</h5><div class="prb">No way to close an expired case when the person is no longer serving. The row sits in the table indefinitely.</div><div class="prh">Cancel Case available when status is Screening Expired (or Order Failed). Moves case to Case Cancelled. Distinct from Archive — archive removes the person from active views; close case only closes this case.</div></div>
   <div class="prc"><h5>Person profile — Current Case + Case History</h5><div class="prb">"Applicant History" shows only profile creation. No visibility into prior check cycles.</div><div class="prh">Case History shows all prior cases — check type, dates, status, assessment, View report links. Admin has full screening record before initiating a rescreen.</div></div>
 </div>
 <div class="sb">
   <div class="sc blue"><h4>Screening Expired is findable</h4><p>"Screening Expired" is a first-class V1 status badge. Filter card shows a count. Admin sees exactly who needs rescreening without scanning for ambiguous rows.</p></div>
   <div class="sc green"><h4>Bulk reorder</h4><p>Filter to Screening Expired, select, trigger batch reorder. Package pre-suggested from last Complete — Eligible case. One confirm for the whole batch.</p></div>
-  <div class="sc amber"><h4>Close case vs archive</h4><p>Close Case = done with this expired case, no rescreen. Archive = person is no longer active. Both actions labeled clearly and kept separate in the UI.</p></div>
+  <div class="sc amber"><h4>Close case vs archive</h4><p>Cancel Case = done with this expired case, no rescreen. Archive = person is no longer active. Both actions labeled clearly and kept separate in the UI.</p></div>
 </div>
 <div class="tn-note"><div class="tni">Phase 1 improvements: Screening Expired status (filterable), bulk select + batch reorder, package pre-suggestion from last cleared case, close case action, Current Case + Case History for rescreening context. Not in Phase 1: proactive rescreen notification before expiry, per-role interval config, continuous monitoring — End Vision.</div></div>
 <div class="tw"><table class="jt"><tbody>
@@ -2035,7 +2035,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   </ol></td>
   <td class="cc"><ol>
     <li>For each person in the expired list: decide rescreen (person still serving) or close case (no longer serving, or admin does not intend to rescreen).</li>
-    <li>Close Case available as a button in Current Case, or via bulk action menu ("Close selected cases"). Status → Case Cancelled. Case moves to Case History. Current Case shows empty state.</li>
+    <li>Cancel Case available as a button in Current Case, or via bulk action menu ("Close selected cases"). Status → Case Cancelled. Case moves to Case History. Current Case shows empty state.</li>
     <li>Person remains active and visible in the People database. Archive is a separate action for when the person is no longer in the organization.</li>
   </ol></td>
   <td class="cc"><ol>
@@ -2075,7 +2075,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-mail"/></svg></span><span class="ltxt">Communications</span></div></td>
   <td class="cc">No outbound. Admin discovering expired cases by table scan. No proactive alert in Phase 1.</td>
   <td class="cc">No communications — admin reviewing profiles.</td>
-  <td class="cc">Close Case: no outbound. Person not notified of closure in Phase 1.</td>
+  <td class="cc">Cancel Case: no outbound. Person not notified of closure in Phase 1.</td>
   <td class="cc">On confirm (email): invite sent per applicant — same improved email as invite order flow. Admin batch confirmation email.</td>
   <td class="cc">Auto-reminders at 50% and 80% of expiry (unless disabled). Invite management actions trigger same communications as invite order flow.</td>
 </tr>
@@ -2084,7 +2084,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-settings"/></svg></span><span class="ltxt">Backend</span></div></td>
   <td class="cc">Cases API returns Screening Expired for cases where rescreen due date has passed. Filter card count accurate.</td>
   <td class="cc">Person profile API returns current expired case and full case history in one call. Last package returned per historical case for wizard pre-selection.</td>
-  <td class="cc">Close Case: PATCH on case record → Case Cancelled. Case moved to history. Current Case returns null. Person record itself unchanged.</td>
+  <td class="cc">Cancel Case: PATCH on case record → Case Cancelled. Case moved to history. Current Case returns null. Person record itself unchanged.</td>
   <td class="cc">Batch rescreen wizard: Step 1 pre-populated from selected case IDs. Step 2 pre-fills suggested package from last Complete — Eligible case per person. On confirm: same case creation and invite dispatch as invite order flow.</td>
   <td class="cc">New cases appear in table immediately. Expired cases move to Case History on confirm (not on close — close is an explicit admin action).</td>
 </tr>
@@ -2093,7 +2093,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-headset_mic"/></svg></span><span class="ltxt">Support</span></div></td>
   <td class="cc">Screening Expired filter card makes the rescreen queue self-discoverable — reduces "how do I find who needs rescreening" contacts.</td>
   <td class="cc">Case History in profile gives context before deciding — reduces "what was this person's last check" contacts.</td>
-  <td class="cc">Close Case vs archive distinction labeled in UI — reduces "I archived someone when I just wanted to close their expired case" contacts.</td>
+  <td class="cc">Cancel Case vs archive distinction labeled in UI — reduces "I archived someone when I just wanted to close their expired case" contacts.</td>
   <td class="cc">Package pre-suggestion reduces "which package for this rescreen" contacts.</td>
   <td class="cc">Batch confirm eliminates one-at-a-time wizard runs. Immediate update reduces "did my batch go through" contacts.</td>
 </tr>
@@ -2118,7 +2118,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="lc"><div class="li"><span class="licon"><svg class="mdi mdi-20" aria-hidden="true"><use href="#mi-task_alt"/></svg></span><span class="ltxt">What Changes</span></div></td>
   <td class="cc"><span class="vtag">RESOLVED</span> "Screening Expired" is unambiguous and filterable. Distinct from Invite Expired. Filter card with count. Amber accent on expired rows.</td>
   <td class="cc"><span class="vtag">RESOLVED</span> Current Case + Case History gives full record before deciding. Last package visible in Case History for pre-suggestion.</td>
-  <td class="cc"><span class="vtag">RESOLVED</span> Close Case and Archive are distinct, clearly labeled actions. Close Case available in bulk.</td>
+  <td class="cc"><span class="vtag">RESOLVED</span> Cancel Case and Archive are distinct, clearly labeled actions. Cancel Case available in bulk.</td>
   <td class="cc"><span class="vtag">RESOLVED</span> Batch rescreen via improved wizard. Package pre-suggested from last Complete — Eligible case. One confirm for the whole batch.</td>
   <td class="cc"><span class="vtag">RESOLVED</span> New cases appear immediately. Expired cases move to Case History on confirm. Not yet: proactive notification, per-role interval, continuous monitoring — End Vision.</td>
 </tr>
@@ -2391,10 +2391,10 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
       <h2 class="sa-h2">Screening Cases — V1 lifecycle</h2>
       <p class="sa-note">One case per screening context. Each case is linked to one person, one department, one check type. Assessment outcomes fold into the lifecycle — no separate column.</p>
       <div class="sa-callout" style="margin-top:14px">
-        <strong>Cancel Case vs Close Case — key distinction</strong>
+        <strong>Cancel Case vs Cancel Case — key distinction</strong>
         <strong style="color:var(--blue);text-transform:none;font-size:13px;letter-spacing:0">Cancel Case</strong> is available only while the case is in an invite-phase status (Invite Created, Invite Sent, Invite Expiring, Invite Expired, Invite Email Bounced) — that is, before consent has been received. Use it when the invite was sent to the wrong address, sent to the wrong person, or placed by mistake. Cancelling revokes the link immediately. The case moves to Case History as Invite Cancelled and is terminal — to screen this person, start a new case. Cancel Case is available from the person profile > Current Case > Invite Management, and from the table row ⋮ menu.
         <br><br>
-        <strong style="color:var(--red);text-transform:none;font-size:13px;letter-spacing:0">Close Case</strong> is only available after an order has been attempted and failed (Order Failed) or after a screening has expired without rescreening (Screening Expired). In the Order Failed scenario, PMM has already auto-cancelled the order in the backend — the case stays on "Order Failed" on screen until the admin explicitly closes it. Closing moves the case from Current Case to Case History as Case Closed. Close Case is available from: the action banner on the person profile when status is Order Failed or Screening Expired; clicking the status badge in the table row; the table row ⋮ menu; and the table selection bar for bulk-closing multiple rows.
+        <strong style="color:var(--red);text-transform:none;font-size:13px;letter-spacing:0">Cancel Case</strong> is only available after an order has been attempted and failed (Order Failed) or after a screening has expired without rescreening (Screening Expired). In the Order Failed scenario, PMM has already auto-cancelled the order in the backend — the case stays on "Order Failed" on screen until the admin explicitly closes it. Closing moves the case from Current Case to Case History as Case Closed. Cancel Case is available from: the action banner on the person profile when status is Order Failed or Screening Expired; clicking the status badge in the table row; the table row ⋮ menu; and the table selection bar for bulk-closing multiple rows.
       </div>
       <div class="sa-tbl-wrap" style="margin-top:14px">
         <table class="sa-tbl">
@@ -2528,7 +2528,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
               <td>
                 <div class="sa-act-close">Yes — close case</div>
                 <ul class="sa-actions">
-                  <li><span class="act-name">Close Case</span><span class="act-where">Person profile &gt; action banner (appears automatically); Table row &gt; clicking the Order Failed badge; Table row ⋮ menu; Table selection bar (bulk close)</span></li>
+                  <li><span class="act-name">Cancel Case</span><span class="act-where">Person profile &gt; action banner (appears automatically); Table row &gt; clicking the Order Failed badge; Table row ⋮ menu; Table selection bar (bulk close)</span></li>
                 </ul>
               </td>
               <td>A technical or system error prevented the order from being submitted to or processed by Digital Delve. PMM auto-cancels the order in the backend. The case stays visible as Order Failed until the admin explicitly closes it. Error details are surfaced on the case.</td>
@@ -2542,7 +2542,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 <div class="sa-act-close">Yes — close case, then start new</div>
                 <ul class="sa-actions">
                   <li><span class="act-name">View field-level detail</span><span class="act-where">Person profile &gt; Current Case (specific fields flagged)</span></li>
-                  <li><span class="act-name">Close Case</span><span class="act-where">Person profile &gt; action banner; Table row &gt; clicking the badge; Table row ⋮ menu; Table selection bar (bulk close)</span></li>
+                  <li><span class="act-name">Cancel Case</span><span class="act-where">Person profile &gt; action banner; Table row &gt; clicking the badge; Table row ⋮ menu; Table selection bar (bulk close)</span></li>
                   <li><span class="act-name">Start new case (after correcting info)</span><span class="act-where">Use "+ Background Check" from Screenings table after closing this case</span></li>
                 </ul>
               </td>
@@ -2616,7 +2616,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 <div class="sa-act-yes">Yes — rescreen or close</div>
                 <ul class="sa-actions">
                   <li><span class="act-name">Start new screening (person still serving)</span><span class="act-where">Person profile &gt; action banner; Table row ⋮ menu; Table selection bar (bulk rescreen)</span></li>
-                  <li><span class="act-name">Close Case (person no longer serving)</span><span class="act-where">Person profile &gt; action banner; Table row ⋮ menu; Table row &gt; clicking the Screening Expired badge; Table selection bar (bulk close)</span></li>
+                  <li><span class="act-name">Cancel Case (person no longer serving)</span><span class="act-where">Person profile &gt; action banner; Table row ⋮ menu; Table row &gt; clicking the Screening Expired badge; Table selection bar (bulk close)</span></li>
                 </ul>
               </td>
               <td>Rescreen due date has passed with no active new screening case. This person's screening is no longer current. A new background check is required before they continue serving — or the admin closes the case if the person is no longer active.</td>
