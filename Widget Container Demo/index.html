@@ -5771,8 +5771,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var open=!!(pop&&pop.type==="switcher");
     return '<span class="dash-select"><span class="dash-name" data-action="dash-rename-inline" title="Click to rename">'+d.name+'</span><button class="dash-caret" data-action="switcher" aria-haspopup="menu" aria-expanded="'+open+'" aria-label="Switch dashboard">'+ICON("expand_more")+'</button></span>';}
   function tbRightHTML(){if(manage)return '<button class="btn naked sm" data-action="add-widget">'+ICON("add")+'Add widget</button><button class="btn naked sm" data-action="reset">'+ICON("history")+'Reset</button><button class="btn outlined sm" data-action="cancel">Cancel</button><span class="split"><button class="btn primary main sm" data-action="save">Save</button><button class="btn primary more sm" data-action="savemenu">'+ICON("expand_more")+'</button></span>';
-    var refreshAll='<button class="iconbtn" data-action="refresh-all" data-tip="Refresh · updated '+cur().updated+'" aria-label="Refresh all widgets, updated '+cur().updated+'">'+ICON("refresh")+'</button>';
-    return refreshAll+'<button class="btn naked sm" data-action="manage">'+ICON("dashboard_customize")+'Manage Dashboard</button><button class="btn outlined sm" data-action="add-widget">'+ICON("add")+'Add widget</button>';}
+    var fopen=!!(pop&&pop.type==="wfind");
+    var wfindBtn='<button class="btn naked sm wfind-btn'+(fopen?" on":"")+'" data-action="wfind" aria-haspopup="dialog" aria-expanded="'+fopen+'" data-tip="Find a widget on this dashboard">'+ICON("search")+'<span class="wfind-lbl">Find a widget</span>'+ICON("expand_more")+'</button>';
+    var refreshAll='<button class="btn naked sm" data-action="refresh-all" data-tip="Last updated '+cur().updated+'" aria-label="Refresh all widgets, last updated '+cur().updated+'">'+ICON("refresh")+'Refresh</button>';
+    return wfindBtn+refreshAll+'<button class="btn outlined sm" data-action="manage">'+ICON("dashboard_customize")+'Edit Dashboard</button>';}
 
   function popContent(){
     if(!pop)return "";
