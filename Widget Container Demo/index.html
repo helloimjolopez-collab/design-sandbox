@@ -852,70 +852,69 @@
   .pur-sk-line{display:flex;align-items:center;gap:12px;}
   .pur-skel-cap{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--txt-subtle);font-size:12px;padding:12px 0 0;}
   .pur-pop{min-width:210px;}
-  /* ===== Receivable Invoices Outstanding (prefix: ar) , CSS ===== */
-/* Header control row (left of the two-row .dep-hd grid) */
+  /* ===== Receivable Invoices Outstanding v2 (prefix: ar) , CSS =====
+   All ar-* rules the v2 block uses. Shared shell classes it also relies on
+   (.dep-hd*, .kpi-row/.kpi-num, .dep-hd-kpigrp/.metric-value, .gl-sub/.bgt-caption,
+   .filter-chip/.fc-label, .vtoggle/.vt, .bank-pill/.delta-pill, .state*, .mi/.cap,
+   .wt-row/.wt-head, .dep-total, .btn/.iconbtn, .sk/.bgt-spin/.bgt-skel-cap,
+   .bgt-pop*, .sr-only, .modal*) are provided by the shell, not redefined here.
+   Amethyst only; no red on any chart element. */
+
+/* ---- Header control row (left of the two-row .dep-hd grid) ---- */
 .ar-ctlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
-.ar-ctlrow .ar-chip{min-width:0;flex:0 1 auto;}
+.ar-ctlrow .ar-chip{min-width:0;flex:0 1 auto;}          /* chips sized to their label */
 .ar-numwrap{display:flex;flex-direction:column;gap:3px;min-width:0;}
-.ar-ctx{font-size:11.5px;font-weight:400;color:var(--txt-subtle);line-height:1.4;max-width:60ch;}
+.ar-ctx{font-size:11.5px;font-weight:400;color:var(--txt-subtle);line-height:1.4;max-width:64ch;}
 
-/* Body layouts: wide = table + chart side by side (wraps if narrow); xwide = two-column explore */
-.ar-body{display:flex;gap:16px;align-items:flex-start;padding:0 16px 14px;flex-wrap:wrap;}
-.ar-body>.ar-tscroll,.ar-body>.scroll{flex:1 1 320px;min-width:0;}
-.ar-body .ar-chartcard{flex:1 1 300px;min-width:260px;}
-.ar-explore{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;padding:0 16px 16px;align-items:start;}
-.ar-explore-col{min-width:0;}
-
-/* Aging + customer tables reuse .wt-row / .wt-head / .lr-main / .wt-c2 / .scroll / .dep-total */
-.ar-tscroll{max-height:230px;}
-.widget[data-size="xwide"] .ar-tscroll{max-height:340px;}
-.ar-cnt{flex:0 0 66px;text-align:right;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
-.ar-worst{flex:0 0 118px;display:inline-flex;align-items:center;gap:6px;color:var(--txt-secondary);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ar-blabel{display:flex;align-items:baseline;gap:8px;min-width:0;}
-.ar-bl-nm{font-weight:600;color:var(--txt-primary);}
-.ar-bl-sub{font-size:11px;color:var(--txt-subtle);font-weight:400;}
+/* ---- Glance: compact aging read under the KPI ---- */
+.ar-glance-read{display:flex;flex-direction:column;gap:7px;margin-top:9px;min-width:0;}
+.ar-stack{display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--wn-200);}
+.ar-seg{display:block;min-width:3px;height:100%;}
+.ar-glance-cap{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt-secondary);min-width:0;}
+.ar-glance-cap .material-symbols-rounded{font-size:15px;flex:0 0 auto;}
+.ar-cap-ok,.ar-cap-ok .material-symbols-rounded{color:var(--txt-pos);}
 .ar-sevdot{width:9px;height:9px;border-radius:2px;flex:0 0 auto;display:inline-block;align-self:center;}
-.ar-crow-nm{font-weight:500;color:var(--txt-primary);}
-/* clickable vs zero rows */
-.wt-row.ar-clickable{cursor:pointer;}
-.wt-row.ar-clickable:hover{background:var(--wn-100);}
-.wt-row.ar-clickable:focus-visible{outline:2px solid var(--am-400);outline-offset:-2px;}
-.wt-row.ar-zero{cursor:default;color:var(--txt-subtle);}
-.wt-row.ar-zero .ar-bl-nm{color:var(--txt-subtle);font-weight:500;}
-.wt-row.ar-zero .wt-c2{color:var(--txt-subtle);}
-.ar-total{background:var(--wn-100);}
+.ar-allset{color:var(--txt-pos);display:inline-flex;align-items:center;gap:7px;font-size:20px;}
+.ar-allset .material-symbols-rounded{font-size:22px;color:var(--txt-pos);}
 
-/* Chart card + toolbar + secondary pie title */
-.ar-chartcard{display:flex;flex-direction:column;gap:8px;min-width:0;}
-.ar-charttoolbar{display:flex;justify-content:flex-end;}
-.ar-charttitle{font-size:12px;font-weight:600;color:var(--txt-secondary);text-align:center;}
-.ar-pie{display:flex;flex-direction:column;gap:4px;}
+/* ---- Body layouts ---- */
+/* Detail (wide): the ordered severity ladder is the full-width hero. */
+.ar-body{padding:2px 16px 16px;min-width:0;}
+.ar-body .ar-bars{gap:14px;}
+.ar-body .ar-barrow{padding:8px 6px;}
+/* Explore (xwide): aging + top debtors side by side, each a quiet-headed panel. */
+.ar-explore{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;padding:2px 16px 16px;align-items:start;}
+.ar-panel{min-width:0;display:flex;flex-direction:column;gap:9px;}
+.ar-panel-h{margin:0;font-size:12px;font-weight:600;color:var(--txt-secondary);display:flex;align-items:center;gap:6px;}
+.ar-panel-h .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);}
 
-/* Ordered horizontal aging bar , amethyst severity gradient, no red */
-.ar-bars{display:flex;flex-direction:column;gap:9px;padding:4px 2px 2px;}
-.ar-barrow{display:grid;grid-template-columns:118px 1fr auto;align-items:center;gap:10px;border-radius:8px;padding:4px 6px;}
+/* ---- Ordered severity ladder (the hero read). Amethyst gradient, no red. ---- */
+.ar-bars{display:flex;flex-direction:column;gap:10px;padding:4px 2px 2px;}
+.ar-barrow{display:grid;grid-template-columns:122px 1fr auto;align-items:center;gap:10px;border-radius:8px;padding:5px 6px;}
 .ar-barrow.ar-clickable{cursor:pointer;}
 .ar-barrow.ar-clickable:hover{background:var(--wn-100);}
 .ar-barrow.ar-clickable:hover .ar-bartrack{background:var(--wn-300);}
 .ar-barrow.ar-clickable:hover .ar-barfill{filter:brightness(.92);}
 .ar-barrow.ar-clickable:focus-visible{outline:2px solid var(--am-400);outline-offset:-1px;}
-.ar-barrow.ar-zero{opacity:.7;}
 .ar-barlbl{display:flex;flex-direction:column;min-width:0;}
 .ar-barlbl-nm{font-size:12px;font-weight:600;color:var(--txt-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ar-barlbl-sub{font-size:10.5px;color:var(--txt-subtle);}
-.ar-bartrack{position:relative;height:16px;border-radius:5px;background:var(--wn-200);overflow:hidden;transition:background var(--dur,.15s);}
+.ar-barlbl-sub{font-size:10.5px;color:var(--txt-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ar-bartrack{position:relative;height:18px;border-radius:5px;background:var(--wn-200);overflow:hidden;transition:background var(--dur,.15s);}
 .ar-barfill{height:100%;border-radius:5px;min-width:2px;transition:filter var(--dur,.15s);}
 .ar-barval{text-align:right;font-variant-numeric:tabular-nums;display:flex;flex-direction:column;line-height:1.2;}
 .ar-barval-amt{font-size:12.5px;font-weight:700;color:var(--txt-primary);}
 .ar-barval-cnt{font-size:10.5px;color:var(--txt-subtle);}
+/* De-emphasised empty buckets, collapsed to one quiet line rather than a sparse zero row. */
+.ar-zeroline{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--txt-subtle);padding:8px 8px 0;line-height:1.4;}
+.ar-zeroline .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
 
-/* Loading skeleton (data-fetch only) , reuses .sk shimmer + .bgt-skel-cap/.bgt-spin */
+/* ---- Loading skeleton (data-fetch only) ---- */
 .ar-skel{padding:16px;display:flex;flex-direction:column;gap:12px;}
 .ar-skel-bars{display:flex;flex-direction:column;gap:11px;}
 .ar-sk-row{display:flex;align-items:center;gap:12px;}
 .ar-sk-bar{height:16px;border-radius:5px;}
 
-/* Positive empty state uses shared .state; a touch of positive colour */
+/* ---- Positive empty state (shared .state; a touch of positive colour) ---- */
 .ar-empty>.material-symbols-rounded{color:var(--txt-pos);}
 
 /* ---- Drill-to-detail focus overlay ---- */
@@ -929,6 +928,7 @@
 .ar-dexp{flex:0 0 22px;display:inline-flex;align-items:center;justify-content:center;color:var(--txt-subtle);}
 .ar-dexp .material-symbols-rounded{font-size:18px;}
 .ar-dc{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
+.ar-dhead .ar-dc{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
 .ar-dc0,.ar-dc1{flex:1.6 1 0;color:var(--txt-primary);font-weight:500;}
 .ar-dc4{flex:0 0 96px;}
 .ar-dc-amt{flex:0 0 100px;text-align:right;font-weight:700;color:var(--txt-primary);}
@@ -964,6 +964,9 @@
 .ar-att-sz{color:var(--txt-subtle);font-size:11.5px;font-variant-numeric:tabular-nums;}
 .ar-note{background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:8px;padding:10px 12px;line-height:1.5;color:var(--txt-primary);}
 .ar-dtotal{border-top:none;margin-top:2px;}
+/* Collection next-step actions in the expanded drawer */
+.ar-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+
 @media(max-width:560px){.ar-explore{grid-template-columns:1fr;}}
   /* ===== Payroll Scheduled Time Off (pto) ===== */
   .pto-hd .pto-chips{display:flex;gap:8px;align-items:center;align-self:center;justify-self:start;min-width:0;flex-wrap:wrap;}
@@ -2482,20 +2485,38 @@ function mysPopContent(){
   document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".pur-col[data-purpop]");if(!col){if(purPopEl)purHideBpop();return;}purShowBpop(col,e.clientX,e.clientY);});
 
 
-  /* ===== Receivable Invoices Outstanding (prefix: ar) ===== */
+  /* ===== Receivable Invoices Outstanding (prefix: ar) , v2 redesign =====
+     Drop-in replacement for the existing ar block (data + render + handlers).
+     Keeps the shell contract identical: contentHTML->arContent(w); every action
+     is "ar-"-prefixed and routed to arHandleClick(a,id,t); popContent uses only
+     pop types ar-rc / ar-source (arPopContent); the drill uses modal.type
+     "artdetail" (arDetailModalHTML); the bar-hover mousemove listener is inside
+     this block. No shell wiring changes are required.
+
+     What changed vs v1 (subpar): the pie is gone (aging is an ordered severity
+     read, per DR decision 11.1); the redundant "Total outstanding" box is gone
+     (the KPI already shows the total, per shell 0.1); the sparse 5-row zero table
+     is gone as the hero, replaced by an ordered amethyst severity bar that fills
+     the width and strongly de-emphasises empty buckets; Glance gains a compact
+     aging read; Explore shows aging + top-debtors side by side; internal jargon
+     ("posted", "voided excluded", table mechanics) is removed from user copy; a
+     light collection next-step is offered from a drilled invoice. */
+
 /* (1) DATA ------------------------------------------------------------- */
 var AR_BUCKETS=[
-  {key:"cur",label:"Current",sub:"Not yet overdue",hi:30,sev:0},
-  {key:"b1",label:"31-60 days",sub:"days past due",hi:60,sev:1},
-  {key:"b2",label:"61-90 days",sub:"days past due",hi:90,sev:2},
-  {key:"b3",label:"91-120 days",sub:"days past due",hi:120,sev:3},
-  {key:"b4",label:"121+ days",sub:"days past due",hi:Infinity,sev:4}
+  {key:"cur",label:"Current",sub:"not yet overdue",hi:30,sev:0},
+  {key:"b1",label:"31-60 days",sub:"1 to 2 months over",hi:60,sev:1},
+  {key:"b2",label:"61-90 days",sub:"2 to 3 months over",hi:90,sev:2},
+  {key:"b3",label:"91-120 days",sub:"3 to 4 months over",hi:120,sev:3},
+  {key:"b4",label:"121+ days",sub:"over 4 months over",hi:Infinity,sev:4}
 ];
-/* Amethyst severity ramp, light (Current) deepening to dark (121+). No red: severity reads from depth of amethyst + order + labels. */
+/* Amethyst severity ramp, light (Current) deepening to dark (121+). No red:
+   severity reads from depth of amethyst + order + labels + text. */
 var AR_SEV_COLORS=["--am-200","--am-300","--am-400","--am-500","--am-700"];
 var AR_RC=["All","Church","Insurance Billing","Pension Billing","School"];
 var AR_SOURCE=["All","Insurance Billing","Pension Billing"];
-/* Posted invoices with a remaining balance, aged by days past due. Some tabs left empty on purpose to exercise the empty-tab paths. */
+/* Unpaid invoices with a balance remaining, aged by days past due. Some tabs
+   left empty on purpose to exercise the empty-tab paths. */
 var AR_INV=[
   {inv:"INV-3001",customer:"Northside Community Church",billTo:"Northside Community Church",due:"2026-07-18",days:5,amount:1250,rc:"Church",source:"",
     lines:[{desc:"Facility use, June",qty:1,unit:900},{desc:"AV support",qty:2,unit:175}],
@@ -2516,13 +2537,16 @@ var AR_INV=[
   {inv:"INV-2890",customer:"Legacy Insurance Group",billTo:"Legacy HR Dept",due:"2026-03-01",days:144,amount:6300,rc:"Insurance Billing",source:"Insurance Billing",
     lines:[{desc:"Group premium, Feb",qty:1,unit:6300}],attachments:[],note:"",payments:[{date:"2026-03-10",method:"Check #1180",amount:0}]}
 ];
-/* Edge instance: everything current (all <=30 days). Overdue buckets are zero, so they are not clickable, and the KPI badge reads All current. */
+/* Edge instance: everything current (all <=30 days). Overdue buckets are zero,
+   so they are not clickable, and the KPI badge reads All current. */
 var AR_INV_CURRENT=[
   {inv:"INV-3101",customer:"Trinity Chapel",billTo:"Trinity Chapel",due:"2026-07-20",days:3,amount:1400,rc:"Church",source:"",lines:[{desc:"Facility use",qty:1,unit:1400}],attachments:[],note:"",payments:[]},
   {inv:"INV-3102",customer:"Faith Center",billTo:"Faith Center",due:"2026-07-11",days:12,amount:2200,rc:"Church",source:"",lines:[{desc:"Event services",qty:1,unit:2200}],attachments:[{name:"INV-3102.pdf",size:"70 KB"}],note:"On track to pay this week.",payments:[]},
   {inv:"INV-3103",customer:"Hope Academy",billTo:"Hope Academy Office",due:"2026-06-26",days:27,amount:980,rc:"School",source:"",lines:[{desc:"Supplies",qty:2,unit:490}],attachments:[],note:"",payments:[]}
 ];
-/* Edge instance: a single populated bucket (91-120). Every other bucket is zero and not clickable; the pie shows one segment. */
+/* Edge instance: a single populated bucket (91-120). Every other bucket is
+   zero and not clickable; the ordered bar shows one full bar plus a quiet
+   "no balance in" line for the empties. */
 var AR_INV_SINGLE=[
   {inv:"INV-2777",customer:"Emmanuel Church",billTo:"Emmanuel Church",due:"2026-04-14",days:100,amount:3300,rc:"Church",source:"",lines:[{desc:"Assessment balance",qty:1,unit:3300}],attachments:[],note:"",payments:[]},
   {inv:"INV-2778",customer:"Shepherd School",billTo:"Shepherd School Office",due:"2026-04-02",days:112,amount:5100,rc:"School",source:"",lines:[{desc:"Tuition balance",qty:1,unit:5100}],attachments:[{name:"stmt.pdf",size:"110 KB"}],note:"Payment plan under discussion.",payments:[{date:"2026-04-20",method:"ACH",amount:0}]},
@@ -2540,11 +2564,13 @@ function arBucketLabel(key){for(var i=0;i<AR_BUCKETS.length;i++)if(AR_BUCKETS[i]
 function arBuckets(w){
   var inv=arFiltered(w),m={};AR_BUCKETS.forEach(function(b){m[b.key]={count:0,total:0};});
   inv.forEach(function(x){var k=arBucketOf(x.days);m[k].count++;m[k].total+=x.amount;});
-  return AR_BUCKETS.map(function(b){return {key:b.key,label:b.label,sub:b.sub,color:AR_SEV_COLORS[b.sev],count:m[b.key].count,total:m[b.key].total};});
+  return AR_BUCKETS.map(function(b){return {key:b.key,label:b.label,sub:b.sub,sev:b.sev,color:AR_SEV_COLORS[b.sev],count:m[b.key].count,total:m[b.key].total};});
 }
 function arTotal(w){return arFiltered(w).reduce(function(s,x){return s+x.amount;},0);}
+function arCount(w){return arFiltered(w).length;}
 function arOverdue(w){return arFiltered(w).filter(function(x){return x.days>30;}).reduce(function(s,x){return s+x.amount;},0);}
 function arOverdueCount(w){return arFiltered(w).filter(function(x){return x.days>30;}).length;}
+function arWorstBucket(w){var nz=arBuckets(w).filter(function(r){return r.total>0;});return nz.length?nz[nz.length-1]:null;}
 function arCustomers(w){
   var inv=arFiltered(w),m={},order=[];
   inv.forEach(function(x){if(!m[x.customer]){m[x.customer]={customer:x.customer,total:0,count:0,worst:0};order.push(x.customer);}var g=m[x.customer];g.total+=x.amount;g.count++;var sev=arSevOf(x.days);if(sev>g.worst)g.worst=sev;});
@@ -2558,122 +2584,118 @@ function arDetailInvoices(w,mode,key){
   var out=(mode==="customer")?inv.filter(function(x){return x.customer===key;}):inv.filter(function(x){return arBucketOf(x.days)===key;});
   return out.sort(function(a,b){return b.days-a.days;});
 }
-/* Filter chips: secondary-fill + leading filter glyph (via .filter-chip[data-action]) + trailing chevron. */
+/* Filter chips: secondary-fill + leading filter glyph (via .filter-chip[data-action]) + trailing chevron. Sized to content. */
 function arRcChip(w){var rc=w.arRc||"All",spin=w.arloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip ar-chip" data-action="ar-rc" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Revenue center, tap to change">'+spin+'<span class="fc-label">'+(rc==="All"?"All revenue centers":rc)+'</span>'+ICON("expand_more")+'</button>';}
 function arSourceChip(w){var s=w.arSource||"All";return '<button class="filter-chip ar-chip" data-action="ar-source" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Source, tap to change"><span class="fc-label">'+(s==="All"?"All sources":s)+'</span>'+ICON("expand_more")+'</button>';}
-function arGroupToggle(w){var g=w.arGroup||"aging";return '<div class="vtoggle" role="group" aria-label="Group by"><button class="vt'+(g==="aging"?" on":"")+'" data-action="ar-group" data-id="'+w.id+'" data-v="aging" aria-pressed="'+(g==="aging")+'" data-tip="Show the outstanding balance split into aging buckets." data-tip-plain>'+ICON("stacked_bar_chart")+'Aging</button><button class="vt'+(g==="customer"?" on":"")+'" data-action="ar-group" data-id="'+w.id+'" data-v="customer" aria-pressed="'+(g==="customer")+'" data-tip="Show which customers owe the most, worst-overdue first." data-tip-plain>'+ICON("groups")+'Customer</button></div>';}
-function arShapeToggle(w){
-  var cust=(w.arGroup==="customer"),v=cust?"bar":(w.arShape||"bar");
-  return '<div class="vtoggle ar-shapetog" role="group" aria-label="Chart type">'+
-    '<button class="vt'+(v==="bar"?" on":"")+'" data-action="ar-shape" data-id="'+w.id+'" data-v="bar" aria-pressed="'+(v==="bar")+'">'+ICON("bar_chart")+'Bar</button>'+
-    '<button class="vt'+(v==="pie"?" on":"")+(cust?" disabled":"")+'"'+(cust?' aria-disabled="true" tabindex="-1" data-tip="The pie shows the aging mix. Switch Group by to Aging to use it." data-tip-plain':' data-action="ar-shape" data-id="'+w.id+'" data-v="pie"')+' aria-pressed="'+(v==="pie")+'">'+ICON("pie_chart")+'Pie</button></div>';
+function arGroupToggle(w){var g=w.arGroup||"aging";return '<div class="vtoggle" role="group" aria-label="Group by"><button class="vt'+(g==="aging"?" on":"")+'" data-action="ar-group" data-id="'+w.id+'" data-v="aging" aria-pressed="'+(g==="aging")+'" data-tip="Show the balance split by how overdue it is." data-tip-plain>'+ICON("stacked_bar_chart")+'Aging</button><button class="vt'+(g==="customer"?" on":"")+'" data-action="ar-group" data-id="'+w.id+'" data-v="customer" aria-pressed="'+(g==="customer")+'" data-tip="Show which customers owe the most, worst overdue first." data-tip-plain>'+ICON("groups")+'Customers</button></div>';}
+
+/* Compact stacked severity bar (single row) , the Glance aging read and a tidy
+   summary strip. One segment per bucket that has a balance, amethyst gradient.
+   Values live in text (Glance caption + sr-only), so this is aria-hidden. */
+function arStackBar(w){
+  var tot=arTotal(w);if(tot<=0)return "";
+  var segs=arBuckets(w).filter(function(r){return r.total>0;});
+  var inner=segs.map(function(r){var pct=r.total/tot*100;return '<span class="ar-seg" style="flex-basis:'+pct.toFixed(2)+'%;background:var('+r.color+')" title="'+arEsc(r.label+": "+money(r.total))+'"></span>';}).join("");
+  return '<div class="ar-stack" aria-hidden="true">'+inner+'</div>';
 }
-/* Ordered horizontal aging bar, Current -> 121+, amethyst severity gradient (no red). Values are in the DOM (amount + count) plus an sr-only sentence. Rows with value 0 are not clickable. */
-function arBar(w){
-  var cust=(w.arGroup==="customer"),rows;
-  if(cust)rows=arCustomers(w).slice(0,w.size==="xwide"?9:6).map(function(r){return {key:r.customer,label:r.customer,sub:r.count+" invoice"+(r.count>1?"s":""),color:AR_SEV_COLORS[r.worst],count:r.count,total:r.total};});
-  else rows=arBuckets(w);
-  var max=1,totAll=0;rows.forEach(function(r){max=Math.max(max,r.total);totAll+=r.total;});
-  var bars=rows.map(function(r){
-    var pct=max?Math.round(r.total/max*100):0,share=totAll?Math.round(r.total/totAll*100):0;
-    var clickable=r.total>0;
-    var attr=clickable?' data-action="ar-open" data-id="'+w.id+'" data-mode="'+(cust?"customer":"aging")+'" data-key="'+arEsc(r.key)+'" role="button" tabindex="0"':'';
-    var arpop=[r.label,r.total,r.count,share].join("|");
-    return '<div class="ar-barrow'+(clickable?" ar-clickable":" ar-zero")+'"'+attr+' data-arpop="'+arEsc(arpop)+'">'+
-      '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.label+'</span><span class="ar-barlbl-sub">'+r.sub+'</span></div>'+
-      '<div class="ar-bartrack"><div class="ar-barfill" style="width:'+(clickable?Math.max(2,pct):0)+'%;background:var('+r.color+')"></div></div>'+
-      '<div class="ar-barval"><span class="ar-barval-amt">'+money(r.total)+'</span><span class="ar-barval-cnt">'+r.count+' inv</span></div>'+
-      '<span class="sr-only">'+r.label+': '+money(r.total)+', '+r.count+' invoices, '+share+'% of the outstanding balance.</span>'+
-    '</div>';
-  }).join("");
-  return '<div class="ar-bars" role="img" aria-label="Outstanding balance by '+(cust?"customer":"aging bucket")+'">'+bars+'</div>';
-}
-/* Secondary chart: the production "Invoice Aging" pie, one segment per bucket. Amethyst severity ramp, values as text in the legend; segments drill to detail. */
-function arPie(w){
-  var rows=arBuckets(w).filter(function(r){return r.total>0;});
-  var tot=rows.reduce(function(s,r){return s+r.total;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
-  rows.forEach(function(r,i){
-    var frac=tot?r.total/tot:0,len=frac*C,c="var("+r.color+")";
-    var clk=' data-action="ar-open" data-id="'+w.id+'" data-mode="aging" data-key="'+r.key+'"';
-    arcs+='<circle class="seg" data-seg="'+i+'"'+clk+' cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';
-    off+=len;
-    legend+='<div class="leg" data-seg="'+i+'"'+clk+'><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+r.label+'</span><span class="lg-meta">'+money(r.total)+' · '+Math.round(frac*100)+'%</span></div>';
-  });
-  return '<div class="ar-pie"><div class="ar-charttitle">Invoice Aging</div><div class="pie-wrap col"><svg class="donut" viewBox="0 0 140 140" width="150" height="150" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="85" text-anchor="middle" class="donut-c2">outstanding</text></svg><div class="legend">'+legend+'</div></div></div>';
-}
-function arChart(w){
-  var cust=(w.arGroup==="customer"),shape=cust?"bar":(w.arShape||"bar");
-  return '<div class="ar-chartcard"><div class="ar-charttoolbar">'+arShapeToggle(w)+'</div>'+((shape==="pie")?arPie(w):arBar(w))+'</div>';
-}
-function arAgingTable(w){
-  var rows=arBuckets(w),tot=arTotal(w);
-  var head='<div class="wt-row wt-head"><span class="lr-main">Aging bucket</span><span class="ar-cnt">Invoices</span><span class="wt-c2">Outstanding</span></div>';
-  var body=rows.map(function(r){
-    var clickable=r.total>0;
-    var attr=clickable?' data-action="ar-open" data-id="'+w.id+'" data-mode="aging" data-key="'+r.key+'" role="button" tabindex="0" aria-label="'+arEsc(r.label+", "+money(r.total)+", "+r.count+" invoices. Open detail.")+'"':'';
-    return '<div class="wt-row ar-brow'+(clickable?" ar-clickable":" ar-zero")+'"'+attr+'>'+
-      '<span class="lr-main ar-blabel"><span class="ar-sevdot" style="background:var('+r.color+')"></span><span class="ar-bl-nm">'+r.label+'</span><span class="ar-bl-sub">'+r.sub+'</span></span>'+
-      '<span class="ar-cnt">'+r.count+'</span>'+
-      '<span class="wt-c2">'+money(r.total)+'</span></div>';
-  }).join("");
-  return '<div class="scroll ar-tscroll">'+head+body+'</div><div class="dep-total ar-total"><span>Total outstanding</span><span>'+money(tot)+'</span></div>';
-}
-function arCustomerTable(w){
-  var rows=arCustomers(w),tot=rows.reduce(function(s,r){return s+r.total;},0);
-  var sk=(w.arSort||"total-desc").split("-"),key=sk[0],dir=sk[1];
-  function sb(k,label){var on=key===k,ic=on?(dir==="desc"?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ar-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
-  var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("customer","Customer")+'</span><span class="ar-worst">Oldest</span><span class="ar-cnt">Invoices</span><span class="wt-c2">'+sb("total","Outstanding")+'</span></div>';
-  var body=rows.map(function(r){
-    return '<div class="wt-row ar-crow ar-clickable" data-action="ar-open" data-id="'+w.id+'" data-mode="customer" data-key="'+arEsc(r.customer)+'" role="button" tabindex="0" aria-label="'+arEsc(r.customer+", "+money(r.total)+", "+r.count+" invoices. Open detail.")+'">'+
-      '<span class="lr-main ar-crow-nm">'+r.customer+'</span>'+
-      '<span class="ar-worst"><span class="ar-sevdot" style="background:var('+AR_SEV_COLORS[r.worst]+')"></span>'+arBucketLabel(AR_BUCKETS[r.worst].key)+'</span>'+
-      '<span class="ar-cnt">'+r.count+'</span>'+
-      '<span class="wt-c2">'+money(r.total)+'</span></div>';
-  }).join("");
-  return '<div class="scroll ar-tscroll">'+head+body+'</div><div class="dep-total ar-total"><span>Total outstanding</span><span>'+money(tot)+'</span></div>';
-}
-function arTable(w){return (w.arGroup==="customer")?arCustomerTable(w):arAgingTable(w);}
-function arSkeleton(){var bars="";[90,64,48,34,22].forEach(function(wd){bars+='<div class="ar-sk-row"><span class="sk" style="width:70px;height:12px;border-radius:4px"></span><span class="sk ar-sk-bar" style="width:'+wd+'%"></span></div>';});return '<div class="ar-skel"><div class="ar-skel-bars">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
-function arGlance(w){
+function arAgeSr(w){var b=arBuckets(w);return 'Outstanding by age: '+b.map(function(r){return r.label+" "+money(r.total);}).join(", ")+'.';}
+
+/* Overdue badge (shared by Glance and the header KPI). Amethyst-neutral pill;
+   red is reserved for the app delta pill, not used here. */
+function arOverduePill(w){
   var tot=arTotal(w),over=arOverdue(w),oc=arOverdueCount(w),pct=tot>0?Math.round(over/tot*100):0;
-  var pill=over>0
-    ?'<span class="bank-pill" data-tip="'+arEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is more than 30 days past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue ('+pct+'%)</span>'
-    :'<span class="delta-pill" data-tip="Every outstanding invoice is still current, 30 days or less past due." data-tip-plain>'+ICON("check")+'All current</span>';
+  if(over>0)return '<span class="bank-pill" data-tip="'+arEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is more than 30 days past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue ('+pct+'%)</span>';
+  return '<span class="delta-pill" data-tip="Every outstanding invoice is still current, 30 days or less past due." data-tip-plain>'+ICON("check")+'All current</span>';
+}
+
+/* GLANCE (kpi): total owed + overdue badge on the LEFT, a plain context line,
+   then a compact aging read (stacked severity bar + oldest-with-balance
+   callout). No content toolbar (Glance is flat). Values as text + sr-only. */
+function arGlance(w){
+  var tot=arTotal(w),n=arCount(w),worst=arWorstBucket(w),over=arOverdue(w);
+  var read="";
+  if(tot>0){
+    var call=(over>0&&worst&&worst.key!=="cur")
+      ?'<span class="ar-glance-cap"><span class="ar-sevdot" style="background:var('+worst.color+')"></span>'+money(worst.total)+' in '+worst.label+', the oldest with a balance</span>'
+      :'<span class="ar-glance-cap ar-cap-ok">'+ICON("check")+'Every invoice is still current</span>';
+    read='<div class="ar-glance-read">'+arStackBar(w)+call+'</div>';
+  }
   return '<div class="kpi-row"><div class="kpi-num">'+
-    '<div class="dep-hd-kpigrp"><span class="metric-value">'+money(tot)+'</span>'+pill+'</div>'+
-    '<div class="gl-sub"><span class="bgt-caption">outstanding, aged by due date</span></div>'+
+    '<div class="dep-hd-kpigrp"><span class="metric-value">'+money(tot)+'</span>'+arOverduePill(w)+'</div>'+
+    '<div class="gl-sub"><span class="bgt-caption">owed to you across '+n+' unpaid invoice'+(n===1?"":"s")+'</span></div>'+
+    read+
+    '<span class="sr-only">'+arAgeSr(w)+'</span>'+
   '</div></div>';
 }
+
 function arEmpty(w){
-  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="color:var(--txt-pos);display:inline-flex;align-items:center;gap:7px;font-size:20px">'+ICON("check_circle")+'All settled</span></div><div class="gl-sub"><span class="bgt-caption">nothing outstanding right now</span></div></div></div>';
-  return '<div class="state ar-empty" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">Nothing outstanding</div><div class="state-sub">Every posted invoice has been paid. There is nothing to chase right now.</div></div>';
+  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value ar-allset">'+ICON("check_circle")+'All settled</span></div><div class="gl-sub"><span class="bgt-caption">nothing outstanding right now</span></div></div></div>';
+  return '<div class="state ar-empty" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">Nothing outstanding</div><div class="state-sub">Every invoice has been paid. There is nothing to chase right now.</div></div>';
 }
+
 function arHeaderBlock(w,mode){
   var loading=(mode==="loading");
   var numInner;
   if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';}
-  else{
-    var tot=arTotal(w),over=arOverdue(w),oc=arOverdueCount(w),pct=tot>0?Math.round(over/tot*100):0;
-    var pill=over>0
-      ?'<span class="bank-pill" data-tip="'+arEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is more than 30 days past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue ('+pct+'%)</span>'
-      :'<span class="delta-pill" data-tip="Every outstanding invoice is still current, 30 days or less past due." data-tip-plain>'+ICON("check")+'All current</span>';
-    numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(tot)+'</span>'+pill+'</div>';
-  }
-  var ctx='Posted invoices with a balance remaining, aged by due date. Voided invoices are excluded.';
+  else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(arTotal(w))+'</span>'+arOverduePill(w)+'</div>';}
+  var n=arCount(w);
+  var ctx='Owed to you across '+n+' unpaid invoice'+(n===1?"":"s")+', oldest balances first.';
+  /* Explore shows both cuts side by side, so the group toggle is hidden there. */
+  var toggle=(w.size==="xwide")?"":arGroupToggle(w);
   return '<div class="dep-hd">'+
-    '<div class="dep-hd-top"><div class="ar-ctlrow">'+arRcChip(w)+arSourceChip(w)+'</div><div class="dep-hd-toggle">'+arGroupToggle(w)+'</div></div>'+
+    '<div class="dep-hd-top"><div class="ar-ctlrow">'+arRcChip(w)+arSourceChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
     '<div class="dep-hd-num"><div class="ar-numwrap">'+numInner+'<div class="ar-ctx">'+ctx+'</div></div></div>'+
   '</div>';
 }
+
+/* Ordered severity bar , the hero read. Current -> 121+ (aging) or worst-debtor
+   first (customers). Amethyst gradient, no red. Values are in the DOM (amount +
+   count) plus an sr-only sentence. Empty aging buckets are suppressed from the
+   plot and collapsed into one quiet "no balance in ..." line. */
+function arBar(w,forceGroup){
+  var group=forceGroup||(w.arGroup||"aging"),cust=(group==="customer");
+  var rows,zeros=[];
+  if(cust){
+    rows=arCustomers(w).slice(0,w.size==="xwide"?7:6).map(function(r){return {key:r.customer,label:r.customer,sub:r.count+" invoice"+(r.count>1?"s":""),color:AR_SEV_COLORS[r.worst],count:r.count,total:r.total};});
+  } else {
+    var all=arBuckets(w);
+    rows=all.filter(function(r){return r.total>0;});
+    zeros=all.filter(function(r){return r.total<=0;});
+  }
+  var totAll=arTotal(w),max=1;rows.forEach(function(r){max=Math.max(max,r.total);});
+  var bars=rows.map(function(r){
+    var pct=max?Math.round(r.total/max*100):0,share=totAll?Math.round(r.total/totAll*100):0;
+    var attr=' data-action="ar-open" data-id="'+w.id+'" data-mode="'+(cust?"customer":"aging")+'" data-key="'+arEsc(r.key)+'" role="button" tabindex="0" aria-label="'+arEsc(r.label+", "+money(r.total)+", "+r.count+" invoice"+(r.count>1?"s":"")+", open the invoices behind this")+'"';
+    var arpop=[r.label,r.total,r.count,share].join("|");
+    return '<div class="ar-barrow ar-clickable"'+attr+' data-arpop="'+arEsc(arpop)+'">'+
+      '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.label+'</span><span class="ar-barlbl-sub">'+r.sub+'</span></div>'+
+      '<div class="ar-bartrack"><div class="ar-barfill" style="width:'+Math.max(3,pct)+'%;background:var('+r.color+')"></div></div>'+
+      '<div class="ar-barval"><span class="ar-barval-amt">'+money(r.total)+'</span><span class="ar-barval-cnt">'+r.count+' inv</span></div>'+
+      '<span class="sr-only">'+r.label+': '+money(r.total)+', '+r.count+' invoices, '+share+'% of the outstanding balance.</span>'+
+    '</div>';
+  }).join("");
+  var zline=(!cust&&zeros.length)?'<div class="ar-zeroline">'+ICON("done")+'No balance in '+zeros.map(function(z){return z.label;}).join(", ")+'</div>':"";
+  var body=rows.length?bars:'<div class="ar-zeroline">'+ICON("info")+'Nothing to show for this selection.</div>';
+  return '<div class="ar-bars" role="img" aria-label="Outstanding balance by '+(cust?"customer, worst overdue first":"aging bucket, current to most overdue")+'">'+body+'</div>'+zline;
+}
+
+function arSkeleton(){var bars="";[90,64,48,34,22].forEach(function(wd){bars+='<div class="ar-sk-row"><span class="sk" style="width:70px;height:12px;border-radius:4px"></span><span class="sk ar-sk-bar" style="width:'+wd+'%"></span></div>';});return '<div class="ar-skel"><div class="ar-skel-bars">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+
 function arContent(w){
   if(w.state==="empty")return arEmpty(w);
   if(w.size==="kpi")return arGlance(w);
   if(w.arloading)return arHeaderBlock(w,"loading")+arSkeleton();
   var mh=arHeaderBlock(w);
-  if(w.size==="xwide")return mh+'<div class="ar-explore"><div class="ar-explore-col ar-tablecol">'+arTable(w)+'</div><div class="ar-explore-col ar-chartcol">'+arChart(w)+'</div></div>';
-  return mh+'<div class="ar-body">'+arTable(w)+'</div>';
+  if(w.size==="xwide")return mh+'<div class="ar-explore">'+
+    '<section class="ar-panel"><h4 class="ar-panel-h">'+ICON("stacked_bar_chart")+'By aging</h4>'+arBar(w,"aging")+'</section>'+
+    '<section class="ar-panel"><h4 class="ar-panel-h">'+ICON("groups")+'Top overdue customers</h4>'+arBar(w,"customer")+'</section>'+
+  '</div>';
+  return mh+'<div class="ar-body">'+arBar(w)+'</div>';
 }
-/* Drill-to-detail focus overlay: columns Customer, Bill To, Due Date, Invoice #, Days Past Due, Outstanding. Each row expands into 4 tabs. Export to Excel + Close in the header. */
+
+/* Drill-to-detail focus overlay: report-style list (Customer, Bill To, Due Date,
+   Invoice #, Days Past Due, Outstanding). Each row expands into four tabs and a
+   collection next-step (open the invoice / record a follow-up). Export + Close. */
 function arDetailTabs(x){
   var tab=modal.tab||"details";
   var tabs=[["details","Details","list_alt"],["attachments","Attachments","attach_file"],["note","Note","sticky_note_2"],["payments","Payments","payments"]];
@@ -2699,6 +2721,10 @@ function arDetailTabs(x){
   }
   return '<div class="ar-tabbar" role="tablist">'+bar+'</div><div class="ar-tabpanel" role="tabpanel">'+panel+'</div>';
 }
+function arDrawerActions(w,x){
+  return '<div class="ar-actions"><button class="btn outlined sm" data-action="ar-open-invoice" data-id="'+w.id+'" data-inv="'+arEsc(x.inv)+'">'+ICON("open_in_new")+'Open invoice</button>'+
+    '<button class="btn naked sm" data-action="ar-followup" data-id="'+w.id+'" data-inv="'+arEsc(x.inv)+'">'+ICON("event_note")+'Record a follow-up</button></div>';
+}
 function arDetailModalHTML(){
   var w=find(modal.id);if(!w)return "";
   var mode=modal.mode,key=modal.key;
@@ -2718,7 +2744,7 @@ function arDetailModalHTML(){
         '<span class="ar-dc ar-dc3">'+x.inv+'</span>'+
         '<span class="ar-dc ar-dc4">'+dpd+'</span>'+
         '<span class="ar-dc ar-dc5 ar-dc-amt">'+money(x.amount)+'</span></div>';
-      if(open)row+='<div class="ar-drawer">'+arDetailTabs(x)+'</div>';
+      if(open)row+='<div class="ar-drawer">'+arDetailTabs(x)+arDrawerActions(w,x)+'</div>';
       return row;
     }).join("");
   } else {
@@ -2732,36 +2758,39 @@ function arDetailModalHTML(){
     '<div class="modal-f"><button class="btn primary sm" data-action="ar-detail-close">Close</button></div></div></div>';
 }
 
-/* (4) HANDLERS --------------------------------------------------------- */
-/* Data-fetch: revenue center / source changes fetch new data => transient arloading flag + skeleton. Group by / chart shape / sort / tab / expand are client re-renders and never trigger a load. */
+/* (3) HANDLERS --------------------------------------------------------- */
+/* Data-fetch: revenue center / source changes fetch new data => transient
+   arloading flag + skeleton. Group by, drill, tab, expand are client re-renders
+   and never trigger a load. */
 function arLoad(w){w.arloading=true;clearTimeout(timers["ar-"+w.id]);timers["ar-"+w.id]=setTimeout(function(){w.arloading=false;render();},800);}
-/* --- click branches (paste into the delegated document click handler) --- */
 function arHandleClick(a,id,t){
   if(a==="ar-rc"){pop=(pop&&pop.type==="ar-rc"&&pop.id===id)?null:{type:"ar-rc",id:id};render();return true;}
   if(a==="ar-set-rc"){var wrc=find(id);if(wrc){var nv=t.getAttribute("data-v");if((wrc.arRc||"All")!==nv){wrc.arRc=nv;arLoad(wrc);}}pop=null;render();return true;}
   if(a==="ar-source"){pop=(pop&&pop.type==="ar-source"&&pop.id===id)?null:{type:"ar-source",id:id};render();return true;}
   if(a==="ar-set-source"){var wso=find(id);if(wso){var sv=t.getAttribute("data-v");if((wso.arSource||"All")!==sv){wso.arSource=sv;arLoad(wso);}}pop=null;render();return true;}
-  if(a==="ar-group"){var wg=find(id);if(wg){var g=t.getAttribute("data-v");if((wg.arGroup||"aging")!==g){wg.arGroup=g;if(g==="customer"&&(wg.arShape||"bar")==="pie")wg.arShape="bar";}}pop=null;render();return true;}
-  if(a==="ar-shape"){var wsh=find(id);if(wsh)wsh.arShape=t.getAttribute("data-v");pop=null;render();return true;}
-  if(a==="ar-sort"){var wst=find(id);if(wst){var k=t.getAttribute("data-k"),parts=(wst.arSort||"total-desc").split("-");wst.arSort=(parts[0]===k)?(k+"-"+(parts[1]==="desc"?"asc":"desc")):(k+"-desc");}pop=null;render();return true;}
+  if(a==="ar-group"){var wg=find(id);if(wg){var g=t.getAttribute("data-v");wg.arGroup=g;}pop=null;render();return true;}
   if(a==="ar-open"){var wop=find(id);if(!wop)return true;modal={type:"artdetail",id:id,mode:t.getAttribute("data-mode"),key:t.getAttribute("data-key"),tab:"details",exp:null};modalMounted=false;pop=null;render();return true;}
   if(a==="ar-detail-close"){modal=null;pop=null;render();return true;}
   if(a==="ar-exp"){if(modal){var iv=t.getAttribute("data-inv");modal.exp=(modal.exp===iv)?null:iv;modal.tab="details";}render();return true;}
   if(a==="ar-tab"){if(modal)modal.tab=t.getAttribute("data-tab");render();return true;}
   if(a==="ar-export"){pop=null;setStatus("Exporting the detail list to Excel…");render();return true;}
+  if(a==="ar-open-invoice"){setStatus("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Receivable…");return true;}
+  if(a==="ar-followup"){setStatus("Follow-up noted for invoice "+t.getAttribute("data-inv")+".");return true;}
   return false;
 }
-/* --- popContent branches (paste into popContent()) --- */
+/* popContent branches (routed from popContent(): ar-rc / ar-source -> arPopContent) */
 function arPopContent(){
   if(pop.type==="ar-rc"){var wr=find(pop.id),cur=wr.arRc||"All";return '<div class="cap">Revenue center</div>'+AR_RC.map(function(o){var on=cur===o;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="ar-set-rc" data-id="'+wr.id+'" data-v="'+arEsc(o)+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+(o==="All"?"All revenue centers":o)+'</button>';}).join("");}
   if(pop.type==="ar-source"){var ws=find(pop.id),cs=ws.arSource||"All";return '<div class="cap">Source</div>'+AR_SOURCE.map(function(o){var on=cs===o;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="ar-set-source" data-id="'+ws.id+'" data-v="'+arEsc(o)+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+(o==="All"?"All sources":o)+'</button>';}).join("");}
   return "";
 }
-/* --- triggerSelector branches (add to triggerSelector()) --- */
+/* triggerSelector branches (already inline in the shell's triggerSelector for
+   ar-rc / ar-source; kept here for parity/verification). */
 function arTriggerSelector(){if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';return null;}
-/* renderModal branch (add near the top of renderModal): if(modal.type==="artdetail"){mr.innerHTML=arDetailModalHTML();return;} */
-/* contentHTML dispatch (add BEFORE the generic empty-state line, next to payroll/tasks): if(w.kind==="ar")return arContent(w); */
-/* --- bar hover popover (formatted card; reuses .bgt-pop styling) --- */
+/* renderModal branch (already in the shell): if(modal.type==="artdetail"){mr.innerHTML=arDetailModalHTML();return;} */
+/* contentHTML dispatch (already in the shell): if(w.kind==="ar")return arContent(w); */
+
+/* Bar hover popover (formatted card; reuses .bgt-pop styling) */
 var arPopEl=null;
 function arHidePop(){if(arPopEl){arPopEl.remove();arPopEl=null;}}
 function arShowPop(row,mx,my){
@@ -2776,9 +2805,8 @@ function arShowPop(row,mx,my){
   var left=mx+14,top=my-bh-10;if(left+bw>innerWidth-M)left=mx-bw-14;if(top<M)top=my+16;
   arPopEl.style.left=left+"px";arPopEl.style.top=top+"px";
 }
-/* Attach: document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.target.closest(".ar-barrow[data-arpop]");if(!row){if(arPopEl)arHidePop();return;}arShowPop(row,e.clientX,e.clientY);}); */
-  document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.target.closest(".ar-barrow[data-arpop]");if(!row){if(arPopEl)arHidePop();return;}arShowPop(row,e.clientX,e.clientY);});
-
+/* Attach once at load (this listener lives inside the ar IIFE block): */
+document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.target.closest(".ar-barrow[data-arpop]");if(!row){if(arPopEl)arHidePop();return;}arShowPop(row,e.clientX,e.clientY);});
   /* ===== Payroll Scheduled Time Off (pto) ===== */
   var PTO_ME="J. Lopez", PTO_TODAY="23 Jul 2026";
   var PTO_TYPES=[
