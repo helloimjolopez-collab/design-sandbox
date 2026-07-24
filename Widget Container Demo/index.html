@@ -4428,23 +4428,7 @@ function mysPopContent(){
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
     return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
   }
-  function bankPie(w,big){
-    var maxN={wide:8,xwide:12}[w.size]||8;
-    var all=bankAccounts(w);
-    var pos=all.filter(function(a){return bankEnding(a)>0;}).map(function(a){return {name:a.name,net:bankEnding(a)};});
-    var negOnly=bankNegCount(w);
-    var segs=topN(pos,maxN);
-    var tot=segs.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
-    var shownReal=segs.filter(function(a){return !a.others;}).length,ramp=blueRamp(Math.max(1,shownReal)),grouped=pos.length-shownReal;
-    segs.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=a.others?OTHERS_COLOR:ramp[i];
-      arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';
-      off+=len;
-      legend+='<div class="leg" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+(a.others?' <span class="lr-meta">('+grouped+')</span>':'')+'</span><span class="lg-meta">'+money(a.net)+' · '+Math.round(frac*100)+'%</span></div>';
-    });
-    var DS={wide:210,xwide:250}[w.size]||190;
-    var note=negOnly?'<div class="bank-pie-note">'+ICON("info")+negOnly+' account'+(negOnly>1?"s":"")+' with a negative balance '+(negOnly>1?"are":"is")+' not shown in the chart. See the table for the full list.</div>':"";
-    return '<div class="dist-wrap bank-dist"><div class="bank-pie-title">All Bank Accounts</div><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+fmtAxis(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">in chart</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">Accounts</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div>'+note+'</div>';
-  }
+  /* bankPie removed: All-Accounts uses the table, no pie (Confluence 10.2). */
   function bankSingleTable(w,sel){
     var a=sel.a,end=bankEnding(sel);
     var rowsDef=[["Beginning Balance",a[0]],["Deposits",a[1]],["Voids",a[2]],["Checks",a[3]],["Withdrawals",a[4]],["EFT",a[5]]];
@@ -5448,13 +5432,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   /* ---- Glance ------------------------------------------------------- */
   function apGlance(w){
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div></div>';}
-    var tot=apTotalDue(w),week=apDueWithin(w,0,7);
-    var cap=week>0?(apMoney(week)+' due within the next 7 days'):'nothing due in the next 7 days';
+    var tot=apTotalDue(w);
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Accounts payable</span></span>'+
       '<div class="metric-value">'+apMoney(tot)+'</div>'+
       '<div class="gl-sub">'+apBadge(w)+'</div>'+
-      '<div class="ap-glance-cap">'+cap+'</div>'+
       '</div></div>';}
 
   /* ---- skeleton (table rows; loading is data-fetch only) ------------ */
