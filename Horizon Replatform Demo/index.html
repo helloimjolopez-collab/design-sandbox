@@ -2655,22 +2655,46 @@ function showSendDifferentEmail(pid, cid){
   setTimeout(()=>document.getElementById(inputId)?.focus(), 100);
 }
 
-/* ─── Happy-path demo simulation for Jordan Lee ─────────────────── */
+/* ─── Happy-path demo simulations (work on any current case) ─────── */
+function setCaseStatus(c, status){
+  c.status = status;
+  if('p1Status' in c && c.p1Status) c.p1Status = status;
+}
+function nowTime(){
+  return new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+function simulateLinkOpened(pid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases[0];
+  if(!c) return;
+  c.events = c.events||[];
+  c.events.push({type:'done',title:'Invite link opened by applicant',date:todayStr(),time:nowTime(),by:'Applicant'});
+  c.linkOpened = true;
+  renderTable(); renderHomeTable();
+  toast('Applicant opened the invite link. Logged in the case timeline.');
+  if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+}
 function simulateConsentSubmitted(pid){
   const person = personById(pid);
   if(!person) return;
   const c = person.cases[0];
   if(!c) return;
-  c.status = 'consent-received';
-  c.consentForm = {submittedDate: todayStr(), nameOnForm: person.fullLegal, nameOnRecord: person.fullLegal, mismatch: false};
   c.events = c.events||[];
-  c.events.push({type:'done',title:'Consent form submitted',date:todayStr(),time:'',by:'Applicant'});
-  c.events.push({type:'done',title:'Order placed automatically',date:todayStr(),time:'',by:'Auto'});
+  if(!c.linkOpened){
+    c.events.push({type:'done',title:'Invite link opened by applicant',date:todayStr(),time:nowTime(),by:'Applicant'});
+    c.linkOpened = true;
+  }
+  setCaseStatus(c, 'consent-received');
+  c.consentForm = {submittedDate: todayStr(), nameOnForm: person.fullLegal, nameOnRecord: person.fullLegal, mismatch: false};
+  c.events.push({type:'done',title:'Consent form submitted',date:todayStr(),time:nowTime(),by:'Applicant'});
+  c.events.push({type:'done',title:'Order placed automatically',date:todayStr(),time:nowTime(),by:'Auto'});
   renderTable(); renderHomeTable();
   toast('Consent received. Order placed automatically.');
   // Auto-advance to order-processing after a beat
   setTimeout(()=>{
-    c.status = 'order-processing';
+    setCaseStatus(c, 'order-processing');
+    c.events.push({type:'done',title:'Order submitted to Digital Delve',date:todayStr(),time:nowTime(),by:'System'});
     if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
     renderTable(); renderHomeTable();
   }, 800);
@@ -2682,10 +2706,10 @@ function simulateReportReceived(pid){
   if(!person) return;
   const c = person.cases[0];
   if(!c) return;
-  c.status = 'awaiting-assessment';
-  c.report = {refId:'DD-2026-JL01',receivedDate:todayStr(),hits:'No disqualifying records found'};
+  setCaseStatus(c, 'awaiting-assessment');
+  c.report = {refId:'DD-2026-'+(person.name.split(' ').map(w=>w[0]).join('')||'XX')+'01',receivedDate:todayStr(),hits:'No disqualifying records found'};
   c.events = c.events||[];
-  c.events.push({type:'done',title:'Report received from Digital Delve',date:todayStr(),time:'',by:'System'});
+  c.events.push({type:'done',title:'Report received from Digital Delve',date:todayStr(),time:nowTime(),by:'System'});
   renderTable(); renderHomeTable();
   toast('Report received. Assessment required.');
   if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
