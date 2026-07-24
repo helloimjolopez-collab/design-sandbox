@@ -848,7 +848,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="cc"><ol>
     <li>Cases appear in the table immediately. Email mode: status "Invite Sent." Link-only mode: status "Invite Created"; success screen shows all links with copy buttons.</li>
     <li>Person profile → Current Case: status badge, package, expiry countdown. While status is Invite Sent or Invite Created: Invite &amp; Link Management section — Copy link, Resend invite (email mode), Extend expiry, Cancel invite.</li>
-    <li>Cancel invite is only available before consent is received. Cancelling: confirmation shown ("Link will expire. Case moves to Case Cancelled.") → on confirm, status = Invite Cancelled, case = Case Cancelled.</li>
+    <li>Cancel invite is only available before consent is received. Cancelling: confirmation shown ("Link will expire. Case moves to Case Cancelled.") → on confirm, status = Case Cancelled, case = Case Cancelled.</li>
     <li>After applicant submits consent: status = Consent Received → system auto-places order → Order Processing. Invite management section disappears (link has been used).</li>
     <li>Consent Details in profile shows the applicant's full legal name exactly as entered on the form, and date submitted — displayed separately from the profile name, never overwrites it. If the two names differ, a name mismatch warning appears with Approve and proceed / Request correction buttons.</li>
     <li>Order failure: status = Order Failed with explanation (technical error or information issue with field details). Admin clicks Cancel Case → status moves to Case Cancelled.</li>
@@ -914,7 +914,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
   <td class="cc">People search queries ChMS person sync for integrated accounts.</td>
   <td class="cc"><span class="empty">—</span></td><td class="cc"><span class="empty">—</span></td>
   <td class="cc">On confirm: case status written back to host person record immediately.</td>
-  <td class="cc">Invite Sent, Invite Cancelled, Order Failed, Case Cancelled all sync back to host record.</td>
+  <td class="cc">Invite Sent, Case Cancelled, Order Failed, Case Cancelled all sync back to host record.</td>
 </tr>
 
 <tr class="rSec">
@@ -2380,7 +2380,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
             <li>Assessment outcomes (Complete — Eligible, Complete — Escalated) are lifecycle statuses</li>
             <li>Rescreen health is part of the case lifecycle</li>
             <li>Report complete and awaiting review is a distinct, actionable status</li>
-            <li>Invite Cancelled and Case Closed are distinct — cancelling an invite is not the same as closing a failed case</li>
+            <li>Case Cancelled and Case Closed are distinct — cancelling an invite is not the same as closing a failed case</li>
             <li>Every case is anchored to a persistent person record</li>
           </ul>
         </div>
@@ -2392,7 +2392,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
       <p class="sa-note">One case per screening context. Each case is linked to one person, one department, one check type. Assessment outcomes fold into the lifecycle — no separate column.</p>
       <div class="sa-callout" style="margin-top:14px">
         <strong>Cancel Case vs Cancel Case — key distinction</strong>
-        <strong style="color:var(--blue);text-transform:none;font-size:13px;letter-spacing:0">Cancel Case</strong> is available only while the case is in an invite-phase status (Invite Created, Invite Sent, Invite Expiring, Invite Expired, Invite Email Bounced) — that is, before consent has been received. Use it when the invite was sent to the wrong address, sent to the wrong person, or placed by mistake. Cancelling revokes the link immediately. The case moves to Case History as Invite Cancelled and is terminal — to screen this person, start a new case. Cancel Case is available from the person profile > Current Case > Invite Management, and from the table row ⋮ menu.
+        <strong style="color:var(--blue);text-transform:none;font-size:13px;letter-spacing:0">Cancel Case</strong> is available only while the case is in an invite-phase status (Invite Created, Invite Sent, Invite Expiring, Invite Expired, Invite Email Bounced) — that is, before consent has been received. Use it when the invite was sent to the wrong address, sent to the wrong person, or placed by mistake. Cancelling revokes the link immediately. The case moves to Case History as Case Cancelled and is terminal — to screen this person, start a new case. Cancel Case is available from the person profile > Current Case > Invite Management, and from the table row ⋮ menu.
         <br><br>
         <strong style="color:var(--red);text-transform:none;font-size:13px;letter-spacing:0">Cancel Case</strong> is only available after an order has been attempted and failed (Order Failed) or after a screening has expired without rescreening (Screening Expired). In the Order Failed scenario, PMM has already auto-cancelled the order in the backend — the case stays on "Order Failed" on screen until the admin explicitly closes it. Closing moves the case from Current Case to Case History as Case Closed. Cancel Case is available from: the action banner on the person profile when status is Order Failed or Screening Expired; clicking the status badge in the table row; the table row ⋮ menu; and the table selection bar for bulk-closing multiple rows.
       </div>
@@ -2420,7 +2420,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>A person-bound link was generated. No email sent yet. Admin holds the link and distributes through their own channel.</td>
-              <td>Admin sends via email → Invite Sent. Expiry approaches → Invite Expiring. Admin cancels → Invite Cancelled.</td>
+              <td>Admin sends via email → Invite Sent. Expiry approaches → Invite Expiring. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
@@ -2436,7 +2436,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>PMM sent an invite email to the applicant. Awaiting consent form submission.</td>
-              <td>Applicant submits consent → Consent Received. Expiry approaches → Invite Expiring. Expiry passes → Invite Expired. Email bounces → Invite Email Bounced. Admin cancels → Invite Cancelled.</td>
+              <td>Applicant submits consent → Consent Received. Expiry approaches → Invite Expiring. Expiry passes → Invite Expired. Email bounces → Invite Email Bounced. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
@@ -2451,7 +2451,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>Invite link is approaching its expiry date. Applicant has not yet submitted consent.</td>
-              <td>Applicant submits before expiry → Consent Received. Admin extends → Invite Sent. Expiry passes → Invite Expired. Admin cancels → Invite Cancelled.</td>
+              <td>Applicant submits before expiry → Consent Received. Admin extends → Invite Sent. Expiry passes → Invite Expired. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
@@ -2465,7 +2465,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>Invite link reached its expiry date with no consent submitted. Case is stalled.</td>
-              <td>Admin re-invites → Invite Sent. Admin cancels → Invite Cancelled.</td>
+              <td>Admin re-invites → Invite Sent. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
@@ -2480,14 +2480,14 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>PMM's invite email could not be delivered to the applicant's address. Admin must correct or switch delivery method.</td>
-              <td>Admin corrects email and resends → Invite Sent. Admin switches to link → Invite Created. Admin cancels → Invite Cancelled.</td>
+              <td>Admin corrects email and resends → Invite Sent. Admin switches to link → Invite Created. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
-              <td><span class="sa-badge grey">Invite Cancelled</span></td>
+              <td><span class="sa-badge grey">Case Cancelled</span></td>
               <td>Consent</td>
               <td><div class="sa-terminal">Terminal — no further actions</div></td>
-              <td>Admin cancelled the invite before consent was received. Typical reasons: wrong email address, wrong person, order placed by mistake. The invite link is immediately revoked. Case moves to Case History as Invite Cancelled. To screen this person, start a new case.</td>
+              <td>Admin cancelled the invite before consent was received. Typical reasons: wrong email address, wrong person, order placed by mistake. The invite link is immediately revoked. Case moves to Case History as Case Cancelled. To screen this person, start a new case.</td>
               <td class="sa-terminal">Terminal. Case moves to Case History.</td>
             </tr>
 
@@ -2636,8 +2636,8 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
         When an applicant opens the training link or begins working through the module, that event is recorded as a timestamped entry in the case timeline — visible in the person profile. It does not change the case status. An abandoned training surfaces through link expiry, not through a silent pile.
       </div>
       <div class="sa-callout" style="margin-top:10px">
-        <strong>Invite Cancelled vs Training Cancelled</strong>
-        <strong style="color:var(--blue);text-transform:none;font-size:13px;letter-spacing:0">Invite Cancelled</strong> is used when admin cancels the invite link specifically — only available while in the invite phase (before the training is completed). Use it for wrong address, wrong person, or sent by mistake. Link is revoked immediately. Case → Training History.
+        <strong>Case Cancelled vs Training Cancelled</strong>
+        <strong style="color:var(--blue);text-transform:none;font-size:13px;letter-spacing:0">Case Cancelled</strong> is used when admin cancels the invite link specifically — only available while in the invite phase (before the training is completed). Use it for wrong address, wrong person, or sent by mistake. Link is revoked immediately. Case → Training History.
         <br><br>
         <strong style="color:var(--red);text-transform:none;font-size:13px;letter-spacing:0">Training Cancelled</strong> is the explicit "close this training case" action. Available at any point before Certificate Complete — including after a failed attempt (applicant did not pass). The training is cancelled in the backend; the case status stays until admin explicitly closes it. Training Cancelled is available from: the action banner on the person profile; the table row ⋮ menu; and the table selection bar for bulk cancellation.
       </div>
@@ -2665,7 +2665,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>Training link generated, not yet sent by email. Admin holds the link.</td>
-              <td>Admin sends via email → Invite Sent. Admin cancels → Invite Cancelled.</td>
+              <td>Admin sends via email → Invite Sent. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
@@ -2681,7 +2681,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>Training invite sent. Applicant has not yet completed the module. If the applicant opens the link or starts the module, that event is logged in the case timeline — the case status does not change.</td>
-              <td>Applicant completes and passes → Certificate Complete. Expiry approaches → Invite Expiring. Expiry passes → Invite Expired. Admin cancels → Invite Cancelled.</td>
+              <td>Applicant completes and passes → Certificate Complete. Expiry approaches → Invite Expiring. Expiry passes → Invite Expired. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
@@ -2696,7 +2696,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>Training invite link is approaching its expiry date. Applicant may not have started or may have started but not completed. Training progress (if any) is visible in the case timeline.</td>
-              <td>Applicant completes before expiry → Certificate Complete. Admin extends → Invite Sent. Expiry passes → Invite Expired. Admin cancels → Invite Cancelled.</td>
+              <td>Applicant completes before expiry → Certificate Complete. Admin extends → Invite Sent. Expiry passes → Invite Expired. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
@@ -2710,14 +2710,14 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
                 </ul>
               </td>
               <td>Training invite link expired before the applicant completed. Applicant may have started but not finished — check the case timeline for progress detail.</td>
-              <td>Admin re-invites → Invite Sent. Admin cancels → Invite Cancelled.</td>
+              <td>Admin re-invites → Invite Sent. Admin cancels → Case Cancelled.</td>
             </tr>
 
             <tr>
-              <td><span class="sa-badge grey">Invite Cancelled</span></td>
+              <td><span class="sa-badge grey">Case Cancelled</span></td>
               <td>Invite</td>
               <td><div class="sa-terminal">Terminal — no further actions</div></td>
-              <td>Admin cancelled the invite before training was completed. Link revoked. Case moves to Training History as Invite Cancelled. To re-send training to this person, start a new training case.</td>
+              <td>Admin cancelled the invite before training was completed. Link revoked. Case moves to Training History as Case Cancelled. To re-send training to this person, start a new training case.</td>
               <td class="sa-terminal">Terminal. Case moves to Training History.</td>
             </tr>
 
@@ -2759,7 +2759,7 @@ table.sa-tbl .phase-hdr:hover td{background:#1E1E2E}
       </div>
       <div class="sa-callout green" style="margin-top:18px">
         <strong>What V1 resolves</strong>
-        Every status describes exactly one condition — admin knows what is happening and what action (if any) is needed without opening the record. Assessment outcomes fold into the lifecycle — no separate column to cross-reference. Report Complete — Awaiting Review is explicitly visible and filterable. Invite Cancelled and Case Closed are distinct — cancelling an invite is not the same as closing a failed order or an expired screening. Invite Expired and Screening Expired are clearly different names for different events. Abandoned trainings surface through link expiry, not through a silent pile. Every case flows from a persistent person record, so all case history aggregates per person.
+        Every status describes exactly one condition — admin knows what is happening and what action (if any) is needed without opening the record. Assessment outcomes fold into the lifecycle — no separate column to cross-reference. Report Complete — Awaiting Review is explicitly visible and filterable. Case Cancelled and Case Closed are distinct — cancelling an invite is not the same as closing a failed order or an expired screening. Invite Expired and Screening Expired are clearly different names for different events. Abandoned trainings surface through link expiry, not through a silent pile. Every case flows from a persistent person record, so all case history aggregates per person.
       </div>
     </div>
   </div><!-- /sa-v1 -->
