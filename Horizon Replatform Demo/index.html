@@ -4978,7 +4978,7 @@ function setScrFilter(key, val, chipId, prefix){
   // update selected state in dropdown
   const drop = document.getElementById(chipId.replace('chip','drop'));
   if(drop) drop.querySelectorAll('.fdrop-item').forEach(it=>{
-    it.classList.toggle('selected', it.textContent.trim()===(val?((key==='statusFilter'?[['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent received'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']]:[['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']]).find(o=>o[0]===val)||['',''])[1]:'All statuses'));
+    it.classList.toggle('selected', it.textContent.trim()===(val?((key==='statusFilter'?[['','All statuses'],['awaiting-assessment','Report complete: awaiting review'],['cleared','Report complete: cleared'],['escalated','Report complete: escalated'],['needs-review','Needs review'],['screening-progress','Screening in progress'],['consent-received','Consent received'],['invite-sent','Invite sent'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']]:[['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']]).find(o=>o[0]===val)||['',''])[1]:'All statuses'));
   });
   renderTable();
   renderSummaryStrip();
@@ -5097,7 +5097,7 @@ function setScrCardFilter(key){
     const chip = document.getElementById('scr-chip-status');
     if(chip){
       const lbl = chip.querySelector('.fchip-lbl');
-      const opts = [['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent received'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']];
+      const opts = [['','All statuses'],['awaiting-assessment','Report complete: awaiting review'],['cleared','Report complete: cleared'],['escalated','Report complete: escalated'],['needs-review','Needs review'],['screening-progress','Screening in progress'],['consent-received','Consent received'],['invite-sent','Invite sent'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']];
       const found = opts.find(o=>o[0]===STATE.statusFilter);
       if(lbl) lbl.textContent = STATE.statusFilter ? 'Status: '+(found?found[1]:STATE.statusFilter) : 'Status: All';
       chip.classList.toggle('active', !!STATE.statusFilter);
