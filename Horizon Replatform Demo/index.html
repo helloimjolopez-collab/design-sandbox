@@ -2729,7 +2729,7 @@ function renderPanelAction(person, c){
     desc='The background check report has been returned. Review it before recording your decision.';
     btns=`<button class="btn btn-sm btn-primary" data-open-report="${c.id}">Review report &amp; assess</button>`;
   } else if(c.status==='escalated'){
-    cls='bad';title='Escalated — do not activate this person';
+    cls='bad';title='Escalated: do not activate this person';
     desc=c.assessment?.notes||'This case has been escalated. Review the report and begin adverse action if needed.';
     btns=`<button class="btn btn-sm btn-secondary" data-open-report="${c.id}">View report</button><button class="btn btn-sm btn-ghost" style="color:var(--red)" onclick="toast('Adverse action process started')">Begin adverse action</button>`;
   } else if(c.status==='invite-expiring'){
@@ -2737,7 +2737,7 @@ function renderPanelAction(person, c){
     desc='The applicant has not yet submitted their consent form.';
     btns=`<button class="btn btn-sm btn-secondary" onclick="toast('Invite resent to ${esc(person.email)}')">Resend invite</button><button class="btn btn-sm btn-ghost" onclick="openExtendExpiry('${c.id}','${c.inviteExpiry||'Jun 14, 2026'}')">Change expiry date</button>`;
   } else if(c.status==='invite-expired'){
-    cls='bad';title='Invite expired — no consent received';
+    cls='bad';title='Invite expired: no consent received';
     desc='The invite link expired before the applicant completed the consent form. Renew the link to restart.';
     const expiredViaEmail = c.via==='invite';
     btns=`<button class="btn btn-sm btn-primary" onclick="toast('${expiredViaEmail?'New invite link sent to '+esc(person.email):'Link renewed — copy and send to applicant'}')">${expiredViaEmail?'Renew Link &amp; Resend Invite':'Renew Link'}</button>`;
