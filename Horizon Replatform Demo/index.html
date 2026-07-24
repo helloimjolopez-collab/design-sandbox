@@ -2707,18 +2707,14 @@ function renderPanelAction(person, c){
       desc='The invite email was not delivered to <strong>' + esc(person.email) + '</strong>. Enter a corrected address to resend, or copy the invite link below to share via another channel.';
       btns=`<button class="btn btn-sm btn-primary" onclick="nsShowEmailFix('${person.id}','${c.id}')">Fix email address</button>`;
     }
-  } else if(DEMO_MODE==='phase-1' && c.status==='order-retrying'){
-    cls='warn';title='Order processing — retrying';
-    desc=`The order is being automatically retried (attempt ${c.orderRetryCount||1} of ${c.orderRetryMax||5}). No action needed — you will be notified when it resolves or if all retries fail.`;
-    btns='';
   } else if(DEMO_MODE==='phase-1' && c.status==='order-failed-data'){
-    cls='bad';title='Order failed — data issue';
+    cls='bad';title='Order failed: data issue';
     const reason = c.orderFailureReason||'The applicant information could not be verified by the provider.';
     desc=reason+' Cancel this case, communicate the issue to the applicant, and open a new case once the information is corrected.';
-    btns=`<button class="btn btn-sm btn-primary" style="background:var(--red)" onclick="cancelCase('${person.id}','${c.id}')">Cancel case</button><button class="btn btn-sm btn-secondary" onclick="toast('Next steps copied to clipboard — paste into email to applicant')">Copy note for applicant</button>`;
+    btns=`<button class="btn btn-sm btn-primary" style="background:var(--red)" onclick="cancelCase('${person.id}','${c.id}')">Cancel case</button><button class="btn btn-sm btn-secondary" onclick="toast('Next steps copied to clipboard')">Copy note for applicant</button>`;
   } else if(DEMO_MODE==='phase-1' && c.status==='order-failed-final'){
-    cls='bad';title='Order failed — max retries reached';
-    desc='PMM could not process this order after multiple automatic retry attempts. Cancel this case and open a new one to restart. If the problem continues, contact support.';
+    cls='bad';title='Order failed';
+    desc='PMM could not process this order. Cancel this case and open a new one to restart. If the problem continues, contact support.';
     btns=`<button class="btn btn-sm btn-primary" style="background:var(--red)" onclick="cancelCase('${person.id}','${c.id}')">Cancel case</button><button class="btn btn-sm btn-secondary" onclick="openWizard()">Open new case</button>`;
   } else if(c.status==='due-rescreening'){
     cls='warn';title='Rescreening due soon';
