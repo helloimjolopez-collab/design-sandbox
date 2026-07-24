@@ -1257,6 +1257,522 @@
   .filter-chip,.scope-chip{flex:0 0 auto;width:-moz-fit-content;width:fit-content;max-width:100%;justify-content:flex-start;}
   .dep-hd-top{min-width:0;}
   .mct-filterrow{display:flex;}
+
+/* ===== P2/P3 widget styles ===== */
+/* =====================================================================
+   Pension Plans (pen) , v1 styles
+   Paste into the widget-container.html <style> block.
+   Reuses shell classes: .dep-hd .dep-hd-top .dep-hd-num .dep-hd-toggle
+   .dep-hd-kpigrp .metric-value .bank-pill .filter-chip/.fc-label
+   .vtoggle/.vt .wt-row/.wt-head/.lr-main/.wt-c2/.wt-sort .scroll .dep-total
+   .dep-full/.dep-col/.dep-col-h .kpi-row/.kpi-num .gl-sub .state .sk
+   .bgt-spin .cap .mi .modal*/.donut/.legend/.leg/.pie-wrap .sr-only.
+   Only pen-* rules are defined here.
+   ===================================================================== */
+
+  /* header context line (row 2): quiet, single statement, no big number */
+  .pen-hd .dep-hd-num{align-self:center;}
+  .pen-numwrap{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .pen-ctx{font-size:11px;color:var(--txt-subtle);line-height:1.45;max-width:66ch;}
+  .pen-caption{font-size:11px;color:var(--txt-subtle);}
+
+  /* body: table scrolls, total row pins beneath it */
+  .pen-body{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 2px 6px;}
+  .pen-tscroll{flex:1 1 auto;min-height:0;}
+
+  /* table rows */
+  .pen-row{gap:12px;}
+  .pen-plan{display:flex;align-items:center;gap:8px;min-width:0;}
+  .pen-dot{flex:0 0 8px;width:8px;height:8px;border-radius:3px;display:inline-block;}
+  .pen-plan-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pen-none{color:var(--txt-subtle);}
+  .pen-c-cnt{flex:0 0 74px;text-align:right;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+  .wt-head .pen-c-cnt,.wt-head .pen-c-share-head{color:var(--txt-subtle);}
+  .pen-row .wt-c2{flex:0 0 108px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;}
+  .pen-row:not(.wt-head) .wt-c2{color:var(--txt-primary);}
+  .pen-c-share{flex:0 0 52px;text-align:right;font-size:11.5px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;}
+
+  /* row-tap drill affordance */
+  .pen-clickable{cursor:pointer;}
+  .wt-row.pen-clickable:hover{background:var(--wn-100);}
+  .wt-row.pen-clickable:hover .pen-share-track{background:var(--wn-300);}
+  .wt-row.pen-clickable:hover .pen-share-fill{filter:brightness(.93);}
+  .wt-row.pen-clickable:focus-visible{outline:2px solid var(--am-400);outline-offset:-2px;}
+
+  /* inline share-of-contribution cue (Detail table) */
+  .pen-share{flex:0 0 128px;display:flex;align-items:center;gap:8px;min-width:0;}
+  .pen-share-head{color:var(--txt-subtle);font-size:11px;font-weight:600;}
+  .pen-share-track{flex:1 1 auto;min-width:0;height:6px;border-radius:999px;background:var(--wn-300);overflow:hidden;transition:background var(--dur,.15s);}
+  .pen-share-fill{display:block;height:100%;border-radius:999px;background:var(--am-400);min-width:2px;transition:width var(--dur,.15s) ease,filter var(--dur,.15s);}
+  .pen-share-pct{flex:0 0 30px;text-align:right;font-size:11px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;}
+
+  .pen-total{font-variant-numeric:tabular-nums;}
+
+  /* Explore: table + synced chart side by side */
+  .pen-full{flex:1;min-height:0;display:flex;gap:12px;padding:12px 14px;}
+  .pen-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;}
+  .pen-col .pen-tscroll{flex:1 1 auto;min-height:0;}
+  .pen-col-chart{flex:0 1 auto;}
+  .pen-chartwrap{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:6px 4px;}
+
+  /* horizontal bar chart (Explore, bar view) */
+  .pen-bars{display:flex;flex-direction:column;gap:12px;padding:4px 4px 2px;}
+  .pen-barrow{display:grid;grid-template-columns:132px 1fr auto;align-items:center;gap:10px;border-radius:8px;padding:5px 6px;}
+  .pen-barrow.pen-clickable:hover{background:var(--wn-100);}
+  .pen-barrow.pen-clickable:hover .pen-bartrack{background:var(--wn-300);}
+  .pen-barrow.pen-clickable:hover .pen-barfill{filter:brightness(.93);}
+  .pen-barrow.pen-clickable:focus-visible{outline:2px solid var(--am-400);outline-offset:-1px;}
+  .pen-barlbl{display:flex;flex-direction:column;min-width:0;}
+  .pen-barlbl-nm{font-size:12px;font-weight:600;color:var(--txt-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pen-barlbl-sub{font-size:10.5px;color:var(--txt-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pen-bartrack{position:relative;height:18px;border-radius:5px;background:var(--wn-200);overflow:hidden;transition:background var(--dur,.15s);}
+  .pen-barfill{height:100%;border-radius:5px;min-width:2px;transition:filter var(--dur,.15s);}
+  .pen-barval{text-align:right;font-variant-numeric:tabular-nums;display:flex;flex-direction:column;line-height:1.2;}
+  .pen-barval-amt{font-size:12.5px;font-weight:700;color:var(--txt-primary);}
+  .pen-barval-cnt{font-size:10.5px;color:var(--txt-subtle);}
+
+  /* pie/donut view (Explore) , reuses shell .donut/.legend/.leg/.pie-wrap */
+  .pen-pie{display:flex;flex-direction:column;justify-content:center;min-width:0;}
+  .pen-leg.pen-clickable:focus-visible{outline:2px solid var(--am-400);outline-offset:-1px;}
+  .pen-leg .dot{flex:0 0 9px;width:9px;height:9px;border-radius:3px;display:inline-block;}
+
+  .pen-chart-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px 10px;color:var(--txt-subtle);font-size:12px;text-align:center;}
+  .pen-chart-empty .material-symbols-rounded{font-size:26px;color:var(--txt-subtle);}
+
+  /* loading skeleton (data-fetch only) */
+  .pen-skel{padding:8px 0;}
+  .pen-sk-row{display:flex;align-items:center;gap:12px;padding:8px 14px;}
+
+  /* empty state (shared .state; a touch of positive colour on the glyph) */
+  .pen-empty>.material-symbols-rounded{color:var(--am-500);}
+
+  /* drill-to-detail focus overlay */
+  .pen-detail-modal{max-width:960px;}
+  .pen-detail-modal .modal-b{display:block;overflow:auto;padding:0 18px 6px;}
+  .pen-detail-h{align-items:center;}
+  .pen-dsub{font-size:12px;font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;padding:2px 10px;margin-left:10px;white-space:nowrap;max-width:44ch;overflow:hidden;text-overflow:ellipsis;}
+  .pen-dh-spacer{flex:1;}
+  .pen-detail-scroll{border:1px solid var(--stroke-widget);border-radius:10px;overflow:hidden;}
+  .pen-dhead,.pen-drow{display:flex;align-items:center;gap:12px;}
+  .pen-dc{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
+  .pen-dhead .pen-dc{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
+  .pen-dc0,.pen-dc1{flex:1.6 1 0;color:var(--txt-primary);font-weight:500;}
+  .pen-dc2{flex:0 0 110px;}
+  .pen-dc-amt{flex:0 0 120px;text-align:right;font-weight:700;color:var(--txt-primary);}
+  .pen-dtotal{border-top:none;margin-top:2px;}
+
+  @media(max-width:620px){.pen-full{flex-direction:column;}.pen-col-chart{flex:1 1 auto;}}
+
+/* =====================================================================
+   Remittance Pledges (prefix: rem)  , CSS block
+   =====================================================================
+   Only .rem-* rules are defined here. Everything else is inherited from
+   the shell: .dep-hd/.dep-hd-top/.dep-hd-num/.dep-hd-toggle/.dep-hd-kpigrp,
+   .metric-value, .kpi-row/.kpi-num, .gl-sub/.bgt-caption, .bank-numwrap/
+   .bank-ctx, .filter-chip/.fc-label, .bank-pill(.warn)/.delta-pill,
+   .wt-sort, .scroll, .dep-total, .state/.state-title/.state-sub, .cap/.mi,
+   .sep, .btn/.iconbtn, .sk/.bgt-spin/.bgt-skel-cap, .bgt-pop*, .modal*,
+   .sr-only, and the amethyst tokens --am-200..--am-700.
+   ===================================================================== */
+
+/* the "data as of" line sits where the view toggle would (right of chip) */
+.rem-asof{font-size:11px;color:var(--txt-subtle);align-self:center;white-space:nowrap;}
+.rem-thru-chip .fc-label{display:inline-flex;align-items:center;gap:5px;}
+
+/* ---- table (shared by Detail compact + Explore full) --------------- */
+.rem-body{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 6px 6px;}
+.rem-tbl{flex:1;min-height:0;display:flex;flex-direction:column;}
+.rem-scroll{flex:0 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;}
+
+/* one grid template per mode, applied to header, rows and the total so the
+   columns line up exactly. Compact: Activity | % Paid | Pacing.
+   Full: Activity | Annual | Expected | Paid | Outstanding | % Paid | Pacing. */
+.rem-row{display:grid;grid-template-columns:minmax(0,1fr) 58px 116px;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid var(--stroke-widget);font-size:13px;}
+.rem-row.full{grid-template-columns:minmax(120px,1.25fr) 88px 96px 88px 100px 62px 116px;gap:8px;}
+.rem-cell{min-width:0;}
+.rem-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rem-pct{text-align:right;}
+.rem-pct-v{font-weight:700;font-variant-numeric:tabular-nums;}
+.rem-nopct{color:var(--txt-subtle);}
+.rem-stat{display:flex;justify-content:flex-end;}
+
+/* header row: quiet, sticky, one sort-control style (.wt-sort) */
+.rem-head{position:sticky;top:0;z-index:1;background:var(--surface-widget);font-size:11px;font-weight:600;color:var(--txt-subtle);border-bottom:1px solid var(--stroke-widget);}
+.rem-head .rem-cell{white-space:nowrap;overflow:visible;}
+.rem-head .rem-num{cursor:default;}
+
+/* activity cell: name, optional paid-of-annual sub, pacing bar */
+.rem-name{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.rem-name-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+.rem-name-sub{font-size:11px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* pacing bar: amethyst paid fill on a neutral annual track, with the
+   "expected by now" marker. No red. */
+.rem-bar{position:relative;height:8px;border-radius:5px;background:var(--wn-200);overflow:hidden;margin-top:1px;}
+.rem-bar-fill{height:100%;border-radius:5px;min-width:2px;transition:width var(--dur,.15s),filter var(--dur,.15s);}
+.rem-bar-mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--txt-secondary);border-radius:2px;transform:translateX(-1px);opacity:.7;}
+
+/* row interactivity: whole row taps through to the payment-history drill */
+.rem-row[role="button"]{cursor:pointer;border-radius:8px;}
+.rem-row[role="button"]:hover{background:var(--wn-100);}
+.rem-row[role="button"]:hover .rem-bar{background:var(--wn-300);}
+.rem-row[role="button"]:hover .rem-bar-fill{filter:brightness(.93);}
+.rem-row[role="button"]:focus-visible{outline:2px solid var(--am-400);outline-offset:-1px;}
+
+/* totals row: reuses the .dep-total weight, kept on the grid */
+.rem-total{border-top:1.5px solid var(--stroke-widget);border-bottom:none;font-weight:700;padding:9px 10px;background:var(--surface-widget);}
+.rem-total-lead{font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* per-row "no pledge" chip (rare edge; neutral, never alarming) */
+.rem-chip{display:inline-flex;align-items:center;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;}
+.rem-chip-none{color:var(--txt-subtle);background:var(--wn-200);}
+
+/* ---- Glance pacing read -------------------------------------------- */
+.rem-glance-read{display:flex;flex-direction:column;gap:4px;margin-top:2px;}
+.rem-gbar{position:relative;height:9px;border-radius:5px;background:var(--wn-200);overflow:hidden;}
+.rem-gbar .rem-bar-fill{height:100%;border-radius:5px;}
+.rem-gbar .rem-bar-mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--txt-secondary);border-radius:2px;opacity:.7;}
+.rem-glance-cap{font-size:11px;color:var(--txt-subtle);}
+
+/* ---- receipts-through popover -------------------------------------- */
+.rem-mi-date{margin-left:auto;font-size:11px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;}
+.rem-datepick{display:flex;align-items:center;gap:8px;padding:4px 10px 2px;}
+.rem-date-input{flex:1;min-width:0;font-family:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--stroke-widget);border-radius:8px;background:var(--surface-widget);color:var(--txt-primary);}
+.rem-date-input:focus{outline:none;border-color:var(--am-400);box-shadow:0 0 0 2px var(--am-100);}
+.rem-pop-note{font-size:11px;color:var(--txt-subtle);line-height:1.45;padding:6px 10px 8px;max-width:280px;}
+
+/* ---- skeleton (data-fetch only) ------------------------------------ */
+.rem-skel{display:flex;flex-direction:column;gap:12px;padding:14px 16px;}
+.rem-sk-row{display:flex;align-items:center;gap:12px;}
+.rem-sk-bar{height:8px;border-radius:5px;}
+@media(prefers-reduced-motion:reduce){.rem-bar-fill{transition:none;}}
+
+/* ---- payment-history drill (modal) --------------------------------- */
+.rem-detail-h{display:flex;align-items:center;gap:10px;}
+.rem-dsub{font-size:12px;color:var(--txt-subtle);}
+.rem-dh-spacer{flex:1;}
+.rem-detail-b{display:flex;flex-direction:column;gap:14px;}
+.rem-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 18px;padding:12px 14px;border:1px solid var(--stroke-widget);border-radius:10px;background:var(--wn-100);}
+.rem-sum-cell{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.rem-sum-k{font-size:11px;color:var(--txt-subtle);}
+.rem-sum-v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;}
+.rem-sum-stat{justify-content:center;align-items:flex-start;}
+.rem-catchup{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.45;color:var(--red-130);background:var(--red-10);border-radius:10px;padding:10px 12px;}
+.rem-catchup .material-symbols-rounded{font-size:18px;color:var(--red-100);flex:0 0 auto;margin-top:1px;}
+.rem-catchup.ok{color:var(--green-120);background:var(--green-10);}
+.rem-catchup.ok .material-symbols-rounded{color:var(--pos-100);}
+.rem-ph-h{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
+.rem-ph-tbl{border:1px solid var(--stroke-widget);border-radius:10px;overflow:hidden;}
+.rem-ph-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) 120px;align-items:center;gap:12px;padding:8px 14px;border-bottom:1px solid var(--stroke-widget);font-size:13px;}
+.rem-ph-row:last-child{border-bottom:none;}
+.rem-ph-head{background:var(--surface-header);font-size:11px;font-weight:600;color:var(--txt-subtle);}
+.rem-ph-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;}
+.rem-ph-total{border-radius:0;}
+.rem-tab-empty{display:flex;align-items:center;gap:8px;justify-content:center;padding:20px;color:var(--txt-subtle);font-size:13px;}
+.rem-tab-empty .material-symbols-rounded{font-size:18px;}
+
+@media(max-width:560px){
+  .rem-sum{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .rem-row.full{grid-template-columns:minmax(90px,1fr) 74px 62px 116px;}
+  .rem-row.full .rem-num:nth-child(3),.rem-row.full .rem-num:nth-child(5){display:none;}
+}
+
+/* =======================================================================
+   Gifts Pledges (prefix: gft) , CSS block.
+   Paste into the shell <style>. Reuses shell primitives (.dep-hd, .kpi-row,
+   .metric-value, .filter-chip, .vtoggle/.vt, .wt-row/.wt-head, .wt-sort,
+   .dep-total, .scroll, .state, .bank-pill, .delta-pill, .scope-chip, .mi,
+   .modal*, .btn*, .sr-only, .sk, .bgt-spin) and only adds .gft-* rules.
+   Two amethyst purples only (--am-600 received, --am-200 expected), never red.
+   ======================================================================= */
+
+/* --- header context lines under the KPI --- */
+.gft-numwrap{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.gft-ctx{font-size:12px;color:var(--txt-secondary);line-height:1.35;}
+.gft-ctx2{color:var(--txt-subtle);}
+.gft-ctlrow{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap;}
+
+/* Date chip: reuse the shared secondary-fill filter-chip look, but swap the
+   forced filter_list glyph for a calendar so it reads as a date control. */
+.gft-datechip::before{content:'event' !important;}
+.gft-datechip .fc-label{font-variant-numeric:tabular-nums;}
+.gft-purpchip{max-width:200px;}
+
+/* behind pill uses the neutral bank-pill; nudge the glyph tone (no red) */
+.gft-behind-pill .material-symbols-rounded{font-size:15px;color:var(--txt-subtle);}
+
+/* --- progress thermometers (the hero) --- */
+.gft-body{display:block;}
+.gft-bars{display:flex;flex-direction:column;gap:14px;padding:12px 14px 4px;}
+.gft-prow{display:flex;flex-direction:column;gap:6px;border-radius:9px;padding:4px;margin:-4px;}
+.gft-clickable{cursor:pointer;transition:background var(--dur,.15s) ease;}
+.gft-clickable:hover{background:var(--wn-100);}
+.gft-clickable:focus-visible{outline:2px solid var(--am-500);outline-offset:1px;}
+.gft-prow-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+.gft-p-nm{font-size:13px;font-weight:650;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gft-p-pct{font-size:13px;font-weight:700;color:var(--am-700);font-variant-numeric:tabular-nums;flex:0 0 auto;}
+
+.gft-track{position:relative;height:14px;border-radius:7px;background:var(--wn-200);overflow:hidden;}
+.gft-track-sm{height:10px;border-radius:5px;margin-top:2px;}
+.gft-fill{position:absolute;left:0;top:0;height:100%;background:var(--am-600);border-radius:7px 0 0 7px;transition:width var(--dur,.15s) ease;}
+/* expected-by-now but not yet received (the schedule shortfall), light amethyst */
+.gft-expected{position:absolute;top:0;height:100%;background:var(--am-200);opacity:.9;}
+/* "due by now" marker tick */
+.gft-marker{position:absolute;top:-2px;width:2px;height:18px;background:var(--am-700);border-radius:2px;transform:translateX(-1px);box-shadow:0 0 0 1.5px var(--surface-widget,#fff);}
+.gft-track-sm .gft-marker{height:14px;top:-2px;}
+
+.gft-prow-foot{display:flex;align-items:center;gap:8px;}
+.gft-p-amt{font-size:12px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;flex:0 0 auto;}
+.gft-p-go{margin-left:auto;display:inline-flex;color:var(--txt-subtle);}
+.gft-p-go .material-symbols-rounded{font-size:18px;}
+.gft-prow-foot .bank-pill,.gft-prow-foot .delta-pill{margin-left:auto;}
+.gft-prow-foot .gft-p-go{margin-left:0;}
+
+.gft-zeroline{display:flex;align-items:center;gap:7px;padding:14px;color:var(--txt-subtle);font-size:12.5px;}
+.gft-zeroline .material-symbols-rounded{font-size:17px;}
+
+/* --- table view --- */
+.gft-trow{display:flex;align-items:center;gap:10px;}
+.gft-c-nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
+.gft-c-n{flex:0 0 auto;width:82px;text-align:right;font-variant-numeric:tabular-nums;}
+.gft-c-pct{width:70px;font-weight:650;color:var(--am-700);}
+.gft-c-go{flex:0 0 auto;width:20px;display:inline-flex;justify-content:flex-end;color:var(--txt-subtle);}
+.gft-c-go .material-symbols-rounded{font-size:18px;}
+.gft-trow.gft-clickable:hover{background:var(--wn-100);}
+.gft-rem{font-variant-numeric:tabular-nums;}
+.gft-rem-behind{color:var(--txt-primary);font-weight:650;}
+.gft-rem-ahead{color:var(--pos-100);font-weight:650;}
+.gft-rem-ok{color:var(--txt-subtle);}
+.gft-total .gft-total-nums{display:inline-flex;align-items:center;gap:10px;}
+.gft-total .gft-c-n{width:82px;}
+.gft-total .gft-c-pct{width:70px;}
+
+/* --- glance --- */
+.gft-glance-read{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+.gft-glance-cap{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--txt-secondary);}
+.gft-glance-cap.gft-cap-ok{color:var(--pos-100);}
+.gft-glance-cap .material-symbols-rounded{font-size:15px;}
+.gft-sevdot{width:9px;height:9px;border-radius:50%;background:var(--am-600);flex:0 0 auto;}
+.gft-allset{display:inline-flex;align-items:center;gap:6px;color:var(--txt-secondary);}
+.gft-allset .material-symbols-rounded{font-size:22px;color:var(--am-500);}
+
+/* --- explore (xwide) two panels --- */
+.gft-explore{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;padding:4px 2px 0;align-items:start;}
+.gft-panel{min-width:0;}
+.gft-panel-h{display:flex;align-items:center;gap:6px;margin:6px 12px 2px;font-size:12px;font-weight:650;color:var(--txt-secondary);}
+.gft-panel-h .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);}
+.gft-panel .gft-bars{padding:8px 12px 4px;}
+
+/* behind-schedule follow-up list */
+.gft-followup{display:flex;flex-direction:column;gap:8px;padding:6px 12px 4px;}
+.gft-fu-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--stroke-widget);background:var(--surface-widget,#fff);border-radius:10px;padding:9px 11px;cursor:pointer;font-family:inherit;transition:background var(--dur,.15s) ease,border-color var(--dur,.15s) ease;}
+.gft-fu-row:hover{background:var(--wn-100);border-color:var(--wn-400);}
+.gft-fu-row:focus-visible{outline:2px solid var(--am-500);outline-offset:1px;}
+.gft-fu-main{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1 1 auto;}
+.gft-fu-nm{font-size:13px;font-weight:650;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gft-fu-sub{font-size:11.5px;color:var(--txt-subtle);}
+.gft-fu-amt{display:flex;flex-direction:column;align-items:flex-end;font-size:13px;font-weight:700;color:var(--am-700);font-variant-numeric:tabular-nums;flex:0 0 auto;}
+.gft-fu-amt-cap{font-size:10px;font-weight:600;color:var(--txt-subtle);text-transform:uppercase;letter-spacing:.04em;}
+.gft-fu-go{color:var(--txt-subtle);display:inline-flex;flex:0 0 auto;}
+.gft-fu-go .material-symbols-rounded{font-size:18px;}
+.gft-followup-ok{padding:20px 12px;}
+
+/* --- skeleton --- */
+.gft-skel{padding:14px;}
+.gft-skel-rows{display:flex;flex-direction:column;gap:16px;}
+.gft-sk-row{display:flex;flex-direction:column;gap:6px;}
+.gft-sk-bar{height:14px;border-radius:7px;}
+
+/* --- drill / focus overlay --- */
+.gft-detail-modal{max-width:860px;}
+.gft-detail-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.gft-detail-ic{font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle);}
+.gft-dsub{font-size:12px;color:var(--txt-subtle);font-weight:500;}
+.gft-dh-spacer{flex:1 1 auto;}
+.gft-d-toggle{transform:scale(.94);transform-origin:right center;}
+.gft-detail-b{padding:0;}
+.gft-detail-scroll{max-height:56vh;overflow:auto;}
+.gft-drow{display:flex;align-items:center;gap:10px;}
+.gft-dexp{flex:0 0 auto;width:20px;display:inline-flex;color:var(--txt-subtle);}
+.gft-dexp .material-symbols-rounded{font-size:18px;}
+.gft-dc{font-variant-numeric:tabular-nums;}
+.gft-dc0{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
+.gft-dc1,.gft-dc2,.gft-dc3,.gft-dc4{flex:0 0 auto;width:88px;text-align:right;}
+.gft-dc3{width:110px;}
+.gft-dc5{flex:0 0 auto;width:96px;text-align:right;color:var(--txt-secondary);}
+.gft-drow.wt-head .gft-dc{color:var(--txt-subtle);font-weight:600;font-size:11.5px;}
+.gft-dstat-h{flex:0 0 auto;width:80px;display:inline-flex;justify-content:flex-end;}
+.gft-dstatus{font-size:11px;font-weight:650;border-radius:999px;padding:2px 8px;}
+.gft-dstatus-behind{background:var(--am-100);color:var(--am-700);}
+.gft-dstatus-ok{background:var(--green-10,#f0faf1);color:var(--pos-100);}
+.gft-drow.gft-clickable:hover{background:var(--wn-100);}
+
+/* expanded donor drawer */
+.gft-drawer{padding:10px 14px 14px 44px;background:var(--wn-50,var(--wn-100));border-bottom:1px solid var(--stroke-widget);}
+.gft-dsum{display:flex;gap:22px;margin-bottom:10px;flex-wrap:wrap;}
+.gft-dsum-i{display:flex;flex-direction:column;gap:1px;}
+.gft-dsum-k{font-size:11px;color:var(--txt-subtle);text-transform:uppercase;letter-spacing:.04em;}
+.gft-dsum-v{font-size:14px;font-weight:700;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+.gft-drawer-h{font-size:11.5px;font-weight:650;color:var(--txt-secondary);margin-bottom:4px;}
+.gft-gifts{border:1px solid var(--stroke-widget);border-radius:8px;overflow:hidden;background:var(--surface-widget,#fff);}
+.gft-grow{display:flex;justify-content:space-between;gap:12px;padding:6px 11px;font-size:12.5px;border-bottom:1px solid var(--stroke-widget);}
+.gft-grow:last-child{border-bottom:0;}
+.gft-ghead{background:var(--wn-100);color:var(--txt-subtle);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+.gft-ga{font-variant-numeric:tabular-nums;font-weight:600;}
+.gft-tab-empty{display:flex;align-items:center;gap:8px;padding:12px;color:var(--txt-subtle);font-size:12.5px;}
+.gft-tab-empty .material-symbols-rounded{font-size:18px;}
+.gft-dactions{display:flex;gap:8px;margin-top:11px;}
+.gft-dtotal .gft-dtotal-nums{font-variant-numeric:tabular-nums;}
+
+/* custom date row in the date popover */
+.gft-custom-date{display:flex;align-items:center;gap:8px;padding:2px 10px 6px;}
+.gft-date-input{font-family:inherit;font-size:12.5px;padding:5px 7px;border:1px solid var(--stroke-widget);border-radius:7px;background:var(--surface-widget,#fff);color:var(--txt-primary);}
+.gft-custom-cur{font-size:12px;color:var(--txt-subtle);}
+.mi-sub2{margin-left:auto;font-size:11.5px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;padding-left:14px;}
+
+/* narrow: stack the explore panels */
+@media (max-width:920px){.gft-explore{grid-template-columns:1fr;}}
+
+@media (prefers-reduced-motion:reduce){.gft-fill,.gft-clickable,.gft-fu-row{transition:none;}}
+
+/* ===== Loans With Balance Due (prefix: loan) , CSS =====
+   All loan-* rules the block uses. Shared shell classes it also relies on
+   (.dep-hd*, .kpi-row/.kpi-num, .dep-hd-kpigrp/.metric-value, .gl-sub/.bgt-caption,
+   .filter-chip/.fc-label, .bank-pill/.delta-pill, .state*, .mi/.cap, .wt-row/.wt-head,
+   .wt-sort, .wt-c2, .lr-main/.lr-stack/.lr-link, .scroll, .dep-total, .dep-full/.dep-col/
+   .dep-col-h, .btn/.iconbtn, .sk/.bgt-spin/.bgt-skel-cap, .bgt-pop*, .sr-only, .modal*)
+   are provided by the shell, not redefined here. Amethyst only; no red on any
+   chart element. */
+
+/* ---- Header control row (left of the two-row .dep-hd grid) ---- */
+.loan-ctlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
+.loan-ctlrow .loan-chip{min-width:0;flex:0 1 auto;}
+.loan-numwrap{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.loan-ctx{font-size:11.5px;font-weight:400;color:var(--txt-subtle);line-height:1.4;max-width:72ch;}
+
+/* ---- Glance: compact aging read under the KPI ---- */
+.loan-glance-read{display:flex;flex-direction:column;gap:7px;margin-top:9px;min-width:0;}
+.loan-stack{display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--wn-200);}
+.loan-seg{display:block;min-width:3px;height:100%;}
+.loan-glance-cap{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt-secondary);min-width:0;}
+.loan-glance-cap .material-symbols-rounded{font-size:15px;flex:0 0 auto;}
+.loan-cap-ok,.loan-cap-ok .material-symbols-rounded{color:var(--txt-pos);}
+.loan-sevdot{width:9px;height:9px;border-radius:2px;flex:0 0 auto;display:inline-block;align-self:center;}
+.loan-allset{color:var(--txt-pos);display:inline-flex;align-items:center;gap:7px;font-size:20px;}
+.loan-allset .material-symbols-rounded{font-size:22px;color:var(--txt-pos);}
+
+/* ---- Body (Detail: full-width table hero) ---- */
+.loan-body{padding:2px 0 0;min-width:0;}
+
+/* ---- Table columns (over shell .wt-row primitives) ---- */
+.loan-c-acct{flex:0 0 84px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt-secondary);font-variant-numeric:tabular-nums;font-size:12.5px;}
+.wt-head .loan-c-acct{color:var(--txt-subtle);}
+.loan-c-name{flex:1.4 1 0;min-width:0;}
+.loan-nm-wrap{display:flex;flex-direction:column;min-width:0;line-height:1.25;}
+.loan-nm{color:var(--txt-primary);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+.loan-row:hover .loan-nm{text-decoration:underline;text-underline-offset:2px;}
+.loan-type-sub{font-size:10.5px;color:var(--txt-subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.loan-c-last{flex:0 0 132px;min-width:0;display:inline-flex;align-items:center;gap:5px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wt-head .loan-c-last{color:var(--txt-subtle);}
+.loan-dormant{display:inline-flex;align-items:center;color:var(--txt-subtle);}
+.loan-dormant .material-symbols-rounded{font-size:15px;}
+.loan-c-days{flex:0 0 108px;min-width:0;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.wt-head .loan-c-days{color:var(--txt-subtle);}
+.loan-days-v{color:var(--txt-secondary);}
+.loan-days-v.over{color:var(--txt-primary);font-weight:600;}
+.loan-notdue{color:var(--txt-subtle);}
+.loan-c-amt{flex:0 0 116px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--txt-primary);}
+.wt-head .loan-c-amt{font-weight:600;color:var(--txt-subtle);}
+.loan-row{cursor:pointer;}
+.loan-row:hover{background:var(--wn-100);}
+.loan-row:focus-visible{outline:2px solid var(--am-400);outline-offset:-2px;}
+
+/* Aging-band group subheaders (the ordered aging report) */
+.wt-row.loan-grp{gap:12px;background:var(--wn-100);padding-top:8px;padding-bottom:8px;}
+.loan-grp-nm{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--txt-secondary);}
+.loan-grp-nm.over{color:var(--txt-primary);}
+.loan-grp-dot{width:9px;height:9px;border-radius:2px;flex:0 0 auto;}
+.loan-grp-ct{font-weight:500;color:var(--txt-subtle);}
+.loan-grp-amt{flex:0 0 116px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--txt-primary);}
+.loan-zeroline{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--txt-subtle);padding:14px;line-height:1.4;}
+.loan-zeroline .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
+
+/* ---- Explore: table + aging/risk side panel ---- */
+.loan-col-side{min-width:0;}
+.loan-panel{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.loan-panel-sub{font-size:11.5px;color:var(--txt-subtle);line-height:1.4;margin-bottom:6px;}
+.loan-panel-sep{height:1px;background:var(--stroke-widget);margin:10px 0 8px;}
+.loan-panel-h{font-size:11px;font-weight:600;color:var(--txt-secondary);margin-bottom:4px;}
+
+/* Band rows double as the table filter (values-as-text, amethyst share bars) */
+.loan-band-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:8px;padding:7px 9px;font-family:inherit;cursor:pointer;}
+.loan-band-row:hover:not(.loan-band-static){background:var(--wn-100);}
+.loan-band-row.sel{background:var(--wn-100);border-color:var(--wn-300);}
+.loan-band-row:focus-visible{outline:2px solid var(--am-400);outline-offset:-1px;}
+.loan-band-static{cursor:default;opacity:.72;}
+.loan-band-main{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:4px;}
+.loan-band-lbl{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--txt-primary);}
+.loan-band-lbl .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);}
+.loan-band-dot{width:9px;height:9px;border-radius:2px;flex:0 0 auto;}
+.loan-mini-track{display:block;height:6px;border-radius:4px;background:var(--wn-200);overflow:hidden;}
+.loan-mini-fill{display:block;height:100%;border-radius:4px;min-width:3px;}
+.loan-band-meta{font-size:10.5px;color:var(--txt-subtle);}
+.loan-band-val{flex:0 0 auto;text-align:right;font-size:12.5px;font-weight:700;color:var(--txt-primary);font-variant-numeric:tabular-nums;align-self:flex-start;}
+.loan-band-val.loan-band-zero{color:var(--txt-subtle);font-weight:500;}
+
+/* Portfolio-risk stat rows */
+.loan-risk-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:4px 9px;}
+.loan-risk-lbl{font-size:12px;color:var(--txt-secondary);}
+.loan-risk-v{font-size:13px;font-weight:700;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+.loan-risk-pct{font-size:11px;font-weight:500;color:var(--txt-subtle);}
+
+/* Most-overdue borrowers (collections priority) */
+.loan-worst-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:none;border-radius:8px;padding:6px 9px;font-family:inherit;cursor:pointer;}
+.loan-worst-row:hover{background:var(--wn-100);}
+.loan-worst-row:focus-visible{outline:2px solid var(--am-400);outline-offset:-1px;}
+.loan-worst-main{flex:1 1 0;min-width:0;display:flex;flex-direction:column;line-height:1.3;}
+.loan-worst-nm{font-size:12.5px;font-weight:600;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.loan-worst-meta{font-size:10.5px;color:var(--txt-subtle);}
+.loan-worst-val{flex:0 0 auto;text-align:right;font-size:12.5px;font-weight:700;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+
+/* ---- Loading skeleton (data-fetch only) ---- */
+.loan-skel{padding:16px;display:flex;flex-direction:column;gap:12px;}
+.loan-sk-row{display:flex;align-items:center;gap:12px;}
+
+/* ---- Positive empty state (shared .state; a touch of positive colour) ---- */
+.loan-empty>.material-symbols-rounded{color:var(--txt-pos);}
+
+/* ---- Drill-to-detail focus overlay (single loan) ---- */
+.loan-detail-modal{max-width:640px;}
+.loan-detail-h{align-items:center;}
+.loan-dsub{font-size:12px;font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;padding:2px 10px;margin-left:10px;white-space:nowrap;}
+.loan-dh-spacer{flex:1;}
+.loan-detail-b{display:block;padding:16px 18px 6px;}
+.loan-dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;border:1px solid var(--stroke-widget);border-radius:10px;padding:4px 14px;}
+.loan-dl-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--stroke-widget);}
+.loan-dl-grid .loan-dl-row:nth-last-child(-n+1){border-bottom:none;}
+.loan-dl-lbl{font-size:11.5px;color:var(--txt-subtle);}
+.loan-dl-val{font-size:12.5px;font-weight:600;color:var(--txt-primary);text-align:right;font-variant-numeric:tabular-nums;}
+.loan-dl-val.loan-dl-amt{font-size:14px;font-weight:700;}
+.loan-dl-val.over{color:var(--txt-primary);}
+.loan-dl-band{display:inline-flex;align-items:center;gap:6px;}
+.loan-dl-since{font-weight:500;color:var(--txt-subtle);}
+.loan-dl-dormant{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 12px;background:var(--wn-100);border:1px solid var(--wn-300);border-radius:8px;font-size:12px;color:var(--txt-secondary);}
+.loan-dl-dormant .material-symbols-rounded{font-size:18px;color:var(--txt-subtle);flex:0 0 auto;}
+.loan-dl-payh{margin:16px 0 8px;font-size:11px;font-weight:600;color:var(--txt-secondary);}
+.loan-pays{border:1px solid var(--stroke-widget);border-radius:8px;overflow:hidden;background:var(--surface-widget);}
+.loan-prow{display:flex;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid var(--stroke-widget);font-variant-numeric:tabular-nums;font-size:12.5px;}
+.loan-prow:last-child{border-bottom:none;}
+.loan-phead{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);background:var(--wn-100);}
+.loan-prow>span:first-child{flex:0 0 120px;}
+.loan-prow>span:nth-child(2){flex:1 1 0;min-width:0;color:var(--txt-primary);}
+.loan-pa{flex:0 0 110px;text-align:right;font-weight:600;color:var(--txt-primary);}
+.loan-tab-empty{display:flex;align-items:center;gap:8px;color:var(--txt-subtle);padding:12px 2px;font-size:12.5px;}
+.loan-tab-empty .material-symbols-rounded{font-size:18px;}
+.loan-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+
+@media(max-width:560px){.loan-dl-grid{grid-template-columns:1fr;}}
+
 </style>
 </head>
 <body>
@@ -1378,8 +1894,1507 @@
   var MYS_DEFAULT = ["q_muje","q_prapp","q_apdue","q_crs","q_revnow","q_mubank","q_bdmo"];
   function mysFind(id){for(var i=0;i<MYS_QUERIES.length;i++)if(MYS_QUERIES[i].id===id)return MYS_QUERIES[i];return null;}
 
+
+  /* ===== P2/P3 WIDGET BLOCKS (pension, remittance, gifts, loans) ===== */
+/* =====================================================================
+   Pension Plans  (pen, kind:"pension")  ,  v1 build
+   =====================================================================
+   Self-contained, namespaced widget block for widget-container.html.
+   Relies on shell globals already present:
+     ICON(name), find(id), render(), pop, modal, modalMounted, timers,
+     setTimeout, clearTimeout, setStatus, EMPTY_COPY, ERROR_COPY.
+
+   Grounded in Confluence DR page 7371030531 (Pension Plans), live
+   re-verified on beta1 (1 Saint Michael Church) 23 Jul 2026:
+     - Denominational clergy-pension obligation, by plan type, filterable
+       by church district, drilling into the appointees on each plan.
+     - PRESERVE the two good behaviours the brief calls the reference model
+       (Part C 11.1): table and chart always show the same data and update
+       together; the district filter carries through into the drill.
+     - Bar over pie for the plan-type breakdown, with a bar/pie toggle
+       (11.2). Add a Glance KPI and appointee counts (11.3). Fix the export
+       mismatch so each export matches its view (11.4). Fix the GBP
+       localisation defect: currency follows the org, here $ (10 / 11.5).
+       Values as text; named controls; one purposeful empty state (10).
+
+   FIVE INTEGRATION PIECES (see wiring notes returned with this file):
+     1. RENDER BLOCK ................ everything in DATA + RENDER below
+        (single entry penContent(w))
+     2. contentHTML() dispatch ...... if(w.kind==="pension")return penContent(w);
+     3. click-handler dispatch ...... if(a&&a.indexOf("pen-")===0&&penHandleClick(a,id,t))return;
+     4. popContent() dispatch ....... if(pop.type==="pen-dist")return penPopContent();
+     5. triggerSelector() branch .... if(pop.type==="pen-dist")return '[data-action="pen-dist"][data-id="'+pop.id+'"]';
+        renderModal() branch ........ if(modal.type==="pendetail"){mr.innerHTML=penDetailModalHTML();return;}
+        aboutOf() branch (optional) . if(w.kind==="pension")return {h:w.title,b:PEN_ABOUT};
+        (+ registry entries pen / pen2 / pen3 / pen4 below)
+   ===================================================================== */
+
+// ===== DATA ============================================================
+/* Plan names and the All-Districts annual amounts are the live-verified
+   set (Confluence Part A, beta1 23 Jul 2026): CPP 6,682.56; CRSP-DB-%
+   7,532.56; CRSP-DC 7,037.31; Employee Before Tax-UMPIP 24,000.00;
+   Flat CRSP-DB 3,000.00; total 55,212.43. Appointee-level rows below roll
+   up to exactly those plan totals and split across three districts, so the
+   district filter genuinely changes the plan set and the drill list, and
+   the appointee counts the brief asked for are real sums, not invented
+   toppers. Only ACTIVE appointments are counted (person active, plan
+   started, not yet ended) , the basis stated in Part A.2 and labelled in
+   the header. Currency is $ (org currency; fixes the live GBP defect). */
+var PEN_ABOUT="How much your conference contributes each year across every clergy pension plan, filterable by district. Only active appointments count, that is a clergy member who is active, whose plan has started and not yet ended. Open a plan to see the individual appointees on it and their annual amounts.";
+var PEN_DISTRICTS=["All Districts","District 1","District 2","District 3"];
+/* stable plan order for colour + tie-breaks (amount desc on All Districts) */
+var PEN_PLAN_ORDER=["Employee Before Tax-UMPIP","CRSP-DB-%","CRSP-DC","CPP","Flat CRSP-DB"];
+/* amethyst ramp, largest share darkest; no red (categorical, not variance) */
+var PEN_COLORS=["--am-600","--am-500","--am-400","--am-300","--am-200"];
+var PEN_APPTS=[
+  {name:"Rev. Jonathan Pierce", org:"St. Paul UMC",           dist:"District 1", plan:"Employee Before Tax-UMPIP", amt:12000.00},
+  {name:"Rev. Naomi Adler",     org:"Hope UMC",               dist:"District 2", plan:"Employee Before Tax-UMPIP", amt:6000.00},
+  {name:"Rev. Caleb Monroe",    org:"Riverside UMC",          dist:"District 3", plan:"Employee Before Tax-UMPIP", amt:6000.00},
+  {name:"Rev. Daniel Cho",      org:"Asbury UMC",             dist:"District 1", plan:"CRSP-DB-%",                 amt:4532.56},
+  {name:"Rev. Miriam Okafor",   org:"Grace Fellowship UMC",   dist:"District 3", plan:"CRSP-DB-%",                 amt:3000.00},
+  {name:"Rev. Samuel Reyes",    org:"First UMC Lakeside",     dist:"District 2", plan:"CRSP-DC",                   amt:3518.66},
+  {name:"Rev. Hannah Whitfield",org:"Cornerstone UMC",        dist:"District 3", plan:"CRSP-DC",                   amt:3518.65},
+  {name:"Rev. Thomas Ashford",  org:"Trinity UMC",            dist:"District 1", plan:"CPP",                       amt:3341.28},
+  {name:"Rev. Grace Bellamy",   org:"Wesley Chapel UMC",      dist:"District 2", plan:"CPP",                       amt:3341.28},
+  {name:"Rev. Esther Vaughn",   org:"Emmanuel UMC",           dist:"District 1", plan:"Flat CRSP-DB",              amt:3000.00}
+];
+var PEN_APPTS_EMPTY=[];
+
+// ===== RENDER ==========================================================
+function penEsc(s){return String(s).replace(/"/g,"&quot;");}
+function penMoney(n){return "$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function penDataset(w){return (w&&w.dataset==="none")?PEN_APPTS_EMPTY:PEN_APPTS;}
+function penDist(w){return (w&&w.penDist)||"All Districts";}
+function penFiltered(w){var d=penDist(w);return penDataset(w).filter(function(a){return d==="All Districts"||a.dist===d;});}
+function penDistLabel(w){return penDist(w);}
+
+/* roll appointees up into one row per plan: amount + appointee count */
+function penPlanData(w){
+  var m={},order=[];
+  penFiltered(w).forEach(function(a){if(!m[a.plan]){m[a.plan]={plan:a.plan,amt:0,count:0};order.push(a.plan);}m[a.plan].amt+=a.amt;m[a.plan].count++;});
+  return order.map(function(k){return m[k];});
+}
+function penTotal(w){return penFiltered(w).reduce(function(s,a){return s+a.amt;},0);}
+function penApptCount(w){return penFiltered(w).length;}
+function penPlanCount(w){return penPlanData(w).length;}
+/* colour by the plan's rank in the fixed order, so table dot, bar and pie
+   segment always agree for a given plan (chart/table sync, visually too). */
+function penColorOf(plan){var i=PEN_PLAN_ORDER.indexOf(plan);if(i<0)i=0;return PEN_COLORS[i%PEN_COLORS.length];}
+
+/* sorted plan rows; default annual amount high to low */
+function penRows(w){
+  var rows=penPlanData(w).slice(),sk=(w.penSort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  rows.sort(function(a,b){
+    if(key==="plan")return dir*a.plan.localeCompare(b.plan);
+    if(key==="count"){var c=a.count-b.count;return dir*(c||(a.amt-b.amt));}
+    var d=a.amt-b.amt;return dir*(d||a.plan.localeCompare(b.plan));
+  });
+  return rows;
+}
+function penApptsFor(w,plan){return penFiltered(w).filter(function(a){return a.plan===plan;}).sort(function(a,b){return b.amt-a.amt;});}
+
+/* ---- controls ------------------------------------------------------- */
+/* District filter: secondary-fill chip, leading filter glyph + trailing
+   chevron (shell .filter-chip[data-action]), sized to its content. Sits on
+   the left of the toolbar and doubles as the "what am I looking at" label. */
+function penDistChip(w){
+  var spin=w.penloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
+  return '<button class="filter-chip pen-chip" data-action="pen-dist" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="pen-dist"&&pop.id===w.id?"true":"false")+'" aria-label="District filter, currently '+penEsc(penDistLabel(w))+'">'+spin+'<span class="fc-label">'+penDistLabel(w)+'</span>'+ICON("expand_more")+'</button>';
+}
+/* Bar / pie toggle (segmented, shell .vtoggle/.vt) , only where a standalone
+   chart lives (Explore). Resolves the pie-vs-bar open question (11.2): bar is
+   the default, precise read; pie stays available for the one-dominant-share
+   look. Plain-language tooltips per segment. */
+function penChartToggle(w){
+  var c=w.penChart||"bar";
+  return '<div class="vtoggle pen-vtoggle" role="group" aria-label="Chart type">'+
+    '<button class="vt'+(c==="bar"?" on":"")+'" data-action="pen-chart" data-id="'+w.id+'" data-v="bar" aria-pressed="'+(c==="bar")+'" data-tip="Compare the annual amount of each plan as horizontal bars." data-tip-plain>'+ICON("bar_chart")+'Bar</button>'+
+    '<button class="vt'+(c==="pie"?" on":"")+'" data-action="pen-chart" data-id="'+w.id+'" data-v="pie" aria-pressed="'+(c==="pie")+'" data-tip="Show each plan as a slice of the total annual contribution." data-tip-plain>'+ICON("donut_small")+'Pie</button>'+
+  '</div>';
+}
+
+/* ---- KPI badge ------------------------------------------------------ */
+function penBadge(w){
+  var na=penApptCount(w),np=penPlanCount(w);
+  return '<span class="bank-pill" data-tip="'+penEsc(na+" active appointee"+(na===1?"":"s")+" across "+np+" pension plan"+(np===1?"":"s")+" in this view.")+'" data-tip-plain>'+ICON("groups")+na+' appointee'+(na===1?"":"s")+'</span>';
+}
+
+/* ---- header (Detail / Explore): two-row .dep-hd -------------------- */
+/* Row 1: district chip (left), chart toggle (right, Explore only). Row 2:
+   total annual contribution + appointee badge on the LEFT, one quiet
+   context line under it (plan-type count, the active-appointments basis,
+   and data-as-of). No redundant total up here , the table owns the Total. */
+function penHeader(w,mode){
+  var numInner,ctx;
+  if(mode==="loading"){
+    numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:132px;height:22px;border-radius:6px"></span><span class="sk" style="width:104px;height:20px;border-radius:999px"></span></div>';
+    ctx="Updating the pension breakdown for "+penDistLabel(w)+"…";
+  }else{
+    numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+penMoney(penTotal(w))+'</span>'+penBadge(w)+'</div>';
+    var np=penPlanCount(w),asof=w.updated?(" Data as of "+w.updated+"."):"";
+    ctx=np+' pension plan'+(np===1?"":"s")+' contributing this year, active appointments only.'+asof;
+  }
+  var toggle=(w.size==="xwide")?penChartToggle(w):"";
+  return '<div class="dep-hd pen-hd"><div class="dep-hd-top">'+penDistChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
+    '<div class="dep-hd-num"><div class="pen-numwrap">'+numInner+'<div class="pen-ctx">'+ctx+'</div></div></div></div>';
+}
+
+/* ---- table atoms ---------------------------------------------------- */
+/* Inline share-of-contribution cue (Detail only): the annual amount stays
+   the primary text value; the bar is aria-hidden decoration and the % is
+   quiet support. In Explore the share is a text % column instead, because
+   the standalone chart on the right carries the visual (no double bars). */
+function penShareCell(amt,total){
+  var pct=total>0?Math.round(amt/total*100):0,wd=total>0?(amt/total*100):0;
+  return '<span class="pen-share"><span class="pen-share-track" aria-hidden="true"><span class="pen-share-fill" style="width:'+wd.toFixed(1)+'%"></span></span><span class="pen-share-pct">'+pct+'%</span></span>';
+}
+function penHeadRow(w,withShare){
+  var sk=(w.penSort||"amt-desc").split("-"),key=sk[0],dir=sk[1];
+  function sb(k,label){var on=key===k,ic=on?(dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pen-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
+  var mid=withShare?'<span class="pen-share pen-share-head">Share</span>':'<span class="pen-c-share pen-c-share-head">Share</span>';
+  return '<div class="wt-row wt-head pen-row"><span class="lr-main">'+sb("plan","Pension plan")+'</span>'+mid+'<span class="pen-c-cnt">'+sb("count","Appointees")+'</span><span class="wt-c2">'+sb("amt","Annual amount")+'</span></div>';
+}
+function penPlanRow(p,total,withShare,w){
+  var pct=total>0?Math.round(p.amt/total*100):0;
+  var tip=p.plan+", "+penDistLabel(w)+". "+penMoney(p.amt)+" a year across "+p.count+" appointee"+(p.count===1?"":"s")+" ("+pct+"% of the total shown). Open to see who is on this plan.";
+  var mid=withShare?penShareCell(p.amt,total):'<span class="pen-c-share">'+pct+'%</span>';
+  return '<div class="wt-row pen-row pen-clickable" data-action="pen-open" data-id="'+w.id+'" data-plan="'+penEsc(p.plan)+'" data-acct="'+penEsc(p.plan)+'" role="button" tabindex="0" data-tip="'+penEsc(tip)+'" data-tip-plain aria-label="'+penEsc(p.plan+", "+penMoney(p.amt)+" a year, "+p.count+" appointee"+(p.count===1?"":"s")+", open the appointees on this plan")+'">'+
+    '<span class="lr-main pen-plan"><span class="pen-dot" style="background:var('+penColorOf(p.plan)+')" aria-hidden="true"></span><span class="pen-plan-nm">'+p.plan+'</span></span>'+
+    mid+
+    '<span class="pen-c-cnt">'+p.count+'</span>'+
+    '<span class="wt-c2">'+penMoney(p.amt)+'</span>'+
+    '<span class="sr-only">'+p.plan+': '+penMoney(p.amt)+' a year, '+p.count+' appointee'+(p.count===1?"":"s")+', '+pct+'% of the total shown.</span>'+
+  '</div>';
+}
+function penTotalRow(w){var tot=penTotal(w),na=penApptCount(w);return '<div class="dep-total pen-total"><span>Total annual contribution ('+na+' appointee'+(na===1?"":"s")+')</span><span>'+penMoney(tot)+'</span></div>';}
+function penTable(w,withShare){
+  var rows=penRows(w),tot=penTotal(w);
+  var body=rows.length?rows.map(function(p){return penPlanRow(p,tot,withShare,w);}).join(""):'<div class="wt-row pen-row"><span class="lr-main pen-none">No active pension plans for '+penDistLabel(w)+'.</span></div>';
+  return '<div class="scroll pen-tscroll">'+penHeadRow(w,withShare)+body+'</div>'+penTotalRow(w);
+}
+
+/* ---- the synced chart (Explore right column) -----------------------
+   Bar (default) or pie, controlled by the header toggle. Both read the SAME
+   filtered, sorted plan data the table shows (the sync the brief preserves),
+   both carry the amount + count as text (values as text, accessibility), and
+   both drill on tap (pen-open) with the district filter carried through. */
+function penBarChart(w){
+  var rows=penRows(w),tot=penTotal(w),max=1;rows.forEach(function(r){max=Math.max(max,r.amt);});
+  if(!rows.length)return '<div class="pen-chart-empty">'+ICON("bar_chart")+'<span>Nothing to chart for '+penDistLabel(w)+'.</span></div>';
+  var bars=rows.map(function(r){
+    var pct=max?Math.round(r.amt/max*100):0,share=tot?Math.round(r.amt/tot*100):0;
+    return '<div class="pen-barrow pen-clickable" data-action="pen-open" data-id="'+w.id+'" data-plan="'+penEsc(r.plan)+'" role="button" tabindex="0" aria-label="'+penEsc(r.plan+", "+penMoney(r.amt)+", "+r.count+" appointee"+(r.count===1?"":"s")+", open the appointees on this plan")+'">'+
+      '<div class="pen-barlbl"><span class="pen-barlbl-nm">'+r.plan+'</span><span class="pen-barlbl-sub">'+r.count+' appointee'+(r.count===1?"":"s")+'</span></div>'+
+      '<div class="pen-bartrack"><div class="pen-barfill" style="width:'+Math.max(3,pct)+'%;background:var('+penColorOf(r.plan)+')"></div></div>'+
+      '<div class="pen-barval"><span class="pen-barval-amt">'+penMoney(r.amt)+'</span><span class="pen-barval-cnt">'+share+'%</span></div>'+
+    '</div>';
+  }).join("");
+  return '<div class="pen-bars" role="img" aria-label="Annual contribution by pension plan, largest first">'+bars+'</div>';
+}
+function penPieChart(w){
+  var rows=penRows(w).slice().sort(function(a,b){return b.amt-a.amt;}),tot=rows.reduce(function(s,r){return s+r.amt;},0);
+  if(!rows.length||tot<=0)return '<div class="pen-chart-empty">'+ICON("donut_small")+'<span>Nothing to chart for '+penDistLabel(w)+'.</span></div>';
+  var R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+  rows.forEach(function(r,i){var frac=r.amt/tot,len=frac*C,c=penColorOf(r.plan);
+    arcs+='<circle class="pen-seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="var('+c+')" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+    legend+='<div class="leg pen-leg pen-clickable" data-seg="'+i+'" data-action="pen-open" data-id="'+w.id+'" data-plan="'+penEsc(r.plan)+'" role="button" tabindex="0" aria-label="'+penEsc(r.plan+", "+penMoney(r.amt)+", "+Math.round(frac*100)+"% of the total, open the appointees on this plan")+'"><span class="dot" style="background:var('+c+')"></span><span class="lg-main">'+r.plan+'</span><span class="lg-meta">'+penMoney(r.amt)+' · '+Math.round(frac*100)+'%</span></div>';
+  });
+  return '<div class="pen-pie"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="200" height="200" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+penMoney(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">a year</text></svg>'+
+    '<div class="legend-col"><div class="legend-head"><span class="legend-hd">Annual contribution by plan</span></div><div class="legend" style="max-height:200px">'+legend+'</div></div></div></div>';
+}
+function penChart(w){return (w.penChart==="pie")?penPieChart(w):penBarChart(w);}
+
+/* Explore (xwide): table LEFT (clean, share as text %) + synced chart RIGHT.
+   This is the preserved table+chart pair, side by side with room to breathe. */
+function penFull(w){
+  return '<div class="dep-full pen-full">'+
+    '<div class="dep-col pen-col"><div class="dep-col-h">Annual contribution by plan</div>'+penTable(w,false)+'</div>'+
+    '<div class="dep-col pen-col pen-col-chart"><div class="dep-col-h">'+((w.penChart==="pie")?"Share of total":"Amount by plan")+'</div><div class="pen-chartwrap">'+penChart(w)+'</div></div>'+
+  '</div>';
+}
+
+/* ---- Glance --------------------------------------------------------- */
+function penGlance(w){
+  if(w.state==="empty"||!penFiltered(w).length)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No appointments</span></div><div class="gl-sub"><span class="pen-caption">no active pension appointments</span></div></div></div>';
+  var tot=penTotal(w),na=penApptCount(w),np=penPlanCount(w),d=penDist(w),lead=(d==="All Districts")?"all districts":d.toLowerCase();
+  return '<div class="kpi-row"><div class="kpi-num">'+
+    '<div class="dep-hd-kpigrp"><span class="metric-value">'+penMoney(tot)+'</span>'+penBadge(w)+'</div>'+
+    '<div class="gl-sub"><span class="pen-caption">contributed a year across '+np+' plan'+(np===1?"":"s")+', '+lead+'</span></div>'+
+    '<span class="sr-only">Annual pension contribution '+penMoney(tot)+' across '+np+' plans and '+na+' active appointees, '+lead+'.</span>'+
+  '</div></div>';
+}
+
+/* ---- states --------------------------------------------------------- */
+function penEmpty(w){
+  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No appointments</span></div><div class="gl-sub"><span class="pen-caption">no active pension appointments</span></div></div></div>';
+  return '<div class="state pen-empty" data-kind="empty">'+ICON("diversity_3")+'<div class="state-title">No active pension appointments</div><div class="state-sub">Once clergy are appointed to a pension plan in the Pension Billing module, their annual contributions will appear here by plan.</div></div>';
+}
+function penSkeleton(){var rows="";[92,70,54,40,30].forEach(function(wd){rows+='<div class="pen-sk-row"><span class="sk" style="width:150px;height:12px;border-radius:4px"></span><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:'+wd+'px;height:12px;border-radius:4px"></span></div>';});return '<div class="pen-skel">'+rows+'</div>';}
+
+/* ---- entry point (single penContent) -------------------------------- */
+function penContent(w){
+  if(w.state==="empty")return penEmpty(w);
+  if(w.size==="kpi")return penGlance(w);
+  if(!penFiltered(w).length&&w.dataset==="none")return penEmpty(w);
+  if(w.penloading)return penHeader(w,"loading")+penSkeleton();
+  if(w.size==="xwide")return penHeader(w)+penFull(w);
+  return penHeader(w)+'<div class="pen-body">'+penTable(w,true)+'</div>';
+}
+
+/* ---- drill focus overlay: plan -> appointees ------------------------
+   Report-style list (Appointee, Church / organisation, District, Annual
+   amount) for the appointees on the tapped plan. The district filter is
+   carried through (11.1). Export to Excel here exports THIS appointee
+   detail, so the export matches the view shown (fixes the mismatch, 11.4).
+   Modal.type "pendetail" , mirrors the ar drill overlay pattern. */
+function penDetailModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  var plan=modal.plan,list=penApptsFor(w,plan),tot=list.reduce(function(s,a){return s+a.amt;},0);
+  var d=penDist(w),sub=plan+(d==="All Districts"?"":" · "+d);
+  var cols=["Appointee","Church / organisation","District","Annual amount"];
+  var head='<div class="wt-row wt-head pen-drow pen-dhead">'+cols.map(function(c,i){return '<span class="pen-dc pen-dc'+i+'">'+c+'</span>';}).join("")+'</div>';
+  var body;
+  if(list.length){
+    body=list.map(function(a){
+      return '<div class="wt-row pen-drow">'+
+        '<span class="pen-dc pen-dc0">'+a.name+'</span>'+
+        '<span class="pen-dc pen-dc1">'+a.org+'</span>'+
+        '<span class="pen-dc pen-dc2">'+a.dist+'</span>'+
+        '<span class="pen-dc pen-dc3 pen-dc-amt">'+penMoney(a.amt)+'</span></div>';
+    }).join("");
+  }else{
+    body='<div class="state" data-kind="empty">'+ICON("diversity_3")+'<div class="state-title">No appointees on this plan</div><div class="state-sub">Nothing matches this plan for '+penDistLabel(w)+'.</div></div>';
+  }
+  var foot=list.length?'<div class="dep-total pen-dtotal"><span>'+list.length+' appointee'+(list.length===1?"":"s")+'</span><span>'+penMoney(tot)+'</span></div>':'';
+  return '<div class="modal-backdrop" data-action="pen-detail-close"><div class="modal modal-wide pen-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Pension plan appointees, detail">'+
+    '<div class="modal-h pen-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">diversity_3</span>Pension Plan: Appointees</span><span class="pen-dsub">'+penEsc(sub)+'</span><span class="pen-dh-spacer"></span><button class="btn naked sm" data-action="pen-export" data-id="'+w.id+'" data-plan="'+penEsc(plan)+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="pen-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b pen-detail-b"><div class="pen-detail-scroll">'+head+body+'</div>'+foot+'</div>'+
+    '<div class="modal-f"><button class="btn primary sm" data-action="pen-detail-close">Close</button></div></div></div>';
+}
+
+// ===== HANDLERS (click branches / popContent / renderModal / input / hover)
+/* Loading: only a district change fetches new data (transient penloading +
+   skeleton). Sort, chart toggle, drill are client re-renders, never a load. */
+function penLoad(w){w.penloading=true;clearTimeout(timers["pen-"+w.id]);timers["pen-"+w.id]=setTimeout(function(){w.penloading=false;w.updated="just now";render();},800);}
+
+/* --- click handler branch: paste into the delegated click listener ---
+   if(a&&a.indexOf("pen-")===0&&penHandleClick(a,id,t))return; */
+function penHandleClick(a,id,t){
+  if(a==="pen-dist"){pop=(pop&&pop.type==="pen-dist"&&pop.id===id)?null:{type:"pen-dist",id:id};render();return true;}
+  if(a==="pen-set-dist"){var wd=find(id);if(wd){var nv=t.getAttribute("data-v");if(penDist(wd)!==nv){wd.penDist=nv;penLoad(wd);setStatus("Showing pension plans for "+nv+".");}}pop=null;render();return true;}
+  if(a==="pen-sort"){var ws=find(id);if(ws){var k=t.getAttribute("data-k"),parts=(ws.penSort||"amt-desc").split("-");ws.penSort=(parts[0]===k)?(k+"-"+(parts[1]==="desc"?"asc":"desc")):(k+"-"+(k==="plan"?"asc":"desc"));}pop=null;render();return true;}
+  if(a==="pen-chart"){var wc=find(id);if(wc)wc.penChart=t.getAttribute("data-v");pop=null;render();return true;}
+  if(a==="pen-open"){var wo=find(id);if(!wo)return true;modal={type:"pendetail",id:id,plan:t.getAttribute("data-plan")};modalMounted=false;pop=null;render();return true;}
+  if(a==="pen-detail-close"){modal=null;pop=null;render();return true;}
+  if(a==="pen-export"){pop=null;setStatus("Exporting the appointees on "+t.getAttribute("data-plan")+" to Excel…");return true;}
+  return false;
+}
+
+/* --- popContent() branch: paste into popContent() ---
+   if(pop.type==="pen-dist")return penPopContent(); */
+function penPopContent(){
+  if(pop.type==="pen-dist"){var w=find(pop.id),cur=penDist(w);
+    return '<div class="cap">District</div>'+PEN_DISTRICTS.map(function(o){var on=cur===o;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="pen-set-dist" data-id="'+w.id+'" data-v="'+penEsc(o)+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+o+'</button>';}).join("");}
+  return "";
+}
+
+/* --- triggerSelector() branch: paste into triggerSelector() ---
+   if(pop.type==="pen-dist")return '[data-action="pen-dist"][data-id="'+pop.id+'"]'; */
+function penTriggerSelector(){if(pop.type==="pen-dist")return '[data-action="pen-dist"][data-id="'+pop.id+'"]';return null;}
+
+/* --- renderModal() branch: paste into renderModal() ---
+   if(modal.type==="pendetail"){mr.innerHTML=penDetailModalHTML();return;} */
+
+/* --- input handler: none needed (district list is short, no search box) --- */
+
+// ===== REGISTRY ========================================================
+/* Paste these objects into the dashboards' widgets array. `updated` drives
+   the shell Refresh tooltip and the "Data as of" line. `actions` drives the
+   more-menu summary export (matches the on-screen plan summary); the drill
+   modal's own Export matches the appointee detail , the two exports match
+   their views (11.4). */
+/*
+  {id:"pen",  title:"Pension Plans",                                   kind:"pension", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penChart:"bar", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+  {id:"pen2", title:"Pension Plans (all districts, explore)",          kind:"pension", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penChart:"bar", updated:"just now"},
+  {id:"pen3", title:"Pension Plans (District 1)",                      kind:"pension", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"District 1",    penSort:"amt-desc", penChart:"bar", updated:"just now"},
+  {id:"pen4", title:"Pension Plans (no active appointments)",          kind:"pension", size:"wide",  tiers:["kpi","wide","xwide"], state:"empty", dataset:"none", updated:"just now"},
+*/
+
+/* =====================================================================
+   Remittance Pledges  (prefix: rem, kind:"remittance")
+   =====================================================================
+   Drop-in, self-contained widget block for widget-container.html. Follows
+   the canonical quality-bar pattern established by ar (Receivable Invoices)
+   and ap (Accounts Payable): two-row .dep-hd header (control chip LEFT,
+   "data as of" RIGHT; KPI number + pacing badge LEFT), a values-as-text
+   hero, one clean empty state, loading only on a data-fetch (the Receipts
+   through date), a row-tap drill, and a formatted bar-hover card.
+
+   Grounded in Confluence DR page 7371980844 (Remittance Pledge):
+     - The distinctive job is PACING: are we keeping up with the year?
+       So pacing is the headline (decision 11.1). The hero metric is the
+       overall % paid, badged On track / Behind pace against the % of the
+       calendar year elapsed, never left for the reader to compare by eye.
+     - Per-activity pacing visual (decision 11.2): each row carries a paid
+       vs annual bar with an "expected by now" marker at the % of the year
+       elapsed. Reaching the marker = on track; short of it = behind. The
+       marker sits at the same position on every row (straight-line, the
+       verified production basis: "proportion of year elapsed"), so the
+       pacing read is consistent down the column. Amethyst only, no red on
+       the bar; status is carried by a chip + label + the fill-vs-marker
+       gap, never colour alone.
+     - Columns verified live (Activity, Annual, YTD Expected, YTD Paid,
+       Outstanding, % Paid) plus an explicit on-track / behind status
+       (decision 11.1) and totals. Detail is the compact pacing view;
+       Explore (xwide) is the full presentation-ready report table.
+     - "Receipts through" date, default today, persists once Refreshed
+       (verified live 23 Jul 2026); only receipts on or before it count;
+       "% of year completed" is the calendar-year pacing reference (the
+       appropriate basis for apportionments). Refresh shows "data as of".
+     - Drill an activity to its payment history (decision 11.6); a behind
+       activity gets a plain year-end catch-up line (unpaid carries
+       forward). Purposeful empty state for the denominational segment
+       (observed live empty for "1 Saint Michael Church").
+   ===================================================================== */
+
+// ===== DATA =====================================================
+/* Fixed "today" so the pacing and aging are deterministic in the demo.
+   Calendar year 2026 (365 days). Currency follows the org ($ here). */
+var REM_TODAY=new Date(2026,6,24); /* 24 Jul 2026 */
+var REM_MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+/* One row per remittance activity, in the order the conference lists them
+   (Seq). Each carries the annual pledge and its dated payments; YTD Paid is
+   computed by summing payments on or before the Receipts-through date, so
+   changing that date genuinely re-fetches the figures. */
+var REM_ACTIVITIES=[
+  {seq:1,name:"General Church Apportionment",ref:"Conference remittance, monthly",annual:24000,payments:[
+    {date:"2026-01-15",ref:"Check 4102",amount:2000},{date:"2026-02-16",ref:"Check 4118",amount:2000},
+    {date:"2026-03-16",ref:"ACH",amount:2000},{date:"2026-04-15",ref:"ACH",amount:2000},
+    {date:"2026-05-15",ref:"ACH",amount:2000},{date:"2026-06-15",ref:"ACH",amount:2000}]},
+  {seq:2,name:"District Superintendent Fund",ref:"District remittance, monthly",annual:6000,payments:[
+    {date:"2026-01-10",ref:"ACH",amount:500},{date:"2026-02-10",ref:"ACH",amount:500},
+    {date:"2026-03-10",ref:"ACH",amount:500},{date:"2026-04-10",ref:"ACH",amount:500},
+    {date:"2026-05-11",ref:"ACH",amount:500},{date:"2026-06-10",ref:"ACH",amount:500},
+    {date:"2026-07-10",ref:"ACH",amount:500}]},
+  {seq:3,name:"Ministerial Pension Fund",ref:"Pension billing, quarterly",annual:12000,payments:[
+    {date:"2026-01-05",ref:"Wire",amount:4000},{date:"2026-04-06",ref:"Wire",amount:4000}]},
+  {seq:4,name:"Mission and Outreach Fund",ref:"Mission share, as billed",annual:9000,payments:[
+    {date:"2026-02-20",ref:"Check 4130",amount:1000},{date:"2026-05-18",ref:"Check 4166",amount:1000}]},
+  {seq:5,name:"Camp and Retreat Assessment",ref:"Annual assessment",annual:3000,payments:[
+    {date:"2026-02-01",ref:"Check 4121",amount:3000}]},
+  {seq:6,name:"Conference Benevolence",ref:"Benevolence share, bi-monthly",annual:4800,payments:[
+    {date:"2026-01-20",ref:"ACH",amount:800},{date:"2026-03-20",ref:"ACH",amount:800},
+    {date:"2026-05-20",ref:"ACH",amount:800}]}
+];
+/* Edge instance: every pledge fully paid for the year (the healthy state,
+   surfaces the "All pledges paid" overall badge and paid-in-full rows). */
+var REM_ACTIVITIES_ONTRACK=[
+  {seq:1,name:"General Church Apportionment",ref:"Conference remittance, monthly",annual:24000,payments:[
+    {date:"2026-01-15",ref:"ACH",amount:12000},{date:"2026-04-15",ref:"ACH",amount:12000}]},
+  {seq:2,name:"District Superintendent Fund",ref:"District remittance, monthly",annual:6000,payments:[
+    {date:"2026-01-10",ref:"ACH",amount:6000}]},
+  {seq:3,name:"Ministerial Pension Fund",ref:"Pension billing, quarterly",annual:12000,payments:[
+    {date:"2026-01-05",ref:"Wire",amount:6000},{date:"2026-04-06",ref:"Wire",amount:6000}]}
+];
+/* Edge instance: a single activity, behind pace (single-row layout, the
+   year-end catch-up prompt). */
+var REM_ACTIVITIES_SINGLE=[
+  {seq:1,name:"General Church Apportionment",ref:"Conference remittance, monthly",annual:24000,payments:[
+    {date:"2026-02-20",ref:"Check 5001",amount:3000},{date:"2026-05-12",ref:"Check 5044",amount:3000}]}
+];
+
+// ===== RENDER ===================================================
+function remEsc(s){return String(s).replace(/"/g,"&quot;");}
+function remData(w){if(w.state==="empty")return [];if(w.dataset==="ontrack")return REM_ACTIVITIES_ONTRACK;if(w.dataset==="single")return REM_ACTIVITIES_SINGLE;return REM_ACTIVITIES;}
+/* ---- date + pacing maths (calendar year) --------------------- */
+function remParse(iso){var p=String(iso).split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function remISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function remFmtDate(iso){var d=remParse(iso);return REM_MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();}
+function remDaysInYear(y){return ((y%4===0&&y%100!==0)||y%400===0)?366:365;}
+function remDayOfYear(d){var s=new Date(d.getFullYear(),0,1);return Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-s)/86400000)+1;}
+function remPctYear(iso){var d=remParse(iso);return remDayOfYear(d)/remDaysInYear(d.getFullYear());}
+function remDaysToYearEnd(iso){var d=remParse(iso),e=new Date(d.getFullYear(),11,31);return Math.round((e-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/86400000);}
+function remEndOfLastMonth(base){var d=new Date(base.getFullYear(),base.getMonth(),1);return remISO(new Date(d-86400000));}
+function remThru(w){return w.remThru||remISO(REM_TODAY);}
+function remPct(x){return Math.round(x*100)+"%";}
+function remPaid(act,iso){return (act.payments||[]).filter(function(p){return p.date<=iso;}).reduce(function(s,p){return s+p.amount;},0);}
+/* Row model. Straight-line "expected by now" = annual * share of the
+   calendar year elapsed (the verified production basis). status:
+   full (nothing outstanding) / ontrack (paid share >= year share) /
+   behind / none (no pledge amount, never a fake 100%). */
+function remCompute(w){
+  var iso=remThru(w),py=remPctYear(iso);
+  return remData(w).map(function(a){
+    var paid=remPaid(a,iso),expected=Math.round(a.annual*py),outstanding=a.annual-paid;
+    var pctPaid=a.annual>0?paid/a.annual:null,status;
+    if(a.annual<=0)status="none";else if(outstanding<=0)status="full";else if(pctPaid>=py)status="ontrack";else status="behind";
+    return {seq:a.seq,name:a.name,ref:a.ref,annual:a.annual,paid:paid,expected:expected,
+      outstanding:Math.max(0,outstanding),pctPaid:pctPaid,pctYear:py,
+      gap:(pctPaid==null?0:pctPaid-py),status:status,payments:a.payments||[]};
+  });
+}
+function remTotals(w){
+  var rows=remCompute(w),py=remPctYear(remThru(w)),annual=0,paid=0,expected=0,out=0;
+  rows.forEach(function(r){annual+=r.annual;paid+=r.paid;expected+=r.expected;out+=r.outstanding;});
+  var pctPaid=annual>0?paid/annual:0,allPaid=rows.length>0&&rows.every(function(r){return r.status==="full";});
+  return {annual:annual,paid:paid,expected:expected,out:out,pctPaid:pctPaid,pctYear:py,
+    shortfall:Math.max(0,expected-paid),status:(allPaid?"full":(pctPaid>=py?"ontrack":"behind")),
+    allPaid:allPaid,count:rows.length,iso:remThru(w),daysLeft:remDaysToYearEnd(remThru(w))};
+}
+function remBehindCount(w){return remCompute(w).filter(function(r){return r.status==="behind";}).length;}
+function remFindRow(w,seq){var rows=remCompute(w);for(var i=0;i<rows.length;i++)if(String(rows[i].seq)===String(seq))return rows[i];return null;}
+
+/* ---- controls ------------------------------------------------ */
+/* Receipts-through chip: shell .filter-chip[data-action] gives it the
+   secondary fill, leading filter glyph and trailing chevron; sized to its
+   content. A spinner shows while the new as-of date is being fetched. */
+function remThruChip(w){var iso=remThru(w),spin=w.remLoading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
+  return '<button class="filter-chip rem-thru-chip" data-action="rem-thru" data-id="'+w.id+'" aria-haspopup="dialog" aria-expanded="'+(pop&&pop.type==="rem-thru"&&pop.id===w.id?"true":"false")+'" aria-label="Receipts through '+remEsc(remFmtDate(iso))+', tap to change"><span class="fc-label">'+spin+'Receipts through '+remFmtDate(iso)+'</span>'+ICON("expand_more")+'</button>';}
+
+/* Overall pacing badge. On track / All pledges paid use the positive pill;
+   behind uses the app warn pill (attention), the point gap and dollar
+   shortfall live in the tooltip and the context line, never colour alone. */
+function remPaceBadge(t){
+  if(t.allPaid)return '<span class="delta-pill" data-tip="Every remittance pledge is fully paid for the year." data-tip-plain>'+ICON("check_circle")+'All pledges paid</span>';
+  if(t.status==="ontrack")return '<span class="delta-pill" data-tip="'+remEsc(remPct(t.pctPaid)+' of the total pledged is paid, at or ahead of the '+remPct(t.pctYear)+' of the calendar year elapsed.')+'" data-tip-plain>'+ICON("check")+'On track</span>';
+  var gapPts=Math.round((t.pctYear-t.pctPaid)*100);
+  return '<span class="bank-pill warn" data-tip="'+remEsc(remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the year elapsed, about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind the expected pace.')+'" data-tip-plain>'+ICON("schedule")+'Behind pace</span>';}
+
+/* Per-activity pacing bar: amethyst paid fill on an annual track, with the
+   "expected by now" marker at the % of the year elapsed. Fill depth
+   reinforces status (paid-in-full deepest, behind lightest); it is not the
+   sole signal. aria-hidden: the figures are text in the row + sr-only. */
+function remBar(r){
+  var fill=Math.min(100,Math.max(2,Math.round((r.pctPaid==null?0:r.pctPaid)*100)));
+  var mark=Math.min(100,Math.round(r.pctYear*100));
+  var col=r.status==="full"?"--am-600":(r.status==="behind"?"--am-300":"--am-500");
+  return '<div class="rem-bar" aria-hidden="true"><div class="rem-bar-fill" style="width:'+fill+'%;background:var('+col+')"></div><span class="rem-bar-mark" style="left:'+mark+'%"></span></div>';}
+
+function remStatusChip(r){
+  if(r.status==="none")return '<span class="rem-chip rem-chip-none" data-tip="No pledge amount is set for this activity, so there is nothing to pace against." data-tip-plain>No pledge</span>';
+  if(r.status==="full")return '<span class="delta-pill" data-tip="'+remEsc(r.name+" is fully paid for the year.")+'" data-tip-plain>'+ICON("check_circle")+'Paid in full</span>';
+  if(r.status==="ontrack")return '<span class="delta-pill" data-tip="'+remEsc(remPct(r.pctPaid)+" paid, at or ahead of the "+remPct(r.pctYear)+" of the year elapsed.")+'" data-tip-plain>'+ICON("check")+'On track</span>';
+  var gapPts=Math.round((r.pctYear-r.pctPaid)*100),behind=Math.max(0,r.expected-r.paid);
+  return '<span class="bank-pill warn" data-tip="'+remEsc(remPct(r.pctPaid)+" paid against "+remPct(r.pctYear)+" of the year, about "+money(behind)+" ("+gapPts+" point"+(gapPts===1?"":"s")+") behind pace.")+'" data-tip-plain>'+ICON("schedule")+'Behind</span>';}
+
+/* One data string for the hover card, kept off the visible text. */
+function remRowPop(r){return remEsc([r.name,r.annual,r.expected,r.paid,r.outstanding,(r.pctPaid==null?-1:Math.round(r.pctPaid*100)),Math.round(r.pctYear*100),r.status].join("|"));}
+function remRowSr(r){return (r.pctPaid==null?"no pledge amount":remPct(r.pctPaid)+" paid")+". Annual "+money(r.annual)+", expected by now "+money(r.expected)+", paid "+money(r.paid)+", outstanding "+money(r.outstanding)+".";}
+
+/* Shared row + header for both sizes. full=true adds the money columns
+   (Explore, presentation-ready report); compact keeps a paid-of-annual sub. */
+function remRow(w,r,full){
+  var pctTxt=r.pctPaid==null?'<span class="rem-nopct">n/a</span>':'<span class="rem-pct-v">'+remPct(r.pctPaid)+'</span>';
+  var head='<div class="rem-cell rem-name"><span class="rem-name-nm">'+r.name+'</span>'+
+    (full?'':'<span class="rem-name-sub">'+money(r.paid)+' paid of '+money(r.annual)+'</span>')+
+    remBar(r)+'</div>';
+  var mid=full
+    ? '<span class="rem-cell rem-num">'+money(r.annual)+'</span>'+
+      '<span class="rem-cell rem-num">'+money(r.expected)+'</span>'+
+      '<span class="rem-cell rem-num">'+money(r.paid)+'</span>'+
+      '<span class="rem-cell rem-num">'+money(r.outstanding)+'</span>'
+    : '';
+  return '<div class="rem-row'+(full?" full":"")+'" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
+    head+mid+
+    '<span class="rem-cell rem-pct">'+pctTxt+'</span>'+
+    '<span class="rem-cell rem-stat">'+remStatusChip(r)+'</span>'+
+    '<span class="sr-only">'+remRowSr(r)+'</span>'+
+  '</div>';}
+
+function remHead(w,full){
+  var sk=(w.remSort||"seq").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  function sb(k,label,tip){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";
+    return '<button class="wt-sort'+(on?" on":"")+'" data-action="rem-sort" data-id="'+w.id+'" data-k="'+k+'"'+(tip?' data-tip="'+remEsc(tip)+'" data-tip-plain':'')+'>'+label+' '+ICON(ic)+'</button>';}
+  var mid=full
+    ? '<span class="rem-cell rem-num">Annual</span>'+
+      '<span class="rem-cell rem-num" data-tip="Amount that should be paid by now, based on the share of the calendar year elapsed." data-tip-plain>Expected</span>'+
+      '<span class="rem-cell rem-num">Paid</span>'+
+      '<span class="rem-cell rem-num">Outstanding</span>'
+    : '';
+  return '<div class="rem-row rem-head'+(full?" full":"")+'"><span class="rem-cell rem-name">'+sb("name","Activity")+'</span>'+mid+
+    '<span class="rem-cell rem-pct">'+sb("paid","% Paid")+'</span>'+
+    '<span class="rem-cell rem-stat">'+sb("status","Pacing","Sort the activities that are furthest behind pace to the top.")+'</span></div>';}
+
+function remRows(w){
+  var rows=remCompute(w),sk=(w.remSort||"seq").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  if(key==="seq")return rows;
+  return rows.slice().sort(function(a,b){
+    if(key==="name")return dir*a.name.localeCompare(b.name);
+    if(key==="paid"){var pa=(a.pctPaid==null?-1:a.pctPaid),pb=(b.pctPaid==null?-1:b.pctPaid);return dir*(pa-pb);}
+    if(key==="status")return dir*(a.gap-b.gap); /* asc = most behind first */
+    return 0;
+  });}
+
+function remTable(w,full){
+  var rows=remRows(w),t=remTotals(w);
+  var body=rows.map(function(r){return remRow(w,r,full);}).join("");
+  var totPct=t.annual>0?remPct(t.pctPaid):"n/a";
+  var totMid=full
+    ? '<span class="rem-cell rem-num">'+money(t.annual)+'</span>'+
+      '<span class="rem-cell rem-num">'+money(t.expected)+'</span>'+
+      '<span class="rem-cell rem-num">'+money(t.paid)+'</span>'+
+      '<span class="rem-cell rem-num">'+money(t.out)+'</span>'
+    : '';
+  var totLead=full?'Total ('+t.count+' activit'+(t.count===1?"y":"ies")+')':money(t.paid)+' of '+money(t.annual)+' paid';
+  var tot='<div class="rem-row rem-total'+(full?" full":"")+'"><span class="rem-cell rem-name rem-total-lead">'+totLead+'</span>'+totMid+
+    '<span class="rem-cell rem-pct"><span class="rem-pct-v">'+totPct+'</span></span>'+
+    '<span class="rem-cell rem-stat">'+remPaceBadge(t)+'</span></div>';
+  return '<div class="rem-tbl'+(full?" full":"")+'"><div class="scroll rem-scroll">'+remHead(w,full)+body+'</div>'+tot+'</div>';}
+
+/* ---- header (Detail / Explore): two-row .dep-hd --------------- */
+function remHeaderBlock(w,mode){
+  var t=remTotals(w),numInner,ctx;
+  if(mode==="loading"){
+    numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:76px;height:22px;border-radius:6px"></span><span class="sk" style="width:112px;height:20px;border-radius:999px"></span></div>';
+    ctx="Updating for the new receipts-through date.";
+  }else{
+    numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+(t.annual>0?remPct(t.pctPaid):"n/a")+'</span>'+remPaceBadge(t)+'</div>';
+    ctx=money(t.paid)+' paid of '+money(t.annual)+' pledged. '+remPct(t.pctYear)+' of the calendar year has elapsed'+
+      (t.allPaid?', with everything paid':(t.status==="behind"?(', so this is about '+money(t.shortfall)+' behind the expected pace'):', keeping pace'))+
+      '. '+money(t.out)+' outstanding, '+t.daysLeft+' day'+(t.daysLeft===1?"":"s")+' to year end.';
+  }
+  return '<div class="dep-hd rem-hd">'+
+    '<div class="dep-hd-top">'+remThruChip(w)+'<div class="dep-hd-toggle rem-asof">Data as of '+(w.updated||"just now")+'</div></div>'+
+    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<div class="bank-ctx">'+ctx+'</div><span class="sr-only">'+remPct(t.pctPaid)+' of the total pledged is paid; '+remPct(t.pctYear)+' of the calendar year has elapsed.</span></div></div>'+
+  '</div>';}
+
+/* ---- Glance (kpi) -------------------------------------------- */
+function remGlance(w){
+  var t=remTotals(w);
+  var fill=Math.min(100,Math.max(2,Math.round(t.pctPaid*100))),mark=Math.min(100,Math.round(t.pctYear*100));
+  var col=t.allPaid?"--am-600":(t.status==="behind"?"--am-300":"--am-500");
+  var bar='<div class="rem-gbar" aria-hidden="true"><div class="rem-bar-fill" style="width:'+fill+'%;background:var('+col+')"></div><span class="rem-bar-mark" style="left:'+mark+'%"></span></div>';
+  var line=remPct(t.pctYear)+' of the year elapsed, '+t.daysLeft+' day'+(t.daysLeft===1?"":"s")+' to year end';
+  return '<div class="kpi-row"><div class="kpi-num">'+
+    '<div class="dep-hd-kpigrp"><span class="metric-value">'+(t.annual>0?remPct(t.pctPaid):"n/a")+'</span>'+remPaceBadge(t)+'</div>'+
+    '<div class="gl-sub"><span class="bgt-caption">'+money(t.paid)+' paid of '+money(t.annual)+' pledged</span></div>'+
+    '<div class="rem-glance-read">'+bar+'<span class="rem-glance-cap">'+line+'</span></div>'+
+    '<span class="sr-only">'+remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the calendar year elapsed. '+money(t.out)+' outstanding.</span>'+
+  '</div></div>';}
+
+/* ---- empty state (denominational default) -------------------- */
+function remEmpty(w){
+  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span><div class="metric-value" style="font-size:16px">None set up</div><div class="gl-sub"><span class="bgt-caption">no pledges to pace yet</span></div></div></div>';
+  return '<div class="state rem-empty" data-kind="empty">'+ICON("volunteer_activism")+'<div class="state-title">No remittance pledges yet</div><div class="state-sub">Once your conference or denomination sets up this organisation’s pledges, you will see what is pledged, paid and outstanding, and whether you are keeping pace with the year.</div></div>';}
+
+function remSkeleton(){var rows="";[72,58,80,50,66].forEach(function(wd){rows+='<div class="rem-sk-row"><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk rem-sk-bar" style="width:'+wd+'%"></span><span class="sk" style="width:44px;height:12px;border-radius:4px"></span></div>';});return '<div class="rem-skel" aria-busy="true">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading</div></div>';}
+
+// ===== entry point ==============================================
+function remContent(w){
+  if(w.state==="empty")return remEmpty(w);
+  if(w.size==="kpi")return remGlance(w);
+  if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
+  var mh=remHeaderBlock(w);
+  return mh+'<div class="rem-body">'+remTable(w,w.size==="xwide")+'</div>';
+}
+
+/* ---- drill: payment history focus overlay (modal.type "remdetail") --- */
+function remDetailModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  var r=remFindRow(w,modal.seq);if(!r)return "";
+  var pays=(r.payments||[]).filter(function(p){return p.date<=remThru(w);}).slice().sort(function(a,b){return a.date<b.date?1:-1;});
+  var gapPts=r.pctPaid==null?0:Math.round((r.pctYear-r.pctPaid)*100),behind=Math.max(0,r.expected-r.paid);
+  var summary='<div class="rem-sum">'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">Annual pledge</span><span class="rem-sum-v">'+money(r.annual)+'</span></div>'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">Expected by now</span><span class="rem-sum-v">'+money(r.expected)+'</span></div>'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">Paid to date</span><span class="rem-sum-v">'+money(r.paid)+'</span></div>'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">Outstanding</span><span class="rem-sum-v">'+money(r.outstanding)+'</span></div>'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">% Paid</span><span class="rem-sum-v">'+(r.pctPaid==null?"n/a":remPct(r.pctPaid))+'</span></div>'+
+    '<div class="rem-sum-cell rem-sum-stat">'+remStatusChip(r)+'</div>'+
+  '</div>';
+  var note=(r.status==="behind")
+    ? '<div class="rem-catchup">'+ICON("info")+'<span>About '+money(behind)+' ('+gapPts+' point'+(gapPts===1?"":"s")+') behind the expected pace. '+money(r.outstanding)+' remains for the year; unpaid amounts carry forward, so catching up before the year-end deadline avoids a balance rolling into next year.</span></div>'
+    : (r.status==="full"
+      ? '<div class="rem-catchup ok">'+ICON("check_circle")+'<span>This pledge is fully paid for the year.</span></div>'
+      : '<div class="rem-catchup ok">'+ICON("check")+'<span>On pace: '+money(r.paid)+' paid against '+money(r.expected)+' expected by now.</span></div>');
+  var head='<div class="rem-ph-row rem-ph-head"><span>Date</span><span>Reference</span><span class="rem-ph-amt">Amount</span></div>';
+  var body=pays.length
+    ? pays.map(function(p){return '<div class="rem-ph-row"><span>'+remFmtDate(p.date)+'</span><span>'+p.ref+'</span><span class="rem-ph-amt">'+money(p.amount)+'</span></div>';}).join("")
+    : '<div class="rem-tab-empty">'+ICON("payments")+'No receipts recorded on or before '+remFmtDate(remThru(w))+'.</div>';
+  var foot=pays.length?'<div class="dep-total rem-ph-total"><span>'+pays.length+' receipt'+(pays.length===1?"":"s")+' through '+remFmtDate(remThru(w))+'</span><span>'+money(r.paid)+'</span></div>':'';
+  return '<div class="modal-backdrop" data-action="rem-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Remittance pledge, payment history">'+
+    '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">volunteer_activism</span>'+r.name+'</span><span class="rem-dsub">Payment history</span><span class="rem-dh-spacer"></span><button class="btn naked sm" data-action="rem-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="rem-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b rem-detail-b">'+summary+note+'<div class="rem-ph-h">Receipts on or before '+remFmtDate(remThru(w))+'</div><div class="rem-ph-tbl">'+head+body+'</div>'+foot+'</div>'+
+    '<div class="modal-f"><button class="btn naked sm" data-action="rem-open-record" data-id="'+w.id+'" data-seq="'+r.seq+'">'+ICON("open_in_new")+'Open in Remittance</button><button class="btn primary sm" data-action="rem-detail-close">Close</button></div></div></div>';}
+
+// ===== REGISTRY =================================================
+/* Paste these objects into dashboards[0].widgets (same shape as ar/ap):
+{id:"rem",title:"Remittance Pledges",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],remSort:"seq",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+{id:"rem2",title:"Remittance Pledges (full report)",kind:"remittance",size:"xwide",tiers:["kpi","wide","xwide"],remSort:"seq",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+{id:"rem3",title:"Remittance Pledges (all pledges paid)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],dataset:"ontrack",remSort:"seq",updated:"just now"},
+{id:"rem4",title:"Remittance Pledges (one activity, behind)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",remSort:"seq",updated:"just now"},
+{id:"rem5",title:"Remittance Pledges (no pledges set up)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",updated:"just now"},
+*/
+
+// ===== HANDLERS =================================================
+/* loading only on a data-fetch (the receipts-through date); sort + drill are
+   client re-renders and never trigger a load. */
+function remLoad(w){w.remLoading=true;clearTimeout(timers["rem-"+w.id]);timers["rem-"+w.id]=setTimeout(function(){w.remLoading=false;w.updated="just now";render();},800);}
+function remCommitThru(w,iso){if(iso&&/^\d{4}-\d{2}-\d{2}$/.test(iso)&&iso!==remThru(w)){w.remThru=iso;remLoad(w);setStatus("Counting receipts through "+remFmtDate(iso)+".");return true;}return false;}
+function remHandleClick(a,id,t){
+  if(a==="rem-thru"){pop=(pop&&pop.type==="rem-thru"&&pop.id===id)?null:{type:"rem-thru",id:id};render();return true;}
+  if(a==="rem-set-thru"){var ws=find(id);if(ws)remCommitThru(ws,t.getAttribute("data-iso"));pop=null;render();return true;}
+  if(a==="rem-refresh"){var wr=find(id);if(wr){var inp=document.getElementById("remq-"+id);remCommitThru(wr,inp?inp.value:null);}pop=null;render();return true;}
+  if(a==="rem-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.remSort||"seq").split("-");wso.remSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+(k==="status"?"asc":(k==="name"?"asc":"desc")));}render();return true;}
+  if(a==="rem-open"){var wop=find(id);if(!wop)return true;modal={type:"remdetail",id:id,seq:t.getAttribute("data-seq")};modalMounted=false;pop=null;render();return true;}
+  if(a==="rem-detail-close"){modal=null;pop=null;render();return true;}
+  if(a==="rem-export"){pop=null;setStatus("Exporting the payment history to Excel.");render();return true;}
+  if(a==="rem-open-record"){var wpr=find(id),rr=wpr?remFindRow(wpr,t.getAttribute("data-seq")):null;setStatus("Opening "+(rr?rr.name:"the activity")+" in the Remittance module.");return true;}
+  return false;
+}
+/* popover: presets + a date field committed by Refresh (the verified
+   commit-then-persist behaviour). Reading the field value at commit time
+   means no cross-listener wiring is needed for the input. */
+function remPopContent(){
+  if(pop.type!=="rem-thru")return "";
+  var w=find(pop.id),cur=remThru(w),py=remPctYear(cur),y=remParse(cur).getFullYear();
+  var todayIso=remISO(REM_TODAY),lastMo=remEndOfLastMonth(REM_TODAY);
+  var presets=[["Today",todayIso],["End of last month",lastMo]];
+  var out='<div class="cap">Count receipts through</div>';
+  out+=presets.map(function(p){var on=cur===p[1];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="rem-set-thru" data-id="'+w.id+'" data-iso="'+p[1]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+p[0]+'</span><span class="rem-mi-date">'+remFmtDate(p[1])+'</span></button>';}).join("");
+  out+='<div class="sep"></div><div class="cap">Or choose a date</div>'+
+    '<div class="rem-datepick"><input type="date" id="remq-'+w.id+'" class="rem-date-input" value="'+cur+'" max="'+todayIso+'" aria-label="Receipts through date"><button class="btn primary sm" data-action="rem-refresh" data-id="'+w.id+'">'+ICON("refresh")+'Refresh</button></div>'+
+    '<div class="rem-pop-note">'+remPct(py)+' of the '+y+' calendar year completed as of '+remFmtDate(cur)+'. Only receipts on or before this date are counted.</div>';
+  return out;
+}
+
+/* ---- SHELL WIRING (paste each line verbatim) ------------------
+   contentHTML() dispatch:
+       if(w.kind==="remittance")return remContent(w);
+   click listener (with the other prefixed dispatches):
+       if(a&&a.indexOf("rem-")===0&&remHandleClick(a,id,t))return;
+   popContent():
+       if(pop.type==="rem-thru")return remPopContent();
+   triggerSelector():
+       if(pop.type==="rem-thru")return '[data-action="rem-thru"][data-id="'+pop.id+'"]';
+   renderModal():
+       if(modal.type==="remdetail"){mr.innerHTML=remDetailModalHTML();return;}
+   No input-listener branch is required: the date field is read from the DOM
+   at Refresh time, not tracked per keystroke.
+   --------------------------------------------------------------- */
+
+/* Bar-hover card (formatted popover, reuses .bgt-pop; guarded to a real row).
+   Lives inside this block, attached once at load. */
+var remPopEl=null;
+function remHidePop(){if(remPopEl){remPopEl.remove();remPopEl=null;}}
+function remShowPop(row,mx,my){
+  var raw=row.getAttribute("data-rempop");if(!raw)return;var p=raw.split("|");
+  var name=p[0],annual=+p[1],expected=+p[2],paid=+p[3],out=+p[4],pctPaid=+p[5],pctYear=+p[6],status=p[7];
+  if(!remPopEl){remPopEl=document.createElement("div");remPopEl.className="bgt-pop";document.body.appendChild(remPopEl);}
+  var favCls=status==="behind"?"neg":(status==="none"?"neutral":"");
+  var favTxt=status==="none"?"No pledge":(status==="full"?"Paid in full":(status==="ontrack"?"On track":"Behind pace"));
+  remPopEl.innerHTML='<div class="bgt-pop-h">'+name+'</div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Annual pledge</span><span class="bgt-pop-v">'+money(annual)+'</span></div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Expected by now</span><span class="bgt-pop-v">'+money(expected)+'</span></div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Paid to date</span><span class="bgt-pop-v">'+money(paid)+'</span></div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Outstanding</span><span class="bgt-pop-v">'+money(out)+'</span></div>'+
+    '<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">'+(pctPaid<0?"% Paid":remPct(pctPaid/100)+" paid vs "+remPct(pctYear/100)+" of year")+'</span><span class="bgt-pop-fav '+favCls+'">'+favTxt+'</span></div>';
+  var bw=remPopEl.offsetWidth,bh=remPopEl.offsetHeight,M=10;
+  var left=mx+14,top=my-bh-10;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;if(top<M)top=my+16;
+  remPopEl.style.left=left+"px";remPopEl.style.top=top+"px";
+}
+document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.target.closest(".rem-row[data-rempop]");if(!row){if(remPopEl)remHidePop();return;}remShowPop(row,e.clientX,e.clientY);});
+
+/* =======================================================================
+   Gifts Pledges  (prefix: gft, kind:"gifts")
+   Confluence DR page 7371194449. Campaign / stewardship pledge tracker:
+   how each pledge PURPOSE is tracking against its goal, as of a chosen
+   "gifts received through" date. Board / report ready.
+
+   Five self-contained pieces, all identifiers prefixed gft:
+     (1) DATA      , donor-level pledges (schedule + gifts) + derivations
+     (2) RENDER    , single entry gftContent(w) + size/view builders
+     (3) REGISTRY  , GFT_WIDGETS entries (spread into a dashboard's widgets[])
+     (4) HANDLERS  , gftHandleClick / gftHandleInput / popovers / drill modal
+                     + the verbatim shell hook lines
+     (5) CSS       , see gftv2_styles.css
+
+   Design decisions (Part C of the page):
+     11.1 progress visual per purpose (thermometer + "due by now" marker)
+     11.2 lead with % fulfilled; ahead-of-schedule shown positively
+     11.3 glance KPI (pledged / received / % fulfilled / outstanding)
+     11.4 drill a purpose -> the donors behind, for follow-up
+     11.5 board-ready   11.7 values as text (sr-only + tables)
+   Conventions: no em dashes; two amethyst purples only, never red; quiet
+   .cap labels; filter chips = secondary fill + glyph + chevron, sized to
+   content; KPI number + badge LEFT; one clean empty state; loading only on
+   the date fetch; row-tap opens detail (no per-row buttons).
+   ======================================================================= */
+
+// ===== DATA =============================================================
+/* "Today" for the demo (page context date). Only gifts on or before the
+   chosen thru-date are counted, so the date control genuinely re-slices. */
+var GFT_TODAY="2026-07-24";
+var GFT_MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function gftFmtDate(iso){var p=String(iso).split("-");if(p.length!==3)return iso;return (+p[2])+" "+GFT_MONTHS[(+p[1])-1]+" "+p[0];}
+
+/* Date presets offered in the picker (label, iso). "Custom" uses a native
+   date input. */
+var GFT_DATE_PRESETS=[["Today",GFT_TODAY],["End of June 2026","2026-06-30"],["End of March 2026","2026-03-31"],["Start of 2026","2026-01-01"]];
+
+/* Donor-level pledges. sched = the pledged instalment schedule [[iso,amount]]
+   (sums to the donor's pledge); gifts = gifts actually received [[iso,amount]].
+   Per purpose, as of a thru-date:
+     pledgeTotal = sum of all scheduled amounts (the goal)
+     received    = gifts on or before the date
+     pledgeDue   = scheduled instalments due on or before the date (expected by now)
+     remaining   = pledgeDue - received  (behind if > 0, ahead if < 0)
+     outstanding = pledgeTotal - received (still to reach the goal)
+   Synthesised, but internally consistent so every figure ties out. */
+var GFT_DONORS=[
+  /* Building Fund , capital campaign, behind by one lapsed pledge */
+  {purpose:"Building Fund", donor:"Hollis Family",     sched:[["2026-01-01",3000],["2026-04-01",3000],["2026-07-01",3000],["2026-10-01",3000]], gifts:[["2026-01-05",3000],["2026-04-10",3000],["2026-07-15",3000]]},
+  {purpose:"Building Fund", donor:"Grace Trust",        sched:[["2026-02-01",10000],["2026-08-01",10000]], gifts:[["2026-02-12",10000]]},
+  {purpose:"Building Fund", donor:"Merrick Foundation", sched:[["2026-01-01",1000],["2026-02-01",1000],["2026-03-01",1000],["2026-04-01",1000],["2026-05-01",1000],["2026-06-01",1000],["2026-07-01",1000],["2026-08-01",1000]], gifts:[["2026-01-08",1000],["2026-02-06",1000],["2026-03-05",1000]]},
+  {purpose:"Building Fund", donor:"Anonymous Gift",     sched:[["2026-03-01",5000]], gifts:[["2026-03-20",5000]]},
+  /* Annual Pledge Drive , many small monthly pledges */
+  {purpose:"Annual Pledge Drive", donor:"Bennett Household", sched:[["2026-01-01",100],["2026-02-01",100],["2026-03-01",100],["2026-04-01",100],["2026-05-01",100],["2026-06-01",100],["2026-07-01",100],["2026-08-01",100],["2026-09-01",100],["2026-10-01",100],["2026-11-01",100],["2026-12-01",100]], gifts:[["2026-01-04",100],["2026-02-03",100],["2026-03-02",100],["2026-04-05",100],["2026-05-04",100],["2026-06-03",100],["2026-07-06",100]]},
+  {purpose:"Annual Pledge Drive", donor:"Carter Family",     sched:[["2026-01-01",200],["2026-02-01",200],["2026-03-01",200],["2026-04-01",200],["2026-05-01",200],["2026-06-01",200],["2026-07-01",200],["2026-08-01",200],["2026-09-01",200],["2026-10-01",200],["2026-11-01",200],["2026-12-01",200]], gifts:[["2026-01-09",200],["2026-02-08",200],["2026-03-07",200],["2026-04-06",200],["2026-05-05",200]]},
+  {purpose:"Annual Pledge Drive", donor:"Delgado Family",    sched:[["2026-01-01",150],["2026-04-01",150],["2026-07-01",150],["2026-10-01",150]], gifts:[["2026-01-14",150],["2026-04-18",150]]},
+  /* Missions Fund , ahead of schedule (gifts given early) */
+  {purpose:"Missions Fund", donor:"Rivera Family",   sched:[["2026-06-01",1500],["2026-09-01",1500]], gifts:[["2026-06-01",1500],["2026-07-01",1500]]},
+  {purpose:"Missions Fund", donor:"St. Anne Circle", sched:[["2026-08-01",2000]], gifts:[["2026-07-10",2000]]},
+  /* Youth Center Expansion , newest, one donor not yet started */
+  {purpose:"Youth Center Expansion", donor:"Okafor Family",    sched:[["2026-03-01",3000],["2026-09-01",3000]], gifts:[["2026-03-15",3000]]},
+  {purpose:"Youth Center Expansion", donor:"Lindqvist Family", sched:[["2026-05-01",4000]], gifts:[]}
+];
+/* An all-positive instance (every purpose on track / ahead / fully funded),
+   to exercise the positive read and the "nothing to follow up" panel. */
+var GFT_DONORS_ONTRACK=[
+  {purpose:"Missions Fund",   donor:"Rivera Family",   sched:[["2026-06-01",1500],["2026-09-01",1500]], gifts:[["2026-06-01",1500],["2026-07-01",1500]]},
+  {purpose:"Missions Fund",   donor:"St. Anne Circle", sched:[["2026-08-01",2000]], gifts:[["2026-07-10",2000]]},
+  {purpose:"Memorial Garden", donor:"Legacy Circle",   sched:[["2026-02-01",4000]], gifts:[["2026-02-01",4000]]},
+  {purpose:"Memorial Garden", donor:"Friends of the Garden", sched:[["2026-01-01",1500]], gifts:[["2026-01-20",1500]]}
+];
+
+/* Shell fallback copy (about text kept OUT of the widget chrome). */
+var GFT_ABOUT_BODY="How your gift pledges are tracking against what has been received, for each pledge purpose, as of the date you choose. Only gifts received on or before that date are counted. Progress is measured against each purpose's pledge goal, and the marker on each bar shows how much was expected by the chosen date, so you can see what is on track, ahead, or behind.";
+if(typeof EMPTY_COPY!=="undefined")EMPTY_COPY.gifts={title:"No pledges yet",sub:"When gift pledges are recorded for a purpose, their progress toward goal shows up here."};
+if(typeof ERROR_COPY!=="undefined")ERROR_COPY.gifts={title:"Could not load pledges",sub:"Something went wrong fetching pledge progress. Please try again."};
+
+/* --- derivations --- */
+function gftThru(w){return (w&&w.gftThru)||GFT_TODAY;}
+function gftDataset(w){if(w.dataset==="empty")return [];if(w.dataset==="ontrack")return GFT_DONORS_ONTRACK;if(w.dataset==="single")return GFT_DONORS.filter(function(d){return d.purpose==="Building Fund";});return GFT_DONORS;}
+function gftSum(list,thru){var s=0;for(var i=0;i<list.length;i++){if(thru===null||list[i][0]<=thru)s+=list[i][1];}return s;}
+function gftStatusOf(p){if(p.pledgeTotal<=0)return "none";if(p.received>=p.pledgeTotal)return "complete";if(p.remaining>0)return "behind";if(p.remaining<0)return "ahead";return "ontrack";}
+function gftAllPurposes(w){var seen={},out=[];gftDataset(w).forEach(function(d){if(!seen[d.purpose]){seen[d.purpose]=1;out.push(d.purpose);}});return out;}
+function gftPurposeCur(w){var all=gftAllPurposes(w);if(w.gftPurpose&&all.indexOf(w.gftPurpose)>-1)return w.gftPurpose;return "All purposes";}
+function gftPurposes(w){
+  var donors=gftDataset(w),thru=gftThru(w),order=[],map={};
+  donors.forEach(function(d){if(!map[d.purpose]){map[d.purpose]={purpose:d.purpose,pledgeTotal:0,received:0,due:0,donors:0};order.push(d.purpose);}
+    var g=map[d.purpose];g.pledgeTotal+=gftSum(d.sched,null);g.received+=gftSum(d.gifts,thru);g.due+=gftSum(d.sched,thru);g.donors++;});
+  var out=order.map(function(nm){var p=map[nm];p.remaining=p.due-p.received;p.outstanding=p.pledgeTotal-p.received;p.fulfilled=p.pledgeTotal>0?p.received/p.pledgeTotal:0;p.status=gftStatusOf(p);return p;});
+  var cur=gftPurposeCur(w);
+  if(cur!=="All purposes")out=out.filter(function(p){return p.purpose===cur;});
+  return out;
+}
+function gftOverall(w){
+  var ps=gftPurposes(w),t={pledgeTotal:0,received:0,due:0,n:ps.length,behindCount:0};
+  ps.forEach(function(p){t.pledgeTotal+=p.pledgeTotal;t.received+=p.received;t.due+=p.due;if(p.status==="behind")t.behindCount++;});
+  t.remaining=t.due-t.received;t.outstanding=t.pledgeTotal-t.received;t.fulfilled=t.pledgeTotal>0?t.received/t.pledgeTotal:0;
+  t.status=gftStatusOf(t);
+  return t;
+}
+function gftDonorsFor(w,purpose){
+  var thru=gftThru(w);
+  var rows=gftDataset(w).filter(function(d){return d.purpose===purpose;}).map(function(d){
+    var pledged=gftSum(d.sched,null),received=gftSum(d.gifts,thru),due=gftSum(d.sched,thru);
+    var remaining=due-received;
+    var given=d.gifts.filter(function(g){return g[0]<=thru;}).sort(function(a,b){return a[0]<b[0]?1:-1;});
+    var status=gftStatusOf({pledgeTotal:pledged,received:received,remaining:remaining});
+    return {donor:d.donor,pledged:pledged,received:received,due:due,remaining:remaining,outstanding:pledged-received,lastGift:given.length?given[0][0]:null,gifts:given,status:status};
+  });
+  rows.sort(function(a,b){return b.remaining-a.remaining;});
+  return rows;
+}
+function gftPct(f){return Math.round(f*100)+"%";}
+function gftBehindPurposes(w){return gftPurposes(w).filter(function(p){return p.status==="behind";}).sort(function(a,b){return b.remaining-a.remaining;});}
+
+// ===== RENDER ===========================================================
+function gftEsc(s){return String(s).replace(/"/g,"&quot;");}
+
+/* Schedule status pill , amethyst-neutral for behind, positive green for on
+   track / ahead / fully funded. No red (per conventions; red is reserved for
+   the app delta pill elsewhere). */
+function gftStatusPill(status,amt,asOf){
+  if(status==="behind")return '<span class="bank-pill gft-behind-pill" data-tip="'+gftEsc(money(amt)+" more was expected by "+gftFmtDate(asOf)+" than has been received. Behind schedule.")+'" data-tip-plain>'+ICON("schedule")+money(amt)+' behind schedule</span>';
+  if(status==="ahead")return '<span class="delta-pill" data-tip="'+gftEsc(money(amt)+" more has been received than was expected by "+gftFmtDate(asOf)+". Ahead of schedule.")+'" data-tip-plain>'+ICON("trending_up")+money(amt)+' ahead of schedule</span>';
+  if(status==="complete")return '<span class="delta-pill" data-tip="The full pledged amount for this selection has been received." data-tip-plain>'+ICON("check_circle")+'Fully funded</span>';
+  return '<span class="delta-pill" data-tip="Received matches what was expected by '+gftEsc(gftFmtDate(asOf))+'. On track." data-tip-plain>'+ICON("check")+'On track</span>';
+}
+
+/* Controls (secondary-fill chips, sized to content). The date chip overrides
+   the shared filter-chip glyph with a calendar (see gftv2_styles.css). */
+function gftDateChip(w){var thru=gftThru(w),spin=w.gftloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=(thru===GFT_TODAY?"Today, "+gftFmtDate(thru):gftFmtDate(thru));return '<button class="filter-chip gft-datechip" data-action="gft-date" data-id="'+w.id+'" aria-haspopup="dialog" aria-label="Gifts received through '+gftEsc(gftFmtDate(thru))+', tap to change">'+spin+'<span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
+function gftPurposeChip(w){var all=gftAllPurposes(w);if(all.length<=1)return "";var cur=gftPurposeCur(w);return '<button class="filter-chip gft-purpchip" data-action="gft-purpose" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pledge purpose, tap to change"><span class="fc-label">'+gftEsc(cur)+'</span>'+ICON("expand_more")+'</button>';}
+function gftViewToggle(w){var v=w.gftView||"progress",opts=[["progress","Progress","insights"],["table","Table","table_rows"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="gft-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+
+function gftHeaderBlock(w,mode){
+  var loading=(mode==="loading"),o=gftOverall(w),thru=gftThru(w);
+  var numInner;
+  if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:64px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:20px;border-radius:999px"></span></div>';}
+  else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+gftPct(o.fulfilled)+'</span>'+gftStatusPill(o.status,Math.abs(o.remaining),thru)+'</div>';}
+  var ctx1='<div class="gft-ctx">'+money(o.received)+' received of '+money(o.pledgeTotal)+' pledged</div>';
+  var ctx2='<div class="gft-ctx gft-ctx2">'+money(o.outstanding)+' still to come, as of '+gftFmtDate(thru)+'</div>';
+  /* Explore shows progress + follow-up side by side, so the view toggle is hidden there. */
+  var toggle=(w.size==="xwide")?"":gftViewToggle(w);
+  return '<div class="dep-hd gft-hd">'+
+    '<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
+    '<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+(loading?"":ctx1+ctx2)+'</div></div>'+
+  '</div>';
+}
+
+function gftSkeleton(){var rows=[92,70,54,38].map(function(wd){return '<div class="gft-sk-row"><span class="sk" style="width:120px;height:12px;border-radius:4px"></span><span class="sk gft-sk-bar" style="width:'+wd+'%"></span></div>';}).join("");return '<div class="gft-skel"><div class="gft-skel-rows">'+rows+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+
+/* One purpose , a thermometer toward its goal. Dark amethyst = received; light
+   amethyst = expected by now but not yet received (the shortfall); a marker
+   tick sits at "due by now". Values live in the DOM (foot line + sr-only). */
+function gftBar(w,p,clickable){
+  var thru=gftThru(w);
+  var rPct=p.pledgeTotal>0?Math.min(100,p.received/p.pledgeTotal*100):0;
+  var dPct=p.pledgeTotal>0?Math.min(100,p.due/p.pledgeTotal*100):0;
+  var gap=(dPct>rPct)?(dPct-rPct):0;
+  var expected=gap>0?'<div class="gft-expected" style="left:'+rPct.toFixed(2)+'%;width:'+gap.toFixed(2)+'%"></div>':"";
+  var marker=p.pledgeTotal>0?'<div class="gft-marker" style="left:'+dPct.toFixed(2)+'%" data-tip="'+gftEsc("Due by now: "+money(p.due)+" expected by "+gftFmtDate(thru)+".")+'" data-tip-plain></div>':"";
+  var srtxt=p.purpose+": "+money(p.received)+" received of "+money(p.pledgeTotal)+" pledged, "+gftPct(p.fulfilled)+" fulfilled, "+money(p.due)+" expected by "+gftFmtDate(thru)+".";
+  var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(p.purpose+", "+gftPct(p.fulfilled)+" fulfilled, open the donors behind this purpose")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
+  return '<div class="gft-prow'+(clickable?" gft-clickable":"")+'"'+attr+'>'+
+    '<div class="gft-prow-top"><span class="gft-p-nm">'+p.purpose+'</span><span class="gft-p-pct">'+gftPct(p.fulfilled)+'</span></div>'+
+    '<div class="gft-track">'+
+      '<div class="gft-fill" style="width:'+Math.max(rPct>0?1.5:0,rPct).toFixed(2)+'%"></div>'+expected+marker+
+    '</div>'+
+    '<div class="gft-prow-foot"><span class="gft-p-amt">'+money(p.received)+' of '+money(p.pledgeTotal)+'</span>'+gftStatusPill(p.status,Math.abs(p.remaining),thru)+(clickable?'<span class="gft-p-go" aria-hidden="true">'+ICON("chevron_right")+'</span>':'')+'</div>'+
+    '<span class="sr-only">'+srtxt+'</span>'+
+  '</div>';
+}
+function gftProgress(w){
+  var ps=gftPurposes(w);
+  if(!ps.length)return '<div class="gft-zeroline">'+ICON("info")+'No pledge purposes match this selection.</div>';
+  return '<div class="gft-bars">'+ps.map(function(p){return gftBar(w,p,true);}).join("")+'</div>';
+}
+
+/* Table view , the five verified columns, "% Fulfilled" reframed from the old
+   "% Due", plus totals. Row tap opens the donors behind that purpose. */
+function gftTable(w){
+  var ps=gftPurposes(w).slice(),thru=gftThru(w);
+  var sk=(w.gftSort||"fulfilled-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  function val(p){if(key==="purpose")return p.purpose;if(key==="total")return p.pledgeTotal;if(key==="due")return p.due;if(key==="received")return p.received;if(key==="remaining")return p.remaining;return p.fulfilled;}
+  ps.sort(function(a,b){var av=val(a),bv=val(b);if(key==="purpose")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
+  function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="gft-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+  var head='<div class="wt-row wt-head gft-trow"><span class="gft-c-nm">'+sb("purpose","Purpose")+'</span><span class="gft-c-n">'+sb("total","Pledged")+'</span><span class="gft-c-n">'+sb("due","Due by date")+'</span><span class="gft-c-n">'+sb("received","Received")+'</span><span class="gft-c-n">'+sb("remaining","Remaining")+'</span><span class="gft-c-n">'+sb("fulfilled","% Fulfilled")+'</span><span class="gft-c-go" aria-hidden="true"></span></div>';
+  var body=ps.map(function(p){
+    var remCell=gftRemainingCell(p);
+    var sr='<span class="sr-only">'+p.purpose+', pledged '+money(p.pledgeTotal)+', due by date '+money(p.due)+', received '+money(p.received)+', '+gftRemainingText(p)+', '+gftPct(p.fulfilled)+' fulfilled. Opens the donors behind this purpose.</span>';
+    return '<div class="wt-row gft-trow gft-clickable" data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(p.purpose+", "+gftPct(p.fulfilled)+" fulfilled, open donors")+'">'+
+      '<span class="gft-c-nm">'+p.purpose+sr+'</span>'+
+      '<span class="gft-c-n">'+money(p.pledgeTotal)+'</span>'+
+      '<span class="gft-c-n">'+money(p.due)+'</span>'+
+      '<span class="gft-c-n">'+money(p.received)+'</span>'+
+      '<span class="gft-c-n">'+remCell+'</span>'+
+      '<span class="gft-c-n gft-c-pct">'+gftPct(p.fulfilled)+'</span>'+
+      '<span class="gft-c-go" aria-hidden="true">'+ICON("chevron_right")+'</span></div>';
+  }).join("");
+  var o=gftOverall(w);
+  return '<div class="scroll">'+head+body+'</div>'+
+    '<div class="dep-total gft-total"><span>'+o.n+' purpose'+(o.n===1?"":"s")+'</span><span class="gft-total-nums"><span class="gft-c-n">'+money(o.pledgeTotal)+'</span><span class="gft-c-n">'+money(o.due)+'</span><span class="gft-c-n">'+money(o.received)+'</span><span class="gft-c-n">'+gftRemainingCell(o)+'</span><span class="gft-c-n gft-c-pct">'+gftPct(o.fulfilled)+'</span></span></div>';
+}
+function gftRemainingText(p){if(p.remaining>0)return money(p.remaining)+" behind";if(p.remaining<0)return money(Math.abs(p.remaining))+" ahead";return "on track";}
+function gftRemainingCell(p){if(p.remaining>0)return '<span class="gft-rem gft-rem-behind">'+money(p.remaining)+'</span>';if(p.remaining<0)return '<span class="gft-rem gft-rem-ahead">&minus;'+money(Math.abs(p.remaining))+'</span>';return '<span class="gft-rem gft-rem-ok">'+money(0)+'</span>';}
+
+/* Behind-schedule follow-up panel (Explore right column). Each purpose that is
+   behind opens straight to the donors behind it. */
+function gftBehindPanel(w){
+  var behind=gftBehindPurposes(w);
+  if(!behind.length)return '<div class="state gft-followup-ok" data-kind="empty" data-tone="pos">'+ICON("task_alt")+'<div class="state-title">Nothing to follow up</div><div class="state-sub">Every purpose is on track or ahead of schedule as of '+gftFmtDate(gftThru(w))+'.</div></div>';
+  return '<div class="gft-followup">'+behind.map(function(p){
+    return '<button class="gft-fu-row" data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" data-view="behind" aria-label="'+gftEsc(p.purpose+", "+money(p.remaining)+" behind schedule, follow up with the donors behind")+'">'+
+      '<span class="gft-fu-main"><span class="gft-fu-nm">'+p.purpose+'</span><span class="gft-fu-sub">'+gftPct(p.fulfilled)+' fulfilled, '+p.donors+' donor'+(p.donors===1?"":"s")+'</span></span>'+
+      '<span class="gft-fu-amt">'+money(p.remaining)+'<span class="gft-fu-amt-cap">behind</span></span>'+
+      '<span class="gft-fu-go" aria-hidden="true">'+ICON("chevron_right")+'</span></button>';
+  }).join("")+'</div>';
+}
+
+/* GLANCE (kpi): % fulfilled + status badge on the LEFT, plain money context,
+   a compact overall goal bar, and a follow-up read. Flat (no toolbar). */
+function gftGlance(w){
+  var o=gftOverall(w),thru=gftThru(w);
+  var rPct=o.pledgeTotal>0?Math.min(100,o.received/o.pledgeTotal*100):0;
+  var dPct=o.pledgeTotal>0?Math.min(100,o.due/o.pledgeTotal*100):0;
+  var gap=(dPct>rPct)?(dPct-rPct):0;
+  var goal=o.pledgeTotal>0?('<div class="gft-track gft-track-sm" aria-hidden="true"><div class="gft-fill" style="width:'+Math.max(rPct>0?1.5:0,rPct).toFixed(2)+'%"></div>'+(gap>0?'<div class="gft-expected" style="left:'+rPct.toFixed(2)+'%;width:'+gap.toFixed(2)+'%"></div>':"")+'<div class="gft-marker" style="left:'+dPct.toFixed(2)+'%"></div></div>'):"";
+  var read=(o.behindCount>0)
+    ?'<span class="gft-glance-cap"><span class="gft-sevdot"></span>'+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind schedule</span>'
+    :'<span class="gft-glance-cap gft-cap-ok">'+ICON("check")+'On track or ahead across every purpose</span>';
+  return '<div class="kpi-row"><div class="kpi-num">'+
+    '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+gftEsc(gftPurposeCur(w))+'</span></span>'+
+    '<div class="dep-hd-kpigrp"><span class="metric-value">'+gftPct(o.fulfilled)+'</span>'+gftStatusPill(o.status,Math.abs(o.remaining),thru)+'</div>'+
+    '<div class="gl-sub"><span class="bgt-caption">'+money(o.received)+' received of '+money(o.pledgeTotal)+' pledged</span></div>'+
+    (o.pledgeTotal>0?'<div class="gft-glance-read">'+goal+read+'</div>':"")+
+    '<span class="sr-only">'+gftPct(o.fulfilled)+' of the '+money(o.pledgeTotal)+' pledged has been received ('+money(o.received)+') as of '+gftFmtDate(thru)+'. '+money(o.due)+' was expected by then. '+money(o.outstanding)+' is still outstanding.</span>'+
+  '</div></div>';
+}
+
+function gftEmpty(w){
+  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value gft-allset">'+ICON("volunteer_activism")+'No pledges</span></div><div class="gl-sub"><span class="bgt-caption">nothing pledged yet</span></div></div></div>';
+  return '<div class="state gft-empty" data-kind="empty">'+ICON("volunteer_activism")+'<div class="state-title">No pledges yet</div><div class="state-sub">When gift pledges are recorded for a purpose, their progress toward goal shows up here.</div></div>';
+}
+
+function gftContent(w){
+  if(w.state==="empty"||!gftDataset(w).length)return gftEmpty(w);
+  if(w.size==="kpi")return gftGlance(w);
+  if(w.gftloading)return gftHeaderBlock(w,"loading")+gftSkeleton();
+  var mh=gftHeaderBlock(w);
+  if(w.size==="xwide")return mh+'<div class="gft-explore">'+
+    '<section class="gft-panel"><h4 class="gft-panel-h">'+ICON("insights")+'Progress toward goal</h4>'+gftProgress(w)+'</section>'+
+    '<section class="gft-panel gft-panel-fu"><h4 class="gft-panel-h">'+ICON("flag")+'Behind schedule, follow up</h4>'+gftBehindPanel(w)+'</section>'+
+  '</div>';
+  return mh+'<div class="gft-body">'+((w.gftView||"progress")==="table"?gftTable(w):gftProgress(w))+'</div>';
+}
+
+/* Drill focus overlay: the donors behind a purpose, most behind first. Each
+   row expands to its gift history + a stewardship follow-up. Export + Close.
+   Board / report ready. modal.type === "gftdetail". */
+function gftDonorStatusChip(st){
+  if(st==="behind")return '<span class="gft-dstatus gft-dstatus-behind">Behind</span>';
+  if(st==="ahead")return '<span class="gft-dstatus gft-dstatus-ok">Ahead</span>';
+  if(st==="complete")return '<span class="gft-dstatus gft-dstatus-ok">Fully paid</span>';
+  return '<span class="gft-dstatus gft-dstatus-ok">On track</span>';
+}
+function gftDetailModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  var purpose=modal.purpose,thru=gftThru(w);
+  var allRows=gftDonorsFor(w,purpose);
+  var view=modal.view||"all";
+  var rows=(view==="behind")?allRows.filter(function(r){return r.remaining>0;}):allRows;
+  var behindN=allRows.filter(function(r){return r.remaining>0;}).length;
+  var toggle='<div class="vtoggle gft-d-toggle" role="group" aria-label="Which donors">'+
+    [["all","All donors"],["behind","Behind only"]].map(function(o){var on=view===o[0];return '<button class="vt'+(on?" on":"")+'" data-action="gft-d-view" data-v="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+(o[0]==="behind"?' ('+behindN+')':'')+'</button>';}).join("")+'</div>';
+  var cols=["Donor","Pledged","Received","Due by "+gftFmtDate(thru),"Remaining","Last gift"];
+  var head='<div class="wt-row wt-head gft-drow"><span class="gft-dexp"></span>'+cols.map(function(c,i){return '<span class="gft-dc gft-dc'+i+'">'+c+'</span>';}).join("")+'<span class="gft-dstat-h"></span></div>';
+  var body;
+  if(rows.length){
+    body=rows.map(function(r){
+      var open=(modal.exp===r.donor);
+      var row='<div class="wt-row gft-drow gft-clickable'+(open?" open":"")+'" data-action="gft-d-exp" data-id="'+w.id+'" data-donor="'+gftEsc(r.donor)+'" role="button" tabindex="0" aria-expanded="'+open+'">'+
+        '<span class="gft-dexp">'+ICON(open?"expand_more":"chevron_right")+'</span>'+
+        '<span class="gft-dc gft-dc0">'+r.donor+'</span>'+
+        '<span class="gft-dc gft-dc1">'+money(r.pledged)+'</span>'+
+        '<span class="gft-dc gft-dc2">'+money(r.received)+'</span>'+
+        '<span class="gft-dc gft-dc3">'+money(r.due)+'</span>'+
+        '<span class="gft-dc gft-dc4">'+gftRemainingCell(r)+'</span>'+
+        '<span class="gft-dc gft-dc5">'+(r.lastGift?gftFmtDate(r.lastGift):"None yet")+'</span>'+
+        '<span class="gft-dstat-h">'+gftDonorStatusChip(r.status)+'</span></div>';
+      if(open)row+=gftDonorDrawer(w,r,thru);
+      return row;
+    }).join("");
+  } else {
+    body='<div class="state" data-kind="empty" data-tone="pos">'+ICON("task_alt")+'<div class="state-title">No donors behind</div><div class="state-sub">Every donor to '+purpose+' is on track or ahead as of '+gftFmtDate(thru)+'.</div></div>';
+  }
+  var totRem=rows.reduce(function(s,r){return s+r.remaining;},0),totRec=rows.reduce(function(s,r){return s+r.received;},0);
+  var foot=rows.length?'<div class="dep-total gft-dtotal"><span>'+rows.length+' donor'+(rows.length===1?"":"s")+'</span><span class="gft-dtotal-nums">'+money(totRec)+' received'+(totRem>0?', '+money(totRem)+' behind':'')+'</span></div>':'';
+  return '<div class="modal-backdrop" data-action="gft-detail-close"><div class="modal modal-wide gft-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Gifts Pledges, donors behind '+gftEsc(purpose)+'">'+
+    '<div class="modal-h gft-detail-h"><span class="modal-title"><span class="material-symbols-rounded gft-detail-ic">volunteer_activism</span>Gifts Pledges: '+purpose+'</span><span class="gft-dsub">as of '+gftFmtDate(thru)+'</span><span class="gft-dh-spacer"></span>'+toggle+'<button class="btn naked sm" data-action="gft-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="gft-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b gft-detail-b"><div class="gft-detail-scroll">'+head+body+'</div>'+foot+'</div>'+
+    '<div class="modal-f"><button class="btn primary sm" data-action="gft-detail-close">Close</button></div></div></div>';
+}
+function gftDonorDrawer(w,r,thru){
+  var hist=r.gifts.length
+    ?'<div class="gft-gifts"><div class="gft-grow gft-ghead"><span>Gift date</span><span class="gft-ga">Amount</span></div>'+r.gifts.map(function(g){return '<div class="gft-grow"><span>'+gftFmtDate(g[0])+'</span><span class="gft-ga">'+money(g[1])+'</span></div>';}).join("")+'</div>'
+    :'<div class="gft-tab-empty">'+ICON("volunteer_activism")+'No gifts received toward this pledge yet.</div>';
+  var summary='<div class="gft-dsum"><span class="gft-dsum-i"><span class="gft-dsum-k">Pledged</span><span class="gft-dsum-v">'+money(r.pledged)+'</span></span><span class="gft-dsum-i"><span class="gft-dsum-k">Received</span><span class="gft-dsum-v">'+money(r.received)+'</span></span><span class="gft-dsum-i"><span class="gft-dsum-k">Still to give</span><span class="gft-dsum-v">'+money(r.outstanding)+'</span></span></div>';
+  var actions='<div class="gft-dactions"><button class="btn outlined sm" data-action="gft-open-donor" data-id="'+w.id+'" data-donor="'+gftEsc(r.donor)+'">'+ICON("open_in_new")+'Open donor record</button><button class="btn naked sm" data-action="gft-followup" data-id="'+w.id+'" data-donor="'+gftEsc(r.donor)+'">'+ICON("event_note")+'Record a follow-up</button></div>';
+  return '<div class="gft-drawer">'+summary+'<div class="gft-drawer-h">Gift history</div>'+hist+actions+'</div>';
+}
+
+// ===== REGISTRY =========================================================
+/* Spread these into a dashboard's widgets[] array (as the ar and pur entries
+   are at ~line 1403). tiers drive the size picker; gftThru / gftView / gftSort
+   seed state. */
+var GFT_WIDGETS=[
+  {id:"gft",  title:"Gifts Pledges", kind:"gifts", size:"wide",  tiers:["kpi","wide","xwide"], gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc", gftPurpose:"All purposes", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+  {id:"gft2", title:"Gifts Pledges (report view)", kind:"gifts", size:"xwide", tiers:["kpi","wide","xwide"], gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc", gftPurpose:"All purposes"},
+  {id:"gft3", title:"Gifts Pledges (one purpose)", kind:"gifts", size:"wide",  tiers:["kpi","wide","xwide"], dataset:"single", gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc"},
+  {id:"gft4", title:"Gifts Pledges (all on track)", kind:"gifts", size:"wide",  tiers:["kpi","wide","xwide"], dataset:"ontrack", gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc"},
+  {id:"gft5", title:"Gifts Pledges (no pledges yet)", kind:"gifts", size:"wide", tiers:["kpi","wide","xwide"], dataset:"empty", state:"empty"}
+];
+
+// ===== HANDLERS =========================================================
+/* ---- SHELL HOOK LINES (paste verbatim into widget-container.html) ----
+   1. contentHTML() dispatch, beside the other `if(w.kind===...)` lines (~3716):
+        if(w.kind==="gifts")return gftContent(w);
+   2. Delegated click listener, beside the ar/pur lines (~3920):
+        if(a&&a.indexOf("gft-")===0&&gftHandleClick(a,id,t))return;
+   3. popContent() dispatch, beside the ar/pur lines (~3821):
+        if(pop.type==="gft-date"||pop.type==="gft-purpose")return gftPopContent();
+   4. triggerSelector(), appended to the chain (~3834):
+        if(pop.type==="gft-date")return '[data-action="gft-date"][data-id="'+pop.id+'"]';
+        if(pop.type==="gft-purpose")return '[data-action="gft-purpose"][data-id="'+pop.id+'"]';
+   5. renderModal(), beside the artdetail branch (~3895):
+        if(modal.type==="gftdetail"){mr.innerHTML=gftDetailModalHTML();return;}
+   6. Delegated input listener, first line (beside purHandleInput, ~3847):
+        if(gftHandleInput(e))return;
+   7. aboutOf(w), before the final return (~1447):
+        if(w.kind==="gifts")return {h:w.title,b:GFT_ABOUT_BODY};
+   No other shell wiring is required; every id/action/pop/modal is gft-scoped.
+   -------------------------------------------------------------------- */
+
+/* Data-fetch: the thru-date changes which gifts are counted, so it fetches new
+   data => transient gftloading flag + skeleton. Purpose filter, view toggle,
+   sort and drill are client re-renders and never trigger a load. */
+function gftLoad(w){w.gftloading=true;clearTimeout(timers["gft-"+w.id]);timers["gft-"+w.id]=setTimeout(function(){w.gftloading=false;render();},820);}
+function gftHandleClick(a,id,t){
+  if(a==="gft-date"){pop=(pop&&pop.type==="gft-date"&&pop.id===id)?null:{type:"gft-date",id:id};render();return true;}
+  if(a==="gft-set-date"){var wd=find(id);if(wd){var nd=t.getAttribute("data-d");if(gftThru(wd)!==nd){wd.gftThru=nd;gftLoad(wd);setStatus("Showing pledge progress as of "+gftFmtDate(nd)+".");}}pop=null;render();return true;}
+  if(a==="gft-purpose"){pop=(pop&&pop.type==="gft-purpose"&&pop.id===id)?null:{type:"gft-purpose",id:id};render();return true;}
+  if(a==="gft-set-purpose"){var wp=find(id);if(wp){var np=t.getAttribute("data-p");wp.gftPurpose=(np==="all"||!np)?"All purposes":np;}pop=null;render();return true;}
+  if(a==="gft-view"){var wv=find(id);if(wv)wv.gftView=t.getAttribute("data-v");pop=null;render();return true;}
+  if(a==="gft-sort"){var ws=find(id),k=t.getAttribute("data-k");if(ws){var cs=(ws.gftSort||"fulfilled-asc").split("-");ws.gftSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+(k==="purpose"?"asc":"desc"));}render();return true;}
+  /* Row / bar / follow-up tap -> the donors behind that purpose, in a focus overlay. */
+  if(a==="gft-open"){var wo=find(id);if(!wo)return true;modal={type:"gftdetail",id:id,purpose:t.getAttribute("data-purpose"),view:t.getAttribute("data-view")||"all",exp:null};modalMounted=false;pop=null;render();return true;}
+  if(a==="gft-d-view"){if(modal){modal.view=t.getAttribute("data-v");modal.exp=null;}render();return true;}
+  if(a==="gft-d-exp"){if(modal){var dn=t.getAttribute("data-donor");modal.exp=(modal.exp===dn)?null:dn;}render();return true;}
+  if(a==="gft-detail-close"){modal=null;modalMounted=false;pop=null;render();return true;}
+  if(a==="gft-export"){pop=null;setStatus("Exporting this pledge detail to Excel…");render();return true;}
+  if(a==="gft-open-donor"){setStatus("Opening the donor record for "+t.getAttribute("data-donor")+" in Donors and Gifts…");return true;}
+  if(a==="gft-followup"){setStatus("Follow-up noted for "+t.getAttribute("data-donor")+".");return true;}
+  return false;
+}
+/* Native date input inside the date popover (custom date). Fires on input in
+   most browsers; the shell's separate change listener also carries it (see
+   hook note). Either way the value is applied and the widget re-fetches. */
+function gftHandleInput(e){
+  if(e.target&&e.target.classList&&e.target.classList.contains("gft-date-input")){var w=find(e.target.getAttribute("data-id"));if(w&&e.target.value&&gftThru(w)!==e.target.value){w.gftThru=e.target.value;pop=null;gftLoad(w);setStatus("Showing pledge progress as of "+gftFmtDate(e.target.value)+".");render();}return true;}
+  return false;
+}
+/* popContent branches (routed from popContent(): gft-date / gft-purpose). */
+function gftPopContent(){
+  if(pop.type==="gft-date"){var wd=find(pop.id),cur=gftThru(wd);
+    var presets=GFT_DATE_PRESETS.map(function(o){var on=cur===o[1];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="gft-set-date" data-id="'+wd.id+'" data-d="'+o[1]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[0]+'</span><span class="mi-sub2">'+gftFmtDate(o[1])+'</span></button>';}).join("");
+    var isPreset=false;GFT_DATE_PRESETS.forEach(function(o){if(o[1]===cur)isPreset=true;});
+    var custom='<div class="cap">Custom date</div><div class="gft-custom-date"><input type="date" class="gft-date-input" id="gftdate-'+wd.id+'" data-id="'+wd.id+'" max="'+GFT_TODAY+'" value="'+cur+'">'+(isPreset?"":'<span class="gft-custom-cur">'+gftFmtDate(cur)+'</span>')+'</div>';
+    return '<div class="cap">Gifts received through</div>'+presets+'<div class="sep"></div>'+custom;}
+  if(pop.type==="gft-purpose"){var wp=find(pop.id),curp=gftPurposeCur(wp),all=gftAllPurposes(wp);
+    var allSel=(curp==="All purposes");
+    var out='<div class="cap">Pledge purpose</div><button class="mi'+(allSel?" check":"")+'" role="option" aria-selected="'+allSel+'" data-action="gft-set-purpose" data-id="'+wp.id+'" data-p="all">'+(allSel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All purposes</span></button>';
+    out+=all.map(function(p){var sel=curp===p,esc=gftEsc(p);return '<button class="mi'+(sel?" check":"")+'" role="option" aria-selected="'+sel+'" data-action="gft-set-purpose" data-id="'+wp.id+'" data-p="'+esc+'">'+(sel?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">volunteer_activism</span><span class="mi-nm">'+p+'</span></button>';}).join("");
+    return out;}
+  return "";
+}
+/* triggerSelector branches (kept here for parity / verification). */
+function gftTriggerSelector(){if(pop.type==="gft-date")return '[data-action="gft-date"][data-id="'+pop.id+'"]';if(pop.type==="gft-purpose")return '[data-action="gft-purpose"][data-id="'+pop.id+'"]';return null;}
+
+/* =====================================================================
+   Loans With Balance Due (prefix: loan, kind: "loans")  , v2 redesign
+   Confluence DR page 7372046373. Drop-in, namespaced block for
+   widget-container.html. Shell contract:
+     contentHTML() ......... if(w.kind==="loans")return loanContent(w);
+     click dispatch ........ if(a&&a.indexOf("loan-")===0&&loanHandleClick(a,id,t))return;
+     popContent() .......... if(pop.type==="loan-type")return loanPopContent();
+     triggerSelector() ..... if(pop.type==="loan-type")return '[data-action="loan-type"][data-id="'+pop.id+'"]';
+     renderModal() ......... if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}
+   Every action is "loan-"-prefixed and routed to loanHandleClick; the only
+   pop type is loan-type; the drill uses modal.type "loandetail"; the aging
+   hover card mousemove listener lives inside this block. No other shell
+   wiring changes required.
+
+   What changed vs the live widget (Part A): the misleading By-Age PIE with
+   labels "Current / 30 / 60 / Over 60" is replaced by an ordered aging read,
+   severity Current -> 90+, values as text (DR 11.1, 11.2); the loan-type
+   filter now drives EVERY read , table, aging and KPI all recompute from the
+   same filtered set, fixing the filter-affects-table-only + all-loans-chart
+   antipattern confirmed live (DR 11.3); a portfolio-risk KPI is added ,
+   total, past-due and 90+ with a percent-past-due read (DR 11.4); the loan is
+   collections-actionable , a row opens a loan detail with "Open loan" and
+   "Record a contact" next-steps and a dormancy flag on a long-dormant loan
+   (DR 11.5); currency follows the org ($, fixing the live GBP localisation
+   defect); amethyst severity ramp, no red on any chart element.
+   ===================================================================== */
+
+/* ===== DATA =========================================================== */
+var LOAN_TODAY="2026-07-24";
+/* Four aging bands in severity order, labelled exactly per DR 11.1
+   (Current / 1-30 / 31-60 / 90+). The top band captures everything over
+   60 days (matching the live "Over 60" band the brief relabels to 90+);
+   no shipped loan sits in 61-89, so "90+" reads truthfully. */
+var LOAN_BUCKETS=[
+  {key:"cur",label:"Current",   sub:"not yet due",           hi:0,       sev:0},
+  {key:"b1", label:"1-30 days", sub:"up to 1 month past due", hi:30,     sev:1},
+  {key:"b2", label:"31-60 days",sub:"1 to 2 months past due", hi:60,     sev:2},
+  {key:"b3", label:"90+ days",  sub:"most overdue",           hi:Infinity,sev:3}
+];
+/* Amethyst severity ramp: light (Current) deepening to dark (90+). No red;
+   severity reads from depth of amethyst + order + labels + text. */
+var LOAN_SEV_COLORS=["--am-200","--am-300","--am-500","--am-700"];
+/* Loan types are organisation-defined (not a fixed list). Live values. */
+var LOAN_TYPES=["All","Church - Special","Church Expansion","Individual"];
+
+/* Loans with at least one invoice and a remaining balance. amount = principal
+   plus interest invoiced, minus posted payments. days = days past due on the
+   oldest unpaid invoice. Some payment histories left empty on purpose. */
+var LOAN_LOANS=[
+  {acct:"LN-1042",name:"Grace Fellowship",type:"Church Expansion",orig:150000,amount:28450.00,days:-8,lastPay:"2026-07-08",nextDue:"2026-08-01",
+    payments:[{date:"2026-07-08",method:"ACH",amount:2100.00},{date:"2026-06-08",method:"ACH",amount:2100.00}]},
+  {acct:"LN-1017",name:"New Life Center",type:"Church Expansion",orig:120000,amount:24800.00,days:-12,lastPay:"2026-07-10",nextDue:"2026-08-05",
+    payments:[{date:"2026-07-10",method:"Check #2093",amount:1750.00}]},
+  {acct:"LN-2231",name:"Maria Alvarez",type:"Individual",orig:5000,amount:640.00,days:-6,lastPay:"2026-07-02",nextDue:"2026-07-30",
+    payments:[{date:"2026-07-02",method:"ACH",amount:160.00},{date:"2026-06-02",method:"ACH",amount:160.00}]},
+  {acct:"LN-1188",name:"First Baptist Church",type:"Church - Special",orig:12000,amount:186.86,days:6,lastPay:"2026-06-30",nextDue:"2026-07-18",
+    payments:[{date:"2026-06-30",method:"Check #4021",amount:930.00}]},
+  {acct:"LN-1205",name:"Trinity Chapel",type:"Church - Special",orig:30000,amount:8200.00,days:22,lastPay:"2026-05-28",nextDue:"2026-07-02",
+    payments:[{date:"2026-05-28",method:"ACH",amount:1200.00}]},
+  {acct:"LN-2044",name:"Stephen Ho",type:"Individual",orig:8000,amount:1020.97,days:44,lastPay:"2026-05-02",nextDue:"2026-06-10",
+    payments:[{date:"2026-05-02",method:"ACH",amount:255.00}]},
+  {acct:"LN-1150",name:"St. Mark Parish",type:"Church - Special",orig:40000,amount:9800.00,days:58,lastPay:"2026-04-15",nextDue:"2026-05-27",
+    payments:[]},
+  {acct:"LN-1301",name:"Third Presbyterian Church",type:"Church Expansion",orig:300000,amount:24690.13,days:95,lastPay:"2026-03-18",nextDue:"2026-04-20",
+    payments:[{date:"2026-03-18",method:"Wire",amount:3400.00}]},
+  {acct:"LN-1099",name:"Cornerstone Academy",type:"Church - Special",orig:60000,amount:14250.00,days:145,lastPay:"2026-01-30",nextDue:"2026-03-01",
+    payments:[]}
+];
+/* Edge instance: every loan current (nothing past due). KPI reads All current;
+   overdue bands are empty and not clickable. */
+var LOAN_LOANS_CURRENT=[
+  {acct:"LN-3001",name:"Hope Chapel",type:"Church Expansion",orig:90000,amount:12400.00,days:-9,lastPay:"2026-07-12",nextDue:"2026-08-03",payments:[{date:"2026-07-12",method:"ACH",amount:1300.00}]},
+  {acct:"LN-3002",name:"Faith Community Church",type:"Church - Special",orig:25000,amount:3800.00,days:-4,lastPay:"2026-07-15",nextDue:"2026-07-28",payments:[{date:"2026-07-15",method:"Check #118",amount:600.00}]},
+  {acct:"LN-3003",name:"David Nguyen",type:"Individual",orig:6000,amount:520.00,days:-15,lastPay:"2026-07-05",nextDue:"2026-08-06",payments:[{date:"2026-07-05",method:"ACH",amount:130.00}]}
+];
+/* Edge instance: a single populated band (90+). Every other band is zero and
+   not clickable; the aging read shows one band plus a quiet "no balance in" line. */
+var LOAN_LOANS_SINGLE=[
+  {acct:"LN-4001",name:"Emmanuel Church",type:"Church Expansion",orig:80000,amount:9300.00,days:112,lastPay:"2026-02-14",nextDue:"2026-03-20",payments:[]},
+  {acct:"LN-4002",name:"Shepherd Fellowship",type:"Church - Special",orig:20000,amount:4100.00,days:98,lastPay:"2026-03-01",nextDue:"2026-04-10",payments:[{date:"2026-03-01",method:"ACH",amount:500.00}]}
+];
+
+/* ===== RENDER ========================================================= */
+function loanEsc(s){return String(s).replace(/"/g,"&quot;");}
+function loanMoney(n){return "$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function loanFmtDate(iso){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];var p=String(iso).split("-");if(p.length!==3)return iso;return M[(+p[1])-1]+" "+(+p[2])+", "+p[0];}
+function loanParse(iso){var p=String(iso).split("-");return new Date(+p[0],(+p[1])-1,+p[2]);}
+function loanDaysSincePay(iso){if(!iso)return null;var t=loanParse(LOAN_TODAY);return Math.round((t-loanParse(iso))/86400000);}
+function loanIsDormant(x){var d=loanDaysSincePay(x.lastPay);return d!=null&&d>90;}
+
+function loanDataset(w){if(w.dataset==="current")return LOAN_LOANS_CURRENT;if(w.dataset==="single")return LOAN_LOANS_SINGLE;return LOAN_LOANS;}
+function loanFiltered(w){var ty=w.loanType||"All";return loanDataset(w).filter(function(x){return ty==="All"||x.type===ty;});}
+function loanBucketOf(days){for(var i=0;i<LOAN_BUCKETS.length;i++){if(days<=LOAN_BUCKETS[i].hi)return LOAN_BUCKETS[i].key;}return "b3";}
+function loanSevOf(days){for(var i=0;i<LOAN_BUCKETS.length;i++){if(days<=LOAN_BUCKETS[i].hi)return LOAN_BUCKETS[i].sev;}return 3;}
+function loanBucketLabel(key){for(var i=0;i<LOAN_BUCKETS.length;i++)if(LOAN_BUCKETS[i].key===key)return LOAN_BUCKETS[i].label;return key;}
+function loanColorOf(key){for(var i=0;i<LOAN_BUCKETS.length;i++)if(LOAN_BUCKETS[i].key===key)return LOAN_SEV_COLORS[LOAN_BUCKETS[i].sev];return LOAN_SEV_COLORS[3];}
+function loanBuckets(w){
+  var ls=loanFiltered(w),m={};LOAN_BUCKETS.forEach(function(b){m[b.key]={count:0,total:0};});
+  ls.forEach(function(x){var k=loanBucketOf(x.days);m[k].count++;m[k].total+=x.amount;});
+  return LOAN_BUCKETS.map(function(b){return {key:b.key,label:b.label,sub:b.sub,sev:b.sev,color:LOAN_SEV_COLORS[b.sev],count:m[b.key].count,total:m[b.key].total};});
+}
+function loanTotal(w){return loanFiltered(w).reduce(function(s,x){return s+x.amount;},0);}
+function loanCount(w){return loanFiltered(w).length;}
+function loanPastDue(w){return loanFiltered(w).filter(function(x){return x.days>0;}).reduce(function(s,x){return s+x.amount;},0);}
+function loanPastDueCount(w){return loanFiltered(w).filter(function(x){return x.days>0;}).length;}
+function loan90(w){return loanFiltered(w).filter(function(x){return loanBucketOf(x.days)==="b3";}).reduce(function(s,x){return s+x.amount;},0);}
+function loanPct(w){var t=loanTotal(w);return t>0?Math.round(loanPastDue(w)/t*100):0;}
+function loanWorstBucket(w){var nz=loanBuckets(w).filter(function(r){return r.total>0;});return nz.length?nz[nz.length-1]:null;}
+function loanFind(w,acct){var ls=loanDataset(w);for(var i=0;i<ls.length;i++)if(ls[i].acct===acct)return ls[i];return null;}
+function loanTopOverdue(w){return loanFiltered(w).filter(function(x){return x.days>0;}).slice().sort(function(a,b){return (b.days-a.days)||(b.amount-a.amount);});}
+
+/* Aging band selection (whole book = "total", or one band key). Client-side
+   narrowing of an already-loaded set , never a data-fetch. */
+function loanSel(w){var v=w&&w.loanBucket;if(v==null||v==="total")return "total";for(var i=0;i<LOAN_BUCKETS.length;i++)if(LOAN_BUCKETS[i].key===v)return v;return "total";}
+function loanRows(w){
+  var sel=loanSel(w),list=loanFiltered(w).slice();
+  if(sel!=="total")list=list.filter(function(x){return loanBucketOf(x.days)===sel;});
+  var sk=(w.loanSort||"days-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  list.sort(function(a,b){
+    if(key==="name")return dir*a.name.localeCompare(b.name);
+    if(key==="last")return dir*(loanParse(a.lastPay)-loanParse(b.lastPay));
+    if(key==="amt")return dir*(a.amount-b.amount);
+    return dir*(a.days-b.days);
+  });
+  return list;
+}
+
+/* Filter chip: secondary-fill + leading filter glyph (via .filter-chip[data-action])
+   + trailing chevron. Sized to its label. Drives the whole widget. */
+function loanTypeChip(w){
+  var ty=w.loanType||"All",spin=w.loanloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
+  return '<button class="filter-chip loan-chip" data-action="loan-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="loan-type"&&pop.id===w.id?"true":"false")+'" aria-label="Loan type, tap to change"><span class="fc-label">'+spin+(ty==="All"?"All loan types":ty)+'</span>'+ICON("expand_more")+'</button>';
+}
+
+/* KPI badge: past-due money on an amethyst-neutral pill (no red), or a positive
+   "All current". */
+function loanBadge(w){
+  var over=loanPastDue(w);
+  if(over>0){var n=loanPastDueCount(w),pct=loanPct(w);return '<span class="bank-pill" data-tip="'+loanEsc(loanMoney(over)+" across "+n+" loan"+(n===1?"":"s")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+loanMoney(over)+' past due ('+pct+'%)</span>';}
+  return '<span class="delta-pill" data-tip="Every loan with a balance is current, nothing is past due." data-tip-plain>'+ICON("check")+'All current</span>';
+}
+
+/* Compact stacked severity strip + sr-only aging sentence (values as text). */
+function loanStackBar(w){
+  var tot=loanTotal(w);if(tot<=0)return "";
+  var segs=loanBuckets(w).filter(function(r){return r.total>0;});
+  var inner=segs.map(function(r){var pct=r.total/tot*100;return '<span class="loan-seg" style="flex-basis:'+pct.toFixed(2)+'%;background:var('+r.color+')" title="'+loanEsc(r.label+": "+loanMoney(r.total))+'"></span>';}).join("");
+  return '<div class="loan-stack" aria-hidden="true">'+inner+'</div>';
+}
+function loanAgeSr(w){var b=loanBuckets(w);return 'Outstanding by age: '+b.map(function(r){return r.label+" "+loanMoney(r.total);}).join(", ")+'.';}
+
+/* GLANCE (kpi): total owed + past-due badge on the LEFT, plain context line,
+   then a compact aging read. Values in text + sr-only. */
+function loanGlance(w){
+  var tot=loanTotal(w),n=loanCount(w),worst=loanWorstBucket(w),over=loanPastDue(w);
+  var read="";
+  if(tot>0){
+    var call=(over>0&&worst&&worst.key!=="cur")
+      ?'<span class="loan-glance-cap"><span class="loan-sevdot" style="background:var('+worst.color+')"></span>'+loanMoney(worst.total)+' in '+worst.label+', the most overdue with a balance</span>'
+      :'<span class="loan-glance-cap loan-cap-ok">'+ICON("check")+'Every loan is current</span>';
+    read='<div class="loan-glance-read">'+loanStackBar(w)+call+'</div>';
+  }
+  return '<div class="kpi-row"><div class="kpi-num">'+
+    '<div class="dep-hd-kpigrp"><span class="metric-value">'+loanMoney(tot)+'</span>'+loanBadge(w)+'</div>'+
+    '<div class="gl-sub"><span class="bgt-caption">owed across '+n+' loan'+(n===1?"":"s")+' with a balance</span></div>'+
+    read+
+    '<span class="sr-only">'+loanAgeSr(w)+'</span>'+
+  '</div></div>';
+}
+
+function loanEmpty(w){
+  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value loan-allset">'+ICON("check_circle")+'All settled</span></div><div class="gl-sub"><span class="bgt-caption">no loans have a balance right now</span></div></div></div>';
+  return '<div class="state loan-empty" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">Nothing outstanding</div><div class="state-sub">No loans currently carry a balance. There is nothing to collect right now.</div></div>';
+}
+
+/* Header (Detail / Explore): two-row .dep-hd. Row 1: loan-type chip (left).
+   Row 2: total owed + past-due badge (LEFT) and one quiet context line stating
+   the count, the past-due and 90+ read, and "as of". */
+function loanHeaderBlock(w,mode){
+  var loading=(mode==="loading"),numInner,ctx;
+  if(loading){
+    numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:130px;height:22px;border-radius:6px"></span><span class="sk" style="width:130px;height:20px;border-radius:999px"></span></div>';
+    ctx="Updating loans with a balance…";
+  }else{
+    numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+loanMoney(loanTotal(w))+'</span>'+loanBadge(w)+'</div>';
+    var n=loanCount(w),over=loanPastDue(w),nine=loan90(w),pct=loanPct(w);
+    ctx=n+' loan'+(n===1?"":"s")+' with a balance. '+(over>0?(loanMoney(over)+' ('+pct+'%) is past due, of which '+loanMoney(nine)+' is 90+ days.'):'Nothing is past due.')+' As of '+loanFmtDate(LOAN_TODAY)+'.';
+  }
+  return '<div class="dep-hd">'+
+    '<div class="dep-hd-top"><div class="loan-ctlrow">'+loanTypeChip(w)+'</div><div class="dep-hd-toggle"></div></div>'+
+    '<div class="dep-hd-num"><div class="loan-numwrap">'+numInner+'<div class="loan-ctx">'+ctx+'</div></div></div>'+
+  '</div>';
+}
+
+/* The hero: the loans table. Columns Account, Borrower (with type + a link),
+   Last payment (dormancy-flagged), Days past due, Amount due. Row-tap opens the
+   loan detail. When the whole book is shown it is grouped into aging bands, most
+   overdue last, each with a subtotal , the ordered aging report (DR 11.2). */
+function loanDaysCell(x){
+  if(x.days<=0)return '<span class="loan-c-days"><span class="loan-notdue">Not due</span></span>';
+  return '<span class="loan-c-days"><span class="loan-days-v over">'+x.days+' day'+(x.days===1?"":"s")+'</span></span>';
+}
+function loanLastCell(x){
+  var dorm=loanIsDormant(x);
+  var flag=dorm?('<span class="loan-dormant" data-tip="No payment received in over 90 days on this loan." data-tip-plain>'+ICON("hourglass_empty")+'</span>'):"";
+  return '<span class="loan-c-last">'+loanFmtDate(x.lastPay)+flag+'</span>';
+}
+function loanRowHTML(w,x){
+  var lbl=x.name+", account "+x.acct+", "+(x.days>0?(x.days+" days past due"):"current")+", "+loanMoney(x.amount)+" due, tap to open the loan";
+  return '<div class="wt-row loan-row" data-action="loan-open" data-id="'+w.id+'" data-acct="'+loanEsc(x.acct)+'" role="button" tabindex="0" aria-label="'+loanEsc(lbl)+'">'+
+    '<span class="loan-c-acct">'+x.acct+'</span>'+
+    '<span class="lr-main lr-stack loan-c-name"><span class="loan-nm-wrap"><span class="lr-link loan-nm">'+x.name+'</span><span class="loan-type-sub">'+x.type+'</span></span></span>'+
+    loanLastCell(x)+
+    loanDaysCell(x)+
+    '<span class="wt-c2 loan-c-amt">'+loanMoney(x.amount)+'</span>'+
+  '</div>';
+}
+function loanTable(w){
+  var sel=loanSel(w),rows=loanRows(w);
+  var sk=(w.loanSort||"days-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="loan-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
+  var head='<div class="wt-row wt-head loan-head"><span class="loan-c-acct">'+sb("acct","Account")+'</span><span class="lr-main loan-c-name">'+sb("name","Borrower")+'</span><span class="loan-c-last">'+sb("last","Last payment")+'</span><span class="loan-c-days">'+sb("days","Days past due")+'</span><span class="wt-c2 loan-c-amt">'+sb("amt","Amount due")+'</span></div>';
+  var body;
+  if(sel==="total"){
+    body=LOAN_BUCKETS.map(function(b){
+      var br=rows.filter(function(x){return loanBucketOf(x.days)===b.key;});
+      if(!br.length)return "";
+      var st=br.reduce(function(s,x){return s+x.amount;},0),over=(b.sev>=1);
+      var gh='<div class="wt-row loan-grp"><span class="loan-grp-nm'+(over?" over":"")+'"><span class="loan-grp-dot" style="background:var('+LOAN_SEV_COLORS[b.sev]+')"></span>'+b.label+' <span class="loan-grp-ct">'+br.length+' loan'+(br.length===1?"":"s")+'</span></span><span class="loan-grp-amt">'+loanMoney(st)+'</span></div>';
+      return gh+br.map(function(x){return loanRowHTML(w,x);}).join("");
+    }).join("");
+  }else{
+    body=rows.map(function(x){return loanRowHTML(w,x);}).join("");
+  }
+  var tot=rows.reduce(function(s,x){return s+x.amount;},0);
+  var footLbl=(sel==="total")?("All aging bands ("+rows.length+" loan"+(rows.length===1?"":"s")+")"):(loanBucketLabel(sel)+" ("+rows.length+" loan"+(rows.length===1?"":"s")+")");
+  var empty=rows.length?"":'<div class="loan-zeroline">'+ICON("info")+'No loans match this selection.</div>';
+  return '<div class="scroll">'+head+body+empty+'</div><div class="dep-total"><span>'+footLbl+'</span><span>'+loanMoney(tot)+'</span></div>';
+}
+
+/* Explore right column: the aging read + portfolio-risk KPI + most-overdue
+   borrowers. The band rows are values-as-text with amethyst share bars and
+   double as the table filter , the synced chart the brief asked for (DR 11.3),
+   done as synced values, not an un-synced chart. */
+function loanMiniBar(frac,color){var pct=Math.max(3,Math.round(frac*100));return '<span class="loan-mini-track" aria-hidden="true"><span class="loan-mini-fill" style="width:'+pct+'%;background:var('+color+')"></span></span>';}
+function loanAgingPanel(w){
+  var sel=loanSel(w),grand=loanTotal(w),bs=loanBuckets(w),n=loanCount(w);
+  var out='<div class="loan-panel">';
+  out+='<div class="loan-panel-sub">How overdue the loan book is. Pick a band to filter the list.</div>';
+  var allSel=(sel==="total");
+  out+='<button class="loan-band-row loan-band-all'+(allSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="loan-band-main"><span class="loan-band-lbl">'+ICON("account_balance")+'All aging bands</span><span class="loan-band-meta">'+n+' loan'+(n===1?"":"s")+' with a balance</span></span><span class="loan-band-val">'+loanMoney(grand)+'</span></button>';
+  bs.forEach(function(r){
+    var has=r.total>0,frac=grand>0?r.total/grand:0,isSel=(sel===r.key),share=grand>0?Math.round(r.total/grand*100):0;
+    var arpop=[r.label,r.total,r.count,share].join("|");
+    out+='<button class="loan-band-row'+(isSel?" sel":"")+(has?"":" loan-band-static")+'"'+(has?' data-action="loan-set-bucket" data-bucket="'+r.key+'" data-id="'+w.id+'" data-loanpop="'+loanEsc(arpop)+'" aria-pressed="'+isSel+'"':' disabled aria-disabled="true"')+'>'+
+      '<span class="loan-band-main">'+
+        '<span class="loan-band-lbl'+(r.sev>=1&&has?" over":"")+'"><span class="loan-band-dot" style="background:var('+r.color+')"></span>'+r.label+'</span>'+
+        loanMiniBar(frac,r.color)+
+        '<span class="loan-band-meta">'+(has?(r.count+' loan'+(r.count===1?"":"s")+', '+share+'% of balance'):'no balance in this band')+'</span>'+
+      '</span>'+
+      '<span class="loan-band-val'+(has?"":" loan-band-zero")+'">'+loanMoney(r.total)+'</span></button>';
+  });
+  /* Portfolio-risk read (DR 11.4). */
+  var over=loanPastDue(w),nine=loan90(w),pct=loanPct(w),pctN=grand>0?Math.round(nine/grand*100):0;
+  out+='<div class="loan-panel-sep"></div><div class="loan-panel-h">Portfolio risk</div>';
+  out+='<div class="loan-risk-row"><span class="loan-risk-lbl">Past due</span><span class="loan-risk-v">'+loanMoney(over)+' <span class="loan-risk-pct">('+pct+'%)</span></span></div>';
+  out+='<div class="loan-risk-row"><span class="loan-risk-lbl">90+ days</span><span class="loan-risk-v">'+loanMoney(nine)+' <span class="loan-risk-pct">('+pctN+'%)</span></span></div>';
+  /* Most-overdue borrowers , collections priority. */
+  var top=loanTopOverdue(w).slice(0,4);
+  if(top.length){
+    out+='<div class="loan-panel-sep"></div><div class="loan-panel-h">Most overdue, work these first</div>';
+    top.forEach(function(x){
+      out+='<button class="loan-worst-row" data-action="loan-open" data-id="'+w.id+'" data-acct="'+loanEsc(x.acct)+'" aria-label="'+loanEsc("Open "+x.name+", "+x.days+" days past due")+'"><span class="loan-worst-main"><span class="loan-worst-nm">'+x.name+'</span><span class="loan-worst-meta">'+x.days+' days past due'+(loanIsDormant(x)?', dormant':'')+'</span></span><span class="loan-worst-val">'+loanMoney(x.amount)+'</span></button>';
+    });
+  }
+  return out+'</div>';
+}
+function loanFull(w){
+  return '<div class="dep-full">'+
+    '<div class="dep-col"><div class="dep-col-h">Loans with a balance</div>'+loanTable(w)+'</div>'+
+    '<div class="dep-col loan-col-side"><div class="dep-col-h">Aging and risk</div>'+loanAgingPanel(w)+'</div>'+
+  '</div>';
+}
+
+function loanSkeleton(){var rows="";[82,58,70,48,64].forEach(function(wd){rows+='<div class="loan-sk-row"><span class="sk" style="width:70px;height:12px;border-radius:4px"></span><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:'+wd+'px;height:12px;border-radius:4px"></span></div>';});return '<div class="loan-skel" aria-busy="true">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
+
+/* Single entry point, dispatched by w.kind==="loans". */
+function loanContent(w){
+  if(w.state==="empty"||!loanDataset(w).length)return loanEmpty(w);
+  if(w.size==="kpi")return loanGlance(w);
+  if(w.loanloading)return loanHeaderBlock(w,"loading")+loanSkeleton();
+  var mh=loanHeaderBlock(w);
+  if(w.size==="xwide")return mh+loanFull(w);
+  return mh+'<div class="loan-body">'+loanTable(w)+'</div>';
+}
+
+/* Loading only on a data-fetch (loan-type change), never on sort or band pick. */
+function loanLoad(w){w.loanloading=true;clearTimeout(timers["loan-"+w.id]);timers["loan-"+w.id]=setTimeout(function(){w.loanloading=false;w.updated="just now";render();},800);}
+
+/* Drill-to-detail focus overlay: one loan, collections-actionable. Summary of
+   the loan, a payment history, a dormancy flag, and two next-steps , Open loan
+   and Record a contact. Export + Close. */
+function loanDetailModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  var x=loanFind(w,modal.acct);if(!x)return "";
+  var bucket=loanBucketOf(x.days),bl=loanBucketLabel(bucket),bcolor=loanColorOf(bucket);
+  var dpd=x.days>0?(x.days+" day"+(x.days===1?"":"s")+" past due"):"Not yet due";
+  var dorm=loanIsDormant(x),since=loanDaysSincePay(x.lastPay);
+  function line(lbl,val,cls){return '<div class="loan-dl-row"><span class="loan-dl-lbl">'+lbl+'</span><span class="loan-dl-val'+(cls?" "+cls:"")+'">'+val+'</span></div>';}
+  var grid='<div class="loan-dl-grid">'+
+    line("Account",x.acct)+
+    line("Loan type",x.type)+
+    line("Original amount",loanMoney(x.orig))+
+    line("Amount due",loanMoney(x.amount),"loan-dl-amt")+
+    line("Aging",'<span class="loan-dl-band"><span class="loan-band-dot" style="background:var('+bcolor+')"></span>'+bl+'</span>')+
+    line("Days past due",dpd,x.days>0?"over":"")+
+    line("Next payment due",loanFmtDate(x.nextDue))+
+    line("Last payment",loanFmtDate(x.lastPay)+(since!=null?(' <span class="loan-dl-since">('+since+' days ago)</span>'):''))+
+  '</div>';
+  var dormNote=dorm?('<div class="loan-dl-dormant">'+ICON("hourglass_empty")+'No payment in over 90 days. Consider making contact.</div>'):'';
+  var pays=(x.payments||[]).filter(function(p){return p.amount>0;});
+  var payTbl=pays.length
+    ?'<div class="loan-pays"><div class="loan-prow loan-phead"><span>Date</span><span>Method</span><span class="loan-pa">Amount</span></div>'+pays.map(function(p){return '<div class="loan-prow"><span>'+loanFmtDate(p.date)+'</span><span>'+p.method+'</span><span class="loan-pa">'+loanMoney(p.amount)+'</span></div>';}).join("")+'</div>'
+    :'<div class="loan-tab-empty">'+ICON("payments")+'No payments recorded yet on this loan.</div>';
+  var actions='<div class="loan-actions"><button class="btn outlined sm" data-action="loan-open-loan" data-id="'+w.id+'" data-acct="'+loanEsc(x.acct)+'">'+ICON("open_in_new")+'Open loan</button>'+
+    '<button class="btn naked sm" data-action="loan-contact" data-id="'+w.id+'" data-acct="'+loanEsc(x.acct)+'">'+ICON("event_note")+'Record a contact</button></div>';
+  return '<div class="modal-backdrop" data-action="loan-detail-close"><div class="modal loan-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Loan detail">'+
+    '<div class="modal-h loan-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">account_balance</span>Loan detail</span><span class="loan-dsub">'+x.name+'</span><span class="loan-dh-spacer"></span><button class="iconbtn" data-action="loan-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b loan-detail-b">'+grid+dormNote+'<div class="loan-dl-payh">Payment history</div>'+payTbl+actions+'</div>'+
+    '<div class="modal-f"><button class="btn naked sm" data-action="loan-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><span class="loan-dh-spacer"></span><button class="btn primary sm" data-action="loan-detail-close">Close</button></div></div></div>';
+}
+
+/* ===== REGISTRY ======================================================= */
+/* Paste these into a dashboard's widgets array. Actions array = the standard
+   export/manage set every widget carries. */
+var LOAN_REGISTRY=[
+  {id:"loan",title:"Loans With Balance Due",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+  {id:"loan2",title:"Loans With Balance Due (every loan current)",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],dataset:"current",loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now"},
+  {id:"loan3",title:"Loans With Balance Due (single aging band)",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now"},
+  {id:"loan4",title:"Loans With Balance Due (nothing outstanding)",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",loanType:"All",loanBucket:"total",updated:"just now"},
+  {id:"loan5",title:"Loans With Balance Due (Explore, aging and risk)",kind:"loans",size:"xwide",tiers:["kpi","wide","xwide"],loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now"}
+];
+
+/* ===== HANDLERS ======================================================= */
+/* Shell hook lines (add verbatim to widget-container.html):
+     contentHTML() ....... if(w.kind==="loans")return loanContent(w);
+     click dispatch ...... if(a&&a.indexOf("loan-")===0&&loanHandleClick(a,id,t))return;
+     popContent() ........ if(pop.type==="loan-type")return loanPopContent();
+     triggerSelector() ... if(pop.type==="loan-type")return '[data-action="loan-type"][data-id="'+pop.id+'"]';
+     renderModal() ....... if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}                           */
+function loanHandleClick(a,id,t){
+  if(a==="loan-type"){pop=(pop&&pop.type==="loan-type"&&pop.id===id)?null:{type:"loan-type",id:id};render();return true;}
+  if(a==="loan-set-type"){var wt=find(id);if(wt){var nv=t.getAttribute("data-v");if((wt.loanType||"All")!==nv){wt.loanType=nv;wt.loanBucket="total";loanLoad(wt);}}pop=null;render();return true;}
+  if(a==="loan-sort"){var ws=find(id),k=t.getAttribute("data-k");if(ws){var cs=(ws.loanSort||"days-desc").split("-");ws.loanSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="name"||k==="last")?"asc":"desc"));}render();return true;}
+  if(a==="loan-set-bucket"){var wb=find(id);if(wb){var nb=t.getAttribute("data-bucket");wb.loanBucket=(wb.loanBucket===nb)?"total":nb;}render();return true;}
+  if(a==="loan-open"){var wop=find(id);if(!wop)return true;modal={type:"loandetail",id:id,acct:t.getAttribute("data-acct")};modalMounted=false;pop=null;render();return true;}
+  if(a==="loan-detail-close"){modal=null;pop=null;render();return true;}
+  if(a==="loan-open-loan"){setStatus("Opening loan "+t.getAttribute("data-acct")+" in Loan Processing…");return true;}
+  if(a==="loan-contact"){setStatus("Contact logged for loan "+t.getAttribute("data-acct")+".");return true;}
+  if(a==="loan-export"){pop=null;setStatus("Exporting the loan detail to Excel…");render();return true;}
+  return false;
+}
+/* popContent branch (routed from popContent(): loan-type -> loanPopContent). */
+function loanPopContent(){
+  if(pop.type==="loan-type"){var w=find(pop.id),cur=w.loanType||"All";return '<div class="cap">Loan type</div>'+LOAN_TYPES.map(function(o){var on=cur===o;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="loan-set-type" data-id="'+w.id+'" data-v="'+loanEsc(o)+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+(o==="All"?"All loan types":o)+'</button>';}).join("");}
+  return "";
+}
+/* triggerSelector branch. */
+function loanTriggerSelector(){if(pop&&pop.type==="loan-type")return '[data-action="loan-type"][data-id="'+pop.id+'"]';return null;}
+
+/* Aging-band hover card (formatted; reuses .bgt-pop styling). Attached once at
+   load; lives inside this block. */
+var loanPopEl=null;
+function loanHidePop(){if(loanPopEl){loanPopEl.remove();loanPopEl=null;}}
+function loanShowPop(row,mx,my){
+  var raw=row.getAttribute("data-loanpop");if(!raw)return;var p=raw.split("|");
+  var label=p[0],total=+p[1],count=+p[2],share=+p[3];
+  if(!loanPopEl){loanPopEl=document.createElement("div");loanPopEl.className="bgt-pop";document.body.appendChild(loanPopEl);}
+  loanPopEl.innerHTML='<div class="bgt-pop-h">'+label+'</div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Outstanding</span><span class="bgt-pop-v">'+loanMoney(total)+'</span></div>'+
+    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Loans</span><span class="bgt-pop-v">'+count+'</span></div>'+
+    '<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">Share of balance</span><span class="bgt-pop-fav neutral">'+share+'%</span></div>';
+  var bw=loanPopEl.offsetWidth,bh=loanPopEl.offsetHeight,M=10;
+  var left=mx+14,top=my-bh-10;if(left+bw>innerWidth-M)left=mx-bw-14;if(top<M)top=my+16;
+  loanPopEl.style.left=left+"px";loanPopEl.style.top=top+"px";
+}
+document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.target.closest(".loan-band-row[data-loanpop]");if(!row){if(loanPopEl)loanHidePop();return;}loanShowPop(row,e.clientX,e.clientY);});
+
+  /* ===== end P2/P3 widget blocks ===== */
+
   var dashboards=[
     {id:"d1",name:"Dashboard",custom:true,widgets:[
+      {id:"pen",  title:"Pension Plans",                                   kind:"pension", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penChart:"bar", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"pen2", title:"Pension Plans (all districts, explore)",          kind:"pension", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penChart:"bar", updated:"just now"},
+      {id:"pen3", title:"Pension Plans (District 1)",                      kind:"pension", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"District 1",    penSort:"amt-desc", penChart:"bar", updated:"just now"},
+      {id:"pen4", title:"Pension Plans (no active appointments)",          kind:"pension", size:"wide",  tiers:["kpi","wide","xwide"], state:"empty", dataset:"none", updated:"just now"},
+      {id:"rem",title:"Remittance Pledges",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],remSort:"seq",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"rem2",title:"Remittance Pledges (full report)",kind:"remittance",size:"xwide",tiers:["kpi","wide","xwide"],remSort:"seq",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"rem3",title:"Remittance Pledges (all pledges paid)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],dataset:"ontrack",remSort:"seq",updated:"just now"},
+      {id:"rem4",title:"Remittance Pledges (one activity, behind)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",remSort:"seq",updated:"just now"},
+      {id:"rem5",title:"Remittance Pledges (no pledges set up)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",updated:"just now"},
+      {id:"gft",  title:"Gifts Pledges", kind:"gifts", size:"wide",  tiers:["kpi","wide","xwide"], gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc", gftPurpose:"All purposes", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"gft2", title:"Gifts Pledges (report view)", kind:"gifts", size:"xwide", tiers:["kpi","wide","xwide"], gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc", gftPurpose:"All purposes"},
+      {id:"gft3", title:"Gifts Pledges (one purpose)", kind:"gifts", size:"wide",  tiers:["kpi","wide","xwide"], dataset:"single", gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc"},
+      {id:"gft4", title:"Gifts Pledges (all on track)", kind:"gifts", size:"wide",  tiers:["kpi","wide","xwide"], dataset:"ontrack", gftThru:GFT_TODAY, gftView:"progress", gftSort:"fulfilled-asc"},
+      {id:"gft5", title:"Gifts Pledges (no pledges yet)", kind:"gifts", size:"wide", tiers:["kpi","wide","xwide"], dataset:"empty", state:"empty"},
+      {id:"loan",title:"Loans With Balance Due",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"loan2",title:"Loans With Balance Due (every loan current)",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],dataset:"current",loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now"},
+      {id:"loan3",title:"Loans With Balance Due (single aging band)",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now"},
+      {id:"loan4",title:"Loans With Balance Due (nothing outstanding)",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",loanType:"All",loanBucket:"total",updated:"just now"},
+      {id:"loan5",title:"Loans With Balance Due (Explore, aging and risk)",kind:"loans",size:"xwide",tiers:["kpi","wide","xwide"],loanType:"All",loanSort:"days-desc",loanBucket:"total",updated:"just now"},
       {id:"dep",title:"Deposits on Hand",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"dep2",title:"Deposits on Hand — edge cases (120 accounts)",kind:"deposits",size:"wide",dataset:"big",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"dist",range:"Q",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"dep3",title:"Deposits on Hand — no data",kind:"deposits",size:"wide",tiers:["kpi","wide","large","xwide"],filter:"All types",view:"table",range:"Q",state:"empty",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"}]},
@@ -1444,7 +3459,7 @@
     fund:{h:"Spend by fund",b:"How spending breaks down across your restricted and unrestricted funds."},
     signups:{h:"New sign-ups",b:"People who recently joined a group or ministry. The number is the total for the period you choose; the list shows the most recent sign-ups regardless of period."}
   };
-  function aboutOf(w){if(w.kind==="deposits")return {h:w.title,b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."};if(w.kind==="payroll")return {h:w.title,b:"How payroll spend for the selected pay period splits across compensation categories: salary, hourly, benefits, overtime, and similar."};if(w.kind==="budget")return {h:w.title,b:"How actual income or spending compares to your original budget, per period and year‑to‑date. Mid‑year budget revisions are not included."};if(w.kind==="bank")return {h:w.title,b:"The current balance of each active bank account, based on unreconciled activity since the last reconciliation. Select one account to see what has moved (deposits, voids, checks, withdrawals, EFT) since then."};if(w.kind==="purchasing")return {h:w.title,b:PUR_ABOUT_BODY};return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
+  function aboutOf(w){if(w.kind==="deposits")return {h:w.title,b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."};if(w.kind==="payroll")return {h:w.title,b:"How payroll spend for the selected pay period splits across compensation categories: salary, hourly, benefits, overtime, and similar."};if(w.kind==="budget")return {h:w.title,b:"How actual income or spending compares to your original budget, per period and year‑to‑date. Mid‑year budget revisions are not included."};if(w.kind==="bank")return {h:w.title,b:"The current balance of each active bank account, based on unreconciled activity since the last reconciliation. Select one account to see what has moved (deposits, voids, checks, withdrawals, EFT) since then."};if(w.kind==="purchasing")return {h:w.title,b:PUR_ABOUT_BODY};if(w.kind==="pension")return {h:w.title,b:PEN_ABOUT};if(w.kind==="gifts")return {h:w.title,b:GFT_ABOUT_BODY};if(w.kind==="remittance")return {h:w.title,b:"How each remittance activity is pacing against its annual pledge: what has come in so far this year versus what was expected by now, and what is still outstanding."};if(w.kind==="loans")return {h:w.title,b:"Every loan that still has a balance owing, grouped by how overdue it is, so you can see the total still out and which borrowers to follow up with."};return ABOUT[w.id]||{h:w.title,b:"A short, plain-language description of what this widget shows and where its data comes from."};}
   var EMPTY_COPY={deposits:{title:"No deposit accounts",sub:"There are no deposit accounts to show here yet.",cta:"Add account",action:"add-acct"},payroll:{title:"No payroll runs in this range",sub:"There's no payroll history for the selected period yet."},budget:{title:"No budget set up",sub:"Once a budget is entered for this fiscal year, actuals will be compared against it here.",cta:"Set up budget",action:"add-budget"}};
   var ERROR_COPY={deposits:{title:"Couldn’t load balances",sub:"Something went wrong fetching account data."},payroll:{title:"Couldn’t load payroll data",sub:"Something went wrong fetching payroll history."},budget:{title:"Couldn’t load budget data",sub:"Something went wrong fetching budget and actual figures."}};
 /* --- Bank Balances additive copy --- */
@@ -3718,6 +5733,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.kind==="payables")return apContent(w);
     if(w.kind==="insurance")return insContent(w);
     if(w.kind==="fixedassets")return faContent(w);
+    if(w.kind==="pension")return penContent(w);
+    if(w.kind==="remittance")return remContent(w);
+    if(w.kind==="gifts")return gftContent(w);
+    if(w.kind==="loans")return loanContent(w);
     if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.showZero?'<div class="dep-total" style="margin-top:4px"><span>Total</span><span>'+money(0)+'</span></div>':'')+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
     if(w.kind==="mystatus")return mysContent(w);
     if(w.kind==="bank")return bankContent(w);
@@ -3757,6 +5776,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
 
   function popContent(){
     if(!pop)return "";
+    if(pop.type==="pen-dist")return penPopContent();
+    if(pop.type==="rem-thru")return remPopContent();
+    if(pop.type==="gft-date"||pop.type==="gft-purpose")return gftPopContent();
+    if(pop.type==="loan-type")return loanPopContent();
     if(pop.type==="winfo"){var wi=find(pop.id),ab=aboutOf(wi);return '<div class="wtip-h">'+ab.h+'</div><div class="wtip-b">'+ab.b+'</div><div class="sep"></div><button class="mi wtip-link" data-action="noop">'+ICON("open_in_new")+'Learn more in user guides</button>';}
     if(pop.type==="wmenu"){var wm=find(pop.id);var expH=(wm&&wm.actions&&wm.actions.length)?([["CSV","Export as CSV","table_view"],["XLSX","Export as Excel","grid_on"],["PDF","Export as PDF","picture_as_pdf"],["PNG","Export as image","image"]].map(function(o){return '<button class="mi" data-action="export-do" data-id="'+pop.id+'" data-fmt="'+o[0]+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'<div class="sep"></div>'):"";return expH+'<button class="mi" data-action="duplicate" data-id="'+pop.id+'">'+ICON("content_copy")+'Duplicate widget</button><button class="mi" data-danger data-action="remove" data-id="'+pop.id+'">'+ICON("delete")+'Remove widget</button>';}
     if(pop.type==="expmenu"){var xf=[["CSV","Export as CSV","table_view"],["XLSX","Export as Excel","grid_on"],["PNG","Export chart as image","image"],["PDF","Download as PDF","picture_as_pdf"]];return '<div class="cap">Export this view</div>'+xf.map(function(o){return '<button class="mi" data-action="export-do" data-id="'+pop.id+'" data-fmt="'+o[0]+'">'+ICON(o[2])+o[1]+'</button>';}).join("");}
@@ -3831,7 +5854,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(pop.type==="fa-groupby"||pop.type==="fa-group"||pop.type==="fa-measure")return faPopContent();
     return "";
   }
-  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="fa-groupby")return '[data-action="fa-groupby"][data-id="'+pop.id+'"]';if(pop.type==="fa-group")return '[data-action="fa-group"][data-id="'+pop.id+'"]';if(pop.type==="fa-measure")return '[data-action="fa-measure"][data-id="'+pop.id+'"]';if(pop.type==="ins-type")return '[data-action="ins-type"][data-id="'+pop.id+'"]';if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';}
+  function triggerSelector(){if(!pop)return null;if(pop.type==="wmenu")return '[data-action="wmenu"][data-id="'+pop.id+'"]';if(pop.type==="size")return '[data-action="wsize"][data-id="'+pop.id+'"]';if(pop.type==="switcher")return '[data-action="switcher"]';if(pop.type==="save")return '[data-action="savemenu"]';if(pop.type==="depfilter")return '[data-action="depfilter"][data-id="'+pop.id+'"]';if(pop.type==="advfilter")return '[data-action="advfilter"][data-id="'+pop.id+'"]';if(pop.type==="cmenu"||pop.type==="companydd")return '[data-action="cmenu"][data-id="'+pop.id+'"]';if(pop.type==="rangemenu")return '[data-action="rangemenu"][data-id="'+pop.id+'"]';if(pop.type==="prperiod")return '[data-action="prperiod"][data-id="'+pop.id+'"]';if(pop.type==="bgt-scope")return '[data-action="bgt-scope"][data-id="'+pop.id+'"]';if(pop.type==="bgt-span")return '[data-action="bgt-span"][data-id="'+pop.id+'"]';if(pop.type==="winfo")return '[data-action="winfo"][data-id="'+pop.id+'"]';if(pop.type==="fa-groupby")return '[data-action="fa-groupby"][data-id="'+pop.id+'"]';if(pop.type==="fa-group")return '[data-action="fa-group"][data-id="'+pop.id+'"]';if(pop.type==="fa-measure")return '[data-action="fa-measure"][data-id="'+pop.id+'"]';if(pop.type==="ins-type")return '[data-action="ins-type"][data-id="'+pop.id+'"]';if(pop.type==="ap-due")return '[data-action="ap-due"][data-id="'+pop.id+'"]';if(pop.type==="pr-scope")return '[data-action="pr-scope"][data-id="'+pop.id+'"]';if(pop.type==="pto-year")return '[data-action="pto-year"][data-id="'+pop.id+'"]';if(pop.type==="pto-view")return '[data-action="pto-view"][data-id="'+pop.id+'"]';if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';if(pop.type==="pur-status")return '[data-action="pur-status"][data-id="'+pop.id+'"]';if(pop.type==="pur-path")return '[data-action="pur-path"][data-id="'+pop.id+'"]';if(pop.type==="mct-appfilter")return '[data-action="mct-appfilter"][data-id="'+pop.id+'"]';if(pop.type==="mys-opts")return '[data-action="mys-opts"][data-id="'+pop.id+'"]';if(pop.type==="bank-acct")return '[data-action="bank-acct"][data-id="'+pop.id+'"]';if(pop.type==="expmenu")return '[data-action="expmenu"][data-id="'+pop.id+'"]';if(pop.type==="pen-dist")return '[data-action="pen-dist"][data-id="'+pop.id+'"]';if(pop.type==="rem-thru")return '[data-action="rem-thru"][data-id="'+pop.id+'"]';if(pop.type==="gft-date")return '[data-action="gft-date"][data-id="'+pop.id+'"]';if(pop.type==="gft-purpose")return '[data-action="gft-purpose"][data-id="'+pop.id+'"]';if(pop.type==="loan-type")return '[data-action="loan-type"][data-id="'+pop.id+'"]';}
   function renderOverlay(){var ov=document.getElementById("overlay");if(!pop){ov.innerHTML="";return;}var sel=triggerSelector(),trig=sel&&document.querySelector(sel);if(!trig){ov.innerHTML="";return;}
     ov.innerHTML='<div class="pop'+(pop.type==="size"?" pop-size":"")+(pop.type==="depfilter"?" pop-filter":"")+(pop.type==="prperiod"?" pop-period":"")+'" data-action="stop" style="visibility:hidden;left:0;top:0;">'+popContent()+'</div>';
     var el=ov.firstChild;
@@ -3844,7 +5867,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   document.addEventListener("focus",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input"))prFocusId=e.target.id;},true);
   document.addEventListener("focusout",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")&&e.target.id===prFocusId)prFocusId=null;},true);
   document.addEventListener("change",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")){var wpc=find(e.target.getAttribute("data-id")),whichc=e.target.getAttribute("data-which");if(wpc&&e.target.value){wpc[whichc]=e.target.value;wpc.range="CUSTOM";render();}}});
-  document.addEventListener("input",function(e){if(purHandleInput(e))return;if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="apq"){apDueQuery=e.target.value;var posa=e.target.selectionStart;renderOverlay();var ai=document.getElementById("apq");if(ai){ai.focus();try{ai.setSelectionRange(posa,posa);}catch(_a){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
+  document.addEventListener("input",function(e){if(gftHandleInput(e))return;if(purHandleInput(e))return;if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="apq"){apDueQuery=e.target.value;var posa=e.target.selectionStart;renderOverlay();var ai=document.getElementById("apq");if(ai){ai.focus();try{ai.setSelectionRange(posa,posa);}catch(_a){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
   var modal=null,modalMounted=false;
   function showModal(t,b){modal={t:t,b:b};modalMounted=false;pop=null;render();}
   /* Special-report picker dialog on a scrim. Exactly two dependent dropdowns: one picks the Report name, one picks the Report line. Changing the report resets the line back to "Select a line". Apply stays disabled until BOTH are chosen. Cancel / close / backdrop all dismiss. The background is frozen while the dialog is open (see renderModal). Rebuilds fully on each interaction so the open/selected state is always correct, and only ONE menu is ever open at a time so nothing overlaps or glitches. */
@@ -3893,6 +5916,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(modal.type==="pur-po"){if(modalMounted){var _pm=mr.querySelector(".modal.pur-po-modal");if(_pm){_pm.innerHTML=purPoModalInner();return;}}mr.innerHTML=purPoModalHTML();modalMounted=true;return;}
     if(modal.type==="mysdetail"){mr.innerHTML=mysDetailModalHTML();return;}
     if(modal.type==="artdetail"){mr.innerHTML=arDetailModalHTML();return;}
+    if(modal.type==="pendetail"){mr.innerHTML=penDetailModalHTML();return;}
+    if(modal.type==="remdetail"){mr.innerHTML=remDetailModalHTML();return;}
+    if(modal.type==="gftdetail"){mr.innerHTML=gftDetailModalHTML();return;}
+    if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}
     var body=(modal.scoped?'<div class="wcontent acct-mw">'+depContent(modal.mw)+'</div>':modal.b);
     if(modalMounted){var bEl=mr.querySelector(".modal-b");if(bEl){bEl.innerHTML=body;return;}}
     mr.innerHTML='<div class="modal-backdrop" data-action="modal-close"><div class="modal'+(modal.scoped?" modal-wide":"")+'" data-action="stop" role="dialog" aria-modal="true" aria-label="'+modal.t+'"><div class="modal-h"><span class="modal-title">'+(modal.glyph?'<span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">'+modal.glyph+'</span>':'')+modal.t+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b">'+body+'</div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">'+(modal.scoped?"Done":"Got it")+'</button></div></div></div>';
@@ -3910,6 +5937,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(faHandleClick(a,id,t))return;
     if(a&&a.indexOf("ins-")===0&&insHandleClick(a,id,t))return;
     if(a&&a.indexOf("ap-")===0&&apHandleClick(a,id,t))return;
+    if(a&&a.indexOf("pen-")===0&&penHandleClick(a,id,t))return;
+    if(a&&a.indexOf("rem-")===0&&remHandleClick(a,id,t))return;
+    if(a&&a.indexOf("gft-")===0&&gftHandleClick(a,id,t))return;
+    if(a&&a.indexOf("loan-")===0&&loanHandleClick(a,id,t))return;
     if(a==="pto-expand"){var wpe=find(id),key=t.getAttribute("data-key");if(wpe){wpe.ptoExpand=wpe.ptoExpand||{};wpe.ptoExpand[key]=!wpe.ptoExpand[key];}render();return;}
     if(a==="pto-year"){pop=(pop&&pop.type==="pto-year"&&pop.id===id)?null:{type:"pto-year",id:id};render();return;}
     if(a==="pto-set-year"){var wsy=find(id);if(wsy){var ny=t.getAttribute("data-y");if(ptoCurYear(wsy)!==ny){wsy.ptoYear=ny;ptoLoad(wsy);setStatus("Showing time off for "+ny+".");}}pop=null;render();return;}
