@@ -2173,7 +2173,7 @@ function getInlineAction(person, c){
   }
   if(s==='invite-expired'){
     const label = c.via==='invite' ? 'Generate and send' : 'Generate new link';
-    return `<button class="row-act-btn row-act-warn" onclick="toast('${c.via==='invite' ? 'New invite sent to ' + person.email : 'New invite link generated — copy to send'}');event.stopPropagation()">${label}</button>`;
+    return `<button class="row-act-btn row-act-warn" onclick="toast('${c.via==='invite' ? 'New invite sent to ' + person.email : 'New invite link generated. Copy and send to applicant.'}');event.stopPropagation()">${label}</button>`;
   }
   if(s==='email-bounced'){
     return `<button class="row-act-btn row-act-warn" onclick="toast('Opening email fix…');event.stopPropagation()">Fix email</button>`;
@@ -2261,7 +2261,7 @@ function getActions(person, c){
     if(via==='invite'){
       acts.push({label:'Generate new invite and send',cls:'pri',fn:`toast('New invite sent to ${person.email}');event.stopPropagation()`});
     } else {
-      acts.push({label:'Generate new invite link',cls:'pri',fn:`toast('New invite link generated — copy to send');event.stopPropagation()`});
+      acts.push({label:'Generate new invite link',cls:'pri',fn:`toast('New invite link generated. Copy and send to applicant.');event.stopPropagation()`});
     }
     acts.push({label:'Copy new invite link',fn:`toast('New invite link copied');event.stopPropagation()`});
   }
@@ -2328,7 +2328,7 @@ function confirmExtendExpiry(){
 function cancelInvite(pid, cid){
   showConfirm({
     title: 'Cancel invite?',
-    body: 'The invite link will be invalidated immediately. <strong>The case stays open</strong> — you can generate a new invite when ready.',
+    body: 'The invite link will be invalidated immediately. <strong>The case stays open.</strong> You can generate a new invite when ready.',
     cancelLabel: 'Keep invite',
     actionLabel: 'Cancel invite',
     actionStyle: 'background:var(--red);color:#fff',
@@ -2341,7 +2341,7 @@ function cancelInvite(pid, cid){
       c.events = c.events||[];
       c.events.push({type:'none',title:'Invite cancelled by admin',date:todayStr(),time:'',by:'Admin'});
       renderTable(); renderHomeTable();
-      toast('Invite cancelled — case remains open.');
+      toast('Invite cancelled. Case remains open.');
     }
   });
 }
