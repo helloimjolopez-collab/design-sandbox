@@ -6255,8 +6255,13 @@ function renderPanelBody(person, targetCaseId){
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
 
   pb.innerHTML = `
-    <!-- Header actions -->
+    <!-- Profile hero: avatar + name + role, actions right -->
     <div class="profile-hero">
+      <div class="profile-hero-av" style="background:${ac}">${esc(initials(person.name))}</div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name">${esc(person.name)}</div>
+        <div class="profile-hero-sub">${esc(person.position||person.role||'Applicant')}${person.team?' &nbsp;·&nbsp; '+esc(person.team):''}</div>
+      </div>
       <div class="profile-hero-actions">
         <button class="btn btn-secondary btn-sm" onclick="openWizardManual()">
           <svg width="12" height="12"><use href="#ic-plus"/></svg>Manual Order
