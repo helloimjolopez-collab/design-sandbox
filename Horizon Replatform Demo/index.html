@@ -1206,7 +1206,7 @@ tbody tr:hover .row-act-btn{opacity:1}
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-cancelled','home-chip-status','Status')">Invite cancelled</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','email-bounced','home-chip-status','Status')">Email bounced</div>
 <div class="fdrop-sep"></div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','consent-received','home-chip-status','Status')">Pending approval</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','consent-received','home-chip-status','Status')">Consent received</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','order-submitted','home-chip-status','Status')">Order submitted</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','screening-progress','home-chip-status','Status')">Screening in progress</div>
 <div class="fdrop-sep"></div>
@@ -1353,7 +1353,7 @@ tbody tr:hover .row-act-btn{opacity:1}
         <div class="filter-drop" id="scr-drop-status">
 <div class="fdrop-item selected" onclick="setScrFilter('statusFilter','','scr-chip-status','Status')">All statuses</div>
 <div class="fdrop-item" onclick="setScrFilter('statusFilter','invite-sent','scr-chip-status','Status')">Invite sent</div>
-<div class="fdrop-item" onclick="setScrFilter('statusFilter','consent-received','scr-chip-status','Status')">Consent signed — action needed</div>
+<div class="fdrop-item" onclick="setScrFilter('statusFilter','consent-received','scr-chip-status','Status')">Consent received</div>
 <div class="fdrop-item" onclick="setScrFilter('statusFilter','screening-progress','scr-chip-status','Status')">Screening in progress</div>
 <div class="fdrop-item" onclick="setScrFilter('statusFilter','awaiting-assessment','scr-chip-status','Status')">Awaiting assessment</div>
 <div class="fdrop-item" onclick="setScrFilter('statusFilter','cleared','scr-chip-status','Status')">Cleared</div>
@@ -4871,7 +4871,7 @@ function setScrFilter(key, val, chipId, prefix){
   const chip = document.getElementById(chipId);
   if(chip){
     const lbl = chip.querySelector('.fchip-lbl');
-    const opts = key==='statusFilter' ? [['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']] : [['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']];
+    const opts = key==='statusFilter' ? [['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent received'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']] : [['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']];
     const found = opts.find(o=>o[0]===val);
     if(lbl) lbl.textContent = val ? prefix+': '+(found?found[1]:val) : prefix+': All';
     chip.classList.toggle('active', !!val);
@@ -4880,7 +4880,7 @@ function setScrFilter(key, val, chipId, prefix){
   // update selected state in dropdown
   const drop = document.getElementById(chipId.replace('chip','drop'));
   if(drop) drop.querySelectorAll('.fdrop-item').forEach(it=>{
-    it.classList.toggle('selected', it.textContent.trim()===(val?((key==='statusFilter'?[['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']]:[['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']]).find(o=>o[0]===val)||['',''])[1]:'All statuses'));
+    it.classList.toggle('selected', it.textContent.trim()===(val?((key==='statusFilter'?[['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent received'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']]:[['','All'],['invite','Email invite'],['manual','Manual order'],['flow','Screening flow'],['integration','Integration']]).find(o=>o[0]===val)||['',''])[1]:'All statuses'));
   });
   renderTable();
   renderSummaryStrip();
@@ -4999,7 +4999,7 @@ function setScrCardFilter(key){
     const chip = document.getElementById('scr-chip-status');
     if(chip){
       const lbl = chip.querySelector('.fchip-lbl');
-      const opts = [['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent signed — action needed'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']];
+      const opts = [['','All statuses'],['invite-sent','Invite sent'],['consent-received','Consent received'],['screening-progress','Screening in progress'],['awaiting-assessment','Awaiting assessment'],['cleared','Cleared'],['needs-review','Needs review'],['escalated','Escalated'],['invite-expiring','Invite expiring soon'],['invite-expired','Invite expired']];
       const found = opts.find(o=>o[0]===STATE.statusFilter);
       if(lbl) lbl.textContent = STATE.statusFilter ? 'Status: '+(found?found[1]:STATE.statusFilter) : 'Status: All';
       chip.classList.toggle('active', !!STATE.statusFilter);
