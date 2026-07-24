@@ -2862,29 +2862,20 @@ function renderCurrentCase(person, c){
     </div>`;
   }
 
-  // Expandable check type details
-  const ctInfo = CHECK_TYPE_INFO[c.checkType];
-  const ctId = `ct-expand-${c.id}`;
-  const ctDetails = ctInfo ? `<div id="${ctId}" style="display:none;margin-top:6px;padding:8px 10px;background:var(--fill-static-neutral-subtle);border-radius:var(--r6)">
-    ${ctInfo.checks.map(ch=>`<div style="display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--fg2);padding:2px 0;line-height:1.4"><span style="color:var(--brand);flex-shrink:0;margin-top:1px">&#10003;</span>${esc(ch)}</div>`).join('')}
-  </div>` : '';
-
   return `
     <!-- Status badge — hero -->
     <div style="margin-bottom:14px">${renderBadge(c.status, lastUpdatedDate(c))}</div>
 
-    <!-- Check type + via + date — all at the same weight and size -->
-    <div style="margin-bottom:${ctDetails?'2px':'14px'}">
+    <!-- Check type + via + date -->
+    <div style="margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         <svg width="13" height="13" viewBox="0 0 20 20" style="color:var(--brand);flex-shrink:0"><use href="#ic-shield-fill"/></svg>
         <span style="font-size:13px;font-weight:500;color:var(--ink)">${esc(c.checkType)}</span>
-        ${ctInfo ? `<button onclick="var el=document.getElementById('${ctId}');el.style.display=el.style.display==='block'?'none':'block'" style="font-size:12px;color:var(--brand);background:none;border:none;padding:0;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">details</button>` : ''}
         <span style="font-size:12px;color:var(--fg4)">·</span>
         ${renderViaBadge(c, person)}
         <span style="font-size:12px;color:var(--fg4)">·</span>
         <span style="font-size:13px;color:var(--fg3)">${fmtShort(c.dateInitiated)}</span>
       </div>
-      ${ctDetails}
     </div>
 
     ${assessHtml}
@@ -5006,7 +4997,7 @@ function setHomeSort(col, dir){
   homeSortDir = dir;
   // Update chip label
   const lbl = document.getElementById('home-sort-lbl');
-  const label = col==='name' ? (dir==='asc' ? 'Name A–Z' : 'Name Z–A') : (dir==='desc' ? 'Latest' : 'Earliest');
+  const label = col==='name' ? (dir==='asc' ? 'Name A-Z' : 'Name Z-A') : (dir==='desc' ? 'Latest' : 'Earliest');
   if(lbl) lbl.textContent = 'Sort: '+label;
   // Update dropdown selected states
   const optMap = {
