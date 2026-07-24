@@ -3535,7 +3535,10 @@ function renderPanelBody(person, targetCaseId){
       <div class="profile-col">
         <div class="pnl-card">
           <div class="pnl-card-hd">
-            <span class="pnl-card-title">Applicant info</span>
+            <span class="pnl-card-title">Applicant Info</span>
+            <button class="icon-btn" style="width:26px;height:26px" title="Edit applicant info" onclick="toast('Edit applicant info')">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </button>
           </div>
           <div class="pnl-card-body">${renderIdentityCompact(person)}</div>
         </div>
@@ -5585,13 +5588,10 @@ renderHomeTable();
 const btnNewHome = document.getElementById('home-ctas');
 if(btnNewHome){ btnNewHome.style.display='flex'; }
 
-document.querySelectorAll('.dept-item').forEach(item=>{
-  item.addEventListener('click',()=>{
-    STATE.dept = item.dataset.dept;
-    document.querySelectorAll('.dept-item').forEach(d=>d.classList.toggle('active',d===item));
-    renderHomeTable();
-  });
-});
+/* SideNav collapse toggle — Pathway 240px / 72px rail */
+window.toggleSidenav = function(){
+  document.getElementById('sidebar')?.classList.toggle('collapsed');
+};
 
 document.getElementById('tbl-search').addEventListener('input',e=>{STATE.search=e.target.value;renderTable()});
 
