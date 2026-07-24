@@ -2408,32 +2408,37 @@ function getActions(person, c){
     acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
-  // Expiring invite — offer renewal, split by original delivery method
+  // Expiring invite — renew (real state change) or extend expiry
   if(s==='invite-expiring'){
-    if(via==='invite'){
-      acts.push({label:'Renew and resend',cls:'pri',fn:`toast('Invite renewed and resent to ${person.email}');event.stopPropagation()`});
-    } else {
-      acts.push({label:'Renew invite link',cls:'pri',fn:`toast('Invite link renewed. Copy the new link to resend.');event.stopPropagation()`});
-    }
-    acts.push({label:'Copy invite link',fn:`toast('Invite link copied');event.stopPropagation()`});
+    acts.push({label:'Resend invite',cls:'pri',fn:`renewInvite('${person.id}','${c.id}');event.stopPropagation()`});
+    acts.push({label:'Extend expiry date',fn:`openExtendExpiry('${c.id}','${c.inviteExpiry||''}');event.stopPropagation()`});
+    acts.push({label:'Copy invite link',fn:`copyInviteLink('${person.id}','${c.id}');event.stopPropagation()`});
     acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
-  // Expired invite — generate fresh invite, split by original method
+  // Expired invite — re-invite via modal (choose email or link, sets status back to sent)
   if(s==='invite-expired'){
-    if(via==='invite'){
-      acts.push({label:'Generate new invite and send',cls:'pri',fn:`toast('New invite sent to ${person.email}');event.stopPropagation()`});
-    } else {
-      acts.push({label:'Generate new invite link',cls:'pri',fn:`toast('New invite link generated. Copy and send to applicant.');event.stopPropagation()`});
-    }
-    acts.push({label:'Copy new invite link',fn:`toast('New invite link copied');event.stopPropagation()`});
+    acts.push({label:'Renew link and resend',cls:'pri',fn:`openReinviteModal('${person.id}','${c.id}');event.stopPropagation()`});
+    acts.push({label:'Close case',fn:`cancelCase('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
-  // Bounced email — fix and resend
+  // Invite cancelled — issue a fresh invite or close out
+  if(s==='invite-cancelled'){
+    acts.push({label:'Issue new invite',cls:'pri',fn:`openReinviteModal('${person.id}','${c.id}');event.stopPropagation()`});
+    acts.push({label:'Close case',fn:`cancelCase('${person.id}','${c.id}');event.stopPropagation()`});
+  }
+
+  // Bounced email — fix and resend via the profile action banner flow
   if(s==='email-bounced'){
-    acts.push({label:'Fix email and resend',cls:'pri',fn:`toast('Opening email correction…');event.stopPropagation()`});
-    acts.push({label:'Copy invite link',fn:`toast('Invite link copied');event.stopPropagation()`});
+    acts.push({label:'Fix email and resend',cls:'pri',fn:`openProfileAtCase('${person.id}','${c.id}',event)`});
+    acts.push({label:'Copy invite link',fn:`copyInviteLink('${person.id}','${c.id}');event.stopPropagation()`});
     acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
+  }
+
+  // Order failed — retry or close the case
+  if(s==='order-failed'){
+    acts.push({label:'Try again',cls:'pri',fn:`retryOrder('${person.id}','${c.id}');event.stopPropagation()`});
+    acts.push({label:'Close case',fn:`cancelCase('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
   // Rescreen / overdue
