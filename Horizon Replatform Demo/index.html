@@ -2381,7 +2381,7 @@ function cancelCase(pid, cid){
     showConfirm({
       title: 'Close this case?',
       body: isDataFailure
-        ? `<strong>${person.name}</strong>'s order failed due to a data issue.<br><br>${c.orderFailureReason||'The applicant information could not be verified.'}<br><br>Closing will remove it from the action queue. Open a new case once the issue is corrected — make sure to communicate to the applicant what needs to be fixed before resubmitting.`
+        ? `<strong>${person.name}</strong>'s order failed due to a data issue.<br><br>${c.orderFailureReason||'The applicant information could not be verified.'}<br><br>Closing will remove it from the action queue. Open a new case once the issue is corrected. Make sure to communicate to the applicant what needs to be fixed before resubmitting.`
         : `The order for <strong>${person.name}</strong> failed after multiple retry attempts. Closing this case will remove it from the action queue. You can open a new case to restart the screening process.<br><br>Contact support if the issue persists.`,
       cancelLabel: 'Keep open',
       actionLabel: 'Close case',
@@ -2740,7 +2740,7 @@ function renderPanelAction(person, c){
     cls='bad';title='Invite expired: no consent received';
     desc='The invite link expired before the applicant completed the consent form. Renew the link to restart.';
     const expiredViaEmail = c.via==='invite';
-    btns=`<button class="btn btn-sm btn-primary" onclick="toast('${expiredViaEmail?'New invite link sent to '+esc(person.email):'Link renewed — copy and send to applicant'}')">${expiredViaEmail?'Renew Link &amp; Resend Invite':'Renew Link'}</button>`;
+    btns=`<button class="btn btn-sm btn-primary" onclick="toast('${expiredViaEmail?'New invite link sent to '+esc(person.email):'Link renewed. Copy and send to applicant.'}')">${expiredViaEmail?'Renew Link &amp; Resend Invite':'Renew Link'}</button>`;
   } else if(c.status==='email-bounced'){
     cls='warn';title='Invite email bounced';
     if(DEMO_MODE==='phase-1'){
@@ -3089,7 +3089,7 @@ function renderLinkManagement(person, c){
   const bounceNote = isBounced ? `
     <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--fill-static-neutral-subtle);border-radius:var(--r6);margin-bottom:8px">
       <svg width="12" height="12" style="color:var(--fg3);flex-shrink:0" viewBox="0 0 24 24"><use href="#ms-info"/></svg>
-      <span style="font-size:12px;color:var(--fg3)">The invite link is still valid — copy it below to share via another channel.</span>
+      <span style="font-size:12px;color:var(--fg3)">The invite link is still valid. Copy it below to share via another channel.</span>
     </div>` : '';
 
   const expiryColor = isExpiring ? 'var(--amber)' : 'var(--fg3)';
