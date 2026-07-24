@@ -2099,6 +2099,47 @@ function renderHomeCSTOnlyRow(person){
   </tr>`;
 }
 
+function exportTableCSV(){
+  const people = filteredHomePeople();
+  const STATUS_LABELS = {};
+  Object.keys(STATUS).forEach(k => { STATUS_LABELS[k] = STATUS[k].label; });
+  const VIA_MAP = {'invite':'Email invite','manual':'Manual order','flow':'Screening flow','integration':'Integration'};
+  const headers = ['Name','Email','Role','Department','Check type','Status','Date initiated','Ordered by','Assessment'];
+  const esc_csv = v => {
+    if(v == null) return '';
+    const s = String(v);
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g,'""') + '"' : s;
+  };
+  const rows = [headers.map(esc_csv).join(',')];
+  people.forEach(p => {
+    const c = currentCase(p);
+    const assessment = c.assessment ? (c.assessment==='cleared'?'Cleared':c.assessment==='needs-review'?'Needs review':c.assessment==='escalated'?'Escalated':'') : '';
+    rows.push([
+      p.name, p.email, p.position, p.team,
+      c.checkType||'', STATUS_LABELS[c.status]||c.status||'',
+      c.dateInitiated||'', c.orderedBy||'', assessment
+    ].map(esc_csv).join(','));
+  });
+  const csv = rows.join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const dept = STATE.dept === 'all' ? 'all-departments' : STATE.dept.toLowerCase().replace(/\s+/g,'-');
+  const date = new Date().toISOString().slice(0,10);
+  a.download = `pmm-screenings-${dept}-${date}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('CSV downloaded.');
+}
+
+function exportTablePrint(){
+  toast('Opening print dialog. Use your browser’s “Save as PDF” option to export.');
+  setTimeout(()=>window.print(), 600);
+}
+
 function renderHomeStats(){
   const all = filteredPeople();
   const strip = document.getElementById('home-summary-strip');
