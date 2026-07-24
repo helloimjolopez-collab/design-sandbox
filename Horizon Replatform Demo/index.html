@@ -2492,6 +2492,23 @@ function confirmExtendExpiry(){
   if(STATE.currentPerson) openProfile(STATE.currentPerson.id);
 }
 
+/* ─── Renew an expiring invite: fresh expiry, resend, back to Invite Link Sent ── */
+function renewInvite(pid, cid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases.find(x=>x.id===cid);
+  if(!c) return;
+  const exp = new Date(); exp.setDate(exp.getDate()+90);
+  c.inviteExpiry = exp.toISOString().split('T')[0];
+  c.status = 'invite-sent';
+  if(c.p1Status) c.p1Status = 'invite-sent';
+  c.events = c.events||[];
+  c.events.push({type:'done',title:'Invite renewed and resent (expires in 90 days)',date:todayStr(),time:nowTime(),by:'Admin'});
+  renderTable(); renderHomeTable();
+  toast('Invite renewed and resent to '+person.email);
+  if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
+}
+
 /* ─── Cancel invite (invite only — case stays open) ───────────────── */
 function cancelInvite(pid, cid){
   showConfirm({
