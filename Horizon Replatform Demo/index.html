@@ -2662,7 +2662,6 @@ function openProfile(pid, targetCaseId){
   renderPanelHead(person);
   renderPanelBody(person, targetCaseId);
   document.getElementById('panel').classList.add('open');
-  document.getElementById('scrim').classList.add('open');
 }
 
 function renderPanelHead(person){
@@ -2676,7 +2675,7 @@ function renderPanelHead(person){
     'Rock CRM':'Identity data synced from Rock CRM. Fields are read-only in PMM; edits must be made in Rock.',
     'PCO':'Identity data synced from Planning Center Online. Fields are read-only in PMM.',
   };
-  const sourceChip = `<span class="source-chip ${srcKey}" data-tip="${esc(srcTips[person.source||'PMM']||'')}" style="cursor:help">${esc(person.source||'PMM')}</span>`;
+  const sourceChip = `<span class="source-chip ${srcKey}">${esc(person.source||'PMM')}</span>`;
   document.getElementById('panel-head-content').innerHTML = `
     <div style="display:flex;align-items:flex-start;gap:14px">
       <div class="profile-av" style="background:${ac};width:44px;height:44px;font-size:15px;flex-shrink:0">${esc(initials(person.name))}</div>
@@ -3481,11 +3480,9 @@ function toggleHistItem(bodyId, chevId){
 
 function closePanel(){
   document.getElementById('panel').classList.remove('open');
-  document.getElementById('scrim').classList.remove('open');
   STATE.currentPerson = null;
 }
 document.getElementById('panel-close').onclick = closePanel;
-document.getElementById('scrim').addEventListener('click',closePanel);
 
 const WZ_STEPS = ['People','Order','Consent','Review'];
 const WZ_CST_TYPES = [
