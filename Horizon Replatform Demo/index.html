@@ -2481,6 +2481,21 @@ function cancelCase(pid, cid){
   });
 }
 
+/* ─── Retry failed order ─────────────────────────────────────────── */
+function retryOrder(pid, cid){
+  const person = personById(pid);
+  if(!person) return;
+  const c = person.cases.find(x=>x.id===cid);
+  if(!c) return;
+  c.status = 'order-processing';
+  if(c.p1Status) c.p1Status = 'order-processing';
+  c.events = c.events||[];
+  c.events.push({type:'done',title:'Order resubmitted by admin',date:todayStr(),time:'',by:'Admin'});
+  renderTable(); renderHomeTable();
+  toast('Order resubmitted. Processing...');
+  if(STATE.currentPerson===pid) renderPanelBody(personById(pid));
+}
+
 /* ─── Archive person ──────────────────────────────────────────────── */
 function archivePerson(pid){
   const person = personById(pid);
