@@ -2836,8 +2836,8 @@ function gftGlance(w){
   var o=gftOverall(w),thru=gftThru(w);
   var rPct=o.pledgeTotal>0?Math.min(100,o.received/o.pledgeTotal*100):0;
   var dPct=o.pledgeTotal>0?Math.min(100,o.due/o.pledgeTotal*100):0;
-  var gap=(dPct>rPct)?(dPct-rPct):0;
-  var goal=o.pledgeTotal>0?('<div class="gft-track gft-track-sm" aria-hidden="true"><div class="gft-fill" style="width:'+Math.max(rPct>0?1.5:0,rPct).toFixed(2)+'%"></div>'+(gap>0?'<div class="gft-expected" style="left:'+rPct.toFixed(2)+'%;width:'+gap.toFixed(2)+'%"></div>':"")+'<div class="gft-marker" style="left:'+dPct.toFixed(2)+'%"></div></div>'):"";
+  var gpop=["All purposes",o.pledgeTotal,o.received,o.due,o.outstanding,Math.round(rPct),Math.round(dPct),o.status].join("|");
+  var goal=o.pledgeTotal>0?pbarHTML({fill:rPct,mark:dPct,sm:true,pop:gftEsc(gpop),aria:gftEsc("Overall progress")}):"";
   var read=(o.behindCount>0)
     ?'<span class="gft-glance-cap"><span class="gft-sevdot"></span>'+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind schedule</span>'
     :'<span class="gft-glance-cap gft-cap-ok">'+ICON("check")+'On track or ahead across every purpose</span>';
