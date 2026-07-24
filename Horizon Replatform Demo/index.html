@@ -2996,14 +2996,8 @@ function openProfile(pid, targetCaseId){
   const person = personById(pid);
   if(!person) return;
   STATE.currentPerson = person;
-  renderPanelHead(person);
   renderPanelBody(person, targetCaseId);
   document.getElementById('panel').classList.add('open');
-}
-
-function renderPanelHead(person){
-  // Head just holds the back-nav breadcrumb. Person info is in the hero block inside renderPanelBody.
-  document.getElementById('panel-head-content').innerHTML = '';
 }
 
 function renderPanelAction(person, c){
@@ -3427,9 +3421,6 @@ function renderPanelBody(person, targetCaseId){
   const caseCancellable = canCancelCase(c) && c.status !== 'case-closed';
   const caseMenuId = `case-hd-menu-${c.id}`;
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
-  const srcMap = {'Rock CRM':'rock','PCO':'pco','PMM':'pmm'};
-  const srcKey = srcMap[person.source||'PMM']||'pmm';
-  const sourceChip = `<span class="source-chip ${srcKey}">${esc(person.source||'PMM')}</span>`;
 
   pb.innerHTML = `
     <!-- Profile hero -->
