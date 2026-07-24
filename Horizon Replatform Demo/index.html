@@ -3422,93 +3422,118 @@ function renderLinkManagement(person, c){
 function renderPanelBody(person, targetCaseId){
   const c = currentCase(person);
   const pb = document.getElementById('panel-body');
-  const hasPastCases = person.cases.length > 1;
   const actionHtml = renderPanelAction(person, c);
   const caseCancellable = canCancelCase(c) && c.status !== 'case-closed';
   const caseMenuId = `case-hd-menu-${c.id}`;
+  const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
+  const srcMap = {'Rock CRM':'rock','PCO':'pco','PMM':'pmm'};
+  const srcKey = srcMap[person.source||'PMM']||'pmm';
+  const sourceChip = `<span class="source-chip ${srcKey}">${esc(person.source||'PMM')}</span>`;
 
-  pb.innerHTML = `<div class="pnl-cards">
-    ${actionHtml ? `<div class="pnl-action-card">${actionHtml}</div>` : ''}
-
-    <!-- Identity card -->
-    <div class="pnl-card">
-      <div class="pnl-card-hd">
-        <span class="pnl-card-title">Identity</span>
-        ${person.source && person.source !== 'PMM' ? `<span class="source-chip rock" style="font-size:12px">${esc(person.source)}</span>` : `<span class="source-chip pmm" style="font-size:12px">PMM</span>`}
+  pb.innerHTML = `
+    <!-- Profile hero -->
+    <div class="profile-hero">
+      <div class="profile-hero-av" style="background:${ac}">${esc(initials(person.name))}</div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name">${esc(person.name)}</div>
+        <div class="profile-hero-sub">${esc(person.role||'—')}${person.dept ? ' &nbsp;·&nbsp; '+esc(person.dept) : ''}</div>
+        <div class="profile-hero-meta">
+          ${renderBadge(c.status)}
+          ${sourceChip}
+          ${c.assessment ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--fg3);font-weight:500">Assessment: <span style="font-weight:600;color:${c.assessment.outcome==='Complete: Cleared'||c.assessment.outcome==='Cleared'?'var(--green)':c.assessment.outcome==='Complete: Escalated'||c.assessment.outcome==='Escalated'?'var(--red)':'var(--amber)'}">${esc(c.assessment.outcome)}</span></span>` : ''}
+          ${person.rescreenDue ? `<span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--amber-bg);color:var(--amber)">Rescreen due ${esc(person.rescreenDue)}</span>` : ''}
+        </div>
       </div>
-      <div class="pnl-card-body">${renderIdentityCompact(person)}</div>
+      <div class="profile-hero-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openWizard()">
+          <svg width="12" height="12"><use href="#ic-plus"/></svg>New background check
+        </button>
+      </div>
     </div>
 
-    <!-- Current case card — more prominent -->
-    <div class="pnl-card current-case-card">
-      <div class="pnl-card-hd">
-        <span class="pnl-card-title">Current case</span>
-        ${caseCancellable ? `<div style="position:relative">
-          <button class="icon-btn" style="width:26px;height:26px" onclick="toggleLmMenu('${caseMenuId}',event)" title="Case options">
-            <svg width="14" height="14" viewBox="0 0 20 20"><use href="#ic-more"/></svg>
-          </button>
-          <div class="drop-menu" id="${caseMenuId}" style="right:0;top:100%;min-width:160px">
-            <div class="drop-item danger" onclick="cancelCase('${person.id}','${c.id}');closeAllMenus()">
-              <svg width="13" height="13" viewBox="0 0 24 24"><use href="#ms-cancel"/></svg>Close this case
-            </div>
+    <!-- Two-column body -->
+    <div class="profile-cols">
+      <!-- Left column: applicant info + notes -->
+      <div class="profile-col">
+        <div class="pnl-card">
+          <div class="pnl-card-hd">
+            <span class="pnl-card-title">Applicant info</span>
+          </div>
+          <div class="pnl-card-body">${renderIdentityCompact(person)}</div>
+        </div>
+        <div class="pnl-card">
+          <div class="pnl-card-hd"><span class="pnl-card-title">Notes</span></div>
+          <div class="pnl-card-body">
+            <textarea id="person-notes-${person.id}" class="ra-notes" style="width:100%;min-height:72px;resize:vertical" placeholder="Add internal notes about this person…" onchange="savePersonNote('${person.id}',this.value)">${esc(person.notes||'')}</textarea>
+            <div style="font-size:12px;color:var(--fg4);margin-top:4px">Internal only, not visible to the applicant.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: action banner, current case, history, CST, demo controls -->
+      <div class="profile-col">
+        ${actionHtml ? `<div class="pnl-action-card">${actionHtml}</div>` : ''}
+
+        <div class="pnl-card current-case-card">
+          <div class="pnl-card-hd">
+            <span class="pnl-card-title">Current case</span>
+            ${caseCancellable ? `<div style="position:relative">
+              <button class="icon-btn" style="width:26px;height:26px" onclick="toggleLmMenu('${caseMenuId}',event)" title="Case options">
+                <svg width="14" height="14" viewBox="0 0 20 20"><use href="#ic-more"/></svg>
+              </button>
+              <div class="drop-menu" id="${caseMenuId}" style="right:0;top:100%;min-width:160px">
+                <div class="drop-item danger" onclick="cancelCase('${person.id}','${c.id}');closeAllMenus()">
+                  <svg width="13" height="13" viewBox="0 0 24 24"><use href="#ms-cancel"/></svg>Close this case
+                </div>
+              </div>
+            </div>` : ''}
+          </div>
+          <div class="pnl-card-body">${renderCurrentCase(person, c)}</div>
+        </div>
+
+        <div class="pnl-card">
+          <div class="pnl-card-hd">
+            <span class="pnl-card-title">Screening history</span>
+            ${person.cases.length > 1 ? `<span style="font-size:12px;color:var(--fg4)">${person.cases.length - 1} previous case${person.cases.length-1!==1?'s':''}</span>` : ''}
+          </div>
+          <div class="pnl-card-body">${renderScreeningHistory(person)}</div>
+        </div>
+
+        <div class="pnl-card">
+          <div class="pnl-card-hd"><span class="pnl-card-title">Child safety training</span></div>
+          <div class="pnl-card-body">${renderCSTCompact(person)}</div>
+        </div>
+
+        ${person.id === 'p11' && (c.status === 'invite-sent' || c.status === 'order-processing') ? `
+        <div class="pnl-card" style="border-color:#c8c4e8;background:#f7f6fe">
+          <div class="pnl-card-hd" style="padding-bottom:0">
+            <span class="pnl-card-title" style="color:#5b4ac8">Demo controls</span>
+            <span style="font-size:12px;color:#7c6ed0;font-style:italic">Simulate applicant actions</span>
+          </div>
+          <div style="padding:10px 18px 14px;display:flex;flex-direction:column;gap:8px">
+            ${c.status === 'invite-sent' ? `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--ink)">Simulate: consent submitted</div>
+                <div style="font-size:12px;color:var(--fg3);margin-top:2px">Applicant opens link, fills form, and submits consent.</div>
+              </div>
+              <button class="btn btn-sm" style="background:#5b4ac8;color:#fff;flex-shrink:0" onclick="simulateConsentSubmitted('${person.id}')">Run</button>
+            </div>` : ''}
+            ${c.status === 'order-processing' ? `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--ink)">Simulate: report received</div>
+                <div style="font-size:12px;color:var(--fg3);margin-top:2px">Digital Delve returns the completed report. Cleared.</div>
+              </div>
+              <button class="btn btn-sm" style="background:#5b4ac8;color:#fff;flex-shrink:0" onclick="simulateReportReceived('${person.id}')">Run</button>
+            </div>` : ''}
           </div>
         </div>` : ''}
       </div>
-      <div class="pnl-card-body">${renderCurrentCase(person, c)}</div>
     </div>
 
-    <!-- Screening history card -->
-    <div class="pnl-card">
-      <div class="pnl-card-hd">
-        <span class="pnl-card-title">Screening history</span>
-        ${person.cases.length > 1 ? `<span style="font-size:12px;color:var(--fg4)">${person.cases.length - 1} previous case${person.cases.length-1!==1?'s':''}</span>` : ''}
-      </div>
-      <div class="pnl-card-body">${renderScreeningHistory(person)}</div>
-    </div>
-
-    <!-- CST card -->
-    <div class="pnl-card">
-      <div class="pnl-card-hd"><span class="pnl-card-title">Child safety training</span></div>
-      <div class="pnl-card-body">${renderCSTCompact(person)}</div>
-    </div>
-
-    <!-- Notes card -->
-    <div class="pnl-card">
-      <div class="pnl-card-hd"><span class="pnl-card-title">Notes</span></div>
-      <div class="pnl-card-body">
-        <textarea id="person-notes-${person.id}" class="ra-notes" style="width:100%;min-height:80px;resize:vertical" placeholder="Add internal notes about this person…" onchange="savePersonNote('${person.id}',this.value)">${esc(person.notes||'')}</textarea>
-        <div style="font-size:12px;color:var(--fg4);margin-top:4px">Notes are internal only. Not visible to the applicant.</div>
-      </div>
-    </div>
-
-    <!-- Demo simulation card — only shown for Jordan Lee (p11) happy path -->
-    ${person.id === 'p11' && (c.status === 'invite-sent' || c.status === 'order-processing') ? `
-    <div class="pnl-card" style="border-color:#c8c4e8;background:#f7f6fe">
-      <div class="pnl-card-hd" style="padding-bottom:0">
-        <span class="pnl-card-title" style="color:#5b4ac8">Demo controls</span>
-        <span style="font-size:12px;color:#7c6ed0;font-style:italic">Simulate applicant actions</span>
-      </div>
-      <div style="padding:10px 18px 14px;display:flex;flex-direction:column;gap:8px">
-        ${c.status === 'invite-sent' ? `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--ink)">Simulate: consent submitted</div>
-            <div style="font-size:12px;color:var(--fg3);margin-top:2px">Applicant opens link, fills form, and submits consent.</div>
-          </div>
-          <button class="btn btn-sm" style="background:#5b4ac8;color:#fff;flex-shrink:0" onclick="simulateConsentSubmitted('${person.id}')">Run</button>
-        </div>` : ''}
-        ${c.status === 'order-processing' ? `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--ink)">Simulate: report received</div>
-            <div style="font-size:12px;color:var(--fg3);margin-top:2px">Digital Delve returns the completed report. Cleared.</div>
-          </div>
-          <button class="btn btn-sm" style="background:#5b4ac8;color:#fff;flex-shrink:0" onclick="simulateReportReceived('${person.id}')">Run</button>
-        </div>` : ''}
-      </div>
-    </div>` : ''}
-
-    <!-- Danger zone card -->
+    <!-- Danger zone — full width at bottom -->
+    <div class="profile-bottom">
     <div class="pnl-card" style="border-color:#fce4e4">
       <div class="pnl-card-hd" style="padding-bottom:0">
         <span class="pnl-card-title" style="color:var(--red)">Danger zone</span>
