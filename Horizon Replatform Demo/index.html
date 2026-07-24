@@ -4216,24 +4216,55 @@ function renderP1Step3(){
 }
 
 function renderP1Step4(){
-  const lvl = LEVELS.find(l=>l.id===P1STATE.level);
-  const levelName = lvl?.name||'—';
+  if(!P1STATE.personOverrides) P1STATE.personOverrides={};
+  const globalLvl = LEVELS.find(l=>l.id===P1STATE.level);
+  const globalLevelName = globalLvl?.name||'—';
   const cstLabel = P1_CST_OPTIONS.find(o=>o.id===P1STATE.cstOption)?.label||'—';
-  const rows = P1STATE.people.map(p=>`
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r6);margin-bottom:6px">
-      <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]};width:28px;height:28px;font-size:10px">${esc(initials(p.name))}</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(p.name)}</div><div style="font-size:13px;color:var(--fg2)">${esc(p.email)}</div></div>
-      <div style="font-size:12px;color:var(--fg2)">${esc(levelName)}</div>
-      <div style="font-size:13px;color:var(--fg2)">${P1STATE.emailOn?'Email invite':'Link only'}</div>
-    </div>`).join('');
+  const rows = P1STATE.people.map(p=>{
+    const overrideId = P1STATE.personOverrides[p.email];
+    const effLvl = overrideId ? LEVELS.find(l=>l.id===overrideId) : globalLvl;
+    const effName = effLvl?.name||globalLevelName;
+    const hasOverride = !!overrideId;
+    const editing = P1STATE.editOverride===p.email;
+    const overrideRow = editing ? `
+      <div style="padding:10px 13px;background:var(--surf2);border-top:1px solid var(--border)">
+        <label class="wz-field-label" style="margin-bottom:6px">Override level for ${esc(p.name)}</label>
+        <select onchange="setP1PersonOverride('${esc(p.email)}',this.value)" style="width:100%;border:1px solid var(--border2);border-radius:var(--r6);padding:7px 10px;font-size:13px;color:var(--ink);background:#fff">
+          <option value="">Use default (${esc(globalLevelName)})</option>
+          ${LEVELS.map(l=>`<option value="${l.id}"${(overrideId||'')===(l.id)?'selected':''}>${esc(l.name)}${l.tier==='custom'?' (Custom)':''}</option>`).join('')}
+        </select>
+        <button class="btn-naked-secondary" style="font-size:12px;padding:2px 0;margin-top:6px" onclick="P1STATE.editOverride=null;renderP1Wizard()">Close</button>
+      </div>` : '';
+    return `
+    <div style="border:1px solid var(--border);border-radius:var(--r6);margin-bottom:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 13px">
+        <div class="av" style="background:${AVATARCOLORS[p.name.charCodeAt(0)%AVATARCOLORS.length]};width:28px;height:28px;font-size:10px;flex-shrink:0">${esc(initials(p.name))}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">${esc(p.name)}</div>
+          <div style="font-size:12px;color:var(--fg2)">${esc(p.email)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span style="font-size:12px;color:${hasOverride?'var(--brand)':'var(--fg2)'}">${esc(effName)}${hasOverride?' (custom)':''}</span>
+          <button class="btn-naked-secondary" style="font-size:12px;padding:2px 6px" onclick="P1STATE.editOverride=P1STATE.editOverride==='${esc(p.email)}'?null:'${esc(p.email)}';renderP1Wizard()">Change</button>
+        </div>
+      </div>
+      ${overrideRow}
+    </div>`;
+  }).join('');
   return `<div class="wz-section-title">Review</div>
     ${rows}
     <div style="margin-top:14px;padding:10px 14px;background:var(--surf2);border-radius:var(--r8);font-size:13px;color:var(--fg2)">
-      <strong style="font-weight:600;color:var(--ink)">Level:</strong> ${esc(levelName)} &nbsp;·&nbsp;
       <strong style="font-weight:600;color:var(--ink)">CST:</strong> ${esc(cstLabel)} &nbsp;·&nbsp;
-      <strong style="font-weight:600;color:var(--ink)">Delivery:</strong> ${P1STATE.emailOn?'Email invite sent by PMM':'Invite link generated for admin to share'}
+      <strong style="font-weight:600;color:var(--ink)">Delivery:</strong> ${P1STATE.emailOn?'Email invites sent by PMM':'Invite links generated for admin to share'}
     </div>`;
 }
+
+window.setP1PersonOverride=function(email,lvlId){
+  if(!P1STATE.personOverrides) P1STATE.personOverrides={};
+  if(!lvlId){delete P1STATE.personOverrides[email];}
+  else{P1STATE.personOverrides[email]=lvlId;}
+  renderP1Wizard();
+};
 
 function renderP1Success(){
   const lvl = LEVELS.find(l=>l.id===P1STATE.level);
