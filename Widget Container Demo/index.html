@@ -2679,7 +2679,7 @@ function gftFmtDate(iso){var p=String(iso).split("-");if(p.length!==3)return iso
 
 /* Date presets offered in the picker (label, iso). "Custom" uses a native
    date input. */
-var GFT_DATE_PRESETS=[["Today",GFT_TODAY],["End of June 2026","2026-06-30"],["End of March 2026","2026-03-31"],["Start of 2026","2026-01-01"]];
+var GFT_DATE_PRESETS=(function(){var t=new Date(GFT_TODAY+"T00:00:00");function iso(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}var lm=new Date(t.getFullYear(),t.getMonth(),0);return [["Today",GFT_TODAY],["End of last month",iso(lm)]];})();
 
 /* Donor-level pledges. sched = the pledged instalment schedule [[iso,amount]]
    (sums to the donor's pledge); gifts = gifts actually received [[iso,amount]].
