@@ -1363,9 +1363,22 @@ tbody tr:hover .row-act-btn{opacity:1}
         <div class="page-title" id="page-title">Background Checks</div>
         <div class="page-sub" id="page-sub">Loading...</div>
       </div>
-      <button class="btn btn-primary" id="btn-new">
-        <svg width="13" height="13"><use href="#ic-plus"/></svg>New background check
-      </button>
+      <div class="split-btn-wrap" id="split-btn-new-wrap">
+        <div class="split-btn">
+          <button class="split-btn-main" id="btn-new" onclick="openWizard()">
+            <svg width="13" height="13"><use href="#ic-plus"/></svg>Background Check
+          </button>
+          <div class="split-btn-divider"></div>
+          <button class="split-btn-arrow" onclick="toggleLmMenu('split-drop-new',event)" title="More options">
+            <svg width="10" height="10" viewBox="0 0 20 20"><use href="#ic-chevdown"/></svg>
+          </button>
+        </div>
+        <div class="drop-menu" id="split-drop-new" style="right:0;top:calc(100% + 4px);min-width:150px">
+          <div class="drop-item" onclick="openWizardManual();closeAllMenus()">
+            <svg width="13" height="13" viewBox="0 0 20 20"><use href="#ic-person"/></svg>Manual order
+          </div>
+        </div>
+      </div>
     </div>
     <div class="summary-strip" id="summary-strip"></div>
     <div class="bulk-bar" id="bulk-bar" style="display:none"></div>
@@ -3977,7 +3990,11 @@ document.getElementById('p1-wz-next').addEventListener('click',()=>{
   }
 });
 document.getElementById('p1-wz-back').addEventListener('click',()=>{if(P1STATE.step>1){P1STATE.step--;renderP1Wizard();}});
-document.getElementById('btn-new').addEventListener('click',openWizard);
+// btn-new main click handled inline; manual order path via split dropdown
+function openWizardManual(){
+  STATE.wzManualMode = true;
+  openWizard();
+}
 
 function renderWzSuccess(){
   const levelName = LEVELS.find(l=>l.id===STATE.wzLevel)?.name||'—';
