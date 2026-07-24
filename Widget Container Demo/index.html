@@ -2618,27 +2618,7 @@ function remPopContent(){
    at Refresh time, not tracked per keystroke.
    --------------------------------------------------------------- */
 
-/* Bar-hover card (formatted popover, reuses .bgt-pop; guarded to a real row).
-   Lives inside this block, attached once at load. */
-var remPopEl=null;
-function remHidePop(){if(remPopEl){remPopEl.remove();remPopEl=null;}}
-function remShowPop(row,mx,my){
-  var raw=row.getAttribute("data-rempop");if(!raw)return;var p=raw.split("|");
-  var name=p[0],annual=+p[1],expected=+p[2],paid=+p[3],out=+p[4],pctPaid=+p[5],pctYear=+p[6],status=p[7];
-  if(!remPopEl){remPopEl=document.createElement("div");remPopEl.className="bgt-pop";document.body.appendChild(remPopEl);}
-  var favCls=status==="behind"?"neg":(status==="none"?"neutral":"");
-  var favTxt=status==="none"?"No pledge":(status==="full"?"Paid in full":(status==="ontrack"?"On track":"Behind pace"));
-  remPopEl.innerHTML='<div class="bgt-pop-h">'+name+'</div>'+
-    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Annual pledge</span><span class="bgt-pop-v">'+money(annual)+'</span></div>'+
-    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Expected by now</span><span class="bgt-pop-v">'+money(expected)+'</span></div>'+
-    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Paid to date</span><span class="bgt-pop-v">'+money(paid)+'</span></div>'+
-    '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Outstanding</span><span class="bgt-pop-v">'+money(out)+'</span></div>'+
-    '<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">'+(pctPaid<0?"% Paid":remPct(pctPaid/100)+" paid vs "+remPct(pctYear/100)+" of year")+'</span><span class="bgt-pop-fav '+favCls+'">'+favTxt+'</span></div>';
-  var bw=remPopEl.offsetWidth,bh=remPopEl.offsetHeight,M=10;
-  var left=mx+14,top=my-bh-10;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;if(top<M)top=my+16;
-  remPopEl.style.left=left+"px";remPopEl.style.top=top+"px";
-}
-document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.target.closest(".rem-row[data-rempop]");if(!row){if(remPopEl)remHidePop();return;}remShowPop(row,e.clientX,e.clientY);});
+/* Bar hover is handled by the shared pbar component (pbarShow). */
 
 /* =======================================================================
    Gifts Pledges  (prefix: gft, kind:"gifts")
