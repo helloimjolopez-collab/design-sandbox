@@ -4341,6 +4341,28 @@ window.p1AddNewPerson = function(keepOpen){
   toast(`${fn} ${ln} added`);
 };
 
+window.toggleP1LvlDrop = function(){
+  P1STATE.lvlDropOpen = !P1STATE.lvlDropOpen;
+  renderP1Wizard();
+  if(P1STATE.lvlDropOpen){
+    requestAnimationFrame(()=>{
+      const inp = document.getElementById('p1-lvl-search');
+      if(inp) inp.focus();
+    });
+  }
+};
+window.p1SelectLvl = function(id){
+  P1STATE.level = id;
+  P1STATE.lvlDropOpen = false;
+  P1STATE.lvlSearch = '';
+  renderP1Wizard();
+};
+window.p1LvlSearchInput = function(v){
+  P1STATE.lvlSearch = v;
+  const opts = document.getElementById('p1-lvl-opts');
+  if(opts) opts.innerHTML = renderP1LvlOpts(v);
+};
+
 document.getElementById('p1-wz-next').addEventListener('click',()=>{
   if(P1STATE.success){closeP1Wizard();return;}
   if(P1STATE.step===1&&P1STATE.people.length===0){toast('Add at least one person to continue');return;}
