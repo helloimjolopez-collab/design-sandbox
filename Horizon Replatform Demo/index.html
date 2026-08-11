@@ -4028,6 +4028,7 @@ tbody tr:hover .row-act-btn{opacity:1}
 <div class="fdrop-sep"></div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','order-processing','home-chip-status','Status')">Order processing</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','order-failed','home-chip-status','Status')">Order failed</div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','order-cancelled','home-chip-status','Status')">Order cancelled</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','consent-received','home-chip-status','Status')">Consent received</div>
 <div class="fdrop-sep"></div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','invite-sent','home-chip-status','Status')">Invite Link Sent</div>
@@ -4693,8 +4694,8 @@ function filteredPeople(){
 function filteredHomePeople(){
   let people = filteredPeople();
   const tab = STATE.mainTab;
-  // status filter (home-specific)
-  if(STATE.homeStatusFilter) people = people.filter(p => currentCase(p).status === STATE.homeStatusFilter);
+  // status filter (home-specific); 'archived' is handled in filteredPeople, not a case status
+  if(STATE.homeStatusFilter && STATE.homeStatusFilter !== 'archived') people = people.filter(p => currentCase(p).status === STATE.homeStatusFilter);
   // initiated filter
   if(STATE.homeInitiatedFilter) people = people.filter(p => currentCase(p).via === STATE.homeInitiatedFilter);
   // case detail filter (check type)
