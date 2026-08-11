@@ -3192,7 +3192,7 @@ function remHeaderBlock(w,mode){
   }
   numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(t.paid)+'</span>'+remPaceBadge(t)+'<span class="gft-goalpill">'+(t.annual>0?remPct(t.pctPaid):"n/a")+' of pledged</span></div>';
   return '<div class="dep-hd rem-hd">'+
-    '<div class="dep-hd-top">'+remThruChip(w)+'</div>'+
+    '<div class="dep-hd-top">'+remThruChip(w)+'<div class="dep-hd-toggle">'+(w.size==="xwide"?"":remViewToggle(w))+'</div></div>'+
     '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<span class="sr-only">'+money(t.paid)+' paid of '+money(t.annual)+' pledged; '+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year.</span></div></div>'+
   '</div>';}
 
@@ -3222,7 +3222,7 @@ function remContent(w){
   if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
   var mh=remHeaderBlock(w);
   if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by activity</div>'+remTable(w,true)+'</div></div>';
-  return mh+'<div class="rem-body">'+remTable(w,false)+'</div>';
+  return mh+'<div class="rem-body">'+remTable(w,(w.remView||"progress")==="table")+'</div>';
 }
 
 /* ---- drill: payment history focus overlay (modal.type "remdetail") --- */
@@ -3273,6 +3273,7 @@ function remHandleClick(a,id,t){
   if(a==="rem-set-thru"){var ws=find(id);if(ws)remCommitThru(ws,t.getAttribute("data-iso"));pop=null;render();return true;}
   if(a==="rem-refresh"){var wr=find(id);if(wr){var inp=document.getElementById("remq-"+id);remCommitThru(wr,inp?inp.value:null);}pop=null;render();return true;}
   if(a==="rem-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.remSort||"seq").split("-");wso.remSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+(k==="status"?"asc":(k==="name"?"asc":"desc")));}render();return true;}
+  if(a==="rem-view"){var wrv=find(id);if(wrv)wrv.remView=t.getAttribute("data-v");pop=null;render();return true;}
   if(a==="rem-open"){var wop=find(id);if(!wop)return true;modal={type:"remdetail",id:id,seq:t.getAttribute("data-seq")};modalMounted=false;pop=null;render();return true;}
   if(a==="rem-detail-close"){modal=null;pop=null;render();return true;}
   if(a==="rem-export"){pop=null;setStatus("Exporting the payment history to Excel.");render();return true;}
