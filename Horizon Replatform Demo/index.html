@@ -5559,22 +5559,35 @@ function confirmReinvite(pid, cid){
   if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
 }
 
-/* ─── Archive person ──────────────────────────────────────────────── */
+/* ─── Archive case ─────────────────────────────────────────────────
+   One person = one row in Phase 1, so archiving a case archives the row.
+   Archived rows leave the main list and appear only under the Archived filter. ── */
 function archivePerson(pid){
   const person = personById(pid);
   if(!person) return;
   showConfirm({
-    title: 'Archive this person?',
-    body: `<strong>${person.name}</strong> will be moved to archived records. Their screening history is retained for compliance purposes and can be retrieved at any time.<br><br>Archived people do not appear in the main Home view.`,
+    title: 'Archive this case?',
+    body: `<strong>${esc(person.name)}</strong> will be moved to archived records and will no longer appear in the main list. Screening history is kept and you can unarchive it at any time from the Archived filter.`,
     cancelLabel: 'Keep active',
-    actionLabel: 'Archive',
+    actionLabel: 'Archive case',
     actionStyle: 'background:var(--ink);color:#fff',
     onConfirm(){
       person.orgStatus = 'archived';
+      closePanel && document.getElementById('panel')?.classList.remove('open');
       renderTable(); renderHomeTable();
       toast(`${person.name} archived.`);
     }
   });
+}
+
+/* ─── Unarchive: restore an archived row to the active list ────────── */
+function unarchivePerson(pid){
+  const person = personById(pid);
+  if(!person) return;
+  person.orgStatus = 'Active';
+  renderTable(); renderHomeTable();
+  toast(`${person.name} restored to the active list.`);
+  if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
 }
 
 function todayStr(){
