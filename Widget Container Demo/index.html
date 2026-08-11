@@ -1655,21 +1655,21 @@
 .rem-barmark{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--txt-secondary);border-radius:1px;}
 /* status-coloured progress fills */
 .rem-fill-ok{background:var(--pos-100);}
-.rem-fill-behind{background:#d59429;}
+.rem-fill-behind{background:#f2953a;}
 .rem-fill-none{background:var(--wn-300);}
 .rem-bars-legend{display:flex;flex-wrap:wrap;gap:16px;padding:2px 4px 10px;font-size:11.5px;color:var(--txt-subtle);}
 .rem-bars-legend .rem-lg-i{display:inline-flex;align-items:center;gap:5px;}
 .rem-sw{width:10px;height:10px;border-radius:3px;display:inline-block;}
 .rem-sw-ok{background:var(--pos-100);}
-.rem-sw-behind{background:#d59429;}
+.rem-sw-behind{background:#f2953a;}
 .rem-tick{display:inline-block;width:2px;height:12px;background:var(--txt-secondary);}
 /* accessible status pills: colour + icon + text */
 .rem-st{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px 2px 7px;line-height:1.5;font-variant-numeric:tabular-nums;}
 .rem-st .material-symbols-rounded{font-size:15px;}
 .rem-st-ok{background:var(--green-10);color:var(--green-120);}
 .rem-st-ok .material-symbols-rounded{color:var(--pos-100);}
-.rem-st-behind{background:#fbeccb;color:#8a5200;}
-.rem-st-behind .material-symbols-rounded{color:#b9741a;}
+.rem-st-behind{background:#fcecd2;color:#8a5300;}
+.rem-st-behind .material-symbols-rounded{color:#c46a10;}
 .rem-st-none{background:var(--wn-200);color:var(--txt-subtle);}
 .rem-catchup.ok{color:var(--green-120);background:var(--green-10);}
 .rem-catchup.ok .material-symbols-rounded{color:var(--pos-100);}
@@ -3132,9 +3132,9 @@ function remViewToggle(w){var v=w.remView||"progress",opts=[["progress","Progres
    shortfall live in the tooltip and the context line, never colour alone. */
 function remPaceBadge(t){
   if(t.allPaid)return '<span class="rem-st rem-st-ok" data-tip="Every remittance pledge is fully paid for the year." data-tip-plain>'+ICON("task_alt")+'All pledges paid</span>';
-  if(t.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(remPct(t.pctPaid)+' paid, at or ahead of the '+remPct(t.pctYear)+' of the calendar year elapsed.')+'" data-tip-plain>'+ICON("trending_up")+'On track</span>';
+  if(t.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(remPct(t.pctPaid)+' paid, at or ahead of the '+remPct(t.pctYear)+' of the calendar year elapsed.')+'" data-tip-plain>'+ICON("check")+'On track</span>';
   var gapPts=Math.round((t.pctYear-t.pctPaid)*100);
-  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc(remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the year elapsed, about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind pace.')+'" data-tip-plain>'+ICON("trending_down")+'Behind pace</span>';}
+  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc(remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the year elapsed, about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind pace.')+'" data-tip-plain>'+ICON("priority_high")+'Behind pace</span>';}
 
 /* Per-activity pacing bar: amethyst paid fill on an annual track, with the
    "expected by now" marker at the % of the year elapsed. Fill depth
@@ -3148,9 +3148,9 @@ function remBar(r){
 function remStatusChip(r){
   if(r.status==="none")return '<span class="rem-st rem-st-none" data-tip="No pledge amount is set for this activity, so there is nothing to pace against." data-tip-plain>No pledge</span>';
   if(r.status==="full")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(r.name+" is fully paid for the year.")+'" data-tip-plain>'+ICON("task_alt")+'Paid in full</span>';
-  if(r.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(remPct(r.pctPaid)+" paid, at or ahead of the "+remPct(r.pctYear)+" of the year elapsed.")+'" data-tip-plain>'+ICON("trending_up")+'On track</span>';
+  if(r.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(remPct(r.pctPaid)+" paid, at or ahead of the "+remPct(r.pctYear)+" of the year elapsed.")+'" data-tip-plain>'+ICON("check")+'On track</span>';
   var gapPts=Math.round((r.pctYear-r.pctPaid)*100),behind=Math.max(0,r.expected-r.paid);
-  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc(remPct(r.pctPaid)+" paid against "+remPct(r.pctYear)+" of the year, about "+money(behind)+" ("+gapPts+" point"+(gapPts===1?"":"s")+") behind pace.")+'" data-tip-plain>'+ICON("trending_down")+'Behind</span>';}
+  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc(remPct(r.pctPaid)+" paid against "+remPct(r.pctYear)+" of the year, about "+money(behind)+" ("+gapPts+" point"+(gapPts===1?"":"s")+") behind pace.")+'" data-tip-plain>'+ICON("priority_high")+'Behind</span>';}
 
 /* One data string for the hover card, kept off the visible text. */
 function remRowPop(r){return remEsc([r.name,r.annual,r.expected,r.paid,r.outstanding,(r.pctPaid==null?-1:Math.round(r.pctPaid*100)),Math.round(r.pctYear*100),r.status].join("|"));}
@@ -3909,7 +3909,7 @@ function gftEsc(s){return String(s).replace(/"/g,"&quot;");}
    the app delta pill elsewhere). */
 function gftStatusPill(status,amt,asOf){
   if(status==="behind")return '<span class="bank-pill gft-behind-pill" data-tip="'+gftEsc(money(amt)+" more was expected by "+gftFmtDate(asOf)+" than has been received. Behind schedule.")+'" data-tip-plain>'+ICON("schedule")+money(amt)+' behind schedule</span>';
-  if(status==="ahead")return '<span class="delta-pill" data-tip="'+gftEsc(money(amt)+" more has been received than was expected by "+gftFmtDate(asOf)+". Ahead of schedule.")+'" data-tip-plain>'+ICON("trending_up")+money(amt)+' ahead of schedule</span>';
+  if(status==="ahead")return '<span class="delta-pill" data-tip="'+gftEsc(money(amt)+" more has been received than was expected by "+gftFmtDate(asOf)+". Ahead of schedule.")+'" data-tip-plain>'+ICON("check")+money(amt)+' ahead of schedule</span>';
   if(status==="complete")return '<span class="delta-pill" data-tip="The full pledged amount for this selection has been received." data-tip-plain>'+ICON("check_circle")+'Fully funded</span>';
   return '<span class="delta-pill" data-tip="Received matches what was expected by '+gftEsc(gftFmtDate(asOf))+'. On track." data-tip-plain>'+ICON("check")+'On track</span>';
 }
@@ -4710,10 +4710,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   var SPARK='<div class="spark"><svg viewBox="0 0 300 50" preserveAspectRatio="none"><path d="M0,40 C40,36 60,16 100,18 C140,20 160,36 200,30 C240,24 270,10 300,14 L300,50 L0,50 Z" fill="rgba(45,72,137,.10)"/><path d="M0,40 C40,36 60,16 100,18 C140,20 160,36 200,30 C240,24 270,10 300,14" fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round"/></svg></div>';
   function sparkMini(){return '<div class="kpi-spark"><svg viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true"><path d="M2,32 C18,28 26,13 42,15 C58,17 66,28 82,24 C98,20 110,10 118,12" fill="none" stroke="var(--brand-fill)" stroke-width="2.5" stroke-linecap="round"/></svg></div>';}
   function trendRangeBtn(w){return '<button class="trend-range" data-action="rangemenu" data-id="'+w.id+'">vs '+periodLbl(w)+ICON("expand_more")+'</button>';}
-  function glance(value,delta,w){var ref=w?' '+trendRangeBtn(w):'';return '<div class="kpi-row"><div class="kpi-num"><div class="metric-value">'+value+'</div><div class="metric-delta">'+ICON("trending_up")+' '+delta+ref+'</div></div>'+sparkMini()+'</div>';}
+  function glance(value,delta,w){var ref=w?' '+trendRangeBtn(w):'';return '<div class="kpi-row"><div class="kpi-num"><div class="metric-value">'+value+'</div><div class="metric-delta">'+ICON("check")+' '+delta+ref+'</div></div>'+sparkMini()+'</div>';}
   function barChart(w){var r=(w&&w.range)||"Q",bars=RANGE_BARS[r],x=RANGE_X[r];return '<div class="chartwrap"><div class="yaxis"><span>Hi</span><span></span><span>0</span></div><div class="plot"><div class="bars">'+bars.map(function(v){return '<span class="bar" style="height:'+v+'%"></span>';}).join("")+'</div><div class="xaxis"><span>'+x[0]+'</span><span>'+x[1]+'</span></div></div></div>';}
-  function metricHTML(w){if(!w||w.size==="kpi")return glance("$482,190","3.2%",w);return '<div class="cmeta"><div><span class="kpi">$482,190</span> <span class="trend">'+ICON("trending_up")+'3.2%</span></div>'+rangeTabs(w)+'</div>'+barChart(w);}
-  function chartHTML(w){if(w.size==="kpi")return glance("$1.24M","8.4%",w);return '<div class="cmeta"><div><span class="kpi">$1.24M</span> <span class="trend">'+ICON("trending_up")+'8.4%</span></div>'+rangeTabs(w)+'</div>'+barChart(w);}
+  function metricHTML(w){if(!w||w.size==="kpi")return glance("$482,190","3.2%",w);return '<div class="cmeta"><div><span class="kpi">$482,190</span> <span class="trend">'+ICON("check")+'3.2%</span></div>'+rangeTabs(w)+'</div>'+barChart(w);}
+  function chartHTML(w){if(w.size==="kpi")return glance("$1.24M","8.4%",w);return '<div class="cmeta"><div><span class="kpi">$1.24M</span> <span class="trend">'+ICON("check")+'8.4%</span></div>'+rangeTabs(w)+'</div>'+barChart(w);}
   function statusHTML(){return '<div class="pad"><div class="metric-value" style="font-size:20px;display:flex;align-items:center;gap:8px;color:var(--txt-pos)">'+ICON("check_circle")+'All synced</div><div class="metric-delta" style="color:var(--txt-subtle)">Last sync 3 min ago</div></div>';}
   /* ---- generic breakdown content, shared by Deposit Accounts + Spend by fund ---- */
   var TYPES=["All types"].concat(DEP_TYPES);
@@ -5511,7 +5511,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function bgtFReportModalHTML(){return '<div class="modal-backdrop" data-action="bgtF-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report">'+bgtFReportModalInner()+'</div></div>';}
   /* Sign-ups: a list with NO natural total, so the optional top metric IS shown (number + trend). Changing the period changes the number/trend only — the list stays "most recent". */
   var SIGNUPS=[{name:"Ava Thompson",group:"Youth",when:"2h ago"},{name:"Liam Carter",group:"Choir",when:"5h ago"},{name:"Noah Bennett",group:"Men's Group",when:"Yesterday"},{name:"Emma Davis",group:"Volunteers",when:"Yesterday"},{name:"Olivia Wright",group:"Youth",when:"2 days ago"},{name:"Mason Reed",group:"Missions",when:"3 days ago"},{name:"Sophia Hughes",group:"Choir",when:"3 days ago"},{name:"Jack Morgan",group:"Youth",when:"4 days ago"}];
-  function signupsMetric(w){return '<div class="dep-summary"><div><div class="wsub" style="margin:0 0 2px">Total this '+periodLbl(w)+'</div><div><span class="kpi">128</span> <span class="trend">'+ICON("trending_up")+' 6.2%</span> '+trendRangeBtn(w)+'</div></div>'+sparkMini()+'</div>';}
+  function signupsMetric(w){return '<div class="dep-summary"><div><div class="wsub" style="margin:0 0 2px">Total this '+periodLbl(w)+'</div><div><span class="kpi">128</span> <span class="trend">'+ICON("check")+' 6.2%</span> '+trendRangeBtn(w)+'</div></div>'+sparkMini()+'</div>';}
   function signupsList(){return '<div class="scroll">'+SIGNUPS.map(function(p){return '<div class="list-row"><span class="lr-main">'+p.name+' <span class="lr-meta">· '+p.group+'</span></span><span class="lr-meta">'+p.when+'</span></div>';}).join("")+'</div>';}
   function signupsContent(w){
     if(w.size==="kpi") return glance("128","6.2%",w);
