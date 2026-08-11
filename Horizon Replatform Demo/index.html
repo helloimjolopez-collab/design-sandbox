@@ -4445,8 +4445,8 @@ const STATUS = {
   // Consent received
   'consent-received':      {label:'Consent Received',                 cls:'v-green',       icon:'ms-check-circle',   action:false, tip:'Applicant submitted their consent form. The order will be placed automatically.'},
   // Processing
-  'order-processing':      {label:'Order Processing',                 cls:'v-blue',        icon:'ms-sync',           action:false, tip:'Background check order has been submitted to Digital Delve and is actively being processed.'},
-  'order-failed':          {label:'Order Failed',                     cls:'v-red-line',    icon:'ms-cancel',         action:true,  tip:'The order could not be submitted to or processed by Digital Delve. The transaction has been cancelled. Retry the order or close the case.'},
+  'order-processing':      {label:'Order Processing',                 cls:'v-blue',        icon:'ms-sync',           action:false, tip:'Background check order has been submitted to the screening provider and is actively being processed.'},
+  'order-failed':          {label:'Order Failed',                     cls:'v-red-line',    icon:'ms-cancel',         action:true,  tip:'The order could not be submitted to or processed by the screening provider. The transaction has been cancelled. Retry the order or close the case.'},
   // Report complete
   'awaiting-assessment':   {label:'Complete- Awaiting Review',        cls:'v-yellow',      icon:'ms-pending',        action:true,  tip:'Digital Delve returned the completed report. Review it and record an assessment outcome.'},
   'complete-cleared':      {label:'Complete-Cleared',                 cls:'v-green',       icon:'ms-thumb-up-fill',  action:false, tip:'Admin reviewed the report and found no disqualifying information. This person is cleared for the role.'},
@@ -8577,6 +8577,10 @@ window.setDemoMode = function(mode){
   renderHomeTable();
   renderTable();
 };
+
+// Always boot into Phase 1: Status Revamp on first load and every reload. Never North Star.
+// Placed immediately after setDemoMode is defined so it runs even if later top-level code throws.
+setDemoMode('phase-1');
 
 // ── Phase 1 email bounce fix ──────────────────────────────────────────
 window.p1ShowEmailFix = function(pid, cid){
