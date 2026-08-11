@@ -3232,15 +3232,16 @@ function remStatusWord(r){return r.status==="none"?"No pledge":(r.status==="full
 function remProgress(w){
   var rows=remRows(w);
   if(!rows.length)return '<div class="rem-zeroline">'+ICON("info")+'No remittance activities to show.</div>';
-  var legend='<div class="rem-bars-legend"><span class="rem-lg-i"><span class="rem-sw rem-sw-recv"></span>Paid</span><span class="rem-lg-i"><span class="rem-sw rem-sw-exp"></span>Expected by now</span></div>';
+  var legend='<div class="rem-bars-legend"><span class="rem-lg-i"><span class="rem-sw rem-sw-ok"></span>On track / paid</span><span class="rem-lg-i"><span class="rem-sw rem-sw-behind"></span>Behind pace</span><span class="rem-lg-i"><span class="rem-tick"></span>Expected by now</span></div>';
   var bars=rows.map(function(r){
     var fill=(r.pctPaid==null?0:r.pctPaid)*100,mark=Math.min(100,r.pctYear*100);
+    var st=r.status==="behind"?"behind":(r.status==="none"?"none":"ok");
     var gap=(r.pctPaid!=null&&mark>fill)?'<span class="rem-bargap" style="left:'+Math.min(100,fill).toFixed(1)+'%;width:'+(mark-fill).toFixed(1)+'%"></span>':'';
     var marker=(r.pctPaid!=null)?'<span class="rem-barmark" style="left:'+mark.toFixed(1)+'%"></span>':'';
     return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
       '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span><span class="ar-barlbl-sub">'+money(r.paid)+' of '+money(r.annual)+'</span></div>'+
-      '<div class="ar-bartrack rem-bartrack"><div class="ar-barfill" style="width:'+Math.max(2,fill).toFixed(1)+'%;background:var(--am-500)"></div>'+gap+marker+'</div>'+
-      '<div class="ar-barval"><span class="ar-barval-amt">'+(r.pctPaid==null?"n/a":remPct(r.pctPaid))+'</span><span class="ar-barval-cnt">'+remStatusWord(r)+'</span></div>'+
+      '<div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,fill).toFixed(1)+'%"></div>'+gap+marker+'</div>'+
+      '<div class="ar-barval"><span class="ar-barval-amt">'+(r.pctPaid==null?"n/a":remPct(r.pctPaid))+'</span>'+remStatusChip(r)+'</div>'+
       '<span class="sr-only">'+remRowSr(r)+'</span>'+
     '</div>';
   }).join("");
