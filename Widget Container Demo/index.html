@@ -3138,9 +3138,7 @@ function remRowSr(r){return (r.pctPaid==null?"no pledge amount":remPct(r.pctPaid
    (Explore, presentation-ready report); compact keeps a paid-of-annual sub. */
 function remRow(w,r,full){
   var pctTxt=r.pctPaid==null?'<span class="rem-nopct">n/a</span>':'<span class="rem-pct-v">'+remPct(r.pctPaid)+'</span>';
-  var head='<div class="rem-cell rem-name"><span class="rem-name-nm">'+r.name+'</span>'+
-    (full?'':'<span class="rem-name-sub">'+money(r.paid)+' paid of '+money(r.annual)+'</span>')+
-    remBar(r)+'</div>';
+  var head='<div class="rem-cell rem-name"><span class="rem-name-nm">'+r.name+'</span></div>';
   var mid=full
     ? '<span class="rem-cell rem-num">'+money(r.annual)+'</span>'+
       '<span class="rem-cell rem-num">'+money(r.expected)+'</span>'+
@@ -3215,7 +3213,6 @@ function remGlance(w){
     '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+
     '<div class="metric-value">'+money(t.paid)+'</div>'+
     '<div class="gl-sub">'+remPaceBadge(t)+'<span class="gft-goalpill">'+(t.annual>0?remPct(t.pctPaid):"n/a")+' of pledged</span></div>'+
-    '<div class="rem-glance-read">'+pbarHTML({fill:t.pctPaid*100,mark:t.pctYear*100,sm:true,pop:remEsc(pop),aria:remEsc("Pacing")})+'</div>'+
     '<span class="sr-only">'+money(t.paid)+' paid of '+money(t.annual)+' pledged. '+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year elapsed. '+money(t.out)+' outstanding.</span>'+
   '</div></div>';}
 
