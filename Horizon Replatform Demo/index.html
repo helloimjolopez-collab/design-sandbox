@@ -5015,13 +5015,9 @@ function renderHomeStats(){
   if(tab==='cst'){
     const cstCompleted = all.filter(p=>p.cst&&p.cst.status==='cst-completed').length;
     const cstInvited = all.filter(p=>p.cst&&p.cst.status==='cst-invited').length;
-    const cstNotSent = all.filter(p=>p.cst&&p.cst.status==='cst-not-sent').length;
-    const cstNa = all.filter(p=>p.cst&&p.cst.status==='cst-na').length;
     strip.innerHTML =
       tile(cstCompleted,'Completed','green','ms-check-circle','cst-done') +
-      tile(cstInvited,'Invite Sent','grey','ms-send','cst-invited') +
-      tile(cstNotSent,'Not Sent','orange','ms-error-fill','cst-not-sent') +
-      tile(cstNa,'Not Required','grey','ms-minus-circle','cst-na');
+      tile(cstInvited,'Invite Sent','grey','ms-send','cst-invited');
   } else {
     const newResults = all.filter(p=>currentCase(p).status==='awaiting-assessment').length;
     const awaitingReview = all.filter(p=>currentCase(p).status==='awaiting-assessment'||currentCase(p).status==='complete-needs-review').length;
