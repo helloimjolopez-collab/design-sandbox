@@ -3101,7 +3101,7 @@ function remPaceBadge(t){
   if(t.allPaid)return '<span class="delta-pill" data-tip="Every remittance pledge is fully paid for the year." data-tip-plain>'+ICON("check_circle")+'All pledges paid</span>';
   if(t.status==="ontrack")return '<span class="delta-pill" data-tip="'+remEsc(remPct(t.pctPaid)+' of the total pledged is paid, at or ahead of the '+remPct(t.pctYear)+' of the calendar year elapsed.')+'" data-tip-plain>'+ICON("check")+'On track</span>';
   var gapPts=Math.round((t.pctYear-t.pctPaid)*100);
-  return '<span class="bank-pill warn" data-tip="'+remEsc(remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the year elapsed, about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind the expected pace.')+'" data-tip-plain>'+ICON("schedule")+'Behind pace</span>';}
+  return '<span class="bank-pill gft-behind-pill" data-tip="'+remEsc(remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the year elapsed, about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind the expected pace.')+'" data-tip-plain>'+ICON("schedule")+'Behind pace</span>';}
 
 /* Per-activity pacing bar: amethyst paid fill on an annual track, with the
    "expected by now" marker at the % of the year elapsed. Fill depth
@@ -3117,7 +3117,7 @@ function remStatusChip(r){
   if(r.status==="full")return '<span class="delta-pill" data-tip="'+remEsc(r.name+" is fully paid for the year.")+'" data-tip-plain>'+ICON("check_circle")+'Paid in full</span>';
   if(r.status==="ontrack")return '<span class="delta-pill" data-tip="'+remEsc(remPct(r.pctPaid)+" paid, at or ahead of the "+remPct(r.pctYear)+" of the year elapsed.")+'" data-tip-plain>'+ICON("check")+'On track</span>';
   var gapPts=Math.round((r.pctYear-r.pctPaid)*100),behind=Math.max(0,r.expected-r.paid);
-  return '<span class="bank-pill warn" data-tip="'+remEsc(remPct(r.pctPaid)+" paid against "+remPct(r.pctYear)+" of the year, about "+money(behind)+" ("+gapPts+" point"+(gapPts===1?"":"s")+") behind pace.")+'" data-tip-plain>'+ICON("schedule")+'Behind</span>';}
+  return '<span class="bank-pill gft-behind-pill" data-tip="'+remEsc(remPct(r.pctPaid)+" paid against "+remPct(r.pctYear)+" of the year, about "+money(behind)+" ("+gapPts+" point"+(gapPts===1?"":"s")+") behind pace.")+'" data-tip-plain>'+ICON("schedule")+'Behind</span>';}
 
 /* One data string for the hover card, kept off the visible text. */
 function remRowPop(r){return remEsc([r.name,r.annual,r.expected,r.paid,r.outstanding,(r.pctPaid==null?-1:Math.round(r.pctPaid*100)),Math.round(r.pctYear*100),r.status].join("|"));}
