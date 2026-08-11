@@ -1636,8 +1636,10 @@
 .rem-sum-k{font-size:11px;color:var(--txt-subtle);}
 .rem-sum-v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;}
 .rem-sum-stat{justify-content:center;align-items:flex-start;}
-.rem-catchup{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.45;color:var(--red-130);background:var(--red-10);border-radius:10px;padding:10px 12px;}
-.rem-catchup .material-symbols-rounded{font-size:18px;color:var(--red-100);flex:0 0 auto;margin-top:1px;}
+.rem-catchup{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.45;color:var(--txt-secondary);background:var(--wn-100);border-radius:10px;padding:10px 12px;}
+.rem-catchup .material-symbols-rounded{font-size:18px;color:var(--am-600);flex:0 0 auto;margin-top:1px;}
+.modal.rem-detail-modal{height:auto;max-height:88vh;}
+.rem-detail-b{display:flex;flex-direction:column;min-height:0;max-height:80vh;overflow:auto;}
 .rem-catchup.ok{color:var(--green-120);background:var(--green-10);}
 .rem-catchup.ok .material-symbols-rounded{color:var(--pos-100);}
 .rem-ph-h{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
@@ -3291,7 +3293,7 @@ function remPopContent(){
   var out='<div class="cap">Count receipts through</div>';
   out+=presets.map(function(p){var on=cur===p[1];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="rem-set-thru" data-id="'+w.id+'" data-iso="'+p[1]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+p[0]+'</span><span class="rem-mi-date">'+remFmtDate(p[1])+'</span></button>';}).join("");
   out+='<div class="sep"></div><div class="cap">Or choose a date</div>'+
-    '<div class="rem-datepick"><input type="date" id="remq-'+w.id+'" class="rem-date-input" value="'+cur+'" max="'+todayIso+'" aria-label="Receipts through date"><button class="btn primary sm" data-action="rem-refresh" data-id="'+w.id+'">'+ICON("refresh")+'Refresh</button></div>';
+    '<div class="rem-datepick"><input type="date" id="remq-'+w.id+'" class="rem-date-input" data-id="'+w.id+'" value="'+cur+'" max="'+todayIso+'" aria-label="Receipts through date"></div>';
   return out;
 }
 
