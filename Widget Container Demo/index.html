@@ -3091,6 +3091,9 @@ function remFindRow(w,seq){var rows=remCompute(w);for(var i=0;i<rows.length;i++)
 function remThruChip(w){var iso=remThru(w),spin=w.remLoading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
   return '<button class="filter-chip rem-thru-chip" data-action="rem-thru" data-id="'+w.id+'" aria-haspopup="dialog" aria-expanded="'+(pop&&pop.type==="rem-thru"&&pop.id===w.id?"true":"false")+'" aria-label="Receipts through '+remEsc(remFmtDate(iso))+', tap to change"><span class="fc-label">'+spin+'Receipts through '+remFmtDate(iso)+'</span>'+ICON("expand_more")+'</button>';}
 
+/* View toggle (Progress bars / Table), sibling-consistent with Gifts Pledges (Oisin W04 "Progress Bars default"; brief 11.2). */
+function remViewToggle(w){var v=w.remView||"progress",opts=[["progress","Progress","insights"],["table","Table","table_rows"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="rem-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+
 /* Overall pacing badge. On track / All pledges paid use the positive pill;
    behind uses the app warn pill (attention), the point gap and dollar
    shortfall live in the tooltip and the context line, never colour alone. */
