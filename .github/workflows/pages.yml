@@ -1,0 +1,39 @@
+name: Deploy Pages (main root + phase-2 subpath)
+on:
+  push:
+    branches: [phase-2]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Checkout main into site root
+        uses: actions/checkout@v4
+        with: { ref: main, path: site }
+      - name: Checkout phase-2 into a temp dir
+        uses: actions/checkout@v4
+        with: { ref: phase-2, path: p2 }
+      - name: Assemble main (root) + phase-2 (/phase-2)
+        run: |
+          rm -rf site/.git p2/.git
+          mkdir -p site/phase-2
+          rsync -a --exclude '.github' p2/ site/phase-2/
+          touch site/.nojekyll
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v4
