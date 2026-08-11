@@ -6516,33 +6516,23 @@ function renderCases(person, targetCaseId){
 }
 
 // Documents for a specific case (used within each case card)
-function renderAgreementsCard(person){
-  // Collect all agreement docs across all cases
+function renderDocRows(person){
+  // Document rows across all cases (consent & disclosure per case)
   const docs = [];
   person.cases.forEach(c => {
     if(c.consentForm){
-      docs.push({label:'Consent & Disclosure',date:fmtTableDate(c.consentForm.submittedDate),caseId:null});
+      docs.push({label:'Consent & Disclosure',date:fmtTableDate(c.consentForm.submittedDate),checkType:c.checkType});
     }
   });
-  if(!docs.length) return '';
-  const rows = docs.map(d=>`
+  if(!docs.length) return `<div style="font-size:13px;color:var(--fg4)">No documents on file yet.</div>`;
+  return docs.map(d=>`
     <div class="doc-row" onclick="toast('Opening document…')">
       <div class="doc-icon"><svg width="14" height="14" style="color:var(--brand)"><use href="#ic-report"/></svg></div>
       <div style="flex:1;min-width:0">
         <div class="doc-name" style="font-size:13px">${esc(d.label)}</div>
-        <div class="doc-meta">${esc(d.date)}</div>
+        <div class="doc-meta">${esc(d.checkType)} &nbsp;·&nbsp; ${esc(d.date)}</div>
       </div>
     </div>`).join('');
-  return `<div class="pnl-card">
-    <div class="pnl-card-hd">
-      <span class="pnl-card-title">Agreements</span>
-      <button class="btn btn-xs btn-secondary" onclick="toast('Upload agreement…')">
-        <svg width="11" height="11" viewBox="0 0 20 20"><path d="M10 3v11M5 8l5-5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        Upload
-      </button>
-    </div>
-    <div class="pnl-card-body">${rows}</div>
-  </div>`;
 }
 
 function renderCaseDocs(c){
