@@ -6014,9 +6014,8 @@ function renderCurrentCase(person, c){
   const initiatedIcon = VIA_ICONS[c.via] || 'ic-link';
   const initiatedLabel = viaLabel(c, person);
 
+  const evCount = (c.events||[]).length;
   return `
-    <!-- ACTIVE CASE -->
-    <div class="pnl-sec-lbl">Active case</div>
     <div class="id-list" style="margin-bottom:2px">
       <div class="id-row"><div class="id-lbl">Package</div><div class="id-val"><span class="pkg-pill"><span class="pkg-pill-dot"></span>${esc(c.checkType)}</span></div></div>
       <div class="id-row"><div class="id-lbl">Initiated</div><div class="id-val" style="display:flex;align-items:center;gap:6px;font-weight:400"><svg width="13" height="13" viewBox="0 0 20 20" style="color:var(--fg3);flex-shrink:0"><use href="#${initiatedIcon}"/></svg>${esc(initiatedLabel)}</div></div>
@@ -6027,19 +6026,16 @@ function renderCurrentCase(person, c){
     ${showLink ? renderLinkManagement(person, c) : ''}
 
     ${eventsHtml ? `
-    <div style="border-top:1px solid var(--stroke-static-neutral-subtle);margin:14px 0 12px"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="pnl-sec-lbl" style="margin-bottom:0">Timeline</div>
-      <button class="case-log-toggle" id="${logToggleId}" onclick="toggleCaseLog('${logId}','${logToggleId}')" style="width:auto;border:none;margin:0;padding:0;gap:5px;font-size:12px">
-        <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><use href="#ic-clock"/></svg>
-        Hide timeline
-        <svg width="11" height="11" viewBox="0 0 20 20" fill="none" id="${logToggleId}-chev" style="transform:rotate(180deg)"><use href="#ic-chevdown"/></svg>
+    <div class="tl-block">
+      <button class="tl-toggle" id="${logToggleId}" onclick="toggleCaseLog('${logId}','${logToggleId}')" aria-expanded="false">
+        <svg class="tl-chev" id="${logToggleId}-chev" width="18" height="18" viewBox="0 0 20 20" fill="none" style="transform:rotate(-90deg)"><use href="#ic-chevdown"/></svg>
+        <span class="tl-lbl">Timeline</span>
+        <span class="tl-count">${evCount} update${evCount!==1?'s':''}</span>
       </button>
-    </div>
-    <div class="case-log-wrap open" id="${logId}">
-      <div class="elog">${eventsHtml}</div>
-    </div>` : ''}
-    ${renderCaseDocs(c)}`;
+      <div class="case-log-wrap" id="${logId}">
+        <div class="elog">${eventsHtml}</div>
+      </div>
+    </div>` : ''}`;
 }
 
 // ── Screening history section ────────────────────────────────────────────
