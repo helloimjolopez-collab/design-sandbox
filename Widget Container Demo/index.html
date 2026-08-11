@@ -3248,14 +3248,17 @@ function remProgress(w){
     var st=r.status==="behind"?"behind":(r.status==="none"?"none":"ok");
     var gap=(r.pctPaid!=null&&mark>fill)?'<span class="rem-bargap" style="left:'+Math.min(100,fill).toFixed(1)+'%;width:'+(mark-fill).toFixed(1)+'%"></span>':'';
     var marker=(r.pctPaid!=null)?'<span class="rem-barmark" style="left:'+mark.toFixed(1)+'%"></span>':'';
-    return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
+    var flagIcon=st==="behind"?"priority_high":(st==="none"?"remove":"check");
+    var flagTip=st==="behind"?"Behind pace":(st==="none"?"No pledge set":(r.status==="full"?"Paid in full":"On track"));
+    var pct=(r.pctPaid==null?"n/a":remPct(r.pctPaid));
+    return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" "+flagTip+". Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
       '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span><span class="ar-barlbl-sub">'+money(r.paid)+' of '+money(r.annual)+'</span></div>'+
       '<div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,fill).toFixed(1)+'%"></div>'+gap+marker+'</div>'+
-      '<div class="ar-barval"><span class="ar-barval-amt">'+(r.pctPaid==null?"n/a":remPct(r.pctPaid))+'</span>'+remStatusChip(r)+'</div>'+
-      '<span class="sr-only">'+remRowSr(r)+'</span>'+
+      '<div class="rem-barval"><span class="rem-pct">'+pct+'</span><span class="rem-flag rem-flag-'+st+'" data-tip="'+remEsc(flagTip)+'" data-tip-plain aria-hidden="true">'+ICON(flagIcon)+'</span></div>'+
+      '<span class="sr-only">'+remRowSr(r)+' '+flagTip+'.</span>'+
     '</div>';
   }).join("");
-  return '<div class="ar-bars rem-bars">'+legend+bars+'</div>';
+  return legend+'<div class="scroll ar-bars rem-bars">'+bars+'</div>';
 }
 function remContent(w){
   if(w.state==="empty")return remEmpty(w);
