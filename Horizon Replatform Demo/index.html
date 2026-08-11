@@ -6103,10 +6103,9 @@ function renderScreeningHistory(person){
       <div class="hist-item-body" id="${itemId}">
         ${assessHtml}
         ${eventsHtml ? `
-        <button class="case-log-toggle" id="${logTogId}" onclick="toggleCaseLog('${logId}','${logTogId}')">
-          <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><use href="#ic-clock"/></svg>
-          Show timeline
-          <svg width="11" height="11" viewBox="0 0 20 20" fill="none" id="${logTogId}-chev"><use href="#ic-chevdown"/></svg>
+        <button class="tl-toggle" id="${logTogId}" onclick="toggleCaseLog('${logId}','${logTogId}')" aria-expanded="false">
+          <svg class="tl-chev" id="${logTogId}-chev" width="18" height="18" viewBox="0 0 20 20" fill="none" style="transform:rotate(-90deg)"><use href="#ic-chevdown"/></svg>
+          <span class="tl-lbl">Timeline</span>
         </button>
         <div class="case-log-wrap" id="${logId}">
           <div class="elog" style="margin-top:4px">${eventsHtml}</div>
@@ -6753,8 +6752,8 @@ function toggleCaseLog(logId, toggleId){
   const chev = document.getElementById(toggleId + '-chev');
   if(!log) return;
   const open = log.classList.toggle('open');
-  if(tog) tog.innerHTML = tog.innerHTML.replace(open ? 'Show timeline' : 'Hide timeline', open ? 'Hide timeline' : 'Show timeline');
-  if(chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+  if(tog){ tog.classList.toggle('open', open); tog.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  if(chev) chev.style.transform = open ? 'rotate(0deg)' : 'rotate(-90deg)';
 }
 
 function toggleHistItem(bodyId, chevId){
