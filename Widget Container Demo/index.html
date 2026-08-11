@@ -1640,6 +1640,15 @@
 .rem-catchup .material-symbols-rounded{font-size:18px;color:var(--am-600);flex:0 0 auto;margin-top:1px;}
 .modal.rem-detail-modal{height:auto;max-height:88vh;}
 .rem-detail-b{display:flex;flex-direction:column;min-height:0;max-height:80vh;overflow:auto;}
+.rem-barrow{cursor:pointer;}
+.rem-barrow:hover{background:var(--wn-100);}
+.rem-bargap{position:absolute;top:0;height:100%;background:var(--am-200);}
+.rem-barmark{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--am-700);}
+.rem-bars-legend{display:flex;gap:16px;padding:2px 4px 10px;font-size:11.5px;color:var(--txt-subtle);}
+.rem-bars-legend .rem-lg-i{display:inline-flex;align-items:center;gap:5px;}
+.rem-sw{width:10px;height:10px;border-radius:3px;display:inline-block;}
+.rem-sw-recv{background:var(--am-500);}
+.rem-sw-exp{background:var(--am-200);border:1px solid var(--am-300);}
 .rem-catchup.ok{color:var(--green-120);background:var(--green-10);}
 .rem-catchup.ok .material-symbols-rounded{color:var(--pos-100);}
 .rem-ph-h{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
@@ -3218,13 +3227,32 @@ function remEmpty(w){
 function remSkeleton(){var rows="";[72,58,80,50,66].forEach(function(wd){rows+='<div class="rem-sk-row"><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk rem-sk-bar" style="width:'+wd+'%"></span><span class="sk" style="width:44px;height:12px;border-radius:4px"></span></div>';});return '<div class="rem-skel" aria-busy="true">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading</div></div>';}
 
 // ===== entry point ==============================================
+function remStatusWord(r){return r.status==="none"?"No pledge":(r.status==="full"?"Paid in full":(r.status==="behind"?"Behind":"On track"));}
+/* Progress view: AR-style labeled bar rows (label | chunky track with paid-fill + expected-by-now marker | value). */
+function remProgress(w){
+  var rows=remRows(w);
+  if(!rows.length)return '<div class="rem-zeroline">'+ICON("info")+'No remittance activities to show.</div>';
+  var legend='<div class="rem-bars-legend"><span class="rem-lg-i"><span class="rem-sw rem-sw-recv"></span>Paid</span><span class="rem-lg-i"><span class="rem-sw rem-sw-exp"></span>Expected by now</span></div>';
+  var bars=rows.map(function(r){
+    var fill=(r.pctPaid==null?0:r.pctPaid)*100,mark=Math.min(100,r.pctYear*100);
+    var gap=(r.pctPaid!=null&&mark>fill)?'<span class="rem-bargap" style="left:'+Math.min(100,fill).toFixed(1)+'%;width:'+(mark-fill).toFixed(1)+'%"></span>':'';
+    var marker=(r.pctPaid!=null)?'<span class="rem-barmark" style="left:'+mark.toFixed(1)+'%"></span>':'';
+    return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
+      '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span><span class="ar-barlbl-sub">'+money(r.paid)+' of '+money(r.annual)+'</span></div>'+
+      '<div class="ar-bartrack rem-bartrack"><div class="ar-barfill" style="width:'+Math.max(2,fill).toFixed(1)+'%;background:var(--am-500)"></div>'+gap+marker+'</div>'+
+      '<div class="ar-barval"><span class="ar-barval-amt">'+(r.pctPaid==null?"n/a":remPct(r.pctPaid))+'</span><span class="ar-barval-cnt">'+remStatusWord(r)+'</span></div>'+
+      '<span class="sr-only">'+remRowSr(r)+'</span>'+
+    '</div>';
+  }).join("");
+  return '<div class="ar-bars rem-bars">'+legend+bars+'</div>';
+}
 function remContent(w){
   if(w.state==="empty")return remEmpty(w);
   if(w.size==="kpi")return remGlance(w);
   if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
   var mh=remHeaderBlock(w);
   if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by activity</div>'+remTable(w,true)+'</div></div>';
-  return mh+'<div class="rem-body">'+remTable(w,(w.remView||"progress")==="table")+'</div>';
+  return mh+'<div class="rem-body">'+((w.remView||"progress")==="table"?remTable(w,true):remProgress(w))+'</div>';
 }
 
 /* ---- drill: payment history focus overlay (modal.type "remdetail") --- */
