@@ -4908,7 +4908,8 @@ function switchTab(tab){
 
 function renderHomeCSTOnlyRow(person){
   const cst = person.cst;
-  if(!cst || cst.status==='cst-na') return '';
+  // No CST case exists until an invite is created: not required, or not yet sent, means no row.
+  if(!cst || cst.status==='cst-na' || cst.status==='cst-not-sent') return '';
   const c = currentCase(person);
   const ac = AVATARCOLORS[person.name.charCodeAt(0) % AVATARCOLORS.length];
   const cs = CST_STATUS_LABELS[cst.status] || {label:cst.status,cls:'b-grey',tip:''};
