@@ -4448,7 +4448,7 @@ const STATUS = {
   'order-processing':      {label:'Order Processing',                 cls:'v-blue',        icon:'ms-sync',           action:false, tip:'Background check order has been submitted to the screening provider and is actively being processed.'},
   'order-failed':          {label:'Order Failed',                     cls:'v-red-line',    icon:'ms-cancel',         action:true,  tip:'The order could not be submitted to or processed by the screening provider. The transaction has been cancelled. Retry the order or close the case.'},
   // Report complete
-  'awaiting-assessment':   {label:'Complete- Awaiting Review',        cls:'v-yellow',      icon:'ms-pending',        action:true,  tip:'Digital Delve returned the completed report. Review it and record an assessment outcome.'},
+  'awaiting-assessment':   {label:'Complete- Awaiting Review',        cls:'v-yellow',      icon:'ms-pending',        action:true,  tip:'The screening provider returned the completed report. Review it and record an assessment outcome.'},
   'complete-cleared':      {label:'Complete-Cleared',                 cls:'v-green',       icon:'ms-thumb-up-fill',  action:false, tip:'Admin reviewed the report and found no disqualifying information. This person is cleared for the role.'},
   'complete-needs-review': {label:'Complete: Needs Review',           cls:'v-yellow',      icon:'ms-flag',           action:true,  tip:'Admin flagged the report for further review. Not a final outcome. The case remains active until a final outcome is recorded.'},
   'complete-escalated':    {label:'Complete-Escalated',               cls:'v-red',         icon:'ms-error-fill',     action:true,  tip:'Admin reviewed the report and escalated. This person must not be placed in the role. FCRA adverse action process may apply.'},
@@ -4611,7 +4611,7 @@ const PEOPLE = [
     {type:'done',title:'Invite email sent',date:'10.07.2026',time:'2:01 PM',by:'PMM'},
     {type:'done',title:'Consent form submitted',date:'12.07.2026',time:'4:45 PM',by:'Applicant'},
     {type:'done',title:'Order placed automatically',date:'12.07.2026',time:'4:45 PM',by:'Auto'},
-    {type:'done',title:'Report received from Digital Delve',date:'18.07.2026',time:'8:12 AM',by:'System'},
+    {type:'done',title:'Report received from the screening provider',date:'18.07.2026',time:'8:12 AM',by:'System'},
   ]}
 ]},
 {id:'p14',name:'Devon White',fullLegal:'Devon White',gender:'Male',email:'d.white@gracechurch.org',phone:'(555) 628-3301',position:'Worship Volunteer',team:'Worship Team',source:'PMM',dob:'09 Jun 1991',preferredName:'Devon',orgStatus:'Pending activation',rescreenDue:null,cst:{status:'cst-not-sent',type:null},tags:[],cases:[
@@ -4623,7 +4623,7 @@ const PEOPLE = [
     {type:'done',title:'Invite email sent',date:'18.07.2026',time:'11:01 AM',by:'PMM'},
     {type:'done',title:'Consent form submitted',date:'20.07.2026',time:'3:22 PM',by:'Applicant'},
     {type:'done',title:'Order submitted for processing',date:'20.07.2026',time:'3:22 PM',by:'Auto'},
-    {type:'danger',title:'Order failed: SSN format invalid. Order rejected by Digital Delve.',date:'20.07.2026',time:'3:24 PM',by:'System'},
+    {type:'danger',title:'Order failed: SSN format invalid. Order rejected by the screening provider.',date:'20.07.2026',time:'3:24 PM',by:'System'},
   ]}
 ]},
 // ── Phase 1-only people ──────────────────────────────────────────────
@@ -5499,7 +5499,7 @@ function simulateConsentSubmitted(pid){
   // Auto-advance to order-processing after a beat
   setTimeout(()=>{
     setCaseStatus(c, 'order-processing');
-    c.events.push({type:'done',title:'Order submitted to Digital Delve',date:todayStr(),time:nowTime(),by:'System'});
+    c.events.push({type:'done',title:'Order submitted to the screening provider',date:todayStr(),time:nowTime(),by:'System'});
     if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
     renderTable(); renderHomeTable();
   }, 800);
@@ -5514,7 +5514,7 @@ function simulateReportReceived(pid){
   setCaseStatus(c, 'awaiting-assessment');
   c.report = {refId:'DD-2026-'+(person.name.split(' ').map(w=>w[0]).join('')||'XX')+'01',receivedDate:todayStr(),hits:'No disqualifying records found'};
   c.events = c.events||[];
-  c.events.push({type:'done',title:'Report received from Digital Delve',date:todayStr(),time:nowTime(),by:'System'});
+  c.events.push({type:'done',title:'Report received from the screening provider',date:todayStr(),time:nowTime(),by:'System'});
   renderTable(); renderHomeTable();
   toast('Report received. Assessment required.');
   if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
@@ -5897,7 +5897,7 @@ function renderPanelAction(person, c){
     }
   } else if(c.status==='order-failed'){
     cls='bad';
-    const reason = c.orderFailureReason||'The order could not be processed by Digital Delve. The transaction has been cancelled.';
+    const reason = c.orderFailureReason||'The order could not be processed by the screening provider. The transaction has been cancelled.';
     title='Order failed';
     desc=reason+' Retry the order or close this case.';
     btns=`<button class="btn btn-sm btn-primary" onclick="retryOrder('${person.id}','${c.id}')">Retry order</button><button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button>`;
@@ -6368,7 +6368,7 @@ function renderPanelBody(person, targetCaseId){
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
               <div>
                 <div style="font-size:13px;font-weight:500;color:var(--ink)">Simulate: report received</div>
-                <div style="font-size:12px;color:var(--fg3);margin-top:2px">Digital Delve returns the completed report for review.</div>
+                <div style="font-size:12px;color:var(--fg3);margin-top:2px">The screening provider returns the completed report for review.</div>
               </div>
               <button class="btn btn-sm" style="background:#5b4ac8;color:#fff;flex-shrink:0" onclick="simulateReportReceived('${person.id}')">Run</button>
             </div>` : ''}
