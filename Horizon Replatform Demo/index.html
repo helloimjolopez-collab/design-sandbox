@@ -5301,11 +5301,11 @@ function renewInvite(pid, cid){
   if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
 }
 
-/* ─── Cancel invite (invite only — case stays open) ───────────────── */
+/* ─── Cancel invite (pre-order: invalidates the invite, case stays) ── */
 function cancelInvite(pid, cid){
   showConfirm({
     title: 'Cancel invite?',
-    body: 'The invite link will be invalidated immediately. <strong>The case stays open.</strong> You can generate a new invite when ready.',
+    body: 'The invite will be invalidated immediately. You can issue a new invite when ready.',
     cancelLabel: 'Keep invite',
     actionLabel: 'Cancel invite',
     actionStyle: 'background:var(--red);color:#fff',
@@ -5315,83 +5315,36 @@ function cancelInvite(pid, cid){
       const c = person.cases.find(x=>x.id===cid);
       if(!c) return;
       c.status = 'invite-cancelled';
+      if(c.p1Status) c.p1Status = 'invite-cancelled';
       c.events = c.events||[];
-      c.events.push({type:'none',title:'Invite cancelled by admin',date:todayStr(),time:'',by:'Admin'});
+      c.events.push({type:'none',title:'Invite cancelled by admin',date:todayStr(),time:nowTime(),by:'Admin'});
       renderTable(); renderHomeTable();
-      toast('Invite cancelled. Case remains open.');
+      toast('Invite cancelled.');
+      if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
     }
   });
 }
 
-/* ─── Cancel case (terminal — cannot be undone) ───────────────────── */
-function cancelCase(pid, cid){
+/* ─── Cancel order (order placed or failed: stops the screening order) ── */
+function cancelOrder(pid, cid){
   const person = personById(pid);
   if(!person) return;
-  // Use raw cases (not currentCase()) to get original status
   const c = person.cases.find(x=>x.id===cid);
   if(!c) return;
-
-  // Resolve effective status (Phase 1 may override)
-  const effectiveStatus = (DEMO_MODE==='phase-1' && c.p1Status) ? c.p1Status : c.status;
-
-  // Guard: determine if cancel is allowed
-  // Phase 1 rules: cancel allowed before consent received, OR if order failed (any failure status)
-  // North Star rules: cancel blocked once order is in progress / complete
-  const blockingStatuses = ['order-processing','awaiting-assessment','complete-cleared','complete-needs-review','complete-escalated'];
-  const orderPlaced = blockingStatuses.includes(effectiveStatus);
-  if(orderPlaced){
-    showConfirm({
-      title: 'Cannot close this case',
-      body: 'The background check order has already been submitted to the provider. Cases in progress or completed cannot be closed.<br><br>If you need to take action, make an assessment or contact support.',
-      cancelLabel: 'Close',
-      actionLabel: 'OK',
-      actionStyle: 'background:var(--brand);color:#fff',
-      onConfirm(){}
-    });
-    return;
-  }
-
-  // Order failed — close with context
-  if(effectiveStatus==='order-failed'){
-    showConfirm({
-      title: 'Close this case?',
-      body: c.orderFailureReason
-        ? `<strong>${person.name}</strong>'s order failed due to a data error.<br><br>${c.orderFailureReason}<br><br>Closing removes this from the action queue. Communicate the issue to the applicant and open a new case once the information is corrected.`
-        : `The order for <strong>${person.name}</strong> could not be processed. Closing this case removes it from the action queue. Open a new case to restart the screening process. Contact support if the issue persists.`,
-      cancelLabel: 'Keep open',
-      actionLabel: 'Close case',
-      actionStyle: 'background:var(--brand);color:#fff',
-      onConfirm(){
-        c.status = 'case-closed';
-        if(c.p1Status) c.p1Status = 'case-closed';
-        c.events = c.events||[];
-        c.events.push({type:'none',title:'Case closed by admin',date:todayStr(),time:'',by:'Admin'});
-        renderTable(); renderHomeTable();
-        toast(`Case closed for ${person.name}.`);
-        if(STATE.currentPerson) renderPanelBody(STATE.currentPerson);
-      }
-    });
-    return;
-  }
-
-  const name = person.name;
-  const checkType = c.checkType;
-  const consentNote = c.consentForm
-    ? '<br><br><strong>Note:</strong> The applicant already submitted their consent form. This data will be retained in case history.'
-    : '';
-
   showConfirm({
-    title: 'Close this case?',
-    body: `This will permanently close the <strong>${checkType}</strong> case for <strong>${name}</strong>. The case cannot be reopened.${consentNote}<br><br>The person record and case history are retained. A new case can be opened if screening is needed in future.`,
-    cancelLabel: 'Keep open',
-    actionLabel: 'Close case',
-    actionStyle: 'background:var(--brand);color:#fff',
+    title: 'Cancel order?',
+    body: `The background check order for <strong>${esc(person.name)}</strong> will be cancelled and no report will be produced. This cannot be undone.`,
+    cancelLabel: 'Keep order',
+    actionLabel: 'Cancel order',
+    actionStyle: 'background:var(--red);color:#fff',
     onConfirm(){
-      c.status = 'case-closed';
+      c.status = 'order-cancelled';
+      if(c.p1Status) c.p1Status = 'order-cancelled';
       c.events = c.events||[];
-      c.events.push({type:'none',title:'Case closed by admin',date:todayStr(),time:'',by:'Admin'});
+      c.events.push({type:'none',title:'Order cancelled by admin',date:todayStr(),time:nowTime(),by:'Admin'});
       renderTable(); renderHomeTable();
-      toast(`Case closed for ${name}.`);
+      toast(`Order cancelled for ${person.name}.`);
+      if(STATE.currentPerson && STATE.currentPerson.id===pid) renderPanelBody(STATE.currentPerson);
     }
   });
 }
