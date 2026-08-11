@@ -5629,7 +5629,7 @@ function renderBulkBar(){
   bar.innerHTML=`<span class="bulk-count">${n} selected</span>
     <button class="btn btn-secondary btn-sm" onclick="toast('Resending invites…')">Resend invites</button>
     <button class="btn btn-secondary btn-sm" onclick="toast('Exporting reports…')">Export reports</button>
-    <button class="btn btn-secondary btn-sm" style="color:var(--red)" onclick="STATE.selectedPeople.clear();renderTable();toast('Cases closed.')">Close cases</button>
+    <button class="btn btn-secondary btn-sm" onclick="STATE.selectedPeople.forEach(id=>{const p=personById(id);if(p)p.orgStatus='archived'});STATE.selectedPeople.clear();renderTable();renderHomeTable();toast('Cases archived.')">Archive cases</button>
     <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="STATE.selectedPeople.clear();renderTable()">Clear selection</button>`;
 }
 
