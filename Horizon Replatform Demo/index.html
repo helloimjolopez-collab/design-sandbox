@@ -5157,13 +5157,18 @@ function getActions(person, c){
   const acts = [];
   const s = c.status;
   const via = c.via;
-  const esc_ = s => s; // label strings are safe literals
+
+  // Archived rows: only unarchive + view
+  if(person.orgStatus === 'archived'){
+    acts.push({label:'Unarchive',cls:'pri',fn:`unarchivePerson('${person.id}');event.stopPropagation()`});
+    acts.push({label:'View profile',fn:`openProfile('${person.id}');event.stopPropagation()`});
+    return acts;
+  }
 
   // Assessment actions
   if(s==='awaiting-assessment'||s==='complete-escalated'||s==='complete-cleared'||s==='complete-needs-review'){
     acts.push({label:s==='awaiting-assessment'?'Record assessment':'View / edit assessment',cls:'pri',fn:`openReport('${c.id}',event)`});
   }
-
 
   // Active invite — sent or just link created
   if(s==='invite-sent'||s==='invite-created'){
@@ -5186,13 +5191,11 @@ function getActions(person, c){
   // Expired invite — re-invite via modal (choose email or link, sets status back to sent)
   if(s==='invite-expired'){
     acts.push({label:'Renew link and resend',cls:'pri',fn:`openReinviteModal('${person.id}','${c.id}');event.stopPropagation()`});
-    acts.push({label:'Close case',fn:`cancelCase('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
-  // Invite cancelled — issue a fresh invite or close out
+  // Invite cancelled — issue a fresh invite
   if(s==='invite-cancelled'){
     acts.push({label:'Issue new invite',cls:'pri',fn:`openReinviteModal('${person.id}','${c.id}');event.stopPropagation()`});
-    acts.push({label:'Close case',fn:`cancelCase('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
   // Bounced email — fix and resend via the profile action banner flow
@@ -5202,10 +5205,15 @@ function getActions(person, c){
     acts.push({label:'Cancel invite',fn:`cancelInvite('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
-  // Order failed — retry or close the case
+  // Order placed and processing — cancel the order
+  if(s==='order-processing'){
+    acts.push({label:'Cancel order',fn:`cancelOrder('${person.id}','${c.id}');event.stopPropagation()`});
+  }
+
+  // Order failed — retry or cancel the order
   if(s==='order-failed'){
     acts.push({label:'Try again',cls:'pri',fn:`retryOrder('${person.id}','${c.id}');event.stopPropagation()`});
-    acts.push({label:'Close case',fn:`cancelCase('${person.id}','${c.id}');event.stopPropagation()`});
+    acts.push({label:'Cancel order',fn:`cancelOrder('${person.id}','${c.id}');event.stopPropagation()`});
   }
 
   // Rescreen / overdue
@@ -5213,6 +5221,8 @@ function getActions(person, c){
     acts.push({label:'Start new background check',cls:'pri',fn:`openWizard();event.stopPropagation()`});
   }
 
+  // Archive case — available on every active row
+  acts.push({label:'Archive case',fn:`archivePerson('${person.id}');event.stopPropagation()`});
   // View profile — always
   acts.push({label:'View profile',fn:`openProfile('${person.id}');event.stopPropagation()`});
 
