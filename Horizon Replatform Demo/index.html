@@ -4435,26 +4435,26 @@ function fmtShort(d){const dt=new Date(d);const m=['Jan','Feb','Mar','Apr','May'
 
 const STATUS = {
   // Consent collection phase
-  'invite-created':        {label:'Invite Link Created',              cls:'v-purple',      icon:'ms-check-circle',   action:false, tip:'A person-bound invite link has been generated. No email has been sent yet. Admin holds the link and will deliver it themselves.'},
-  'invite-sent':           {label:'Invite Link Sent',                 cls:'v-purple',      icon:'ms-send',           action:false, tip:'PMM dispatched an invite email to the applicant. Waiting for the applicant to submit their consent form.'},
-  'invite-expiring':       {label:'Invite Link Expiring',             cls:'v-amber',       icon:'ms-warning',        action:false, tip:'The invite link is within its expiry warning window and no consent has been submitted. Resend or extend before the link dies.'},
-  'invite-expired':        {label:'Invite Link Expired',              cls:'v-red',         icon:'ms-error-fill',     action:true,  tip:'The invite link hit its expiry date with no consent submitted. The case is stalled. Re-invite the applicant or close the case.'},
-  'email-bounced':         {label:'Invite Email Bounced',             cls:'v-red-line',    icon:'ms-error-fill',     action:true,  tip:'The invite email could not be delivered. Correct the address and resend, or switch to a generated link.'},
-  'invite-cancelled':      {label:'Invite Cancelled',                 cls:'v-grey',        icon:'ms-cancel',         action:false, tip:'Admin cancelled this specific invite. The case stays open. Issue a new invite when ready.'},
-  'case-closed':           {label:'Case Closed',                      cls:'v-grey',        icon:'ms-minus-circle',   action:false, tip:'Admin closed this screening case. No check will be ordered. The case moves to screening history as an audit record.'},
+  'invite-created':        {label:'Invite Link Created',              cls:'v-purple',      icon:'ms-check-circle',   action:false, tip:'The invite link has been created but not yet sent.'},
+  'invite-sent':           {label:'Invite Link Sent',                 cls:'v-purple',      icon:'ms-send',           action:false, tip:'The invite has been sent. Waiting for the applicant to submit their consent form.'},
+  'invite-expiring':       {label:'Invite Link Expiring',             cls:'v-amber',       icon:'ms-warning',        action:false, tip:'The invite expires soon and no consent has been submitted yet.'},
+  'invite-expired':        {label:'Invite Link Expired',              cls:'v-red',         icon:'ms-error-fill',     action:true,  tip:'The invite expired before consent was submitted.'},
+  'email-bounced':         {label:'Invite Email Bounced',             cls:'v-red-line',    icon:'ms-error-fill',     action:true,  tip:'The invite email could not be delivered. Correct the email address and resend.'},
+  'invite-cancelled':      {label:'Invite Cancelled',                 cls:'v-grey',        icon:'ms-cancel',         action:false, tip:'The invite was cancelled. Issue a new invite when ready.'},
+  'order-cancelled':       {label:'Order Cancelled',                  cls:'v-grey',        icon:'ms-cancel',         action:false, tip:'The order was cancelled. No report will be produced.'},
   // Consent received
-  'consent-received':      {label:'Consent Received',                 cls:'v-green',       icon:'ms-check-circle',   action:false, tip:'Applicant submitted their consent form. The order will be placed automatically.'},
+  'consent-received':      {label:'Consent Received',                 cls:'v-green',       icon:'ms-check-circle',   action:false, tip:'The applicant submitted their consent form. The order will be placed automatically.'},
   // Processing
-  'order-processing':      {label:'Order Processing',                 cls:'v-blue',        icon:'ms-sync',           action:false, tip:'Background check order has been submitted to the screening provider and is actively being processed.'},
-  'order-failed':          {label:'Order Failed',                     cls:'v-red-line',    icon:'ms-cancel',         action:true,  tip:'The order could not be submitted to or processed by the screening provider. The transaction has been cancelled. Retry the order or close the case.'},
+  'order-processing':      {label:'Order Processing',                 cls:'v-blue',        icon:'ms-sync',           action:false, tip:'The order has been placed and is being processed.'},
+  'order-failed':          {label:'Order Failed',                     cls:'v-red-line',    icon:'ms-cancel',         action:true,  tip:'The order could not be processed. Try again or cancel the order.'},
   // Report complete
-  'awaiting-assessment':   {label:'Complete- Awaiting Review',        cls:'v-yellow',      icon:'ms-pending',        action:true,  tip:'The screening provider returned the completed report. Review it and record an assessment outcome.'},
-  'complete-cleared':      {label:'Complete-Cleared',                 cls:'v-green',       icon:'ms-thumb-up-fill',  action:false, tip:'Admin reviewed the report and found no disqualifying information. This person is cleared for the role.'},
-  'complete-needs-review': {label:'Complete: Needs Review',           cls:'v-yellow',      icon:'ms-flag',           action:true,  tip:'Admin flagged the report for further review. Not a final outcome. The case remains active until a final outcome is recorded.'},
-  'complete-escalated':    {label:'Complete-Escalated',               cls:'v-red',         icon:'ms-error-fill',     action:true,  tip:'Admin reviewed the report and escalated. This person must not be placed in the role. FCRA adverse action process may apply.'},
+  'awaiting-assessment':   {label:'Complete- Awaiting Review',        cls:'v-yellow',      icon:'ms-pending',        action:true,  tip:'The report is back. Review it and record an assessment.'},
+  'complete-cleared':      {label:'Complete-Cleared',                 cls:'v-green',       icon:'ms-thumb-up-fill',  action:false, tip:'Reviewed and cleared for the role.'},
+  'complete-needs-review': {label:'Complete: Needs Review',           cls:'v-yellow',      icon:'ms-flag',           action:true,  tip:'Flagged for further review. Not a final outcome yet.'},
+  'complete-escalated':    {label:'Complete-Escalated',               cls:'v-red',         icon:'ms-error-fill',     action:true,  tip:'Reviewed and escalated. Do not place this person in the role.'},
   // Rescreening health
-  'rescreen-due':          {label:'Rescreening Due',                  cls:'v-orange-line', icon:'ms-schedule',       action:true,  tip:'The rescreening date is approaching. Current check is still valid. Start a new screening case soon to avoid a gap.'},
-  'screening-expired':     {label:'Screening Expired',                cls:'v-red-line',    icon:'ms-error-fill',     action:true,  tip:"The rescreen due date has passed. This person's screening is no longer current. A new background check is required."},
+  'rescreen-due':          {label:'Rescreening Due',                  cls:'v-orange-line', icon:'ms-schedule',       action:true,  tip:'The current check is due for renewal. Start a new background check.'},
+  'screening-expired':     {label:'Screening Expired',                cls:'v-red-line',    icon:'ms-error-fill',     action:true,  tip:'The screening is no longer current. A new background check is required.'},
 };
 
 
