@@ -4040,7 +4040,8 @@ tbody tr:hover .row-act-btn{opacity:1}
 <div class="fdrop-sep"></div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','rescreen-due','home-chip-status','Status')">Rescreening Due</div>
 <div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','screening-expired','home-chip-status','Status')">Screening Expired</div>
-<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','case-closed','home-chip-status','Status')">Case Closed</div>
+<div class="fdrop-sep"></div>
+<div class="fdrop-item" onclick="setHomeFilter('homeStatusFilter','archived','home-chip-status','Status')">Archived</div>
         </div>
       </button>
       <!-- Ordered By filter — Figma chip (2145:14901 group). Non-scoping display filter. -->
@@ -5876,14 +5877,18 @@ function renderPanelAction(person, c){
     }
   } else if(c.status==='order-failed'){
     cls='bad';
-    const reason = c.orderFailureReason||'The order could not be processed by the screening provider. The transaction has been cancelled.';
+    const reason = c.orderFailureReason||'The order could not be processed. The order has been cancelled.';
     title='Order failed';
-    desc=reason+' Retry the order or close this case.';
-    btns=`<button class="btn btn-sm btn-primary" onclick="retryOrder('${person.id}','${c.id}')">Retry order</button><button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button>`;
+    desc=reason+' Try again, or cancel the order.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="retryOrder('${person.id}','${c.id}')">Try again</button><button class="btn btn-sm btn-secondary" onclick="cancelOrder('${person.id}','${c.id}')">Cancel order</button>`;
   } else if(c.status==='invite-cancelled'){
     cls='warn';title='Invite cancelled';
-    desc='The applicant\'s invite link has been invalidated. Issue a new invite to continue with this case, or close it.';
-    btns=`<button class="btn btn-sm btn-primary" onclick="openReinviteModal('${person.id}','${c.id}')">Issue new invite</button><button class="btn btn-sm btn-secondary" onclick="cancelCase('${person.id}','${c.id}')">Close case</button>`;
+    desc='The invite has been invalidated. Issue a new invite to continue.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="openReinviteModal('${person.id}','${c.id}')">Issue new invite</button>`;
+  } else if(c.status==='order-cancelled'){
+    cls='warn';title='Order cancelled';
+    desc='The order was cancelled. Start a new background check to screen this person again.';
+    btns=`<button class="btn btn-sm btn-primary" onclick="openWizard()">Start new background check</button>`;
   } else if(c.status==='rescreen-due'){
     cls='warn';title='Rescreening due soon';
     desc='This person\'s background check is due for renewal.';
