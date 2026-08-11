@@ -6416,6 +6416,15 @@ function renderPanelBody(person, targetCaseId){
   pb.querySelectorAll('.badge').forEach(b=>{
     b.addEventListener('click',e=>e.stopPropagation());
   });
+  // Seamless arrival from a status badge: flash the Current Case block so the user
+  // instantly sees the same status they clicked, in context.
+  if(targetCaseId){
+    const anchor = document.getElementById('current-case-anchor');
+    if(anchor){
+      anchor.classList.add('flash');
+      setTimeout(()=>anchor.classList.remove('flash'), 1700);
+    }
+  }
 }
 
 function renderSituation(person, c){
