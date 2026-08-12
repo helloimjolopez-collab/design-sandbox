@@ -1050,14 +1050,7 @@
     background: var(--semantic-color-light-mode-stroke-static-neutral-light);
   }
   .spd-topnav__orgname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
-  .spd-topnav__hamburger {
-    display: none; align-items: center; justify-content: center;
-    width: 36px; height: 36px; margin-right: 2px; flex-shrink: 0;
-    border: none; background: transparent; cursor: pointer; border-radius: 9px;
-    color: var(--semantic-color-light-mode-text-static-secondary-base);
-    transition: background var(--motion-duration-3) var(--motion-easing-standard);
-  }
-  .spd-topnav__hamburger:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  .spd-topnav__hamburger { display: none; }
 
   /* ── Account menu, Spired-level settings/admin live here (not the side nav) */
   .spd-acct { position: relative; margin-left: 6px; }
@@ -1142,12 +1135,8 @@
     .spd-topnav [aria-label="Search"], .spd-topnav [aria-label="Help"] { display: none; }
     .spd-topnav__orgname { max-width: 150px; }
 
-    /* Side nav gives way to the drawer (opened by the hamburger). The module
-       SWITCHER stays put — it's the logo's popover, a separate surface. */
+    /* Side nav + top-bar switcher give way to the drawer. */
     .spd-modnav, .spd-tms, .spd-topnav__brandsep { display: none; }
-    .spd-topnav__hamburger { display: inline-flex; }
-    /* Pinning a rail is meaningless on mobile (the rail is hidden), so drop it. */
-    .spd-swpop__pin { display: none; }
 
     .spd-body { padding-top: 0; }
     .spd-sheet { min-width: 0; margin-right: 0; border-radius: 0; }
@@ -2449,45 +2438,28 @@ function ModuleNav({ mod, item, onSelectItem, onSwitchModule, rail, onToggleRail
   );
 }
 
-/* Mobile: the drawer is the CURRENT module's own side nav — nothing else.
-   Switching modules is a separate surface (the logo's switcher popover), never
-   merged in here. This mirrors the desktop split of switcher vs. section nav.
-   On Home the nav's module-link items (`to`) are the hub, so they stay. */
+/* Mobile: one drawer holds everything, the module list (how you switch /
+   go Home) then, when inside a module, that module's own sections. Same
+   information as the desktop rail + panel, stacked into a single sheet. */
 function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, onClose }) {
   const mod = MODULE_MAP[moduleId];
-  const nav = mod.nav || [];
-  const accent = mod.id === "home" ? "var(--spd-home-glyph)" : mod.color;
-  let lastGroup = null;
   return (
     <React.Fragment>
       <div className={"spd-navscrim" + (open ? " is-open" : "")} onClick={onClose} aria-hidden="true" />
-      <nav className={"spd-drawer" + (open ? " is-open" : "")} aria-label={mod.name + " navigation"}>
+      <nav className={"spd-drawer" + (open ? " is-open" : "")} aria-label="Navigation">
         <div className="spd-modnav__list spd-stagger">
-          <p className="spd-sidenav__section-label">{mod.name}</p>
-          {nav.map((n) => {
-            const showGroup = n.group && n.group !== lastGroup;
-            lastGroup = n.group || lastGroup;
-            const target = n.to ? MODULE_MAP[n.to] : null;
-            return (
-              <React.Fragment key={n.id}>
-                {showGroup && <p className="spd-modnav__group">{n.group}</p>}
-                {target ? (
-                  <SectionItem icon={target.icon} label={target.name} color={target.color}
-                    leadColor={target.color} active={false} onClick={() => onSwitchModule(n.to)} />
-                ) : (
-                  <SectionItem icon={n.icon} label={n.label} color={accent}
-                    active={item === n.id} onClick={() => onSelectItem(n.id)} />
-                )}
-              </React.Fragment>
-            );
+          <p className="spd-sidenav__section-label">Modules</p>
+          {RAIL_TOP.map((id) => {
+            const m = MODULE_MAP[id];
+            return <SectionItem key={id} icon={m.icon} label={m.name} color={m.color} active={id === moduleId} onClick={() => onSwitchModule(id)} />;
           })}
         </div>
-        {mod.footerNav && mod.footerNav.length > 0 && (
+        {mod.nav && mod.nav.filter((n) => !n.to).length > 0 && (
           <div className="spd-modnav__list spd-stagger" style={{ marginTop: 8 }}>
-            <p className="spd-sidenav__section-label">Admin settings</p>
-            {mod.footerNav.map((n) => (
-              <SectionItem key={n.id} icon={n.icon} label={n.label} color={accent}
-                active={item === n.id} onClick={() => onSelectItem(n.id)} />
+            <p className="spd-sidenav__section-label">{mod.name}</p>
+            {/* skip module-link items, the Modules list above already covers them */}
+            {mod.nav.filter((n) => !n.to).map((n) => (
+              <SectionItem key={n.id} icon={n.icon} label={n.label} color={mod.color} active={item === n.id} onClick={() => onSelectItem(n.id)} />
             ))}
           </div>
         )}
@@ -2496,7 +2468,7 @@ function MobileNavDrawer({ moduleId, item, onSwitchModule, onSelectItem, open, o
   );
 }
 
-function TopNav({ mode, onToggleMode, onLogoClick, onLogoEnter, onLogoLeave, logoLabel, logoActive, moduleId, onMenuClick }) {
+function TopNav({ mode, onToggleMode, onLogoClick, onLogoEnter, onLogoLeave, logoLabel, logoActive, moduleId }) {
   const midnight = mode === "midnight";
   const isHome = moduleId === "home";
   return (
@@ -2504,12 +2476,8 @@ function TopNav({ mode, onToggleMode, onLogoClick, onLogoEnter, onLogoLeave, log
       {/* Left cluster: the Spired logo opens the module switcher (hover or click).
           On Home the mark + "spired" wordmark sit tight (no divider) so they read
           as the ONE Spired logo; on other modules a divider separates the mark
-          (switcher) from the module glyph + name. On mobile a hamburger (before
-          the logo) opens THIS module's section nav — separate from the switcher. */}
+          (switcher) from the module glyph + name. */}
       <div className={"spd-topnav__lead" + (isHome ? " spd-topnav__lead--brand" : "")}>
-        <button className="spd-topnav__hamburger" onClick={onMenuClick} aria-label="Open navigation">
-          <Icon name="menu" size={22} />
-        </button>
         <button className={"spd-topnav__logo" + (logoActive ? " is-active" : "")} data-sw-logo
           onClick={onLogoClick} onMouseEnter={onLogoEnter} onMouseLeave={onLogoLeave}
           aria-label={logoLabel}>
@@ -4311,11 +4279,12 @@ function App() {
   const [switching, setSwitching] = useState(false);   // brief loader while moving to another module
   const hoverTimer = useRef(null);                     // hover-intent open/close timer for the switcher
 
-  // The Spired logo always opens the module-switcher popover — on every
-  // breakpoint. On mobile the current module's own section nav is a SEPARATE
-  // surface, opened by the hamburger (never merged into the switcher).
+  // The Spired logo always opens the module-switcher popover (the drawer on
+  // mobile). The popover is also where you pin the switcher to a rail, and,
+  // when already pinned, where you unpin it back to a popover.
   const onLogoClick = () => {
     clearTimeout(hoverTimer.current);
+    if (window.matchMedia("(max-width: 768px)").matches) { setMobileNav((o) => !o); return; }
     setSwitcherOpen((o) => !o);
   };
   // Hover-to-open with intent: a short delay before opening so a passing cursor
@@ -4385,7 +4354,6 @@ function App() {
         logoLabel={logoLabel}
         logoActive={switcherOpen}
         moduleId={moduleId}
-        onMenuClick={() => setMobileNav((o) => !o)}
       />
       {switcherOpen && (
         <SwitcherPopover moduleId={moduleId} pinned={switcherPinned} onSwitch={goModule}
