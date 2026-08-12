@@ -3116,6 +3116,25 @@ function remTotals(w){
 }
 function remBehindCount(w){return remCompute(w).filter(function(r){return r.status==="behind";}).length;}
 function remFindRow(w,seq){var rows=remCompute(w);for(var i=0;i<rows.length;i++)if(String(rows[i].seq)===String(seq))return rows[i];return null;}
+/* ---- member-church roster per fund (Remittance HQ model) --------------
+   Each fund carries many pledges = member churches (500-800 in production).
+   The demo generates a deterministic sample roster; real data seeds from
+   Manage Pledges (church x activity). Drill surfaces the ones behind first. */
+var REM_CHURCH_NAMES=["Trinity Church","Grace Fellowship","St. Paul's","First Church","Wesley Chapel","Hope Community","Faith Church","Christ Church","Mount Zion","New Hope Church","Bethel Church","Aldersgate Church","Asbury Church","Emmanuel Church","Covenant Church","Cornerstone Church","Good Shepherd","Living Water","Riverside Church","Crossroads Church","Calvary Church","Epworth Church","St. Luke's","St. Mark's","Pleasant Grove","Fairview Church","Ebenezer Church","Salem Church","Oak Grove","Highland Park","Meadowbrook","Northside Church","Southside Church","Parkview Church","Lakeside Church","Cedar Ridge","Union Chapel","Bethany Church","Wesleyan Church","Providence Church"];
+var REM_DISTRICTS=["North District","South District","East District","West District","Central District"];
+function remRnd(seed){var x=Math.sin(seed*12.9898)*43758.5453;return x-Math.floor(x);}
+function remChurchesFor(w,seq){
+  var fund=remData(w).filter(function(a){return String(a.seq)===String(seq);})[0];if(!fund)return [];
+  var py=remPctYear(remThru(w)),per=fund.annual/REM_CHURCH_NAMES.length;
+  return REM_CHURCH_NAMES.map(function(nm,i){
+    var s=fund.seq*101+i;
+    var pledged=Math.max(100,Math.round(per*(0.55+remRnd(s)*1.1)/50)*50);
+    var remitted=Math.min(pledged,Math.round(pledged*Math.min(1,remRnd(s+3.7)*1.25)/50)*50);
+    var out=Math.max(0,pledged-remitted),pct=pledged>0?remitted/pledged:null;
+    var st=pledged<=0?"none":(out<=0?"full":(pct>=py?"ontrack":"behind"));
+    return {name:nm,district:REM_DISTRICTS[i%5],pledged:pledged,remitted:remitted,outstanding:out,pctPaid:pct,gap:(pct==null?0:pct-py),status:st,pctYear:py};
+  });
+}
 
 /* ---- controls ------------------------------------------------ */
 /* Receipts-through chip: shell .filter-chip[data-action] gives it the
