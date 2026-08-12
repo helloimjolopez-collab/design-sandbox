@@ -3186,7 +3186,7 @@ function remRow(w,r,full){
       '<span class="rem-cell rem-num">'+money(r.paid)+'</span>'+
       '<span class="rem-cell rem-num">'+money(r.outstanding)+'</span>'
     : '';
-  return '<div class="rem-row'+(full?" full":"")+'" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
+  return '<div class="rem-row'+(full?" full":"")+'" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open the member churches behind this fund.")+'" data-rempop="'+remRowPop(r)+'">'+
     head+mid+
     '<span class="rem-cell rem-pct">'+pctTxt+'</span>'+
     '<span class="rem-cell rem-stat">'+remStatusChip(r)+'</span>'+
@@ -3203,7 +3203,7 @@ function remHead(w,full){
       '<span class="rem-cell rem-num">Paid</span>'+
       '<span class="rem-cell rem-num">Outstanding</span>'
     : '';
-  return '<div class="rem-row rem-head'+(full?" full":"")+'"><span class="rem-cell rem-name">'+sb("name","Activity")+'</span>'+mid+
+  return '<div class="rem-row rem-head'+(full?" full":"")+'"><span class="rem-cell rem-name">'+sb("name","Fund")+'</span>'+mid+
     '<span class="rem-cell rem-pct">'+sb("paid","% Paid")+'</span>'+
     '<span class="rem-cell rem-stat">'+sb("status","Pacing","Sort the activities that are furthest behind pace to the top.")+'</span></div>';}
 
@@ -3227,7 +3227,7 @@ function remTable(w,full){
       '<span class="rem-cell rem-num">'+money(t.paid)+'</span>'+
       '<span class="rem-cell rem-num">'+money(t.out)+'</span>'
     : '';
-  var totLead=full?'Total ('+t.count+' activit'+(t.count===1?"y":"ies")+')':money(t.paid)+' of '+money(t.annual)+' paid';
+  var totLead=full?'Total ('+t.count+' fund'+(t.count===1?"":"s")+')':money(t.paid)+' of '+money(t.annual)+' paid';
   var tot='<div class="rem-row rem-total'+(full?" full":"")+'"><span class="rem-cell rem-name rem-total-lead">'+totLead+'</span>'+totMid+
     '<span class="rem-cell rem-pct"><span class="rem-pct-v">'+totPct+'</span></span>'+
     '<span class="rem-cell rem-stat">'+remPaceBadge(t)+'</span></div>';
@@ -3279,7 +3279,7 @@ function remProgress(w){
     var flagIcon=st==="behind"?"error":(st==="none"?"do_not_disturb_on":"check_circle");
     var flagTip=st==="behind"?"Behind pace":(st==="none"?"No pledge set":(r.status==="full"?"Paid in full":"On track"));
     var pct=(r.pctPaid==null?"n/a":remPct(r.pctPaid));
-    return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" "+flagTip+". Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
+    return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" "+flagTip+". Open the member churches behind this fund.")+'" data-rempop="'+remRowPop(r)+'">'+
       '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span><span class="ar-barlbl-sub">'+money(r.paid)+' of '+money(r.annual)+'</span></div>'+
       '<div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,fill).toFixed(1)+'%"></div>'+gap+marker+'</div>'+
       '<div class="rem-barval"><span class="rem-pct">'+pct+'</span><span class="rem-flag rem-flag-'+st+'" data-tip="'+remEsc(flagTip)+'" data-tip-plain aria-hidden="true">'+ICON(flagIcon)+'</span></div>'+
@@ -3293,7 +3293,7 @@ function remContent(w){
   if(w.size==="kpi")return remGlance(w);
   if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
   var mh=remHeaderBlock(w);
-  if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by activity</div>'+remTable(w,true)+'</div></div>';
+  if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by fund</div>'+remTable(w,true)+'</div></div>';
   return mh+'<div class="rem-body">'+((w.remView||"progress")==="table"?remTable(w,true):remProgress(w))+'</div>';
 }
 
@@ -3634,7 +3634,7 @@ function remFRow(w,r){
   var band=remFBand(r);
   var sub=(r.total<=0)?(money(r.paid)+' received, no pledge set'):(money(r.paid)+' paid of '+money(r.total));
   var pctTxt=r.pctPaid==null?'<span class="remF-nopct">n/a</span>':'<span class="remF-pct-v remF-'+band+'">'+remFPct(r.pctPaid)+'</span>';
-  return '<div class="remF-row" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open payment history.")+'">'+
+  return '<div class="remF-row" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
     '<div class="remF-cell remF-name"><span class="remF-name-nm">'+r.name+'</span><span class="remF-name-sub">'+sub+'</span></div>'+
     '<span class="remF-cell remF-num">'+money(r.total)+'</span>'+
     '<span class="remF-cell remF-num">'+money(r.expected)+'</span>'+
@@ -3667,7 +3667,7 @@ function remFBars(w){
   var rows=remFRows(w);
   var body=rows.map(function(r){
     var band=remFBand(r),pctTxt=r.pctPaid==null?'n/a':remFPct(r.pctPaid);
-    return '<div class="remF-barrow" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open payment history.")+'">'+
+    return '<div class="remF-barrow" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
       '<div class="remF-barrow-top"><span class="remF-barrow-nm">'+r.name+'</span><span class="remF-barrow-pct remF-'+band+'">'+pctTxt+'</span></div>'+
       remFBar(r,false)+
       '<div class="remF-barrow-cap"><span class="remF-vals">'+money(r.paid)+' paid &middot; '+money(r.expected)+' expected by now</span>'+remFStatusChip(r)+'</div>'+
