@@ -1669,10 +1669,10 @@
 /* accessible status pills: colour + icon + text */
 .rem-st{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px 2px 7px;line-height:1.5;font-variant-numeric:tabular-nums;}
 .rem-st .material-symbols-rounded{font-size:15px;}
-.rem-st-ok{background:#e7f4ea;color:#1e7d32;}
-.rem-st-ok .material-symbols-rounded{color:#1e7d32;}
-.rem-st-behind{background:#fbebd2;color:#8a4e07;}
-.rem-st-behind .material-symbols-rounded{color:#cf7a09;}
+.rem-st-ok{background:#daf5ea;color:#0b6b4c;}
+.rem-st-ok .material-symbols-rounded{color:#0b6b4c;}
+.rem-st-behind{background:#fdeeba;color:#6f5200;}
+.rem-st-behind .material-symbols-rounded{color:#6f5200;}
 .rem-st-none{background:var(--wn-200);color:var(--txt-secondary);}
 .rem-quiet{font-size:12px;color:var(--txt-subtle);margin-top:2px;font-variant-numeric:tabular-nums;}
 /* member-church drill table */
@@ -3294,12 +3294,12 @@ function remProgress(w){
     var st=r.status==="behind"?"behind":(r.status==="none"?"none":"ok");
     var gap=(r.pctPaid!=null&&mark>fill)?'<span class="rem-bargap" style="left:'+Math.min(100,fill).toFixed(1)+'%;width:'+(mark-fill).toFixed(1)+'%"></span>':'';
     var marker=(r.pctPaid!=null)?'<span class="rem-barmark" style="left:'+mark.toFixed(1)+'%"></span>':'';
-    var flagIcon=st==="behind"?"priority_high":(st==="none"?"remove":"check");
+    var flagIcon=st==="behind"?"error":(st==="none"?"remove":"check_circle");
     var flagTip=st==="behind"?"Behind pace":(st==="none"?"No pledge set":(r.status==="full"?"Paid in full":"On track"));
     var pct=(r.pctPaid==null?"n/a":remPct(r.pctPaid));
     return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" "+flagTip+". Open the member churches behind this fund.")+'" data-rempop="'+remRowPop(r)+'">'+
       '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span><span class="ar-barlbl-sub">'+money(r.paid)+' of '+money(r.annual)+'</span></div>'+
-      '<div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,fill).toFixed(1)+'%"></div>'+gap+marker+'</div>'+
+      '<div class="rem-bwrap"><div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,fill).toFixed(1)+'%"></div>'+gap+'</div>'+marker+'</div>'+
       '<div class="rem-barval"><span class="rem-pct">'+pct+'</span><span class="rem-flag rem-flag-'+st+'" data-tip="'+remEsc(flagTip)+'" data-tip-plain aria-hidden="true">'+ICON(flagIcon)+'</span></div>'+
       '<span class="sr-only">'+remRowSr(r)+' '+flagTip+'.</span>'+
     '</div>';
