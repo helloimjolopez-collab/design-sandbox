@@ -3205,8 +3205,7 @@ function remRow(w,r,full){
     : '';
   return '<div class="rem-row'+(full?" full":"")+'" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open the member churches behind this fund.")+'" data-rempop="'+remRowPop(r)+'">'+
     head+mid+
-    '<span class="rem-cell rem-pct">'+pctTxt+'</span>'+
-    '<span class="rem-cell rem-stat">'+remStatusChip(r)+'</span>'+
+    '<span class="rem-cell rem-pct">'+pctTxt+'<span class="rem-flag rem-flag-'+(r.status==="behind"?"behind":(r.status==="none"?"none":"ok"))+'" aria-hidden="true">'+ICON(r.status==="behind"?"error":(r.status==="none"?"remove":"check_circle"))+'</span></span>'+
     '<span class="sr-only">'+remRowSr(r)+'</span>'+
   '</div>';}
 
@@ -3221,8 +3220,7 @@ function remHead(w,full){
       '<span class="rem-cell rem-num">Outstanding</span>'
     : '';
   return '<div class="rem-row rem-head'+(full?" full":"")+'"><span class="rem-cell rem-name">'+sb("name","Fund")+'</span>'+mid+
-    '<span class="rem-cell rem-pct">'+sb("paid","% Paid")+'</span>'+
-    '<span class="rem-cell rem-stat">'+sb("status","Pacing","Sort the activities that are furthest behind pace to the top.")+'</span></div>';}
+    '<span class="rem-cell rem-pct">'+sb("paid","% Paid")+'</span></div>';}
 
 function remRows(w){
   var rows=remCompute(w),sk=(w.remSort||"seq").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
