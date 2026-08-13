@@ -3180,10 +3180,10 @@ function remBar(r){
 
 function remStatusChip(r){
   if(r.status==="none")return '<span class="rem-st rem-st-none" data-tip="No pledge amount is set for this activity, so there is nothing to pace against." data-tip-plain>No pledge</span>';
-  if(r.status==="full")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(r.name+" is fully paid for the year.")+'" data-tip-plain>'+ICON("task_alt")+'Paid in full</span>';
-  if(r.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(remPct(r.pctPaid)+" paid, at or ahead of the "+remPct(r.pctYear)+" of the year elapsed.")+'" data-tip-plain>'+ICON("check")+'On track</span>';
-  var gapPts=Math.round((r.pctYear-r.pctPaid)*100),behind=Math.max(0,r.expected-r.paid);
-  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc(remPct(r.pctPaid)+" paid against "+remPct(r.pctYear)+" of the year, about "+money(behind)+" ("+gapPts+" point"+(gapPts===1?"":"s")+") behind pace.")+'" data-tip-plain>'+ICON("priority_high")+'Behind</span>';}
+  if(r.status==="full")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(r.name+" is fully remitted for the year.")+'" data-tip-plain>'+ICON("check")+'Paid in full</span>';
+  if(r.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="Remitted at or ahead of where this fund should be by now." data-tip-plain>'+ICON("check")+'On track</span>';
+  var behind=Math.max(0,r.expected-r.paid);
+  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc("About "+money(behind)+" behind where this fund should be by now.")+'" data-tip-plain>'+ICON("priority_high")+'Behind</span>';}
 
 /* One data string for the hover card, kept off the visible text. */
 function remRowPop(r){return remEsc([r.name,r.annual,r.expected,r.paid,r.outstanding,(r.pctPaid==null?-1:Math.round(r.pctPaid*100)),Math.round(r.pctYear*100),r.status].join("|"));}
@@ -3291,7 +3291,7 @@ function remProgress(w){
     var st=r.status==="behind"?"behind":(r.status==="none"?"none":"ok");
     var gap=(r.pctPaid!=null&&mark>fill)?'<span class="rem-bargap" style="left:'+Math.min(100,fill).toFixed(1)+'%;width:'+(mark-fill).toFixed(1)+'%"></span>':'';
     var marker=(r.pctPaid!=null)?'<span class="rem-barmark" style="left:'+mark.toFixed(1)+'%"></span>':'';
-    var flagIcon=st==="behind"?"error":(st==="none"?"do_not_disturb_on":"check_circle");
+    var flagIcon=st==="behind"?"priority_high":(st==="none"?"remove":"check");
     var flagTip=st==="behind"?"Behind pace":(st==="none"?"No pledge set":(r.status==="full"?"Paid in full":"On track"));
     var pct=(r.pctPaid==null?"n/a":remPct(r.pctPaid));
     return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" "+flagTip+". Open the member churches behind this fund.")+'" data-rempop="'+remRowPop(r)+'">'+
