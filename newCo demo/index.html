@@ -383,7 +383,7 @@
     background: var(--primitive-color-warm-300);
     border-radius: 8px;
   }
-  /* Collab "thinking": three little rounded bars (echoing the NewCo logo
+  /* Collab "thinking": three little rounded bars (echoing the Spired logo
      pieces) that rise in sequence, the brand's ascent motion in miniature. */
   .spd-thinkbars { display: inline-flex; align-items: flex-end; gap: 4px; height: 16px; }
   .spd-thinkbars i {
@@ -543,7 +543,7 @@
   .spd-shell:has(.spd-mrail:not(.is-collapsed)) .spd-topnav { padding-left: 14px; }
   /* Left cluster aligns over the side-nav column: logo + tight waffle/label. */
   .spd-topnav__lead { display: flex; align-items: center; gap: 3px; min-width: 0; }
-  /* Home: mark + "newco" wordmark tight, so they read as the one NewCo logo. */
+  /* Home: mark + "spired" wordmark tight, so they read as the one Spired logo. */
   .spd-topnav__lead--brand { gap: 4px; }
   .spd-topnav__org {
     display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
@@ -1160,7 +1160,7 @@
       --semantic-layout-units-contextual-page-padding-bottom: 40px;
     }
     /* Tight bar: the org switcher folds away (still reachable in-app), so the
-       NewCo wordmark and the essential globals (notifications, account) breathe. */
+       Spired wordmark and the essential globals (notifications, account) breathe. */
     .spd-topnav__org { display: none; }
   }
 
@@ -1556,8 +1556,8 @@ const { useState, useEffect, useRef } = React;
 
 /* ═══ Brand primitives (SVG mark + ascension device, from the guidelines) ═══ */
 
-/* ═══ The ACTUAL NewCo logo, geometry lifted verbatim from
-   NewCo_Logo_FC.svg. Mark = 3 paths (bottom #41377D, middle #6E64BE,
+/* ═══ The ACTUAL Spired logo, geometry lifted verbatim from
+   Spired_Logo_FC.svg. Mark = 3 paths (bottom #41377D, middle #6E64BE,
    top #9691F5); wordmark = 7 letter paths (#19143C light / #FFF midnight,
    via --spd-logo-word). ═══ */
 
@@ -1581,7 +1581,7 @@ const MONO_OPS = [1, 0.7, 0.45];
 
 /* `solid` = a flat single-colour mark (all bars full opacity), used on dark
    tiles where the tiered white opacities would look muddy. */
-function NewCoMark({ size = 22, withWordmark = false, mono, solid = false }) {
+function SpiredMark({ size = 22, withWordmark = false, mono, solid = false }) {
   const w = withWordmark ? size * (705.2 / 189.9) : size * (135.3 / 121.2);
   return (
     <svg width={w} height={size} viewBox={withWordmark ? LOGO_VB : MARK_VB} fill="none" aria-hidden="true" style={{ display: "block" }}>
@@ -1625,7 +1625,7 @@ function AscensionField({ colors, opacity = 1 }) {
    through it (bottom-left → top-right, the brand's ascension) over a gentle
    breath. Full colour = page-level loads; `mono` (grayscale) inside widgets,
    cards, modals, and on-fill. */
-function NewCoLoader({ label, size = 56, mono, gap = 12 }) {
+function SpiredLoader({ label, size = 56, mono, gap = 12 }) {
   const w = size * (135.3 / 121.2);
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: gap }}>
@@ -1690,7 +1690,7 @@ function PressableMark({ size = 28, withWordmark = false, pad = 10, onClick, tit
   return (
     <button className="spd-pressmark" aria-label={title || "NewCo"} title={title} style={{ padding: pad }} onClick={onClick}>
       <span className="spd-pressmark__mark">
-        <NewCoMark size={size} withWordmark={withWordmark} />
+        <SpiredMark size={size} withWordmark={withWordmark} />
       </span>
     </button>
   );
@@ -1803,7 +1803,7 @@ const MODULES = [
   { id: "concept", name: "Design Concept", short: "Concept", icon: "palette", demo: true,
     color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)", nav: [
       { id: "motion", label: "Motion", icon: "animation" },
-      { id: "newcologo", label: "NewCo Logo Animation", icon: "auto_awesome_motion" },
+      { id: "spiredlogo", label: "Spired Logo Animation", icon: "auto_awesome_motion" },
       { id: "aimark", label: "AI Assistant Logo", icon: "blur_on" },
       { id: "loading", label: "Loading States", icon: "sync" },
       { id: "errors", label: "Error States", icon: "error" },
@@ -1999,7 +1999,7 @@ const moduleBadgeFill = (id) => (id === "home"
 
 /* The module badge + name in the top bar. This is NOT the switcher anymore,    it's a one-click shortcut back to the CURRENT module's home (its dashboard /
    first section) for when you've navigated deep inside it. Switching modules
-   happens at the NewCo logo (popover) or the pinned rail. */
+   happens at the Spired logo (popover) or the pinned rail. */
 function ModuleBadge({ moduleId }) {
   const mod = MODULE_MAP[moduleId];
   // On NewCo Home the identity IS the NewCo brand, show the "NewCo" wordmark
@@ -2016,7 +2016,7 @@ function ModuleBadge({ moduleId }) {
   }
   return (
     /* NON-clickable "you are here" label. No background tile, just the module
-       glyph in its high-contrast ink, sized close to the NewCo logo. */
+       glyph in its high-contrast ink, sized close to the Spired logo. */
     <div className="spd-tms__current" aria-label={"Current module: " + mod.name}>
       <span className="spd-tms__badge">
         <Icon name={mod.icon} filled size={24} style={{ color: moduleInkDeep(mod.id) }} />
@@ -2026,7 +2026,7 @@ function ModuleBadge({ moduleId }) {
   );
 }
 
-/* Module switcher as a POPOVER, opened from the NewCo logo when the switcher
+/* Module switcher as a POPOVER, opened from the Spired logo when the switcher
    isn't pinned. Lists every module; picking one switches. A Pin control docks
    it to the persistent left rail (see ModuleRail) for one-click access. */
 function SwitcherPopover({ moduleId, pinned, onSwitch, onPin, onUnpin, onClose, onMouseEnter, onMouseLeave }) {
@@ -2473,9 +2473,9 @@ function TopNav({ mode, onToggleMode, onLogoClick, onLogoEnter, onLogoLeave, log
   const isHome = moduleId === "home";
   return (
     <header className="spd-topnav" role="banner">
-      {/* Left cluster: the NewCo logo opens the module switcher (hover or click).
-          On Home the mark + "newco" wordmark sit tight (no divider) so they read
-          as the ONE NewCo logo; on other modules a divider separates the mark
+      {/* Left cluster: the Spired logo opens the module switcher (hover or click).
+          On Home the mark + "spired" wordmark sit tight (no divider) so they read
+          as the ONE Spired logo; on other modules a divider separates the mark
           (switcher) from the module glyph + name. */}
       <div className={"spd-topnav__lead" + (isHome ? " spd-topnav__lead--brand" : "")}>
         <button className={"spd-topnav__logo" + (logoActive ? " is-active" : "")} data-sw-logo
@@ -2672,7 +2672,7 @@ function HomePage() {
         <Widget title="Usage" span={5} refreshing={loading.usage} onRefresh={() => refresh("usage")}>
           {loading.usage ? (
             <div style={{ flex: 1, minHeight: 208, display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
-              <NewCoLoader size={38} mono="var(--primitive-color-neutral-300)" label="Loading usage…" />
+              <SpiredLoader size={38} mono="var(--primitive-color-neutral-300)" label="Loading usage…" />
             </div>
           ) : (
             <React.Fragment>
@@ -2682,7 +2682,7 @@ function HomePage() {
               </button>
             </div>
             <div className="spd-fade-in" style={{ flex: 1, minHeight: 150, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 32 }}>
-              <NewCoMark size={26} mono="var(--semantic-color-light-mode-stroke-action-secondary-inverse-base)" />
+              <SpiredMark size={26} mono="var(--semantic-color-light-mode-stroke-action-secondary-inverse-base)" />
               <p style={{ fontSize: 13, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>No usage data available.</p>
             </div>
             </React.Fragment>
@@ -2941,8 +2941,8 @@ function DoDont({ type, points }) {
   );
 }
 
-/* Dedicated tab: every NewCo-logo animation in one place. */
-function NewCoLogoPage() {
+/* Dedicated tab: every Spired-logo animation in one place. */
+function SpiredLogoPage() {
   const [run, setRun] = useState(0);
   const stage = { display: "flex", alignItems: "center", justifyContent: "center", gap: 44, flexWrap: "wrap", padding: "34px 24px" };
   const cap = { fontSize: 11.5, fontWeight: 500, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", marginTop: 10, textAlign: "center" };
@@ -2950,8 +2950,8 @@ function NewCoLogoPage() {
   return (
     <div className="spd-page">
       <div className="spd-page__inner" style={{ maxWidth: 980 }}>
-        <ConceptHeader gradient tone="motion" title="NewCo Logo Animation"
-          lead="Every way the NewCo mark moves: the boot assembly on app load, the loading marks it becomes, and the hover replay of its ascent."
+        <ConceptHeader gradient tone="motion" title="Spired Logo Animation"
+          lead="Every way the Spired mark moves: the boot assembly on app load, the loading marks it becomes, and the hover replay of its ascent."
           action={<button className="spd-btn spd-btn--onhero" onClick={() => setRun((r) => r + 1)}><Icon name="replay" size={17} /> Replay</button>} />
 
         <ShowcaseLabel>Boot, the mark assembles on app load</ShowcaseLabel>
@@ -2959,14 +2959,14 @@ function NewCoLogoPage() {
 
         <ShowcaseLabel>Loading marks, the logo at work</ShowcaseLabel>
         <div className="spd-card" style={stage}>
-          {cell("Full colour", <NewCoLoader size={48} />)}
-          {cell("Grayscale (in-container)", <NewCoLoader size={40} mono="var(--primitive-color-neutral-300)" />)}
+          {cell("Full colour", <SpiredLoader size={48} />)}
+          {cell("Grayscale (in-container)", <SpiredLoader size={40} mono="var(--primitive-color-neutral-300)" />)}
           {cell("Ring (buttons)", <RingLoader size={30} />)}
         </div>
 
         <ShowcaseLabel>Mark, hover to replay the ascent</ShowcaseLabel>
         <div className="spd-card" style={stage}>
-          <button className="spd-topnav__logo" style={{ width: 64, height: 64 }} aria-label="NewCo mark">
+          <button className="spd-topnav__logo" style={{ width: 64, height: 64 }} aria-label="Spired mark">
             <span className="spd-topnav__logo-mark"><LogoMark size={40} /></span>
           </button>
         </div>
@@ -3313,9 +3313,9 @@ function CtxFullChat() {
     </CtxFrame>
   );
 }
-/* Thinking: the little bars rise (NewCo-piece motion); the phrase can vary. */
+/* Thinking: the little bars rise (Spired-piece motion); the phrase can vary. */
 function CollabThinking() {
-  const phrases = ["Collab is thinking", "Getting ’newco", "Working on it"];
+  const phrases = ["Collab is thinking", "Getting ’spired", "Working on it"];
   const [i, setI] = useState(0);
   useEffect(() => { const id = setInterval(() => setI((x) => (x + 1) % 3), 2200); return () => clearInterval(id); }, []);
   return (
@@ -3330,7 +3330,7 @@ function CtxWorking() {
   const g = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 18, alignItems: "start" };
   return (
     <div style={g}>
-      <CtxFrame label="Thinking: three little bars rise like the NewCo logo pieces; the phrase can vary (“Collab is thinking”, “Getting ’newco”).">
+      <CtxFrame label="Thinking: three little bars rise like the Spired logo pieces; the phrase can vary (“Collab is thinking”, “Getting ’spired”).">
         <CollabThinking />
       </CtxFrame>
       <CtxFrame label="Working: the mono / two-tone mark spins as a gentle loader.">
@@ -3373,7 +3373,7 @@ function CollabContexts() {
       <CtxGroup title="Conversation">
         <div style={g2}><CtxSidePanel /><CtxFullChat /></div>
       </CtxGroup>
-      <CtxGroup title="Working states" hint="When Collab is busy, the phrase can lean into the brand (“getting ’newco”), and the mark either spins or the little bars rise.">
+      <CtxGroup title="Working states" hint="When Collab is busy, the phrase can lean into the brand (“getting ’spired”), and the mark either spins or the little bars rise.">
         <CtxWorking />
       </CtxGroup>
     </div>
@@ -3507,7 +3507,7 @@ function LoadingStatesPage() {
 
         <ShowcaseLabel>The rule, scale decides the loader</ShowcaseLabel>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 16 }}>
-          <PrincipleCard icon="fullscreen" title="Page / big feature → full-colour mark" body="Fetching a whole page or major feature earns the full-colour NewCo mark rising bottom-to-top. It's the boot screen and route-level loads only." />
+          <PrincipleCard icon="fullscreen" title="Page / big feature → full-colour mark" body="Fetching a whole page or major feature earns the full-colour Spired mark rising bottom-to-top. It's the boot screen and route-level loads only." />
           <PrincipleCard icon="widgets" title="Widget / card / modal → grayscale mark" body="Inside a container the same mark loads in grayscale, so colour stays meaningful and the wait feels quiet." />
           <PrincipleCard icon="smart_button" title="Button / tight spot → ring" body="Inline actions use the ring, the mark's DNA (long, medium, short pills) turning, or a gradient-shimmer fill for longer waits." />
         </div>
@@ -3515,11 +3515,11 @@ function LoadingStatesPage() {
         <ShowcaseLabel>Page-level vs. in-container</ShowcaseLabel>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           <div className="spd-card" style={{ flex: 1, minWidth: 240, minHeight: 180, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
-            <NewCoLoader size={46} label="Loading NewCo…" />
+            <SpiredLoader size={46} label="Loading NewCo…" />
             <span className="spd-pill" style={{ background: "var(--spd-badge-role-bg)", color: "var(--spd-badge-role-fg)", border: "0.5px solid var(--spd-badge-role-stroke)" }}>Page level · full colour</span>
           </div>
           <div className="spd-card" style={{ flex: 1, minWidth: 240, minHeight: 180, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
-            <NewCoLoader size={34} mono="var(--primitive-color-neutral-300)" />
+            <SpiredLoader size={34} mono="var(--primitive-color-neutral-300)" />
             <span className="spd-pill" style={{ background: "var(--spd-badge-role-bg)", color: "var(--spd-badge-role-fg)", border: "0.5px solid var(--spd-badge-role-stroke)" }}>In container · grayscale</span>
           </div>
         </div>
@@ -3529,7 +3529,7 @@ function LoadingStatesPage() {
           <Widget title="Live widget" span={6} refreshing={cardLoading}>
             {cardLoading ? (
               <div style={{ flex: 1, minHeight: 190, display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
-                <NewCoLoader size={34} mono="var(--primitive-color-neutral-300)" label="Gathering the latest…" />
+                <SpiredLoader size={34} mono="var(--primitive-color-neutral-300)" label="Gathering the latest…" />
               </div>
             ) : (
               <div className="spd-fade-in" style={{ flex: 1, minHeight: 190, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: 32 }}>
@@ -3566,7 +3566,7 @@ function LoadingStatesPage() {
             <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)" }}>The fill breathes light, a gradient shimmer for longer waits.</p>
           </div>
           <div className="spd-card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, flex: 1, minWidth: 230 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}><RingLoader size={22} /><NewCoLoader size={26} mono="var(--primitive-color-neutral-300)" /></div>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}><RingLoader size={22} /><SpiredLoader size={26} mono="var(--primitive-color-neutral-300)" /></div>
             <p style={{ fontSize: 11.5, color: "var(--semantic-color-light-mode-text-static-tertiary-base)", textAlign: "center" }}>Ring for tight spots; grayscale mark for empty states.</p>
           </div>
         </div>
@@ -4261,7 +4261,7 @@ function ModulePlaceholder({ mod, item }) {
 /* ═══ App shell ═══ */
 
 const CONCEPT_PAGES = {
-  motion: MotionPage, newcologo: NewCoLogoPage, aimark: AiMarkPage,
+  motion: MotionPage, spiredlogo: SpiredLogoPage, aimark: AiMarkPage,
   loading: LoadingStatesPage, errors: ErrorStatesPage,
   validation: ValidationStatesPage, states: ComponentStatesPage,
   feedback: SystemFeedbackPage, ia: InfoArchitecturePage,
@@ -4279,7 +4279,7 @@ function App() {
   const [switching, setSwitching] = useState(false);   // brief loader while moving to another module
   const hoverTimer = useRef(null);                     // hover-intent open/close timer for the switcher
 
-  // The NewCo logo always opens the module-switcher popover (the drawer on
+  // The Spired logo always opens the module-switcher popover (the drawer on
   // mobile). The popover is also where you pin the switcher to a rail, and,
   // when already pinned, where you unpin it back to a popover.
   const onLogoClick = () => {
@@ -4373,7 +4373,7 @@ function App() {
               never reloads content */}
           <div key={moduleId + ":" + item + ":" + (switching ? "load" : "page")} className="spd-fade-in" style={{ position: "absolute", inset: 0, display: "flex", overflow: "hidden" }}>
             {switching
-              ? <div className="spd-modload"><NewCoLoader size={30} gap={18} label={"Opening " + mod.name + "…"} /></div>
+              ? <div className="spd-modload"><SpiredLoader size={30} gap={18} label={"Opening " + mod.name + "…"} /></div>
               : renderPage()}
           </div>
         </main>
