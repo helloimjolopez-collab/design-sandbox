@@ -3115,7 +3115,7 @@ var REM_ACTIVITIES_SINGLE=[
 
 // ===== RENDER ===================================================
 function remEsc(s){return String(s).replace(/"/g,"&quot;");}
-function remData(w){if(w.state==="empty")return [];if(w.dataset==="ontrack")return REM_ACTIVITIES_ONTRACK;if(w.dataset==="single")return REM_ACTIVITIES_SINGLE;return REM_ACTIVITIES;}
+function remData(w){if(w.state==="empty")return [];if(w.dataset==="ontrack")return REM_ACTIVITIES_ONTRACK;if(w.dataset==="single")return REM_ACTIVITIES_SINGLE;if(w.dataset==="newyear")return REM_ACTIVITIES.map(function(a){return Object.assign({},a,{start:"2026-03-01"});});return REM_ACTIVITIES;}
 /* ---- date + pacing maths (calendar year) --------------------- */
 function remParse(iso){var p=String(iso).split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
 function remISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -3388,6 +3388,7 @@ function remDetailModalHTML(){
 {id:"rem3",title:"Remittance Pledges (all pledges paid)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],dataset:"ontrack",remSort:"seq",updated:"just now"},
 {id:"rem4",title:"Remittance Pledges (one activity, behind)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",remSort:"seq",updated:"just now"},
 {id:"rem5",title:"Remittance Pledges (no pledges set up)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",updated:"just now"},
+{id:"rem6",title:"Remittance Pledges (date before pledges begin)",kind:"remittance",size:"wide",tiers:["kpi","wide","xwide"],dataset:"newyear",remThru:"2026-01-15",remSort:"seq",updated:"just now"},
 */
 
 // ===== HANDLERS =================================================
