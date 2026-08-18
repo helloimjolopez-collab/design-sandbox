@@ -5970,7 +5970,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function mctResults(w){var res=mctSearchList(w),q=(w.mctQ||"").trim();if(!res.length)return '<div class="mct-sec"><div class="mct-noresult">No tasks match "'+q.replace(/"/g,"&quot;")+'". Try another word, like "check" or "deposit".</div></div>';return '<div class="mct-sec"><div class="mct-sec-h">'+res.length+' result'+(res.length>1?"s":"")+' across all applications</div><div class="mct-list">'+res.map(function(r){return mctRow(w,r.t,true);}).join("")+'</div></div>';}
   function mctEmpty(w){var ctx=mctCtx(w);var sub=(ctx==="home")?"You do not have access to any tasks yet. Tasks appear here once your role has permission to use them.":("There are no main content tasks for "+mctCtxName(w)+" yet.");return '<div class="state" data-kind="empty">'+ICON("apps")+'<div class="state-title">No tasks available</div><div class="state-sub">'+sub+'</div></div>';}
   function mctGlance(w){var q=(w.mctQ||"").trim(),body;if(q){var res=mctSearchList(w);body=res.length?('<div class="mct-irow">'+res.slice(0,8).map(function(r){return mctItile(w,r.t);}).join("")+'</div>'):'<div class="mct-glance-empty">No matches</div>';}else{var list=mctRecentTasks(w);body=list.length?('<div class="mct-irow">'+list.map(function(t){return mctItile(w,t);}).join("")+'</div>'):'<div class="mct-glance-empty">No recently used tasks yet</div>';}return '<div class="mct-glance">'+mctSearch(w)+body+'</div>';}
-  function mctContent(w){var ctxTasks=mctCtxTasks(w);if(w.state==="empty"||!ctxTasks.length)return mctEmpty(w);if(w.size==="kpi")return mctGlance(w);var q=(w.mctQ||"").trim();var out='<div class="mct-scroll">'+mctSearch(w)+(mctCtx(w)==="home"?('<div class="mct-filterrow">'+mctFilterChip(w)+'</div>'):"");if(q)out+=mctResults(w);else out+=mctRecentSection(w)+mctMySection(w)+mctStandardSection(w);out+='</div>';return out;}
+  function mctContent(w){if(w.size==="kpi")return mctGlance(w);var q=(w.mctQ||"").trim();var out='<div class="mct-scroll">'+mctSearch(w)+(mctCtx(w)==="home"?('<div class="mct-filterrow">'+mctFilterChip(w)+'</div>'):"");if(q)out+=mctResults(w);else out+=mctRecentSection(w)+mctMySection(w)+mctStandardSection(w);out+='</div>';return out;}
 
   /* === MY STATUS (mys) render === */
 function mysConfigBtn(w){return '<button class="btn naked sm mys-cfg-btn" data-action="mys-config" data-id="'+w.id+'" aria-haspopup="dialog">'+ICON("checklist")+'Configure</button>';}
@@ -6272,7 +6272,7 @@ function purTable(w,full){
 }
 function purCaughtUp(w){var s=w.pstatus||"mine",pos=(s==="mine"||s==="next");
   var phrase=s==="approved"?"No approved orders match this filter yet.":s==="unapproved"?"No unapproved requests match this filter.":"Nothing is awaiting your approval right now.";
-  return '<div class="state" data-kind="empty"'+(pos?' data-tone="pos"':'')+'>'+ICON(pos?"task_alt":"inbox")+'<div class="state-title">'+(pos?"You are all caught up":"Nothing to show")+'</div><div class="state-sub">'+phrase+'</div></div>';}
+  return '<div class="state" data-kind="empty">'+ICON(pos?"task_alt":"inbox")+'<div class="state-title">'+(pos?"You are all caught up":"Nothing to show")+'</div><div class="state-sub">'+phrase+'</div></div>';}
 function purQueueView(w){return purFiltered(w).length?purTable(w,false):purCaughtUp(w);}
 function purEnc(w){
   var data=purEncData(w);
