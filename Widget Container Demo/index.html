@@ -7830,6 +7830,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.kind==="remittance")return remContent(w);
     if(w.kind==="gifts")return gftContent(w);
     if(w.kind==="loans")return loanContent(w);
+    if(w.kind==="pension-mb")return penFContent(w); // MB variants dispatched BEFORE the generic empty fallback so each renders its own empty state, not the Deposits copy
+    if(w.kind==="payroll-mb")return prFContent(w);
+    if(w.kind==="remittance-mb")return remFContent(w);
+    if(w.kind==="receivables-mb")return arFContent(w);
+    if(w.kind==="insurance-mb")return insFContent(w);
     if(w.state==="empty"){var ec=EMPTY_COPY[w.kind]||EMPTY_COPY.deposits;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.showZero?'<div class="dep-total" style="margin-top:4px"><span>Total</span><span>'+money(0)+'</span></div>':'')+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';}
     if(w.kind==="mystatus")return mysContent(w);
     if(w.kind==="bank")return bankContent(w);
