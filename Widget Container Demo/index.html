@@ -2025,7 +2025,7 @@
 
 /* ===== Shared progress bar (Gifts, Remittance, any pacing) ===== */
 .pbar{position:relative;display:block;width:100%;padding:3px 0;}
-.pbar-track{position:relative;height:9px;border-radius:999px;background:var(--wn-200);overflow:hidden;}
+.pbar-track{position:relative;display:block;width:100%;height:9px;border-radius:999px;background:var(--wn-200);overflow:hidden;}
 .pbar-sm .pbar-track{height:6px;}
 .pbar-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:var(--am-500);}
 .pbar-gap{position:absolute;top:0;height:100%;background:var(--am-200);}
@@ -3331,7 +3331,7 @@ function remContent(w){
   return mh+'<div class="rem-body">'+((w.remView||"progress")==="table"?remTable(w,true):remProgress(w))+'</div>';
 }
 /* pledges active on/before the selected receipts-through date; funds without a start are always active (so existing data is unaffected) */
-function remActiveRows(w){var iso=remThru(w);return remData(w).filter(function(a){return !a.start||a.start<=iso;});}
+function remActiveRows(w){var iso=remThru(w),yStart=REM_TODAY.getFullYear()+"-01-01";if(iso<yStart)return [];return remData(w).filter(function(a){return !a.start||a.start<=iso;});}
 /* controls-only header for the filtered-empty case: keep the date + view controls, drop the KPI money and pace badge */
 function remControlsHeader(w){return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remThruChip(w)+'<div class="dep-hd-toggle">'+(w.size==="xwide"?"":remViewToggle(w))+'</div></div></div>';}
 function remThruEmpty(w){return '<div class="state" data-kind="empty">'+ICON("volunteer_activism")+'<div class="state-title">No pledges in this date range</div><div class="state-sub">No pledges were active on or before '+remFmtDate(remThru(w))+'. Move the receipts date forward to see them.</div></div>';}
