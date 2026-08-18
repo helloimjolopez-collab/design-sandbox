@@ -8610,8 +8610,8 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     var sk=(w.tsort||"net-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
     rows.sort(function(a,b){if(key==="name")return dir*a.name.localeCompare(b.name);if(key==="type")return dir*a.type.localeCompare(b.type);if(key==="trend")return dir*(trendPct(a)-trendPct(b));return dir*(a.net-b.net);});
     var tot=rows.reduce(function(s,a){return s+a.net;},0);
-    var PER=50,nRows=rows.length,pages=Math.max(1,Math.ceil(nRows/PER)),pg=Math.min(Math.max(1,w.tpage||1),pages);w.tpage=pg;
-    var startI=(pg-1)*PER,endI=Math.min(startI+PER,nRows),pageRows=rows.slice(startI,endI);
+    var PER=50,nRows=rows.length,shown=Math.min(Math.max(PER,w.tshown||PER),nRows);w.tshown=shown;
+    var pageRows=rows.slice(0,shown),remaining=nRows-shown;
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-depf="tsort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
     var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Name")+'</span><span class="dt-c dt-type">'+sb("type","Type")+'</span><span class="dt-c dt-tr">'+sb("trend","Trend")+'</span><span class="wt-c2">'+sb("net","Balance")+'</span></div>';
     var leaf=w.leaf;var body=pageRows.map(function(a){var tp=trendPct(a),tn=tp<0,esc=a.type.replace(/"/g,"&quot;"),aesc=a.name.replace(/"/g,"&quot;");
