@@ -4327,7 +4327,8 @@ function loanParse(iso){var p=String(iso).split("-");return new Date(+p[0],(+p[1
 function loanDaysSincePay(iso){if(!iso)return null;var t=loanParse(LOAN_TODAY);return Math.round((t-loanParse(iso))/86400000);}
 function loanIsDormant(x){var d=loanDaysSincePay(x.lastPay);return d!=null&&d>90;}
 
-function loanDataset(w){if(w.dataset==="current")return LOAN_LOANS_CURRENT;if(w.dataset==="single")return LOAN_LOANS_SINGLE;return LOAN_LOANS;}
+var LOAN_NOINDIV=LOAN_LOANS.filter(function(x){return x.type!=="Individual";});
+function loanDataset(w){if(w.dataset==="current")return LOAN_LOANS_CURRENT;if(w.dataset==="single")return LOAN_LOANS_SINGLE;if(w.dataset==="notype")return LOAN_NOINDIV;return LOAN_LOANS;}
 function loanFiltered(w){var ty=w.loanType||"All";return loanDataset(w).filter(function(x){return ty==="All"||x.type===ty;});}
 function loanBucketOf(days){for(var i=0;i<LOAN_BUCKETS.length;i++){if(days<=LOAN_BUCKETS[i].hi)return LOAN_BUCKETS[i].key;}return "b3";}
 function loanSevOf(days){for(var i=0;i<LOAN_BUCKETS.length;i++){if(days<=LOAN_BUCKETS[i].hi)return LOAN_BUCKETS[i].sev;}return 3;}
