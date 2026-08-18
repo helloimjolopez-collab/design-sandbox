@@ -7638,9 +7638,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.state==="empty")return insEmpty(w);
     if(w.size==="kpi")return insGlance(w);
     if(w.insloading)return insHeader(w,"loading")+insSkeleton();
+    if(!insFiltered(w).length)return insHeader(w)+'<div class="ins-body">'+insScopedEmpty(w)+'</div>';
     var table=(w.size==="xwide")?insGroupedTable(w):insFlatTable(w);
     return insHeader(w)+'<div class="ins-body">'+table+'</div>';
   }
+  function insScopedEmpty(w){var ty=w.insType||"All";if(ty==="All")return insEmpty(w);return '<div class="state" data-kind="empty">'+ICON("shield_person")+'<div class="state-title">No '+insEsc(ty)+' plans</div><div class="state-sub">There are no '+insEsc(ty.toLowerCase())+' plans set up right now. Pick another type above to see the rest.</div></div>';}
 
   /* ---- loading: only on a data-fetch (type change), never on sort ---- */
   function insLoad(w){w.insloading=true;clearTimeout(timers["ins-"+w.id]);timers["ins-"+w.id]=setTimeout(function(){w.insloading=false;render();},800);}
@@ -7702,7 +7704,8 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function insFMoney(n){return "$"+Number(n).toLocaleString();}
   function insFCost(p){return (p.enroll||0)*(p.rate||0);}
   function insFCostTotal(w){return insFFiltered(w).reduce(function(s,p){return s+insFCost(p);},0);}
-  function insFDataset(w){return (w.dataset==="none")?INSF_PLANS_EMPTY:INSF_PLANS;}
+  var INSF_NODENTAL=INSF_PLANS.filter(function(p){return p.type!=="Dental";});
+  function insFDataset(w){if(w.dataset==="none")return INSF_PLANS_EMPTY;if(w.dataset==="nodental")return INSF_NODENTAL;return INSF_PLANS;}
   function insFFiltered(w){var ty=w.insType||"All";return insFDataset(w).filter(function(p){return ty==="All"||p.type===ty;});}
   function insFTotal(w){return insFFiltered(w).reduce(function(s,p){return s+p.enroll;},0);}
   function insFPlanCount(w){return insFFiltered(w).length;}
