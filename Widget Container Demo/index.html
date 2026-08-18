@@ -8695,7 +8695,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     return '<div class="acctm">'+head+content+'</div>';}
   function depFOpenAcct(w,name,type,acctNo){var a=acctNo?DEPF_DEP.filter(function(x){return x.acct===acctNo;})[0]:DEPF_DEP.filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;var ctx={aname:a.name,atype:a.type,acctNo:a.acct,range:w.range||"Q",mview:"trend"};modal={t:a.name,glyph:"account_balance_wallet",depf:ctx,b:depFAcctModalBody(ctx)};modalMounted=false;depFClosePop();pop=null;render();}
   /* Owner change 3: chart click drills into scope, it does not expand. A type series sets the top-left scope to that type and flips the breakdown to By Account. */
-  function depFDrillType(w,typeName){if(!typeName)return;w.filter=typeName;w.acct=null;w.acctType=null;w.acctNo=null;w.bd="group";w.trIso=null;w.tpage=1;}
+  function depFDrillType(w,typeName){if(!typeName)return;w.filter=typeName;w.acct=null;w.acctType=null;w.acctNo=null;w.bd="group";w.trIso=null;w.tshown=50;}
   function depFPopContent(){var w=find(DEPF_POP.id);if(!w)return "";
     if(DEPF_POP.type==="rangemenu"){var r=w.range||"Q";return '<div class="cap">Compare to</div>'+[["W","Previous week"],["M","Previous month"],["P","Previous period"],["Q","Previous quarter"],["F","Previous fiscal year"],["Y","Previous calendar year"]].map(function(o){return '<button class="mi'+(r===o[0]?" check":"")+'" data-depf="range-set" data-id="'+w.id+'" data-r="'+o[0]+'">'+(r===o[0]?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");}
     var q=(DEPF_FQ||"").toLowerCase();
@@ -8727,7 +8727,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     var w=id?find(id):null;if(!w)return;
     if(a==="depfilter"){if(DEPF_POP&&DEPF_POP.type==="depfilter"&&document.getElementById("depfPop")){depFClosePop();}else{depFOpenPop(t,"depfilter",id);}return;}
     if(a==="rangemenu"){if(DEPF_POP&&DEPF_POP.type==="rangemenu"&&document.getElementById("depfPop")){depFClosePop();}else{depFOpenPop(t,"rangemenu",id);}return;}
-    if(a==="set-scope"){var mode=t.getAttribute("data-mode"),val=t.getAttribute("data-v");if(mode==="account"){w.acct=val;w.acctType=t.getAttribute("data-type");w.acctNo=t.getAttribute("data-acctno");}else{if(mode==="all")w.filter="All types";else if(mode==="type")w.filter=val;w.acct=null;w.acctType=null;w.acctNo=null;}w.trIso=null;w.bd="group";w.tpage=1;depFClosePop();render();return;}
+    if(a==="set-scope"){var mode=t.getAttribute("data-mode"),val=t.getAttribute("data-v");if(mode==="account"){w.acct=val;w.acctType=t.getAttribute("data-type");w.acctNo=t.getAttribute("data-acctno");}else{if(mode==="all")w.filter="All types";else if(mode==="type")w.filter=val;w.acct=null;w.acctType=null;w.acctNo=null;}w.trIso=null;w.bd="group";w.tshown=50;depFClosePop();render();return;}
     if(a==="range-set"){w.range=t.getAttribute("data-r");depFClosePop();render();return;}
     if(a==="pick-acct"){depFOpenAcct(w,t.getAttribute("data-v"),t.getAttribute("data-type"),t.getAttribute("data-acctno"));return;}
     if(a==="tr-iso"){if(t.getAttribute("data-kind")==="type"){depFDrillType(w,t.getAttribute("data-name"));render();}return;} /* account series: inert */
