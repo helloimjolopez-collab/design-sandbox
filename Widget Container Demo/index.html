@@ -7383,7 +7383,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var sel=apSel(w),rows=apRows(w);
     var sk=(w.apsort||"due-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ap-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
-    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="ap-c-inv">'+sb("inv","Invoice")+'</span><span class="ap-c-due">'+sb("due","Due date")+'</span><span class="wt-c2">'+sb("amt","Amount")+'</span></div>';
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="ap-c-inv">'+sb("inv","Invoice")+'</span><span class="ap-c-duedate">'+sb("due","Due date")+'</span><span class="ap-c-status">Status</span><span class="wt-c2">'+sb("amt","Amount")+'</span></div>';
     var body;
     if(sel==="total"){
       /* grouped: one subheader per non-empty aging band + its subtotal. Rows
@@ -7474,6 +7474,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(a==="ap-due"){apDueQuery="";pop=(pop&&pop.type==="ap-due"&&pop.id===id)?null:{type:"ap-due",id:id};render();return true;}
     if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due"),cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return true;}
     if(a==="ap-sort"){var was=find(id),k=t.getAttribute("data-k");if(was){var cs=(was.apsort||"due-asc").split("-");was.apsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="vendor"||k==="inv"||k==="due")?"asc":"desc"));}render();return true;}
+    if(a==="ap-open"){var _inv=t.getAttribute("data-inv"),_vn=t.getAttribute("data-vendor"),_du=t.getAttribute("data-due"),_am=t.getAttribute("data-amt"),_st=t.getAttribute("data-status");showModal("Invoice "+_inv,'<div class="pur-po-facts"><div class="pur-po-fact"><span class="pur-po-fact-k">Vendor</span><span class="pur-po-fact-v">'+_vn+'</span></div><div class="pur-po-fact"><span class="pur-po-fact-k">Invoice #</span><span class="pur-po-fact-v">'+_inv+'</span></div><div class="pur-po-fact"><span class="pur-po-fact-k">Due date</span><span class="pur-po-fact-v">'+_du+'</span></div><div class="pur-po-fact"><span class="pur-po-fact-k">Status</span><span class="pur-po-fact-v">'+_st+'</span></div><div class="pur-po-fact"><span class="pur-po-fact-k">Amount</span><span class="pur-po-fact-v">'+_am+'</span></div></div>');return true;}
     if(a==="ap-pick-date"){var wap=find(id);if(wap){var iso=t.getAttribute("data-iso"),cur=apSel(wap);if(iso!==cur){wap.apDue=iso;apLoad(wap);}}pop=null;render();return true;}
     return false;
   }
