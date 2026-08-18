@@ -1772,7 +1772,7 @@
 .gft-clickable:focus-visible{outline:2px solid var(--am-500);outline-offset:1px;}
 .gft-prow-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
 .gft-p-nm{font-size:13px;font-weight:600;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.gft-p-pct{font-size:13px;font-weight:600;color:var(--am-700);font-variant-numeric:tabular-nums;flex:0 0 auto;}
+.gft-p-pct{font-size:13px;font-weight:600;color:var(--txt-primary);font-variant-numeric:tabular-nums;flex:0 0 auto;}
 
 .gft-track{position:relative;height:14px;border-radius:7px;background:var(--wn-200);overflow:hidden;}
 .gft-track-sm{height:10px;border-radius:5px;margin-top:2px;}
@@ -4026,25 +4026,35 @@ function gftSkeleton(){var rows=[92,70,54,38].map(function(wd){return '<div clas
 /* One purpose , a thermometer toward its goal. Dark amethyst = received; light
    amethyst = expected by now but not yet received (the shortfall); a marker
    tick sits at "due by now". Values live in the DOM (foot line + sr-only). */
+/* One purpose = one row, mirroring the Remittance pacing row anatomy exactly
+   (label + received-of-pledged sub | chunky bar with received fill, expected gap
+   and a due-by-now marker | % fulfilled + one status flag). Status colours the
+   fill and the flag (saffron behind, emerald on track / ahead / funded). The
+   exact pledged / outstanding numbers live in the drill and the sr-only text, so
+   the row stays a clean glance. Tap opens the donors behind the purpose. */
 function gftBar(w,p,clickable){
   var thru=gftThru(w);
   var rPct=p.pledgeTotal>0?Math.min(100,p.received/p.pledgeTotal*100):0;
   var dPct=p.pledgeTotal>0?Math.min(100,p.due/p.pledgeTotal*100):0;
-  var srtxt=p.purpose+": "+money(p.received)+" received of "+money(p.pledgeTotal)+" pledged, "+gftPct(p.fulfilled)+" fulfilled, "+money(p.due)+" expected by "+gftFmtDate(thru)+".";
-  var pop=[p.purpose,p.pledgeTotal,p.received,p.due,(p.pledgeTotal-p.received),Math.round(rPct),Math.round(dPct),p.status].join("|");
-  var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(p.purpose+", "+gftPct(p.fulfilled)+" fulfilled, open the donors behind this purpose")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
-  return '<div class="gft-prow'+(clickable?" gft-clickable":"")+'"'+attr+'>'+
-    '<div class="gft-prow-top"><span class="gft-p-nm">'+p.purpose+'</span><span class="gft-p-pct">'+gftPct(p.fulfilled)+'</span></div>'+
-    pbarHTML({fill:rPct,mark:dPct,pop:gftEsc(pop),aria:""})+
-    '<div class="gft-prow-foot"><span class="gft-p-amt">'+money(p.received)+' received of '+money(p.pledgeTotal)+'</span>'+gftStatusPill(p.status,Math.abs(p.remaining),thru)+'</div>'+
+  var st=(p.status==="behind")?"behind":"ok";
+  var gap=(dPct>rPct)?'<span class="rem-bargap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
+  var marker='<span class="rem-barmark" style="left:'+Math.min(100,dPct).toFixed(1)+'%"></span>';
+  var flagIcon=(st==="behind")?"error":"check_circle";
+  var flagTip=(p.status==="behind")?"Behind schedule":((p.status==="complete")?"Fully funded":((p.status==="ahead")?"Ahead of schedule":"On track"));
+  var srtxt=p.purpose+": "+money(p.received)+" received of "+money(p.pledgeTotal)+" pledged, "+gftPct(p.fulfilled)+" fulfilled, "+money(p.due)+" expected by "+gftFmtDate(thru)+". "+flagTip+".";
+  var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(srtxt+" Open the donors behind this purpose.")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
+  return '<div class="ar-barrow rem-barrow'+(clickable?"":" gft-barrow-static")+'"'+attr+'>'+
+    '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+p.purpose+'</span><span class="ar-barlbl-sub">'+money(p.received)+' of '+money(p.pledgeTotal)+'</span></div>'+
+    '<div class="rem-bwrap"><div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div>'+marker+'</div>'+
+    '<div class="rem-barval"><span class="rem-pct">'+gftPct(p.fulfilled)+'</span><span class="rem-flag rem-flag-'+st+'" data-tip="'+gftEsc(flagTip)+'" data-tip-plain aria-hidden="true">'+ICON(flagIcon)+'</span></div>'+
     '<span class="sr-only">'+srtxt+'</span>'+
   '</div>';
 }
 function gftProgress(w){
   var ps=gftPurposes(w);
-  if(!ps.length)return '<div class="gft-zeroline">'+ICON("info")+'No pledge purposes match this selection.</div>';
-  var legend='<div class="gft-bars-legend"><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-recv"></span>Received</span><span class="pbar-lg-i"><span class="pbar-lg-swatch pbar-lg-exp"></span>Expected by today</span></div>';
-  return legend+'<div class="gft-bars">'+ps.map(function(p){return gftBar(w,p,true);}).join("")+'</div>';
+  if(!ps.length)return '<div class="rem-zeroline">'+ICON("info")+'No pledge purposes match this selection.</div>';
+  var legend='<div class="rem-bars-legend"><span class="rem-lg-i"><span class="rem-sw rem-sw-ok"></span>On track / received</span><span class="rem-lg-i"><span class="rem-sw rem-sw-behind"></span>Behind schedule</span><span class="rem-lg-i"><span class="rem-tick"></span>Expected by today</span></div>';
+  return legend+'<div class="scroll ar-bars rem-bars">'+ps.map(function(p){return gftBar(w,p,true);}).join("")+'</div>';
 }
 
 /* Table view , the five verified columns, "% Fulfilled" reframed from the old
