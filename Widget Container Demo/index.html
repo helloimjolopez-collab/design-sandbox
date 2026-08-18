@@ -702,7 +702,9 @@
   .mct-badge[data-app="assets"]{background:var(--wn-200);color:var(--txt-subtle);}
   .mct-noresult{font-size:13px;color:var(--txt-subtle);padding:6px 2px;line-height:1.5;}
   .mct-glance{padding:10px 12px;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:12px;}
-  .mct-irow{display:flex;align-items:center;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:4px;flex:0 0 auto;}
+  .mct-carousel{position:relative;min-width:0;align-self:stretch;}
+  .mct-carousel::after{content:"";position:absolute;top:0;bottom:6px;right:0;width:28px;background:linear-gradient(to right,transparent,var(--surface-widget));pointer-events:none;}
+  .mct-irow{display:flex;align-items:center;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:4px;min-width:0;}
   .mct-itile{position:relative;flex:0 0 auto;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:52px;height:52px;border:1px solid var(--stroke-widget);border-radius:10px;background:var(--surface-widget);color:var(--brand-300);cursor:pointer;}
   .mct-itile:hover{background:var(--wn-200);border-color:var(--wn-400);}
   .mct-itile:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
@@ -3716,9 +3718,7 @@ function remFTable(w){
     '<span class="remF-cell remF-num">'+money(t.out)+'</span>'+
     '<span class="remF-cell remF-pct"><span class="remF-pct-v '+totBand+'">'+totPct+'</span></span>'+
   '</div>';
-  var cap='<div class="remF-cap"><span>Expected-to-date reflects each pledge\'s own term (start to end date)</span>'+
-    '<button class="remF-cap-sort'+(key==="status"?" on":"")+'" data-action="remF-sort" data-id="'+w.id+'" data-k="status" data-tip="Sort the activities furthest behind pace to the top." data-tip-plain>'+ICON("low_priority")+'Most behind first</button></div>';
-  return '<div class="remF-tbl">'+cap+'<div class="scroll remF-scroll">'+remFHead(w)+body+'</div>'+tot+'</div>';
+  return '<div class="remF-tbl"><div class="scroll remF-scroll">'+remFHead(w)+body+'</div>'+tot+'</div>';
 }
 /* ---- pacing-bars view (Version B presentation) ---- */
 function remFBars(w){
