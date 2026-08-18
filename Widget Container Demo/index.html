@@ -6000,9 +6000,7 @@ function mysHeaderBlock(w,sel){
 }
 function mysRowHTML(w,q){
   var zero=q.count<=0, clickable=!zero;
-  var aff=zero?"":(q.click==="nav"
-      ?'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens the '+q.navTo+' page (leaves the dashboard)" data-tip-plain>arrow_outward</span>'
-      :'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens a record list here in the widget" data-tip-plain>list_alt</span>');
+  var aff=(!zero&&q.click==="nav")?'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens the '+q.navTo+' page (leaves the dashboard)" data-tip-plain>arrow_outward</span>':'';
   var srClick=clickable?(q.click==="nav"?", opens the "+q.navTo+" page":", opens a record list"):", nothing to action";
   var nm='<span class="lr-main mys-nm">'+q.name+'</span>';
   var count='<span class="wt-c2 mys-count'+(zero?" mys-count-zero":"")+'">'+q.count+'<span class="sr-only"> records'+srClick+'</span></span>';
@@ -7221,7 +7219,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(v==="pending")return '<div class="state pto-state" data-kind="empty"><span class="material-symbols-rounded pto-state-ic ok">check_circle</span><div class="state-title">You are all caught up</div><div class="state-sub">No time off is waiting for your approval in '+y+'. Switch the view to see approved time off.</div></div>';
     if(v==="approved")return '<div class="state pto-state" data-kind="empty">'+ICON("event_busy")+'<div class="state-title">No approved time off</div><div class="state-sub">Nothing has been approved for '+y+' yet.</div></div>';
     return '<div class="state pto-state" data-kind="empty">'+ICON("event_busy")+'<div class="state-title">No scheduled time off</div><div class="state-sub">There is no time off recorded for '+y+'.</div></div>';}
-  function ptoNoAccessState(){return '<div class="state pto-state" data-kind="empty">'+ICON("lock")+'<div class="state-title">You don’t have approval access</div><div class="state-sub">You do not have approval rights for any departments. Time off appears here once you are assigned as an approver.</div></div>';}
+  function ptoNoAccessState(){return '<div class="state pto-state" data-kind="empty">'+ICON("lock")+'<div class="state-title">No access to time-off data</div><div class="state-sub">You have the Payroll module, but you’re not permitted to view time-off records here. Ask an administrator if you need access.</div></div>';}
   function ptoGlance(w){
     if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">No departments</span></span><div class="metric-value">0</div><div class="gl-sub"><span class="pto-caption">no approval rights</span></div></div></div>';
     var pend=ptoPending(w);
