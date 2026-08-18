@@ -210,8 +210,8 @@
   .dep-search{flex:1 1 auto;min-width:70px;max-width:240px;display:flex;align-items:center;gap:6px;border:1px solid var(--stroke-widget);border-radius:8px;padding:6px 10px;min-height:34px;box-sizing:border-box;background:var(--surface-widget);}
   .tbl-search{min-height:44px;align-items:center;}
   .dep-search .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
-  .dep-q{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:14px;color:var(--txt-primary);outline:none;}
-  .dep-q::placeholder{font-size:14px;color:var(--txt-subtle);}
+  .dep-q{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:13px;color:var(--txt-primary);outline:none;}
+  .dep-q::placeholder{font-size:13px;color:var(--txt-subtle);}
   .dep-hd-kpigrp{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;}
   .dep-hd-r{display:flex;align-items:center;gap:10px;min-width:0;}
   .dep-search-inline{flex:0 0 auto;width:200px;max-width:46vw;}
@@ -7356,7 +7356,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     list.sort(function(a,b){
       if(key==="vendor")return dir*a.vendor.localeCompare(b.vendor);
       if(key==="inv")return dir*a.inv.localeCompare(b.inv);
-      if(key==="due"){var dd=apParse(a.due)-apParse(b.due);return dir*(dd||(b.amount-a.amount));}
+      if(key==="due"||key==="status"){var dd=apParse(a.due)-apParse(b.due);return dir*(dd||(b.amount-a.amount));}
       return dir*(a.amount-b.amount);
     });
     return list;}
@@ -7391,7 +7391,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
   /* ---- the hero: dense due-date table, grouped by aging band --------- */
   function apRowHTML(x){var od=apIsOverdue(x.due),n=apDiffDays(x.due);
     var daysIcon=od?"warning":(n===0?"today":"schedule");
-    return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(x.vendor)+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
+    return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(x.vendor+" "+x.inv)+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
       '<span class="lr-main">'+x.vendor+'</span>'+
       '<span class="ap-c-inv">'+x.inv+'</span>'+
       '<span class="ap-c-duedate">'+apFmtShort(x.due)+'</span>'+
@@ -7418,7 +7418,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     }
     var tot=rows.reduce(function(s,x){return s+x.amount;},0);
     var footLbl=apSelLabel(w)+' ('+rows.length+' invoice'+(rows.length===1?"":"s")+')';
-    var search=(rows.length>6)?'<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search vendors" aria-label="Search vendors"></div></div>':'';
+    var search=(rows.length>6)?'<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search invoices or vendors" aria-label="Search invoices or vendors"></div></div>':'';
     return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+footLbl+'</span><span>'+apMoney(tot)+'</span></div>';
   }
 
