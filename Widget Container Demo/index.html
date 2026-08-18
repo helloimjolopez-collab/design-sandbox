@@ -210,7 +210,8 @@
   .dep-search{flex:1 1 auto;min-width:70px;max-width:240px;display:flex;align-items:center;gap:6px;border:1px solid var(--stroke-widget);border-radius:8px;padding:6px 10px;min-height:34px;box-sizing:border-box;background:var(--surface-widget);}
   .tbl-search{min-height:44px;align-items:center;}
   .dep-search .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
-  .dep-q{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:12px;color:var(--txt-primary);outline:none;}
+  .dep-q{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:14px;color:var(--txt-primary);outline:none;}
+  .dep-q::placeholder{font-size:14px;color:var(--txt-subtle);}
   .dep-hd-kpigrp{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;}
   .dep-hd-r{display:flex;align-items:center;gap:10px;min-width:0;}
   .dep-search-inline{flex:0 0 auto;width:200px;max-width:46vw;}
@@ -7322,6 +7323,8 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function apDiffDays(iso){var d=apParse(iso),t=new Date(AP_TODAY.getFullYear(),AP_TODAY.getMonth(),AP_TODAY.getDate());return Math.round((d-t)/86400000);}
   function apIsOverdue(iso){return apDiffDays(iso)<0;}
   function apDaysLabel(iso){var n=apDiffDays(iso);if(n<0)return "Overdue by "+(-n)+" day"+((-n)===1?"":"s");if(n===0)return "Due today";return "Due in "+n+" day"+(n===1?"":"s");}
+function apDaysShort(iso){var n=apDiffDays(iso);if(n<0)return "Overdue "+(-n)+"d";if(n===0)return "Due today";return "Due "+n+"d";}
+function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()];if(d.getFullYear()!==AP_TODAY.getFullYear())s+=" "+d.getFullYear();return s;}
   function apBandOf(iso){var n=apDiffDays(iso);if(n<0)return "overdue";if(n<=7)return "week";if(n<=30)return "month";return "later";}
   function apEsc(s){return String(s).replace(/"/g,"&quot;");}
 
@@ -7384,8 +7387,8 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(x.vendor)+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
       '<span class="lr-main">'+x.vendor+'</span>'+
       '<span class="ap-c-inv">'+x.inv+'</span>'+
-      '<span class="ap-c-duedate">'+apFmtLong(x.due)+'</span>'+
-      '<span class="ap-c-status"><span class="ap-pill'+(od?" warn":"")+'">'+ICON(daysIcon)+apDaysLabel(x.due)+'</span></span>'+
+      '<span class="ap-c-duedate">'+apFmtShort(x.due)+'</span>'+
+      '<span class="ap-c-status"><span class="ap-pill'+(od?" warn":"")+'">'+ICON(daysIcon)+apDaysShort(x.due)+'</span></span>'+
       '<span class="wt-c2">'+apMoney(x.amount)+'</span></div>';}
   function apTable(w){
     var sel=apSel(w),rows=apRows(w);
