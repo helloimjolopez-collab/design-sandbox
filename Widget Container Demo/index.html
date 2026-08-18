@@ -6261,9 +6261,8 @@ function purTable(w,full){
   var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Amount")+'</span></div>';
   var body=rows.map(function(o){
     var act=purCanAct(o);
-    var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, outstanding '+money(o.amount)+'. '+(act?"Opens to approve or reject.":"Opens the purchase order.")+'</span>';
-    var chev='<span class="pur-c-go" aria-hidden="true">'+ICON(act?"rule":"chevron_right")+'</span>';
-    return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', outstanding '+money(o.amount)+(act?', open to approve or reject':', open record')+'"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span>'+chev+'</div>';
+    var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, amount '+money(o.amount)+'. '+(act?"Opens to approve or reject.":"Opens the purchase order.")+'</span>';
+    return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', amount '+money(o.amount)+(act?', open to approve or reject':', open record')+'"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span></div>';
   }).join("");
   var tot=purSum(rows),n=rows.length;
   var totLbl=(w.pstatus||"mine")==="approved"?(n+" order"+(n===1?"":"s")):(n+" request"+(n===1?"":"s"));
@@ -7374,10 +7373,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   /* ---- the hero: dense due-date table, grouped by aging band --------- */
   function apRowHTML(x){var od=apIsOverdue(x.due),n=apDiffDays(x.due);
     var daysIcon=od?"warning":(n===0?"today":"schedule");
-    return '<div class="wt-row" data-acct="'+apEsc(x.vendor)+'">'+
+    return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(x.vendor)+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
       '<span class="lr-main">'+x.vendor+'</span>'+
       '<span class="ap-c-inv">'+x.inv+'</span>'+
-      '<span class="ap-c-due"><span class="ap-due-d">'+apFmtLong(x.due)+'</span><span class="ap-due-days'+(od?" over":"")+'">'+ICON(daysIcon)+apDaysLabel(x.due)+'</span></span>'+
+      '<span class="ap-c-duedate">'+apFmtLong(x.due)+'</span>'+
+      '<span class="ap-c-status"><span class="ap-pill'+(od?" warn":"")+'">'+ICON(daysIcon)+apDaysLabel(x.due)+'</span></span>'+
       '<span class="wt-c2">'+apMoney(x.amount)+'</span></div>';}
   function apTable(w){
     var sel=apSel(w),rows=apRows(w);
