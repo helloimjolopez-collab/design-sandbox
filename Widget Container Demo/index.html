@@ -7819,9 +7819,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.state==="empty")inner=insFEmpty(w);
     else if(w.size==="kpi")inner=insFGlance(w);
     else if(w.insloading)inner=insFHeader(w,"loading")+insFSkeleton();
+    else if(!insFFiltered(w).length)inner=insFHeader(w)+'<div class="ins-body">'+insFScopedEmpty(w)+'</div>';
     else inner=insFHeader(w)+'<div class="ins-body">'+insFNestedTable(w)+'</div>';
     return '<div class="insf-scope" data-tier="'+(w.size||"wide")+'">'+inner+'</div>';
   }
+  function insFScopedEmpty(w){var ty=w.insType||"All";if(ty==="All")return insFEmpty(w);return '<div class="state" data-kind="empty">'+ICON("shield_person")+'<div class="state-title">No '+insFEsc(ty)+' plans</div><div class="state-sub">There are no '+insFEsc(ty.toLowerCase())+' plans set up right now. Pick another type above to see the rest.</div></div>';}
 
   /* (8) DELEGATED HANDLERS (self-contained; data-action="insF-*"). Jo's own
      click/keydown listeners ignore these: no "insF-" branch of hers matches, and
