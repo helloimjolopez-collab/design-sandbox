@@ -1589,11 +1589,13 @@
    columns line up exactly. Compact: Activity | % Paid | Pacing.
    Full: Activity | Annual | Expected | Paid | Outstanding | % Paid | Pacing. */
 .rem-row{display:grid;grid-template-columns:minmax(0,1fr) 58px 116px;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid var(--stroke-widget);font-size:13px;}
-.rem-row.full{grid-template-columns:minmax(120px,1.25fr) 88px 96px 88px 100px 62px 116px;gap:8px;}
+.rem-row.full{grid-template-columns:minmax(130px,1.3fr) 84px 96px 84px 100px 96px;gap:12px;}
 .rem-cell{min-width:0;}
 .rem-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .rem-pct{text-align:right;}
-.rem-pct-v{font-weight:700;font-variant-numeric:tabular-nums;}
+.rem-row .rem-cell.rem-pct{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+.rem-head .rem-cell,.rem-head .wt-sort{font-size:11px;font-weight:600;color:var(--txt-subtle);text-transform:none;letter-spacing:0;}
+.rem-pct-v{font-weight:600;font-variant-numeric:tabular-nums;}
 .rem-nopct{color:var(--txt-subtle);}
 .rem-stat{display:flex;justify-content:flex-end;}
 
@@ -1658,8 +1660,56 @@
 .rem-sum-k{font-size:11px;color:var(--txt-subtle);}
 .rem-sum-v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;}
 .rem-sum-stat{justify-content:center;align-items:flex-start;}
-.rem-catchup{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.45;color:var(--red-130);background:var(--red-10);border-radius:10px;padding:10px 12px;}
-.rem-catchup .material-symbols-rounded{font-size:18px;color:var(--red-100);flex:0 0 auto;margin-top:1px;}
+.rem-catchup{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.45;color:var(--txt-secondary);background:var(--wn-100);border-radius:10px;padding:10px 12px;}
+.rem-catchup .material-symbols-rounded{font-size:18px;color:var(--am-600);flex:0 0 auto;margin-top:1px;}
+.modal.rem-detail-modal{height:auto;max-height:88vh;}
+.rem-detail-b{display:flex;flex-direction:column;min-height:0;max-height:80vh;overflow:auto;}
+.rem-bars{gap:8px;padding:8px 10px 4px;}
+.rem-barrow{cursor:pointer;grid-template-columns:210px 1fr auto;gap:12px;padding:6px 8px;}
+.rem-barrow:hover{background:var(--wn-100);}
+.rem-bartrack{height:10px;border-radius:999px;}
+.rem-barval{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-variant-numeric:tabular-nums;}
+.rem-pct{font-size:12.5px;font-weight:600;color:var(--txt-primary);}
+.rem-flag{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.rem-flag .material-symbols-rounded{font-size:18px;font-variation-settings:'FILL' 1;}
+.rem-flag-ok .material-symbols-rounded{color:#0b6b4c;}
+.rem-flag-behind .material-symbols-rounded{color:#7a5300;}
+.rem-flag-none .material-symbols-rounded{color:var(--txt-subtle);}
+.rem-bargap{position:absolute;top:0;height:100%;background:var(--wn-300);}
+.rem-bwrap{position:relative;}
+.rem-bwrap .ar-bartrack{width:100%;}
+.rem-barmark{position:absolute;top:50%;transform:translate(-50%,-50%);width:2px;height:16px;background:var(--wn-750);border-radius:2px;}
+/* status-coloured progress fills */
+.rem-fill-ok{background:#10b981;}
+.rem-fill-behind{background:#f5b301;}
+.rem-fill-none{background:var(--wn-300);}
+.rem-bars-legend{display:flex;flex-wrap:wrap;gap:16px;padding:2px 10px 10px 18px;font-size:11.5px;color:var(--txt-subtle);}
+.rem-bars-legend .rem-lg-i{display:inline-flex;align-items:center;gap:5px;}
+.rem-sw{width:10px;height:10px;border-radius:3px;display:inline-block;}
+.rem-sw-ok{background:#10b981;}
+.rem-sw-behind{background:#f5b301;}
+.rem-tick{display:inline-block;width:2px;height:12px;background:var(--txt-secondary);}
+/* accessible status pills: colour + icon + text */
+.rem-st{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px 2px 8px;line-height:1.6;font-variant-numeric:tabular-nums;}
+.rem-st .material-symbols-rounded{font-size:16px;font-variation-settings:'FILL' 1;color:inherit;}
+.rem-st-ok{background:#daf5ea;color:#0b6b4c;}
+.rem-st-behind{background:#fdeeba;color:#7a5300;}
+.rem-st-none{background:var(--wn-200);color:var(--txt-secondary);}
+.rem-quiet{font-size:12px;color:var(--txt-subtle);margin-top:2px;font-variant-numeric:tabular-nums;}
+/* member-church drill table */
+.rem-ch-tbl{border:1px solid var(--stroke-widget);border-radius:10px;overflow:hidden;margin-top:4px;}
+.rem-ch-row{display:grid;grid-template-columns:minmax(150px,1.5fr) 116px 92px 92px 104px 66px 108px;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--stroke-widget);font-size:12.5px;font-variant-numeric:tabular-nums;}
+.rem-ch-row:last-child{border-bottom:0;}
+.rem-ch-head{background:var(--wn-100);font-size:11px;font-weight:600;color:var(--txt-subtle);}
+.rem-ch-nm{font-weight:600;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rem-ch-head .rem-ch-nm{font-weight:600;color:var(--txt-subtle);}
+.rem-ch-dist{color:var(--txt-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rem-ch-n{text-align:right;color:var(--txt-secondary);}
+.rem-ch-pct{text-align:right;font-weight:600;color:var(--txt-primary);}
+.rem-ch-head .rem-ch-pct{color:var(--txt-subtle);font-weight:600;}
+.rem-ch-stat{display:flex;justify-content:flex-end;}
+.rem-ch-foot{padding:10px 4px 2px;font-size:12px;color:var(--txt-secondary);}
+.rem-dsort-tog{transform:scale(.94);transform-origin:right center;}
 .rem-catchup.ok{color:var(--green-120);background:var(--green-10);}
 .rem-catchup.ok .material-symbols-rounded{color:var(--pos-100);}
 .rem-ph-h{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
@@ -1674,8 +1724,6 @@
 
 @media(max-width:560px){
   .rem-sum{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .rem-row.full{grid-template-columns:minmax(90px,1fr) 74px 62px 116px;}
-  .rem-row.full .rem-num:nth-child(3),.rem-row.full .rem-num:nth-child(5){display:none;}
 }
 
 /* =======================================================================
@@ -3105,6 +3153,25 @@ function remTotals(w){
 }
 function remBehindCount(w){return remCompute(w).filter(function(r){return r.status==="behind";}).length;}
 function remFindRow(w,seq){var rows=remCompute(w);for(var i=0;i<rows.length;i++)if(String(rows[i].seq)===String(seq))return rows[i];return null;}
+/* ---- member-church roster per fund (Remittance HQ model) --------------
+   Each fund carries many pledges = member churches (500-800 in production).
+   The demo generates a deterministic sample roster; real data seeds from
+   Manage Pledges (church x activity). Drill surfaces the ones behind first. */
+var REM_CHURCH_NAMES=["Trinity Church","Grace Fellowship","St. Paul's","First Church","Wesley Chapel","Hope Community","Faith Church","Christ Church","Mount Zion","New Hope Church","Bethel Church","Aldersgate Church","Asbury Church","Emmanuel Church","Covenant Church","Cornerstone Church","Good Shepherd","Living Water","Riverside Church","Crossroads Church","Calvary Church","Epworth Church","St. Luke's","St. Mark's","Pleasant Grove","Fairview Church","Ebenezer Church","Salem Church","Oak Grove","Highland Park","Meadowbrook","Northside Church","Southside Church","Parkview Church","Lakeside Church","Cedar Ridge","Union Chapel","Bethany Church","Wesleyan Church","Providence Church"];
+var REM_DISTRICTS=["North District","South District","East District","West District","Central District"];
+function remRnd(seed){var x=Math.sin(seed*12.9898)*43758.5453;return x-Math.floor(x);}
+function remChurchesFor(w,seq){
+  var fund=remData(w).filter(function(a){return String(a.seq)===String(seq);})[0];if(!fund)return [];
+  var py=remPctYear(remThru(w)),per=fund.annual/REM_CHURCH_NAMES.length;
+  return REM_CHURCH_NAMES.map(function(nm,i){
+    var s=fund.seq*101+i;
+    var pledged=Math.max(100,Math.round(per*(0.55+remRnd(s)*1.1)/50)*50);
+    var remitted=Math.min(pledged,Math.round(pledged*Math.min(1,remRnd(s+3.7)*1.25)/50)*50);
+    var out=Math.max(0,pledged-remitted),pct=pledged>0?remitted/pledged:null;
+    var st=pledged<=0?"none":(out<=0?"full":(pct>=py?"ontrack":"behind"));
+    return {name:nm,district:REM_DISTRICTS[i%5],pledged:pledged,remitted:remitted,outstanding:out,pctPaid:pct,gap:(pct==null?0:pct-py),status:st,pctYear:py};
+  });
+}
 
 /* ---- controls ------------------------------------------------ */
 /* Receipts-through chip: shell .filter-chip[data-action] gives it the
@@ -3113,14 +3180,16 @@ function remFindRow(w,seq){var rows=remCompute(w);for(var i=0;i<rows.length;i++)
 function remThruChip(w){var iso=remThru(w),spin=w.remLoading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
   return '<button class="filter-chip rem-thru-chip" data-action="rem-thru" data-id="'+w.id+'" aria-haspopup="dialog" aria-expanded="'+(pop&&pop.type==="rem-thru"&&pop.id===w.id?"true":"false")+'" aria-label="Receipts through '+remEsc(remFmtDate(iso))+', tap to change"><span class="fc-label">'+spin+'Receipts through '+remFmtDate(iso)+'</span>'+ICON("expand_more")+'</button>';}
 
+/* View toggle (Progress bars / Table), sibling-consistent with Gifts Pledges (Oisin W04 "Progress Bars default"; brief 11.2). */
+function remViewToggle(w){var v=w.remView||"progress",opts=[["progress","Progress","insights"],["table","Table","table_rows"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="rem-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+
 /* Overall pacing badge. On track / All pledges paid use the positive pill;
    behind uses the app warn pill (attention), the point gap and dollar
    shortfall live in the tooltip and the context line, never colour alone. */
 function remPaceBadge(t){
-  if(t.allPaid)return '<span class="delta-pill" data-tip="Every remittance pledge is fully paid for the year." data-tip-plain>'+ICON("check_circle")+'All pledges paid</span>';
-  if(t.status==="ontrack")return '<span class="delta-pill" data-tip="'+remEsc(remPct(t.pctPaid)+' of the total pledged is paid, at or ahead of the '+remPct(t.pctYear)+' of the calendar year elapsed.')+'" data-tip-plain>'+ICON("check")+'On track</span>';
-  var gapPts=Math.round((t.pctYear-t.pctPaid)*100);
-  return '<span class="bank-pill warn" data-tip="'+remEsc(remPct(t.pctPaid)+' paid against '+remPct(t.pctYear)+' of the year elapsed, about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind the expected pace.')+'" data-tip-plain>'+ICON("schedule")+'Behind pace</span>';}
+  if(t.allPaid)return '<span class="rem-st rem-st-ok" data-tip="Every fund is fully remitted for the year." data-tip-plain>'+ICON("check_circle")+'All funds paid</span>';
+  if(t.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(money(t.paid)+" remitted, at or ahead of the pace expected by "+remFmtDate(t.iso)+".")+'" data-tip-plain>'+ICON("check_circle")+'On track</span>';
+  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc("About "+money(t.shortfall)+" behind where you’d expect to be by "+remFmtDate(t.iso)+". "+money(t.paid)+" remitted of "+money(t.annual)+" pledged.")+'" data-tip-plain>'+ICON("error")+'Behind pace</span>';}
 
 /* Per-activity pacing bar: amethyst paid fill on an annual track, with the
    "expected by now" marker at the % of the year elapsed. Fill depth
@@ -3132,11 +3201,11 @@ function remBar(r){
   return pbarHTML({fill:fill,mark:mark,pop:remEsc(pop),aria:remEsc(remRowSr(r))});}
 
 function remStatusChip(r){
-  if(r.status==="none")return '<span class="rem-chip rem-chip-none" data-tip="No pledge amount is set for this activity, so there is nothing to pace against." data-tip-plain>No pledge</span>';
-  if(r.status==="full")return '<span class="delta-pill" data-tip="'+remEsc(r.name+" is fully paid for the year.")+'" data-tip-plain>'+ICON("check_circle")+'Paid in full</span>';
-  if(r.status==="ontrack")return '<span class="delta-pill" data-tip="'+remEsc(remPct(r.pctPaid)+" paid, at or ahead of the "+remPct(r.pctYear)+" of the year elapsed.")+'" data-tip-plain>'+ICON("check")+'On track</span>';
-  var gapPts=Math.round((r.pctYear-r.pctPaid)*100),behind=Math.max(0,r.expected-r.paid);
-  return '<span class="bank-pill warn" data-tip="'+remEsc(remPct(r.pctPaid)+" paid against "+remPct(r.pctYear)+" of the year, about "+money(behind)+" ("+gapPts+" point"+(gapPts===1?"":"s")+") behind pace.")+'" data-tip-plain>'+ICON("schedule")+'Behind</span>';}
+  if(r.status==="none")return '<span class="rem-st rem-st-none" data-tip="No pledge amount is set for this activity, so there is nothing to pace against." data-tip-plain>No pledge</span>';
+  if(r.status==="full")return '<span class="rem-st rem-st-ok" data-tip="'+remEsc(r.name+" is fully remitted for the year.")+'" data-tip-plain>'+ICON("check_circle")+'Paid in full</span>';
+  if(r.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="Remitted at or ahead of where this fund should be by now." data-tip-plain>'+ICON("check_circle")+'On track</span>';
+  var behind=Math.max(0,r.expected-r.paid);
+  return '<span class="rem-st rem-st-behind" data-tip="'+remEsc("About "+money(behind)+" behind where this fund should be by now.")+'" data-tip-plain>'+ICON("error")+'Behind</span>';}
 
 /* One data string for the hover card, kept off the visible text. */
 function remRowPop(r){return remEsc([r.name,r.annual,r.expected,r.paid,r.outstanding,(r.pctPaid==null?-1:Math.round(r.pctPaid*100)),Math.round(r.pctYear*100),r.status].join("|"));}
@@ -3146,19 +3215,16 @@ function remRowSr(r){return (r.pctPaid==null?"no pledge amount":remPct(r.pctPaid
    (Explore, presentation-ready report); compact keeps a paid-of-annual sub. */
 function remRow(w,r,full){
   var pctTxt=r.pctPaid==null?'<span class="rem-nopct">n/a</span>':'<span class="rem-pct-v">'+remPct(r.pctPaid)+'</span>';
-  var head='<div class="rem-cell rem-name"><span class="rem-name-nm">'+r.name+'</span>'+
-    (full?'':'<span class="rem-name-sub">'+money(r.paid)+' paid of '+money(r.annual)+'</span>')+
-    remBar(r)+'</div>';
+  var head='<div class="rem-cell rem-name"><span class="rem-name-nm">'+r.name+'</span></div>';
   var mid=full
     ? '<span class="rem-cell rem-num">'+money(r.annual)+'</span>'+
       '<span class="rem-cell rem-num">'+money(r.expected)+'</span>'+
       '<span class="rem-cell rem-num">'+money(r.paid)+'</span>'+
       '<span class="rem-cell rem-num">'+money(r.outstanding)+'</span>'
     : '';
-  return '<div class="rem-row'+(full?" full":"")+'" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open payment history.")+'" data-rempop="'+remRowPop(r)+'">'+
+  return '<div class="rem-row'+(full?" full":"")+'" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" Open the member churches behind this fund.")+'" data-rempop="'+remRowPop(r)+'">'+
     head+mid+
-    '<span class="rem-cell rem-pct">'+pctTxt+'</span>'+
-    '<span class="rem-cell rem-stat">'+remStatusChip(r)+'</span>'+
+    '<span class="rem-cell rem-pct">'+pctTxt+'<span class="rem-flag rem-flag-'+(r.status==="behind"?"behind":(r.status==="none"?"none":"ok"))+'" aria-hidden="true">'+ICON(r.status==="behind"?"error":(r.status==="none"?"remove":"check_circle"))+'</span></span>'+
     '<span class="sr-only">'+remRowSr(r)+'</span>'+
   '</div>';}
 
@@ -3172,9 +3238,8 @@ function remHead(w,full){
       '<span class="rem-cell rem-num">Paid</span>'+
       '<span class="rem-cell rem-num">Outstanding</span>'
     : '';
-  return '<div class="rem-row rem-head'+(full?" full":"")+'"><span class="rem-cell rem-name">'+sb("name","Activity")+'</span>'+mid+
-    '<span class="rem-cell rem-pct">'+sb("paid","% Paid")+'</span>'+
-    '<span class="rem-cell rem-stat">'+sb("status","Pacing","Sort the activities that are furthest behind pace to the top.")+'</span></div>';}
+  return '<div class="rem-row rem-head'+(full?" full":"")+'"><span class="rem-cell rem-name">'+sb("name","Fund")+'</span>'+mid+
+    '<span class="rem-cell rem-pct">'+sb("paid","% Paid")+'</span></div>';}
 
 function remRows(w){
   var rows=remCompute(w),sk=(w.remSort||"seq").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
@@ -3196,10 +3261,9 @@ function remTable(w,full){
       '<span class="rem-cell rem-num">'+money(t.paid)+'</span>'+
       '<span class="rem-cell rem-num">'+money(t.out)+'</span>'
     : '';
-  var totLead=full?'Total ('+t.count+' activit'+(t.count===1?"y":"ies")+')':money(t.paid)+' of '+money(t.annual)+' paid';
+  var totLead=full?'Total ('+t.count+' fund'+(t.count===1?"":"s")+')':money(t.paid)+' of '+money(t.annual)+' paid';
   var tot='<div class="rem-row rem-total'+(full?" full":"")+'"><span class="rem-cell rem-name rem-total-lead">'+totLead+'</span>'+totMid+
-    '<span class="rem-cell rem-pct"><span class="rem-pct-v">'+totPct+'</span></span>'+
-    '<span class="rem-cell rem-stat">'+remPaceBadge(t)+'</span></div>';
+    '<span class="rem-cell rem-pct"><span class="rem-pct-v">'+totPct+'</span></span></div>';
   return '<div class="rem-tbl'+(full?" full":"")+'"><div class="scroll rem-scroll">'+remHead(w,full)+body+'</div>'+tot+'</div>';}
 
 /* ---- header (Detail / Explore): two-row .dep-hd --------------- */
@@ -3209,10 +3273,10 @@ function remHeaderBlock(w,mode){
     numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:76px;height:22px;border-radius:6px"></span><span class="sk" style="width:112px;height:20px;border-radius:999px"></span></div>';
     return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remThruChip(w)+'</div><div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div></div>';
   }
-  numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(t.paid)+'</span>'+remPaceBadge(t)+'<span class="gft-goalpill">'+(t.annual>0?remPct(t.pctPaid):"n/a")+' of pledged</span></div>';
+  numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(t.paid)+'</span>'+remPaceBadge(t)+'</div>';
   return '<div class="dep-hd rem-hd">'+
-    '<div class="dep-hd-top">'+remThruChip(w)+'</div>'+
-    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<span class="sr-only">'+money(t.paid)+' paid of '+money(t.annual)+' pledged; '+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year.</span></div></div>'+
+    '<div class="dep-hd-top">'+remThruChip(w)+'<div class="dep-hd-toggle">'+(w.size==="xwide"?"":remViewToggle(w))+'</div></div>'+
+    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<span class="sr-only">'+money(t.paid)+' remitted of '+money(t.annual)+' pledged; '+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year.</span></div></div>'+
   '</div>';}
 
 /* ---- Glance (kpi) -------------------------------------------- */
@@ -3222,8 +3286,7 @@ function remGlance(w){
   return '<div class="kpi-row"><div class="kpi-num">'+
     '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+
     '<div class="metric-value">'+money(t.paid)+'</div>'+
-    '<div class="gl-sub">'+remPaceBadge(t)+'<span class="gft-goalpill">'+(t.annual>0?remPct(t.pctPaid):"n/a")+' of pledged</span></div>'+
-    '<div class="rem-glance-read">'+pbarHTML({fill:t.pctPaid*100,mark:t.pctYear*100,sm:true,pop:remEsc(pop),aria:remEsc("Pacing")})+'</div>'+
+    '<div class="gl-sub">'+remPaceBadge(t)+'</div>'+
     '<span class="sr-only">'+money(t.paid)+' paid of '+money(t.annual)+' pledged. '+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year elapsed. '+money(t.out)+' outstanding.</span>'+
   '</div></div>';}
 
@@ -3235,43 +3298,82 @@ function remEmpty(w){
 function remSkeleton(){var rows="";[72,58,80,50,66].forEach(function(wd){rows+='<div class="rem-sk-row"><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk rem-sk-bar" style="width:'+wd+'%"></span><span class="sk" style="width:44px;height:12px;border-radius:4px"></span></div>';});return '<div class="rem-skel" aria-busy="true">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading</div></div>';}
 
 // ===== entry point ==============================================
+function remStatusWord(r){return r.status==="none"?"No pledge":(r.status==="full"?"Paid in full":(r.status==="behind"?"Behind":"On track"));}
+/* Progress view: AR-style labeled bar rows (label | chunky track with paid-fill + expected-by-now marker | value). */
+function remProgress(w){
+  var rows=remRows(w);
+  if(!rows.length)return '<div class="rem-zeroline">'+ICON("info")+'No remittance activities to show.</div>';
+  var legend='<div class="rem-bars-legend"><span class="rem-lg-i"><span class="rem-sw rem-sw-ok"></span>On track / paid</span><span class="rem-lg-i"><span class="rem-sw rem-sw-behind"></span>Behind pace</span><span class="rem-lg-i"><span class="rem-tick"></span>Expected by now</span></div>';
+  var bars=rows.map(function(r){
+    var fill=(r.pctPaid==null?0:r.pctPaid)*100,mark=Math.min(100,r.pctYear*100);
+    var st=r.status==="behind"?"behind":(r.status==="none"?"none":"ok");
+    var gap=(r.pctPaid!=null&&mark>fill)?'<span class="rem-bargap" style="left:'+Math.min(100,fill).toFixed(1)+'%;width:'+(mark-fill).toFixed(1)+'%"></span>':'';
+    var marker=(r.pctPaid!=null)?'<span class="rem-barmark" style="left:'+mark.toFixed(1)+'%"></span>':'';
+    var flagIcon=st==="behind"?"error":(st==="none"?"remove":"check_circle");
+    var flagTip=st==="behind"?"Behind pace":(st==="none"?"No pledge set":(r.status==="full"?"Paid in full":"On track"));
+    var pct=(r.pctPaid==null?"n/a":remPct(r.pctPaid));
+    return '<div class="ar-barrow rem-barrow" data-action="rem-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remEsc(r.name+", "+remRowSr(r)+" "+flagTip+". Open the member churches behind this fund.")+'" data-rempop="'+remRowPop(r)+'">'+
+      '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span><span class="ar-barlbl-sub">'+money(r.paid)+' of '+money(r.annual)+'</span></div>'+
+      '<div class="rem-bwrap"><div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,fill).toFixed(1)+'%"></div>'+gap+'</div>'+marker+'</div>'+
+      '<div class="rem-barval"><span class="rem-pct">'+pct+'</span><span class="rem-flag rem-flag-'+st+'" data-tip="'+remEsc(flagTip)+'" data-tip-plain aria-hidden="true">'+ICON(flagIcon)+'</span></div>'+
+      '<span class="sr-only">'+remRowSr(r)+' '+flagTip+'.</span>'+
+    '</div>';
+  }).join("");
+  return legend+'<div class="scroll ar-bars rem-bars">'+bars+'</div>';
+}
 function remContent(w){
   if(w.state==="empty")return remEmpty(w);
   if(w.size==="kpi")return remGlance(w);
   if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
   var mh=remHeaderBlock(w);
-  if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by activity</div>'+remTable(w,true)+'</div></div>';
-  return mh+'<div class="rem-body">'+remTable(w,false)+'</div>';
+  if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by fund</div>'+remTable(w,true)+'</div></div>';
+  return mh+'<div class="rem-body">'+((w.remView||"progress")==="table"?remTable(w,true):remProgress(w))+'</div>';
 }
 
 /* ---- drill: payment history focus overlay (modal.type "remdetail") --- */
+function remChStatusChip(c){
+  if(c.status==="none")return '<span class="rem-st rem-st-none">No pledge</span>';
+  if(c.status==="full")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'Paid in full</span>';
+  if(c.status==="ontrack")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'On track</span>';
+  return '<span class="rem-st rem-st-behind">'+ICON("error")+'Behind</span>';
+}
 function remDetailModalHTML(){
   var w=find(modal.id);if(!w)return "";
   var r=remFindRow(w,modal.seq);if(!r)return "";
-  var pays=(r.payments||[]).filter(function(p){return p.date<=remThru(w);}).slice().sort(function(a,b){return a.date<b.date?1:-1;});
-  var gapPts=r.pctPaid==null?0:Math.round((r.pctYear-r.pctPaid)*100),behind=Math.max(0,r.expected-r.paid);
+  var churches=remChurchesFor(w,modal.seq);
+  var sort=modal.remDSort||"pacing";
+  churches.sort(function(a,b){
+    if(sort==="pct"){var pa=(a.pctPaid==null?-1:a.pctPaid),pb=(b.pctPaid==null?-1:b.pctPaid);return pa-pb;}
+    return a.gap-b.gap; /* behind-first: paid vs expected-by-now */
+  });
+  var behindN=churches.filter(function(c){return c.status==="behind";}).length;
+  var TOPN=12,shown=churches.slice(0,TOPN),more=churches.length-shown.length;
   var summary='<div class="rem-sum">'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">Annual pledge</span><span class="rem-sum-v">'+money(r.annual)+'</span></div>'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">Expected by now</span><span class="rem-sum-v">'+money(r.expected)+'</span></div>'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">Paid to date</span><span class="rem-sum-v">'+money(r.paid)+'</span></div>'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">Pledged</span><span class="rem-sum-v">'+money(r.annual)+'</span></div>'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">Remitted</span><span class="rem-sum-v">'+money(r.paid)+'</span></div>'+
     '<div class="rem-sum-cell"><span class="rem-sum-k">Outstanding</span><span class="rem-sum-v">'+money(r.outstanding)+'</span></div>'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">% Paid</span><span class="rem-sum-v">'+(r.pctPaid==null?"n/a":remPct(r.pctPaid))+'</span></div>'+
+    '<div class="rem-sum-cell"><span class="rem-sum-k">% Remitted</span><span class="rem-sum-v">'+(r.pctPaid==null?"n/a":remPct(r.pctPaid))+'</span></div>'+
     '<div class="rem-sum-cell rem-sum-stat">'+remStatusChip(r)+'</div>'+
   '</div>';
-  var note=(r.status==="behind")
-    ? '<div class="rem-catchup">'+ICON("info")+'<span>About '+money(behind)+' ('+gapPts+' point'+(gapPts===1?"":"s")+') behind the expected pace. '+money(r.outstanding)+' remains for the year; unpaid amounts carry forward, so catching up before the year-end deadline avoids a balance rolling into next year.</span></div>'
-    : (r.status==="full"
-      ? '<div class="rem-catchup ok">'+ICON("check_circle")+'<span>This pledge is fully paid for the year.</span></div>'
-      : '<div class="rem-catchup ok">'+ICON("check")+'<span>On pace: '+money(r.paid)+' paid against '+money(r.expected)+' expected by now.</span></div>');
-  var head='<div class="rem-ph-row rem-ph-head"><span>Date</span><span>Reference</span><span class="rem-ph-amt">Amount</span></div>';
-  var body=pays.length
-    ? pays.map(function(p){return '<div class="rem-ph-row"><span>'+remFmtDate(p.date)+'</span><span>'+p.ref+'</span><span class="rem-ph-amt">'+money(p.amount)+'</span></div>';}).join("")
-    : '<div class="rem-tab-empty">'+ICON("payments")+'No receipts recorded on or before '+remFmtDate(remThru(w))+'.</div>';
-  var foot=pays.length?'<div class="dep-total rem-ph-total"><span>'+pays.length+' receipt'+(pays.length===1?"":"s")+' through '+remFmtDate(remThru(w))+'</span><span>'+money(r.paid)+'</span></div>':'';
-  return '<div class="modal-backdrop" data-action="rem-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Remittance pledge, payment history">'+
-    '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">volunteer_activism</span>'+r.name+'</span><span class="rem-dsub">Payment history</span><span class="rem-dh-spacer"></span><button class="btn naked sm" data-action="rem-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="rem-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
-    '<div class="modal-b rem-detail-b">'+summary+note+'<div class="rem-ph-h">Receipts on or before '+remFmtDate(remThru(w))+'</div><div class="rem-ph-tbl">'+head+body+'</div>'+foot+'</div>'+
-    '<div class="modal-f"><button class="btn naked sm" data-action="rem-open-record" data-id="'+w.id+'" data-seq="'+r.seq+'">'+ICON("open_in_new")+'Open in Remittance</button><button class="btn primary sm" data-action="rem-detail-close">Close</button></div></div></div>';}
+  var toggle='<div class="vtoggle rem-dsort-tog" role="group" aria-label="Sort member churches">'+
+    [["pacing","Behind first"],["pct","% remitted"]].map(function(o){var on=sort===o[0];return '<button class="vt'+(on?" on":"")+'" data-action="rem-dsort" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+'</button>';}).join("")+'</div>';
+  var head='<div class="wt-row rem-ch-row rem-ch-head"><span class="rem-ch-nm">Member church</span><span class="rem-ch-dist">District</span><span class="rem-ch-n">Pledged</span><span class="rem-ch-n">Remitted</span><span class="rem-ch-n">Outstanding</span><span class="rem-ch-pct">% Rem.</span><span class="rem-ch-stat">Pacing</span></div>';
+  var body=shown.map(function(c){
+    return '<div class="wt-row rem-ch-row">'+
+      '<span class="rem-ch-nm">'+c.name+'</span>'+
+      '<span class="rem-ch-dist">'+c.district+'</span>'+
+      '<span class="rem-ch-n">'+money(c.pledged)+'</span>'+
+      '<span class="rem-ch-n">'+money(c.remitted)+'</span>'+
+      '<span class="rem-ch-n">'+money(c.outstanding)+'</span>'+
+      '<span class="rem-ch-pct">'+(c.pctPaid==null?"n/a":remPct(c.pctPaid))+'</span>'+
+      '<span class="rem-ch-stat">'+remChStatusChip(c)+'</span>'+
+    '</div>';
+  }).join("");
+  var foot='<div class="rem-ch-foot">'+(sort==="pacing"?("The "+shown.length+" furthest behind"):("Top "+shown.length))+' of '+churches.length+' member churches'+(behindN?" · "+behindN+" behind pace":"")+(more>0?" · "+more+" more in the roster":"")+'</div>';
+  return '<div class="modal-backdrop" data-action="rem-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Member churches for '+remEsc(r.name)+'">'+
+    '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">groups</span>'+r.name+'</span><span class="rem-dsub">member churches · as of '+remFmtDate(remThru(w))+'</span><span class="rem-dh-spacer"></span>'+toggle+'<button class="btn naked sm" data-action="rem-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="rem-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b rem-detail-b">'+summary+'<div class="rem-ch-tbl">'+head+body+'</div>'+foot+'</div>'+
+    '<div class="modal-f"><button class="btn primary sm" data-action="rem-detail-close">Close</button></div></div></div>';}
 
 // ===== REGISTRY =================================================
 /* Paste these objects into dashboards[0].widgets (same shape as ar/ap):
@@ -3292,6 +3394,8 @@ function remHandleClick(a,id,t){
   if(a==="rem-set-thru"){var ws=find(id);if(ws)remCommitThru(ws,t.getAttribute("data-iso"));pop=null;render();return true;}
   if(a==="rem-refresh"){var wr=find(id);if(wr){var inp=document.getElementById("remq-"+id);remCommitThru(wr,inp?inp.value:null);}pop=null;render();return true;}
   if(a==="rem-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.remSort||"seq").split("-");wso.remSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+(k==="status"?"asc":(k==="name"?"asc":"desc")));}render();return true;}
+  if(a==="rem-view"){var wrv=find(id);if(wrv)wrv.remView=t.getAttribute("data-v");pop=null;render();return true;}
+  if(a==="rem-dsort"){if(modal)modal.remDSort=t.getAttribute("data-v");render();return true;}
   if(a==="rem-open"){var wop=find(id);if(!wop)return true;modal={type:"remdetail",id:id,seq:t.getAttribute("data-seq")};modalMounted=false;pop=null;render();return true;}
   if(a==="rem-detail-close"){modal=null;pop=null;render();return true;}
   if(a==="rem-export"){pop=null;setStatus("Exporting the payment history to Excel.");render();return true;}
@@ -3301,6 +3405,11 @@ function remHandleClick(a,id,t){
 /* popover: presets + a date field committed by Refresh (the verified
    commit-then-persist behaviour). Reading the field value at commit time
    means no cross-listener wiring is needed for the input. */
+/* Custom date applies on change (no Refresh button), matching Gifts Pledges. */
+function remHandleInput(e){
+  if(e.target&&e.target.classList&&e.target.classList.contains("rem-date-input")){var w=find(e.target.getAttribute("data-id"));if(w){remCommitThru(w,e.target.value);pop=null;render();}return true;}
+  return false;
+}
 function remPopContent(){
   if(pop.type!=="rem-thru")return "";
   var w=find(pop.id),cur=remThru(w),py=remPctYear(cur),y=remParse(cur).getFullYear();
@@ -3309,7 +3418,7 @@ function remPopContent(){
   var out='<div class="cap">Count receipts through</div>';
   out+=presets.map(function(p){var on=cur===p[1];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="rem-set-thru" data-id="'+w.id+'" data-iso="'+p[1]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+p[0]+'</span><span class="rem-mi-date">'+remFmtDate(p[1])+'</span></button>';}).join("");
   out+='<div class="sep"></div><div class="cap">Or choose a date</div>'+
-    '<div class="rem-datepick"><input type="date" id="remq-'+w.id+'" class="rem-date-input" value="'+cur+'" max="'+todayIso+'" aria-label="Receipts through date"><button class="btn primary sm" data-action="rem-refresh" data-id="'+w.id+'">'+ICON("refresh")+'Refresh</button></div>';
+    '<div class="rem-datepick"><input type="date" id="remq-'+w.id+'" class="rem-date-input" data-id="'+w.id+'" value="'+cur+'" max="'+todayIso+'" aria-label="Receipts through date"></div>';
   return out;
 }
 
@@ -3558,7 +3667,7 @@ function remFRow(w,r){
   var band=remFBand(r);
   var sub=(r.total<=0)?(money(r.paid)+' received, no pledge set'):(money(r.paid)+' paid of '+money(r.total));
   var pctTxt=r.pctPaid==null?'<span class="remF-nopct">n/a</span>':'<span class="remF-pct-v remF-'+band+'">'+remFPct(r.pctPaid)+'</span>';
-  return '<div class="remF-row" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open payment history.")+'">'+
+  return '<div class="remF-row" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
     '<div class="remF-cell remF-name"><span class="remF-name-nm">'+r.name+'</span><span class="remF-name-sub">'+sub+'</span></div>'+
     '<span class="remF-cell remF-num">'+money(r.total)+'</span>'+
     '<span class="remF-cell remF-num">'+money(r.expected)+'</span>'+
@@ -3591,7 +3700,7 @@ function remFBars(w){
   var rows=remFRows(w);
   var body=rows.map(function(r){
     var band=remFBand(r),pctTxt=r.pctPaid==null?'n/a':remFPct(r.pctPaid);
-    return '<div class="remF-barrow" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open payment history.")+'">'+
+    return '<div class="remF-barrow" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
       '<div class="remF-barrow-top"><span class="remF-barrow-nm">'+r.name+'</span><span class="remF-barrow-pct remF-'+band+'">'+pctTxt+'</span></div>'+
       remFBar(r,false)+
       '<div class="remF-barrow-cap"><span class="remF-vals">'+money(r.paid)+' paid &middot; '+money(r.expected)+' expected by now</span>'+remFStatusChip(r)+'</div>'+
@@ -4077,7 +4186,7 @@ var GFT_WIDGETS=[
    5. renderModal(), beside the artdetail branch (~3895):
         if(modal.type==="gftdetail"){mr.innerHTML=gftDetailModalHTML();return;}
    6. Delegated input listener, first line (beside purHandleInput, ~3847):
-        if(gftHandleInput(e))return;
+        if(gftHandleInput(e))return;if(remHandleInput(e))return;
    7. aboutOf(w), before the final return (~1447):
         if(w.kind==="gifts")return {h:w.title,b:GFT_ABOUT_BODY};
    No other shell wiring is required; every id/action/pop/modal is gft-scoped.
