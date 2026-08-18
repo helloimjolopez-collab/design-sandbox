@@ -7019,24 +7019,43 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   }
   function ptoDayRow(w,r,vis){
     var appr=(r.status==="approved");
-    var lbl=appr?"Uncheck to move this day back to pending":"Check to approve this day";
-    var box='<button class="pto-check pto-day'+(appr?" on":"")+'" data-action="pto-day" data-id="'+w.id+'" data-rec="'+r.id+'" role="checkbox" aria-checked="'+appr+'" aria-label="'+lbl+'" data-tip="'+lbl+'" data-tip-plain>'+ICON(appr?"check_box":"check_box_outline_blank")+'</button>';
+    var dl=ptoFmtDate(r.date)+", "+r.day;
     var hrs=vis.map(function(t){var v=(r.type===t.key)?r.hrs:0;return '<span class="pto-daycell pto-hrcol">'+(v?(v.toFixed(1)+'h'):'')+'</span>';}).join("");
-    var status=appr?('<span class="pto-status ok">Approved by: '+r.by+', '+r.on+'</span>'):'<span class="pto-status pend">Pending</span>';
-    return '<div class="wt-row pto-l3'+(appr?" appr":"")+'">'+box+'<span class="pto-daycell pto-datecol">'+ptoFmtDate(r.date)+'</span><span class="pto-daycell pto-daycol">'+r.day+'</span>'+hrs+'<span class="pto-daycell pto-statuscol">'+status+'</span></div>';
+    var action=appr
+      ?('<span class="pto-approved-stamp">Approved · '+r.by+' · '+r.on+'</span><button class="pto-undo" data-action="pto-unapprove-day" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Undo approval of time off on '+dl+'">'+ICON("undo")+'Undo</button>')
+      :('<button class="pto-abtn pto-abtn-appr" data-action="pto-approve-day" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Approve time off on '+dl+'">'+ICON("check")+'Approve</button>');
+    return '<div class="wt-row pto-l3'+(appr?" appr":"")+'"><span class="pto-daycell pto-datecol">'+ptoFmtDate(r.date)+'</span><span class="pto-daycell pto-daycol">'+r.day+'</span>'+hrs+'<span class="pto-daycell pto-statuscol pto-actioncol">'+action+'</span></div>';
   }
   function ptoEmpRows(w,en){
-    var e=en.emp,open=!!(w.ptoExpand&&w.ptoExpand[e.id]),st=ptoEmpState(w,e),year=ptoCurYear(w);
+    var e=en.emp,open=!!(w.ptoExpand&&w.ptoExpand[e.id]),year=ptoCurYear(w);
     var yr=ptoRecsForYear(e,year),pend=yr.filter(function(r){return r.status==="pending";}).length;
     var meta='<span class="pto-emp-meta">'+yr.length+' day'+(yr.length===1?"":"s")+(pend?(' · '+pend+' pending'):' · all approved')+'</span>';
-    var bl=(st==="all")?("Uncheck to move all of "+e.name+"'s time off back to pending"):("Check to approve all of "+e.name+"'s time off");
-    var box='<button class="pto-check pto-bulk'+(st==="all"?" on":"")+'" data-action="pto-bulk" data-id="'+w.id+'" data-emp="'+e.id+'" role="checkbox" aria-checked="'+(st==="all"?"true":(st==="some"?"mixed":"false"))+'" aria-label="'+bl.replace(/"/g,"&quot;")+'" data-tip="'+bl.replace(/"/g,"&quot;")+'" data-tip-plain>'+ptoCheckIcon(st)+'</button>';
-    var row='<div class="wt-row pto-l2'+(open?" open":"")+'"><span class="pto-l2-head" data-action="pto-expand" data-id="'+w.id+'" data-key="'+e.id+'" role="button" tabindex="0" aria-expanded="'+open+'" aria-label="Employee '+e.name.replace(/"/g,"&quot;")+', tap to '+(open?"collapse":"expand")+'">'+ptoChev(open)+'<span class="lr-main pto-emp-nm">'+e.name+'</span>'+meta+'</span>'+box+'</div>';
+    var nm=e.name.replace(/"/g,"&quot;");
+    var action=pend>0
+      ?('<button class="pto-abtn pto-abtn-appr" data-action="pto-approve-emp" data-id="'+w.id+'" data-emp="'+e.id+'" aria-label="Review and approve '+pend+' pending day'+(pend===1?"":"s")+' for '+nm+'">'+ICON("check")+'Approve '+pend+'</button>')
+      :('<span class="pto-appr-chip">'+ICON("check_circle")+'Approved</span><button class="pto-undo" data-action="pto-unapprove-emp" data-id="'+w.id+'" data-emp="'+e.id+'" aria-label="Undo approval for '+nm+'">'+ICON("undo")+'Undo</button>');
+    var row='<div class="wt-row pto-l2'+(open?" open":"")+'"><span class="pto-l2-head" data-action="pto-expand" data-id="'+w.id+'" data-key="'+e.id+'" role="button" tabindex="0" aria-expanded="'+open+'" aria-label="Employee '+nm+', tap to '+(open?"collapse":"expand")+'">'+ptoChev(open)+'<span class="lr-main pto-emp-nm">'+e.name+'</span>'+meta+'</span><span class="pto-actioncol pto-l2-action">'+action+'</span></div>';
     if(!open)return row;
     var vis=ptoVisTypes(w);
-    var colhead='<div class="wt-row pto-colhead"><span class="pto-daycell pto-datecol">Date</span><span class="pto-daycell pto-daycol">Day</span>'+vis.map(function(t){return '<span class="pto-daycell pto-hrcol">'+t.label+'</span>';}).join("")+'<span class="pto-daycell pto-statuscol">Status</span></div>';
+    var colhead='<div class="wt-row pto-colhead"><span class="pto-daycell pto-datecol">Date</span><span class="pto-daycell pto-daycol">Day</span>'+vis.map(function(t){return '<span class="pto-daycell pto-hrcol">'+t.label+'</span>';}).join("")+'<span class="pto-daycell pto-statuscol">Approval</span></div>';
     var days=en.recs.slice().sort(function(a,b){return a.date<b.date?-1:1;}).map(function(r){return ptoDayRow(w,r,vis);}).join("");
     return row+colhead+days;
+  }
+  function ptoConfirmModalHTML(){
+    var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
+    var e=ptoFindEmp(w,modal.emp);if(!e)return '<div class="modal-backdrop" data-action="modal-close"></div>';
+    var vis=ptoVisTypes(w);
+    var recs=ptoRecsForYear(e,ptoCurYear(w)).filter(function(r){return r.status==="pending";}).slice().sort(function(a,b){return a.date<b.date?-1:1;});
+    var n=recs.length;
+    var rows=recs.map(function(r){
+      var hrs=vis.map(function(t){var v=(r.type===t.key)?r.hrs:0;return '<span class="pto-cf-hr">'+(v?(v.toFixed(1)+'h '+t.label):'')+'</span>';}).join("");
+      return '<div class="pto-cf-row"><span class="pto-cf-date">'+ptoFmtDate(r.date)+'</span><span class="pto-cf-day">'+r.day+'</span>'+hrs+'</div>';
+    }).join("");
+    var head='<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--pos-100,#36a14f)">event_available</span>Approve time off · '+e.name+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div>';
+    var intro='<div class="pto-cf-intro">Approving <b>'+n+' pending day'+(n===1?"":"s")+'</b> for '+e.name+'. You can undo this afterwards.</div>';
+    var body='<div class="modal-b pto-cf-b" data-action="stop">'+intro+'<div class="pto-cf-list">'+rows+'</div></div>';
+    var footer='<div class="modal-f pto-cf-f"><button class="btn naked sm" data-action="modal-close">Cancel</button><button class="btn primary sm" data-action="pto-approve-emp-confirm" data-id="'+w.id+'" data-emp="'+e.id+'">'+ICON("check")+'Approve '+n+' day'+(n===1?"":"s")+'</button></div>';
+    return '<div class="modal-backdrop" data-action="modal-close"><div class="modal pto-cf-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Approve time off for '+e.name.replace(/"/g,"&quot;")+'">'+head+body+footer+'</div></div>';
   }
   function ptoEmptyForView(w){var v=w.ptoView||"pending",y=ptoCurYear(w);
     if(v==="pending")return '<div class="state pto-state" data-kind="empty"><span class="material-symbols-rounded pto-state-ic ok">check_circle</span><div class="state-title">You are all caught up</div><div class="state-sub">No time off is waiting for your approval in '+y+'. Switch the view to see approved time off.</div></div>';
@@ -7846,12 +7865,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.kind==="table")return fundContent(w);
     if(w.kind==="signups")return signupsContent(w);
     if(w.kind==="status")return statusHTML();
-    if(w.kind==="pension-mb")return penFContent(w); // Pension Plans (MB updated), additive dispatch
-    if(w.kind==="payroll-mb")return prFContent(w); // Payroll Distributions (MB updated), additive dispatch
-    if(w.kind==="remittance-mb")return remFContent(w); // Remittance Pledges (MB updated), additive dispatch
-    if(w.kind==="receivables-mb")return arFContent(w); // Receivable Invoices Outstanding (MB updated), additive dispatch
-    if(w.kind==="insurance-mb")return insFContent(w); // Insurance Billing Plans (MB updated), additive dispatch
-    if(w.kind==="deposits-mb")return depFContent(w); // Deposits on Hand (MB updated), additive dispatch
+    if(w.kind==="deposits-mb")return depFContent(w); // Deposits on Hand (MB updated); relies on the generic empty fallback (deposits copy is correct for it)
     return "";
   }
 
