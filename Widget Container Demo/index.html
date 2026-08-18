@@ -4527,10 +4527,13 @@ function loanContent(w){
   if(w.state==="empty"||!loanDataset(w).length)return loanEmpty(w);
   if(w.size==="kpi")return loanGlance(w);
   if(w.loanloading)return loanHeaderBlock(w,"loading")+loanSkeleton();
+  if(!loanFiltered(w).length)return loanControlsHeader(w)+'<div class="loan-body">'+loanScopedEmpty(w)+'</div>';
   var mh=loanHeaderBlock(w);
   if(w.size==="xwide")return mh+loanFull(w);
   return mh+'<div class="loan-body">'+loanTable(w)+'</div>';
 }
+function loanControlsHeader(w){return '<div class="dep-hd"><div class="dep-hd-top"><div class="loan-ctlrow">'+loanTypeChip(w)+'</div><div class="dep-hd-toggle"></div></div></div>';}
+function loanScopedEmpty(w){var ty=(w.loanType&&w.loanType!=="All")?w.loanType:"";if(!ty)return loanEmpty(w);return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">No '+loanEsc(ty)+' loans</div><div class="state-sub">No loans of this type are carrying a balance. Pick another type above to see the rest.</div></div>';}
 
 /* Loading only on a data-fetch (loan-type change), never on sort or band pick. */
 function loanLoad(w){w.loanloading=true;clearTimeout(timers["loan-"+w.id]);timers["loan-"+w.id]=setTimeout(function(){w.loanloading=false;w.updated="just now";render();},800);}
