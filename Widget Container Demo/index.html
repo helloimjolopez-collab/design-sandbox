@@ -3325,10 +3325,16 @@ function remContent(w){
   if(w.state==="empty")return remEmpty(w);
   if(w.size==="kpi")return remGlance(w);
   if(w.remLoading)return remHeaderBlock(w,"loading")+remSkeleton();
+  if(remData(w).length&&!remActiveRows(w).length)return remControlsHeader(w)+'<div class="rem-body">'+remThruEmpty(w)+'</div>';
   var mh=remHeaderBlock(w);
   if(w.size==="xwide")return mh+'<div class="dep-full one rem-full"><div class="dep-col"><div class="dep-col-h">Pacing by fund</div>'+remTable(w,true)+'</div></div>';
   return mh+'<div class="rem-body">'+((w.remView||"progress")==="table"?remTable(w,true):remProgress(w))+'</div>';
 }
+/* pledges active on/before the selected receipts-through date; funds without a start are always active (so existing data is unaffected) */
+function remActiveRows(w){var iso=remThru(w);return remData(w).filter(function(a){return !a.start||a.start<=iso;});}
+/* controls-only header for the filtered-empty case: keep the date + view controls, drop the KPI money and pace badge */
+function remControlsHeader(w){return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remThruChip(w)+'<div class="dep-hd-toggle">'+(w.size==="xwide"?"":remViewToggle(w))+'</div></div></div>';}
+function remThruEmpty(w){return '<div class="state" data-kind="empty">'+ICON("volunteer_activism")+'<div class="state-title">No pledges in this date range</div><div class="state-sub">No pledges were active on or before '+remFmtDate(remThru(w))+'. Move the receipts date forward to see them.</div></div>';}
 
 /* ---- drill: payment history focus overlay (modal.type "remdetail") --- */
 function remChStatusChip(c){
