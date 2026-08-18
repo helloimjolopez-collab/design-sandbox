@@ -6236,6 +6236,7 @@ function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
   if(paths.length<=1)return ""; /* never a dead control: one path -> omit */
   return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, tap to change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
 function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_alt"],["enc","Committed","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+function purAmtWord(w){var s=w.pstatus||"mine";return s==="approved"?"approved":s==="unapproved"?"unapproved":"to approve";}
 function purHeaderBlock(w,mode){
   var loading=(mode==="loading");
   var toggle=(w.size==="wide")?purViewToggle(w):"";
@@ -6257,7 +6258,7 @@ function purTable(w,full){
   rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="num"||key==="vendor")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
   function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pur-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
   var numLbl=purColLabel(w);
-  var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Outstanding")+'</span><span class="pur-c-go" aria-hidden="true"></span></div>';
+  var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Amount")+'</span></div>';
   var body=rows.map(function(o){
     var act=purCanAct(o);
     var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, outstanding '+money(o.amount)+'. '+(act?"Opens to approve or reject.":"Opens the purchase order.")+'</span>';
