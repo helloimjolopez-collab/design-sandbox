@@ -5687,7 +5687,8 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.bloading){var mhl=bgtFHeaderBlock(w,"loading");return mhl+(w.size==="xwide"?('<div class="bgt-explore"><div class="bgt-explore-col">'+bgtFSkeleton()+'</div><div class="bgt-explore-col">'+bgtFSkeleton()+'</div></div>'):bgtFSkeleton());}
     var mh=bgtFHeaderBlock(w);
     if(w.size!=="xwide")return mh+bgtFView(w,w.bshape||"bar");
-    return mh+'<div class="bgt-explore"><div class="bgt-explore-col"><div class="bgt-col-h">Budget vs actual</div>'+bgtFView(w,"bar")+'</div><div class="bgt-explore-col"><div class="bgt-col-h">Detail</div>'+bgtFView(w,"table")+'</div></div>';
+    if((w.bdetail||"charts")==="table")return mh+bgtFView(w,"table");
+    return mh+'<div class="bgt-explore"><div class="bgt-explore-col"><div class="bgt-col-h">Budget vs actual</div>'+bgtFView(w,"bar")+'</div><div class="bgt-explore-col"><div class="bgt-col-h">Trend</div>'+bgtFView(w,"line")+'</div></div>';
   }
   /* Data-fetch loading only (scope / report / report-line / window). Interval / shape / sort are client-side re-renders of data already in hand, so they never trigger a load. */
   function bgtFLoad(w){w.bloading=true;clearTimeout(timers["bgtF-"+w.id]);timers["bgtF-"+w.id]=setTimeout(function(){w.bloading=false;render();},850);}
@@ -8511,6 +8512,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     if(a==="set-bgtF-span"){var wfsp=find(id);if(wfsp){var ns2=t.getAttribute("data-s");if(wfsp.bspan!==ns2){wfsp.bspan=ns2;["binterval","iA","iB"].forEach(function(ivk3){if(bgtFIvDisabled(ns2,wfsp[ivk3]||"month"))wfsp[ivk3]=bgtFIvDefault(ns2);});bgtFSnapShape(wfsp);["a","b"].forEach(function(sd){var ivk=sd==="a"?"iA":"iB",fmk=sd==="a"?"fA":"fB";var wvv=Object.assign({},wfsp,{binterval:wfsp[ivk]||bgtFIvDefault(ns2)});if(wfsp[fmk]==="line"&&bgtFViewRows(wvv).length<2)wfsp[fmk]="bar";});bgtFLoad(wfsp);}}pop=null;render();return;}
     if(a==="set-bgtF-interval"){var wfi=find(id);if(wfi){wfi.binterval=t.getAttribute("data-v");bgtFSnapShape(wfi);}render();return;}
     if(a==="set-bgtF-shape"){var wfsh=find(id);if(wfsh)wfsh.bshape=t.getAttribute("data-v");render();return;}
+    if(a==="set-bgtF-detail"){var wfd=find(id);if(wfd)wfd.bdetail=t.getAttribute("data-v");render();return;}
     if(a==="set-bgtF-pinterval"){var wfp=find(id),sg2=t.getAttribute("data-panel");if(wfp){var ivk4=sg2==="a"?"iA":"iB",fmk4=sg2==="a"?"fA":"fB";wfp[ivk4]=t.getAttribute("data-v");var wvv4=Object.assign({},wfp,{binterval:wfp[ivk4]});if(wfp[fmk4]==="line"&&bgtFViewRows(wvv4).length<2)wfp[fmk4]="bar";}render();return;}
     if(a==="set-bgtF-pshape"){var wfps=find(id),sf2=t.getAttribute("data-panel");if(wfps)wfps[sf2==="a"?"fA":"fB"]=t.getAttribute("data-v");render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
