@@ -3925,8 +3925,13 @@ function remFHandleClick(a,id,t){
 /* popover: presets + a date field committed by Refresh (read from the DOM at
    commit time, so typing never re-renders and the caret is never dropped). */
 function remFPopContent(){
+  var w=find(pop.id);if(!w)return "";
+  if(pop.type==="remF-pacef"){
+    var cv=w.remPaceF||"all",opts=[["all","View all"],["behind","Behind"],["ontrack","On track"],["ahead","Ahead"]];
+    return '<div class="cap">Filter by pace</div>'+opts.map(function(o){var on=cv===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");
+  }
   if(pop.type!=="remF-thru")return "";
-  var w=find(pop.id),cur=remFThru(w);
+  var cur=remFThru(w);
   var todayIso=remFISO(REMF_TODAY),lastMo=remFEndOfLastMonth(REMF_TODAY);
   var presets=[["Today",todayIso],["End of last month",lastMo]];
   var out='<div class="cap">Count receipts through</div>';
