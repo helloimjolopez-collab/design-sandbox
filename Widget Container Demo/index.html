@@ -3714,7 +3714,8 @@ function remFMiniBar(r){
   if(r.pctPaid==null)return '<span class="remF-nopct">n/a</span>';
   var st=remFOk(r)?"ok":"behind";
   var paidPct=Math.max(0,Math.min(100,r.pctPaid*100)),expPct=(r.total>0)?Math.min(100,r.expected/r.total*100):0;
-  return '<span class="rem-minirow" data-tip="'+remFEsc(remFPct(r.pctPaid)+' paid of the pledged total')+'" data-tip-plain><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+st+'" style="width:'+paidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+expPct.toFixed(1)+'%"></span></span><span class="rem-mini-pct">'+remFPct(r.pctPaid)+'</span></span>';
+  var pop=[r.name,r.total,r.paid,r.expected,r.outstanding,Math.round(r.pctPaid*100),Math.round(expPct),remFStatus(r),remFDayPhrase(r)].join("|").replace(/"/g,"&quot;");
+  return '<span class="rem-minirow" data-rempop="'+pop+'"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+st+'" style="width:'+paidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+expPct.toFixed(1)+'%"></span></span><span class="rem-mini-pct">'+remFPct(r.pctPaid)+'</span></span>';
 }
 /* Pace filter: a normal top-toolbar dropdown (View all / Behind / On track / Ahead). */
 function remFPaceChip(w){var v=w.remPaceF||"all";return '<button class="filter-chip" data-action="remF-pacef" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="remF-pacef"&&pop.id===w.id?"true":"false")+'" aria-label="Pace filter, tap to change"><span class="fc-label">'+remFPaceLabel(v)+'</span>'+ICON("expand_more")+'</button>';}
