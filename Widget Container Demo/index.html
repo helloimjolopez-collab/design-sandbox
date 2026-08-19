@@ -3911,11 +3911,12 @@ function remFLoad(w){w.remLoading=true;clearTimeout(timers["remF-"+w.id]);timers
 function remFCommitThru(w,iso){if(iso&&/^\d{4}-\d{2}-\d{2}$/.test(iso)&&iso!==remFThru(w)){w.remThru=iso;remFLoad(w);setStatus("Counting receipts through "+remFFmtDate(iso)+".");return true;}return false;}
 function remFHandleClick(a,id,t){
   if(a==="remF-thru"){pop=(pop&&pop.type==="remF-thru"&&pop.id===id)?null:{type:"remF-thru",id:id};render();return true;}
+  if(a==="remF-pacef"){pop=(pop&&pop.type==="remF-pacef"&&pop.id===id)?null:{type:"remF-pacef",id:id};render();return true;}
+  if(a==="remF-set-pacef"){var wpf=find(id);if(wpf)wpf.remPaceF=t.getAttribute("data-v");pop=null;render();return true;}
   if(a==="remF-set-thru"){var ws=find(id);if(ws)remFCommitThru(ws,t.getAttribute("data-iso"));pop=null;render();return true;}
   if(a==="remF-refresh"){var wr=find(id);if(wr){var inp=document.getElementById("remFq-"+id);remFCommitThru(wr,inp?inp.value:null);}pop=null;render();return true;}
   if(a==="remF-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.remSort||"seq").split("-");var dd=(k==="name"||k==="status")?"asc":"desc";wso.remSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+dd);}render();return true;}
   if(a==="remF-view"){var wv=find(id);if(wv)wv.view=t.getAttribute("data-v");render();return true;}
-  if(a==="remF-pace"){var wp=find(id);if(wp){var b=t.getAttribute("data-band"),s=remFPaceSel(wp);var ns={behind:s.behind,ontrack:s.ontrack,ahead:s.ahead};ns[b]=!ns[b];wp.remPace=ns;}render();return true;}
   if(a==="remF-open"){var wop=find(id);if(!wop)return true;modal={type:"remFdetail",id:id,seq:t.getAttribute("data-seq")};modalMounted=false;pop=null;render();return true;}
   if(a==="remF-detail-close"){modal=null;pop=null;render();return true;}
   if(a==="remF-export"){pop=null;setStatus("Exporting the payment history to Excel.");render();return true;}
