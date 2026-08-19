@@ -3847,16 +3847,14 @@ function remFKpiHead(t){
 function remFBandStats(w){var rows=remFCompute(w),s={behind:{n:0,out:0},ontrack:{n:0,out:0},ahead:{n:0,out:0}};rows.forEach(function(r){var b=remFPaceBand(r);if(s[b]){s[b].n++;s[b].out+=r.outstanding;}});return s;}
 /* KPI filter cards: Behind / On track / Ahead. Always shown; tap one to filter the
    table to that pace, tap again (or tap another) to clear. Single-select. */
-function remFPaceCards(w){
+function remFPaceCards(w,drill){
   var cur=w.remPaceF||"all",st=remFBandStats(w);
   var defs=[["behind","Behind","error"],["ontrack","On track","check_circle"],["ahead","Ahead","trending_up"]];
-  return '<div class="remF-cards" role="group" aria-label="Filter pledges by pace">'+defs.map(function(d){
-    var on=cur===d[0],b=st[d[0]];
-    return '<button class="remF-card remF-card-'+d[0]+(on?" on":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', '+money(b.out)+' outstanding, tap to filter">'+
-      '<span class="remF-card-top">'+ICON(d[2])+'<span class="remF-card-lbl">'+d[1]+'</span></span>'+
-      '<span class="remF-card-n">'+b.n+'</span>'+
-      '<span class="remF-card-sub">'+money(b.out)+' outstanding</span>'+
-    '</button>';
+  return '<div class="remF-cards" role="group" aria-label="'+(drill?"Pledge pace, tap to open":"Filter pledges by pace")+'">'+defs.map(function(d){
+    var b=st[d[0]],top='<span class="remF-card-top">'+ICON(d[2])+'<span class="remF-card-lbl">'+d[1]+'</span></span><span class="remF-card-n">'+b.n+'</span><span class="remF-card-sub">'+money(b.out)+' outstanding</span>';
+    if(drill)return '<button class="remF-card remF-card-'+d[0]+'" data-action="remF-drill" data-id="'+w.id+'" data-band="'+d[0]+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', '+money(b.out)+' outstanding, tap to open">'+top+'</button>';
+    var on=cur===d[0];
+    return '<button class="remF-card remF-card-'+d[0]+(on?" on":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', '+money(b.out)+' outstanding, tap to filter">'+top+'</button>';
   }).join("")+'</div>';
 }
 function remFHeaderBlock(w,mode){
