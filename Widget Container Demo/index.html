@@ -3708,7 +3708,7 @@ function remFPaceLabel(v){return v==="behind"?"Behind":v==="ontrack"?"On track":
    expected-by-now marker), slim. Hover shows the numbers, tap opens the drill. */
 function remFBar(r){
   if(r.total<=0)return '<div class="rem-bwrap rem-bar-slim"><div class="ar-bartrack rem-bartrack"></div></div>';
-  var st=remFOk(r)?"ok":"behind";
+  var band=remFPaceBand(r),st=(band==="neutral"?"none":band);
   var paidPct=Math.min(100,r.paid/r.total*100),expPct=Math.min(100,r.expected/r.total*100);
   var gap=(expPct>paidPct)?'<span class="rem-bargap" style="left:'+paidPct.toFixed(1)+'%;width:'+(expPct-paidPct).toFixed(1)+'%"></span>':'';
   var marker='<span class="rem-barmark" style="left:'+Math.min(100,expPct).toFixed(1)+'%"></span>';
