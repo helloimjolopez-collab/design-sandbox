@@ -3828,10 +3828,10 @@ function remFHeaderBlock(w,mode){
   var toggle=(w.size==="wide")?('<div class="dep-hd-toggle">'+remFViewToggle(w)+'</div>'):"";
   if(mode==="loading"){
     numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:96px;height:22px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';
-    return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div><div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div></div>';
+    return '<div class="dep-hd rem-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+remFThruChip(w)+remFPaceChip(w)+'</div>'+toggle+'</div><div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div></div>';
   }
   numInner=remFKpiHead(t);
-  return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div>'+
+  return '<div class="dep-hd rem-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+remFThruChip(w)+remFPaceChip(w)+'</div>'+toggle+'</div>'+
     '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<span class="sr-only">'+money(t.paid)+' paid of '+money(t.expected)+' expected by now (across each pledge\'s term); '+money(t.total)+' pledged in total.</span></div></div>'+
   '</div>';
 }
@@ -3860,12 +3860,11 @@ function remFContent(w){
   if(w.state==="empty")return remFEmpty(w);
   if(w.size==="kpi")return remFGlance(w);
   if(w.remLoading)return remFHeaderBlock(w,"loading")+remFSkeleton();
-  var pacebar='<div class="remF-pacebar">'+remFPaceFilter(w)+'</div>';
   if(w.size==="xwide"){
-    return remFHeaderBlock(w)+pacebar+'<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Report</div>'+remFTable(w)+'</div><div class="dep-col"><div class="dep-col-h">Progress</div>'+remFBars(w)+'</div></div>';
+    return remFHeaderBlock(w)+'<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Report</div>'+remFTable(w)+'</div><div class="dep-col"><div class="dep-col-h">Progress</div>'+remFBars(w)+'</div></div>';
   }
   var v=w.view||"table";
-  return remFHeaderBlock(w)+pacebar+'<div class="remF-body">'+(v==="bars"?remFBars(w):remFTable(w))+'</div>';
+  return remFHeaderBlock(w)+'<div class="remF-body">'+(v==="bars"?remFBars(w):remFTable(w))+'</div>';
 }
 
 /* ---- drill: payment-history focus overlay (modal.type "remFdetail") ---- */
