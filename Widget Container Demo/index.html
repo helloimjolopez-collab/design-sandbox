@@ -3691,7 +3691,7 @@ function remFPbarShow(el,mx,my){
   var left=mx+14,top=my-bh-10;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;if(top<M)top=my+16;
   remFPopEl.style.left=left+"px";remFPopEl.style.top=top+"px";
 }
-document.addEventListener("mousemove",function(e){var el=e.target.closest&&e.target.closest(".remF-pbar[data-rempop]");if(!el){remFPbarHide();return;}remFPbarShow(el,e.clientX,e.clientY);});
+document.addEventListener("mousemove",function(e){var el=e.target.closest&&e.target.closest(".rem-bwrap[data-rempop],.rem-minirow[data-rempop]");if(!el){remFPbarHide();return;}remFPbarShow(el,e.clientX,e.clientY);});
 /* per-activity pbar: pop = "label|pledged|received|expected|remaining|pctFill|pctTick|status|dayPhrase" */
 /* binary pace band for colour (behind = saffron, else emerald), matching Gifts/HQ. */
 function remFOk(r){var s=remFStatus(r);return !(s==="behind"||s==="farbehind");}
@@ -3893,9 +3893,6 @@ function remFContent(w){
   if(w.state==="empty")return remFEmpty(w);
   if(w.size==="kpi")return remFGlance(w);
   if(w.remLoading)return remFHeaderBlock(w,"loading")+remFSkeleton();
-  if(w.size==="xwide"){
-    return remFHeaderBlock(w)+'<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Report</div>'+remFTable(w)+'</div><div class="dep-col"><div class="dep-col-h">Progress</div>'+remFBars(w)+'</div></div>';
-  }
   var v=w.view||"table";
   return remFHeaderBlock(w)+'<div class="remF-body">'+(v==="bars"?remFBars(w):remFTable(w))+'</div>';
 }
