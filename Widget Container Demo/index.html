@@ -3867,7 +3867,16 @@ function remFHeaderBlock(w,mode){
 /* ---- Glance (kpi): Jo's remGlance shape, money + pace badge + goal pill + one
    small graded flat fill with the navy expected tick; legend hidden. ---- */
 function remFGlance(w){
-  return '<div class="remF-glancewrap"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+remFPaceCards(w)+'</div>';
+  return '<div class="remF-glancewrap"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+remFPaceCards(w,true)+'</div>';
+}
+function remFDrillModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  var band=modal.band||"all";
+  var clone=Object.assign({},w,{size:"wide",remPaceF:band});
+  return '<div class="modal-backdrop" data-action="remF-drill-close"><div class="modal modal-wide rem-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Remittance pledges">'+
+    '<div class="modal-h"><span class="modal-title">Remittance pledges</span><button class="iconbtn" data-action="remF-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b rem-drill-b">'+remFContent(clone)+'</div>'+
+  '</div></div>';
 }
 function remFEmpty(w){
   if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span><div class="metric-value" style="font-size:16px">None set up</div><div class="gl-sub"><span class="bgt-caption">no pledges to pace yet</span></div></div></div>';
