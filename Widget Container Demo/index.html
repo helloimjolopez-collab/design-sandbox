@@ -3715,16 +3715,13 @@ function remFHead(w){
   '</div>';
 }
 function remFRow(w,r){
-  var band=remFBand(r);
-  var sub=(r.total<=0)?(money(r.paid)+' received, no pledge set'):(money(r.paid)+' paid of '+money(r.total));
-  var pctTxt=r.pctPaid==null?'<span class="remF-nopct">n/a</span>':'<span class="remF-pct-v remF-'+band+'">'+remFPct(r.pctPaid)+'</span>';
   return '<div class="remF-row" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
-    '<div class="remF-cell remF-name"><span class="remF-name-nm">'+r.name+'</span><span class="remF-name-sub">'+sub+'</span></div>'+
+    '<div class="remF-cell remF-name"><span class="remF-name-nm">'+r.name+'</span></div>'+
     '<span class="remF-cell remF-num">'+money(r.total)+'</span>'+
     '<span class="remF-cell remF-num">'+money(r.expected)+'</span>'+
     '<span class="remF-cell remF-num">'+money(r.paid)+'</span>'+
     '<span class="remF-cell remF-num">'+money(r.outstanding)+'</span>'+
-    '<span class="remF-cell remF-pct">'+pctTxt+'</span>'+
+    '<span class="remF-cell remF-pct">'+remFMiniBar(r)+'</span>'+
     '<span class="sr-only">'+remFRowSr(r)+' '+remFStatusLabel(remFStatus(r))+'.</span>'+
   '</div>';
 }
