@@ -3681,7 +3681,10 @@ function remFPaceBadge(t){
 }
 /* ---- sort (seq default = conference order) ---- */
 function remFRows(w){
-  var rows=remFCompute(w),sk=(w.remSort||"seq").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  var rows=remFCompute(w);
+  var sel=remFPaceSel(w),all=(sel.behind&&sel.ontrack&&sel.ahead),none=(!sel.behind&&!sel.ontrack&&!sel.ahead);
+  if(!all&&!none)rows=rows.filter(function(r){var b=remFPaceBand(r);return b==="neutral"?true:sel[b];});
+  var sk=(w.remSort||"seq").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
   if(key==="seq")return rows;
   return rows.slice().sort(function(a,b){
     if(key==="name")return dir*a.name.localeCompare(b.name);
