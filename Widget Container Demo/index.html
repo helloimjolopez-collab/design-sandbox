@@ -3850,16 +3850,7 @@ function remFHeaderBlock(w,mode){
 /* ---- Glance (kpi): Jo's remGlance shape, money + pace badge + goal pill + one
    small graded flat fill with the navy expected tick; legend hidden. ---- */
 function remFGlance(w){
-  var t=remFTotals(w),ok=(t.paid>=t.expected);
-  var paidPct=t.total>0?Math.min(100,t.paid/t.total*100):0,expPct=t.total>0?Math.min(100,t.expected/t.total*100):0;
-  var gap=(expPct>paidPct)?'<span class="rem-bargap" style="left:'+paidPct.toFixed(1)+'%;width:'+(expPct-paidPct).toFixed(1)+'%"></span>':'';
-  var marker=(t.total>0)?'<span class="rem-barmark" style="left:'+Math.min(100,expPct).toFixed(1)+'%"></span>':'';
-  return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+
-    remFKpiHead(t)+
-    '<div class="remF-glance-read"><div class="rem-bwrap rem-bar-slim"><div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+(ok?"ok":"behind")+'" style="width:'+Math.max(2,paidPct).toFixed(1)+'%"></div>'+gap+'</div>'+marker+'</div></div>'+
-    '<span class="sr-only">'+money(t.paid)+' paid of '+money(t.expected)+' expected by now; '+money(t.total)+' pledged in total; '+money(t.out)+' outstanding.</span>'+
-  '</div></div>';
+  return '<div class="remF-glancewrap"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+remFPaceCards(w)+'</div>';
 }
 function remFEmpty(w){
   if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span><div class="metric-value" style="font-size:16px">None set up</div><div class="gl-sub"><span class="bgt-caption">no pledges to pace yet</span></div></div></div>';
