@@ -3777,16 +3777,24 @@ function remFViewToggle(w){
     seg("bars","Progress","linear_scale","One progress bar per activity, with a marker for the amount expected by now.")+
   '</div>';
 }
+/* KPI diff badge: paid vs the total expected by now (the pace question), one icon. */
+function remFKpiBadge(t){
+  if(t.expected<=0)return '';
+  var behind=t.paid<t.expected,ahead=t.paid>t.expected;
+  var txt=behind?('−'+money(t.shortfall)):(ahead?('+'+money(t.paid-t.expected)):'On track');
+  var tip=behind?(money(t.shortfall)+' behind the total expected by now.'):(ahead?(money(t.paid-t.expected)+' ahead of the total expected by now.'):'Paid matches the total expected by now.');
+  return '<span class="rem-st rem-st-'+(behind?'behind':'ok')+'" data-tip="'+remFEsc(tip)+'" data-tip-plain>'+ICON(behind?'error':'check_circle')+txt+'</span>';
+}
 function remFHeaderBlock(w,mode){
   var t=remFTotals(w),numInner;
-  var toggle=(w.size==="wide"||w.size==="xwide")?('<div class="dep-hd-toggle">'+remFViewToggle(w)+'</div>'):"";
+  var toggle=(w.size==="wide")?('<div class="dep-hd-toggle">'+remFViewToggle(w)+'</div>'):"";
   if(mode==="loading"){
     numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:96px;height:22px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';
     return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div><div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div></div>';
   }
-  numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(t.paid)+'</span>'+remFPaceBadge(t)+'<span class="gft-goalpill">'+(t.total>0?remFPct(t.pctPaid):"n/a")+' of pledged</span></div>';
+  numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(t.paid)+'</span><span class="rem-kpi-ctx">paid of '+money(t.expected)+' expected by now</span>'+remFKpiBadge(t)+'</div>';
   return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div>'+
-    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<span class="sr-only">'+money(t.paid)+' paid of '+money(t.total)+' pledged; '+remFPct(t.pctPaid)+' received against an expected '+remFPct(t.pace)+' by now across each pledge\'s term.</span></div></div>'+
+    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<span class="sr-only">'+money(t.paid)+' paid of '+money(t.expected)+' expected by now (across each pledge\'s term); '+money(t.total)+' pledged in total.</span></div></div>'+
   '</div>';
 }
 /* ---- Glance (kpi): Jo's remGlance shape, money + pace badge + goal pill + one
