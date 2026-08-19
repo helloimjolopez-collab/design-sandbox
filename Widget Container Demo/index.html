@@ -2192,7 +2192,7 @@
   .remF-card-ontrack.on{border-color:var(--am-400);background:var(--am-100);}
   .remF-card-ahead.on{border-color:#10b981;background:#daf5ea;}
   .remF-glancewrap{display:flex;flex-direction:column;gap:9px;padding:10px 12px;height:100%;justify-content:center;}
-  .remF-glancewrap .scope-chip{align-self:flex-start;}
+  .remF-glancewrap .scope-chip,.remF-glancewrap .filter-chip{align-self:flex-start;}
   .rem-drill-modal{height:auto;max-height:88vh;width:min(760px,94vw);display:flex;flex-direction:column;}
   .rem-drill-b{padding:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
   .rem-drill-b .dep-hd{padding-top:12px;}
@@ -3768,9 +3768,9 @@ function remFHead(w){
   return '<div class="remF-row remF-head">'+
     '<span class="remF-cell remF-name">'+remFSortBtn(w,"name","Activity")+'</span>'+
     '<span class="remF-cell remF-num">'+remFSortBtn(w,"annual","Pledge","Total pledged over this pledge's own term (start to end date).")+'</span>'+
-    '<span class="remF-cell remF-num remF-alignL">'+remFSortBtn(w,"expected","Expected","Amount that should be paid by now, based on the share of each pledge's own term (start to end date) elapsed.")+'</span>'+
-    '<span class="remF-cell remF-num">'+remFSortBtn(w,"paidamt","Paid")+'</span>'+
     '<span class="remF-cell remF-num remF-alignL">'+remFSortBtn(w,"outstanding","Outstanding")+'</span>'+
+    '<span class="remF-cell remF-num">'+remFSortBtn(w,"paidamt","Paid")+'</span>'+
+    '<span class="remF-cell remF-num remF-alignL">'+remFSortBtn(w,"expected","Expected","Amount that should be paid by now, based on the share of each pledge's own term (start to end date) elapsed.")+'</span>'+
     '<span class="remF-cell remF-pct">'+remFSortBtn(w,"pct","% Paid")+'</span>'+
   '</div>';
 }
@@ -3778,9 +3778,9 @@ function remFRow(w,r){
   return '<div class="remF-row" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
     '<div class="remF-cell remF-name"><span class="remF-name-nm">'+r.name+'</span></div>'+
     '<span class="remF-cell remF-num">'+money(r.total)+'</span>'+
-    '<span class="remF-cell remF-num remF-alignL">'+money(r.expected)+'</span>'+
-    '<span class="remF-cell remF-num">'+money(r.paid)+'</span>'+
     '<span class="remF-cell remF-num remF-alignL">'+money(r.outstanding)+'</span>'+
+    '<span class="remF-cell remF-num">'+money(r.paid)+'</span>'+
+    '<span class="remF-cell remF-num remF-alignL">'+money(r.expected)+'</span>'+
     '<span class="remF-cell remF-pct">'+remFMiniBar(r)+'</span>'+
     '<span class="sr-only">'+remFRowSr(r)+' '+remFStatusLabel(remFStatus(r))+'.</span>'+
   '</div>';
@@ -3796,9 +3796,9 @@ function remFTable(w){
   var tot='<div class="remF-row remF-total">'+
     '<span class="remF-cell remF-name remF-total-lead">Total ('+tt.count+' activit'+(tt.count===1?"y":"ies")+')</span>'+
     '<span class="remF-cell remF-num">'+money(tt.total)+'</span>'+
-    '<span class="remF-cell remF-num remF-alignL">'+money(tt.expected)+'</span>'+
-    '<span class="remF-cell remF-num">'+money(tt.paid)+'</span>'+
     '<span class="remF-cell remF-num remF-alignL">'+money(tt.out)+'</span>'+
+    '<span class="remF-cell remF-num">'+money(tt.paid)+'</span>'+
+    '<span class="remF-cell remF-num remF-alignL">'+money(tt.expected)+'</span>'+
     '<span class="remF-cell remF-pct">'+totMini+'</span>'+
   '</div>';
   return '<div class="remF-tbl"><div class="scroll remF-scroll">'+remFHead(w)+body+'</div>'+tot+'</div>';
@@ -3878,7 +3878,7 @@ function remFHeaderBlock(w,mode){
 /* ---- Glance (kpi): Jo's remGlance shape, money + pace badge + goal pill + one
    small graded flat fill with the navy expected tick; legend hidden. ---- */
 function remFGlance(w){
-  return '<div class="remF-glancewrap"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+remFPaceCards(w,true)+'</div>';
+  return '<div class="remF-glancewrap">'+remFThruChip(w)+remFPaceCards(w,true)+'</div>';
 }
 function remFDrillModalHTML(){
   var w=find(modal.id);if(!w)return "";
@@ -8306,7 +8306,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
   function render(){hideTip();if(typeof hideLnTip==="function")hideLnTip();if(typeof dsHide==="function")dsHide();var _ws=cur().widgets,_grid=_ws.map(widgetHTML).join("");if(_ws.length<=1)_grid+=addWidgetPlaceholderHTML();document.getElementById("dashboard").innerHTML=_grid;document.getElementById("tbLeft").innerHTML=tbLeftHTML();document.getElementById("tbRight").innerHTML=tbRightHTML();if(renaming){var el=document.getElementById("rn-"+renaming);if(el){el.focus();el.select();}}if(focusDash){var di=document.getElementById("dashInput");if(di){di.focus();di.select();}focusDash=false;}renderOverlay();if(pop&&pop.type==="companydd"){var _ci=document.getElementById("coq");if(_ci&&document.activeElement!==_ci){_ci.focus();try{_ci.setSelectionRange(_ci.value.length,_ci.value.length);}catch(_e){}}}if(pop&&pop.type==="wfind"){var _wf=document.getElementById("wfindq");if(_wf&&document.activeElement!==_wf){_wf.focus();try{_wf.setSelectionRange(_wf.value.length,_wf.value.length);}catch(_e6){}}}if(pop&&pop.type==="depfilter"){var _fi=document.getElementById("fq");if(_fi&&document.activeElement!==_fi){_fi.focus();try{_fi.setSelectionRange(_fi.value.length,_fi.value.length);}catch(_e2){}}}if(pop&&pop.type==="bank-acct"){var _bi=document.getElementById("bankq");if(_bi&&document.activeElement!==_bi){_bi.focus();try{_bi.setSelectionRange(_bi.value.length,_bi.value.length);}catch(_e4){}}}if(pop&&pop.type==="ap-due"){var _ai=document.getElementById("apq");if(_ai&&document.activeElement!==_ai){_ai.focus();try{_ai.setSelectionRange(_ai.value.length,_ai.value.length);}catch(_e5){}}}if(prFocusId){var _pf=document.getElementById(prFocusId);if(_pf&&document.activeElement!==_pf){_pf.focus();try{var _vl=_pf.value.length;_pf.setSelectionRange(_vl,_vl);}catch(_e3){}}}renderModal();}
   document.addEventListener("focus",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input"))prFocusId=e.target.id;},true);
   document.addEventListener("focusout",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")&&e.target.id===prFocusId)prFocusId=null;},true);
-  document.addEventListener("change",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")){var wpc=find(e.target.getAttribute("data-id")),whichc=e.target.getAttribute("data-which");if(wpc&&e.target.value){wpc[whichc]=e.target.value;wpc.range="CUSTOM";render();}}});
+  document.addEventListener("change",function(e){if(typeof remHandleInput==="function"&&remHandleInput(e))return;if(e.target.classList&&e.target.classList.contains("pr-date-input")){var wpc=find(e.target.getAttribute("data-id")),whichc=e.target.getAttribute("data-which");if(wpc&&e.target.value){wpc[whichc]=e.target.value;wpc.range="CUSTOM";render();}}});
   /* Smart scroll chaining: when the wheel is over a widget's internal scroller that is at its
      boundary (or does not overflow), scroll the whole dashboard instead of getting stuck. */
   document.addEventListener("wheel",function(e){
@@ -8317,7 +8317,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;
     if(!canScroll||(e.deltaY<0&&atTop)||(e.deltaY>0&&atBottom)){window.scrollBy(0,e.deltaY);e.preventDefault();}
   },{passive:false});
-  document.addEventListener("input",function(e){if(gftHandleInput(e))return;if(purHandleInput(e))return;if(e.target.id==="wfindq"){widgetFindQuery=e.target.value;var poswf=e.target.selectionStart;renderOverlay();var wfi=document.getElementById("wfindq");if(wfi){wfi.focus();try{wfi.setSelectionRange(poswf,poswf);}catch(_wf){}}return;}if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="apq"){apDueQuery=e.target.value;var posa=e.target.selectionStart;renderOverlay();var ai=document.getElementById("apq");if(ai){ai.focus();try{ai.setSelectionRange(posa,posa);}catch(_a){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
+  document.addEventListener("input",function(e){if(gftHandleInput(e))return;if(purHandleInput(e))return;if(typeof remHandleInput==="function"&&remHandleInput(e))return;if(e.target.id==="wfindq"){widgetFindQuery=e.target.value;var poswf=e.target.selectionStart;renderOverlay();var wfi=document.getElementById("wfindq");if(wfi){wfi.focus();try{wfi.setSelectionRange(poswf,poswf);}catch(_wf){}}return;}if(e.target.id&&e.target.id.indexOf("mctq-")===0){var wmq=find(e.target.id.slice(5));if(wmq)wmq.mctQ=e.target.value;var pmc=e.target.selectionStart;render();var mi2=document.getElementById(e.target.id);if(mi2){mi2.focus();try{mi2.setSelectionRange(pmc,pmc);}catch(_mc){}}return;}var dq=e.target.closest&&e.target.closest(".dep-q");if(dq){var cont=dq.closest(".wcontent"),val=dq.value.trim().toLowerCase();if(cont){cont.querySelectorAll(".wt-row").forEach(function(r){if(r.classList.contains("wt-head"))return;var nm=(r.getAttribute("data-acct")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".tr-lg-row").forEach(function(r){var nm=(r.getAttribute("data-name")||"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});cont.querySelectorAll(".pie-wrap .leg").forEach(function(r){var m=r.querySelector(".lg-main"),nm=(m?m.textContent:"").toLowerCase();r.style.display=(!val||nm.indexOf(val)>-1)?"":"none";});}return;}if(e.target.id==="bankq"){bankQuery=e.target.value;var posb=e.target.selectionStart;renderOverlay();var bi=document.getElementById("bankq");if(bi){bi.focus();try{bi.setSelectionRange(posb,posb);}catch(_b){}}return;}if(e.target.id==="apq"){apDueQuery=e.target.value;var posa=e.target.selectionStart;renderOverlay();var ai=document.getElementById("apq");if(ai){ai.focus();try{ai.setSelectionRange(posa,posa);}catch(_a){}}return;}if(e.target.id==="fq"){filterQuery=e.target.value;var posf=e.target.selectionStart;renderOverlay();var fi=document.getElementById("fq");if(fi){fi.focus();try{fi.setSelectionRange(posf,posf);}catch(_f){}}return;}if(e.target.id==="mysConfigQ"){if(modal)modal.q=e.target.value;var pmq=e.target.selectionStart;renderModal();var mqi=document.getElementById("mysConfigQ");if(mqi){mqi.focus();try{mqi.setSelectionRange(pmq,pmq);}catch(_mq){}}return;}if(e.target.id==="bgtRepModalQ"){if(modal)modal.q=e.target.value;var ps2=e.target.selectionStart;renderModal();var si=document.getElementById("bgtRepModalQ");if(si){si.focus();try{si.setSelectionRange(ps2,ps2);}catch(_s){}}return;}if(e.target.id!=="coq")return;companyQuery=e.target.value;var pos=e.target.selectionStart;renderOverlay();var ci=document.getElementById("coq");if(ci){ci.focus();try{ci.setSelectionRange(pos,pos);}catch(_){}}});
   var modal=null,modalMounted=false;
   function showModal(t,b){modal={t:t,b:b};modalMounted=false;pop=null;render();}
   /* Special-report picker dialog on a scrim. Exactly two dependent dropdowns: one picks the Report name, one picks the Report line. Changing the report resets the line back to "Select a line". Apply stays disabled until BOTH are chosen. Cancel / close / backdrop all dismiss. The background is frozen while the dialog is open (see renderModal). Rebuilds fully on each interaction so the open/selected state is always correct, and only ONE menu is ever open at a time so nothing overlaps or glitches. */
