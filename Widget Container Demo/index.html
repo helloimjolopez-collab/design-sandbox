@@ -3793,13 +3793,19 @@ function remFViewToggle(w){
     seg("bars","Progress","segment","One progress bar per activity, with a marker for the amount expected by now.")+
   '</div>';
 }
-/* KPI diff badge: paid vs the total expected by now (the pace question), one icon. */
-function remFKpiBadge(t){
-  if(t.expected<=0)return '';
-  var behind=t.paid<t.expected,ahead=t.paid>t.expected;
-  var txt=behind?('−'+money(t.shortfall)):(ahead?('+'+money(t.paid-t.expected)):'On track');
-  var tip=behind?(money(t.shortfall)+' behind the total expected by now.'):(ahead?(money(t.paid-t.expected)+' ahead of the total expected by now.'):'Paid matches the total expected by now.');
-  return '<span class="rem-st rem-st-'+(behind?'behind':'ok')+'" data-tip="'+remFEsc(tip)+'" data-tip-plain>'+ICON(behind?'error':'check_circle')+txt+'</span>';
+/* KPI: Paid (check) vs Expected-by-now (error, ochre) as two numbers, plus a pace badge. */
+function remFKpiHead(t){
+  var behind=t.paid<t.expected;
+  var pctBehind=t.expected>0?Math.round((t.expected-t.paid)/t.expected*100):0;
+  var badge=behind
+    ?'<span class="rem-st rem-st-behind" data-tip="'+remFEsc(money(t.shortfall)+' behind the total expected by now.')+'" data-tip-plain>'+ICON("error")+pctBehind+'% behind pace</span>'
+    :'<span class="rem-st rem-st-ok" data-tip="'+remFEsc('Paid at or ahead of the total expected by now.')+'" data-tip-plain>'+ICON("check_circle")+'On track</span>';
+  return '<div class="remF-kpi2">'+
+    '<div class="remF-kpi-metric"><span class="remF-kpi-eye remF-eye-ok">'+ICON("check_circle")+'Paid</span><span class="metric-value">'+money(t.paid)+'</span></div>'+
+    '<span class="remF-kpi-vs">vs</span>'+
+    '<div class="remF-kpi-metric"><span class="remF-kpi-eye '+(behind?"remF-eye-behind":"remF-eye-ok")+'">'+ICON(behind?"error":"check_circle")+'Expected by now</span><span class="metric-value'+(behind?" remF-kpi-ochre":"")+'">'+money(t.expected)+'</span></div>'+
+    badge+
+  '</div>';
 }
 function remFHeaderBlock(w,mode){
   var t=remFTotals(w),numInner;
