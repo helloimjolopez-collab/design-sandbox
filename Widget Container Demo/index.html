@@ -3824,8 +3824,12 @@ function remFContent(w){
   if(w.state==="empty")return remFEmpty(w);
   if(w.size==="kpi")return remFGlance(w);
   if(w.remLoading)return remFHeaderBlock(w,"loading")+remFSkeleton();
+  var pacebar='<div class="remF-pacebar">'+remFPaceFilter(w)+'</div>';
+  if(w.size==="xwide"){
+    return remFHeaderBlock(w)+pacebar+'<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Report</div>'+remFTable(w)+'</div><div class="dep-col"><div class="dep-col-h">Progress</div>'+remFBars(w)+'</div></div>';
+  }
   var v=w.view||"table";
-  return remFHeaderBlock(w)+'<div class="remF-body">'+(v==="bars"?remFBars(w):remFTable(w))+'</div>';
+  return remFHeaderBlock(w)+pacebar+'<div class="remF-body">'+(v==="bars"?remFBars(w):remFTable(w))+'</div>';
 }
 
 /* ---- drill: payment-history focus overlay (modal.type "remFdetail") ---- */
