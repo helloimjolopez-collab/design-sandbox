@@ -3745,15 +3745,16 @@ function remFTable(w){
 function remFBars(w){
   var rows=remFRows(w);
   var body=rows.map(function(r){
-    var band=remFBand(r),pctTxt=r.pctPaid==null?'n/a':remFPct(r.pctPaid);
-    return '<div class="remF-barrow" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
-      '<div class="remF-barrow-top"><span class="remF-barrow-nm">'+r.name+'</span><span class="remF-barrow-pct remF-'+band+'">'+pctTxt+'</span></div>'+
-      remFBar(r,false)+
-      '<div class="remF-barrow-cap"><span class="remF-vals">'+money(r.paid)+' paid &middot; '+money(r.expected)+' expected by now</span>'+remFStatusChip(r)+'</div>'+
+    var neutral=(r.total<=0),ok=remFOk(r),pctTxt=r.pctPaid==null?'n/a':remFPct(r.pctPaid);
+    var flag=neutral?'':'<span class="rem-flag rem-flag-'+(ok?"ok":"behind")+'" aria-hidden="true">'+ICON(ok?"check_circle":"error")+'</span>';
+    return '<div class="ar-barrow rem-barrow ar-clickable" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
+      '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span></div>'+
+      remFBar(r)+
+      '<div class="rem-barval"><span class="rem-pct">'+pctTxt+'</span>'+flag+'</div>'+
       '<span class="sr-only">'+remFRowSr(r)+' '+remFStatusLabel(remFStatus(r))+'.</span>'+
     '</div>';
   }).join("");
-  return '<div class="remF-bars">'+body+'</div>'+remFLegend();
+  return '<div class="ar-bars rem-bars scroll">'+body+'</div>';
 }
 function remFLegend(){
   return '<div class="remF-legend" aria-hidden="true">'+
