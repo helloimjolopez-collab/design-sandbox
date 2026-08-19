@@ -2187,6 +2187,9 @@
   .remF-card-ontrack.on,.remF-card-ahead.on{border-color:#10b981;background:#daf5ea;}
   .remF-glancewrap{display:flex;flex-direction:column;gap:9px;padding:10px 12px;height:100%;justify-content:center;}
   .remF-glancewrap .scope-chip{align-self:flex-start;}
+  .rem-drill-modal{height:auto;max-height:88vh;width:min(760px,94vw);display:flex;flex-direction:column;}
+  .rem-drill-b{padding:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+  .rem-drill-b .dep-hd{padding-top:12px;}
   .remF-cell{min-width:0;}
   .remF-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .remF-pct{text-align:right;}
@@ -5473,6 +5476,8 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function bgtFSpanPhrase(s){return s==="month"?"this month":s==="period"?"this fiscal period":s==="quarter"?"the last 3 months":s==="roll12"?"the last 12 months":"this fiscal year to date";}
   function bgtFSpanChip(w,extra){return '<button class="filter-chip" data-action="bgtF-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, tap to change"><span class="fc-label">'+bgtFSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
   function bgtFShapeToggle(w,fmt,action,extra,lineOff){return bgtFTog([["bar","Bar","bar_chart","Budget and actual side by side"],["line","Line","show_chart",lineOff?"A line needs at least two periods, widen the time span or change the interval":"How budget and actual track over time (the trend)",!!lineOff],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
+  /* Detail size: bar + line charts side by side, with a Charts / Table swap on the right. */
+  function bgtFDetailToggle(w){return bgtFTog([["charts","Charts","bar_chart","Bar and line charts side by side"],["table","Table","table_rows","The exact figures, sortable"]],w.bdetail||"charts",w,"set-bgtF-detail","View");}
   /* as-of anchor for the two ROLLING windows ("today"): end of Jul 2026, the current date implied by BGT_CUR_PERIOD (period 7 of FY 2026). The real API takes asOf as a parameter. */
   var BGTF_ASOF={y:2026,mi:6,d:31};
   /* special-report lines only carry current-FY rows, but the rolling 12-month window reaches into the prior FY, so derive a deterministic prior-FY series (budget 95% of current, actuals a seeded wobble, fully posted). The real API's budget lookup simply spans both FYs. */
