@@ -3637,12 +3637,33 @@ function remFPbarShow(el,mx,my){
 }
 document.addEventListener("mousemove",function(e){var el=e.target.closest&&e.target.closest(".remF-pbar[data-rempop]");if(!el){remFPbarHide();return;}remFPbarShow(el,e.clientX,e.clientY);});
 /* per-activity pbar: pop = "label|pledged|received|expected|remaining|pctFill|pctTick|status|dayPhrase" */
-function remFBar(r,sm){
-  var band=remFBand(r),st=remFStatus(r);
-  var fill=(r.pctPaid==null?0:r.pctPaid)*100;
-  var tick=(r.total>0)?Math.max(0,Math.min(100,r.expected/r.total*100)):null;
-  var pop=[r.name,r.total,r.paid,r.expected,r.outstanding,(r.pctPaid==null?0:Math.round(r.pctPaid*100)),Math.round(r.total>0?r.expected/r.total*100:0),st,remFDayPhrase(r)].join("|");
-  return remFPbarHTML({fill:fill,tick:tick,band:band,pop:remFEsc(pop),aria:remFEsc(remFRowSr(r)),sm:sm,tickTip:remFEsc("Expected by now: "+money(r.expected))});
+/* binary pace band for colour (behind = saffron, else emerald), matching Gifts/HQ. */
+function remFOk(r){var s=remFStatus(r);return !(s==="behind"||s==="farbehind");}
+/* pace bucket for the pace filter: behind | ontrack | ahead | neutral(no pledge) */
+function remFPaceBand(r){var s=remFStatus(r);if(s==="neutral")return "neutral";if(s==="ahead"||s==="full")return "ahead";if(s==="onpace")return "ontrack";return "behind";}
+function remFPaceSel(w){var s=w.remPace;return s?s:{behind:true,ontrack:true,ahead:true};}
+/* Progress-row bar: the SHARED anatomy (paid fill + hatched behind gap + dashed
+   expected-by-now marker), slim. Hover shows the numbers, tap opens the drill. */
+function remFBar(r){
+  if(r.total<=0)return '<div class="rem-bwrap rem-bar-slim"><div class="ar-bartrack rem-bartrack"></div></div>';
+  var st=remFOk(r)?"ok":"behind";
+  var paidPct=Math.min(100,r.paid/r.total*100),expPct=Math.min(100,r.expected/r.total*100);
+  var gap=(expPct>paidPct)?'<span class="rem-bargap" style="left:'+paidPct.toFixed(1)+'%;width:'+(expPct-paidPct).toFixed(1)+'%"></span>':'';
+  var marker='<span class="rem-barmark" style="left:'+Math.min(100,expPct).toFixed(1)+'%"></span>';
+  var tip=money(r.paid)+' paid, '+money(r.expected)+' expected by now, '+money(r.outstanding)+' outstanding';
+  return '<div class="rem-bwrap rem-bar-slim" data-tip="'+remFEsc(tip)+'" data-tip-plain><div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+st+'" style="width:'+Math.max(2,paidPct).toFixed(1)+'%"></div>'+gap+'</div>'+marker+'</div>';
+}
+/* Mini bar for the % Paid table column (Pension small-bar pattern, shared palette). */
+function remFMiniBar(r){
+  if(r.pctPaid==null)return '<span class="remF-nopct">n/a</span>';
+  var st=remFOk(r)?"ok":"behind";
+  var paidPct=Math.max(0,Math.min(100,r.pctPaid*100)),expPct=(r.total>0)?Math.min(100,r.expected/r.total*100):0;
+  return '<span class="rem-mini" data-tip="'+remFEsc(remFPct(r.pctPaid)+' paid of the pledged total")+'" data-tip-plain><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+st+'" style="width:'+paidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+expPct.toFixed(1)+'%"></span><span class="sr-only">'+remFPct(r.pctPaid)+' paid</span></span>';
+}
+/* Second toolbar: pace filters (all three visible, multi-select, default all on). */
+function remFPaceFilter(w){
+  var sel=remFPaceSel(w),opts=[["behind","Behind","error"],["ontrack","On track","check_circle"],["ahead","Ahead","trending_up"]];
+  return '<div class="remF-pacefilter" role="group" aria-label="Filter by pace">'+opts.map(function(o){var on=sel[o[0]];return '<button class="remF-pacechip remF-pace-'+o[0]+(on?" on":"")+'" data-action="remF-pace" data-id="'+w.id+'" data-band="'+o[0]+'" aria-pressed="'+on+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';
 }
 function remFStatusChip(r){
   var s=remFStatus(r);
