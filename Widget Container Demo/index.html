@@ -3800,17 +3800,16 @@ function remFHeaderBlock(w,mode){
 /* ---- Glance (kpi): Jo's remGlance shape, money + pace badge + goal pill + one
    small graded flat fill with the navy expected tick; legend hidden. ---- */
 function remFGlance(w){
-  var t=remFTotals(w),gband=t.allPaid?"ahead":(t.paid>=t.expected?"onpace":"behind");
-  var gtick=(t.total>0)?Math.max(0,Math.min(100,t.expected/t.total*100)):null;
-  var gLabel=t.allPaid?"All pledges paid":(t.paid>=t.expected?"On track":"Behind pace");
-  var gPhrase=t.allPaid?"Every pledge fully paid for its term":(t.paid>=t.expected?(money(t.paid-t.expected)+" ahead of the expected pace overall"):(money(t.shortfall)+" behind the expected pace overall"));
-  var pop=["All pledges",t.total,t.paid,t.expected,t.out,(t.total>0?Math.round(t.pctPaid*100):0),Math.round(t.total>0?t.expected/t.total*100:0),gband,gPhrase,gLabel].join("|");
+  var t=remFTotals(w),ok=(t.paid>=t.expected);
+  var paidPct=t.total>0?Math.min(100,t.paid/t.total*100):0,expPct=t.total>0?Math.min(100,t.expected/t.total*100):0;
+  var gap=(expPct>paidPct)?'<span class="rem-bargap" style="left:'+paidPct.toFixed(1)+'%;width:'+(expPct-paidPct).toFixed(1)+'%"></span>':'';
+  var marker=(t.total>0)?'<span class="rem-barmark" style="left:'+Math.min(100,expPct).toFixed(1)+'%"></span>':'';
   return '<div class="kpi-row"><div class="kpi-num">'+
     '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+
     '<div class="metric-value">'+money(t.paid)+'</div>'+
-    '<div class="gl-sub">'+remFPaceBadge(t)+'<span class="gft-goalpill">'+(t.total>0?remFPct(t.pctPaid):"n/a")+' of pledged</span></div>'+
-    '<div class="remF-glance-read">'+remFPbarHTML({fill:t.pctPaid*100,tick:gtick,band:gband,sm:true,pop:remFEsc(pop),aria:remFEsc("Overall pacing"),tickTip:remFEsc("Expected by now: "+money(t.expected))})+'</div>'+
-    '<span class="sr-only">'+money(t.paid)+' paid of '+money(t.total)+' pledged. '+remFPct(t.pctPaid)+' received against an expected '+remFPct(t.pace)+' by now across each pledge\'s term. '+money(t.out)+' outstanding.</span>'+
+    '<div class="gl-sub"><span class="rem-kpi-ctx">paid of '+money(t.expected)+' expected by now</span>'+remFKpiBadge(t)+'</div>'+
+    '<div class="remF-glance-read"><div class="rem-bwrap rem-bar-slim"><div class="ar-bartrack rem-bartrack"><div class="ar-barfill rem-fill-'+(ok?"ok":"behind")+'" style="width:'+Math.max(2,paidPct).toFixed(1)+'%"></div>'+gap+'</div>'+marker+'</div></div>'+
+    '<span class="sr-only">'+money(t.paid)+' paid of '+money(t.expected)+' expected by now; '+money(t.total)+' pledged in total; '+money(t.out)+' outstanding.</span>'+
   '</div></div>';
 }
 function remFEmpty(w){
