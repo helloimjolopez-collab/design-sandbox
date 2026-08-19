@@ -3790,9 +3790,9 @@ function remFTable(w){
   var body=rows.map(function(r){return remFRow(w,r);}).join("");
   var tt={total:0,expected:0,paid:0,out:0,count:rows.length};
   rows.forEach(function(r){tt.total+=r.total;tt.expected+=r.expected;tt.paid+=r.paid;tt.out+=r.outstanding;});
-  var tOk=tt.paid>=tt.expected,totPct=tt.total>0?remFPct(tt.paid/tt.total):"n/a";
+  var tBand=(tt.paid<tt.expected)?"behind":(((tt.total-tt.paid)<=0)?"ahead":"ontrack"),totPct=tt.total>0?remFPct(tt.paid/tt.total):"n/a";
   var tPaidPct=tt.total>0?Math.min(100,tt.paid/tt.total*100):0,tExpPct=tt.total>0?Math.min(100,tt.expected/tt.total*100):0;
-  var totMini=tt.total>0?('<span class="rem-minirow"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+(tOk?"ok":"behind")+'" style="width:'+tPaidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+tExpPct.toFixed(1)+'%"></span></span><span class="rem-mini-pct">'+totPct+'</span></span>'):'<span class="remF-nopct">n/a</span>';
+  var totMini=tt.total>0?('<span class="rem-minirow"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+tBand+'" style="width:'+tPaidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+tExpPct.toFixed(1)+'%"></span></span><span class="rem-mini-pct">'+totPct+'</span></span>'):'<span class="remF-nopct">n/a</span>';
   var tot='<div class="remF-row remF-total">'+
     '<span class="remF-cell remF-name remF-total-lead">Total ('+tt.count+' activit'+(tt.count===1?"y":"ies")+')</span>'+
     '<span class="remF-cell remF-num">'+money(tt.total)+'</span>'+
@@ -3807,8 +3807,9 @@ function remFTable(w){
 function remFBars(w){
   var rows=remFRows(w);
   var body=rows.map(function(r){
-    var neutral=(r.total<=0),ok=remFOk(r),pctTxt=r.pctPaid==null?'n/a':remFPct(r.pctPaid);
-    var flag=neutral?'':'<span class="rem-flag rem-flag-'+(ok?"ok":"behind")+'" aria-hidden="true">'+ICON(ok?"check_circle":"error")+'</span>';
+    var neutral=(r.total<=0),band=neutral?"neutral":remFPaceBand(r),pctTxt=r.pctPaid==null?'n/a':remFPct(r.pctPaid);
+    var flagIc={behind:"error",ontrack:"check_circle",ahead:"trending_up"}[band]||"check_circle";
+    var flag=neutral?'':'<span class="rem-flag rem-flag-'+band+'" aria-hidden="true">'+ICON(flagIc)+'</span>';
     return '<div class="ar-barrow rem-barrow ar-clickable" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
       '<div class="ar-barlbl"><span class="ar-barlbl-nm">'+r.name+'</span></div>'+
       remFBar(r)+
