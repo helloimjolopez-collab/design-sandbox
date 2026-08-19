@@ -3775,18 +3775,20 @@ function remFRow(w,r){
   '</div>';
 }
 function remFTable(w){
-  var rows=remFRows(w),t=remFTotals(w);
-  var key=(w.remSort||"seq").split("-")[0];
+  var rows=remFRows(w);
   var body=rows.map(function(r){return remFRow(w,r);}).join("");
-  var totPct=t.total>0?remFPct(t.pctPaid):"n/a";
-  var totBand=t.status==="ontrack"?"remF-onpace":(t.status==="full"?"remF-ahead":"remF-behind");
+  var tt={total:0,expected:0,paid:0,out:0,count:rows.length};
+  rows.forEach(function(r){tt.total+=r.total;tt.expected+=r.expected;tt.paid+=r.paid;tt.out+=r.outstanding;});
+  var tOk=tt.paid>=tt.expected,totPct=tt.total>0?remFPct(tt.paid/tt.total):"n/a";
+  var tPaidPct=tt.total>0?Math.min(100,tt.paid/tt.total*100):0,tExpPct=tt.total>0?Math.min(100,tt.expected/tt.total*100):0;
+  var totMini=tt.total>0?('<span class="rem-minirow"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+(tOk?"ok":"behind")+'" style="width:'+tPaidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+tExpPct.toFixed(1)+'%"></span></span><span class="rem-mini-pct">'+totPct+'</span></span>'):'<span class="remF-nopct">n/a</span>';
   var tot='<div class="remF-row remF-total">'+
-    '<span class="remF-cell remF-name remF-total-lead">Total ('+t.count+' activit'+(t.count===1?"y":"ies")+')</span>'+
-    '<span class="remF-cell remF-num">'+money(t.total)+'</span>'+
-    '<span class="remF-cell remF-num remF-alignL">'+money(t.expected)+'</span>'+
-    '<span class="remF-cell remF-num">'+money(t.paid)+'</span>'+
-    '<span class="remF-cell remF-num remF-alignL">'+money(t.out)+'</span>'+
-    '<span class="remF-cell remF-pct"><span class="remF-pct-v '+totBand+'">'+totPct+'</span></span>'+
+    '<span class="remF-cell remF-name remF-total-lead">Total ('+tt.count+' activit'+(tt.count===1?"y":"ies")+')</span>'+
+    '<span class="remF-cell remF-num">'+money(tt.total)+'</span>'+
+    '<span class="remF-cell remF-num remF-alignL">'+money(tt.expected)+'</span>'+
+    '<span class="remF-cell remF-num">'+money(tt.paid)+'</span>'+
+    '<span class="remF-cell remF-num remF-alignL">'+money(tt.out)+'</span>'+
+    '<span class="remF-cell remF-pct">'+totMini+'</span>'+
   '</div>';
   return '<div class="remF-tbl"><div class="scroll remF-scroll">'+remFHead(w)+body+'</div>'+tot+'</div>';
 }
