@@ -3824,17 +3824,28 @@ function remFKpiHead(t){
     badge+
   '</div>';
 }
+/* Per-band stats for the KPI filter cards (count + outstanding). */
+function remFBandStats(w){var rows=remFCompute(w),s={behind:{n:0,out:0},ontrack:{n:0,out:0},ahead:{n:0,out:0}};rows.forEach(function(r){var b=remFPaceBand(r);if(s[b]){s[b].n++;s[b].out+=r.outstanding;}});return s;}
+/* KPI filter cards: Behind / On track / Ahead. Always shown; tap one to filter the
+   table to that pace, tap again (or tap another) to clear. Single-select. */
+function remFPaceCards(w){
+  var cur=w.remPaceF||"all",st=remFBandStats(w);
+  var defs=[["behind","Behind","error"],["ontrack","On track","check_circle"],["ahead","Ahead","trending_up"]];
+  return '<div class="remF-cards" role="group" aria-label="Filter pledges by pace">'+defs.map(function(d){
+    var on=cur===d[0],b=st[d[0]];
+    return '<button class="remF-card remF-card-'+d[0]+(on?" on":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', '+money(b.out)+' outstanding, tap to filter">'+
+      '<span class="remF-card-top">'+ICON(d[2])+'<span class="remF-card-lbl">'+d[1]+'</span></span>'+
+      '<span class="remF-card-n">'+b.n+'</span>'+
+      '<span class="remF-card-sub">'+money(b.out)+' outstanding</span>'+
+    '</button>';
+  }).join("")+'</div>';
+}
 function remFHeaderBlock(w,mode){
-  var t=remFTotals(w),numInner;
   var toggle=(w.size==="wide")?('<div class="dep-hd-toggle">'+remFViewToggle(w)+'</div>'):"";
   if(mode==="loading"){
-    numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:96px;height:22px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';
-    return '<div class="dep-hd rem-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+remFThruChip(w)+remFPaceChip(w)+'</div>'+toggle+'</div><div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div></div>';
+    return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div><div class="remF-cards"><span class="sk remF-card-sk"></span><span class="sk remF-card-sk"></span><span class="sk remF-card-sk"></span></div></div>';
   }
-  numInner=remFKpiHead(t);
-  return '<div class="dep-hd rem-hd"><div class="dep-hd-top"><div class="bgt-ctlrow">'+remFThruChip(w)+remFPaceChip(w)+'</div>'+toggle+'</div>'+
-    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'<span class="sr-only">'+money(t.paid)+' paid of '+money(t.expected)+' expected by now (across each pledge\'s term); '+money(t.total)+' pledged in total.</span></div></div>'+
-  '</div>';
+  return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div>'+remFPaceCards(w)+'</div>';
 }
 /* ---- Glance (kpi): Jo's remGlance shape, money + pace badge + goal pill + one
    small graded flat fill with the navy expected tick; legend hidden. ---- */
