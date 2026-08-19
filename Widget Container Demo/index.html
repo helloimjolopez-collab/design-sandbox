@@ -3718,7 +3718,7 @@ function remFBar(r){
 /* Mini bar for the % Paid table column (Pension small-bar pattern, shared palette). */
 function remFMiniBar(r){
   if(r.pctPaid==null)return '<span class="remF-nopct">n/a</span>';
-  var st=remFOk(r)?"ok":"behind";
+  var band=remFPaceBand(r),st=(band==="neutral"?"none":band);
   var paidPct=Math.max(0,Math.min(100,r.pctPaid*100)),expPct=(r.total>0)?Math.min(100,r.expected/r.total*100):0;
   var pop=[r.name,r.total,r.paid,r.expected,r.outstanding,Math.round(r.pctPaid*100),Math.round(expPct),remFStatus(r),remFDayPhrase(r)].join("|").replace(/"/g,"&quot;");
   return '<span class="rem-minirow" data-rempop="'+pop+'"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+st+'" style="width:'+paidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+expPct.toFixed(1)+'%"></span></span><span class="rem-mini-pct">'+remFPct(r.pctPaid)+'</span></span>';
