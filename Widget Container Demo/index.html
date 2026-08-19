@@ -233,9 +233,14 @@
   .bgt-tbar{display:flex;justify-content:flex-end;padding:6px 14px 10px;}
   /* Variance column in the shared table grid + the no-trend empty state */
   .wt-c2.bgt-varcol{flex:0 0 130px;}
-  .bgt-vv{font-weight:600;font-variant-numeric:tabular-nums;}
+  .bgt-vv{display:inline-flex;align-items:center;justify-content:flex-end;gap:2px;font-weight:600;font-variant-numeric:tabular-nums;}
+  .bgt-vv .material-symbols-rounded{font-size:15px;}
   .bgt-vv.pos{color:var(--txt-pos);}.bgt-vv.neg{color:var(--red-100);}.bgt-vv.neu{color:var(--txt-secondary);}
   .bgt-vp{font-weight:400;color:var(--txt-subtle);margin-left:6px;font-size:11px;}
+  .bgt-kpi-iv{justify-self:end;align-self:center;}
+  .bgt-legend-under{justify-content:flex-start;padding:8px 16px 2px;}
+  .bgt-col-h{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);padding:8px 12px 4px;}
+  .bgt-gl2-base{opacity:.9;border-top-style:solid;}
   .dep-total .bgt-vartot{text-align:right;}
   .bgt-notrend{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:34px 24px;color:var(--txt-subtle);}
   .bgt-notrend .material-symbols-rounded{font-size:30px;opacity:.5;}
@@ -1690,7 +1695,7 @@
 .rem-flag-ok .material-symbols-rounded{color:#0b6b4c;}
 .rem-flag-behind .material-symbols-rounded{color:#7a5300;}
 .rem-flag-none .material-symbols-rounded{color:var(--txt-subtle);}
-.rem-bargap{position:absolute;top:0;height:100%;background:repeating-linear-gradient(45deg,var(--wn-300),var(--wn-300) 3px,var(--wn-200) 3px,var(--wn-200) 6px);}
+.rem-bargap{position:absolute;top:0;height:100%;background:var(--wn-400);}
 .rem-bwrap{position:relative;}
 .rem-bwrap .ar-bartrack{width:100%;}
 .rem-barmark{position:absolute;top:50%;transform:translate(-50%,-50%);width:0;height:24px;border-left:2px dashed var(--wn-700);z-index:3;}
@@ -2196,21 +2201,34 @@
   .remF-legend-i{display:inline-flex;align-items:center;gap:5px;}
   .remF-legend-sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex:0 0 auto;}
   .remF-legend-tick{width:0;height:12px;border-left:2px dashed var(--wn-700);display:inline-block;flex:0 0 auto;}
-  /* -- KPI context + pace filter + slim/mini shared bars -- */
-  .rem-kpi-ctx{font-size:12px;color:var(--txt-secondary);white-space:nowrap;}
-  .remF-pacebar{display:flex;justify-content:flex-end;padding:2px 12px 8px;}
-  .remF-pacefilter{display:inline-flex;gap:6px;}
-  .remF-pacechip{display:inline-flex;align-items:center;gap:4px;font-family:inherit;font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px 3px 8px;border:1px solid var(--stroke-widget);background:var(--surface-widget);color:var(--txt-subtle);cursor:pointer;}
+  /* -- KPI (two-number) + pace filter + slim/mini shared bars -- */
+  .remF-kpi2{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+  .remF-kpi-metric{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .remF-kpi-eye{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;color:var(--txt-secondary);white-space:nowrap;}
+  .remF-kpi-eye .material-symbols-rounded{font-size:14px;font-variation-settings:'FILL' 1;}
+  .remF-eye-ok .material-symbols-rounded{color:#0b6b4c;}
+  .remF-eye-behind .material-symbols-rounded{color:#7a5300;}
+  .remF-kpi-ochre{color:#7a5300;}
+  .remF-kpi-vs{font-size:12px;color:var(--txt-subtle);align-self:center;padding-bottom:2px;}
+  .remF-alignL .wt-sort{justify-content:flex-start;width:100%;}
+  .remF-pacebar{display:flex;justify-content:flex-end;padding:8px 12px 12px;}
+  .remF-pacefilter{display:inline-flex;align-items:center;gap:6px;}
+  .remF-pacelead{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--txt-subtle);margin-right:2px;}
+  .remF-pacelead .material-symbols-rounded{font-size:15px;}
+  .remF-pacechip{display:inline-flex;align-items:center;gap:4px;font-family:inherit;font-size:12px;font-weight:600;border-radius:999px;padding:4px 11px 4px 9px;border:1px solid var(--stroke-widget);background:var(--surface-widget);color:var(--txt-subtle);cursor:pointer;opacity:.62;}
   .remF-pacechip .material-symbols-rounded{font-size:15px;}
-  .remF-pacechip:hover{background:var(--wn-100);}
+  .remF-pacechip:hover{background:var(--wn-100);opacity:1;}
+  .remF-pacechip.on{opacity:1;}
   .remF-pacechip.on.remF-pace-behind{background:#fdeeba;color:#7a5300;border-color:#f5b301;}
   .remF-pacechip.on.remF-pace-ontrack,.remF-pacechip.on.remF-pace-ahead{background:#daf5ea;color:#0b6b4c;border-color:#10b981;}
   .rem-bar-slim .ar-bartrack{height:12px;}
   .rem-bar-slim .rem-barmark{height:18px;}
-  .rem-mini{position:relative;display:block;width:100%;}
+  .rem-minirow{display:flex;align-items:center;gap:8px;justify-content:flex-end;}
+  .rem-mini{position:relative;flex:1;min-width:36px;}
   .rem-mini-track{position:relative;display:block;width:100%;height:8px;border-radius:999px;background:var(--wn-200);overflow:hidden;}
   .rem-mini-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;}
   .rem-mini-mark{position:absolute;top:50%;transform:translateY(-50%);height:13px;width:0;border-left:1.5px dashed var(--wn-700);}
+  .rem-mini-pct{font-size:12px;font-variant-numeric:tabular-nums;color:var(--txt-secondary);flex:0 0 auto;}
   /* -- Glance pacing read -- */
   .remF-glance-read{display:flex;flex-direction:column;gap:4px;margin-top:2px;width:100%;}
   /* -- term line inside the drill modal -- */
@@ -5399,13 +5417,12 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function bgtFVariance(type,b,a){if(a==null)return null;return type==="expense"?(b-a):(a-b);}
   /* ---- controls (Jo's toggle primitive + tooltip convention) ---- */
   function bgtFTog(opts,cur,w,action,aria,extra){return '<div class="vtoggle" role="group" aria-label="'+(aria||"View")+'">'+opts.map(function(o){var dis=o[4];return '<button class="vt'+(cur===o[0]?" on":"")+(dis?" disabled":"")+'"'+(dis?' aria-disabled="true" tabindex="-1"':' data-action="'+action+'" data-id="'+w.id+'" data-v="'+o[0]+'"'+(extra||""))+(o[3]?' data-tip="'+o[3].replace(/"/g,"&quot;")+'" data-tip-plain data-tip-narrow':"")+' aria-pressed="'+(cur===o[0])+'">'+(o[2]?ICON(o[2]):"")+o[1]+'</button>';}).join("")+'</div>';}
-  function bgtFFavPill(v,neutral){if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)">No data yet</span>';var neg=v<0;if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)">'+ICON(neg?"south_east":"north_east")+(neg?"Under budget":"Over budget")+'</span>';return '<span class="delta-pill'+(neg?" neg":"")+'">'+ICON(neg?"south_east":"north_east")+(neg?"Unfavourable":"Favourable")+'</span>';}
+  function bgtFFavPill(v,neutral,tip){var tipA=tip?(' data-tip="'+tip+'" data-tip-plain data-tip-narrow tabindex="0"'):'';if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)"'+tipA+'>No data yet</span>';var neg=v<0,ic=neg?"arrow_downward":"arrow_upward";if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)"'+tipA+'>'+ICON(ic)+(neg?"Under budget":"Over budget")+'</span>';return '<span class="delta-pill'+(neg?" neg":"")+'"'+tipA+'>'+ICON(ic)+(neg?"Unfavourable":"Favourable")+'</span>';}
   /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
   function bgtFHeadlineInner(v,neutral,sumB){
     if(v==null)return {cls:"",html:money(0),pct:""};
     var neg=v<0,cls=neutral?" bgtF-hl-neu":(neg?" bgtF-hl-neg":" bgtF-hl-pos");
-    var pct=(sumB>0)?(Math.round(Math.abs(v)/sumB*1000)/10):null;
-    return {cls:cls,html:'<span class="bgtF-hl-ar" aria-hidden="true">'+(neg?"▼":"▲")+'</span>'+(neg?"−":"+")+money(Math.abs(v)),pct:(pct!=null?'<span class="bgtF-hl-pct">'+pct+'%</span>':"")};
+    return {cls:cls,html:(neg?"−":"+")+money(Math.abs(v)),pct:""};
   }
   function bgtFScopeShort(w){var av=w.acctview||"income";return av==="expense"?"Expense accounts":av==="special"?"Special report":"Income accounts";}
   function bgtFScopeContext(w){if((w.acctview||"income")!=="special")return "";return "Special report: "+bgtFReport(w).name+" · "+bgtFReportLine(w).name;}
@@ -5491,20 +5508,21 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function bgtFHeaderBlock(w,mode){
     var xw=(w.size==="xwide"),loading=(mode==="loading"),controlsOnly=(mode===true);
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
-    var leftControls='<div class="bgt-ctlrow">'+bgtFScopeChip(w)+(xw?bgtFSpanChip(w):"")+'</div>';
+    var leftControls='<div class="bgt-ctlrow">'+bgtFScopeChip(w)+bgtFSpanChip(w)+'</div>';
     var shapeToggle=xw?"":bgtFShapeToggle(w,w.bshape||"bar","set-bgtF-shape",undefined,!bgtFLineOK(w));
     if(controlsOnly)return '<div class="dep-hd"><div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div></div>';
-    var numInner;
+    var numInner,ivTog="";
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
     else{
       var sv=bgtFSpanVariance(w,vt),variance=sv.v;
       var explainTip=bgtFExplain(w,vt,neutral,variance,sv.sumA,sv.sumB).replace(/"/g,"&quot;");
       var hv=bgtFHeadlineInner(variance,neutral,sv.sumB);
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+hv.pct+'</span>'+bgtFFavPill(variance,neutral)+'<span class="material-symbols-rounded bgt-info-ic" data-i="info" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</span>'+bgtFFavPill(variance,neutral,explainTip)+'</div>';
+      ivTog='<div class="bgt-kpi-iv">'+bgtFIntervalToggle(w,w.binterval||bgtFIvDefault(w.bspan||"year"),"set-bgtF-interval")+'</div>';
     }
     var ctx=bgtFScopeContext(w);
     var ctxLine=ctx?'<div class="bgt-repctx">'+ctx+'</div>':"";
-    return '<div class="dep-hd"><div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div><div class="dep-hd-num"><div class="bgt-numwrap">'+numInner+ctxLine+'</div></div></div>';
+    return '<div class="dep-hd"><div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div><div class="dep-hd-num bgt-kpirow"><div class="bgt-numwrap">'+numInner+ctxLine+'</div>'+ivTog+'</div></div>';
   }
   function bgtFSkeleton(){var bars="";[62,80,54,88,70,95,60].forEach(function(hh){bars+='<div class="bgt-sk-col"><span class="sk bgt-sk-bar" style="height:'+hh+'%"></span></div>';});return '<div class="bgt-skel"><div class="bgt-skel-plot">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
   /* Grouped bars from already-aggregated interval rows. Two purples only, no red; signed variance under each bar; formatted popover data rides on the column (data-bgtfpop, namespaced so Jo's own bar-hover listener never grabs ours); full text in an sr-only span. */
@@ -5523,11 +5541,13 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     });
     var yl='<span>'+bgtFAxis(max)+'</span><span>'+bgtFAxis(max/2)+'</span><span>$0</span>';
     var n=rows.length,innerW=(n>13)?('min-width:'+(46+n*44)+'px'):'';
-    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+
+    return '<div class="bgt-chart-wrap2">'+
     '<div class="bgt-scrollx"><div class="bgt-inner2" style="'+innerW+'">'+
-    '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
+    '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:100%"></div><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-gl2 bgt-gl2-base" style="bottom:0"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
     '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div>'+
-    '</div></div></div>';
+    '</div></div>'+
+    '<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div></div>'+
+    '</div>';
   }
   /* Owner delta: dynamic x-axis label thinning (density from estimated plot width vs label width), so a 12-month span labels every month where it fits and every other month where it does not, with no colliding text at any window/interval/scope. */
   function bgtFLineTicks(n,labels,availW){
@@ -5568,12 +5588,14 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
     var sr=rows.map(function(r){return r.period+': budget '+money(r.budget)+(r.actual!=null?(', actual '+money(r.actual)):', actual not posted yet');}).join('; ');
     var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'<div class="bgtF-lcols">'+hovers+'</div></div><div class="tr-xax">'+xl+'</div><span class="sr-only">Budget and actual trend. '+sr+'</span></div>';
-    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+plot+'</div>';
+    return '<div class="bgt-ytd-wrap">'+plot+'<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div></div></div>';
   }
   function bgtFVarInner(v,neutral,budget){
     if(v==null)return '<span class="bgt-vv neu">n/a</span>';
     var neg=v<0,cls=neutral?"neu":(neg?"neg":"pos"),pct=(budget>0)?(Math.round(Math.abs(v)/budget*1000)/10):null;
-    return '<span class="bgt-vv '+cls+'">'+(neg?"−":"+")+money(Math.abs(v))+(pct!=null?'<span class="bgt-vp">'+pct+'%</span>':"")+'</span>';
+    var lbl=neutral?(neg?"Under budget by ":"Over budget by "):(neg?"Unfavourable by ":"Favourable by ");
+    var tip=(lbl+money(Math.abs(v))+(pct!=null?(", "+pct+"% of budget"):"")).replace(/"/g,"&quot;");
+    return '<span class="bgt-vv '+cls+'" data-tip="'+tip+'" data-tip-plain>'+ICON(neg?"arrow_downward":"arrow_upward")+money(Math.abs(v))+'</span>';
   }
   /* Table view: Period / Budget / Actual / Variance, sortable, with a "Total, posted so far" footer that sums only the posted periods in the window. */
   function bgtFTable(w,ivHTML){
@@ -5590,15 +5612,14 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     return (ivHTML?'<div class="bgt-tbar">'+ivHTML+'</div>':"")+'<div class="scroll bgt-tscroll">'+head+body+'</div><div class="dep-total"><span>Total, posted so far</span><span class="bgt-varcol bgt-vartot">'+bgtFVarInner(totalV,neutral,tB)+'</span></div>';}
   /* The slicer: span chip LEFT + D W M P Q Y interval toggle RIGHT, kept together just above the chart because they constrain each other. */
   function bgtFSlicer(w){return '<div class="bgt-slicer">'+bgtFSpanChip(w)+bgtFIntervalToggle(w,w.binterval||bgtFIvDefault(w.bspan||"year"),"set-bgtF-interval")+'</div>';}
-  function bgtFNoTrendState(slic){return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(slic||"")+'</div><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';}
+  function bgtFNoTrendState(slic){return '<div class="bgt-ytd-wrap"><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';}
   function bgtFView(w,fmt){
     var av=w.acctview||"income";
     if(!bgtFHasBudget(bgtFSet(w)))return bgtFNoBudgetState(w,av);
-    var slic=bgtFSlicer(w);
-    if(fmt==="table")return bgtFTable(w,slic);
+    if(fmt==="table")return bgtFTable(w,"");
     var rows=bgtFViewRows(w);
-    if(fmt==="line"&&rows.length<2)return bgtFNoTrendState(slic);
-    return (fmt==="line")?bgtFLine(w,rows,slic):bgtFBars(w,rows,slic);
+    if(fmt==="line"&&rows.length<2)return bgtFNoTrendState("");
+    return (fmt==="line")?bgtFLine(w,rows,""):bgtFBars(w,rows,"");
   }
   /* Glance (KPI size): interactive. The scope chip is the same control as the bigger sizes (opens the scope popover; Special report opens the dialog), the "vs. budget, [window]" caption opens the five-window picker, and the big number carries the same arrow/sign/percent as the header headline. */
   function bgtFGlance(w){
@@ -5607,7 +5628,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var chip='<button class="scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
     if(!bgtFHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div></div></div>';
     var sv=bgtFSpanVariance(w,vt),v=sv.v,hv=bgtFHeadlineInner(v,neutral,sv.sumB);
-    return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+hv.pct+'</div><div class="gl-sub">'+bgtFFavPill(v,neutral)+'<button class="bgt-caption bgtF-cap-btn" data-action="bgtF-span" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Comparison window, tap to change">vs. budget, '+bgtFSpanLabel(w.bspan||"year")+ICON("expand_more")+'</button></div></div></div>';}
+    return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div><div class="gl-sub">'+bgtFFavPill(v,neutral)+'<button class="bgt-caption bgtF-cap-btn" data-action="bgtF-span" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Comparison window, tap to change">vs. budget, '+bgtFSpanLabel(w.bspan||"year")+ICON("expand_more")+'</button></div></div></div>';}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtFPanel(w,side){
     var interval=w[side==="a"?"iA":"iB"]||bgtFIvDefault(w.bspan||"year");
@@ -5627,7 +5648,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.bloading){var mhl=bgtFHeaderBlock(w,"loading");return mhl+(w.size==="xwide"?('<div class="bgt-explore"><div class="bgt-explore-col">'+bgtFSkeleton()+'</div><div class="bgt-explore-col">'+bgtFSkeleton()+'</div></div>'):bgtFSkeleton());}
     var mh=bgtFHeaderBlock(w);
     if(w.size!=="xwide")return mh+bgtFView(w,w.bshape||"bar");
-    return mh+'<div class="bgt-explore">'+bgtFPanel(w,"a")+bgtFPanel(w,"b")+'</div>';
+    return mh+'<div class="bgt-explore"><div class="bgt-explore-col"><div class="bgt-col-h">Budget vs actual</div>'+bgtFView(w,"bar")+'</div><div class="bgt-explore-col"><div class="bgt-col-h">Detail</div>'+bgtFView(w,"table")+'</div></div>';
   }
   /* Data-fetch loading only (scope / report / report-line / window). Interval / shape / sort are client-side re-renders of data already in hand, so they never trigger a load. */
   function bgtFLoad(w){w.bloading=true;clearTimeout(timers["bgtF-"+w.id]);timers["bgtF-"+w.id]=setTimeout(function(){w.bloading=false;render();},850);}
