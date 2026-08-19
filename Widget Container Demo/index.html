@@ -3796,9 +3796,9 @@ function remFTable(w){
   var tot='<div class="remF-row remF-total">'+
     '<span class="remF-cell remF-name remF-total-lead">Total ('+tt.count+' activit'+(tt.count===1?"y":"ies")+')</span>'+
     '<span class="remF-cell remF-num">'+money(tt.total)+'</span>'+
-    '<span class="remF-cell remF-num remF-alignL">'+money(tt.expected)+'</span>'+
-    '<span class="remF-cell remF-num">'+money(tt.paid)+'</span>'+
     '<span class="remF-cell remF-num remF-alignL">'+money(tt.out)+'</span>'+
+    '<span class="remF-cell remF-num">'+money(tt.paid)+'</span>'+
+    '<span class="remF-cell remF-num remF-alignL">'+money(tt.expected)+'</span>'+
     '<span class="remF-cell remF-pct">'+totMini+'</span>'+
   '</div>';
   return '<div class="remF-tbl"><div class="scroll remF-scroll">'+remFHead(w)+body+'</div>'+tot+'</div>';
@@ -8306,7 +8306,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
   function render(){hideTip();if(typeof hideLnTip==="function")hideLnTip();if(typeof dsHide==="function")dsHide();var _ws=cur().widgets,_grid=_ws.map(widgetHTML).join("");if(_ws.length<=1)_grid+=addWidgetPlaceholderHTML();document.getElementById("dashboard").innerHTML=_grid;document.getElementById("tbLeft").innerHTML=tbLeftHTML();document.getElementById("tbRight").innerHTML=tbRightHTML();if(renaming){var el=document.getElementById("rn-"+renaming);if(el){el.focus();el.select();}}if(focusDash){var di=document.getElementById("dashInput");if(di){di.focus();di.select();}focusDash=false;}renderOverlay();if(pop&&pop.type==="companydd"){var _ci=document.getElementById("coq");if(_ci&&document.activeElement!==_ci){_ci.focus();try{_ci.setSelectionRange(_ci.value.length,_ci.value.length);}catch(_e){}}}if(pop&&pop.type==="wfind"){var _wf=document.getElementById("wfindq");if(_wf&&document.activeElement!==_wf){_wf.focus();try{_wf.setSelectionRange(_wf.value.length,_wf.value.length);}catch(_e6){}}}if(pop&&pop.type==="depfilter"){var _fi=document.getElementById("fq");if(_fi&&document.activeElement!==_fi){_fi.focus();try{_fi.setSelectionRange(_fi.value.length,_fi.value.length);}catch(_e2){}}}if(pop&&pop.type==="bank-acct"){var _bi=document.getElementById("bankq");if(_bi&&document.activeElement!==_bi){_bi.focus();try{_bi.setSelectionRange(_bi.value.length,_bi.value.length);}catch(_e4){}}}if(pop&&pop.type==="ap-due"){var _ai=document.getElementById("apq");if(_ai&&document.activeElement!==_ai){_ai.focus();try{_ai.setSelectionRange(_ai.value.length,_ai.value.length);}catch(_e5){}}}if(prFocusId){var _pf=document.getElementById(prFocusId);if(_pf&&document.activeElement!==_pf){_pf.focus();try{var _vl=_pf.value.length;_pf.setSelectionRange(_vl,_vl);}catch(_e3){}}}renderModal();}
   document.addEventListener("focus",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input"))prFocusId=e.target.id;},true);
   document.addEventListener("focusout",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")&&e.target.id===prFocusId)prFocusId=null;},true);
-  document.addEventListener("change",function(e){if(e.target.classList&&e.target.classList.contains("pr-date-input")){var wpc=find(e.target.getAttribute("data-id")),whichc=e.target.getAttribute("data-which");if(wpc&&e.target.value){wpc[whichc]=e.target.value;wpc.range="CUSTOM";render();}}});
+  document.addEventListener("change",function(e){if(typeof remHandleInput==="function"&&remHandleInput(e))return;if(e.target.classList&&e.target.classList.contains("pr-date-input")){var wpc=find(e.target.getAttribute("data-id")),whichc=e.target.getAttribute("data-which");if(wpc&&e.target.value){wpc[whichc]=e.target.value;wpc.range="CUSTOM";render();}}});
   /* Smart scroll chaining: when the wheel is over a widget's internal scroller that is at its
      boundary (or does not overflow), scroll the whole dashboard instead of getting stuck. */
   document.addEventListener("wheel",function(e){
