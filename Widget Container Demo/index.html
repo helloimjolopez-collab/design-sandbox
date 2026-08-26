@@ -6266,7 +6266,30 @@ function mysPopContent(){
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
     return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
   }
-  /* bankPie removed: All-Accounts uses the table, no pie (Confluence 10.2). */
+  /* All-Accounts comparison = a sorted horizontal DIVERGING bar (replaces the pie:
+     shows negatives, comparable, legible with many accounts; section 8 + decision 2).
+     Zero line; positive bars amethyst growing right, overdrawn red growing left;
+     values as text; sorted by the same key as the table; hover tip per row. */
+  function bankAllBars(w,full){
+    var rows=bankAccounts(w).slice();
+    if(w.bkOver)rows=rows.filter(function(a){return bankEnding(a)<0;});
+    var sk=(w.bksort||"bal-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    function val(a){if(key==="name")return a.name;if(key==="type")return a.type;return bankEnding(a);}
+    rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="name"||key==="type")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
+    var maxPos=0,maxNeg=0;rows.forEach(function(a){var e=bankEnding(a);if(e>maxPos)maxPos=e;if(-e>maxNeg)maxNeg=-e;});
+    var span=(maxPos+maxNeg)||1,zero=maxNeg/span*100;
+    var body=rows.map(function(a){var e=bankEnding(a),neg=e<0,mag=Math.abs(e),wd=mag/span*100;
+      var aesc=a.name.replace(/"/g,"&quot;");
+      var tip=aesc+', '+bankMoney(e)+(neg?'. This account is overdrawn.':'');
+      var barStyle=neg?('right:'+(100-zero)+'%;width:'+wd+'%'):('left:'+zero+'%;width:'+wd+'%');
+      return '<div class="bank-hb-row" data-acct="'+aesc+'"><span class="lr-link bank-hb-name" data-action="bank-set-acct" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+'" data-tip-plain>'+a.name+'</span>'+
+        '<span class="bank-hb-track"><span class="bank-hb-zero" style="left:'+zero+'%"></span><span class="bank-hb-fill'+(neg?' neg':'')+'" style="'+barStyle+'"></span></span>'+
+        '<span class="bank-hb-val'+(neg?' bank-neg':'')+'">'+bankMoney(e)+'</span>'+
+        '<span class="sr-only">'+aesc+', balance '+bankMoney(e)+(neg?', overdrawn':'')+'</span></div>';
+    }).join("");
+    var tot=bankTotal(w);
+    return '<div class="scroll bank-hb">'+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
+  }
   function bankSingleTable(w,sel){
     var a=sel.a,end=bankEnding(sel);
     var rowsDef=[["Beginning Balance",a[0]],["Deposits",a[1]],["Voids",a[2]],["Checks",a[3]],["Withdrawals",a[4]],["EFT",a[5]]];
