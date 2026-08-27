@@ -6402,12 +6402,20 @@ function mysPopContent(){
   /* Glance is interactive: the account chip opens the real picker (filter/search),
      and the overdrawn chip DRILLS, opening the Detail view in a closable overlay
      filtered to the overdrawn accounts. No inert button-looking chip. */
-  function bankGlance(w){var sel=bankSelected(w),val=sel?bankEnding(sel):bankTotal(w),neg=val<0,over=sel?0:bankNegCount(w);
+  function bankGlance(w){var sel=bankSelected(w);
+    if(sel){var end=bankEnding(sel),beg=sel.a[0],chg=end-beg,neg=end<0,up=chg>=0;
+      return '<div class="kpi-row"><div class="kpi-num">'+
+        '<div class="bank-gl-top">'+bankAcctChip(w)+'</div>'+
+        '<div class="bank-gl-lbl">Ending balance</div>'+
+        '<div class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</div>'+
+        '<div class="bank-gl-sub2"><span class="bank-gl-beg">Beginning '+bankMoney(beg)+'</span><span class="bank-gl-chg '+(up?"pos":"neg")+'" data-tip="Net change since the last reconciliation" data-tip-plain>'+ICON(up?"arrow_upward":"arrow_downward")+bankMoney(Math.abs(chg))+'</span></div>'+
+        (neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
+        '</div></div>';}
+    var val=bankTotal(w),negT=val<0,over=bankNegCount(w);
     var odDrill=over?'<button class="bank-odchip" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, tap to open details">'+ICON("error")+'<span>'+over+' overdrawn</span></button>':'';
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<div class="bank-gl-top">'+bankAcctChip(w)+odDrill+'</div>'+
-      '<div class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
-      (sel&&neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
+      '<div class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
       '</div></div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
