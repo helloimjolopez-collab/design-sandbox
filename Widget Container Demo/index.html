@@ -6619,13 +6619,20 @@ function purGlance(w){var filtered=purFiltered(w),count=filtered.length,out=purS
     '</div></div>';}
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
+function purWideStack(w){
+  var q=purFiltered(w).length?purTable(w,false):purCaughtUp(w);
+  return '<div class="pur-stack">'+
+    '<div class="pur-wsec"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+q+'</div>'+
+    '<div class="pur-wsec"><div class="dep-col-h">Committed, not yet paid</div>'+purEncView(w)+'</div>'+
+  '</div>';
+}
 function purContent(w){
   if(w.state==="empty")return purEmptyState(w);
   if(w.size==="kpi")return purGlance(w);
   if(w.purloading)return purHeaderBlock(w,"loading")+purSkeleton();
   var mh=purHeaderBlock(w);
   if(w.size==="xwide")return mh+purFull(w);
-  return mh+((w.purview||"queue")==="enc"?purEncView(w):purQueueView(w));
+  return mh+purWideStack(w);
 }
 
 /* (3) POPOVERS ---------------------------------------------------------- */
