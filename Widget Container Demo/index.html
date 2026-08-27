@@ -6244,9 +6244,10 @@ function mysPopContent(){
     var numInner;
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
     else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?'<span class="bank-pill warn">'+ICON("warning")+'Overdrawn</span>':'')+'</div>';}
-    else{var tot=bankTotal(w),n=bankAccounts(w).length,over=bankNegCount(w);
-      var overPill=over?'<button class="bank-pill warn bank-overpill" data-action="bank-overdrawn" data-id="'+w.id+'" aria-pressed="'+(w.bkOver?"true":"false")+'" data-tip="Show only the '+over+' overdrawn account'+(over>1?"s":"")+'" data-tip-plain>'+ICON("warning")+over+' overdrawn</button>':"";
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span><span class="bank-pill">'+n+' accounts</span>'+overPill+'</div>';}
+    else{var tot=bankTotal(w);
+      /* KPI is the money only. Account count moves to a "showing X of Y" caption on
+         the table; overdrawn moves to its own filter card (bankOverCard). */
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span></div>';}
     return '<div class="dep-hd">'+
       '<div class="dep-hd-top">'+bankAcctChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
       '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
