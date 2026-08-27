@@ -6724,6 +6724,15 @@ function purPoModalInner(){
   return head+body+footer;
 }
 function purPoModalHTML(){return '<div class="modal-backdrop" data-action="modal-close"><div class="modal pur-po-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Purchase order">'+purPoModalInner()+'</div></div>';}
+/* Glance drill: open the Detail view (queue + committed) in a focus overlay. */
+function purDrillModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  var clone=Object.assign({},w,{size:"xwide"});
+  return '<div class="modal-backdrop" data-action="pur-drill-close"><div class="modal modal-wide pur-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Purchasing Management">'+
+    '<div class="modal-h"><span class="modal-title">Purchasing Management</span><button class="iconbtn" data-action="pur-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b pur-drill-b">'+purContent(clone)+'</div>'+
+  '</div></div>';
+}
 
 /* mousemove hover card for the encumbrance bars (formatted popover, not a
    one-line tooltip). Guarded so it only appears over a real bar. */
