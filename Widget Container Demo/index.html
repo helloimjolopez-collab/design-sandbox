@@ -6563,7 +6563,7 @@ function purAmtWord(w){var s=w.pstatus||"mine";return s==="approved"?"approved":
    chooses which one you are looking at (not a view-toggle, not stacked, never both
    crammed together). Each data set then offers only the views usable FOR IT:
    Queue = table (a to-do list); Committed = chart or table (money over time). */
-function purDataTabs(w){var d=w.pdata||"queue";var opts=[["queue","Approvals","inbox"],["committed","Committed","account_balance_wallet"]];
+function purDataTabs(w){var d=w.pdata||"queue";var opts=[["queue","Approvals","inbox"],["committed","Encumbrances","account_balance_wallet"]];
   return '<div class="pur-tabs" role="tablist" aria-label="What to view">'+opts.map(function(o){return '<button class="pur-tab'+(d===o[0]?" on":"")+'" role="tab" aria-selected="'+(d===o[0])+'" data-action="pur-data" data-id="'+w.id+'" data-d="'+o[0]+'">'+ICON(o[2])+'<span>'+o[1]+'</span></button>';}).join("")+'</div>';}
 function purEncToggle(w){var v=w.encview||"chart";return '<div class="vtoggle" role="group" aria-label="Committed view">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 function purHeaderBlock(w,mode){
