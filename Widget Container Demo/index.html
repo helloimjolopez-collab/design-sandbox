@@ -6261,22 +6261,20 @@ function mysPopContent(){
     function val(a){if(key==="name")return a.name;if(key==="type")return a.type;return bankEnding(a);}
     rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="name"||key==="type")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="bank-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
-    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Account")+'</span>'+(full?'<span class="wt-type">'+sb("type","Type")+'</span>':'')+'<span class="wt-c2">'+sb("bal","Balance")+'</span></div>';
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Account")+'</span>'+(full?'<span class="wt-type">'+sb("type","Type")+'</span>':'')+'<span class="wt-c2 bank-bal">'+sb("bal","Balance")+'</span></div>';
     var body=rows.map(function(a){var end=bankEnding(a),neg=end<0,aesc=a.name.replace(/"/g,"&quot;");
       var tip=aesc+', Account '+(a.acctFull||a.acct)+(neg?'. This account is overdrawn.':'');
-      var over=neg?'<span class="bank-tag-over" data-tip="This account is overdrawn (a negative balance)." data-tip-plain>Overdrawn</span>':'';
+      var pill=neg?'<span class="bank-tag-over">Overdrawn</span>':'';
       return '<div class="wt-row" data-acct="'+aesc+'">'+
         '<span class="lr-main lr-stack lr-link" data-action="bank-set-acct" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.acct+'</span></span>'+
         (full?'<span class="wt-type">'+a.type+'</span>':'')+
-        '<span class="wt-c2'+(neg?" bank-neg":"")+'">'+over+bankMoney(end)+'</span></div>';
+        '<span class="wt-c2 bank-bal'+(neg?" bank-neg":"")+'">'+pill+'<span class="bank-bal-amt">'+bankMoney(end)+'</span></span></div>';
     }).join("");
-    var shownTot=rows.reduce(function(s,a){return s+bankEnding(a);},0),tot=bankTotal(w);
-    if(w.bkOver){
-      var bar='<div class="bank-filterbar">'+ICON("warning")+'<span>Showing '+rows.length+' overdrawn account'+(rows.length===1?"":"s")+'</span><button class="btn naked sm" data-action="bank-overdrawn" data-id="'+w.id+'">Show all accounts</button></div>';
-      return bar+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Overdrawn total</span><span class="bank-neg">'+bankMoney(shownTot)+'</span></div>';
-    }
+    var shownTot=rows.reduce(function(s,a){return s+bankEnding(a);},0),n=bankAccounts(w).length;
+    var caption='<div class="bank-count">Showing '+rows.length+' of '+n+' account'+(n===1?"":"s")+(w.bkOver?" (overdrawn only)":"")+'</div>';
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
-    return search+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
+    var totLabel=w.bkOver?"Overdrawn total":"Total, all accounts";
+    return search+caption+'<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+totLabel+'</span><span'+(shownTot<0?' class="bank-neg"':'')+'>'+bankMoney(shownTot)+'</span></div>';
   }
   /* All-Accounts comparison = a sorted horizontal DIVERGING bar (replaces the pie:
      shows negatives, comparable, legible with many accounts; section 8 + decision 2).
