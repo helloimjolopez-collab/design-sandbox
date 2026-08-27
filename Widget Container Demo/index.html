@@ -6290,7 +6290,8 @@ function mysPopContent(){
     rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="name"||key==="type")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="bank-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
     var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Account")+'</span>'+(full?'<span class="wt-type">'+sb("type","Type")+'</span>':'')+'<span class="wt-c2 bank-bal">'+sb("bal","Balance")+'</span></div>';
-    var body=rows.map(function(a){var end=bankEnding(a),neg=end<0,aesc=a.name.replace(/"/g,"&quot;");
+    var nRows=rows.length,PER=20,shown=Math.min(Math.max(PER,w.bkShown||PER),nRows),remaining=nRows-shown,pageRows=rows.slice(0,shown);
+    var body=pageRows.map(function(a){var end=bankEnding(a),neg=end<0,aesc=a.name.replace(/"/g,"&quot;");
       var tip=aesc+', Account '+(a.acctFull||a.acct)+(neg?'. This account is overdrawn.':'');
       var pill=neg?'<span class="bank-tag-over">Overdrawn</span>':'';
       return '<div class="wt-row" data-acct="'+aesc+'">'+
