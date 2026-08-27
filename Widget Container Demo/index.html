@@ -6596,7 +6596,7 @@ function purHeaderBlock(w,mode){
   var numInner,leftControls="",rightToggle="";
   if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:46px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:15px;border-radius:6px"></span></div>';}
   else if(d==="committed"){var enc=purEncTotal(w);numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(enc)+'</span><span class="bank-pill">committed, not yet paid</span></div>';rightToggle=purEncToggle(w);}
-  else{var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="bank-pill">'+ICON("payments")+money(out)+' '+purAmtWord(w)+'</span></div>';leftControls=purStatusChip(w)+purPathChip(w);}
+  else{var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="bank-pill">'+ICON("payments")+money(out)+' '+purAmtWord(w)+'</span></div>';var qv=w.qview||"table";leftControls=(qv==="kanban"?"":purStatusChip(w))+purPathChip(w);rightToggle=purQviewToggle(w);}
   return '<div class="pur-tabrow">'+purDataTabs(w)+'</div>'+
     '<div class="dep-hd pur-hd">'+
       '<div class="dep-hd-top"><div class="pur-filters">'+leftControls+'</div><div class="dep-hd-toggle">'+rightToggle+'</div></div>'+
