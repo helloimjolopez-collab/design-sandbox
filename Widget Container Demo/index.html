@@ -6316,14 +6316,26 @@ function mysPopContent(){
     var tot=bankTotal(w);
     return '<div class="scroll bank-hb">'+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
   }
+  /* Single-account activity = production's register model: a Type column + a signed
+     Amount column (money out negative/red, money in positive/green, matching the
+     +/- convention). Framed as a running statement: Beginning balance pinned on top,
+     the movement Types sortable in between, Ending balance as the total. Red = a
+     negative amount everywhere; "Overdrawn" is the status word on a negative balance. */
   function bankSingleTable(w,sel){
-    var a=sel.a,end=bankEnding(sel);
-    var rowsDef=[["Beginning Balance",a[0]],["Deposits",a[1]],["Voids",a[2]],["Checks",a[3]],["Withdrawals",a[4]],["EFT",a[5]]];
-    var body=rowsDef.map(function(r){var v=r[1],out=(r[0]==="Checks"||r[0]==="Withdrawals"||v<0),inflow=(v>0&&(r[0]==="Deposits"||r[0]==="Voids"||r[0]==="EFT"));
-      var meta=out&&r[0]!=="Beginning Balance"?' <span class="lr-meta">· outflow</span>':(inflow?' <span class="lr-meta">· inflow</span>':'');
-      return '<div class="wt-row"><span class="lr-main">'+r[0]+meta+'</span><span class="wt-c2'+(v<0?" bank-neg":"")+'">'+bankMoney(v)+'</span></div>';
+    var a=sel.a,end=bankEnding(sel),beg=a[0];
+    var moves=[["Deposits",a[1]],["Voids",a[2]],["Checks",a[3]],["Withdrawals",a[4]],["EFT",a[5]]];
+    var sk=(w.bksSort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    if(key==="type")moves.sort(function(x,y){return dir*String(x[0]).localeCompare(String(y[0]));});
+    else moves.sort(function(x,y){return dir*(x[1]-y[1]);});
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="bank-ssort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("type","Type")+'</span><span class="wt-c2 bank-amt">'+sb("amt","Amount")+'</span></div>';
+    var begRow='<div class="wt-row bank-anchor"><span class="lr-main">Beginning balance</span><span class="wt-c2 bank-amt">'+bankMoney(beg)+'</span></div>';
+    var body=moves.map(function(r){var v=r[1],neg=v<0,pos=v>0,amt=(pos?"+":"")+bankMoney(v);
+      return '<div class="wt-row"><span class="lr-main">'+r[0]+'</span><span class="wt-c2 bank-amt'+(neg?" bank-neg":(pos?" bank-pos":""))+'">'+amt+'</span></div>';
     }).join("");
-    return '<div class="scroll bank-7scroll">'+body+'</div><div class="dep-total"><span>Ending Balance</span><span'+(end<0?' class="bank-neg"':'')+'>'+bankMoney(end)+'</span></div>';
+    var endNeg=end<0,endPill=endNeg?'<span class="bank-tag-over">Overdrawn</span>':'';
+    var total='<div class="dep-total"><span>Ending balance</span><span class="bank-amt'+(endNeg?" bank-neg":"")+'">'+endPill+'<span class="bank-bal-amt">'+bankMoney(end)+'</span></span></div>';
+    return '<div class="scroll bank-7scroll">'+head+begRow+body+'</div>'+total;
   }
   function bankBars(w,sel){
     var a=sel.a;
