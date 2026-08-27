@@ -6598,28 +6598,28 @@ function purDataTabs(w){var d=w.pdata||"queue";var opts=[["queue","Approvals","i
 function purEncToggle(w){var v=w.encview||"chart";return '<div class="vtoggle" role="group" aria-label="Committed view">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 function purQviewToggle(w){var v=w.qview||"table";return '<div class="vtoggle" role="group" aria-label="Queue view">'+[["table","Table","table_rows"],["kanban","Kanban","view_kanban"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-qview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 function purKAge(o){var cls=o.age>=30?" red":o.age>=21?" amber":"";return '<span class="pur-kc-age'+cls+'">'+o.age+'d</span>';}
+function purHash(s){var h=0,z=String(s);for(var i=0;i<z.length;i++)h=(h*31+z.charCodeAt(i))>>>0;return h;}
+function purSteps(o){return o.amount>3000?3:o.amount>1200?2:1;}
+function purDone(o){var Y=purSteps(o);if(o.status==="approved")return Y;if(o.status==="mine")return Math.max(0,Y-1);if(o.status==="next")return Math.max(0,Y-2);return 0;}
+function purPStage(o){if(o.status!=="approved")return "pending";var m=purHash(o.id)%3;return m===0?"paid":m===1?"payapproved":"approved";}
 function purKanban(w){
   var cp=purPathCur(w),all=purVisible(w).filter(function(o){return cp==="All approval paths"||o.path===cp;});
-  var lanes=[
-    {label:"Unapproved",tone:"neutral",match:function(o){return o.status==="unapproved"||o.status==="next";}},
-    {label:"Awaiting my approval",tone:"action",match:function(o){return o.status==="mine";}},
-    {label:"Approved",tone:"ok",match:function(o){return o.status==="approved";}},
-    {label:"Approved for payment",needsData:true},
-    {label:"Paid / closed",needsData:true}
-  ];
+  var lanes=[["pending","Pending approval","neutral"],["approved","Approved","ok"],["payapproved","Approved for payment","ok"],["paid","Paid / closed","done"]];
   var cols=lanes.map(function(L){
-    if(L.needsData)return '<div class="pur-kcol pur-kcol-nd"><div class="pur-kcol-h"><span class="pur-kcol-t">'+L.label+'</span><span class="pur-kcol-nd-tag">needs data</span></div><div class="pur-kcol-b"><div class="pur-knd">Payment-stage data is not in the widget feed yet.</div></div></div>';
-    var items=all.filter(L.match);
-    var cards=items.map(function(o){var act=purCanAct(o);
-      return '<button class="pur-kcard pur-kcard-'+L.tone+'" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Purchase order '+o.num+', '+o.vendor+', '+money(o.amount)+(act?', open to approve or reject':', open record')+'">'+
+    var key=L[0],items=all.filter(function(o){return purPStage(o)===key;});
+    var cards=items.map(function(o){
+      var needsMe=(key==="pending"&&o.status==="mine"),Y=purSteps(o),X=purDone(o);
+      var foot=needsMe?'<span class="pur-kc-need">'+ICON("error")+'your approval</span>':(key==="pending"?'<span class="pur-kc-prog">'+X+' of '+Y+' approved</span>':'');
+      var cls=needsMe?"pur-kcard-action":(key==="paid"?"pur-kcard-done":(key==="pending"?"":"pur-kcard-ok"));
+      return '<button class="pur-kcard '+cls+'" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Purchase order '+o.num+', '+o.vendor+', '+money(o.amount)+(needsMe?', awaiting your approval, tap to review':', tap to open')+'">'+
         '<span class="pur-kc-top"><span class="pur-kc-num">'+o.num+'</span>'+purKAge(o)+'</span>'+
         '<span class="pur-kc-vendor">'+o.vendor+'</span>'+
-        '<span class="pur-kc-foot"><span class="pur-kc-amt">'+money(o.amount)+'</span>'+(act?'<span class="pur-kc-act">'+ICON("check")+'approve</span>':'')+'</span>'+
+        '<span class="pur-kc-foot"><span class="pur-kc-amt">'+money(o.amount)+'</span>'+foot+'</span>'+
       '</button>';
     }).join("")||'<div class="pur-kempty">None</div>';
-    return '<div class="pur-kcol pur-kcol-'+L.tone+'"><div class="pur-kcol-h"><span class="pur-kcol-t">'+L.label+'</span><span class="pur-kcol-n">'+items.length+'</span></div><div class="pur-kcol-b">'+cards+'</div></div>';
+    return '<div class="pur-kcol pur-kcol-'+L[2]+'"><div class="pur-kcol-h"><span class="pur-kcol-t">'+L[1]+'</span><span class="pur-kcol-n">'+items.length+'</span></div><div class="pur-kcol-b">'+cards+'</div></div>';
   }).join("");
-  return '<div class="pur-kanban">'+cols+'</div>';
+  return '<div class="pur-kanban pur-kanban-4">'+cols+'</div>';
 }
 function purHeaderBlock(w,mode){
   var loading=(mode==="loading"),d=w.pdata||"queue";
