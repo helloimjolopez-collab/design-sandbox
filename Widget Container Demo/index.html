@@ -6342,15 +6342,16 @@ function mysPopContent(){
     var cats=[["Deposits",a[1]],["Voids",a[2]],["Checks",a[3]],["Withdrawals",a[4]]];
     var max=1;cats.forEach(function(c){max=Math.max(max,Math.abs(c[1]));});max=max*1.15;
     var cols="",xl="";
-    cats.forEach(function(c){var raw=c[1],mag=Math.abs(raw),out=(c[0]==="Checks"||c[0]==="Withdrawals"||raw<0);
-      var h=Math.max(1,Math.round(mag/max*100)),flow=out?"outflow":"inflow";
-      var srtxt=c[0]+', '+flow+' of '+money(mag)+(out?' (stored as '+bankMoney(raw)+', drawn as a positive bar)':'');
-      var dpop=[c[0],mag,flow].join("|").replace(/"/g,"&quot;");
+    cats.forEach(function(c){var raw=c[1],mag=Math.abs(raw),out=(raw<0||c[0]==="Checks"||c[0]==="Withdrawals");
+      var h=Math.max(1,Math.round(mag/max*100));
+      var vlab=(mag===0?"$0":(out?"−":"+")+"$"+mag.toLocaleString());
+      var srtxt=c[0]+', '+vlab+(out?' out of the account':' into the account');
+      var dpop=[c[0],mag,(out?"out":"in")].join("|").replace(/"/g,"&quot;");
       cols+='<div class="bank-col '+(out?"out":"in")+'" role="group" aria-label="'+srtxt+'" data-bankpop="'+dpop+'"><div class="bank-barwrap"><div class="bank-bar" style="height:'+h+'%"></div></div><span class="sr-only">'+srtxt+'</span></div>';
-      xl+='<div class="bank-xcol"><span class="bank-xlbl">'+c[0]+'</span><span class="bank-xflow">'+flow+'</span></div>';
+      xl+='<div class="bank-xcol"><span class="bank-xlbl">'+c[0]+'</span><span class="bank-xval '+(out?"out":"in")+'">'+vlab+'</span></div>';
     });
     var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
-    return '<div class="bank-chart-wrap"><div class="bank-legend"><span class="bank-lg"><span class="bank-sw in"></span>Inflow (money in)</span><span class="bank-lg"><span class="bank-sw out"></span>Outflow (money out)</span></div>'+
+    return '<div class="bank-chart-wrap">'+
       '<div class="bank-plotrow"><div class="bank-yax">'+yl+'</div><div class="bank-canvas"><div class="bank-gl"></div><div class="bank-cols">'+cols+'</div></div></div>'+
       '<div class="bank-xaxrow"><div class="bank-yaxsp"></div><div class="bank-xcols">'+xl+'</div></div>'+
       '</div>';
