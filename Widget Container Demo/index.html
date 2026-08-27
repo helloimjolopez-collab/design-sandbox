@@ -6352,8 +6352,8 @@ function mysPopContent(){
         '<span class="bank-hb-val'+(neg?' bank-neg':'')+'">'+(neg?'<span class="material-symbols-rounded bank-hb-warn" data-tip="This account is overdrawn (a negative balance)." data-tip-plain>error</span>':'')+bankMoney(e)+'</span>'+
         '<span class="sr-only">'+aesc+', balance '+bankMoney(e)+(neg?', overdrawn':'')+'</span></div>';
     }).join("");
-    var tot=bankTotal(w);
-    return '<div class="scroll bank-hb">'+body+'</div><div class="dep-total"><span>Total, all accounts</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
+    var tot=rows.reduce(function(s,a){return s+bankEnding(a);},0),totLabel=w.bkOver?"Overdrawn total":"Total, all accounts";
+    return '<div class="scroll bank-hb">'+body+'</div><div class="dep-total"><span>'+totLabel+'</span><span'+(tot<0?' class="bank-neg"':'')+'>'+bankMoney(tot)+'</span></div>';
   }
   /* Single-account activity = production's register model: a Type column + a signed
      Amount column (money out negative/red, money in positive/green, matching the
