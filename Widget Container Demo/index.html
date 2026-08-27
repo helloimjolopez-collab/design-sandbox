@@ -6393,12 +6393,24 @@ function mysPopContent(){
   function bankSingleView(w,v){var sel=bankSelected(w);return (v==="chart")?('<div class="bank-mvmt-h">Activity by type since last reconciliation</div>'+bankBars(w,sel)):('<div class="bank-mvmt-h">Balance movement since last reconciliation</div>'+bankSingleTable(w,sel));}
   function bankAllFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+bankAllTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Balance comparison</div>'+bankAllBars(w,true)+'</div></div>';}
   function bankSingleFull(w){var sel=bankSelected(w);return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balance movement since last reconciliation</div>'+bankSingleTable(w,sel)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Activity by type</div>'+bankBars(w,sel)+'</div></div>';}
-  function bankGlance(w){var sel=bankSelected(w),lbl=sel?sel.name:"All Bank Accounts",val=sel?bankEnding(sel):bankTotal(w),neg=val<0,over=sel?0:bankNegCount(w);
+  /* Glance is interactive: the account chip opens the real picker (filter/search),
+     and the overdrawn chip DRILLS, opening the Detail view in a closable overlay
+     filtered to the overdrawn accounts. No inert button-looking chip. */
+  function bankGlance(w){var sel=bankSelected(w),val=sel?bankEnding(sel):bankTotal(w),neg=val<0,over=sel?0:bankNegCount(w);
+    var odDrill=over?'<button class="bank-odchip" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, tap to open details">'+ICON("error")+'<span>'+over+' overdrawn</span></button>':'';
     return '<div class="kpi-row"><div class="kpi-num">'+
-      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+lbl+'</span></span>'+
+      '<div class="bank-gl-top">'+bankAcctChip(w)+odDrill+'</div>'+
       '<div class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
-      (over?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("warning")+over+' overdrawn</span></div>':'')+
+      (sel&&neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
       '</div></div>';}
+  function bankDrillModalHTML(){
+    var w=find(modal.id);if(!w)return "";
+    var clone=Object.assign({},w,{size:"xwide"});
+    return '<div class="modal-backdrop" data-action="bank-drill-close"><div class="modal modal-wide bank-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Bank Balances">'+
+      '<div class="modal-h"><span class="modal-title">Bank Balances</span><button class="iconbtn" data-action="bank-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+      '<div class="modal-b bank-drill-b">'+bankContent(clone)+'</div>'+
+    '</div></div>';
+  }
   function bankLoad(w){w.bkloading=true;clearTimeout(timers["bank-"+w.id]);timers["bank-"+w.id]=setTimeout(function(){w.bkloading=false;render();},850);}
   /* Overdrawn is the ONE meaningful quick-filter here (account type is not universal
      across orgs; available/unrestricted cash is out of scope). A single boolean does
