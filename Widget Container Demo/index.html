@@ -6609,7 +6609,7 @@ function purEncView(w){var v=w.encview||"chart";
   var toggle='<div class="pur-subbar"><div class="vtoggle" role="group" aria-label="Committed display">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div></div>';
   return toggle+(v==="table"?purEncTable(w):purEnc(w));}
 function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(w);
-  return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Committed, not yet paid</div>'+purEnc(w)+'</div></div>';}
+  return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Committed, not yet paid</div>'+purEncView(w)+'</div></div>';}
 function purGlance(w){var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered),enc=purEncTotal(w);
   return '<div class="kpi-row"><div class="kpi-num">'+
     '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+purStatusLabel(w.pstatus||"mine")+'</span></span>'+
