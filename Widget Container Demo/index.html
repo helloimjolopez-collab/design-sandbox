@@ -6318,9 +6318,9 @@ function mysPopContent(){
     var shownTot=rows.reduce(function(s,a){return s+bankEnding(a);},0);
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
     var totLabel=w.bkOver?"Overdrawn total":"Total, all accounts";
-    var moreBtn=(remaining>0)?'<button class="depf-more" data-action="bank-more" data-id="'+w.id+'" aria-label="Load more accounts, '+remaining+' remaining">Load more<span class="depf-more-n">'+remaining+'</span></button>':'';
+    var moreBtn=(remaining>0)?'<button class="bank-more" data-action="bank-more" data-id="'+w.id+'" aria-label="Load more accounts, '+remaining+' remaining">Load more</button>':'';
     var pager=(nRows>PER)?('<div class="bank-pager"><span class="bank-count">Showing '+shown+' of '+nRows+' accounts</span>'+moreBtn+'</div>'):'';
-    return search+'<div class="scroll">'+head+body+'</div>'+pager+'<div class="dep-total"><span>'+totLabel+'</span><span'+(shownTot<0?' class="bank-neg"':'')+'>'+bankMoney(shownTot)+'</span></div>';
+    return search+'<div class="scroll">'+head+body+pager+'</div><div class="dep-total"><span>'+totLabel+'</span><span'+(shownTot<0?' class="bank-neg"':'')+'>'+bankMoney(shownTot)+'</span></div>';
   }
   /* All-Accounts comparison = a sorted horizontal DIVERGING bar (replaces the pie:
      shows negatives, comparable, legible with many accounts; section 8 + decision 2).
