@@ -8728,12 +8728,12 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
   function bankHideBpop(){if(bankPopEl){bankPopEl.remove();bankPopEl=null;}}
   function bankShowBpop(col,mx,my){
     var raw=col.getAttribute("data-bankpop");if(!raw)return;var p=raw.split("|");
-    var cat=p[0],amt=+p[1],flow=p[2],out=(flow==="outflow");
+    var cat=p[0],amt=+p[1],flow=p[2],out=(flow==="out");
     bankHideBpop();
     bankPopEl=document.createElement("div");bankPopEl.className="bgt-pop bank-pop";
     bankPopEl.innerHTML='<div class="bgt-pop-h">'+cat+'</div>'+
-      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:'+(out?"var(--am-300)":"var(--am-600)")+'"></span><span class="bgt-pop-lbl">'+(out?"Money out":"Money in")+'</span><span class="bgt-pop-v">'+money(amt)+'</span></div>'+
-      '<div class="bgt-pop-note">'+(out?"Outflow. Stored as a negative and drawn as a positive bar for readability.":"Inflow, adds to the balance.")+'</div>';
+      '<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:'+(out?"var(--red-100)":"var(--am-600)")+'"></span><span class="bgt-pop-lbl">'+(out?"Out of the account":"Into the account")+'</span><span class="bgt-pop-v">'+(out?"−":"+")+money(amt)+'</span></div>'+
+      '<div class="bgt-pop-note">'+(out?"Reduces the balance.":"Adds to the balance.")+'</div>';
     document.body.appendChild(bankPopEl);
     var bw=bankPopEl.offsetWidth,bh=bankPopEl.offsetHeight,M=10;
     var left=mx+14;if(left+bw>innerWidth-M)left=mx-bw-14;if(left<M)left=M;
