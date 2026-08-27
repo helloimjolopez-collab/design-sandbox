@@ -6551,18 +6551,23 @@ function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
   return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, tap to change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
 function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_alt"],["enc","Committed","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 function purAmtWord(w){var s=w.pstatus||"mine";return s==="approved"?"approved":s==="unapproved"?"unapproved":"to approve";}
+/* Queue and Committed are two DIFFERENT data sets, so a top-level DATA SELECTOR
+   chooses which one you are looking at (not a view-toggle, not stacked, never both
+   crammed together). Each data set then offers only the views usable FOR IT:
+   Queue = table (a to-do list); Committed = chart or table (money over time). */
+function purDataTabs(w){var d=w.pdata||"queue";var opts=[["queue","Approvals","inbox"],["committed","Committed","account_balance_wallet"]];
+  return '<div class="pur-tabs" role="tablist" aria-label="What to view">'+opts.map(function(o){return '<button class="pur-tab'+(d===o[0]?" on":"")+'" role="tab" aria-selected="'+(d===o[0])+'" data-action="pur-data" data-id="'+w.id+'" data-d="'+o[0]+'">'+ICON(o[2])+'<span>'+o[1]+'</span></button>';}).join("")+'</div>';}
+function purEncToggle(w){var v=w.encview||"chart";return '<div class="vtoggle" role="group" aria-label="Committed view">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 function purHeaderBlock(w,mode){
-  var loading=(mode==="loading");
-  var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);
-  var numInner;
+  var loading=(mode==="loading"),d=w.pdata||"queue";
+  var numInner,leftControls="",rightToggle="";
   if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:46px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:15px;border-radius:6px"></span></div>';}
-  else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="bank-pill">'+ICON("payments")+money(out)+' '+purAmtWord(w)+'</span></div>';}
-  /* No Queue|Committed view toggle: the queue and the encumbrance are two different
-     data sets (two jobs in one frame), not alternate views, so both are shown, not
-     toggled (queue leads; committed alongside/below). */
-  return '<div class="dep-hd pur-hd">'+
-    '<div class="dep-hd-top"><div class="pur-filters">'+purStatusChip(w)+purPathChip(w)+'</div><div class="dep-hd-toggle"></div></div>'+
-    '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
+  else if(d==="committed"){var enc=purEncTotal(w);numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(enc)+'</span><span class="bank-pill">committed, not yet paid</span></div>';rightToggle=purEncToggle(w);}
+  else{var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="bank-pill">'+ICON("payments")+money(out)+' '+purAmtWord(w)+'</span></div>';leftControls=purStatusChip(w)+purPathChip(w);}
+  return '<div class="pur-tabrow">'+purDataTabs(w)+'</div>'+
+    '<div class="dep-hd pur-hd">'+
+      '<div class="dep-hd-top"><div class="pur-filters">'+leftControls+'</div><div class="dep-hd-toggle">'+rightToggle+'</div></div>'+
+      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
     '</div>';
 }
 function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="pur-sk-line"><span class="sk" style="height:12px;flex:1"></span><span class="sk" style="height:12px;width:74px"></span></div>';}).join("");return '<div class="pur-skel"><div class="pur-skel-rows">'+rows+'</div><div class="pur-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
