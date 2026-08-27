@@ -6268,6 +6268,7 @@ function mysPopContent(){
        Single-account = activity table / activity bar. Toggle at Explore (wide);
        Detail (xwide) shows both views side by side, so no toggle there. */
     var toggle=(w.size==="wide")?bankViewToggle(w):"";
+    var od=(!sel&&!loading)?bankOdChip(w):"";
     var numInner;
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
     else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?'<span class="bank-pill warn">'+ICON("warning")+'Overdrawn</span>':'')+'</div>';}
@@ -6276,7 +6277,7 @@ function mysPopContent(){
          the table; overdrawn moves to its own filter card (bankOverCard). */
       numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span></div>';}
     return '<div class="dep-hd">'+
-      '<div class="dep-hd-top">'+bankAcctChip(w)+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
+      '<div class="dep-hd-top">'+bankAcctChip(w)+od+'<div class="dep-hd-toggle">'+toggle+'</div></div>'+
       '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
       '</div>';
   }
