@@ -6668,6 +6668,7 @@ function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
 function purBody(w){
   if((w.pdata||"queue")==="committed")return (w.encview||"chart")==="table"?purEncTable(w):purEnc(w);
+  if((w.qview||"table")==="kanban")return purKanban(w);
   return purFiltered(w).length?purTable(w,w.size==="xwide"):purCaughtUp(w);
 }
 function purContent(w){
@@ -6701,6 +6702,7 @@ function purHandleClick(a,t,id){
   if(a==="pur-view"){var wv=find(id);if(wv)wv.purview=t.getAttribute("data-v");pop=null;render();return true;}
   if(a==="pur-encview"){var we=find(id);if(we)we.encview=t.getAttribute("data-v");pop=null;render();return true;}
   if(a==="pur-data"){var wd2=find(id);if(wd2)wd2.pdata=t.getAttribute("data-d");pop=null;render();return true;}
+  if(a==="pur-qview"){var wq=find(id);if(wq)wq.qview=t.getAttribute("data-v");pop=null;render();return true;}
   if(a==="pur-sort"){var wso=find(id),k=t.getAttribute("data-k");if(wso){var cs=(wso.psort||"age-desc").split("-");wso.psort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="num"||k==="vendor")?"asc":"desc"));}render();return true;}
   /* Whole-row tap -> in-widget focus overlay (approve/reject inline). */
   if(a==="pur-open"){var oid=t.getAttribute("data-oid");modal={type:"pur-po",id:id,oid:oid,confirmReject:false,note:""};modalMounted=false;pop=null;render();return true;}
