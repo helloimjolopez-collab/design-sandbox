@@ -6326,7 +6326,7 @@ function mysPopContent(){
       var tip=aesc+', Account '+(a.acctFull||a.acct)+(neg?'. This account is overdrawn.':'');
       var pill=neg?'<span class="bank-tag-over">Overdrawn</span>':'';
       return '<div class="wt-row" data-acct="'+aesc+'">'+
-        '<span class="lr-main lr-stack lr-link bank-namecell" data-action="bank-set-acct" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.acct+'</span></span>'+
+        '<span class="lr-main lr-stack lr-link bank-namecell" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+', tap to open" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.acct+'</span></span>'+
         (full?'<span class="wt-type">'+a.type+'</span>':'')+
         '<span class="wt-c2 bank-bal'+(neg?" bank-neg":"")+'">'+pill+'<span class="bank-bal-amt">'+bankMoney(end)+'</span></span></div>';
     }).join("");
@@ -6353,7 +6353,7 @@ function mysPopContent(){
       var aesc=a.name.replace(/"/g,"&quot;");
       var tip=aesc+', '+bankMoney(e)+(neg?'. This account is overdrawn.':'');
       var barStyle=neg?('right:'+(100-zero)+'%;width:'+wd+'%'):('left:'+zero+'%;width:'+wd+'%');
-      return '<div class="bank-hb-row" data-acct="'+aesc+'"><span class="lr-link bank-hb-name" data-action="bank-set-acct" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+'" data-tip-plain>'+a.name+'</span>'+
+      return '<div class="bank-hb-row" data-acct="'+aesc+'"><span class="lr-link bank-hb-name" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+', tap to open" data-tip-plain>'+a.name+'</span>'+
         '<span class="bank-hb-track"><span class="bank-hb-zero" style="left:'+zero+'%"></span><span class="bank-hb-fill'+(neg?' neg':'')+'" style="'+barStyle+'"></span></span>'+
         '<span class="bank-hb-val'+(neg?' bank-neg':'')+'">'+(neg?'<span class="material-symbols-rounded bank-hb-warn" data-tip="This account is overdrawn (a negative balance)." data-tip-plain>error</span>':'')+bankMoney(e)+'</span>'+
         '<span class="sr-only">'+aesc+', balance '+bankMoney(e)+(neg?', overdrawn':'')+'</span></div>';
