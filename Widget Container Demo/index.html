@@ -6761,9 +6761,13 @@ function purPoStatusChip(o){
   return '<span class="pur-po-status" data-tone="'+tone+'">'+lbl+'</span>';
 }
 function purPoTrail(o){
+  var Y=purSteps(o),X=purDone(o),roles=["Department head","Finance review","Treasurer sign-off"].slice(0,Y);
   var steps=[{ic:"edit_note",done:true,label:"Requested",who:purReq(o)+" · "+o.issued}];
-  if(o.status==="approved"){steps.push({ic:"check_circle",done:true,label:"Approved",who:(o.approvedByMe?"You · just now":"Approver")});}
-  else{steps.push({ic:purCanAct(o)?"pending":"schedule",done:false,label:purCanAct(o)?"Your approval":"Awaiting approver",who:purCanAct(o)?"Pending your decision":"On "+o.path});}
+  roles.forEach(function(r,i){var done=i<X,cur=(i===X&&o.status!=="approved");
+    steps.push({ic:done?"check_circle":(cur?"pending":"schedule"),done:done,label:r,who:done?"Approved":(cur?(o.status==="mine"?"Pending your decision":"Awaiting this approver"):"Not yet reached")});});
+  if(o.status==="approved"){var ps=purPStage(o);
+    steps.push({ic:(ps==="payapproved"||ps==="paid")?"check_circle":"schedule",done:(ps==="payapproved"||ps==="paid"),label:"Approved for payment",who:(ps==="payapproved"||ps==="paid")?"Cleared":"Pending"});
+    steps.push({ic:ps==="paid"?"check_circle":"schedule",done:ps==="paid",label:"Paid",who:ps==="paid"?"Paid, closed":"Pending"});}
   return '<ol class="pur-po-trail">'+steps.map(function(s){return '<li class="pur-po-step'+(s.done?" done":"")+'"><span class="pur-po-step-ic material-symbols-rounded">'+s.ic+'</span><span class="pur-po-step-tx"><span class="pur-po-step-l">'+s.label+'</span><span class="pur-po-step-w">'+s.who+'</span></span></li>';}).join("")+'</ol>';
 }
 function purPoModalInner(){
