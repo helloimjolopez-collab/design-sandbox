@@ -6566,6 +6566,31 @@ function purAmtWord(w){var s=w.pstatus||"mine";return s==="approved"?"approved":
 function purDataTabs(w){var d=w.pdata||"queue";var opts=[["queue","Approvals","inbox"],["committed","Encumbrances","account_balance_wallet"]];
   return '<div class="pur-tabs" role="tablist" aria-label="What to view">'+opts.map(function(o){return '<button class="pur-tab'+(d===o[0]?" on":"")+'" role="tab" aria-selected="'+(d===o[0])+'" data-action="pur-data" data-id="'+w.id+'" data-d="'+o[0]+'">'+ICON(o[2])+'<span>'+o[1]+'</span></button>';}).join("")+'</div>';}
 function purEncToggle(w){var v=w.encview||"chart";return '<div class="vtoggle" role="group" aria-label="Committed view">'+[["chart","Chart","bar_chart"],["table","Table","table_rows"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-encview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+function purQviewToggle(w){var v=w.qview||"table";return '<div class="vtoggle" role="group" aria-label="Queue view">'+[["table","Table","table_rows"],["kanban","Kanban","view_kanban"]].map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-qview" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
+function purKAge(o){var cls=o.age>=30?" red":o.age>=21?" amber":"";return '<span class="pur-kc-age'+cls+'">'+o.age+'d</span>';}
+function purKanban(w){
+  var cp=purPathCur(w),all=purVisible(w).filter(function(o){return cp==="All approval paths"||o.path===cp;});
+  var lanes=[
+    {label:"Unapproved",tone:"neutral",match:function(o){return o.status==="unapproved"||o.status==="next";}},
+    {label:"Awaiting my approval",tone:"action",match:function(o){return o.status==="mine";}},
+    {label:"Approved",tone:"ok",match:function(o){return o.status==="approved";}},
+    {label:"Approved for payment",needsData:true},
+    {label:"Paid / closed",needsData:true}
+  ];
+  var cols=lanes.map(function(L){
+    if(L.needsData)return '<div class="pur-kcol pur-kcol-nd"><div class="pur-kcol-h"><span class="pur-kcol-t">'+L.label+'</span><span class="pur-kcol-nd-tag">needs data</span></div><div class="pur-kcol-b"><div class="pur-knd">Payment-stage data is not in the widget feed yet.</div></div></div>';
+    var items=all.filter(L.match);
+    var cards=items.map(function(o){var act=purCanAct(o);
+      return '<button class="pur-kcard pur-kcard-'+L.tone+'" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Purchase order '+o.num+', '+o.vendor+', '+money(o.amount)+(act?', open to approve or reject':', open record')+'">'+
+        '<span class="pur-kc-top"><span class="pur-kc-num">'+o.num+'</span>'+purKAge(o)+'</span>'+
+        '<span class="pur-kc-vendor">'+o.vendor+'</span>'+
+        '<span class="pur-kc-foot"><span class="pur-kc-amt">'+money(o.amount)+'</span>'+(act?'<span class="pur-kc-act">'+ICON("check")+'approve</span>':'')+'</span>'+
+      '</button>';
+    }).join("")||'<div class="pur-kempty">None</div>';
+    return '<div class="pur-kcol pur-kcol-'+L.tone+'"><div class="pur-kcol-h"><span class="pur-kcol-t">'+L.label+'</span><span class="pur-kcol-n">'+items.length+'</span></div><div class="pur-kcol-b">'+cards+'</div></div>';
+  }).join("");
+  return '<div class="pur-kanban">'+cols+'</div>';
+}
 function purHeaderBlock(w,mode){
   var loading=(mode==="loading"),d=w.pdata||"queue";
   var numInner,leftControls="",rightToggle="";
