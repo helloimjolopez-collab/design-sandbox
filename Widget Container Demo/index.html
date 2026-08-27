@@ -8519,6 +8519,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     if(a==="bank-view"){var wbv=find(id);if(wbv)wbv.bkview=t.getAttribute("data-v");pop=null;render();return;}
     if(a==="bank-sort"){var wbs=find(id),k=t.getAttribute("data-k");if(wbs){var cs=(wbs.bksort||"bal-desc").split("-");wbs.bksort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="name"||k==="type")?"asc":"desc"));}render();return;}
     if(a==="bank-ssort"){var wsg=find(id),sgk=t.getAttribute("data-k");if(wsg){var scs=(wsg.bksSort||"amt-desc").split("-");wsg.bksSort=(scs[0]===sgk)?(sgk+"-"+(scs[1]==="asc"?"desc":"asc")):(sgk+"-"+(sgk==="type"?"asc":"desc"));}render();return;}
+    if(a==="bank-more"){var wbm=find(id);if(wbm)wbm.bkShown=(wbm.bkShown||20)+20;render();return;}
     if(a==="mys-config"){var wc0=find(id);modal={type:"mysconfig",id:id,q:"",draft:(wc0.selected||[]).slice()};modalMounted=false;pop=null;render();return;}
     if(a==="mys-add"){var wa2=find(modal.id);var qid=t.getAttribute("data-q");if(wa2&&modal.draft.indexOf(qid)<0)modal.draft.push(qid);renderModal();return;}
     if(a==="mys-remove"){var qidr=t.getAttribute("data-q");if(modal)modal.draft=modal.draft.filter(function(x){return x!==qidr;});renderModal();return;}
