@@ -6425,9 +6425,10 @@ function mysPopContent(){
       '</div></div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
-    var clone=Object.assign({},w,{size:"xwide"});
-    return '<div class="modal-backdrop" data-action="bank-drill-close"><div class="modal modal-wide bank-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Bank Balances">'+
-      '<div class="modal-h"><span class="modal-title">Bank Balances</span><button class="iconbtn" data-action="bank-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    var clone=Object.assign({},w,{size:"xwide"}),title="Bank Balances";
+    if(modal.acct){clone.bkacct=modal.acct;clone.bkOver=false;var ao=bankAccounts(w).filter(function(a){return a.id===modal.acct;})[0];if(ao)title=ao.name+" "+ao.acct;}
+    return '<div class="modal-backdrop" data-action="bank-drill-close"><div class="modal modal-wide bank-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="'+title.replace(/"/g,"&quot;")+'">'+
+      '<div class="modal-h"><span class="modal-title">'+title+'</span><button class="iconbtn" data-action="bank-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
       '<div class="modal-b bank-drill-b">'+bankContent(clone)+'</div>'+
     '</div></div>';
   }
