@@ -6545,13 +6545,15 @@ function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_
 function purAmtWord(w){var s=w.pstatus||"mine";return s==="approved"?"approved":s==="unapproved"?"unapproved":"to approve";}
 function purHeaderBlock(w,mode){
   var loading=(mode==="loading");
-  var toggle=(w.size==="wide")?purViewToggle(w):"";
   var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);
   var numInner;
   if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:46px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:15px;border-radius:6px"></span></div>';}
   else{numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="bank-pill">'+ICON("payments")+money(out)+' '+purAmtWord(w)+'</span></div>';}
+  /* No Queue|Committed view toggle: the queue and the encumbrance are two different
+     data sets (two jobs in one frame), not alternate views, so both are shown, not
+     toggled (queue leads; committed alongside/below). */
   return '<div class="dep-hd pur-hd">'+
-    '<div class="dep-hd-top"><div class="pur-filters">'+purStatusChip(w)+purPathChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
+    '<div class="dep-hd-top"><div class="pur-filters">'+purStatusChip(w)+purPathChip(w)+'</div><div class="dep-hd-toggle"></div></div>'+
     '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
     '</div>';
 }
