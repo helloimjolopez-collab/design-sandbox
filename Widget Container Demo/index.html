@@ -6340,12 +6340,28 @@ function mysPopContent(){
       (over?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("warning")+over+' overdrawn</span></div>':'')+
       '</div></div>';}
   function bankLoad(w){w.bkloading=true;clearTimeout(timers["bank-"+w.id]);timers["bank-"+w.id]=setTimeout(function(){w.bkloading=false;render();},850);}
+  /* Overdrawn = the one universal, in-scope status filter (account type is not
+     universal across orgs; available/unrestricted cash is out of scope, no fund
+     data). Rendered as a filter card in the established pattern, shown only when
+     there is something to alert on. Single-select: tap filters, tap again clears. */
+  function bankOverCard(w){
+    var accts=bankAccounts(w).filter(function(a){return bankEnding(a)<0;}),over=accts.length;
+    if(!over)return "";
+    var sum=accts.reduce(function(s,a){return s+bankEnding(a);},0),on=!!w.bkOver;
+    return '<div class="bank-cards" role="group" aria-label="Filter accounts by status">'+
+      '<button class="bank-fcard bank-fcard-over'+(on?" on":"")+'" data-action="bank-overdrawn" data-id="'+w.id+'" aria-pressed="'+on+'" aria-label="Overdrawn, '+over+' account'+(over>1?"s":"")+', '+bankMoney(sum)+' total, tap to '+(on?"clear the filter":"show only these")+'">'+
+        '<span class="bank-fcard-top">'+ICON("error")+'<span>Overdrawn</span></span>'+
+        '<span class="bank-fcard-n">'+over+'</span>'+
+        '<span class="bank-fcard-sub">'+bankMoney(sum)+'</span>'+
+      '</button></div>';
+  }
   function bankContent(w){
     if(w.size==="kpi")return bankGlance(w);
     if(w.bkloading)return bankHeaderBlock(w,"loading")+bankSkeleton();
     var mh=bankHeaderBlock(w),sel=bankSelected(w),v=w.bkview||"table";
-    if(w.size==="xwide")return mh+(sel?bankSingleFull(w):bankAllFull(w));
-    return mh+(sel?bankSingleView(w,v):bankAllView(w,v));
+    var cards=sel?"":bankOverCard(w);
+    if(w.size==="xwide")return mh+cards+(sel?bankSingleFull(w):bankAllFull(w));
+    return mh+cards+(sel?bankSingleView(w,v):bankAllView(w,v));
   }
 
   /* =======================================================================
