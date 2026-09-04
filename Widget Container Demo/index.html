@@ -6125,8 +6125,15 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       legend+='<div class="leg" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' &middot; '+Math.round(frac*100)+'%</span></div>';});
     var DS=forceSize||({wide:250,xwide:280}[w.size]||190);
     return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">'+meta.legend+'</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
+  function prFGlanceComp(w){var rows=prFDistTotals(w).slice().sort(function(a,b){return b.net-a.net;}),tot=rows.reduce(function(s,a){return s+a.net;},0);
+    if(!tot||!rows.length)return "";
+    var segs=rows.map(function(a){var pct=a.net/tot*100;return '<span class="prf-gseg" style="width:'+pct.toFixed(2)+'%;background:'+(PRF_DIST_COLORS[a.id]||"#8a8f98")+'" data-tip="'+a.name+': '+money(a.net)+', '+Math.round(pct)+'% of payroll this period" data-tip-plain></span>';}).join("");
+    var top=rows[0],tp=Math.round(top.net/tot*100);
+    return '<div class="prf-gcomp"><div class="prf-gbar" role="img" aria-label="Payroll split across '+rows.length+' distributions this period">'+segs+'</div>'+
+      '<div class="prf-gcap"><span class="prf-gdot" style="background:'+(PRF_DIST_COLORS[top.id]||"#8a8f98")+'"></span><span class="prf-gname">'+top.name+'</span><span class="prf-gpct">'+tp+'%</span></div></div>';}
   function prFGlance(w){var tot=prFDistTotals(w).reduce(function(s,a){return s+a.net;},0);
-    return '<div class="kpi-row"><div class="kpi-num">'+prFPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div></div></div>';}
+    if(!tot)return '<div class="kpi-row"><div class="kpi-num">'+prFPeriodChip(w)+'<div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
+    return '<div class="kpi-row"><div class="kpi-num" style="flex:1 1 100%">'+prFPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div>'+prFGlanceComp(w)+'</div></div>';}
   function prFHeaderBlock(w,hideToggle,noTotal){
     var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>')+'</div>';
     if(noTotal)return '<div class="dep-hd">'+top+'</div>';
