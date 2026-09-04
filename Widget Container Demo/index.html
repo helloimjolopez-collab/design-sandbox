@@ -6144,6 +6144,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
       return prFHeaderBlock(w,(w.size==="xwide"||w.size==="kpi"),true)+body;}
     if(w.size==="kpi")return prFGlance(w);
+    /* Zero-in-range (e.g. a custom range with no pay runs): show the state, not a
+       degenerate $0 donut. Header stays so the period chip is the recovery. */
+    if(!prFTableRows(w).reduce(function(s,a){return s+a.net;},0)){
+      var ec0=EMPTY_COPY.payroll;
+      return prFHeaderBlock(w,(w.size==="xwide"),true)+'<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec0.title+'</div><div class="state-sub">'+ec0.sub+'</div></div>';}
     if(w.size==="xwide")return prFHeaderBlock(w,true)+'<div class="pr-split"><div class="pr-split-table">'+prFTableHTML(w)+'</div><div class="pr-split-chart">'+prFDonut(w,196)+'</div></div>';
     var v=w.view||"table";return prFHeaderBlock(w)+(v==="dist"?prFDonut(w):prFTableHTML(w));}
   /* ---- handlers (namespaced prF-; routed via one dispatch line in the
