@@ -6156,7 +6156,14 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   /* ---- handlers (namespaced prF-; routed via one dispatch line in the
      delegated click listener). View toggle reuses Jo's generic dep-view; the
      custom date fields reuse her global pr-date-input change/focus listeners. ---- */
+  /* Drill a single distribution into its pay types, in an isolated focus overlay
+     (Jo's standard: drill = focus overlay always). Reuses the scoped mini-widget
+     mechanism (like Deposits' openAcct): a clone scoped to the distribution,
+     rendered xwide so the table + synced donut show together. */
+  function prFOpenDist(w,distId){if(!w)return;var mw=Object.assign({},w,{id:"__prfdrill",prScope:distId,size:"xwide",view:"table",state:"ready"});
+    modal={t:"Payroll Distributions: "+prFDistName(distId),glyph:"payments",scoped:true,mw:mw};modalMounted=false;pop=null;render();}
   function prFHandleClick(a,id,t){
+    if(a==="prF-drilldist"){prFOpenDist(find(id),t.getAttribute("data-dist"));return true;}
     if(a==="prF-period"){pop=(pop&&pop.type==="prF-period"&&pop.id===id)?null:{type:"prF-period",id:id};render();return true;}
     if(a==="prF-scope"){pop=(pop&&pop.type==="prF-scope"&&pop.id===id)?null:{type:"prF-scope",id:id};render();return true;}
     if(a==="prF-set-scope"){var wps=find(id);if(wps)wps.prScope=t.getAttribute("data-s");pop=null;render();return true;}
