@@ -457,6 +457,12 @@
   .prf-gcap .prf-gdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
   .prf-gcap .prf-gname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
   .prf-gcap .prf-gpct{margin-left:auto;color:var(--txt-subtle);flex:0 0 auto;}
+  /* Drillable distribution rows / donut legend entries (open the pay-type focus overlay). */
+  .wt-row.wt-rowlink{cursor:pointer;}
+  .wt-row.wt-rowlink:hover{background:var(--wn-100);}
+  .wt-row.wt-rowlink .lr-link{cursor:pointer;}
+  .leg.leg-link{cursor:pointer;border-radius:6px;transition:background .12s;}
+  .leg.leg-link:hover{background:var(--wn-100);}
   .glance{display:flex;flex-direction:column;height:100%;min-height:0;padding:12px 16px 12px;}
   .glance .scope-chip{align-self:flex-start;margin:0 0 8px;}
   .gl-metric{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -8671,7 +8677,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
     if(modal.type==="remdetail"){mr.innerHTML=remDetailModalHTML();return;}
     if(modal.type==="gftdetail"){mr.innerHTML=gftDetailModalHTML();return;}
     if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}
-    var body=(modal.scoped?'<div class="wcontent acct-mw">'+depContent(modal.mw)+'</div>':modal.b);
+    var body=(modal.scoped?'<div class="wcontent acct-mw">'+((modal.mw&&modal.mw.kind==="payroll-mb")?prFContent(modal.mw):depContent(modal.mw))+'</div>':modal.b);
     if(modalMounted){var bEl=mr.querySelector(".modal-b");if(bEl){bEl.innerHTML=body;return;}}
     mr.innerHTML='<div class="modal-backdrop" data-action="modal-close"><div class="modal'+(modal.scoped?" modal-wide":"")+'" data-action="stop" role="dialog" aria-modal="true" aria-label="'+modal.t+'"><div class="modal-h"><span class="modal-title">'+(modal.glyph?'<span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">'+modal.glyph+'</span>':'')+modal.t+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b">'+body+'</div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">'+(modal.scoped?"Done":"Got it")+'</button></div></div></div>';
     modalMounted=true;}
