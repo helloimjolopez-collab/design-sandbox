@@ -6114,10 +6114,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
         return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.pt+'</span><span class="pr-distcol">'+prFDistBadge(a.distId)+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'<span class="sr-only"> '+a.pt+', '+a.distName+'</span></span></div>';}).join("");
       return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all pay types</span><span>'+money(tot)+'</span></div>';
     }
-    var col=meta.kind==="distpt"?"Pay type":"Distribution";
+    var col=meta.kind==="distpt"?"Pay type":"Distribution",drill=(meta.kind==="all");
     var head2='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"name",col)+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
     var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
-      return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.name+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+      var nm=drill?'<span class="lr-main lr-link" data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" data-tip="'+a.name+', tap to see its pay types" data-tip-plain>'+a.name+'</span>':'<span class="lr-main">'+a.name+'</span>';
+      return '<div class="wt-row wt-rowh'+(drill?" wt-rowlink":"")+'">'+nm+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     return '<div class="scroll">'+head2+body2+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
   function prFDonut(w,forceSize){var meta=prFScopeMeta(w),rows=prFChartRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length);
     rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];
