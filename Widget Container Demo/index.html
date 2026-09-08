@@ -3575,10 +3575,20 @@
      ellipsise long distribution names rather than letting a chip balloon. */
   .pr-fchip{max-width:230px;}
   .pr-fchip .fc-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  /* W03-EX-01: the grafted employee table scrolls inside the modal so a long
-     list never grows the dialog or pushes the Done button out of reach. */
-  .pro-emps{margin-top:14px;border-top:1px solid var(--stroke-widget);padding-top:10px;}
-  .pro-empscroll{max-height:230px;overflow-y:auto;overscroll-behavior:contain;}
+  /* W03-EX-01: the employee breakdown is a full-width panel across the bottom of
+     the drill modal, below both columns. Weak border and radius are the house
+     panel treatment used by the other popups; the list scrolls inside it so a long
+     roster never grows the dialog or pushes Done out of reach. */
+  .pro-emps{flex:0 0 auto;margin:14px 0 0;border:1px solid var(--stroke-widget);border-radius:9px;background:var(--surface-widget);padding:10px 0 0;overflow:hidden;}
+  .pro-panel-h{margin:0 0 6px;padding:0 12px;font-size:12px;font-weight:600;color:var(--txt-secondary);display:flex;align-items:center;gap:6px;}
+  .pro-panel-h .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);}
+  .pro-empscroll{max-height:clamp(110px,24vh,240px);overflow-y:auto;overscroll-behavior:contain;}
+  /* Her drill modal body is height-constrained and does not scroll, so on a short
+     window our extra panel pushed the total row under the Done button. Scoped with
+     :has() to bodies that actually contain our panel, so her own scoped modals are
+     untouched and no markup of hers changes. */
+  .wcontent.acct-mw:has(.pro-emps){overflow-y:auto;overscroll-behavior:contain;}
+  .pro-emps .dep-total{border-top:1px solid var(--stroke-widget);}
   /* W03-DE-01 (new, in neither version): the shared .pr-split-chart rules force
      the donut and its legend into a column at Detail, dropping the key underneath.
      Those selectors are global and Jo's own payroll cards rely on them, so the fix
@@ -17180,7 +17190,7 @@ function penOPopContent(){
     if(!prOTableRows(w).reduce(function(s,a){return s+a.net;},0)){
       var ec0=EMPTY_COPY.payroll;
       return prOHeaderBlock(w,(w.size==="xwide"),true)+'<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec0.title+'</div><div class="state-sub">'+ec0.sub+'</div></div>';}
-    if(w.size==="xwide")return prOHeaderBlock(w,true)+'<div class="pr-split pro-split"><div class="pr-split-table">'+prOTableHTML(w)+(w.prODrill?prOEmpTable(w,w.prDist):"")+'</div><div class="pr-split-chart">'+prODonut(w,196)+'</div></div>';
+    if(w.size==="xwide")return prOHeaderBlock(w,true)+'<div class="pr-split pro-split"><div class="pr-split-table">'+prOTableHTML(w)+'</div><div class="pr-split-chart">'+prODonut(w,196)+'</div></div>'+(w.prODrill?prOEmpTable(w,w.prDist):"");
     var v=w.view||"table";return prOHeaderBlock(w)+(v==="dist"?prODonut(w):prOTableHTML(w));}
   /* ---- handlers (namespaced prO-; routed via one dispatch line in the
      delegated click listener). View toggle reuses Jo's generic dep-view; the
@@ -17292,11 +17302,12 @@ function penOPopContent(){
   }
   function prOEmpTable(w,distId){
     var rows=prOEmpFiltered(w,distId);
-    if(!rows.length)return '<div class="wt-row pr-empnest"><span class="lr-main">No employees paid in this period</span></div>';
+    if(!rows.length)return '<div class="pro-emps">'+'<h4 class="pro-panel-h">'+ICON("groups")+'Breakdown</h4>'+'<div class="wt-row pr-empnest"><span class="lr-main">No employees paid in this period</span></div></div>';
     var tot=rows.reduce(function(s,e){return s+e.total;},0);
     var head='<div class="wt-row wt-head"><span class="lr-main">'+prOSortBtn(w,"name","Employee")+'</span><span class="wt-c2">'+prOSortBtn(w,"amt","Total pay")+'</span></div>';
     var body=rows.map(function(e){return prOEmpBlock(w,e,false);}).join("");
     return '<div class="pro-emps">'+
+      '<h4 class="pro-panel-h">'+ICON("groups")+'Breakdown</h4>'+
       '<div class="scroll pro-empscroll">'+head+body+'</div>'+
       '<div class="dep-total"><span>Total, '+rows.length+' employee'+(rows.length===1?'':'s')+'</span><span>'+prOMoney(tot)+'</span></div>'+
     '</div>';
@@ -19508,6 +19519,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
 </script>
 </body>
 </html>
+
+
+
+
 
 
 

@@ -238,6 +238,11 @@ Detail pie legend moves to the right of the donut, which is wrong in **both** ve
 | ID | Aspect | Jo (current live) | Ours | Decision | Notes |
 |---|---|---|---|---|---|
 | W03-EX-01 | Clicking a Distribution in the table view | Opens **her** modal: period and distribution chips, the total, a pay-type table (% of total and Amount) with a Total row, a donut with its legend to the right, and Done. No employee detail anywhere | Employee-level drill: an employee table, sortable by Employee or Total pay, each row expanding to that employee's pay breakdown | **Adopt modified** | Keep **her modal exactly as it is** and add our employee table into the empty area beneath the pay-type table, in the left column below the Total row, where the box is drawn on the screenshot. Columns Employee and Total pay, both sortable; a chevron per row expanding that employee's pay breakdown; a `Total, N employees` footer row. The employee table gets **its own scroll container**, so the modal itself does not grow |
+
+**Refined 2026-09-08 (owner):** the employee list is no longer inside her left column. It spans the
+**full width across the bottom of the modal, below both columns**, as its own panel with the house
+weak border and radius used by the other popups, and a **Breakdown** subheading. Everything else
+about the row is unchanged.
 | W03-EX-02 | Filter chips | Two chips: the period, plus one combined scope chip | Three chips: the period, plus **Distribution** and **Pay type** as two independent filters that combine freely | **Adopt ours** | Distributions and pay types must be separately filterable |
 
 ### Detail
