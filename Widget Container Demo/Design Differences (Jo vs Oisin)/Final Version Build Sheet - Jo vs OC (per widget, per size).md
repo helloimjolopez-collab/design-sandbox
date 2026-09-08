@@ -241,7 +241,7 @@ Detail pie legend moves to the right of the donut, which is wrong in **both** ve
 
 **Refined 2026-09-08 (owner):** the employee list is no longer inside her left column. It spans the
 **full width across the bottom of the modal, below both columns**, as its own panel with the house
-weak border and radius used by the other popups, and a **Breakdown** subheading. Everything else
+weak border and radius used by the other popups, and an **Employee Break Down** subheading. Everything else
 about the row is unchanged.
 | W03-EX-02 | Filter chips | Two chips: the period, plus one combined scope chip | Three chips: the period, plus **Distribution** and **Pay type** as two independent filters that combine freely | **Adopt ours** | Distributions and pay types must be separately filterable |
 
