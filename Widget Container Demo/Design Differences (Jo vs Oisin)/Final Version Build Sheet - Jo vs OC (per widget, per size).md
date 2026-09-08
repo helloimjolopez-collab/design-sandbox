@@ -107,8 +107,8 @@ codebase trace), and any open question. A row with nothing to say in Notes leave
 
 | Widget | Documented | Decisions made | Implemented |
 |---|---|---|---|
-| W01 Budget Compared to Actual | 2026-09-08 | 3 adopt-modified, rest base = Jo | not yet |
-| W02 Pension Plans | 2026-09-08 | 1 adopt, rest base = Jo | not yet |
+| W01 Budget Compared to Actual | 2026-09-08 | 3 adopt, rest base = Jo | **2026-09-08, verified** |
+| W02 Pension Plans | 2026-09-08 | 1 adopt, rest base = Jo | **2026-09-08, verified** |
 | W03 Payroll Distributions | 2026-09-08 | 1 adopt, 1 adopt-modified, 1 new | **2026-09-08, verified** |
 | W04 Remittance Pledges | — | — | — |
 | W05 Receivable Invoices Outstanding | — | — | — |
@@ -362,6 +362,42 @@ is hers, it is correct, and changing it is not in scope.
 The rebase discards our other V2 W02 changes, which are body-level rather than structural and are not
 listed above because everything outside the Glance caption was ruled "same as Jo". If you want them
 enumerated before the code change so nothing is dropped unknowingly, say so and I will list them.
+
+### Implemented 2026-09-08 — what was actually done
+
+Backup: `index.BACKUP-W01W02-oc-rebase-*.html`. Rebased `bgtO` onto her `bgtF` block from
+`a548419` (14 CSS + 287 JS lines) and took her registry state, which restored her Detail
+chart/table toggle, her Glance sparkline and her `trend-range` caption. Then the percent: the
+calculation added to `bgtOHeadlineInner` and `hv.pct` appended at the two render sites, exactly as
+planned. Her `html` string was left byte-identical, so the arrow did not come across.
+
+No new CSS was needed, as predicted: her block already declared the percent class.
+
+**One thing the plan missed.** The rebase restored her Detail toggle's *markup* but not its click
+handler, because that handler lives in the shell's listener and our V2 had deleted it, so there was
+no `bgtO` copy to restore. The toggle rendered but did nothing. Its twin has been added. The new
+driver asserts it, so this cannot regress.
+
+Verification: **`w01-budget-oc.driver.js`**, 38 assertions, replacing
+`w01-budget-mb.driver.js` (kept as `.superseded.bak`). It pins the percent's maths against the
+widget's own window totals, asserts the arrow is absent at all three sizes, asserts her sparkline and
+caption survive, and checks every one of her `bgtF` functions still exists.
+
+### Implemented 2026-09-08 — what was actually done
+
+Rebased `penO` onto her `penF` block from `a548419` (20 CSS + 342 JS lines) and took her
+registry state. Then the one edit: her empty caption slot now renders the context line, reusing the
+plan count and district label she already computes. No new CSS, and her screen-reader sentence was
+left exactly as she wrote it.
+
+Verification: **`w02-pension-oc.driver.js`**, 25 assertions, replacing
+`w02-pension-mb.driver.js` (kept as `.superseded.bak`). It checks the line uses the widget's live
+plan count rather than a hardcoded number, that a chosen district is named instead of claiming
+"all districts", that the line does not leak into Explore or Detail, and that her `penF`
+functions all survive.
+
+**Worth noting:** she uses the same caption class in her empty state for her own wording
+("no active pension appointments"), so the driver asserts the *text*, not the class.
 
 ## W03 — implementation notes
 

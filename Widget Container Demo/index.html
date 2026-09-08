@@ -3549,12 +3549,10 @@
   .bgtO-lcol{position:absolute;top:0;bottom:0;pointer-events:auto;cursor:crosshair;}
   .bgtO-lguide{position:absolute;top:0;bottom:0;width:1px;background:var(--am-600);opacity:0;transform:translateX(-0.5px);transition:opacity .12s;}
   .bgtO-lcol:hover .bgtO-lguide{opacity:.55;}
-
 /* ===== (OC) CLONE of penF -> penO, kind pension-oc. V2 from stash@{0} 2026-09-08; Jo's adopted penF block above is untouched. ===== */
-  /* ===== Pension Plans (MB updated): ONLY the new grouped-bar-by-district view
-     and the v2.2 appointees-modal layout. Everything else reuses Jo's .pen-* /
-     .dep-hd / .filter-chip / .vtoggle / .bank-pill / .wt-* / .state / .modal
-     classes and Pathway tokens. ===== */
+  /* ===== Pension Plans (MB updated): ONLY the new grouped-bar-by-district view.
+     Everything else reuses Jo's .pen-* / .dep-hd / .filter-chip / .vtoggle /
+     .bank-pill / .wt-* / .state / .modal classes and Pathway tokens. ===== */
   .penf-explore-chart{display:flex;flex-direction:column;min-height:0;}
   .penf-gwrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:2px 8px 4px;}
   .penf-grow{flex:1;min-height:60px;display:flex;align-items:stretch;gap:20px;padding:4px 8px 0;}
@@ -3571,19 +3569,6 @@
   .penf-glegend{display:flex;flex-wrap:wrap;gap:2px 10px;justify-content:center;padding:8px 4px 0;flex-shrink:0;}
   .penf-gleg{cursor:default;}
   .penf-gleg:hover{background:transparent;}
-  /* v2.2 (2026-08-30, owner instruction) + v2.2a: the appointees modal body is a
-     DELIBERATE flex row. The shell's later .modal.modal-wide .modal-b (display:flex,
-     0,3,0) already beat .pen-detail-modal .modal-b (display:block, 0,2,0) by
-     specificity, squeezing the table to about half the modal and stranding its own
-     footer beside it. Made deliberate at 0,4,0: the table takes the majority of the
-     960px modal and the appointee/total summary is a 190px rail pinned right whose
-     divider runs the full body height. Scoped to OUR penf-detail-modal class so
-     Jo's own pen modal keeps her cascade untouched. */
-  .modal.modal-wide.penf-detail-modal{max-width:960px;}
-  .modal.modal-wide.penf-detail-modal .modal-b{display:flex;align-items:flex-start;gap:16px;overflow:auto;padding:0 18px 6px;}
-  .modal.modal-wide.penf-detail-modal .pen-detail-scroll{flex:1 1 auto;min-width:0;}
-  .modal.modal-wide.penf-detail-modal .pen-dtotal{flex:0 0 190px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:9px 0 9px 14px;margin-top:0;border-top:none;border-left:1px solid var(--stroke-widget);text-align:right;justify-content:flex-start;align-self:stretch;}
-
 
 /* ===== (OC) CLONE of prF -> prO, kind payroll-oc. V2 from stash@{0} 2026-09-08; Jo's adopted prF block above is untouched. ===== */
   /* W03-EX-02: two filter chips sit side by side, so cap their width and
@@ -6774,9 +6759,9 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   };
   /* number, display name, HER kind + her state, OUR kind + our state */
   var CMP_ROWS=[
-    ["W01","Budget Compared to Actual","budget-mb",{acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},"budget-oc",{acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"month",fA:"bar",fB:"line"}],
-    ["W02","Pension Plans","pension-mb",{penDist:"All Districts",penSort:"amt-desc",penViewM:"table",penChartL:"pie"},"pension-oc",{penDist:"All Districts",penSort:"amt-desc",penViewM:"table",penChartL:"pie",updated:"just now"}],
-    ["W03","Payroll Distributions","payroll-mb",{range:"TM",view:"table",prScope:"all",prSort:"amt-desc"},"payroll-oc",{range:"TM",view:"table",prDist:"all",prPT:"all",prSort:"amt-desc",prDistOpen:{},prEmpOpen:{}}],
+    ["W01","Budget Compared to Actual","budget-mb",{acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},"budget-oc",{acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"}],
+    ["W02","Pension Plans","pension-mb",{penDist:"All Districts",penSort:"amt-desc",penViewM:"table",penChartL:"pie"},"pension-oc",{penDist:"All Districts",penSort:"amt-desc",penViewM:"table",penChartL:"pie"}],
+    ["W03","Payroll Distributions","payroll-mb",{range:"TM",view:"table",prScope:"all",prSort:"amt-desc"},"payroll-oc",{range:"TM",view:"table",prDist:"all",prPT:"all",prEmpOpen:{},prSort:"amt-desc"}],
     ["W04","Remittance Pledges","remittance-mb",{remSort:"seq",view:"table"},"remittance-oc",{range:"year",view:"table",remSort:"seq",paceF:"all",updated:"just now"}],
     ["W05","Receivable Invoices Outstanding","receivables-mb",{arFRc:"All",arFSource:"All",arFGroup:"aging",arFSort:"total-desc"},"receivables-oc",{arORc:"All",arOSource:"All",arOGroup:"aging",arOSort:"total-desc",arOCustPage:0}],
     ["W06","Insurance Billing Plans","insurance-mb",{insType:"All",insSort:"count-desc",insExpanded:{}},"insurance-oc",{insType:"All",insSort:"count-desc",insView:"table",insExpanded:{},updated:"just now"}],
@@ -6828,7 +6813,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       {id:"bgtF2",title:"Budget Compared to Actual (Detail view)",kind:"budget-mb",size:"xwide",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
       {id:"bgtF3",title:"Budget Compared to Actual (expense budget not set up)",kind:"budget-mb",size:"wide",tiers:["kpi","wide","xwide"],acctview:"expense",fy:"2027",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
       {id:"bgtF4",title:"Budget Compared to Actual (income budget not set up)",kind:"budget-mb",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",fy:"2028",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
-      {id:"bgtO",title:"Budget Compared to Actual (OC)",kind:"budget-oc",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"month",fA:"bar",fB:"line",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"bgtO",title:"Budget Compared to Actual (OC)",kind:"budget-oc",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       /* (OC) driver fixtures for bgtO: state-variant instances read by _port-drivers/w*.driver.js only; NOT rendered as cards.
       {id:"bgtO_k",title:"Budget Compared to Actual (OC, Glance)",kind:"budget-oc",size:"kpi",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"month",fA:"bar",fB:"line",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bgtO2",title:"Budget Compared to Actual (OC, Detail view)",kind:"budget-oc",size:"xwide",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"month",fA:"bar",fB:"line"},
@@ -6934,7 +6919,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       {id:"penF_k", title:"Pension Plans (Glance)",                     kind:"pension-mb", size:"kpi",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"penF2",title:"Pension Plans (Detail view)",        kind:"pension-mb", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now"},
       {id:"penF3",title:"Pension Plans (no active appointments)", kind:"pension-mb", size:"wide", tiers:["kpi","wide","xwide"], state:"empty", dataset:"none", updated:"just now"},
-      {id:"penO", title:"Pension Plans (OC)",                     kind:"pension-oc", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"penO", title:"Pension Plans (OC)",                     kind:"pension-oc", size:"wide",  tiers:["kpi","wide","xwide"],penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       /* (OC) driver fixtures for penO: state-variant instances read by _port-drivers/w*.driver.js only; NOT rendered as cards.
       {id:"penO_k", title:"Pension Plans (OC, Glance)",                     kind:"pension-oc", size:"kpi",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"penO2",title:"Pension Plans (OC, Detail view)",        kind:"pension-oc", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now"},
@@ -11024,6 +11009,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(a==="set-bgtO-shape"){var wfsh=find(id);if(wfsh)wfsh.bshape=t.getAttribute("data-v");render();return;}
     if(a==="set-bgtO-pinterval"){var wfp=find(id),sg2=t.getAttribute("data-panel");if(wfp){var ivk4=sg2==="a"?"iA":"iB",fmk4=sg2==="a"?"fA":"fB";wfp[ivk4]=t.getAttribute("data-v");var wvv4=Object.assign({},wfp,{binterval:wfp[ivk4]});if(wfp[fmk4]==="line"&&bgtOViewRows(wvv4).length<2)wfp[fmk4]="bar";}render();return;}
     if(a==="set-bgtO-pshape"){var wfps=find(id),sf2=t.getAttribute("data-panel");if(wfps)wfps[sf2==="a"?"fA":"fB"]=t.getAttribute("data-v");render();return;}
+    if(a==="set-bgtO-detail"){var wfd=find(id);if(wfd)wfd.bdetail=t.getAttribute("data-v");render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
     if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
@@ -16418,12 +16404,6 @@ var GPF_WIRED=false;
      date with day/week synthesis, dynamic line label thinning + line hover, the
      single variance headline carrying an arrow, sign and quiet % of the window's
      budget, and an interactive Glance. No em dashes in any user-facing string.
-     Re-synced 1:1 against the rebuilt V2 Final (Step 3 mockups bgtO block) on
-     2026-09-07 (V2 re-port, branch oisin-v2-rebuild, base 71ca056): headline
-     arrow + quiet %, info-icon explain tooltip, legend + slicer row moved above
-     every chart/table, single mid gridline, xwide always two panels (the
-     charts/table detail toggle is gone), V2 table variance cell. Bar-scroll
-     threshold stays 13 (sized for Jo's card widths; the mockup's 9/11 is FC-only).
      ============================================================================ */
   /* Compact axis/variance formatter, finer than Jo's fmtAxis so the new sub-period (Day/Week) grains keep readable sub-10k labels. Full-dollar figures still use Jo's money(). */
   function bgtOAxis(v){var n=Math.abs(v),s=v<0?"−":"";if(n>=1e6)return s+"$"+(Math.round(n/1e5)/10)+"M";if(n>=1e4)return s+"$"+Math.round(n/1e3)+"k";if(n>=1e3)return s+"$"+(Math.round(n/100)/10)+"k";return s+"$"+Math.round(n);}
@@ -16436,13 +16416,12 @@ var GPF_WIRED=false;
   function bgtOVariance(type,b,a){if(a==null)return null;return type==="expense"?(b-a):(a-b);}
   /* ---- controls (Jo's toggle primitive + tooltip convention) ---- */
   function bgtOTog(opts,cur,w,action,aria,extra){return '<div class="vtoggle" role="group" aria-label="'+(aria||"View")+'">'+opts.map(function(o){var dis=o[4];return '<button class="vt'+(cur===o[0]?" on":"")+(dis?" disabled":"")+'"'+(dis?' aria-disabled="true" tabindex="-1"':' data-action="'+action+'" data-id="'+w.id+'" data-v="'+o[0]+'"'+(extra||""))+(o[3]?' data-tip="'+o[3].replace(/"/g,"&quot;")+'" data-tip-plain data-tip-narrow':"")+' aria-pressed="'+(cur===o[0])+'">'+(o[2]?ICON(o[2]):"")+o[1]+'</button>';}).join("")+'</div>';}
-  function bgtOFavPill(v,neutral){if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)">No data yet</span>';var neg=v<0;if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)">'+ICON(neg?"south_east":"north_east")+(neg?"Under budget":"Over budget")+'</span>';return '<span class="delta-pill'+(neg?" neg":"")+'">'+ICON(neg?"south_east":"north_east")+(neg?"Unfavourable":"Favourable")+'</span>';}
-  /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. The pill itself carries no tooltip; the explain sentence lives on the info icon beside it (V2 Final). */
+  function bgtOFavPill(v,neutral,tip){var tipA=tip?(' data-tip="'+tip+'" data-tip-plain data-tip-narrow tabindex="0"'):'';if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)"'+tipA+'>No data yet</span>';var neg=v<0,ic=neg?"arrow_downward":"arrow_upward";if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)"'+tipA+'>'+ICON(ic)+(neg?"Under budget":"Over budget")+'</span>';return '<span class="delta-pill'+(neg?" neg":"")+'"'+tipA+'>'+ICON(ic)+(neg?"Unfavourable":"Favourable")+'</span>';}
+  /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
   function bgtOHeadlineInner(v,neutral,sumB){
     if(v==null)return {cls:"",html:money(0),pct:""};
     var neg=v<0,cls=neutral?" bgtO-hl-neu":(neg?" bgtO-hl-neg":" bgtO-hl-pos");
-    var pct=(sumB>0)?(Math.round(Math.abs(v)/sumB*1000)/10):null;
-    return {cls:cls,html:'<span class="bgtO-hl-ar" aria-hidden="true">'+(neg?"\u25bc":"\u25b2")+'</span>'+(neg?"\u2212":"+")+money(Math.abs(v)),pct:(pct!=null?'<span class="bgtO-hl-pct">'+pct+'%</span>':"")};
+    var pct=(sumB>0)?(Math.round(Math.abs(v)/sumB*1000)/10):null;return {cls:cls,html:(neg?"−":"+")+money(Math.abs(v)),pct:(pct!=null?'<span class="bgtO-hl-pct">'+pct+'%</span>':"")};
   }
   function bgtOScopeShort(w){var av=w.acctview||"income";return av==="expense"?"Expense accounts":av==="special"?"Special report":"Income accounts";}
   function bgtOScopeContext(w){if((w.acctview||"income")!=="special")return "";return "Special report: "+bgtOReport(w).name+" · "+bgtOReportLine(w).name;}
@@ -16460,6 +16439,7 @@ var GPF_WIRED=false;
   function bgtOSpanChip(w,extra){return '<button class="filter-chip" data-action="bgtO-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, tap to change"><span class="fc-label">'+bgtOSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
   function bgtOShapeToggle(w,fmt,action,extra,lineOff){return bgtOTog([["bar","Bar","bar_chart","Budget and actual side by side"],["line","Line","show_chart",lineOff?"A line needs at least two periods, widen the time span or change the interval":"How budget and actual track over time (the trend)",!!lineOff],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
   /* Detail size: bar + line charts side by side, with a Charts / Table swap on the right. */
+  function bgtODetailToggle(w){return bgtOTog([["charts","Charts","bar_chart","Bar and line charts side by side"],["table","Table","table_rows","The exact figures, sortable"]],w.bdetail||"charts",w,"set-bgtO-detail","View");}
   /* as-of anchor for the two ROLLING windows ("today"): end of Jul 2026, the current date implied by BGT_CUR_PERIOD (period 7 of FY 2026). The real API takes asOf as a parameter. */
   var BGTO_ASOF={y:2026,mi:6,d:31};
   /* special-report lines only carry current-FY rows, but the rolling 12-month window reaches into the prior FY, so derive a deterministic prior-FY series (budget 95% of current, actuals a seeded wobble, fully posted). The real API's budget lookup simply spans both FYs. */
@@ -16529,20 +16509,21 @@ var GPF_WIRED=false;
   function bgtOHeaderBlock(w,mode){
     var xw=(w.size==="xwide"),loading=(mode==="loading"),controlsOnly=(mode===true);
     var bs=bgtOBasis(w),vt=bs.type,neutral=bs.neutral;
-    var leftControls='<div class="bgt-ctlrow">'+bgtOScopeChip(w)+(xw?bgtOSpanChip(w):"")+'</div>';
-    var shapeToggle=xw?"":bgtOShapeToggle(w,w.bshape||"bar","set-bgtO-shape",undefined,!bgtOLineOK(w));
+    var leftControls='<div class="bgt-ctlrow">'+bgtOScopeChip(w)+bgtOSpanChip(w)+'</div>';
+    var shapeToggle=xw?bgtODetailToggle(w):bgtOShapeToggle(w,w.bshape||"bar","set-bgtO-shape",undefined,!bgtOLineOK(w));
     if(controlsOnly)return '<div class="dep-hd"><div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div></div>';
-    var numInner;
+    var numInner,ivTog="";
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
     else{
       var sv=bgtOSpanVariance(w,vt),variance=sv.v;
       var explainTip=bgtOExplain(w,vt,neutral,variance,sv.sumA,sv.sumB).replace(/"/g,"&quot;");
       var hv=bgtOHeadlineInner(variance,neutral,sv.sumB);
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value bgtO-hl'+hv.cls+'">'+hv.html+hv.pct+'</span>'+bgtOFavPill(variance,neutral)+'<span class="material-symbols-rounded bgt-info-ic" data-i="info" tabindex="0" data-tip="'+explainTip+'" data-tip-narrow data-tip-plain aria-label="What this number means">info</span></div>';
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value bgtO-hl'+hv.cls+'">'+hv.html+hv.pct+'</span>'+bgtOFavPill(variance,neutral,explainTip)+'</div>';
+      ivTog='<div class="bgt-kpi-iv">'+bgtOIntervalToggle(w,w.binterval||bgtOIvDefault(w.bspan||"year"),"set-bgtO-interval")+'</div>';
     }
     var ctx=bgtOScopeContext(w);
     var ctxLine=ctx?'<div class="bgt-repctx">'+ctx+'</div>':"";
-    return '<div class="dep-hd"><div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div><div class="dep-hd-num"><div class="bgt-numwrap">'+numInner+ctxLine+'</div></div></div>';
+    return '<div class="dep-hd"><div class="dep-hd-top">'+leftControls+'<div class="dep-hd-toggle">'+shapeToggle+'</div></div><div class="dep-hd-num bgt-kpirow"><div class="bgt-numwrap">'+numInner+ctxLine+'</div>'+ivTog+'</div></div>';
   }
   function bgtOSkeleton(){var bars="";[62,80,54,88,70,95,60].forEach(function(hh){bars+='<div class="bgt-sk-col"><span class="sk bgt-sk-bar" style="height:'+hh+'%"></span></div>';});return '<div class="bgt-skel"><div class="bgt-skel-plot">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
   /* Grouped bars from already-aggregated interval rows. Two purples only, no red; signed variance under each bar; formatted popover data rides on the column (data-bgtfpop, namespaced so Jo's own bar-hover listener never grabs ours); full text in an sr-only span. */
@@ -16560,13 +16541,14 @@ var GPF_WIRED=false;
       xl+='<div class="bgt-xcol2"><span class="bgt-xlbl2">'+r.period+'</span>'+(vr!=null?('<span class="bgt-xvar2">'+(neg?"−":"+")+bgtOAxis(Math.abs(vr))+'</span>'):'<span class="bgt-xvar2 muted">n/a</span>')+'</div>';
     });
     var yl='<span>'+bgtOAxis(max)+'</span><span>'+bgtOAxis(max/2)+'</span><span>$0</span>';
-    /* Scroll threshold stays 13 here: the V2 Final's per-tier 9/11 exists only because the mockup file's fc cards are narrower than Jo's demo cards (its own comment says the 13 was sized for these cards). */
     var n=rows.length,innerW=(n>13)?('min-width:'+(46+n*44)+'px'):'';
-    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+
+    return '<div class="bgt-chart-wrap2">'+
     '<div class="bgt-scrollx"><div class="bgt-inner2" style="'+innerW+'">'+
-    '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
+    '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:100%"></div><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-gl2 bgt-gl2-base" style="bottom:0"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
     '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div>'+
-    '</div></div></div>';
+    '</div></div>'+
+    '<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div></div>'+
+    '</div>';
   }
   /* Owner delta: dynamic x-axis label thinning (density from estimated plot width vs label width), so a 12-month span labels every month where it fits and every other month where it does not, with no colliding text at any window/interval/scope. */
   function bgtOLineTicks(n,labels,availW){
@@ -16607,12 +16589,14 @@ var GPF_WIRED=false;
     var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
     var sr=rows.map(function(r){return r.period+': budget '+money(r.budget)+(r.actual!=null?(', actual '+money(r.actual)):', actual not posted yet');}).join('; ');
     var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'<div class="bgtO-lcols">'+hovers+'</div></div><div class="tr-xax">'+xl+'</div><span class="sr-only">Budget and actual trend. '+sr+'</span></div>';
-    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+plot+'</div>';
+    return '<div class="bgt-ytd-wrap">'+plot+'<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div></div></div>';
   }
   function bgtOVarInner(v,neutral,budget){
     if(v==null)return '<span class="bgt-vv neu">n/a</span>';
     var neg=v<0,cls=neutral?"neu":(neg?"neg":"pos"),pct=(budget>0)?(Math.round(Math.abs(v)/budget*1000)/10):null;
-    return '<span class="bgt-vv '+cls+'">'+(neg?"\u2212":"+")+money(Math.abs(v))+(pct!=null?'<span class="bgt-vp">'+pct+'%</span>':"")+'</span>';
+    var lbl=neutral?(neg?"Under budget by ":"Over budget by "):(neg?"Unfavourable by ":"Favourable by ");
+    var tip=(lbl+money(Math.abs(v))+(pct!=null?(", "+pct+"% of budget"):"")).replace(/"/g,"&quot;");
+    return '<span class="bgt-vv '+cls+'" data-tip="'+tip+'" data-tip-plain>'+ICON(neg?"arrow_downward":"arrow_upward")+money(Math.abs(v))+'</span>';
   }
   /* Table view: Period / Budget / Actual / Variance, sortable, with a "Total, posted so far" footer that sums only the posted periods in the window. */
   function bgtOTable(w,ivHTML){
@@ -16629,15 +16613,14 @@ var GPF_WIRED=false;
     return (ivHTML?'<div class="bgt-tbar">'+ivHTML+'</div>':"")+'<div class="scroll bgt-tscroll">'+head+body+'</div><div class="dep-total"><span>Total, posted so far</span><span class="bgt-varcol bgt-vartot">'+bgtOVarInner(totalV,neutral,tB)+'</span></div>';}
   /* The slicer: span chip LEFT + D W M P Q Y interval toggle RIGHT, kept together just above the chart because they constrain each other. */
   function bgtOSlicer(w){return '<div class="bgt-slicer">'+bgtOSpanChip(w)+bgtOIntervalToggle(w,w.binterval||bgtOIvDefault(w.bspan||"year"),"set-bgtO-interval")+'</div>';}
-  function bgtONoTrendState(slic){return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(slic||"")+'</div><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';}
+  function bgtONoTrendState(slic){return '<div class="bgt-ytd-wrap"><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';}
   function bgtOView(w,fmt){
     var av=w.acctview||"income";
     if(!bgtOHasBudget(bgtOSet(w)))return bgtONoBudgetState(w,av);
-    var slic=bgtOSlicer(w);
-    if(fmt==="table")return bgtOTable(w,slic);
+    if(fmt==="table")return bgtOTable(w,"");
     var rows=bgtOViewRows(w);
-    if(fmt==="line"&&rows.length<2)return bgtONoTrendState(slic);
-    return (fmt==="line")?bgtOLine(w,rows,slic):bgtOBars(w,rows,slic);
+    if(fmt==="line"&&rows.length<2)return bgtONoTrendState("");
+    return (fmt==="line")?bgtOLine(w,rows,""):bgtOBars(w,rows,"");
   }
   /* Glance (KPI size): interactive. The scope chip is the same control as the bigger sizes (opens the scope popover; Special report opens the dialog), the "vs. budget, [window]" caption opens the five-window picker, and the big number carries the same arrow/sign/percent as the header headline. */
   function bgtOGlance(w){
@@ -16646,7 +16629,9 @@ var GPF_WIRED=false;
     var chip='<button class="scope-chip" data-action="bgtO-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
     if(!bgtOHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div></div></div>';
     var sv=bgtOSpanVariance(w,vt),v=sv.v,hv=bgtOHeadlineInner(v,neutral,sv.sumB);
-    return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value bgtO-hl'+hv.cls+'">'+hv.html+hv.pct+'</div><div class="gl-sub">'+bgtOFavPill(v,neutral)+'<button class="bgt-caption bgtO-cap-btn" data-action="bgtO-span" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Comparison window, tap to change">vs. budget, '+bgtOSpanLabel(w.bspan||"year")+ICON("expand_more")+'</button></div></div></div>';}
+    var _sr=bgtOViewRows(w).filter(function(r){return r.actual!=null;}),_ss=_sr.map(function(r){return r.actual;}),_sl=_sr.map(function(r){return r.period;});
+    var _spark=(_ss.length>=2)?depSparkHTML({s:_ss,labs:_sl},null,"Actual by period. Hover to read a point"):'';
+    return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value bgtO-hl'+hv.cls+'">'+hv.html+hv.pct+'</div><div class="gl-sub">'+bgtOFavPill(v,neutral)+'<button class="trend-range" data-action="bgtO-span" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Comparison window, tap to change">'+bgtOSpanLabel(w.bspan||"year")+ICON("expand_more")+'</button></div></div>'+_spark+'</div>';}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtOPanel(w,side){
     var interval=w[side==="a"?"iA":"iB"]||bgtOIvDefault(w.bspan||"year");
@@ -16666,7 +16651,8 @@ var GPF_WIRED=false;
     if(w.bloading){var mhl=bgtOHeaderBlock(w,"loading");return mhl+(w.size==="xwide"?('<div class="bgt-explore"><div class="bgt-explore-col">'+bgtOSkeleton()+'</div><div class="bgt-explore-col">'+bgtOSkeleton()+'</div></div>'):bgtOSkeleton());}
     var mh=bgtOHeaderBlock(w);
     if(w.size!=="xwide")return mh+bgtOView(w,w.bshape||"bar");
-    return mh+'<div class="bgt-explore">'+bgtOPanel(w,"a")+bgtOPanel(w,"b")+'</div>';
+    if((w.bdetail||"charts")==="table")return mh+bgtOView(w,"table");
+    return mh+'<div class="bgt-explore"><div class="bgt-explore-col"><div class="bgt-col-h">Budget vs actual</div>'+bgtOView(w,"bar")+'</div><div class="bgt-explore-col"><div class="bgt-col-h">Trend</div>'+bgtOView(w,"line")+'</div></div>';
   }
   /* Data-fetch loading only (scope / report / report-line / window). Interval / shape / sort are client-side re-renders of data already in hand, so they never trigger a load. */
   function bgtOLoad(w){w.bloading=true;clearTimeout(timers["bgtO-"+w.id]);timers["bgtO-"+w.id]=setTimeout(function(){w.bloading=false;render();},850);}
@@ -16688,7 +16674,6 @@ var GPF_WIRED=false;
     return '<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">summarize</span>Choose a special report</span><button class="iconbtn" data-action="bgtO-rm-cancel" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b bgt-rm-b" data-action="bgtO-rm-closemenu">'+body+'</div><div class="modal-f"><button class="btn naked sm" data-action="bgtO-rm-cancel">Cancel</button><button class="btn primary sm'+(canApply?"":" is-off")+'"'+(canApply?' data-action="bgtO-rm-done" data-id="'+w.id+'"':' aria-disabled="true"')+'>Apply</button></div>';
   }
   function bgtOReportModalHTML(){return '<div class="modal-backdrop" data-action="bgtO-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report">'+bgtOReportModalInner()+'</div></div>';}
-
 /* ===== (OC) CLONE of penF -> penO, kind pension-oc. V2 from stash@{0} 2026-09-08; Jo's adopted penF block above is untouched. ===== */
 /* =====================================================================
    Pension Plans (MB updated)  (prefix: penO, kind:"pension-oc")
@@ -16699,8 +16684,8 @@ var GPF_WIRED=false;
    own globals (pop, modal, modalMounted, render, find, ICON, setStatus, timers)
    exactly as her pen block is. Nothing of hers is edited.
 
-   Owner deltas applied (Step 4 "W02 - Pension Plans.md" v2.2, 2026-08-30; grounded
-   in Step 5 "Pension Plans/v2/Pension Plans - API Spec.md"):
+   Owner deltas applied (Step 4 "W02 - Pension Plans.md" v2, 2026-07-27; grounded
+   in Step 5 "Pension Plans - API Spec.md"):
      1. Three-view model (Table / Pie / By district). Table is the default view.
         Her demo kept the table as the body with a bar/pie chart toggle only at
         her largest size; the Final promotes Pie to a top-level view and adds the
@@ -16716,14 +16701,6 @@ var GPF_WIRED=false;
      4. Explore (wide) shows ONE view under a 3-way toggle (Table default); Detail
         (xwide) is two synced panels, table always LEFT, active chart RIGHT under a
         2-way Pie / By district toggle. Glance (kpi) is the KPI card.
-     5. v2.2 (2026-08-30, owner instruction): the v2.1 Districts roster view is CUT.
-        No roster functions or state key exist here (this port never carried them),
-        and a stale penViewM of "dist" falls back to Table with Table marked pressed,
-        at both Explore and Detail. District survives as the filter chip.
-     6. v2.2/v2.2a (owner instruction): the appointees drill modal stays at 960px and
-        its body is a DELIBERATE flex row, table taking the majority and the count and
-        total summary a 190px rail pinned right with a full-height divider. Scoped to
-        our own penf-detail-modal class so Jo's pen modal keeps her own cascade.
    No time axis (snapshot of appointments active today); the only fetch is a
    district change (800ms skeleton + spinner in the chip), everything else is a
    client re-render. Five plans, ten appointees, three districts; totals sum from
@@ -16816,7 +16793,6 @@ function penODistChip(w){
    language data-tip per segment (shell tooltip engine). */
 function penOViewToggleM(w){
   var v=w.penViewM||"table";
-  if(v==="dist")v="table"; /* v2.2: Districts roster segment cut; stale state marks Table pressed. */
   function seg(val,lbl,ic,tip){return '<button class="vt'+(v===val?" on":"")+'" data-action="penO-view" data-id="'+w.id+'" data-v="'+val+'" aria-pressed="'+(v===val)+'" data-tip="'+penOEsc(tip)+'" data-tip-plain>'+ICON(ic)+lbl+'</button>';}
   return '<div class="vtoggle pen-vtoggle" role="group" aria-label="View">'+
     seg("table","Table","table_rows","The plans as a sortable list: appointees and annual amount per plan.")+
@@ -16974,11 +16950,8 @@ function penOContent(w){
   if(w.size==="kpi")return penOGlance(w);
   if(!penOFiltered(w).length&&w.dataset==="none")return penOEmpty(w);
   if(w.penloading)return penOHeader(w,"loading")+penOSkeleton();
-  var v=w.penViewM||"table";
-  /* v2.2 (2026-08-30, owner instruction): the Districts roster segment is cut, so a
-     stale "dist" view state falls back to the table rather than reaching penOChart. */
-  if(v==="dist")v="table";
   if(w.size==="xwide")return penOHeader(w)+penOFull(w);
+  var v=w.penViewM||"table";
   if(v==="table")return penOHeader(w)+'<div class="pen-body">'+penOTable(w,true)+'</div>';
   return penOHeader(w)+'<div class="pen-chartwrap penf-explore-chart">'+penOChart(w,v)+'</div>';
 }
@@ -17006,7 +16979,7 @@ function penODetailModalHTML(){
     body='<div class="state" data-kind="empty">'+ICON("diversity_3")+'<div class="state-title">No appointees on this plan</div><div class="state-sub">Nothing matches this plan for '+d+'.</div></div>';
   }
   var foot=list.length?'<div class="dep-total pen-dtotal"><span>'+list.length+' appointee'+(list.length===1?"":"s")+'</span><span>'+penOMoney(tot)+'</span></div>':'';
-  return '<div class="modal-backdrop" data-action="penO-detail-close"><div class="modal modal-wide pen-detail-modal penf-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Pension plan appointees, detail">'+
+  return '<div class="modal-backdrop" data-action="penO-detail-close"><div class="modal modal-wide pen-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Pension plan appointees, detail">'+
     '<div class="modal-h pen-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">diversity_3</span>Pension Plan: Appointees</span><span class="pen-dsub">'+penOEsc(sub)+'</span><span class="pen-dh-spacer"></span><button class="btn naked sm" data-action="penO-export" data-id="'+w.id+'" data-plan="'+penOEsc(plan)+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="penO-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
     '<div class="modal-b pen-detail-b"><div class="pen-detail-scroll">'+head+body+'</div>'+foot+'</div>'+
     '<div class="modal-f"><button class="btn primary sm" data-action="penO-detail-close">Close</button></div></div></div>';
@@ -17039,11 +17012,10 @@ function penOPopContent(){
 
 // ===== REGISTRY (appended after Jo's pen entries in the dashboards array) =====
 /*
-  {id:"penO", title:"Pension Plans (OC)",                     kind:"pension-oc", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-  {id:"penO2",title:"Pension Plans (OC, Detail view)",        kind:"pension-oc", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now"},
-  {id:"penO3",title:"Pension Plans (OC, no active appointments)", kind:"pension-oc", size:"wide", tiers:["kpi","wide","xwide"], state:"empty", dataset:"none", updated:"just now"},
+  {id:"penO", title:"Pension Plans (MB updated)",                     kind:"pension-oc", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+  {id:"penO2",title:"Pension Plans (MB updated, Detail view)",        kind:"pension-oc", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now"},
+  {id:"penO3",title:"Pension Plans (MB updated, no active appointments)", kind:"pension-oc", size:"wide", tiers:["kpi","wide","xwide"], state:"empty", dataset:"none", updated:"just now"},
 */
-
 
 /* ===== (OC) CLONE of prF -> prO, kind payroll-oc. V2 from stash@{0} 2026-09-08; Jo's adopted prF block above is untouched. ===== */
   /* =====================================================================
@@ -19536,6 +19508,9 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
 </script>
 </body>
 </html>
+
+
+
 
 
 
