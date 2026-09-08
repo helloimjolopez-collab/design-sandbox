@@ -3586,36 +3586,34 @@
 
 
 /* ===== (OC) CLONE of prF -> prO, kind payroll-oc. V2 from stash@{0} 2026-09-08; Jo's adopted prF block above is untouched. ===== */
-  .pr-split-chart .dist-wrap{padding:0;width:100%;max-width:340px;}
-  .pr-split-chart .pie-wrap.row{flex-direction:column;align-items:center;}
-  .pr-split-chart .legend-col{max-width:100%;width:100%;}
-  /* ===== Payroll Distributions (MB updated), V2 v2.6 CSS: filter chips, caption/export row, nested drill.
-     v2.3 TOMBSTONE: the .pro-g* glance composition bar and the old row-link and legend-link drill rules are
-     REMOVED with the views that used them (the glance is chip + total; the drill lives in the table rows).
-     The export button itself is the shell's GLOBAL .btn naked sm family (the FC build's .pro-root .btn fix
-     maps to "already global" in this shell), right-aligned by the .pro-cap .btn rule below. ===== */
+  /* W03-EX-02: two filter chips sit side by side, so cap their width and
+     ellipsise long distribution names rather than letting a chip balloon. */
   .pr-fchip{max-width:230px;}
   .pr-fchip .fc-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .pr-scope-ctx{font-size:11.5px;color:var(--txt-subtle);margin-top:2px;}
-  .pro-cap{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt-subtle);padding:4px 8px 8px;}
-  .pro-cap .btn{margin-left:auto;white-space:nowrap;}
-  .pr-distrow{cursor:pointer;}
-  .pr-distrow:hover{background:var(--wn-100);}
-  .pr-emprow{cursor:pointer;}
-  .pr-emprow:hover{background:var(--wn-100);}
-  .pr-distrow .pro-caret,.pr-emprow .pro-caret{display:inline-flex;vertical-align:-3px;margin-right:4px;transition:transform .15s ease;}
-  .pr-distrow .pro-caret.on,.pr-emprow .pro-caret.on{transform:rotate(90deg);}
-  .pro-caret .material-symbols-rounded{font-size:16px;}
-  .pro-dist-panel{border-left:3px solid var(--am-400);background:var(--wn-100);margin:0 0 6px;border-radius:0 6px 6px 0;overflow:hidden;}
-  .pro-emp-panel{border-left:2px solid var(--stroke-widget);background:transparent;margin:0;overflow:hidden;}
-  .pro-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;font-size:11px;color:var(--txt-subtle);border-top:1px solid var(--stroke-widget);}
-  .pr-empnest{padding-left:22px;}
-  .pr-ptline{padding-left:22px;}
-  .pr-ptline.pr-ptnest{padding-left:44px;}
-  .glance{display:flex;flex-direction:column;height:100%;min-height:0;padding:12px 16px 12px;}
-  .glance .scope-chip{align-self:flex-start;margin:0 0 8px;}
-  .gl-metric{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-
+  /* W03-EX-01: the grafted employee table scrolls inside the modal so a long
+     list never grows the dialog or pushes the Done button out of reach. */
+  .pro-emps{margin-top:14px;border-top:1px solid var(--stroke-widget);padding-top:10px;}
+  .pro-empscroll{max-height:230px;overflow-y:auto;overscroll-behavior:contain;}
+  /* W03-DE-01 (new, in neither version): the shared .pr-split-chart rules force
+     the donut and its legend into a column at Detail, dropping the key underneath.
+     Those selectors are global and Jo's own payroll cards rely on them, so the fix
+     is scoped to .pro-split, which only this widget emits. Applies to the Detail
+     card and to the distribution drill modal, since both render the same branch. */
+  .pro-split .pr-split-chart{justify-content:flex-start;}
+  .pro-split .pr-split-chart .pie-wrap.row{flex-direction:row;align-items:center;flex-wrap:nowrap;}
+  .pro-split .pr-split-chart .dist-wrap{max-width:none;}
+  .pro-split .pr-split-chart .legend-col{max-width:none;width:auto;flex:1 1 auto;min-width:0;}
+  /* (OC) W03 base: Jo's own Glance composition-bar rules, namespaced. */
+  /* Glance within-period composition (no trend): a 100%-stacked distribution bar
+     + the single leading cost centre labelled beneath it. */
+  .pro-gcomp{width:100%;margin-top:8px;display:flex;flex-direction:column;gap:6px;}
+  .pro-gbar{display:flex;width:100%;height:10px;border-radius:5px;overflow:hidden;background:var(--wn-200);}
+  .pro-gseg{height:100%;min-width:2px;}
+  .pro-gseg+.pro-gseg{box-shadow:inset 1px 0 0 var(--surface-widget);}
+  .pro-gcap{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
+  .pro-gcap .pro-gdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
+  .pro-gcap .pro-gname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .pro-gcap .pro-gpct{margin-left:auto;color:var(--txt-subtle);flex:0 0 auto;}
 /* ===== (OC) CLONE of remF -> remO, kind remittance-oc. V2 from stash@{0} 2026-09-08; Jo's adopted remF block above is untouched. ===== */
   /* =====================================================================
      Remittance Pledges (MB updated) (prefix: remO), V2 v3.5a CSS block. ADDITIVE.
@@ -6844,7 +6842,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       {id:"prF2",title:"Payroll Distributions (by pay type)",       kind:"payroll-mb",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"pt",  prSort:"dist-asc"},
       {id:"prF3",title:"Payroll Distributions (one distribution)",  kind:"payroll-mb",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"admin",prSort:"amt-desc"},
       {id:"prF4",title:"Payroll Distributions (no history)",        kind:"payroll-mb",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",state:"empty"},
-      {id:"prO",  title:"Payroll Distributions (OC)",                   kind:"payroll-oc",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prDist:"all",  prPT:"all",prSort:"amt-desc",prDistOpen:{},prEmpOpen:{},actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"prO",  title:"Payroll Distributions (OC)",                   kind:"payroll-oc",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prDist:"all",prPT:"all",prEmpOpen:{},prSort:"amt-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       /* (OC) driver fixtures for prO: state-variant instances read by _port-drivers/w*.driver.js only; NOT rendered as cards.
       {id:"prO_k",title:"Payroll Distributions (OC, Glance)",           kind:"payroll-oc",size:"kpi",  tiers:["kpi","wide","xwide"],range:"TM",view:"table",prDist:"all",  prPT:"all",prSort:"amt-desc",prDistOpen:{},prEmpOpen:{},actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"prO_x",title:"Payroll Distributions (OC, Detail)",           kind:"payroll-oc",size:"xwide",tiers:["kpi","wide","xwide"],range:"TM",view:"table",prDist:"all",  prPT:"all",prSort:"amt-desc",prDistOpen:{},prEmpOpen:{},actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
@@ -10855,7 +10853,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(modal.type==="remdetail"){mr.innerHTML=remDetailModalHTML();return;}
     if(modal.type==="gftdetail"){mr.innerHTML=gftDetailModalHTML();return;}
     if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}
-    var body=(modal.scoped?'<div class="wcontent acct-mw">'+((modal.mw&&modal.mw.kind==="payroll-mb")?prFContent(modal.mw):depContent(modal.mw))+'</div>':modal.b);
+    var body=(modal.scoped?'<div class="wcontent acct-mw">'+((modal.mw&&modal.mw.kind==="payroll-mb")?prFContent(modal.mw):(modal.mw&&modal.mw.kind==="payroll-oc")?prOContent(modal.mw):depContent(modal.mw))+'</div>':modal.b);
     if(modalMounted){var bEl=mr.querySelector(".modal-b");if(bEl){bEl.innerHTML=body;return;}}
     mr.innerHTML='<div class="modal-backdrop" data-action="modal-close"><div class="modal'+(modal.scoped?" modal-wide":"")+'" data-action="stop" role="dialog" aria-modal="true" aria-label="'+modal.t+'"><div class="modal-h"><span class="modal-title">'+(modal.glyph?'<span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">'+modal.glyph+'</span>':'')+modal.t+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b">'+body+'</div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">'+(modal.scoped?"Done":"Got it")+'</button></div></div></div>';
     modalMounted=true;}
@@ -17051,53 +17049,37 @@ function penOPopContent(){
   /* =====================================================================
      Payroll Distributions (MB updated)    (prefix: prO, kind:"payroll-oc")
      ---------------------------------------------------------------------
-     ADDITIVE + NAMESPACED port of our finalized W03, V2 re-port 2026-09-07
-     (v2.6 Final; Step 4 doc stamped 2026-09-07 + Step 5 v2 spec). Built FROM
-     Jo's own pr* payroll block just above, reusing her exact components,
-     classes and tokens verbatim: her two-row .dep-hd header, .scope-chip
-     period chip, .filter-chip chips, her shared tog() view toggle (generic
-     dep-view handler), her .pct-bar percent bars, her blueRamp .donut with
-     the shared [data-seg] legend hover sync, and her .pr-date-input custom
-     range fields (shell focus/change listeners, caret never dropped).
-     Instant client-side recompute, no fetch and no skeleton.
+     ADDITIVE + NAMESPACED port of our finalized W03. Built FROM Jo's own pr*
+     payroll block just above, reusing her exact components, classes and
+     Pathway tokens verbatim: her two-row .dep-hd header, .scope-chip period
+     chip, .filter-chip scope chip, .vtoggle view toggle (via her shared tog()
+     and generic dep-view handler), her .pct-bar percent bars, her blue-ramp
+     .donut (with the shell's generic [data-seg] legend hover sync), her .pr-*
+     and .pct-* CSS (unchanged, reused as is), and her .pr-date-input custom
+     range fields (reusing the shell's global focus and change listeners so the
+     caret is never dropped). Instant client-side recompute, no fetch and no
+     skeleton, exactly her payroll behaviour. NO personal data is surfaced
+     anywhere: the breakdown stops at distribution x pay-type dollar amounts
+     (no hours, rates, names or check numbers), already true of Jo's block and
+     preserved here (Step 4 doc; Step 5 spec).
 
-     THE V2 DELTA vs the old August port of this same widget:
-       v2.1 (2026-08-25, Feargal call): EMPLOYEE level under a distribution,
-            deterministic allocation that cross-foots to the penny, gated by
-            PRO_PAYROLL_PERM (row-level: no permission = inert rows, no route
-            to per-person pay).
-       v2.2 (2026-08-30, owner): NESTED in-widget drill, distribution ->
-            employees -> that person's pay types, in ONE table; the standalone
-            Employees view is gone ("emp" view falls back to table); NO
-            link-out and NO drill modal (the old prO-drilldist focus overlay
-            and prOOpenDist are REMOVED).
-       v2.3 (owner): TWO independent filter chips, Distribution (prDist) and
-            Pay type (prPT), REPLACE the single prScope chip; the "By pay
-            type" grouping view is REMOVED (prOPTTotals, prOPTFlat,
-            prOScopeLabel, prOScopeMeta, prODistBadge, the pt/dist sort keys
-            and the pr-distcol/pr-dbadge markup are tombstoned, deleted
-            rather than left dead). Pay type is a client-side filter applied
-            AFTER allocation, so a person's figures never move.
-       v2.4/v2.5/v2.6 (owner): ONE view-scoped export button, "btn naked sm"
-            with a download icon on the caption row, marked
-            data-pro="export-view"; per-person and per-distribution exports
-            removed. In this shell the .btn family is global, so the FC
-            build's .pro-root .btn fix is satisfied by Jo's own stylesheet.
-     Headline: the distribution total for the window (the "N pending
-     approval" headline belongs to W13, not here). NO prior-period comparison
-     anywhere (sign-off finding F3: no total.prior, no diffAmount, no
-     diffPct). Default sort amt-desc with header-click sorting (name asc on
-     first click, every click flips the active column).
+     THE ONE OWNER DELTA (Step 4 doc, Filters v2): the period presets. Jo's set
+     was This month / This quarter / All time / This year on a calendar
+     definition; ours is This month (default) / This period / This quarter /
+     This year / All time, smallest first, on the Time Window Module's ROLLING
+     definitions (This quarter = last 3 months, This year = last 12 months),
+     with This period a distinct fiscal-period param. Jo's Custom From/To row is
+     kept first. No grain toggle, no prior-period comparison (sign-off flag F3).
 
-     Wiring (all pre-existing dispatch lines; Jo's code untouched):
+     Wiring (all additive appends; Jo's code untouched):
        contentHTML() ....... if(w.kind==="payroll-oc")return prOContent(w);
        click handler ....... if(a&&a.indexOf("prO-")===0&&prOHandleClick(a,id,t))return;
-       popContent() ........ if(pop.type==="prO-period"||pop.type==="prO-scope"||pop.type==="prO-pt")return prOPopContent();
-       triggerSelector() ... prO-period / prO-scope / prO-pt branches
+       popContent() ........ if(pop.type==="prO-period"||pop.type==="prO-scope")return prOPopContent();
+       triggerSelector() ... prO-period / prO-scope branches
        aboutOf() ........... if(w.kind==="payroll-oc")return {h:w.title,b:PRO_ABOUT};
-       registry ............ prO / prO_k / prO_x / prO2 / prO3 / prO4 after Jo's pr entries
+       registry ............ prO / prO2 / prO3 / prO4 appended after Jo's pr entries
      ===================================================================== */
-  var PRO_ABOUT="How payroll dollars already paid out break down for the selected time period, by distribution (your organization's own payroll cost centers), with a pay type filter (Regular Pay, Overtime, Housing Allowance and similar). Users with payroll permission can open a distribution to see the employees paid in it, and open a person to see that person's own pay types.";
+  var PRO_ABOUT="How payroll dollars already paid out break down for the selected time period: by distribution (your organization's own payroll cost centers) and by pay type (Regular Pay, Overtime, Housing Allowance and similar). Shows amounts only, not hours, rates, or individual pay details.";
   /* Distributions (org-defined payroll cost centers, PR_CompensationDistribution.Name). Verbatim from Jo's PR_DISTS. */
   var PRO_DISTS=[
     {id:"admin",   name:"Administration Staff"},
@@ -17109,8 +17091,6 @@ function penOPopContent(){
     {id:"office",  name:"Office & Reception"},
     {id:"missions",name:"Missions & Outreach"}
   ];
-  /* Fixed color per distribution: popover swatches only now (v2.3 removed the
-     table badges; the donut uses her blueRamp). */
   var PRO_DIST_COLORS={admin:"#4b6bbf",pastoral:"#7a5bbf",worship:"#2f8f6b",youth:"#b5822a",children:"#8a3f8f",facilities:"#486b7a",office:"#6b7a2a",missions:"#2a6b8a"};
   /* Fixed pay-type vocabulary (PR_HistoryCompensation SubType). Verbatim from Jo's PR_PT. */
   var PRO_PT=[
@@ -17127,10 +17107,10 @@ function penOPopContent(){
     office:{reg:1900,ot:90,vac:180,ss:126,med:30},
     missions:{reg:1400,vac:120,ss:93,med:22}
   };
-  /* Biweekly runs, Jo's seeded generator (seed 17), EXTENDED to 13 runs ending
-     Jul 29 2026 with the as-of anchor at Jul 31 2026, matching our built Final
-     (This month = 3 runs, This quarter = 7). Amounts only, no personal data at
-     this level; the employee level below is derived FROM these totals. */
+  /* Biweekly runs, Jo's seeded generator (seed 17). EXTENDED to 13 runs ending
+     Jul 29 2026 (one extra biweekly run) with the as-of anchor at Jul 31 2026,
+     matching our built Final, so the new preset set shows distinct totals
+     (This month = 3 runs, This quarter = 7). Amounts only; no personal data. */
   var PRO_RUNS=(function(){
     var runs=[],seed=17;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
     var end=new Date(2026,6,29);
@@ -17141,14 +17121,9 @@ function penOPopContent(){
   })();
   var PRO_TODAY=new Date(2026,6,31);
   function prOISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
-  /* Penny-exact money: integers render clean, employee amounts keep their cents
-     (the allocation below is done in cents and cross-foots exactly). */
-  function prOMoney(n){var c=Math.round(n*100);return "$"+(c%100===0?(c/100).toLocaleString("en-US"):(c/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}));}
-  function prOEsc(x){return String(x).replace(/"/g,"&quot;");}
-  /* OWNER DELTA (kept from the first port): preset order and set, This month
-     default, smallest first, Time Window Module definitions (rolling quarter
-     and year). */
+  /* OWNER DELTA: preset order and set. This month default, smallest first. */
   var PRO_PRESETS=[["TM","This month"],["TP","This period"],["TQ","This quarter"],["TY","This year"],["ALL","All time"]];
+  /* OWNER DELTA: Time Window Module definitions (rolling quarter and year). */
   function prORangeBoundsFor(r,w){var t=PRO_TODAY;
     if(r==="TM")return {begin:prOISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prOISO(t)};
     if(r==="TP")return {begin:prOISO(new Date(t.getFullYear(),t.getMonth(),1)),end:prOISO(t)};
@@ -17157,42 +17132,138 @@ function penOPopContent(){
     if(r==="ALL")return {begin:prOISO(PRO_RUNS[0].date),end:prOISO(t)};
     return {begin:w.begin||prOISO(t),end:w.end||prOISO(t)};
   }
-  /* Local-midnight ISO parse (hardening vs new Date(iso) parsing as UTC). */
-  function prOParseISO(x){var p=String(x).split("-");return new Date(+p[0],(+p[1])-1,+p[2]);}
+  /* Local-midnight ISO parse (carried from our built Final; Jo's verbatim new Date(iso)
+     parses as UTC and drops a boundary run at positive-offset timezones, e.g. this widget
+     losing the 1st-of-month run under IST/UTC+1). Namespaced, prO-only. */
+  function prOParseISO(s){var p=String(s).split("-");return new Date(+p[0],(+p[1])-1,+p[2]);}
   function prOPeriodBounds(w){var b=prORangeBoundsFor(w.range||"TM",w);return {start:prOParseISO(b.begin),end:prOParseISO(b.end)};}
   function prORunsInRange(w){var b=prOPeriodBounds(w);return PRO_RUNS.filter(function(x){return x.date>=b.start&&x.date<=b.end;});}
   function prOPeriodLabel(w){var r=w.range||"TM";if(r==="CUSTOM")return "Custom";var m=PRO_PRESETS.filter(function(o){return o[0]===r;})[0];return m?m[1]:"This month";}
-  function prOPeriodChip(w){var lb=prOPeriodLabel(w);return '<button class="scope-chip" data-action="prO-period" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+((pop&&pop.type==="prO-period"&&pop.id===w.id)?"true":"false")+'" aria-label="Period, tap to change" title="'+prOEsc(lb)+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  function prOPeriodChip(w){var lb=prOPeriodLabel(w);return '<button class="scope-chip" data-action="prO-period" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period, tap to change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
   function prOAgg(w){var runs=prORunsInRange(w),agg={};PRO_DISTS.forEach(function(ds){agg[ds.id]={};});
     runs.forEach(function(run){PRO_DISTS.forEach(function(ds){var rc=run.cells[ds.id]||{};Object.keys(rc).forEach(function(pt){agg[ds.id][pt]=(agg[ds.id][pt]||0)+rc[pt];});});});return agg;}
   function prODistName(id){for(var i=0;i<PRO_DISTS.length;i++)if(PRO_DISTS[i].id===id)return PRO_DISTS[i].name;return id;}
   function prOPTName(id){for(var i=0;i<PRO_PT.length;i++)if(PRO_PT[i].id===id)return PRO_PT[i].name;return id;}
-  /* v2.3: THE PAY-TYPE FILTER. prPT is "all" or one PRO_PT id; every total is
-     computed over prOPTList, so filtering to Overtime turns the distribution
-     table into an Overtime-per-distribution comparison without a separate
-     grouping mode. */
-  function prOPTFilter(w){var p=w.prPT||"all";if(p==="all")return null;for(var i=0;i<PRO_PT.length;i++)if(PRO_PT[i].id===p)return p;return null;}
-  function prOPTList(w){var f=prOPTFilter(w);return f?PRO_PT.filter(function(p){return p.id===f;}):PRO_PT;}
-  function prODistTotals(w){var agg=prOAgg(w),pts=prOPTList(w);return PRO_DISTS.map(function(ds){var t=0,c=agg[ds.id]||{};pts.forEach(function(p){t+=(c[p.id]||0);});return {id:ds.id,name:ds.name,net:t};}).filter(function(x){return x.net>0;});}
+  function prODistTotals(w){var agg=prOAgg(w),keep=prOPTList(w);return PRO_DISTS.map(function(ds){var t=0,c=agg[ds.id]||{};keep.forEach(function(p){if(c[p.id]>0)t+=c[p.id];});return {id:ds.id,name:ds.name,net:t};}).filter(function(x){return x.net>0;});}
+  function prOPTTotals(w){var agg=prOAgg(w),m={};PRO_DISTS.forEach(function(ds){var c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){m[pt]=(m[pt]||0)+c[pt];});});return PRO_PT.filter(function(p){return m[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:m[p.id]};});}
   function prODrillRows(w,distId){var agg=prOAgg(w),c=agg[distId]||{};return prOPTList(w).filter(function(p){return c[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:c[p.id]};});}
-  /* v2.3 TOMBSTONE: prOPTTotals and prOPTFlat are REMOVED with the flat "By pay
-     type" table they fed; prOScopeLabel/prOScopeMeta went with prScope, and
-     prODistBadge with the table's Distribution badge column. Deleted rather
-     than left dead so none of it can be rewired by accident. */
-  /* ==================================================================
-     v2.1 (2026-08-25, Feargal call): EMPLOYEE LEVEL, permission-gated.
-     Employees are generated deterministically FROM the distribution x
-     pay-type totals and allocated in CENTS with the rounding remainder
-     walked back onto real rows, so every level cross-foots to the penny.
-     PRO_PAYROLL_PERM models "users with payroll permission": set it false
-     and distribution rows render inert (no caret, no role, no handler
-     path), falling back to the pay-type rows when one distribution is
-     chosen on the chip, so there is no route to per-person pay.
-     ================================================================== */
-  var PRO_PAYROLL_PERM=true;
+  function prOPTFlat(w){var agg=prOAgg(w),out=[];PRO_DISTS.forEach(function(ds){var c=agg[ds.id]||{};PRO_PT.forEach(function(p){if(c[p.id]>0)out.push({id:ds.id+"_"+p.id,pt:p.name,ptId:p.id,distId:ds.id,distName:ds.name,net:c[p.id]});});});return out;}
+  function prOScopeLabel(w){var sc=w.prScope||"all";if(sc==="all")return "All distributions";if(sc==="pt")return "By pay type";return prODistName(sc);}
+  function prOScopeMeta(w){var d=w.prDist||"all",f=prOPTFilter(w),sfx=f?(", "+prOPTName(f)):"";if(d==="all")return {kind:"all",legend:"Distributions"+sfx};return {kind:"distpt",legend:prODistName(d)+": pay types"+sfx,dist:d};}
+  function prOSortRows(rows,sort,kind){var sk=(sort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    rows.sort(function(a,b){
+      if(key==="amt")return dir*(a.net-b.net);
+      if(key==="dist"&&kind==="pt"){var d=a.distName.localeCompare(b.distName);return dir*d||(b.net-a.net);}
+      if(key==="pt"&&kind==="pt")return dir*a.pt.localeCompare(b.pt);
+      if(key==="name")return dir*a.name.localeCompare(b.name);
+      return b.net-a.net;});
+    return rows;}
+  function prOTableRows(w){var d=w.prDist||"all";var rows=(d==="all")?prODistTotals(w):prODrillRows(w,d);return prOSortRows(rows,w.prSort||"amt-desc","other");}
+  function prOChartRows(w){var d=w.prDist||"all";var rows=(d==="all")?prODistTotals(w):prODrillRows(w,d);return rows.sort(function(a,b){return b.net-a.net;});}
+  function prOScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="prO-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, tap to change what the breakdown is grouped by"><span class="fc-label">'+prOScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function prOToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
+  function prODistBadge(distId){var c=PRO_DIST_COLORS[distId]||"#8a8f98";return '<span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+prODistName(distId)+'</span></span>';}
+  function prOSortBtn(w,k,label){var sk=(w.prSort||"amt-desc").split("-"),on=sk[0]===k,ic=on?(sk[1]==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="prO-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
+  function prOTableHTML(w){var meta=prOScopeMeta(w),rows=prOTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
+    if(meta.kind==="pt"){
+      var head='<div class="wt-row wt-head"><span class="lr-main">'+prOSortBtn(w,"pt","Pay type")+'</span><span class="pr-distcol">'+prOSortBtn(w,"dist","Distribution")+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prOSortBtn(w,"amt","Amount")+'</span></div>';
+      var body=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
+        return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.pt+'</span><span class="pr-distcol">'+prODistBadge(a.distId)+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'<span class="sr-only"> '+a.pt+', '+a.distName+'</span></span></div>';}).join("");
+      return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all pay types</span><span>'+money(tot)+'</span></div>';
+    }
+    var col=meta.kind==="distpt"?"Pay type":"Distribution",drill=(meta.kind==="all");
+    var head2='<div class="wt-row wt-head"><span class="lr-main">'+prOSortBtn(w,"name",col)+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prOSortBtn(w,"amt","Amount")+'</span></div>';
+    var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
+      var nm=drill?'<span class="lr-main lr-link" data-action="prO-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" data-tip="'+a.name+', tap to see its pay types" data-tip-plain>'+a.name+'</span>':'<span class="lr-main">'+a.name+'</span>';
+      return '<div class="wt-row wt-rowh'+(drill?" wt-rowlink":"")+'">'+nm+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+    return '<div class="scroll">'+head2+body2+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
+  function prODonut(w,forceSize){var meta=prOScopeMeta(w),rows=prOChartRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length),drill=(meta.kind==="all");
+    rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];
+      arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      var la=drill?' class="leg leg-link" data-action="prO-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" data-tip="'+a.name+', tap to see its pay types" data-tip-plain':' class="leg"';
+      legend+='<div'+la+' data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' &middot; '+Math.round(frac*100)+'%</span></div>';});
+    var DS=forceSize||({wide:250,xwide:280}[w.size]||190);
+    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">'+meta.legend+'</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
+  function prOGlanceComp(w){var rows=prODistTotals(w).slice().sort(function(a,b){return b.net-a.net;}),tot=rows.reduce(function(s,a){return s+a.net;},0);
+    if(!tot||!rows.length)return "";
+    var segs=rows.map(function(a){var pct=a.net/tot*100;return '<span class="pro-gseg" style="width:'+pct.toFixed(2)+'%;background:'+(PRO_DIST_COLORS[a.id]||"#8a8f98")+'" data-tip="'+a.name+': '+money(a.net)+', '+Math.round(pct)+'% of payroll this period" data-tip-plain></span>';}).join("");
+    var top=rows[0],tp=Math.round(top.net/tot*100);
+    return '<div class="pro-gcomp"><div class="pro-gbar" role="img" aria-label="Payroll split across '+rows.length+' distributions this period">'+segs+'</div>'+
+      '<div class="pro-gcap"><span class="pro-gdot" style="background:'+(PRO_DIST_COLORS[top.id]||"#8a8f98")+'"></span><span class="pro-gname">'+top.name+'</span><span class="pro-gpct">'+tp+'%</span></div></div>';}
+  function prOGlance(w){var tot=prODistTotals(w).reduce(function(s,a){return s+a.net;},0);
+    if(!tot)return '<div class="kpi-row"><div class="kpi-num">'+prOPeriodChip(w)+'<div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
+    return '<div class="kpi-row"><div class="kpi-num" style="flex:1 1 100%">'+prOPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div>'+prOGlanceComp(w)+'</div></div>';}
+  function prOHeaderBlock(w,hideToggle,noTotal){
+    var top='<div class="dep-hd-top"><div class="pr-tools">'+prOPeriodChip(w)+prODistChip(w)+prOPTChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prOToggle(w)+'</div>')+'</div>';
+    if(noTotal)return '<div class="dep-hd">'+top+'</div>';
+    var rows=prOTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),meta=prOScopeMeta(w);
+    var ctx='';
+    return '<div class="dep-hd">'+top+'<div class="dep-hd-num"><span class="metric-value">'+money(tot)+'</span>'+ctx+'</div></div>';}
+  function prOContent(w){
+    if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
+      return prOHeaderBlock(w,(w.size==="xwide"||w.size==="kpi"),true)+body;}
+    if(w.size==="kpi")return prOGlance(w);
+    /* Zero-in-range (e.g. a custom range with no pay runs): show the state, not a
+       degenerate $0 donut. Header stays so the period chip is the recovery. */
+    if(!prOTableRows(w).reduce(function(s,a){return s+a.net;},0)){
+      var ec0=EMPTY_COPY.payroll;
+      return prOHeaderBlock(w,(w.size==="xwide"),true)+'<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec0.title+'</div><div class="state-sub">'+ec0.sub+'</div></div>';}
+    if(w.size==="xwide")return prOHeaderBlock(w,true)+'<div class="pr-split pro-split"><div class="pr-split-table">'+prOTableHTML(w)+(w.prODrill?prOEmpTable(w,w.prDist):"")+'</div><div class="pr-split-chart">'+prODonut(w,196)+'</div></div>';
+    var v=w.view||"table";return prOHeaderBlock(w)+(v==="dist"?prODonut(w):prOTableHTML(w));}
+  /* ---- handlers (namespaced prO-; routed via one dispatch line in the
+     delegated click listener). View toggle reuses Jo's generic dep-view; the
+     custom date fields reuse her global pr-date-input change/focus listeners. ---- */
+  /* Drill a single distribution into its pay types, in an isolated focus overlay
+     (Jo's standard: drill = focus overlay always). Reuses the scoped mini-widget
+     mechanism (like Deposits' openAcct): a clone scoped to the distribution,
+     rendered xwide so the table + synced donut show together. */
+  function prOOpenDist(w,distId){if(!w)return;var mw=Object.assign({},w,{id:"__prodrill",prDist:distId,size:"xwide",view:"table",state:"ready",prODrill:true,prEmpOpen:{}});
+    modal={t:"Payroll Distributions: "+prODistName(distId),glyph:"payments",scoped:true,mw:mw};modalMounted=false;pop=null;render();}
+  function prOHandleClick(a,id,t){
+    if(a==="prO-emp-open"){var weo=find(id)||((modal&&modal.mw&&modal.mw.id===id)?modal.mw:null);if(!weo)return true;var ek=t.getAttribute("data-e");weo.prEmpOpen=weo.prEmpOpen||{};if(weo.prEmpOpen[ek]){delete weo.prEmpOpen[ek];}else{weo.prEmpOpen[ek]=true;}render();return true;}
+    if(a==="prO-drilldist"){prOOpenDist(find(id),t.getAttribute("data-dist"));return true;}
+    if(a==="prO-period"){pop=(pop&&pop.type==="prO-period"&&pop.id===id)?null:{type:"prO-period",id:id};render();return true;}
+    if(a==="prO-scope"){pop=(pop&&pop.type==="prO-scope"&&pop.id===id)?null:{type:"prO-scope",id:id};render();return true;}
+    if(a==="prO-set-dist"){var wsd=find(id)||((modal&&modal.mw&&modal.mw.id===id)?modal.mw:null);if(wsd){wsd.prDist=t.getAttribute("data-s");wsd.prEmpOpen={};}pop=null;render();return true;}
+    if(a==="prO-pt"){pop=(pop&&pop.type==="prO-pt"&&pop.id===id)?null:{type:"prO-pt",id:id};render();return true;}
+    if(a==="prO-set-pt"){var wsp=find(id)||((modal&&modal.mw&&modal.mw.id===id)?modal.mw:null);if(wsp){wsp.prPT=t.getAttribute("data-s");wsp.prEmpOpen={};}pop=null;render();return true;}
+    if(a==="prO-sort"){var wsr=find(id),k=t.getAttribute("data-k");if(wsr){var cs=(wsr.prSort||"amt-desc").split("-");wsr.prSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="amt")?"desc":"asc"));}render();return true;}
+    if(a==="prO-range-set"){var wprr=find(id),rset=t.getAttribute("data-r");if(wprr){wprr.range=rset;if(rset==="CUSTOM"&&!wprr.begin){var b0=prORangeBoundsFor("TM",wprr);wprr.begin=b0.begin;wprr.end=b0.end;}}if(rset!=="CUSTOM")pop=null;render();return true;}
+    return false;}
+  /* ---- popover content for the period and scope chips (Jo's prperiod and
+     pr-scope popovers, presets swapped to PRO_PRESETS; date fields keep the
+     pr-date-input class so the shell's caret-restore machinery applies). ---- */
+  function prOPopContent(){
+    if(pop.type==="prO-scope"){var wsc=find(pop.id)||((modal&&modal.mw&&modal.mw.id===pop.id)?modal.mw:null),curD=(wsc&&wsc.prDist)||"all";
+      var outD='<button class="mi'+(curD==="all"?" check":"")+'" role="option" aria-selected="'+(curD==="all")+'" data-action="prO-set-dist" data-id="'+wsc.id+'" data-s="all">'+(curD==="all"?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All distributions</span></button>'+'<div class="sep"></div><div class="cap">A specific distribution</div>';
+      outD+=PRO_DISTS.map(function(ds){var on=curD===ds.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="prO-set-dist" data-id="'+wsc.id+'" data-s="'+ds.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="pr-dot" style="background:'+(PRO_DIST_COLORS[ds.id]||"#8a8f98")+'"></span><span class="mi-nm">'+ds.name+'</span></button>';}).join("");
+      return outD;}
+    if(pop.type==="prO-pt"){var wpt=find(pop.id)||((modal&&modal.mw&&modal.mw.id===pop.id)?modal.mw:null),curP=(wpt&&wpt.prPT)||"all";
+      var live=prOAgg(wpt),paid={};
+      PRO_DISTS.forEach(function(ds){var c=live[ds.id]||{};Object.keys(c).forEach(function(pt){if(c[pt]>0)paid[pt]=true;});});
+      var outP='<button class="mi'+(curP==="all"?" check":"")+'" role="option" aria-selected="'+(curP==="all")+'" data-action="prO-set-pt" data-id="'+wpt.id+'" data-s="all">'+(curP==="all"?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All pay types</span></button>'+'<div class="sep"></div><div class="cap">A specific pay type</div>';
+      outP+=PRO_PT.filter(function(p){return paid[p.id];}).map(function(p){var on=curP===p.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="prO-set-pt" data-id="'+wpt.id+'" data-s="'+p.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+p.name+'</span></button>';}).join("");
+      return outP;}
+    var wp=find(pop.id),rp=wp.range||"TM",onC=(rp==="CUSTOM"),bId="prb-"+wp.id,eId="pre-"+wp.id;
+    var curB=prORangeBoundsFor(rp,wp);
+    var customRow='<button class="mi'+(onC?" check":"")+'" data-action="prO-range-set" data-id="'+wp.id+'" data-r="CUSTOM">'+(onC?ICON("check"):'<span class="mi-gap"></span>')+'Custom time span</button>'+
+      '<div class="pr-pop-dates"><label>From<input type="date" id="'+bId+'" class="pr-date-input" data-id="'+wp.id+'" data-which="begin" value="'+curB.begin+'"></label><label>To<input type="date" id="'+eId+'" class="pr-date-input" data-id="'+wp.id+'" data-which="end" value="'+curB.end+'"></label></div>';
+    var presetRows=PRO_PRESETS.map(function(o){var on=rp===o[0];return '<button class="mi'+(on?" check":"")+'" data-action="prO-range-set" data-id="'+wp.id+'" data-r="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");
+    return customRow+'<div class="sep"></div>'+presetRows;}
+
+
+  /* ---- W03-EX-01 / W03-DE-02: OUR employee drill, grafted into HER drill
+     modal. Employees are generated deterministically from the distribution,
+     so the same names and amounts appear every time and cross-foot to the
+     distribution total. Her modal chrome is untouched. ---- */
   var PRO_EMP_NAMES=["Whitfield, Dana","Bell, Marcus","Alvarez, Rosa","Nguyen, Thomas","Okafor, Grace","Sullivan, Patrick","Ramirez, Elena","Coleman, Derek","Fitzgerald, Maureen","Patel, Anil","Brooks, Latoya","Hoffman, Greg","Delgado, Carmen","Whitaker, Susan","Osei, Kwame","Lindqvist, Erik","Montoya, Beatriz","Callahan, Sean","Freeman, Cheryl","Barrett, Malcolm","Zhang, Wei","Donovan, Kathleen","Pruitt, Wesley","Amara, Fatima","Reyes, Miguel","Stanton, Gloria","Mercer, Aaron","Boone, Harriet","Schmidt, Karl","Castillo, Diego"];
+  var PRO_PAYROLL_PERM=true;
   function prORng(seed){var q=seed>>>0;return function(){q=q+0x6D2B79F5|0;var t=Math.imul(q^q>>>15,1|q);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
   function prODistSeed(distId){var h=0;for(var i=0;i<distId.length;i++)h=(h*31+distId.charCodeAt(i))|0;return Math.abs(h)+7919;}
+  function prOMoney(n){var c=Math.round(n*100);return "$"+(c%100===0?(c/100).toLocaleString("en-US"):(c/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}));}
+  function prOEsc(x){return String(x).replace(/"/g,"&quot;");}
+  function prOPTFilter(w){var p=w.prPT||"all";if(p==="all")return null;for(var i=0;i<PRO_PT.length;i++)if(PRO_PT[i].id===p)return p;return null;}
+  function prOPTList(w){var f=prOPTFilter(w);return f?PRO_PT.filter(function(p){return p.id===f;}):PRO_PT;}
   function prOEmployeesFor(w,distId){
     var agg=prOAgg(w),cells=agg[distId]||{};
     var rng=prORng(prODistSeed(distId));
@@ -17219,13 +17290,6 @@ function penOPopContent(){
     });
     return emps.filter(function(e){return e.total>0;}).sort(function(a,b){return b.total-a.total;});
   }
-  /* v2.2 TOMBSTONE: prOAllEmployees (the unscoped cross-org employee list that
-     fed the standalone Employees view) is REMOVED; employees are only ever
-     reached through their own distribution now. */
-  function prOEmpKey(e){return e.dist+"|"+e.name;}
-  /* v2.3: the pay-type filter is applied only AFTER allocation, so a person's
-     Regular Pay figure never moves because Overtime got filtered out; any
-     subset of pay types still cross-foots to the penny. */
   function prOEmpFiltered(w,distId){
     var pts=prOPTList(w),out=[];
     prOEmployeesFor(w,distId).forEach(function(e){
@@ -17235,49 +17299,7 @@ function penOPopContent(){
     });
     return out.sort(function(a,b){return b.total-a.total;});
   }
-  /* ---- v2.3: TWO INDEPENDENT FILTERS replace the single prScope family ---- */
-  function prODistLabel(w){var d=w.prDist||"all";return d==="all"?"All distributions":prODistName(d);}
-  function prOPTLabel(w){var f=prOPTFilter(w);return f?prOPTName(f):"All pay types";}
-  function prOFilterLabel(w){var f=prOPTFilter(w);return prODistLabel(w)+(f?", "+prOPTName(f)+" only":"");}
-  function prODistMeta(w){var d=w.prDist||"all";if(d==="all")return {kind:"all",legend:"Distributions"};return {kind:"dist",legend:prODistName(d)+": pay types",dist:d};}
-  /* v2.3: only the name and amt sort keys remain (the dist/pt keys went with
-     the flat table). amt starts desc, name starts asc, every click flips. */
-  function prOSortRows(rows,sort){var sk=(sort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    rows.sort(function(a,b){
-      if(key==="amt")return dir*(a.net-b.net);
-      if(key==="name")return dir*a.name.localeCompare(b.name);
-      return b.net-a.net;});
-    return rows;}
-  function prOTableRows(w){var meta=prODistMeta(w),rows;
-    if(meta.kind==="all")rows=prODistTotals(w);
-    else if(PRO_PAYROLL_PERM)rows=prOEmpFiltered(w,meta.dist).map(function(e){return {id:prOEmpKey(e),name:e.name,net:e.total,emp:e};});
-    else rows=prODrillRows(w,meta.dist);
-    return prOSortRows(rows,w.prSort||"amt-desc");}
-  function prOChartRows(w){var meta=prODistMeta(w);
-    if(meta.kind==="all")return prODistTotals(w).sort(function(a,b){return b.net-a.net;});
-    return prODrillRows(w,meta.dist).sort(function(a,b){return b.net-a.net;});}
-  /* ---- controls: three chips of one shape (Period / Distribution / Pay type) ---- */
-  function prODistChip(w){return '<button class="filter-chip pr-fchip" data-action="prO-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+((pop&&pop.type==="prO-scope"&&pop.id===w.id)?"true":"false")+'" aria-label="Distribution filter, tap to change" title="'+prOEsc(prODistLabel(w))+'"><span class="fc-label">'+prODistLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
-  function prOPTChip(w){return '<button class="filter-chip pr-fchip" data-action="prO-pt" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+((pop&&pop.type==="prO-pt"&&pop.id===w.id)?"true":"false")+'" aria-label="Pay type filter, tap to change" title="'+prOEsc(prOPTLabel(w))+'"><span class="fc-label">'+prOPTLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
-  /* v2.4/v2.5/v2.6: ONE export, on the caption row, "btn naked sm" with a
-     download icon, identical in class list to the shell's other naked exports.
-     data-pro="export-view" is the V2 Final's marker attribute, kept for
-     traceability; dispatch runs on data-action like everything else here. */
-  function prOExportBtn(w){
-    var meta=prODistMeta(w),f=prOPTFilter(w);
-    var what=(meta.kind==="all")?"every distribution":((PRO_PAYROLL_PERM?"the employees in ":"the pay types in ")+prODistName(meta.dist));
-    return '<button class="btn naked sm" data-action="prO-export-view" data-pro="export-view" data-id="'+w.id+'" title="'+prOEsc("Export "+what+", "+(f?prOPTName(f)+" only":"all pay types")+", "+prOPeriodLabel(w)+", to Excel")+'">'+ICON("download")+'Export to Excel</button>';
-  }
-  /* v2.4: ONE caption row, export at its right-hand end; every data-bearing
-     state routes through here so the export cannot be lost. */
-  function prOCapRow(w,text){
-    return '<div class="pro-cap"><span>'+text+'</span>'+prOExportBtn(w)+'</div>';
-  }
-  /* v2.2: back to Jo's two segments; the Employees segment is REMOVED and a
-     stale view of "emp" is normalised to table HERE as well as in prOContent,
-     so the toggle and the content can never desync. */
-  function prOToggle(w){var v=w.view||"table";if(v==="emp")v="table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
-  /* ---- v2.2 NESTED DRILL: distribution -> employees -> pay types, one table ---- */
+  function prOEmpKey(e){return e.dist+"|"+e.name;}
   function prOEmpBlock(w,e,nested){
     var open=w.prEmpOpen||{},key=prOEmpKey(e),isOpen=!!open[key];
     var pts=PRO_PT.filter(function(p){return e.pay[p.id]>0;});
@@ -17296,169 +17318,25 @@ function penOPopContent(){
     var foot='<div class="pro-foot"><span>'+e.name+', '+prOMoney(e.total)+' across '+pts.length+' pay type'+(pts.length===1?'':'s')+'</span></div>';
     return row+'<div class="pro-emp-panel" role="region" aria-label="'+prOEsc("Pay types for "+e.name)+'">'+lines+foot+'</div>';
   }
-  function prODistBlock(w,a,tot){
-    var pct=tot?Math.round(a.net/tot*100):0;
-    var cells='<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pct+'% of total"><span class="pct-fill" style="width:'+pct+'%"></span></span><span class="pct-num">'+pct+'%</span></span>'+
-      '<span class="wt-c2">'+prOMoney(a.net)+'</span>';
-    /* No payroll permission: inert row. No caret, no role="button", no action. */
-    if(!PRO_PAYROLL_PERM)return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.name+'</span>'+cells+'</div>';
-    var open=w.prDistOpen||{},isOpen=!!open[a.id];
-    var lbl=a.name+", "+prOMoney(a.net)+", "+pct+"% of total. "+(isOpen?"Hide":"Show")+" the employees paid in this group.";
-    var row='<div class="wt-row wt-rowh pr-distrow'+(isOpen?' is-open':'')+'" data-action="prO-dist-open" data-id="'+w.id+'" data-d="'+prOEsc(a.id)+'" role="button" tabindex="0" aria-expanded="'+isOpen+'" aria-label="'+prOEsc(lbl)+'">'+
-      '<span class="lr-main"><span class="pro-caret'+(isOpen?' on':'')+'" aria-hidden="true">'+ICON("chevron_right")+'</span>'+a.name+'</span>'+cells+'</div>';
-    if(!isOpen)return row;
-    var emps=prOEmpFiltered(w,a.id);
-    if(!emps.length){
-      return row+'<div class="pro-dist-panel" role="region" aria-label="'+prOEsc("Employees in "+a.name)+'"><div class="wt-row pr-empnest"><span class="lr-main">No employees paid in this period</span></div></div>';
-    }
-    var head='<div class="wt-row wt-head pr-empnest"><span class="lr-main">Employee</span><span class="wt-c2">Total pay</span></div>';
-    var body=emps.map(function(e){return prOEmpBlock(w,e,true);}).join("");
-    var foot='<div class="pro-foot"><span>'+emps.length+' employee'+(emps.length===1?'':'s')+' paid in '+a.name+', '+prOMoney(a.net)+'</span></div>';
-    return row+'<div class="pro-dist-panel" role="region" aria-label="'+prOEsc("Employees in "+a.name)+'">'+head+body+foot+'</div>';
+  function prOEmpTable(w,distId){
+    var rows=prOEmpFiltered(w,distId);
+    if(!rows.length)return '<div class="wt-row pr-empnest"><span class="lr-main">No employees paid in this period</span></div>';
+    var tot=rows.reduce(function(s,e){return s+e.total;},0);
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+prOSortBtn(w,"name","Employee")+'</span><span class="wt-c2">'+prOSortBtn(w,"amt","Total pay")+'</span></div>';
+    var body=rows.map(function(e){return prOEmpBlock(w,e,false);}).join("");
+    return '<div class="pro-emps">'+
+      '<div class="scroll pro-empscroll">'+head+body+'</div>'+
+      '<div class="dep-total"><span>Total, '+rows.length+' employee'+(rows.length===1?'':'s')+'</span><span>'+prOMoney(tot)+'</span></div>'+
+    '</div>';
   }
-  function prOSortBtn(w,k,label){var sk=(w.prSort||"amt-desc").split("-"),on=sk[0]===k,ic=on?(sk[1]==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="prO-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
-  function prOTableHTML(w){var meta=prODistMeta(w),rows=prOTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
-    var ptf=prOPTFilter(w),ptNote=ptf?(' '+prOPTName(ptf)+' only.'):'';
-    /* v2.3: a filter combination can legitimately match nothing, which is
-       different from the period holding no runs. Say which filter emptied it,
-       and keep the chips reachable so it can be undone. */
-    if(!rows.length){
-      return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">Nothing matches these filters</div>'+
-        '<div class="state-sub">No payroll was distributed for '+prOEsc(prOFilterLabel(w))+' in the selected period.</div></div>';
-    }
-    /* A chosen distribution lists its EMPLOYEES, each expanding to pay types. */
-    if(meta.kind==="dist"&&PRO_PAYROLL_PERM){
-      var eHead='<div class="wt-row wt-head"><span class="lr-main">'+prOSortBtn(w,"name","Employee")+'</span><span class="wt-c2">'+prOSortBtn(w,"amt","Total pay")+'</span></div>';
-      var eBody=rows.map(function(r){return prOEmpBlock(w,r.emp,false);}).join("");
-      var eCap=prOCapRow(w,'Employees paid in '+prODistName(meta.dist)+', highest first.'+ptNote+' Click a name for that person\'s pay types. Amounts cross-foot to the penny against the distribution total.');
-      return eCap+'<div class="scroll">'+eHead+eBody+'</div><div class="dep-total"><span>Total, '+rows.length+' employee'+(rows.length===1?'':'s')+'</span><span>'+prOMoney(tot)+'</span></div>';
-    }
-    /* All distributions: the nested tree. Under a pay-type filter the same
-       tree reads as a per-distribution comparison of that one component. */
-    if(meta.kind==="all"){
-      var aHead='<div class="wt-row wt-head"><span class="lr-main">'+prOSortBtn(w,"name","Distribution")+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prOSortBtn(w,"amt","Amount")+'</span></div>';
-      var aBody=rows.map(function(a){return prODistBlock(w,a,tot);}).join("");
-      /* v2.4: the caption always renders (it carries the export; an
-         unauthorised viewer can still export the totals they can see); only
-         the drill sentence is gated. */
-      var aLead=ptf?(prOPTName(ptf)+' across every distribution, comparable row by row.'):'Payroll by distribution.';
-      var aCap=prOCapRow(w,aLead+(PRO_PAYROLL_PERM?' Click a distribution for the employees paid in it, then a name for that person\'s pay types.':''));
-      return aCap+'<div class="scroll">'+aHead+aBody+'</div><div class="dep-total"><span>Total</span><span>'+prOMoney(tot)+'</span></div>';
-    }
-    /* Fallback: no payroll permission and a distribution chosen: pay-type rows. */
-    var head2='<div class="wt-row wt-head"><span class="lr-main">'+prOSortBtn(w,"name","Pay type")+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prOSortBtn(w,"amt","Amount")+'</span></div>';
-    var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
-      return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.name+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+prOMoney(a.net)+'</span></div>';}).join("");
-    var fCap=prOCapRow(w,prODistName(meta.dist)+' by pay type'+(ptf?', '+prOPTName(ptf)+' only':'')+'.');
-    return fCap+'<div class="scroll">'+head2+body2+'</div><div class="dep-total"><span>Total</span><span>'+prOMoney(tot)+'</span></div>';}
-  /* ---- donut (Jo's blueRamp arcs, center total, hoverable legend; v2.2: no
-     drill links on the chart, the drill lives in the table) ---- */
-  function prODonut(w,forceSize){var meta=prODistMeta(w),rows=prOChartRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length);
-    rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];
-      arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
-      legend+='<div class="leg" data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+prOMoney(a.net)+' &middot; '+Math.round(frac*100)+'%</span></div>';});
-    var DS=forceSize||({wide:250,xwide:280}[w.size]||190);
-    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+prOMoney(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend-head"><div class="legend-hd">'+meta.legend+'</div></div><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div><span class="sr-only">Total for the selected period: '+prOMoney(tot)+'.</span></div>';}
-  /* ---- Glance: period chip + the distribution total (W03's headline is the
-     total distributed; "N pending approval" is W13's headline, not this
-     widget's). v2.2: the glance composition bar went with the old view set. ---- */
-  function prOGlance(w){var tot=prODistTotals(w).reduce(function(s,a){return s+a.net;},0);
-    return '<div class="kpi-row"><div class="kpi-num">'+prOPeriodChip(w)+'<div class="metric-value">'+prOMoney(tot)+'</div><span class="sr-only">Total payroll paid, '+prOPeriodLabel(w)+': '+prOMoney(tot)+'.</span></div></div>';}
-  /* ---- header: three chips, toggle on the right (hidden at Detail and in the
-     empty state), total + a context line naming whichever filters narrow it ---- */
-  function prOHeaderBlock(w,hideToggle,noTotal){
-    var right=(noTotal||hideToggle)?'':('<div class="dep-hd-toggle">'+prOToggle(w)+'</div>');
-    var top='<div class="dep-hd-top"><div class="pr-tools">'+prOPeriodChip(w)+prODistChip(w)+prOPTChip(w)+'</div>'+right+'</div>';
-    if(noTotal)return '<div class="dep-hd">'+top+'</div>';
-    var rows=prOTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),meta=prODistMeta(w);
-    var bits=[];
-    if(meta.kind==="dist")bits.push(prODistName(meta.dist)+(PRO_PAYROLL_PERM?', employees paid':', all pay types'));
-    var hf=prOPTFilter(w);if(hf)bits.push(prOPTName(hf)+' only');
-    var ctx=bits.length?('<div class="pr-scope-ctx">'+bits.join(' &middot; ')+' in the selected period</div>'):'';
-    return '<div class="dep-hd">'+top+'<div class="dep-hd-num"><span class="metric-value">'+prOMoney(tot)+'</span>'+ctx+'</div></div>';}
-  function prOContent(w){
-    if(w.state==="empty"||!prORunsInRange(w).length){
-      var body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No payroll runs in this range</div><div class="state-sub">There\'s no payroll history for the selected period yet.</div></div>';
-      return prOHeaderBlock(w,(w.size==="xwide"||w.size==="kpi"),true)+body;}
-    if(w.size==="kpi")return prOGlance(w);
-    var v=w.view||"table";
-    /* v2.2: the "emp" view is gone; stale state resolves to the table, which is
-       where the employee level now lives. The nested drill works at every
-       tier, Detail included, because it is part of prOTableHTML. */
-    if(v==="emp")v="table";
-    if(w.size==="xwide")return prOHeaderBlock(w,true)+'<div class="pr-split"><div class="pr-split-table">'+prOTableHTML(w)+'</div><div class="pr-split-chart">'+prODonut(w,196)+'</div></div>';
-    /* v2.4: the Chart view gets its own caption row so it carries the export
-       too (not inside prODonut: at Detail the donut renders beside the table,
-       whose caption already holds the one export). */
-    if(v==="dist"){
-      var cMeta=prODistMeta(w),cPT=prOPTFilter(w);
-      var cCap=(cMeta.kind==="all")?('Payroll by distribution'+(cPT?', '+prOPTName(cPT)+' only':'')+'.'):(prODistName(cMeta.dist)+' by pay type'+(cPT?', '+prOPTName(cPT)+' only':'')+'.');
-      return prOHeaderBlock(w)+prOCapRow(w,cCap)+prODonut(w);
-    }
-    return prOHeaderBlock(w)+prOTableHTML(w);}
-  /* ---- handlers (namespaced prO-; one pre-existing dispatch line in the
-     delegated click listener). v2.2 TOMBSTONE: prO-drilldist and prOOpenDist
-     (the focus-overlay drill) are REMOVED, the drill is in the table now.
-     The view toggle reuses Jo's generic dep-view; the custom date fields
-     reuse her global pr-date-input change/focus listeners. ---- */
-  function prOHandleClick(a,id,t){
-    if(a==="prO-period"){pop=(pop&&pop.type==="prO-period"&&pop.id===id)?null:{type:"prO-period",id:id};render();return true;}
-    if(a==="prO-scope"){pop=(pop&&pop.type==="prO-scope"&&pop.id===id)?null:{type:"prO-scope",id:id};render();return true;}
-    if(a==="prO-pt"){pop=(pop&&pop.type==="prO-pt"&&pop.id===id)?null:{type:"prO-pt",id:id};render();return true;}
-    /* v2.3: changing EITHER filter clears the open drill; rows are re-derived
-       under the new filter, so a caret left open could point at a distribution
-       or a person the filter no longer lists. */
-    if(a==="prO-set-dist"){var wsd=find(id);if(wsd){wsd.prDist=t.getAttribute("data-s");wsd.prDistOpen={};wsd.prEmpOpen={};}pop=null;render();return true;}
-    if(a==="prO-set-pt"){var wsp=find(id);if(wsp){wsp.prPT=t.getAttribute("data-s");wsp.prDistOpen={};wsp.prEmpOpen={};}pop=null;render();return true;}
-    if(a==="prO-sort"){var wsr=find(id),k=t.getAttribute("data-k");if(wsr){var cs=(wsr.prSort||"amt-desc").split("-");wsr.prSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="amt")?"desc":"asc"));}render();return true;}
-    if(a==="prO-range-set"){var wprr=find(id),rset=t.getAttribute("data-r");if(wprr){wprr.range=rset;if(rset==="CUSTOM"&&!wprr.begin){var b0=prORangeBoundsFor("TM",wprr);wprr.begin=b0.begin;wprr.end=b0.end;}}if(rset!=="CUSTOM")pop=null;render();return true;}
-    /* v2.1/v2.2: the nested drill, permission-gated at the source. Collapsing
-       a distribution clears the open state of the employees inside it. */
-    if(a==="prO-dist-open"){var wdo=find(id);
-      if(!wdo||!PRO_PAYROLL_PERM)return true;
-      var dk=t.getAttribute("data-d");wdo.prDistOpen=wdo.prDistOpen||{};
-      if(wdo.prDistOpen[dk]){
-        delete wdo.prDistOpen[dk];
-        var eo=wdo.prEmpOpen||{};Object.keys(eo).forEach(function(k2){if(k2.split("|")[0]===dk)delete eo[k2];});
-      }else{wdo.prDistOpen[dk]=true;}
-      render();return true;}
-    if(a==="prO-emp-open"){var weo=find(id);
-      if(!weo||!PRO_PAYROLL_PERM)return true;
-      var ek=t.getAttribute("data-e");weo.prEmpOpen=weo.prEmpOpen||{};
-      if(weo.prEmpOpen[ek]){delete weo.prEmpOpen[ek];}else{weo.prEmpOpen[ek]=true;}
-      render();return true;}
-    /* v2.3: ONE view-scoped export; honest stub, status-line feedback, no fake
-       download (this demo has no export backend). */
-    if(a==="prO-export-view"){var wev=find(id);
-      if(wev){var mv=prODistMeta(wev),fv=prOPTFilter(wev);
-        setStatus("Exporting "+(mv.kind==="all"?"all distributions":(PRO_PAYROLL_PERM?prODistName(mv.dist)+" employees":prODistName(mv.dist)+" pay types"))+", "+(fv?prOPTName(fv):"all pay types")+", "+prOPeriodLabel(wev)+" to Excel (demo, no export backend).");}
-      return true;}
-    return false;}
-  /* ---- popover content for the three chips (period presets with the Custom
-     From/To row FIRST; distribution list, no "By pay type" row, v2.3; pay-type
-     list offering only pay types that actually paid out in the window). ---- */
-  function prOPopContent(){
-    if(pop.type==="prO-scope"){var wsc=find(pop.id),curD=wsc.prDist||"all";
-      var outD='<button class="mi'+(curD==="all"?" check":"")+'" role="option" aria-selected="'+(curD==="all")+'" data-action="prO-set-dist" data-id="'+wsc.id+'" data-s="all">'+(curD==="all"?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All distributions</span></button>'+
-        '<div class="sep"></div><div class="cap">A specific distribution</div>';
-      outD+=PRO_DISTS.map(function(ds){var on=curD===ds.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="prO-set-dist" data-id="'+wsc.id+'" data-s="'+ds.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="pr-dot" style="background:'+(PRO_DIST_COLORS[ds.id]||"#8a8f98")+'"></span><span class="mi-nm">'+ds.name+'</span></button>';}).join("");
-      return outD;}
-    if(pop.type==="prO-pt"){var wpt=find(pop.id),curP=wpt.prPT||"all";
-      var live=prOAgg(wpt),paid={};
-      PRO_DISTS.forEach(function(ds){var c=live[ds.id]||{};Object.keys(c).forEach(function(pt){if(c[pt]>0)paid[pt]=true;});});
-      var outP='<button class="mi'+(curP==="all"?" check":"")+'" role="option" aria-selected="'+(curP==="all")+'" data-action="prO-set-pt" data-id="'+wpt.id+'" data-s="all">'+(curP==="all"?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">All pay types</span></button>'+
-        '<div class="sep"></div><div class="cap">A specific pay type</div>';
-      outP+=PRO_PT.filter(function(p){return paid[p.id];}).map(function(p){var on=curP===p.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="prO-set-pt" data-id="'+wpt.id+'" data-s="'+p.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+p.name+'</span></button>';}).join("");
-      return outP;}
-    var wp=find(pop.id),rp=wp.range||"TM",onC=(rp==="CUSTOM"),bId="prb-"+wp.id,eId="pre-"+wp.id;
-    var curB=prORangeBoundsFor(rp,wp);
-    var customRow='<button class="mi'+(onC?" check":"")+'" data-action="prO-range-set" data-id="'+wp.id+'" data-r="CUSTOM">'+(onC?ICON("check"):'<span class="mi-gap"></span>')+'Custom time span</button>'+
-      '<div class="pr-pop-dates"><label>From<input type="date" id="'+bId+'" class="pr-date-input" data-id="'+wp.id+'" data-which="begin" value="'+curB.begin+'"></label><label>To<input type="date" id="'+eId+'" class="pr-date-input" data-id="'+wp.id+'" data-which="end" value="'+curB.end+'"></label></div>';
-    var presetRows=PRO_PRESETS.map(function(o){var on=rp===o[0];return '<button class="mi'+(on?" check":"")+'" data-action="prO-range-set" data-id="'+wp.id+'" data-r="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+o[1]+'</button>';}).join("");
-    return customRow+'<div class="sep"></div>'+presetRows;}
-  /* --- end Payroll Distributions (MB updated), V2 v2.6 re-port --- */
 
-
+  /* ---- W03-EX-02: OUR two independent filter chips replace her single
+     combined scope chip. Distribution reuses her prO-scope popover slot; pay
+     type gets its own. ---- */
+  function prODistLabel(w){var d=w.prDist||"all";return d==="all"?"All distributions":prODistName(d);}
+  function prOPTLabel(w){var f=prOPTFilter(w);return f?prOPTName(f):"All pay types";}
+  function prODistChip(w){return '<button class="filter-chip pr-fchip" data-action="prO-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+((pop&&pop.type==="prO-scope"&&pop.id===w.id)?"true":"false")+'" aria-label="Distribution filter, tap to change" title="'+prOEsc(prODistLabel(w))+'"><span class="fc-label">'+prODistLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function prOPTChip(w){return '<button class="filter-chip pr-fchip" data-action="prO-pt" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+((pop&&pop.type==="prO-pt"&&pop.id===w.id)?"true":"false")+'" aria-label="Pay type filter, tap to change" title="'+prOEsc(prOPTLabel(w))+'"><span class="fc-label">'+prOPTLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
 /* ===== (OC) CLONE of remF -> remO, kind remittance-oc. V2 from stash@{0} 2026-09-08; Jo's adopted remF block above is untouched. ===== */
 /* =====================================================================
    Remittance Pledges (MB updated)  (prefix: remO, kind:"remittance-oc")
@@ -19658,3 +19536,8 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
 </script>
 </body>
 </html>
+
+
+
+
+
