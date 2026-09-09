@@ -6483,9 +6483,46 @@ function mysPopContent(){
     if(sel){cats=sel.a.slice();}
     else{cats=[0,0,0,0,0,0];bankAccounts(w).forEach(function(a){for(var i=0;i<6;i++)cats[i]+=(a.a[i]||0);});}
     var run=[],acc=0,i;for(i=0;i<cats.length;i++){acc+=cats[i];run.push(acc);}return run;}
-  function bankSpark(w){var run=bankRunning(w),mx=Math.max.apply(null,run),mn=Math.min.apply(null,run);
-    if(run.length<2||mx===mn)return "";
-    return depSparkHTML({s:run,labs:["Beginning balance","Deposits","Voids","Checks","Withdrawals","Ending balance"]},"bank-spark","Balance since the last reconciliation, beginning to ending. Hover to read a point");}
+  /* Running-balance spark: Beginning to Ending across the reconciliation entries.
+     Coloured dots encode additions (green) vs subtractions (red); endpoints are
+     neutral. A custom hover reads each movement (into/out, signed amount, running
+     balance), and the Ending point shows the net change since Beginning. */
+  function bankSpark(w){
+    var sel=bankSelected(w),cats;
+    if(sel)cats=sel.a.slice();else{cats=[0,0,0,0,0,0];bankAccounts(w).forEach(function(a){for(var k=0;k<6;k++)cats[k]+=(a.a[k]||0);});}
+    var run=[],acc=0,z;for(z=0;z<cats.length;z++){acc+=cats[z];run.push(acc);}
+    var mx=Math.max.apply(null,run),mn=Math.min.apply(null,run);if(run.length<2||mx===mn)return "";
+    var W=120,H=44,pad=7,rng=(mx-mn)||1;
+    var xs=run.map(function(v,i){return pad+i*(W-2*pad)/(run.length-1);});
+    var ys=run.map(function(v){return H-pad-((v-mn)/rng)*(H-2*pad);});
+    var line=smoothPath(xs,ys);
+    var labs=["Beginning balance","Deposits","Voids","Checks","Withdrawals","Ending balance"];
+    var pts=run.map(function(v,i){return {lab:labs[i]||("Movement "+i),kind:(i===0?"begin":(i===run.length-1?"end":"move")),move:(i===0?null:cats[i]),bal:v,net:(i===run.length-1?(v-run[0]):null)};});
+    var dots=run.map(function(v,i){var cls=(i===0)?"begin":(i===run.length-1)?"end":((cats[i]>=0)?"add":"sub");return '<span class="brs-dot brs-'+cls+'" style="left:'+(xs[i]/W*100).toFixed(2)+'%;top:'+(ys[i]/H*100).toFixed(2)+'%"></span>';}).join("");
+    var xp=xs.map(function(x){return (x/W*100).toFixed(2);}).join(",");
+    return '<div class="kpi-spark bank-rspark" tabindex="0" data-bpts="'+encodeURIComponent(JSON.stringify(pts))+'" data-xp="'+xp+'" aria-label="Balance since the last reconciliation, beginning to ending. Hover to read each movement.">'+
+      '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="brsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.16"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs>'+
+      '<path d="'+line+' L'+xs[xs.length-1].toFixed(1)+','+H+' L'+xs[0].toFixed(1)+','+H+' Z" fill="url(#brsg)"/>'+
+      '<path d="'+line+'" fill="none" stroke="var(--chart)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>'+dots+'</div>';
+  }
+  var brsTip=null;
+  function brsHide(){if(brsTip){brsTip.remove();brsTip=null;}}
+  document.addEventListener("mousemove",function(e){
+    var sp=e.target.closest&&e.target.closest(".bank-rspark");
+    if(!sp){if(brsTip)brsHide();return;}
+    var pts;try{pts=JSON.parse(decodeURIComponent(sp.getAttribute("data-bpts")));}catch(_e){return;}
+    var xp=sp.getAttribute("data-xp").split(",").map(Number),r=sp.getBoundingClientRect(),fx=((e.clientX-r.left)/(r.width||1))*100;
+    var idx=0,best=1e9,i;for(i=0;i<xp.length;i++){var dd=Math.abs(xp[i]-fx);if(dd<best){best=dd;idx=i;}}
+    var p=pts[idx];if(!p)return;
+    if(!brsTip){brsTip=document.createElement("div");brsTip.className="bgt-pop bank-rtip";document.body.appendChild(brsTip);}
+    var html='<div class="bgt-pop-h">'+p.lab+'</div>';
+    if(p.kind==="move"){var add=p.move>=0;html+='<div class="bgt-pop-r"><span class="brs-ic '+(add?"add":"sub")+'"><span class="material-symbols-rounded">'+(add?"add":"remove")+'</span></span><span class="bgt-pop-lbl">'+(add?"Into the account":"Out of the account")+'</span><span class="bgt-pop-v '+(add?"add":"sub")+'">'+(add?"+":"−")+money(Math.abs(p.move))+'</span></div>';}
+    html+='<div class="bgt-pop-r"><span class="bgt-pop-lbl">Balance</span><span class="bgt-pop-v">'+money(p.bal)+'</span></div>';
+    if(p.kind==="end"&&p.net!=null){var nu=p.net>=0;html+='<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">Since beginning</span><span class="bgt-pop-fav '+(nu?"add":"sub")+'">'+ICON(nu?"north_east":"south_east")+(nu?"up ":"down ")+money(Math.abs(p.net))+'</span></div>';}
+    brsTip.innerHTML=html;
+    var bw=brsTip.offsetWidth,bh=brsTip.offsetHeight,x=e.clientX+14,y=e.clientY-bh-10;if(x+bw>innerWidth-8)x=e.clientX-bw-14;if(y<8)y=e.clientY+18;
+    brsTip.style.left=x+"px";brsTip.style.top=y+"px";
+  });
   function bankAcctChip(w){var sel=bankSelected(w);var spin=w.bkloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=sel?(sel.name+" "+sel.acct):"All Bank Accounts";return '<button class="filter-chip bank-acct-chip" data-action="bank-acct" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Bank account, tap to change the view"><span class="fc-label">'+spin+lbl+'</span>'+ICON("expand_more")+'</button>';}
   function bankViewToggle(w){var v=w.bkview||"table";var opts=[["table","Table","table_rows"],["chart","Bars","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="bank-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
   function bankHeaderBlock(w,mode){
