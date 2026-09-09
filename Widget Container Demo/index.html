@@ -6605,18 +6605,18 @@ function mysPopContent(){
      and the overdrawn chip DRILLS, opening the Detail view in a closable overlay
      filtered to the overdrawn accounts. No inert button-looking chip. */
   function bankGlance(w){var sel=bankSelected(w);
-    if(sel){var end=bankEnding(sel),beg=sel.a[0],chg=end-beg,neg=end<0,up=chg>=0;
+    if(sel){var end=bankEnding(sel),neg=end<0;
       return '<div class="kpi-row"><div class="kpi-num">'+
         '<div class="bank-gl-top">'+bankAcctChip(w)+'</div>'+
         '<div class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</div>'+
-        '<div class="gl-sub">'+(neg?'<span class="bank-pill warn">'+ICON("error")+'Overdrawn</span>':'')+'<span class="delta-pill'+(up?"":" neg")+'" data-tip="Beginning balance '+bankMoney(beg)+' · '+(up?"up ":"down ")+bankMoney(Math.abs(chg))+' since the last reconciliation" data-tip-plain tabindex="0">'+ICON(up?"north_east":"south_east")+bankAbbr(chg)+'</span><span class="trend-range static">vs beginning balance</span></div>'+
+        (neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
         '</div>'+bankSpark(w)+'</div>';}
-    var val=bankTotal(w),negT=val<0,over=bankNegCount(w),bt=bankBeginTotal(w),tchg=val-bt,tup=tchg>=0;
+    var val=bankTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, tap to open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<div class="bank-gl-top">'+bankAcctChip(w)+'</div>'+
       '<div class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
-      '<div class="gl-sub">'+od+'<span class="delta-pill'+(tup?"":" neg")+'" data-tip="Beginning balance '+bankMoney(bt)+' · '+(tup?"up ":"down ")+bankMoney(Math.abs(tchg))+' since the last reconciliation" data-tip-plain tabindex="0">'+ICON(tup?"north_east":"south_east")+bankAbbr(tchg)+'</span><span class="trend-range static">vs beginning balance</span></div>'+
+      (over?'<div class="gl-sub">'+od+'</div>':'')+
       '</div>'+bankSpark(w)+'</div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
