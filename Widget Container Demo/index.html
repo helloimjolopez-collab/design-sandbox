@@ -5918,9 +5918,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var chip='<button class="scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
     if(!bgtFHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div></div></div>';
     var sv=bgtFSpanVariance(w,vt),v=sv.v,hv=bgtFHeadlineInner(v,neutral,sv.sumB);
-    var _sr=bgtFViewRows(w).filter(function(r){return r.actual!=null;}),_ss=_sr.map(function(r){return r.actual;}),_sl=_sr.map(function(r){return r.period;});
-    var _spark=(_ss.length>=2)?depSparkHTML({s:_ss,labs:_sl},null,"Actual by period. Hover to read a point"):'';
-    return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div><div class="gl-sub">'+bgtFFavPill(v,neutral)+'<button class="trend-range" data-action="bgtF-span" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Comparison window, tap to change">'+bgtFSpanLabel(w.bspan||"year")+ICON("expand_more")+'</button></div></div>'+_spark+'</div>';}
+    return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div><div class="gl-sub">'+bgtFFavPill(v,neutral)+'<button class="trend-range" data-action="bgtF-span" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Comparison window, tap to change">'+bgtFSpanLabel(w.bspan||"year")+ICON("expand_more")+'</button></div></div></div>';}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtFPanel(w,side){
     var interval=w[side==="a"?"iA":"iB"]||bgtFIvDefault(w.bspan||"year");
