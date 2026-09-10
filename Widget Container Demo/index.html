@@ -900,6 +900,8 @@
   .bank-rtip .brs-ic.sub,.bank-rtip .bgt-pop-v.sub,.bank-rtip .bgt-pop-fav.sub{color:var(--red-100);}
   .bank-rtip .bgt-pop-fav{display:inline-flex;align-items:center;gap:2px;}
   .bank-rtip .bgt-pop-fav .material-symbols-rounded{font-size:14px;}
+  .brs-hair{position:absolute;top:2px;bottom:2px;width:1px;background:rgba(60,60,80,.22);opacity:0;transform:translateX(-0.5px);pointer-events:none;transition:opacity .08s;}
+  .brs-cursor{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--chart);box-shadow:0 0 0 2px #fff;transform:translate(-50%,-50%);opacity:0;pointer-events:none;transition:opacity .08s;}
   .bank-odchip .material-symbols-rounded{font-size:16px;font-variation-settings:'FILL' 1;}
   .bank-odchip:hover{background:#fbe3e3;}
   .bank-odchip.on{background:var(--red-100);color:#fff;border-color:var(--red-100);}
@@ -8978,7 +8980,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(a==="bank-acct-drill"){var wad=find(id);if(!wad)return;modal={type:"bankdrill",id:id,acct:t.getAttribute("data-acct")};modalMounted=false;pop=null;render();return;}
     if(a==="bank-drill-close"){modal=null;pop=null;render();return;}
     if(a==="bank-drill-back"){if(modal)modal.acct=null;render();return;}
-    if(a==="bank-open-app"){setStatus("Opening "+t.getAttribute("data-name")+" in Bank Account Management…");return;}
+    if(a==="bank-open-app"){setStatus("Opening "+t.getAttribute("data-name")+" in Bank Accounts…");return;}
     if(a==="mys-config"){var wc0=find(id);modal={type:"mysconfig",id:id,q:"",draft:(wc0.selected||[]).slice()};modalMounted=false;pop=null;render();return;}
     if(a==="mys-add"){var wa2=find(modal.id);var qid=t.getAttribute("data-q");if(wa2&&modal.draft.indexOf(qid)<0)modal.draft.push(qid);renderModal();return;}
     if(a==="mys-remove"){var qidr=t.getAttribute("data-q");if(modal)modal.draft=modal.draft.filter(function(x){return x!==qidr;});renderModal();return;}
