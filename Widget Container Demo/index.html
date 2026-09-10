@@ -6512,25 +6512,30 @@ function mysPopContent(){
     var pts=run.map(function(v,i){return {lab:labs[i]||("Movement "+i),kind:(i===0?"begin":(i===run.length-1?"end":"move")),move:(i===0?null:cats[i]),bal:v,net:(i===run.length-1?(v-run[0]):null)};});
     var dots=run.map(function(v,i){var cls=(i===0)?"begin":(i===run.length-1)?"end":((cats[i]>=0)?"add":"sub");return '<span class="brs-dot brs-'+cls+'" style="left:'+(xs[i]/W*100).toFixed(2)+'%;top:'+(ys[i]/H*100).toFixed(2)+'%"></span>';}).join("");
     var xp=xs.map(function(x){return (x/W*100).toFixed(2);}).join(","),yp=ys.map(function(y){return (y/H*100).toFixed(2);}).join(",");
-    return '<div class="kpi-spark bank-rspark" tabindex="0" data-bpts="'+encodeURIComponent(JSON.stringify(pts))+'" data-xp="'+xp+'" aria-label="Balance since the last reconciliation, beginning to ending. Hover to read each movement.">'+
+    return '<div class="kpi-spark bank-rspark" tabindex="0" data-bpts="'+encodeURIComponent(JSON.stringify(pts))+'" data-xp="'+xp+'" data-yp="'+yp+'" aria-label="Balance since the last reconciliation, beginning to ending. Hover to read each movement.">'+
       '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="brsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.16"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs>'+
       '<path d="'+line+' L'+xs[xs.length-1].toFixed(1)+','+H+' L'+xs[0].toFixed(1)+','+H+' Z" fill="url(#brsg)"/>'+
-      '<path d="'+line+'" fill="none" stroke="var(--chart)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>'+dots+'</div>';
+      '<path d="'+line+'" fill="none" stroke="var(--chart)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>'+dots+'<div class="brs-hair"></div><div class="brs-cursor"></div></div>';
   }
-  var brsTip=null;
-  function brsHide(){if(brsTip){brsTip.remove();brsTip=null;}}
+  var brsTip=null,brsSp=null;
+  function brsHide(){if(brsTip){brsTip.remove();brsTip=null;}if(brsSp){var hr=brsSp.querySelector(".brs-hair"),cu=brsSp.querySelector(".brs-cursor");if(hr)hr.style.opacity="0";if(cu)cu.style.opacity="0";brsSp=null;}}
   document.addEventListener("mousemove",function(e){
     var sp=e.target.closest&&e.target.closest(".bank-rspark");
-    if(!sp){if(brsTip)brsHide();return;}
+    if(!sp){brsHide();return;}
     var pts;try{pts=JSON.parse(decodeURIComponent(sp.getAttribute("data-bpts")));}catch(_e){return;}
-    var xp=sp.getAttribute("data-xp").split(",").map(Number),r=sp.getBoundingClientRect(),fx=((e.clientX-r.left)/(r.width||1))*100;
+    var xp=sp.getAttribute("data-xp").split(",").map(Number),yp=(sp.getAttribute("data-yp")||"").split(",").map(Number);
+    var r=sp.getBoundingClientRect(),fx=((e.clientX-r.left)/(r.width||1))*100;
     var idx=0,best=1e9,i;for(i=0;i<xp.length;i++){var dd=Math.abs(xp[i]-fx);if(dd<best){best=dd;idx=i;}}
     var p=pts[idx];if(!p)return;
+    brsSp=sp;
+    var hair=sp.querySelector(".brs-hair"),cur=sp.querySelector(".brs-cursor");
+    if(hair){hair.style.left=xp[idx]+"%";hair.style.opacity="1";}
+    if(cur&&yp.length){cur.style.left=xp[idx]+"%";cur.style.top=yp[idx]+"%";cur.style.opacity="1";}
     if(!brsTip){brsTip=document.createElement("div");brsTip.className="bgt-pop bank-rtip";document.body.appendChild(brsTip);}
     var html='<div class="bgt-pop-h">'+p.lab+'</div>';
-    if(p.kind==="move"){var add=p.move>=0;html+='<div class="bgt-pop-r"><span class="brs-ic '+(add?"add":"sub")+'"><span class="material-symbols-rounded">'+(add?"add":"remove")+'</span></span><span class="bgt-pop-lbl">'+(add?"Into the account":"Out of the account")+'</span><span class="bgt-pop-v '+(add?"add":"sub")+'">'+(add?"+":"−")+money(Math.abs(p.move))+'</span></div>';}
+    if(p.kind==="move"){var add=p.move>=0;html+='<div class="bgt-pop-r"><span class="bgt-pop-lbl">Amount</span><span class="bgt-pop-v '+(add?"add":"sub")+'">'+(add?"+":"−")+money(Math.abs(p.move))+'</span></div>';}
     html+='<div class="bgt-pop-r"><span class="bgt-pop-lbl">Balance</span><span class="bgt-pop-v">'+money(p.bal)+'</span></div>';
-    if(p.kind==="end"&&p.net!=null){var nu=p.net>=0;html+='<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">Since beginning</span><span class="bgt-pop-fav '+(nu?"add":"sub")+'">'+ICON(nu?"north_east":"south_east")+(nu?"up ":"down ")+money(Math.abs(p.net))+'</span></div>';}
+    if(p.kind==="end"&&p.net!=null){var nu=p.net>=0;html+='<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">Since beginning</span><span class="bgt-pop-fav '+(nu?"add":"sub")+'">'+(nu?"+":"−")+money(Math.abs(p.net))+'</span></div>';}
     brsTip.innerHTML=html;
     var bw=brsTip.offsetWidth,bh=brsTip.offsetHeight,x=e.clientX+14,y=e.clientY-bh-10;if(x+bw>innerWidth-8)x=e.clientX-bw-14;if(y<8)y=e.clientY+18;
     brsTip.style.left=x+"px";brsTip.style.top=y+"px";
