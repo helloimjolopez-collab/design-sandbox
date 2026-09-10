@@ -6511,7 +6511,7 @@ function mysPopContent(){
     var labs=["Beginning balance","Deposits","Voids","Checks","Withdrawals","Ending balance"];
     var pts=run.map(function(v,i){return {lab:labs[i]||("Movement "+i),kind:(i===0?"begin":(i===run.length-1?"end":"move")),move:(i===0?null:cats[i]),bal:v,net:(i===run.length-1?(v-run[0]):null)};});
     var dots=run.map(function(v,i){var cls=(i===0)?"begin":(i===run.length-1)?"end":((cats[i]>=0)?"add":"sub");return '<span class="brs-dot brs-'+cls+'" style="left:'+(xs[i]/W*100).toFixed(2)+'%;top:'+(ys[i]/H*100).toFixed(2)+'%"></span>';}).join("");
-    var xp=xs.map(function(x){return (x/W*100).toFixed(2);}).join(",");
+    var xp=xs.map(function(x){return (x/W*100).toFixed(2);}).join(","),yp=ys.map(function(y){return (y/H*100).toFixed(2);}).join(",");
     return '<div class="kpi-spark bank-rspark" tabindex="0" data-bpts="'+encodeURIComponent(JSON.stringify(pts))+'" data-xp="'+xp+'" aria-label="Balance since the last reconciliation, beginning to ending. Hover to read each movement.">'+
       '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="brsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.16"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs>'+
       '<path d="'+line+' L'+xs[xs.length-1].toFixed(1)+','+H+' L'+xs[0].toFixed(1)+','+H+' Z" fill="url(#brsg)"/>'+
