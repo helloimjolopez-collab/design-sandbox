@@ -8660,9 +8660,9 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   function faContent(w){
     if(w.state==="empty")return faEmptyState(w);
     var sz=w.size,big=(sz==="large"||sz==="xwide"||sz==="detail");
-    if(sz==="kpi"){var m=faMeasure(w),list=faTableAssets(w),total=faSum(list,m),n=list.length;
-      var num=w.faLoading?'<div class="dep-hd-kpigrp"><span class="sk" style="width:110px;height:24px;border-radius:6px"></span></div>':'<div class="metric-value" data-total="'+money(total)+'">'+money(total)+'</div>';
-      return '<div class="kpi-row"><div class="kpi-num">'+num+'<div class="gl-sub fa-ctx">'+faMeasureLabel(m)+' · '+n+(n===1?" asset":" assets")+' · '+faDimLabel(faDim(w))+'</div></div></div>';}
+    if(sz==="kpi"){var list=faTableAssets(w),nbv=faSum(list,"net"),cost=faSum(list,"cost"),acc=faSum(list,"acc"),n=list.length,pd=cost>0?Math.round(acc/cost*100):0;
+      var num=w.faLoading?'<div class="dep-hd-kpigrp"><span class="sk" style="width:110px;height:24px;border-radius:6px"></span></div>':'<div class="metric-value" data-total="'+money(nbv)+'">'+money(nbv)+'</div>';
+      return '<div class="kpi-row"><div class="kpi-num">'+num+'<div class="gl-sub"><span class="bank-pill" data-tip="'+money(acc)+' of '+money(cost)+' in cost depreciated" data-tip-plain>'+pd+'% depreciated</span><span class="fa-count-badge">'+ICON("inventory_2")+n+(n===1?" asset":" assets")+'</span></div></div></div>';}
     var head=faHeader(w);
     if(w.faLoading)return head+faSkeletonBody(big);
     if(big)return head+'<div class="fa-full"><div class="fa-panel"><div class="dep-col-h">Assets in '+faGroupLabel(w)+'</div>'+faTable(w)+'</div><div class="fa-panel fa-panel-pie"><div class="dep-col-h">'+faMeasureLabel(faMeasure(w))+' by '+faDimLabel(faDim(w))+'</div>'+faPie(w,220)+'</div></div>';
