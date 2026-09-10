@@ -8646,7 +8646,27 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     var body=list.map(function(a){return '<div class="wt-row fa-row" data-acct="'+a.name.replace(/"/g,"&quot;")+'"><span class="fa-c-tag">'+a.tag+'</span><span class="fa-c-name">'+a.name+'</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+money(a[c])+'</span>';}).join("")+'</div>';}).join("");
     var totals='<div class="wt-row fa-row fa-total-row"><span class="fa-c-tag"></span><span class="fa-c-name">Total ('+list.length+(list.length===1?" asset":" assets")+')</span>'+cols.map(function(c){return '<span class="fa-c-num'+(c===sel?" fa-emph":"")+'">'+money(faSum(list,c))+'</span>';}).join("")+'</div>';
     return '<div class="fa-tbl"><div class="scroll fa-tbl-scroll">'+head+body+totals+'</div></div>';}
-  function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){return s+r.val;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+  /* Depreciation story per group: Net Book Value + Accumulated = Cost, as one
+   stacked bar, with % depreciated. Bar length is proportional to cost, so bigger
+   groups read longer; clicking a group filters to it. Replaces the pie. */
+function faGroupRows(w){var dim=faDim(w),rows=[];
+  FA_CATALOG[dim].forEach(function(name){var list=FA_ASSETS.filter(function(a){return a[dim]===name;});if(!list.length)return;rows.push({name:name,cost:faSum(list,"cost"),acc:faSum(list,"acc"),net:faSum(list,"net"),count:list.length});});
+  if(faHasNA(dim)){var la=FA_ASSETS.filter(function(a){return a[dim]==null;});if(la.length)rows.push({name:FA_NA_LABEL,cost:faSum(la,"cost"),acc:faSum(la,"acc"),net:faSum(la,"net"),count:la.length,na:true});}
+  rows.sort(function(a,b){return b.cost-a.cost;});return rows;}
+function faBar(w){
+  var rows=faGroupRows(w),sel=(faGroup(w)===FA_ALL?null:faGroup(w));
+  if(!rows.length)return '<div class="fa-bars"><div class="state fa-inline-empty" data-kind="empty">'+ICON("inbox")+'<div class="state-title">Nothing to chart</div></div></div>';
+  var max=1;rows.forEach(function(r){max=Math.max(max,r.cost);});
+  var bars=rows.map(function(r){
+    var pd=r.cost>0?Math.round(r.acc/r.cost*100):0,netW=r.cost>0?(r.net/r.cost*100):100,accW=r.cost>0?(r.acc/r.cost*100):0,barW=Math.round(r.cost/max*100),hi=(sel!=null&&r.name===sel);
+    return '<div class="fa-brow'+(hi?" fa-brow-hi":"")+'" data-action="fa-set-group" data-id="'+w.id+'" data-g="'+String(r.name).replace(/"/g,"&quot;")+'" role="button" tabindex="0" aria-label="'+String(r.name).replace(/"/g,"&quot;")+', net book value '+money(r.net)+', '+pd+' percent depreciated, cost '+money(r.cost)+'. Filter to this group.">'+
+      '<div class="fa-blbl"><span class="fa-blbl-nm">'+r.name+'</span><span class="fa-blbl-sub">'+pd+'% depreciated</span></div>'+
+      '<div class="fa-btrack"><div class="fa-bfill" style="width:'+Math.max(6,barW)+'%"><div class="fa-bseg fa-bseg-net" style="flex-basis:'+netW.toFixed(1)+'%"></div><div class="fa-bseg fa-bseg-acc" style="flex-basis:'+accW.toFixed(1)+'%"></div></div></div>'+
+      '<div class="fa-bval"><span class="fa-bval-net">'+money(r.net)+'</span><span class="fa-bval-cost">of '+money(r.cost)+'</span></div>'+
+    '</div>';}).join("");
+  return '<div class="fa-bars"><div class="fa-blegend"><span class="fa-lg"><span class="fa-sw fa-sw-net"></span>Net book value</span><span class="fa-lg"><span class="fa-sw fa-sw-acc"></span>Accumulated depreciation</span></div>'+bars+'</div>';
+}
+function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){return s+r.val;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
     var selName=(faGroup(w)===FA_NA)?FA_NA_LABEL:(faGroup(w)===FA_ALL?null:faGroup(w));
     if(!rows.length)return '<div class="fa-pie"><div class="state fa-inline-empty" data-kind="empty">'+ICON("donut_large")+'<div class="state-title">Nothing to chart</div><div class="state-sub">No group has a '+faMeasureLabel(faMeasure(w)).toLowerCase()+' above zero.</div></div></div>';
     rows.forEach(function(r,i){var frac=tot?r.val/tot:0,len=frac*C,c=FA_PIE[i%FA_PIE.length],hi=(selName!=null&&r.name===selName);
