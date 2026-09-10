@@ -8665,7 +8665,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
       return '<div class="kpi-row"><div class="kpi-num">'+num+'<div class="gl-sub"><span class="bank-pill" data-tip="'+money(acc)+' of '+money(cost)+' in cost depreciated" data-tip-plain>'+pd+'% depreciated</span><span class="fa-count-badge">'+ICON("inventory_2")+n+(n===1?" asset":" assets")+'</span></div></div></div>';}
     var head=faHeader(w);
     if(w.faLoading)return head+faSkeletonBody(big);
-    if(big)return head+'<div class="fa-full"><div class="fa-panel"><div class="dep-col-h">Assets in '+faGroupLabel(w)+'</div>'+faTable(w)+'</div><div class="fa-panel fa-panel-pie"><div class="dep-col-h">'+faMeasureLabel(faMeasure(w))+' by '+faDimLabel(faDim(w))+'</div>'+faPie(w,220)+'</div></div>';
+    if(big)return head+'<div class="fa-full"><div class="fa-panel"><div class="dep-col-h">Assets in '+faGroupLabel(w)+'</div>'+faTable(w)+'</div><div class="fa-panel fa-panel-pie"><div class="dep-col-h">Net book value and depreciation by '+faDimLabel(faDim(w))+'</div>'+faBar(w)+'</div></div>';
     return head+'<div class="fa-single">'+faTable(w)+'</div>';
   }
   function faLoad(w){w.faLoading=true;render();clearTimeout(timers["fa-"+w.id]);timers["fa-"+w.id]=setTimeout(function(){w.faLoading=false;w.updated="just now";render();},700);}
