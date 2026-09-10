@@ -6700,7 +6700,7 @@ function mysPopContent(){
     if(!modal.acct&&w.bkOver)title="Overdrawn accounts";
     if(modal.acct){clone.bkacct=modal.acct;clone.bkOver=false;ao=bankAccounts(w).filter(function(a){return a.id===modal.acct;})[0];if(ao)title=ao.name+" "+ao.acct;}
     var back=modal.acct?'<button class="btn naked sm bank-back" data-action="bank-drill-back" data-id="'+w.id+'">'+ICON("arrow_back")+(w.bkOver?"Overdrawn accounts":"All accounts")+'</button>':'';
-    var openApp=(modal.acct&&ao)?'<button class="btn outlined sm" data-action="bank-open-app" data-name="'+ao.name.replace(/"/g,"&quot;")+'">'+ICON("open_in_new")+'Open in Bank Accounts</button>':'';
+    var openApp="";/* External deep-link to the account in Bank Account Management is an UNVERIFIED dependency (destination screens exist per the Bank audit, but dashboard deep-linking is unconfirmed). Not shipping a button that implies a capability we haven't confirmed; the account's detail is already in this drill. Re-add once engineering confirms the link. */
     return '<div class="modal-backdrop" data-action="bank-drill-close"><div class="modal modal-wide bank-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="'+title.replace(/"/g,"&quot;")+'">'+
       '<div class="modal-h bank-drill-h">'+back+'<span class="modal-title">'+title+'</span><span class="bank-dh-spacer"></span>'+openApp+'<button class="iconbtn" data-action="bank-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
       '<div class="modal-b bank-drill-b">'+bankContent(clone)+'</div>'+
