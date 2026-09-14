@@ -7880,8 +7880,8 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     var kpi,pend=ptoPending(w);
     if(w.ptoLoading){kpi='<div class="dep-hd-kpigrp"><span class="sk" style="width:52px;height:24px;border-radius:6px"></span><span class="sk" style="width:110px;height:20px;border-radius:999px"></span></div>';}
     else{var badge='<span class="pto-pill '+(pend.records?"warn":"ok")+'">'+ICON(pend.records?"pending_actions":"check_circle")+pend.records+' pending</span>';kpi='<div class="dep-hd-kpigrp"><span class="metric-value">'+pend.records+'</span>'+badge+'</div>';}
-    var ctx=pend.records?'Awaiting your approval':'Nothing awaiting your approval';
-    return '<div class="dep-hd pto-hd"><div class="dep-hd-top">'+chips+'</div><div class="dep-hd-num"><div class="pto-numwrap">'+kpi+'<div class="pto-ctx">'+ctx+'</div></div></div></div>';
+    /* No prose line: the count + "N pending" pill (warn/ok) already say it. */
+    return '<div class="dep-hd pto-hd"><div class="dep-hd-top">'+chips+'</div><div class="dep-hd-num"><div class="pto-numwrap">'+kpi+'</div></div></div>';
   }
   function ptoSkeleton(){var rows="";for(var i=0;i<4;i++)rows+='<div class="wt-row pto-sk-row"><span class="sk" style="width:18px;height:18px;border-radius:4px"></span><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:72px;height:12px;border-radius:4px"></span></div>';return '<div class="pto-skel" aria-busy="true">'+rows+'</div>';}
   function ptoChev(open){return '<span class="pto-chev'+(open?" open":"")+'" aria-hidden="true">'+ICON("chevron_right")+'</span>';}
