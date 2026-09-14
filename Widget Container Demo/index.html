@@ -8547,10 +8547,20 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   }
 
   /* (6) HEADER / GLANCE / STATES */
+  /* Header: filter chip (top row) + a canonical headline (total enrolled) with
+     the same "N plans" pill the glance uses. No prose line: the employees-and-
+     dependents basis lives in the widget's about/info affordance and the per-row
+     tooltips, so the face carries the number, not a sentence. */
   function insFHeader(w,mode){
-    var ctx=(mode==="loading")?"Updating the enrolment breakdown...":"Counts include employees and their dependents.";
+    var numInner;
+    if(mode==="loading"){
+      numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:96px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';
+    }else{
+      var tot=insFTotal(w),n=insFPlanCount(w);
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+insFNum(tot)+'</span><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+' enrolled</span></div>';
+    }
     return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insFTypeChip(w)+'<div class="dep-hd-toggle"></div></div>'+
-      '<div class="dep-hd-num"><div class="ins-ctx">'+ctx+'</div></div></div>';
+      '<div class="dep-hd-num">'+numInner+'</div></div>';
   }
   function insFGlance(w){
     var tot=insFTotal(w),n=insFPlanCount(w),lead=(w.insType&&w.insType!=="All")?insFTypeLabel(w).toLowerCase():"all types";
