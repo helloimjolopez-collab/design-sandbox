@@ -6611,13 +6611,17 @@ function mysPopContent(){
        Detail (xwide) shows both views side by side, so no toggle there. */
     var toggle=(w.size==="wide")?bankViewToggle(w):"";
     var od=(!sel&&!loading)?bankOdChip(w):"";
+    /* The balance is the unreconciled figure (activity since the last reconciliation),
+       not necessarily cleared, spendable cash — the domain's central truth (brief
+       section 8 / 17.3). Carried as one muted chip, not a sentence; detail in hover. */
+    var basisPill='<span class="delta-pill bank-basis" style="color:var(--txt-subtle);background:var(--wn-200)" data-tip="Unreconciled activity since the last reconciliation, not necessarily cleared, spendable cash." data-tip-plain>Unreconciled</span>';
     var numInner;
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
-    else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?'<span class="bank-pill warn">'+ICON("warning")+'Overdrawn</span>':'')+'</div>';}
+    else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?'<span class="bank-pill warn">'+ICON("warning")+'Overdrawn</span>':'')+basisPill+'</div>';}
     else{var tot=bankTotal(w);
-      /* KPI is the money only. Account count moves to a "showing X of Y" caption on
-         the table; overdrawn moves to its own filter card (bankOverCard). */
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span></div>';}
+      /* KPI is the money + the unreconciled-basis chip. Account count moves to a
+         "showing X of Y" caption on the table; overdrawn moves to its own filter card. */
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span>'+basisPill+'</div>';}
     return '<div class="dep-hd">'+
       '<div class="dep-hd-top"><div class="bank-hd-left">'+bankAcctChip(w)+od+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
       '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
