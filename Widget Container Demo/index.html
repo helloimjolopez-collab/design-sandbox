@@ -6724,18 +6724,19 @@ function mysPopContent(){
      and the overdrawn chip DRILLS, opening the Detail view in a closable overlay
      filtered to the overdrawn accounts. No inert button-looking chip. */
   function bankGlance(w){var sel=bankSelected(w);
+    var basisPill='<span class="delta-pill bank-basis" style="color:var(--txt-subtle);background:var(--wn-200)" data-tip="Unreconciled activity since the last reconciliation, not necessarily cleared, spendable cash." data-tip-plain>Unreconciled</span>';
     if(sel){var end=bankEnding(sel),neg=end<0;
       return '<div class="kpi-row"><div class="kpi-num">'+
         '<div class="bank-gl-top">'+bankAcctChip(w)+'</div>'+
         '<div class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</div>'+
-        (neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
+        '<div class="gl-sub">'+(neg?'<span class="bank-pill warn">'+ICON("error")+'Overdrawn</span>':'')+basisPill+'</div>'+
         '</div>'+bankSpark(w)+'</div>';}
     var val=bankTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, tap to open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<div class="bank-gl-top">'+bankAcctChip(w)+'</div>'+
       '<div class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
-      (over?'<div class="gl-sub">'+od+'</div>':'')+
+      '<div class="gl-sub">'+od+basisPill+'</div>'+
       '</div>'+bankSpark(w)+'</div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
