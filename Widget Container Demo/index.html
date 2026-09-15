@@ -4592,7 +4592,10 @@ function gftDonorDrawer(w,r,thru){
     ?'<div class="gft-gifts"><div class="gft-grow gft-ghead"><span>Gift date</span><span class="gft-ga">Amount</span></div>'+r.gifts.map(function(g){return '<div class="gft-grow"><span>'+gftFmtDate(g[0])+'</span><span class="gft-ga">'+money(g[1])+'</span></div>';}).join("")+'</div>'
     :'<div class="gft-tab-empty">'+ICON("volunteer_activism")+'No gifts received toward this pledge yet.</div>';
   var summary='<div class="gft-dsum"><span class="gft-dsum-i"><span class="gft-dsum-k">Pledged</span><span class="gft-dsum-v">'+money(r.pledged)+'</span></span><span class="gft-dsum-i"><span class="gft-dsum-k">Received</span><span class="gft-dsum-v">'+money(r.received)+'</span></span><span class="gft-dsum-i"><span class="gft-dsum-k">Still to give</span><span class="gft-dsum-v">'+money(r.outstanding)+'</span></span></div>';
-  var actions='<div class="gft-dactions"><button class="btn outlined sm" data-action="gft-open-donor" data-id="'+w.id+'" data-donor="'+gftEsc(r.donor)+'">'+ICON("open_in_new")+'Open donor record</button><button class="btn naked sm" data-action="gft-followup" data-id="'+w.id+'" data-donor="'+gftEsc(r.donor)+'">'+ICON("event_note")+'Record a follow-up</button></div>';
+  /* Only the navigational action: opening the donor in Donors & Gifts. A
+     "record a follow-up" logging capability is unconfirmed in the data model
+     (brief section 19), so it is not claimed here. */
+  var actions='<div class="gft-dactions"><button class="btn outlined sm" data-action="gft-open-donor" data-id="'+w.id+'" data-donor="'+gftEsc(r.donor)+'">'+ICON("open_in_new")+'Open donor record</button></div>';
   return '<div class="gft-drawer">'+summary+'<div class="gft-drawer-h">Gift history</div>'+hist+actions+'</div>';
 }
 
