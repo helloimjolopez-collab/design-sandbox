@@ -110,7 +110,7 @@ codebase trace), and any open question. A row with nothing to say in Notes leave
 | W01 Budget Compared to Actual | 2026-09-08 | 3 adopt, rest base = Jo | **2026-09-08, verified** |
 | W02 Pension Plans | 2026-09-08 | 1 adopt, rest base = Jo | **2026-09-08, verified** |
 | W03 Payroll Distributions | 2026-09-08 | 1 adopt, 1 adopt-modified, 1 new | **2026-09-08, verified** |
-| W04 Remittance Pledges | — | — | — |
+| W04 Remittance Pledges | 2026-09-10 | Round 1: 11 rows. Round 2: T1-T19, all agreed. 3 naming cautions open | **2026-09-10, verified.** Both rounds in; 221 assertions, seed tuned |
 | W05 Receivable Invoices Outstanding | — | — | — |
 | W06 Insurance Billing Plans | — | — | — |
 | W07 Deposits on Hand | — | — | — |
@@ -257,6 +257,146 @@ about the row is unchanged.
 | ID | Aspect | Jo (current live) | Ours | Decision | Notes |
 |---|---|---|---|---|---|
 | W03-ST-01 | No pay history, and zero-in-range | Her empty state, with the header kept so the period chip is the way back | Same | Keep Jo | Untouched by everything above |
+
+---
+
+## W04 — Remittance Pledges
+
+**Base: Jo's exact code**, and it stays the base — but W04 is **no longer "her widget taken whole"**.
+Round 1 changed only the pop-up. Round 2 (agreed and built 2026-09-10) also edits her table: the
+column headings go back to the legacy words, the legacy order is restored, `Seq.` comes back, and a
+new `Pledges behind` column is added. Recorded honestly here rather than left reading as parity.
+
+What still stands untouched from her: her pacing bars, her pace cards, her band drill, her thru-date
+control, her sorting mechanism, her views, her `% Paid` progress bar, her band thresholds and her
+loading and empty behaviour. What changes is the pop-up on an activity click, her table's column
+set, and three additions on top (grace period, info icons, the second empty state).
+
+### The governing decision: two tiers, two pacing definitions
+
+**The widget is the overview. The pop-up is where the detailed work happens.** That split is
+deliberate, and it decides everything else in this section.
+
+| | Widget, every size | Pop-up |
+|---|---|---|
+| Pacing basis | **Term elapsed.** `expected = goal × (daysElapsed / termDays)` on each pledge's own term, summed | **Instalments due.** For each pledge, the instalments whose due date has passed, from `BeginDate`, `Frequency` and `Duration` |
+| Unit of "behind" | Days | Payments |
+| Cost | One grouped read, as legacy | Per-pledge iteration, scoped to one activity |
+| Answers | "is this activity roughly keeping up" | "who has missed a payment, which one, and how much is unfunded" |
+
+The widget keeps the term-elapsed basis because it is what legacy did, it is adequate for an
+overview, and — decisively — **it is the only one that scales.** A mega-church activity can carry
+thousands of pledgers, each with its own start and end date; building an instalment schedule for
+every one of them to render a KPI tile cannot be indexed and cannot easily be cached, because it
+depends on the as-of date. Term-elapsed is a single `GROUP BY` that the database does.
+
+> **Amended 2026-09-10 (round 2).** The split is no longer absolute. `W04-T10` puts **one**
+> instalment-derived number on the widget row — the `Pledges behind` count — because the owner needs
+> an activity that reads healthy overall to still reveal the one or two pledges behind inside it,
+> which is exactly the exception a netted total hides. Every *money* figure on the row is still
+> term-elapsed and still one grouped read; only that count crosses over. It carries the same
+> live-versus-materialise decision the pledge-list sort does in `W04-AL-07`, and the same two
+> options: materialise a missed-instalment count per pledge when receipts post so it becomes a plain
+> `SUM`, or compute it live only below a row-count threshold.
+
+The pop-up is scoped to one activity, so the instalment work is bounded by that activity's pledge
+count rather than the organisation's.
+
+**Known cost of the split, accepted deliberately:** the activity row nets, so an activity can read
+"keeping up" while pledgers underneath it have missed payments. This is the masking the aggregate
+rule in the Step 5 spec was written to prevent (`SUM(MAX(0, expected − paid))`, never
+`MAX(0, SUM(expected) − SUM(paid))`). It is accepted here because the alternative does not scale.
+It must be worded as "the activity is keeping up overall, but these pledgers have missed payments",
+never in a way that reads as a defect.
+
+### Why the two numbers will not match, and how that is handled
+
+Most of the pop-up reconciles to the activity row regardless of the split, because most of the
+figures are definitional rather than paced: **Goal, Paid, Outstanding and % Paid** are receipts
+summed and goal minus receipts. They tie out under either basis.
+
+**Exactly one figure diverges: expected-by-now** — and with it the status chip and the behind
+phrase. The two must therefore never appear side by side under the same name. Handled by naming the
+basis in the label at both tiers (see `W04-AL-05`), so a reader is told why the numbers differ
+instead of being left to assume one is wrong.
+
+### What the pop-up is for
+
+> Clicking an activity answers **"what pledges sit behind this activity, and which of them are
+> falling behind?"** — not "what money arrived recently".
+
+Her receipts list is the wrong level. What it shows are the payments made against the activity's
+pledges, but flattened, with the pledge each one belongs to and its term stripped out — so a reader
+sees amounts arriving without being able to tell which commitment they are paying down or whether
+that commitment is on schedule. The pledge list restores the level the widget is actually about:
+each pledge, its own term, its goal, what it has paid, what is outstanding, and its pacing status.
+
+### Route structure — no new wiring
+
+Her pacing bars already fire the **same** action as her table rows (`remF-open`), so a bar and a row
+open one shared modal. Our version split that into two different pop-ups. Restoring one modal from
+both routes is therefore **her own structure**, not a change to it: only the modal that action opens
+is different. Our second pop-up is dropped.
+
+### All sizes
+
+| ID | Aspect | Jo (current live) | Ours | Decision | Notes |
+|---|---|---|---|---|---|
+| W04-AL-01 | What the activity pop-up lists under the header | **Receipts.** Six-cell summary (Total pledge, Expected by now, Paid to date, Outstanding, % Paid, status chip), term line, status note, then `Receipts on or before <date>` as a Date / Reference / Amount list with a count-and-total footer | **Pledges.** A pledge table — Name, Begin date, End date, Goal, Paid, Outstanding, Status — each name expanding to that pledge's payment schedule and any skipped payments | **Adopt ours** | Her receipts are the payments against the activity's pledges with the pledge and its term stripped out, so they cannot be read as progress against a commitment. The pledge list is the level the widget is about. The summary strip above the list is **not** kept as-is from either version — see `W04-AL-05` |
+| W04-AL-02 | Scope and default order of that list | n/a | Every pledge for the activity, sorted most behind pace first | **Adopt modified** | **All** pledges, not only the behind ones — the sort carries the urgency, the filter must not. Default order is most instalments missed first, per `W04-AL-07`. Paging stays as ours has it. Wording must be corrected with it: the modal subtitle reads `Pledges behind this activity` and the panel caption `Pledges behind <name>`, where "behind" means *belonging to* — three words after a pacing status chip, so it reads as "behind pace". Neither string filters anything; both need rewording |
+| W04-AL-03 | Export inside the pop-up | Export to Excel in the modal header, exporting the receipts | Export to Excel in the modal header, exporting that activity's pledges | **Adopt ours** | Export covers **what is in the pop-up**: the list of pledges and, beneath each, its transactions. Display-only, as every export in this build is — the button records where the control lives and what it covers; the developers implement the file. Unlike W03, this export is **not** pushed behind the card's 3-dot menu: it is scoped to one activity's pop-up, which the card-level menu cannot express |
+| W04-AL-04 | Pacing basis | Calendar-year: `(Annual / 12) × month number` in the grid, day-of-year `/365` in the header note. Two bases on one screen that do not agree, and neither reads a pledge's own term | Term-elapsed everywhere: `goal × daysElapsed / termDays` on each pledge's own term, with the day-based band (±30 / −60) and the phrase "About N days behind schedule" | **Adopt ours for the widget, New for the pop-up** | Widget keeps term-elapsed, per the two-tier decision above. The pop-up switches to **instalments due**, computed from `BeginDate`, `Frequency` and `Duration`. Consequences inside the pop-up: the band stops being defined in days and becomes payments (on track / 1 payment behind / 2 or more behind); "ahead" becomes rare and meaningful, reached only by prepaying an instalment not yet due. Reason the day band cannot be carried into the pop-up: `daysAhead` peaks at exactly one payment interval for a payer who misses nothing, so a fixed 30-day tolerance flags on-time quarterly and semi-annual payers as "30+ days ahead" while taking a full month to surface a real miss. Six of the seven selectable frequencies are non-monthly |
+| W04-AL-05 | Pop-up summary strip | Total pledge, Expected by now, Paid to date, Outstanding, % Paid, status chip — all term-elapsed | Identical strip, identical basis | **New** | The strip is rebuilt to the pop-up's own basis. Keeps: total pledged, paid to date, outstanding, % paid — these are definitional and tie out to the activity row either way. Replaces the paced figures with instalment ones: how many pledges have a missed instalment, how many instalments are missed in total, and the unfunded amount. **Both tiers name their basis in the label** so the two expected figures are never presented as the same quantity. See the naming questions below |
+| W04-AL-06 | Pop-up behind-pace note | Her note reads "About 102 days behind schedule ($6,712 behind the expected pace)" | Same sentence, same day basis | **New** | Rewritten to the instalment basis, in payments rather than days, naming the count of missed instalments and the unfunded amount. The day-count sentence stays on the widget, where the day basis still applies |
+| W04-AL-07 | Pledge list sorting | n/a — no pledge list exists | Fixed order: most behind pace first, no user control | **Adopt modified** | Five sorts, user-selectable from the column headers: **most outstanding by amount**, **most instalments missed** (the default), **oldest / newest pledger** (`BeginDate`), **closest to / furthest from finishing** (`EndDate`, or paid ÷ goal). Note for the devs on cost: four of the five are plain indexed column sorts. **Most instalments missed is not** — sorting on it requires building the schedule for *every* pledge under the activity, not only the page being shown, and it is the default. For a large activity that is thousands of schedules per open. Options to spec: compute live below a row-count threshold and fall back to outstanding-amount ordering above it, or materialise a missed-instalment count per pledge when receipts post so the sort becomes a column |
+
+**Naming — decided in principle, wording still open.** The two expected figures must carry different
+labels, because they answer the same question on different bases and will not agree. Recorded as an
+owner decision. Three cautions on the specific words, raised 2026-09-10 and **not yet resolved**:
+
+1. **Avoid "absolute" for the widget's figure.** It points the wrong way: term-elapsed is the looser,
+   smoothed approximation, while instalments-due is the literal one. "Absolute" would tell a reader
+   the approximation is the exact number. Prefer labels that name the basis — the widget's is
+   "expected by term elapsed", the pop-up's "expected by instalments due" — rather than asserting
+   precision.
+2. **"Due" is already taken, and it means shortfall.** Legacy uses it that way twice: the church
+   portal's `Due` is `expected − paid` floored at zero, and the pledge grid's "Current Due" is the
+   same idea instalment-based. `RM_Company` even ships a configurable `DueLabel` beside
+   `YTDExpectedLabel`. Using "Due by now" for the pop-up's *target* would collide with a word
+   existing users read as "the amount you are behind".
+3. **"For the year" is wrong for multi-year pledges, and legacy already has this bug.** The legacy
+   column is called "Annual" but holds `SUM(RM_PledgeDetail.Pledge)` — the **full term** amount. The
+   demo's own capital campaign proves it: $30,000 is the whole three-year pledge, not a year of it.
+   The screenshot's pledge list carries terms running to 2027 and 2028 under an activity strip
+   claiming a 2026 term. So "total pledged for the year" would inherit a misnomer. Either drop "for
+   the year", or pro-rate to the window — which nothing in legacy does.
+
+### Glance
+
+No differences adopted. Base is Jo's code, unchanged. Her Glance carries no activity list, so the
+pop-up is not reachable at this size.
+
+### Explore
+
+| ID | Aspect | Jo (current live) | Ours | Decision | Notes |
+|---|---|---|---|---|---|
+| W04-EX-01 | Clicking an activity row in the table | Opens her receipts pop-up | Opens our pledge drill | **Adopt ours** | The pop-up defined in W04-AL-01. Her row markup and her click action are kept; only the modal they open changes |
+| W04-EX-02 | Clicking a pacing bar | Opens her receipts pop-up — the **same** action as her table rows, so bar and row share one modal | Opens a **different, second** pop-up: the same summary and term line, then only the **top 5 pledges furthest behind pace**, no paging, with a caption counting how many are behind | **Adopt ours, single route** | The bar must open the **same** pop-up as the table. Our separate top-5 pop-up is **not adopted** and is dropped — its content is a subset of the drill's first page once the sort is most-behind-first. Because her two routes already share one action, this needs no new wiring: it is her structure, pointed at our modal |
+
+### Detail
+
+| ID | Aspect | Jo (current live) | Ours | Decision | Notes |
+|---|---|---|---|---|---|
+| W04-DE-01 | Clicking an activity row or a pacing bar | As W04-EX-01 and W04-EX-02 | As W04-EX-01 and W04-EX-02 | **Adopt ours, single route** | Same behaviour and the same code. The modal is shared across sizes, so this is one implementation, not a second one |
+
+### Other states
+
+| ID | Aspect | Jo (current live) | Ours | Decision | Notes |
+|---|---|---|---|---|---|
+| W04-ST-01 | No pledges set up / no receipts | Her empty state, and inside the pop-up a `No receipts recorded on or before <date>` row | Her empty state is untouched; inside our pop-up an empty pledge list | Keep Jo for the widget, ours for the pop-up | The widget's own empty state is hers and is not touched. Only the pop-up's empty message changes, because the pop-up's content changed |
+| W04-ST-02 | Activity with no pledge amount set | Her `neutral` status note: nothing to pace against, receipts shown for reference | Same neutral note, plus a term line that says no pledge term falls inside the selected window | Carried with the pop-up | **Open question.** Our extra term line belongs to our date-range machinery, which is **not** being adopted — the range picker stays hers. Say whether that line should come across reworded to her thru-date framing, or be dropped so the neutral note stands alone |
+| W04-ST-03 | Pledge whose term has **ended** with an amount still unpaid | No such state. Her day-based chip labels it "60+ days behind" like any other lagging pledge | Same — ours inherits the day band, so it labels it "60+ days behind" too | **New** | Wrong in **both**. Evidenced in the live build 2026-09-10: `Coleman, Derek`, term Feb 1 2025 to Jan 31 2026, goal $320, paid $0 — the term ended six months before the as-of date and nothing was ever paid, yet it reads "60+ days behind". It is not behind, it is **finished and defaulted**, and no amount of catching up is possible inside the term. `Fairchild, Nora` is the same case part-paid ($238 of $683, term ended Feb 28 2026). Needs its own state and wording — under the instalment basis, every instalment is missed and the term is closed. Distinct from "behind", which implies a term still running |
+| W04-ST-04 | Activity term line above the pledge list | Renders a single pledge term for the whole activity | Same | **New** | Wrong in both. An activity has **no term of its own** — the line is inheriting one pledge's dates. The live build shows `Pledge term Jan 1, 2026 to Dec 31, 2026` above a list whose pledges run to Jan 2027, Jun 2026 and May 2028. Confirmed in the schema: `RM_Activity` has `StartDate` and `EndDate` columns but the widget's activity aggregate is built from `RM_PledgeDetail` joined to `RM_Pledge`, so the term shown is a pledge's, not the activity's. Either drop the line at activity level, or replace it with a range across the pledges it contains |
 
 ---
 
@@ -534,3 +674,201 @@ retained as `w03-payroll-mb.driver.superseded.bak` and replaced by **`w03-payrol
 66 assertions, each traceable to a row ID above, including the cross-foot, the scoping of the legend
 fix, and a check that all of her own `prF` functions still exist verbatim. Full suite: 15 drivers,
 **7,167 assertions, 0 failures**. Confirmed in the browser at all three sizes and in the drill modal.
+
+---
+
+## W04 — implementation notes
+
+### Implemented 2026-09-10 — what was actually done
+
+All eleven rows are in. **`w04-remittance-oc.driver.js`, 124 assertions, 0 failures.** Full suite
+after the change: **6,589 assertions, 2 failures**, both pre-existing and unrelated — `cmp-dashboard`
+and `w17-gifts-mb` each look for an `index.BACKUP-cmpdash-*.html` / W17 snapshot from an earlier
+edit workflow that no longer exists on disk.
+
+1. **Rebase.** The `remO` CSS and JS blocks were replaced with her `remF` blocks renamed into the
+   `remO` namespace. Function count went from our 79 to her 50, then the pledge machinery was added
+   back on top. Three traps the rename had to survive:
+   - **Her retired `rem` widget owns `remFmtDate` and `remFindRow`**, while her live block owns
+     `remFFmtDate` and `remFFindRow`. A blind `remF` → `remO` replace would have silently corrupted
+     the retired widget's two functions. The rename was anchored on an enumerated allowlist of the
+     57 `remF` tokens that actually occur inside her block, applied longest-first. Both retired
+     functions are asserted intact in the driver.
+   - **The hover popover.** Her mousemove listener keys on `data-rempop`, and our pre-rebase block
+     had deliberately used `data-remopop` to stay isolated. A straight rename would have reinstated
+     her attribute in our copy, so both listeners would fire on both widgets' bars. The copy keeps
+     the distinct attribute.
+   - **Shared `rem-*` CSS.** Her block defines eleven un-prefixed rules (`.rem-drill-modal`,
+     `.rem-mini*` and so on). Copying them would have put a *later, unscoped* duplicate in the file,
+     which would then override hers for **her** widgets. Those eleven rules were dropped from the
+     copy; hers still supply them.
+2. **The pop-up (W04-AL-01, EX-01/02, DE-01).** Her `remOdetail` modal type now renders
+   `remOPledgeModalHTML` instead of her payment history. No new route: her own open action already
+   fires from the table row and the pacing bar, so both reach it. `remOBehindModalHTML` and
+   `REMO_USE_POPUP` are gone; her `remODetailModalHTML` is retained unedited as the rollback path.
+   The shell branch uses the mounted / body-only refresh pattern so paging, sorting and expanding a
+   schedule never replay the entry animation.
+3. **Instalment pacing (W04-AL-04).** `remOPledgePace` derives everything from `remOSchedule`, which
+   already existed and already allocated receipts oldest-first with missed / part / upcoming states.
+   So this was a rewiring, not new logic — and it resolves the contradiction that the expandable
+   schedule had always been instalment-based while the chip above it was day-based. `daysAhead` and
+   the ±30 / −60 band are gone from the pop-up; the widget keeps both.
+4. **The reconciliation holds.** Verified for every activity: pledge goals sum **exactly** to the
+   activity total and pledge paids sum **exactly** to the activity paid, because they are
+   definitional. The paced figure is the one that legitimately differs, and the driver asserts that
+   it *does* differ — that divergence is the reason the label names the basis.
+5. **W04-ST-03/04.** The ended-term status and the term-range line are in, and the driver asserts
+   the pledges genuinely span outside the activity's own dates, which is what made the old single
+   term line wrong.
+
+### Two things left open
+
+**Flagged for the owner — the demo data now makes almost everything read behind.** The logic is
+right and verified, but the seeded pledge paids are random fractions of goal, and the instalment
+basis is far stricter than term-elapsed, so the pop-up now reports 58 of 60 pledges behind on W04-01
+and **71 of 71** on the capital campaign. Worst case is the capital campaign, where the widget row
+says "on track, +$178" while its pop-up says every pledge is behind and $10,416 is unfunded. That is
+the masking cost recorded above behaving exactly as designed, but at an implausible scale that will
+read as a bug in review. This is a **demo-data tune, not a logic change** — the seed needs a
+realistic mix of on-track, one-behind, several-behind and ended pledges. Not done, pending the
+owner's word.
+
+**Naming.** The strip currently reads "Total pledged" and "Expected by instalments due" as
+placeholders that name the basis. The three wording questions above are unresolved and the labels
+are marked provisional in the code comment.
+
+---
+
+### Round 2 — agreed and IMPLEMENTED 2026-09-10
+
+Every item below was decided by the owner on 2026-09-10 and is **built and verified**.
+`w04-remittance-oc.driver.js` now runs **221 assertions, 0 failures**; the full suite is
+**6,686 assertions, 2 failures**, both pre-existing and unrelated (`cmp-dashboard` and
+`w17-gifts-mb` each look for an `index.BACKUP-*` snapshot from an earlier edit workflow that is no
+longer on disk). What was actually done, where it differed from the plan, is noted after the table.
+
+| # | Change | Detail |
+|---|---|---|
+| T1 | Pledge table gets its own scroll | Name / Begin date / End date / Goal / Paid / Outstanding / Status stay **fixed**; rows and any expanded schedule scroll beneath. Strip, term line, note and caption stay above the scroll. `.rem-pl-head` already carries `position:sticky` and only needs a scrolling ancestor |
+| T2 | Padding between table and footer | Rows currently land on the Close button |
+| T3 | Separate the note from the caption | "N of M pledges have missed a payment" and the purple "Every pledge recorded against…" read as one block |
+| T4 | Widen the modal, strip to 7 cells at 4 per row | `Total pledged · Expected by instalments due · Received to date · Outstanding` / `% Paid · Pledges behind · Pledges at risk`. Replaces the single "Pledges with a missed payment" cell with the two counts. Widen via a **scoped** override (`.remo-root.rem-drill-modal`) — never her global `.rem-drill-modal` rule |
+| T5 | At-risk **amount** named in the note | The two counts fix the population but not the arithmetic: expected minus received will not reach the unfunded figure, because at-risk money sits between them |
+| T6 | Widget headings | `Pledge` → **`Annual`** (kept per owner, misnomer acknowledged, tooltip it), `Paid` → **`Received to date`**, `Expected` → **`Expected to date`**. "YTD" is **dropped, not adopted** — see the time-basis note below |
+| T7 | Widget column order | `Seq. \| Activity \| Pledges behind \| Annual \| Expected to date \| Received to date \| Outstanding \| % Paid` |
+| T8 | Add `Seq.` back | The only legacy number missing. The table already defaults to sorting by `seq` without showing it |
+| T9 | Keep Jo's `% Paid` progress bar | With its expected-position marker. Legacy was a plain percentage; Jo's bar wins |
+| T10 | New column `Pledges behind` | **Count only, no amount.** Definition: pledges with at least one payment behind **past the 7-day grace**. Sortable like her other columns. Purpose: an activity that looks healthy overall but hides one or two behind pledges, at high volume |
+| T11 | Bands unchanged | Jo's 30 / ±30 / −60 logic stays, and both edge cases with it (paid-in-full counts as Ahead, no-pledge-amount counts in none). The owner's proposed 0-boundary was withdrawn |
+| T12 | Info icon on each of the three cards | Top right, **all** sizes, **focusable** not hover-only, reusing her `data-tip` mechanism. Wording in plain terms, no day counts: "further behind than about a month's worth of payments" and its equivalents. Note: the icon cannot nest inside her `<button>` card — needs a wrapper with the button and the icon as siblings |
+| T13 | 7-day grace on every payment date | Due dates themselves unchanged. For an instalment due 1 Jul: **on track on 1 Jul**, at risk 2–8 Jul, behind from 9 Jul. Grace runs from the day *after* the due date |
+| T14 | Status column, five types | `N payments behind` · `At risk` · `Term ended, unpaid` · `Paid in full` · `On track`. No separate "Term ended, paid" — `Paid in full` already existed and covers it |
+| T15 | At risk never counts as behind | Excluded from the pledge's behind count, the note, the strip cell and the `Pledges behind` column |
+| T16 | Unfunded counts only past-grace instalments | At-risk money is tracked separately (T4, T5) |
+| T17 | Tune the seed | Populate at-risk, term-ended-unpaid and **more** paid-in-full pledges. Constraint to respect: pledge paids must still sum **exactly** to the activity's paid figure, so profiles have to be engineered through **terms** (free) and through *which* pledges get the money, not by overriding the sum |
+| T18 | Amend `W04-AL-04` and the section opening | Two things change on the record: the widget is no longer purely term-elapsed (T10 puts one instalment-derived number on the row), and W04 is no longer "Jo's widget taken whole" (T6–T10 edit her table). The spec needs the same live-vs-materialise dev note that `W04-AL-07` carries for the sort |
+| T19 | Empty state has two meanings | "No pledges configured" versus "pledges exist but none in scope". Legacy collapses both into "No records to display" |
+
+**Deliberately left out:** a second column for a true annual figure (`windowPaid`, receipts inside
+the selected window). Offered, not chosen. Add it only if an annual view is wanted later — as an
+extra column, never by redefining `Received to date`.
+
+#### Round 2 — what was actually done, and four things worth knowing
+
+0. **T1 needed a second pass — the first attempt did not scroll.** Her `.rem-drill-b` is
+   `display:flex; flex-direction:column; overflow:hidden`, so **nothing in that dialog scrolls**:
+   anything past the bottom is clipped, which is why an expanded schedule ran under the Close
+   button. Capping the table with a `max-height` did not fix it, because the strip, term line, note
+   and caption still pushed the panel past the modal's 88vh and the excess was cut. The working fix
+   distributes height down the whole chain instead — panel and table both `flex:1 1 auto` with
+   **`min-height:0`**, and the scrollport takes what is left. The `min-height:0` is the load-bearing
+   part: a flex item defaults to `min-height:auto` and refuses to shrink below its content, which
+   silently defeats any nested scroller. The driver now asserts every link in that chain, and that
+   the abandoned `max-height` cap has not come back.
+
+0b. **The restored column set needed a layout pass (2026-09-14).** Two faults, both mine:
+   - **Headers overlapped.** `.remO-cell` carries `white-space:nowrap` with `overflow:visible`, so a
+     header wider than its column spills straight over its neighbour rather than wrapping or
+     clipping — which rendered "Expected to date" and "Received to date" as "Expected to Rate". Not
+     fixed by shortening the labels or widening the table past her card: the **head row now wraps**.
+     The sort control is set to `display:inline` so its label flows like text, and the row
+     bottom-aligns so a two-line header sits level with a one-line one. Net effect the table got
+     *narrower*, from a 685px minimum to 663px.
+   - **Money columns were misaligned.** Jo alternated `remO-alignL` down her money columns to
+     separate them visually **in her column order**; after the `W04-T7` reorder that alternation
+     read as random — Annual and Outstanding left, Expected and Received right. All six occurrences
+     are removed from our head, row and totals, so every money column is right-aligned and the
+     figures read as a column of currency. Her `remF-alignL` markup is untouched.
+
+1. **The grace period turned out to be a status change only.** `remOSchedule` gains a `daysPast`
+   figure and the status set becomes `paid` / `upcoming` / `atrisk` / `part` / `missed`. Due dates,
+   instalment amounts and `dueAmt` are all untouched, exactly as instructed — an at-risk instalment
+   is still counted as *due*, it simply is not counted as *behind*.
+2. **`.remo-root` is on the drill modal only, never on the widget card.** So the eight-column grid
+   rule had to be written **unscoped** as `.remO-row` — a rule scoped under `.remo-root` would never
+   have reached the table. It is safe unscoped because `remO-` *is* the namespace: her own widget
+   uses `remF-`. The modal widening is the opposite case and *is* scoped, as
+   `.remo-root.rem-drill-modal`, so her global 760px rule is untouched. The driver asserts both.
+3. **The info icon could not go inside her card.** Her card is a `<button>`, and a focusable control
+   nested in a button is invalid and unreachable. Each card is now wrapped, with the info button as
+   a **sibling**. It is a real `<button>`, and the shell's tooltip engine already listens on both
+   `mouseover` and `focusin` for `[data-tip]`, so hover and keyboard both work with no new plumbing.
+4. **The seed needed engineering, not just re-rolling.** The reconciliation constraint is absolute:
+   pledge goals must sum exactly to the activity total and pledge paids exactly to its paid figure.
+   So the showcase states are built out of the only two free variables — each pledge's own **term**,
+   and **which** pledges receive the money. At-risk is the fiddly one: it needs an instalment due
+   inside the grace window, achieved by anchoring those terms on **26 January**, which lands a due
+   date on 26 July for every frequency whose step divides 6, five days before the thru date. If the
+   showcase would ever cost more than the activity actually received, profiles are demoted back to
+   flex until it fits — an activity 30% paid genuinely cannot carry many paid-in-full pledges, and
+   faking it would break the cross-foot.
+
+Result, with every activity still reconciling exactly:
+
+| Activity | Behind | At risk | Paid in full | Term ended | On track |
+|---|---|---|---|---|---|
+| W04-01 General Fund Apportionment (30% paid) | 40 | 3 | 6 | 6 | 6 |
+| W04-02 District Mission Share (100% paid) | 0 | 0 | 72 | 0 | 0 |
+| W04-03 Clergy Pension Assessment (45% paid) | 37 | 3 | 11 | 6 | 6 |
+| W04-04 Outreach and Benevolence (70% paid) | 20 | 3 | 28 | 7 | 5 |
+| W04-05 Capital Campaign Pledge (37% paid) | 47 | 3 | 9 | 13 | 6 |
+
+Before the tune, W04-01 read 58 of 60 behind and W04-05 read 71 of 71. W04-05 is still mostly
+behind, and that is honest: it is a three-year campaign only 37% paid.
+
+**Still open, unchanged:** the three naming cautions above (`Annual` kept as the owner's call with
+the caveat in its tooltip; "Due" avoided because legacy already uses it for shortfall). The pop-up
+strip's expected cell reads "Expected by instalments due" and the widget's reads "Expected to date",
+so the two bases are never presented as the same quantity.
+
+### The time basis — settled 2026-09-10
+
+The legacy labels are wrong on two of three columns, verified in live data (1 Saint Michael Church,
+pledge 1/1/2019–12/31/2019, thru 1 Sep 2019):
+
+- **`YTD Paid` has no lower bound.** The only filter is `CheckDate <= thru`, plus posted and
+  non-void. It is **cumulative all-time to date**, not year-to-date [CODE: RMActivityRepository.cs].
+- **`Annual` is the full pledge term**, not a year. A three-year pledge contributes all three years.
+- **`YTD Expected` is the only calendar-year-anchored figure**, `ROUND((Annual / 12) × thru.Month, 2)`
+  — a calendar-year fraction applied to a full-term amount.
+
+**Decision: keep the cumulative basis and fix the labels to say so.** The governing rule is that the
+numerator's window must match the denominator's. Bounding paid to 1 January while `Annual` stays
+full-term makes every multi-year pledge read far worse than it is — the capital campaign would go
+from $19,000 outstanding and roughly on track to $24,000 outstanding and $4,822 behind. Making YTD
+coherent would require pro-rating `Annual`, which legacy never did and which only derives cleanly
+when `Duration` and `Frequency` agree with the term — and nothing validates that.
+
+Live confirmations from the same screen, worth keeping:
+
+- The **header disagrees with the column**: "Percent of year completed 66.85%" is day-of-year
+  (244/365), while `YTD Expected` uses month 9 of 12 = 75%. $750 is 75% of $1,000, not 66.85%.
+- **`Active` is not filtered.** That pledge has `Active` unticked and the widget still shows it,
+  confirming the error in the Step 1 doc and the Step 5 legacy pass. The v2 spec has it right.
+- **Why 2026 showed no rows**: the term test is the single instant `BeginDate <= thru <= EndDate`, so
+  a 2019 pledge vanishes in 2026 and takes its $1,250 outstanding with it. The v2 window-overlap
+  rule keeps it visible, so the same tenant may legitimately show rows where legacy shows none.
+- **A receipt is not split in the apportionment ratio.** Widget paid $125/$125 = $250 against the
+  pledge screen's $208.33/$166.67 = $375: the $125 difference is one later monthly payment split
+  correctly ($83.33/$41.67, exactly the two Periodic amounts), while the earlier $250 was typed in
+  evenly. Receipt entry allows any per-activity split.
