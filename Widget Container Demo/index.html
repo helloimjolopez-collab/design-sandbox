@@ -4169,14 +4169,36 @@ function remFContent(w){
   return remFHeaderBlock(w)+'<div class="remF-body">'+(v==="bars"?remFBars(w):remFTable(w))+'</div>';
 }
 
-/* ---- drill: payment-history focus overlay (modal.type "remFdetail") ---- */
+/* ---- drill: the MEMBER CHURCHES behind a fund (modal.type "remFdetail").
+   A fund carries many pledges = member churches (verified HQ model). The roster is
+   illustrative demo data pro-rated from the fund, paced against the fund's own term
+   fraction, sorted worst-first so the chase list writes itself. ---- */
+function remFChStatusChip(c){
+  if(c.status==="neutral")return '<span class="rem-st rem-st-none">No pledge</span>';
+  if(c.status==="full")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'Paid in full</span>';
+  if(c.status==="onpace")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'On track</span>';
+  return '<span class="rem-st rem-st-behind">'+ICON("error")+'Behind</span>';
+}
+function remFChurchesFor(r){
+  var pace=r.pace||0,names=REM_CHURCH_NAMES,per=r.total/names.length;
+  return names.map(function(nm,i){
+    var s=r.seq*101+i;
+    var pledged=Math.max(50,Math.round(per*(0.55+remRnd(s)*1.1)/25)*25);
+    var remitted=Math.min(pledged,Math.round(pledged*Math.min(1,remRnd(s+3.7)*1.25)/25)*25);
+    var out=Math.max(0,pledged-remitted),pct=pledged>0?remitted/pledged:null,expected=Math.round(pledged*pace);
+    var st=pledged<=0?"neutral":(out<=0?"full":(remitted>=expected?"onpace":"behind"));
+    return {name:nm,district:REM_DISTRICTS[i%5],pledged:pledged,remitted:remitted,outstanding:out,pctPaid:pct,expected:expected,gap:(pct==null?0:pct-pace),status:st};
+  });
+}
 function remFDetailModalHTML(){
   var w=find(modal.id);if(!w)return "";
   var r=remFFindRow(w,modal.seq);if(!r)return "";
-  var s=remFStatus(r);
-  var pays=(r.payments||[]).filter(function(p){return p.date<=remFThru(w);}).slice().sort(function(a,b){return a.date<b.date?1:-1;});
-  var behind=Math.max(0,r.expected-r.paid);
-  var termLine='<div class="remF-term-line">'+ICON("event")+'<span>Pledge term '+remFFmtDate(r.begin)+' to '+remFFmtDate(r.end)+(r.end.slice(0,4)!==r.begin.slice(0,4)?' (multi-year)':'')+'. Expected-to-date reflects '+remFPct(r.pace)+' of this term elapsed.</span></div>';
+  var sort=modal.remDSort||"pacing";
+  var churches=remFChurchesFor(r);
+  churches.sort(function(a,b){if(sort==="pct"){var pa=(a.pctPaid==null?-1:a.pctPaid),pb=(b.pctPaid==null?-1:b.pctPaid);return pa-pb;}return a.gap-b.gap;});
+  var behindN=churches.filter(function(c){return c.status==="behind";}).length;
+  var TOPN=12,shown=churches.slice(0,TOPN),more=churches.length-shown.length;
+  var multiY=(r.end.slice(0,4)!==r.begin.slice(0,4));
   var summary='<div class="rem-sum">'+
     '<div class="rem-sum-cell"><span class="rem-sum-k">Total pledge</span><span class="rem-sum-v">'+money(r.total)+'</span></div>'+
     '<div class="rem-sum-cell"><span class="rem-sum-k">Expected by now</span><span class="rem-sum-v">'+money(r.expected)+'</span></div>'+
@@ -4185,21 +4207,24 @@ function remFDetailModalHTML(){
     '<div class="rem-sum-cell"><span class="rem-sum-k">% Paid</span><span class="rem-sum-v">'+(r.pctPaid==null?"n/a":remFPct(r.pctPaid))+'</span></div>'+
     '<div class="rem-sum-cell rem-sum-stat">'+remFStatusChip(r)+'</div>'+
   '</div>';
-  var note=(s==="behind"||s==="farbehind")
-    ? '<div class="rem-catchup">'+ICON("info")+'<span>'+remFDayPhrase(r)+' ('+money(behind)+' behind the expected pace). '+money(r.outstanding)+' remains over the term; unpaid amounts carry forward, so catching up before the pledge ends ('+remFFmtDate(r.end)+') avoids a balance rolling into the next period.</span></div>'
-    : (s==="full"
-      ? '<div class="rem-catchup ok">'+ICON("check_circle")+'<span>This pledge is fully paid for its term.</span></div>'
-      : (s==="neutral"
-        ? '<div class="rem-catchup ok">'+ICON("info")+'<span>No pledge amount is set for this activity, so there is nothing to pace against; any receipts are shown for reference.</span></div>'
-        : '<div class="rem-catchup ok">'+ICON("check")+'<span>On track: '+remFDayPhrase(r)+'. '+money(r.paid)+' paid against '+money(r.expected)+' expected by now.</span></div>'));
-  var head='<div class="rem-ph-row rem-ph-head"><span>Date</span><span>Reference</span><span class="rem-ph-amt">Amount</span></div>';
-  var body=pays.length
-    ? pays.map(function(p){return '<div class="rem-ph-row"><span>'+remFFmtDate(p.date)+'</span><span>'+p.ref+'</span><span class="rem-ph-amt">'+money(p.amount)+'</span></div>';}).join("")
-    : '<div class="rem-tab-empty">'+ICON("payments")+'No receipts recorded on or before '+remFFmtDate(remFThru(w))+'.</div>';
-  var foot=pays.length?'<div class="dep-total rem-ph-total"><span>'+pays.length+' receipt'+(pays.length===1?"":"s")+' through '+remFFmtDate(remFThru(w))+'</span><span>'+money(r.paid)+'</span></div>':'';
-  return '<div class="modal-backdrop" data-action="remF-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Remittance pledge, payment history">'+
-    '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">volunteer_activism</span>'+r.name+'</span><span class="rem-dsub">Payment history</span><span class="rem-dh-spacer"></span><button class="btn naked sm" data-action="remF-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="remF-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
-    '<div class="modal-b rem-detail-b">'+summary+termLine+note+'<div class="rem-ph-h">Receipts on or before '+remFFmtDate(remFThru(w))+'</div><div class="rem-ph-tbl">'+head+body+'</div>'+foot+'</div>'+
+  var toggle='<div class="vtoggle rem-dsort-tog" role="group" aria-label="Sort member churches">'+
+    [["pacing","Behind first"],["pct","% remitted"]].map(function(o){var on=sort===o[0];return '<button class="vt'+(on?" on":"")+'" data-action="remF-dsort" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+'</button>';}).join("")+'</div>';
+  var head='<div class="wt-row rem-ch-row rem-ch-head"><span class="rem-ch-nm">Member church</span><span class="rem-ch-dist">District</span><span class="rem-ch-n">Pledged</span><span class="rem-ch-n">Remitted</span><span class="rem-ch-n">Outstanding</span><span class="rem-ch-pct">% Rem.</span><span class="rem-ch-stat">Pacing</span></div>';
+  var body=shown.map(function(c){
+    return '<div class="wt-row rem-ch-row">'+
+      '<span class="rem-ch-nm">'+c.name+'</span>'+
+      '<span class="rem-ch-dist">'+c.district+'</span>'+
+      '<span class="rem-ch-n">'+money(c.pledged)+'</span>'+
+      '<span class="rem-ch-n">'+money(c.remitted)+'</span>'+
+      '<span class="rem-ch-n">'+money(c.outstanding)+'</span>'+
+      '<span class="rem-ch-pct">'+(c.pctPaid==null?"n/a":remFPct(c.pctPaid))+'</span>'+
+      '<span class="rem-ch-stat">'+remFChStatusChip(c)+'</span>'+
+    '</div>';
+  }).join("");
+  var foot='<div class="rem-ch-foot">'+(sort==="pacing"?("The "+shown.length+" furthest behind"):("Top "+shown.length))+' of '+churches.length+' member churches'+(behindN?" · "+behindN+" behind pace":"")+(more>0?" · "+more+" more in the roster":"")+'</div>';
+  return '<div class="modal-backdrop" data-action="remF-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Member churches for '+remFEsc(r.name)+'">'+
+    '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">groups</span>'+r.name+'</span><span class="rem-dsub">member churches · '+remFFmtDate(r.begin)+' to '+remFFmtDate(r.end)+(multiY?" (multi-year)":"")+'</span><span class="rem-dh-spacer"></span>'+toggle+'<button class="btn naked sm" data-action="remF-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="remF-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="modal-b rem-detail-b">'+summary+'<div class="rem-ch-tbl">'+head+body+'</div>'+foot+'</div>'+
     '<div class="modal-f"><button class="btn naked sm" data-action="remF-open-record" data-id="'+w.id+'" data-seq="'+r.seq+'">'+ICON("open_in_new")+'Open in Remittance</button><button class="btn primary sm" data-action="remF-detail-close">Close</button></div></div></div>';
 }
 
