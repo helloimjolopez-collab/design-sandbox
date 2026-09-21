@@ -111,9 +111,10 @@ codebase trace), and any open question. A row with nothing to say in Notes leave
 | W02 Pension Plans | 2026-09-08 | 1 adopt, rest base = Jo | **2026-09-08, verified** |
 | W03 Payroll Distributions | 2026-09-08 | 1 adopt, 1 adopt-modified, 1 new | **2026-09-08, verified** |
 | W04 Remittance Pledges | 2026-09-10 | Round 1: 11 rows. Round 2: T1-T19, all agreed. 3 naming cautions open | **2026-09-10, verified.** Both rounds in; 221 assertions, seed tuned |
-| W05 Receivable Invoices Outstanding | — | — | — |
-| W06 Insurance Billing Plans | — | — | — |
-| W07 Deposits on Hand | — | — | — |
+| W05 Receivable Invoices Outstanding | 2026-09-17 | No decision rows recorded; the built delta stands as agreed | **2026-09-17, verified.** `w05-receivables-oc.driver.js`, 292 assertions |
+| W06 Insurance Billing Plans | 2026-09-17 | No decision rows recorded; the pie is the whole difference, see below | **2026-09-17, verified.** `w06-insurance-oc.driver.js`, 280 assertions |
+| W07 Deposits on Hand | 2026-09-17 | Four owner changes, plus the account pop-up, which has no counterpart in hers | **2026-09-17, verified.** `w07-deposits-oc.driver.js`, 263 assertions |
+| W08 My Status | 2026-09-17 | Clone of hers, plus 2 improvements: pop-up content fills the dialog; the urgency dots get a legend | **2026-09-17, verified.** `w08-mystatus-oc.driver.js`, 291 assertions |
 | W09 Payroll Scheduled Time Off | — | — | — |
 | W10 Loans With Balance Due | — | — | — |
 | W11 Fixed Asset Values | — | — | — |
@@ -397,6 +398,153 @@ pop-up is not reachable at this size.
 | W04-ST-02 | Activity with no pledge amount set | Her `neutral` status note: nothing to pace against, receipts shown for reference | Same neutral note, plus a term line that says no pledge term falls inside the selected window | Carried with the pop-up | **Open question.** Our extra term line belongs to our date-range machinery, which is **not** being adopted — the range picker stays hers. Say whether that line should come across reworded to her thru-date framing, or be dropped so the neutral note stands alone |
 | W04-ST-03 | Pledge whose term has **ended** with an amount still unpaid | No such state. Her day-based chip labels it "60+ days behind" like any other lagging pledge | Same — ours inherits the day band, so it labels it "60+ days behind" too | **New** | Wrong in **both**. Evidenced in the live build 2026-09-10: `Coleman, Derek`, term Feb 1 2025 to Jan 31 2026, goal $320, paid $0 — the term ended six months before the as-of date and nothing was ever paid, yet it reads "60+ days behind". It is not behind, it is **finished and defaulted**, and no amount of catching up is possible inside the term. `Fairchild, Nora` is the same case part-paid ($238 of $683, term ended Feb 28 2026). Needs its own state and wording — under the instalment basis, every instalment is missed and the term is closed. Distinct from "behind", which implies a term still running |
 | W04-ST-04 | Activity term line above the pledge list | Renders a single pledge term for the whole activity | Same | **New** | Wrong in both. An activity has **no term of its own** — the line is inheriting one pledge's dates. The live build shows `Pledge term Jan 1, 2026 to Dec 31, 2026` above a list whose pledges run to Jan 2027, Jun 2026 and May 2028. Confirmed in the schema: `RM_Activity` has `StartDate` and `EndDate` columns but the widget's activity aggregate is built from `RM_PledgeDetail` joined to `RM_Pledge`, so the term shown is a pledge's, not the activity's. Either drop the line at activity level, or replace it with a range across the pledges it contains |
+
+---
+
+## W05 — Receivable Invoices Outstanding
+
+**Status: facts gathered 2026-09-14. No decisions taken yet.** Nothing below is a decision; the
+Decision column is deliberately empty until the owner dictates. Recorded now so the groundwork does
+not have to be repeated.
+
+| | |
+|---|---|
+| Jo's live kind / prefix | `receivables-mb` / **`arF`** — CSS 1217-1432, JS 9122-9538, 42 functions |
+| Ours | `receivables-oc` / **`arO`** — CSS 3871-4036, JS 18325-18805, 41 functions |
+| Also present, must not be touched | Her **original** AR widget, prefix **`ar`**, `kind:"ar"` — CSS 1100-1216, JS 8800-9121. Still live. Both `arF` and `arO` were derived from it |
+
+### ⚠ The rename trap here is worse than W03's or W04's — read before any rebase
+
+W04's trap was two functions. W05 has **three collisions in two unrelated widgets**, and the prefix
+boundary is unsafe in *both* directions, so neither a `arF[A-Z]` regex nor a `\barF[a-z]` regex is
+usable:
+
+| Token | Where | What a blind `arF` → `arO` does |
+|---|---|---|
+| `arFmtDate` | her original `ar` block, defined 8870, called 9055 | `arOmtDate` — breaks her live `kind:"ar"` widget |
+| `arFiltered` | same block, defined 8872, **called 8× (8877-8895)** | `arOiltered` — breaks every aggregate in that widget |
+| `ptoF**YearF**lat` | the Time Off widget, 11534, called 11535-11536 | `ptoFYearOlat` — **the substring `arF` sits inside "YearFlat"** |
+
+And the reverse direction is already contaminated: her `ar` block contains **`arOverdue`**,
+**`arOverdueCount`** and **`arOverduePill`**, so the token prefix `arO` is *already shared* with her
+namespace. Any tooling that scopes our block by "identifiers starting with `arO`" will pick those up.
+
+Her own namespace also carries lowercase-following tokens that an `[A-Z]`-anchored rule would
+silently skip: `arFloading`, `arFdetail` (the `modal.type` string), `arFpop` / `data-arFpop`,
+`arFwlq`, `arFwlScroll`, plus ~180 `arF-*` classes.
+
+**The only safe rule: an explicit allow-list.** `arF` + `[A-Z]`, plus exactly `arFloading`,
+`arFdetail`, `arFpop`, `arFwlq`, `arFwlScroll`, `arF-*`, `ARF_*`, and the ids `arF`, `arF_k`,
+`arF2`-`arF5`. Never a bare substring pass. (`ARF_`/`ARO_` constants are clean — no such token
+exists outside the two blocks.) And per the W04 lesson, scope every patch by slicing the file at the
+`(OC) CLONE` banner: large stretches of the two blocks are byte-identical, so text anchors collide.
+
+**Two more porting notes.** Her CSS block defines **no** un-prefixed shared classes, so nothing
+duplicates on copy (unlike W04, where eleven had to be dropped). But her hover listener keys on
+`.arF-barrow[data-arFpop]`, which a rename turns into an exact duplicate of our existing listener at
+18803 — the old one must be **removed, not renamed**, or two popover nodes fight over the same rows.
+Her `input` listener on `#arFwlq` has no counterpart in ours and would need to survive as `#arOwlq`.
+
+### The headline difference: the two drill modals are different products
+
+This is the decision that will drive the whole widget, so it is stated plainly rather than as a row:
+
+| | Jo's modal (`arFdetail`) | Ours (`arOdetail`) |
+|---|---|---|
+| Shape | A **collections worklist grouped by customer** | A **flat invoice table** |
+| Columns | Customer / Oldest, invoices, last contact / Outstanding | Customer / Bill To / Due Date / Invoice # / Days Past Due / Outstanding |
+| Controls | Search, cycling sort (oldest / most owed / name), 12-per-page "Show more", select-all | None of those |
+| Row expands to | Contact block (email, phone, last activity) then that customer's invoices, plus Send statement / Record a follow-up / Record a payment | A four-tab drawer: Details / Attachments / Note / Payments, plus Open invoice / Record a follow-up |
+| Selection keyed by | Customer name | Invoice number |
+| Export | Footer button opening a **preview sheet** (scope line, column chips, first 6 rows) | Header button, fires immediately |
+| Also has | Print statements, scroll-preserving incremental re-render | `Confirm` → "Move to unposted transactions" |
+
+Hers answers *"who do I chase and how do I reach them"*. Ours answers *"which invoices are these and
+what do I do with them"*. They are not variants of one design.
+
+### What ours changed at the data level (from Step 4 v2.1, already locked there)
+
+- **Six aging bands, not five.** `Current` was redefined `hi:30` → **`hi:0`** (genuinely not yet
+  due), and a new **`1-30 days`** band carries what her `Current` was mislabelling.
+- **Overdue is `days > 0`**, was `days > 30`. So the headline overdue figure now includes
+  1-30-day money.
+- Not-yet-due invoices carry **negative** `days`; her dataset has none, so her `Current` band can
+  never be exercised as "not yet due".
+- Ours adds a **Pie** view, **customer paging** (7 per page), an in-widget **customer sort**
+  (Biggest amount / Oldest balance), inert zero-band rows, a Glance sub-caption and a header
+  context line. Hers has a bar list only, `.slice(0,6|7)` with no pager and no sort control.
+
+### Live defects found while inventorying — present before any change
+
+1. **Our overdue-pill tooltip is now wrong.** `arOOverduePill` still says "more than 30 days past
+   due" while `arOOverdue` counts `days > 0`. Already flagged as the `open:` item in the comparison
+   copy at 6637, still unfixed.
+2. **Dead code in her block.** `arFDetailTabs` (9356) is defined, never called, and emits
+   `data-action="arF-tab"` for which `arFHandleClick` has **no branch**. Roughly 30 orphaned CSS
+   rules go with it (the whole first-port table skin our `arO` still uses). Rebasing inherits all of
+   it unless dropped deliberately.
+3. **Neither version is keyboard-operable.** The bar rows carry `role="button" tabindex="0"` but
+   neither block installs a keydown bridge, so Enter and Space do nothing. Several neighbouring
+   widgets do install one, so this is a genuine gap in both, not a porting artifact.
+4. **Demo-card asymmetry.** She ships **six** live registry cards (`arF`, `arF_k`, `arF2`-`arF5`,
+   including `dataset:"current"`, `dataset:"single"` and an empty state). We ship **one** — our five
+   variants sit inside a block comment as driver fixtures only.
+
+### Glance / Explore / Detail
+
+| | Jo | Ours |
+|---|---|---|
+| Glance | Total + overdue pill + stacked band bar + one callout line. **No sub-caption** — the `gl-sub` slot is an explicit empty string | Same plus a sub-caption, "owed to you across N unpaid invoices", and longer callout wording |
+| Explore | Two chips (Revenue center, Source), two-segment toggle (Aging / Customers) with `data-tip` copy, bar list | Same chips, **three**-segment toggle (Aging / Customers / **Pie**) with no tips, plus the sort bar and pager in customer mode |
+| Detail | Two panels: left follows the toggle, right is a **flat invoice list** capped at 8 with a "View all N invoices" button | Two panels: left is Pie or Aging, right is **always** the customer bar. **No invoice list panel at all** |
+
+### Changes already taken, 2026-09-14 (owner instruction, ahead of the row-by-row pass)
+
+Two fixes made before the decision pass, both on our `arO` side only. Hers is untouched.
+
+**1. Explore did not fit.** Our row metrics are hers verbatim (`gap:14px`, `padding:8px 6px` on
+`.arF-body`), but she **collapses** zero bands into one "No balance in…" line while we render all six
+as inert rows — a deliberate v2.1 choice, and about two rows taller than the spacing was designed
+for. Six rows came to ~355px against a body of roughly 350, so the `121+ days` row clipped off the
+bottom. Tightened to `gap:9px` / `padding:6px` with label line-heights at 1.2 / 1.25, which frees
+52px. The list is also now a shrinkable flex child with `overflow-y:auto`, because **this shell clips
+rather than scrolls** when content overruns (the W04 lesson) — so customer mode with its sort bar and
+pager, or a shorter card, degrades to a scroll instead of silently losing a row. Only the
+Explore-scoped overrides changed; the Detail panels use the tighter base values and were never
+affected.
+
+> Standing tension worth knowing: six always-visible bands is what does not fit her row design.
+> Tightening buys it back, but if anything else is added to Explore, collapsing zero bands the way
+> she does is the more durable answer.
+
+**2. Detail's second panel now matches hers.** Was: left panel forced to aging (or the pie), right
+panel **always** the customer rollup, and no invoice list at any size. Now:
+
+| | Before | After |
+|---|---|---|
+| Left panel | Aging, or the pie | **The whole toggle** — Aging, Customers or Pie, heading follows |
+| Right panel | Always the customer rollup | **Her Invoice detail list** |
+
+So all three toggle options stay reachable at Detail, and the companion panel answers "which invoices
+are these" — which hers does and ours had lost. The customer bar's own sort control and pager travel
+with it into the left panel.
+
+Two things had to be ported to make it work, since neither existed on our side:
+
+- **`arOInlineList`** — hand-ported from her `arFInlineList`, *not* mechanically renamed, because this
+  widget's prefix cannot be find-and-replaced safely (see the trap table above). Kept verbatim from
+  hers: the cap of 8, days-descending sort, the "Nd past due" / "Not due" wording, the shell's
+  `wt-row` / `lr-main` / `wt-c2` / `dep-total` primitives, and the `depf-more` footer button. Our own
+  data functions feed it, so the six-band scheme and the `days > 0` overdue rule still apply.
+- **The `all` drill scope** — her footer button opens every invoice in the current filter.
+  `arODetailInvoices` only knew `customer` and band keys, so the button had nowhere to go.
+
+Verified: 27 targeted checks plus the existing W05 driver at **292 assertions, 0 failures**; full
+suite **6,702 passing**. Two assertions in `w05-receivables-oc.driver.js` encoded the old layout
+(left forced to aging, right always customers) and were updated to the new intent rather than
+retired — this is a layout change on our V2 code, not a rebase.
+
+<!-- Decision rows to be added here as the owner dictates, using the W05-GL/EX/DE/ST/AL-nn scheme. -->
 
 ---
 

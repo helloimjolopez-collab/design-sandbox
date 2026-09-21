@@ -380,7 +380,7 @@ pre code { background: none; padding: 0; }
 </table>
 <p><strong>Parity kept (identical to Jo, one-to-one):</strong> the Revenue Center and Source filter chips as the only two fetches (~800ms skeleton, client re-renders never load); the Details / Attachments / Note / Payments tabs and the collection next-steps in each expanded modal row; the KPI headline + overdue pill and the Glance stacked severity read; the bar hover card; the amethyst-only severity ramp (no red on any chart element); and the empty / single-band demo states. [DESIGN — parity with Jo]</p>
 <p><strong>Open questions carried, not resolved:</strong> (1) the Attachments / Note / Payments tab data sources are unverified and now on the critical path, an open item for Feargal (Step 4 open item 2); the tabs are ported exactly as built. (2) The six-band outcome still needs formal closure of action-list flag C1 with Feargal. (3) The overdue pill tooltip still reads "more than 30 days past due" while the maths is days&gt;0, carried as built in v2.3 and flagged here rather than reworded. (4) Confirm does NOT stage to an entry screen; the move-to-unposted transaction type is an open SME/API item, so the UI keeps only the intent label [API — Step 5 logic notes]. The Bill To blank remains a pre-existing modern-API defect, not a design choice [CODE — BillToDisplay].</p>
-<p><em>Section updated 2026-09-07: V2 re-port (v2.3) in place on branch oisin-v2-rebuild (base 71ca056), replacing the August block; registry titles now use the (OC) convention; verified by w05-receivables-mb.driver.js, 288/288; W01-W04 drivers re-verified after the edit.</em></p>
+<p><em>Section updated 2026-09-07: V2 re-port (v2.3) in place on branch oisin-v2-rebuild (base 71ca056), replacing the August block; registry titles now use the (OC) convention; verified by w05-receivables-oc.driver.js, 288/288; W01-W04 drivers re-verified after the edit.</em></p>
 <hr />
 <h2>W06 — Insurance Billing Plans</h2>
 <p>Our version = Jo's Insurance widget one-to-one, with an expandable Type-to-Plan table that adds Share-of-total + Cost columns and, since v2.2, the restored legacy pie beside it.</p>
@@ -418,7 +418,7 @@ pre code { background: none; padding: 0; }
 </tr>
 <tr>
 <td>Chart</td>
-<td>No chart (table-native share bars only)</td>
+<td><strong>No chart, and deliberately so, not an omission.</strong> Her own code comment beside the share bars says they are in place because &quot;with only a handful of plans it makes uptake instantly scannable (the job a donut did, but table-native)&quot;. So this row is a genuine design disagreement, not a gap we filled</td>
 <td>The legacy pie restored (v2.2): an amethyst donut of enrolment by plan (five-shade ramp --am-600 to --am-200, colour keyed to fixed plan order). Explore shows ONE view at a time behind a Table / Pie segment, Table the default (a stale view state falls back to the table); Detail shows BOTH at once, table left 58 / pie right 42 with a dividing rule; Glance charts nothing</td>
 <td>Step 1 records the original widget as a side-by-side table and pie; the owner directed its restoration; 6 columns cannot hold both legibly at Explore</td>
 <td>[DESIGN — Step 4 v2.2; DOC — Step 1 research]</td>
@@ -450,10 +450,10 @@ pre code { background: none; padding: 0; }
 <p><strong>Accessibility added with the pie:</strong> the donut SVG carries role="img" and an aria-label stating the charted total and plan count; every segment carries a title naming plan, count and percent; each legend row states its count and percent as DOM text, so colour is never the only signal. [DESIGN — Step 4 v2.4 accessibility]</p>
 <p><strong>Resolved (owner + code, 2026-08-05):</strong> Cost is the per-enrolment premium; the Cost column shows the <strong>total premium</strong> (SUM of each enrolment's Rate). The code splits every enrolment into an employer share (Rate minus RateIndividual) and an employee share (RateIndividual), so employer-only or employee-only totals are derivable from the same data later if wanted; EmployerBilled and PreTax are flags on the enrolment [CODE — IBEmployeeRepository; DESIGN — owner default = total premium]. Dependents carry their own premium and are counted.</p>
 <p><strong>Open questions carried, not resolved:</strong> (1) pie-as-default at Explore was never owner-confirmed; Table stays the default and the question is carried open, not flipped here [DESIGN — Step 4]. (2) The coverage-tier (IBTypeElection) third level is intentionally not surfaced (future). (3) The "total cost" definition (total premium vs employer share vs employee share, PreTax handling) remains a product/SME definition choice; the data is derivable either way [DESIGN — Step 4 open items; API — Step 5 v2].</p>
-<p><em>Section updated 2026-09-07: V2 re-port (v2.4) in place on branch oisin-v2-rebuild (base 71ca056), replacing the August block; registry titles now use the (OC) convention; verified by w06-insurance-mb.driver.js, 280/280; W01-W05 drivers re-verified after the edit.</em></p>
+<p><em>Section updated 2026-09-07: V2 re-port (v2.4) in place on branch oisin-v2-rebuild (base 71ca056), replacing the August block; registry titles now use the (OC) convention; verified by w06-insurance-oc.driver.js, 280/280; W01-W05 drivers re-verified after the edit.</em></p>
 <hr />
 <h2>W07 — Deposits on Hand</h2>
-<p>Our version = Jo's Deposits widget with four owner-directed changes; everything else is kept at parity. (Jo titles it "Deposits"; the widget was renamed "Deposits on Hand" by management, rename not yet executed project-wide.)</p>
+<p>Our version = Jo's Deposits widget with four owner-directed changes plus one addition that has no counterpart in hers (the account pop-up); everything else is kept at parity. (Jo titles it "Deposits"; the widget was renamed "Deposits on Hand" by management, rename not yet executed project-wide.)</p>
 <table>
 <thead>
 <tr>
@@ -492,6 +492,13 @@ pre code { background: none; padding: 0; }
 <td>Six options: Previous week / month / period / quarter / fiscal year / calendar year, with the fiscal Period sitting between month and quarter</td>
 <td>Owner added a real intermediate fiscal-period delta between month and quarter</td>
 <td>[DESIGN — Step 4 owner change 4]</td>
+</tr>
+<tr>
+<td>Account pop-up (row click)</td>
+<td><strong>None. She has no account pop-up at all</strong> &mdash; her <code>dep*</code> functions stop at <code>depContent</code>, with no <code>depAcctModalBody</code> and no <code>depOpenAcct</code>, so there is nothing of hers this is derived from</td>
+<td>Clicking a table row opens a per-account pop-up: the type badge, that account's balance with its delta against the current Compare To period, and a Trend / Table segment (a nine-point sparkline with y and x axes, or a one-row table reconciling to the account total). It uses her shared <code>.wt-row</code> / <code>.dt-*</code> / <code>.wt-c2</code> column widths exactly as written, in <strong>our own 560px <code>.depo-acct-modal</code> shell</strong>, a deliberate duplicate of the generic shell her <code>renderModal</code> builds, because her 390px default leaves 354px against 424px of unshrinkable columns</td>
+<td>The whole <code>.acctm*</code> family is ours, invented with this port; the duplicate shell is the same approach <code>remOPledgeModalHTML</code> already takes for the W04 drill, and it costs one appended dispatch line in <code>renderModal</code> rather than any change to her widths or her 390px default</td>
+<td>[DESIGN — Step 4; owner directions 2026-09-17]</td>
 </tr>
 </tbody>
 </table>
