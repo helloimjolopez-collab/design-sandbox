@@ -1,0 +1,434 @@
+/* =====================================================================
+   cmp-dashboard.driver.js , the "Side by side (Jo vs OC)" comparison TAB.
+
+   This is not a widget driver. The tab is a fourth entry in the shell's
+   dashboards array holding 98 cards: for each of the fourteen widgets we
+   have ported, HER version at Glance / Explore / Detail, OUR version at the
+   same three, and one cmpnote-mb note card summarising that widget's section
+   of the Jo vs Oisin design-difference doc.
+
+   The real test in here is not the note card. It is that every one of HER
+   fourteen widgets still renders at all three sizes from a registry row built
+   by this tab, including the seven she deleted from her own dashboard in her
+   commit faa6507 (budget, pension, payroll, remittance, ar, insurance,
+   deposits). Their render functions are still in the file; nothing but this
+   tab exercises them any more.
+
+   Unlike the widget drivers, this one runs the WHOLE shell script rather than
+   one extracted block, because contentHTML() and all fourteen of her entry
+   functions have to be live at once. It does that on the shared harness:
+   loadShell + runBlock + Assert, with one appended export line so the IIFE's
+   internals are reachable, and with render() caught because the shim has no
+   real #grid to write into.
+
+   Run from this folder:  node cmp-dashboard.driver.js
+   ===================================================================== */
+"use strict";
+const fs = require("fs");
+const path = require("path");
+const H = require("./jo-port-driver.js");
+
+const A = new H.Assert("CMP side-by-side dashboard");
+const shell = H.loadShell();
+const S = shell.script;
+
+/* ---------- 0. host the whole shell on the shared harness ------------- */
+const TAIL = "\r\n  render();\r\n})();\r\n";
+A.eq(S.slice(-TAIL.length), TAIL, "the shell still ends in the render()/IIFE tail this driver appends to");
+const EXPORTS =
+  "\r\n  __EX={contentHTML:contentHTML,dashboards:dashboards,find:find," +
+  "cmpNoteContent:cmpNoteContent,CMPNOTE_:CMPNOTE_,cmpCards:cmpCards,CMP_ROWS:CMP_ROWS};\r\n" +
+  "  try{render();}catch(e){__EX.renderErr=String(e&&e.message);}\r\n})();\r\n";
+const hosted = S.slice(0, -TAIL.length) + EXPORTS;
+
+const env = H.runBlock(hosted, {
+  globals: {
+    __EX: null,
+    Boolean: Boolean, RegExp: RegExp, Intl: Intl, Set: Set, Map: Map, Error: Error,
+    encodeURIComponent: encodeURIComponent, decodeURIComponent: decodeURIComponent,
+    setInterval: function () { return 1; }, clearInterval: function () {},
+    navigator: { userAgent: "node" }, location: { href: "about:blank", hash: "" },
+    alert: function () {}, performance: { now: function () { return 0; } },
+    localStorage: { getItem: function () { return null; }, setItem: function () {}, removeItem: function () {} },
+    getComputedStyle: function () { return { getPropertyValue: function () { return ""; } }; }
+  }
+});
+const EX = env.ctx.__EX;
+A.ok(EX && typeof EX.contentHTML === "function", "the whole shell script loaded and contentHTML is reachable");
+
+/* ---------- 1. the tab exists, and hers are untouched ----------------- */
+const dash = EX.dashboards.filter(function (d) { return d.id === "cmp"; })[0];
+A.ok(!!dash, "a dashboard with id 'cmp' exists");
+A.eq(dash.name, "Side by side (Jo vs OC)", "its name reads as specified");
+A.eq(dash.custom, true, "it is a custom dashboard, so it is not the read-only system one");
+A.eq(dash.widgets.length, 98, "it holds exactly 98 cards (14 widgets x 7)");
+
+A.eq(EX.dashboards.length, 4, "the shell now has four dashboards, hers plus this one");
+A.eq(EX.dashboards.map(function (d) { return d.id; }).join(","), "d1,sys,nowidgets,cmp",
+  "the tab is APPENDED after her three, so her order and default dashboard are unchanged");
+A.eq(EX.dashboards[0].widgets.length, 123, "her main dashboard still holds its 123 cards");
+A.eq(EX.dashboards[1].widgets.length, 1, "her System dashboard still holds its one card");
+A.eq(EX.dashboards[2].widgets.length, 0, "her No widgets dashboard is still empty");
+
+/* Her three dashboard entries, byte-identical to the pre-edit snapshot.
+   The comparison is on the SOURCE TEXT of the array region, so a changed
+   default, a moved card or a re-ordered key would all show up. */
+(function () {
+  const dir = path.join(__dirname, "..");
+  const snaps = fs.readdirSync(dir)
+    .filter(function (f) { return /^index\.BACKUP-cmpdash-.*\.html$/.test(f); }).sort();
+  A.ok(snaps.length > 0, "the pre-edit snapshot for this edit is on disk");
+  if (!snaps.length) return;
+  const old = fs.readFileSync(path.join(dir, snaps[snaps.length - 1]), "utf8");
+  const cur = fs.readFileSync(path.join(dir, "index.html"), "utf8");
+  function region(t) {
+    const i = t.indexOf('    {id:"d1",name:"Dashboard",custom:true,widgets:[');
+    const END = '    {id:"nowidgets",name:"No widgets dashboard",custom:true,widgets:[]}';
+    const j = t.indexOf(END, i);
+    return i < 0 || j < 0 ? null : t.slice(i, j + END.length);
+  }
+  const rOld = region(old), rCur = region(cur);
+  A.ok(rOld && rCur, "her three dashboard entries were located in both files");
+  A.eq(rCur, rOld, "her three dashboard entries are BYTE-IDENTICAL (" + (rCur || "").length + " bytes)");
+
+  /* purely additive: no pre-existing line was rewritten or removed */
+  const oL = old.split("\r\n"), cL = cur.split("\r\n");
+  A.eq(cL.length - oL.length, 92, "the edit added 92 lines");
+  const missing = oL.filter(function (l, i) { return cL.indexOf(l) < 0 && l.trim() !== ""; });
+  A.eq(missing.length, 0, "every non-blank pre-edit line is still present somewhere in the file");
+
+  /* the CRLF file kept its line endings: a whole-file flip is an automatic fail */
+  A.eq((cur.match(/(?<!\r)\n/g) || []).length, 0, "no bare LF anywhere: still a pure CRLF file");
+  A.eq((cur.match(/\r\n/g) || []).length, 16906, "the CRLF pair count matches the new line count");
+
+  /* our namespace was free before this edit and is ours alone now */
+  ["cmpnote", "CMPNOTE_", "cmpCards", "cmpNoteContent", "CMP_ROWS", 'id:"cmp"', "Side by side"]
+    .forEach(function (tok) {
+      A.eq(old.split(tok).length - 1, 0, "'" + tok + "' had ZERO occurrences before this edit");
+      A.ok(cur.split(tok).length - 1 > 0, "'" + tok + "' is present now and is ours");
+    });
+})();
+
+/* ---------- 2. group structure: hers x3, ours x3, then the note ------- */
+const GROUPS = [
+  ["W01", "Budget Compared to Actual", "budget", "budget-mb"],
+  ["W02", "Pension Plans", "pension", "pension-mb"],
+  ["W03", "Payroll Distributions", "payroll", "payroll-mb"],
+  ["W04", "Remittance Pledges", "remittance", "remittance-mb"],
+  ["W05", "Receivable Invoices Outstanding", "ar", "receivables-mb"],
+  ["W06", "Insurance Billing Plans", "insurance", "insurance-mb"],
+  ["W07", "Deposits on Hand", "deposits", "deposits-mb"],
+  ["W09", "Payroll Scheduled Time Off", "pto", "pto-mb"],
+  ["W10", "Loans With Balance Due", "loans", "loans-mb"],
+  ["W11", "Fixed Asset Values", "fixedassets", "fixedassets-mb"],
+  ["W13", "Purchasing Management", "purchasing", "purchasing-mb"],
+  ["W15", "Bank Balances", "bank", "bank-mb"],
+  ["W16", "Accounts Payable By Due Date", "payables", "payables-mb"],
+  ["W17", "Gifts Pledges", "gifts", "gifts-mb"]
+];
+const TIERS = ["kpi", "wide", "xwide"];
+const LBL = { kpi: "Glance", wide: "Explore", xwide: "Detail" };
+
+A.eq(GROUPS.length, 14, "fourteen widgets are compared");
+/* the three that are deliberately NOT here */
+["mystatus", "tasks"].forEach(function (k) {
+  A.eq(dash.widgets.filter(function (w) { return w.kind === k; }).length, 0,
+    "kind '" + k + "' is absent: W08 and W14 are hers alone, so there is nothing to compare");
+});
+A.eq(dash.widgets.filter(function (w) { return /^cmpW12/.test(w.id); }).length, 0,
+  "W12 is absent: it is an empty slot in the widget list");
+
+GROUPS.forEach(function (g, gi) {
+  const n = g[0], nm = g[1], herK = g[2], ourK = g[3];
+  const grp = dash.widgets.slice(gi * 7, gi * 7 + 7);
+  A.eq(grp.length, 7, n + ": the group holds seven cards");
+  /* 1-3 hers, in tier order */
+  TIERS.forEach(function (sz, i) {
+    const w = grp[i];
+    A.eq(w.kind, herK, n + " card " + (i + 1) + ": HER kind is " + herK);
+    A.eq(w.size, sz, n + " card " + (i + 1) + ": size is " + sz);
+    A.eq(w.title, n + " " + nm + " - Jo (" + LBL[sz] + ")", n + " card " + (i + 1) + ": title names Jo and the tier");
+  });
+  /* 4-6 ours, in the same tier order */
+  TIERS.forEach(function (sz, i) {
+    const w = grp[3 + i];
+    A.eq(w.kind, ourK, n + " card " + (i + 4) + ": OUR kind is " + ourK);
+    A.eq(w.size, sz, n + " card " + (i + 4) + ": size is " + sz);
+    A.eq(w.title, n + " " + nm + " - OC (" + LBL[sz] + ")", n + " card " + (i + 4) + ": title names OC and the tier");
+  });
+  /* 7 the note card */
+  const note = grp[6];
+  A.eq(note.kind, "cmpnote-mb", n + " card 7: the diff-summary card is the new kind");
+  A.eq(note.size, "wide", n + " card 7: the note card is wide");
+  A.eq(note.title, n + " - What changed", n + " card 7: title reads plainly");
+  A.eq(note.cmpN, n, n + " card 7: the note card names its widget");
+  /* every card in the group */
+  grp.forEach(function (w, i) {
+    A.eq((w.tiers || []).join(","), "kpi,wide,xwide", n + " card " + (i + 1) + ": declares all three tiers");
+    A.eq(w.goto, false, n + " card " + (i + 1) + ": the go-to-report icon is off");
+    A.eq(w.state, "ready", n + " card " + (i + 1) + ": no card fakes a loading, error or empty state");
+  });
+});
+
+/* card ids are unique, so find() and the shell's per-card state cannot cross */
+(function () {
+  const ids = dash.widgets.map(function (w) { return w.id; });
+  A.eq(new Set(ids).size, 98, "all 98 card ids are unique");
+  const herIds = EX.dashboards[0].widgets.map(function (w) { return w.id; });
+  A.eq(ids.filter(function (i) { return herIds.indexOf(i) > -1; }).length, 0,
+    "no card id collides with one of hers on her own dashboard");
+})();
+
+/* ---------- 3. THE REAL TEST: every card renders at its own size ------ */
+(function () {
+  let herRendered = 0, ourRendered = 0, noteRendered = 0;
+  dash.widgets.forEach(function (w) {
+    let html = null, threw = null;
+    try { html = EX.contentHTML(w); } catch (e) { threw = e.message; }
+    A.ok(threw === null, w.id + " (" + w.kind + " at " + w.size + ") renders without throwing" +
+      (threw ? " [" + threw + "]" : ""));
+    A.ok(html && html.length > 100, w.id + " (" + w.kind + " at " + w.size + ") renders NON-EMPTY html" +
+      (html ? " (" + html.length + " bytes)" : ""));
+    /* nothing silently degraded into a loading skeleton or a shared fallback */
+    A.absent(html || "", 'aria-busy="true"', w.id + ": did not render as a loading skeleton");
+    A.absent(html || "", 'data-kind="error"', w.id + ": did not render as an error state");
+    A.noEmDash(html || "", w.id + " (" + w.kind + " at " + w.size + ")");
+    if (w.kind === "cmpnote-mb") noteRendered++;
+    else if (/-mb$|^receivables-mb$/.test(w.kind)) ourRendered++;
+    else herRendered++;
+  });
+  A.eq(herRendered, 42, "42 of HER cards rendered: 14 widgets x 3 sizes");
+  A.eq(ourRendered, 42, "42 of OUR cards rendered: 14 widgets x 3 sizes");
+  A.eq(noteRendered, 14, "14 note cards rendered");
+})();
+
+/* Her seven removed widgets specifically: the point of the whole tab.
+   NOTE on counting: her file still carries COMMENTED-OUT registry templates
+   for several of these kinds (she left the paste-me blocks above her own
+   render code), so a whole-script scan for a kind literal is not a test of
+   what is LIVE. Everything below counts inside the dashboards array only. */
+function dashRegion(text) {
+  const i = text.indexOf("  var dashboards=[");
+  const j = text.indexOf("\n  ];", i);
+  return i < 0 || j < 0 ? "" : text.slice(i, j);
+}
+function liveRows(text, kind) {
+  return dashRegion(text).split(/\r?\n/).filter(function (l) {
+    return l.indexOf('kind:"' + kind + '"') > -1 && l.trim().charAt(0) === "{";
+  }).length;
+}
+(function () {
+  const REMOVED = ["budget", "pension", "payroll", "remittance", "ar", "insurance", "deposits"];
+  REMOVED.forEach(function (k) {
+    A.eq(liveRows(shell.html, k), 0,
+      "she has NO live registry row for kind '" + k + "' any more (she removed it in her own commit faa6507)");
+    const cards = dash.widgets.filter(function (w) { return w.kind === k; });
+    A.eq(cards.length, 3, "this tab is the only place kind '" + k + "' is exercised, at all three sizes");
+    A.eq(cards.map(function (w) { return w.size; }).join(","), "kpi,wide,xwide",
+      k + ": all three sizes are present, in order");
+    cards.forEach(function (w) {
+      const html = EX.contentHTML(w);
+      A.ok(html.length > 150, k + " at " + w.size + ": her removed widget still renders (" + html.length + " bytes)");
+    });
+  });
+})();
+
+/* Every comparison card's state is copied from the matching LIVE registry
+   object on her own dashboard, key by key, for HERS and for OURS alike. The
+   live objects are read at runtime rather than parsed out of the source,
+   because two of her rows reference a shell constant by name. */
+(function () {
+  const HER_LIVE = { pto: "pto", loans: "loans", fixedassets: "fixedassets",
+    purchasing: "purchasing", bank: "bank", payables: "payables", gifts: "gifts" };
+  const OUR_LIVE = { "budget-mb": 1, "pension-mb": 1, "payroll-mb": 1, "remittance-mb": 1,
+    "receivables-mb": 1, "insurance-mb": 1, "deposits-mb": 1, "pto-mb": 1, "loans-mb": 1,
+    "fixedassets-mb": 1, "purchasing-mb": 1, "bank-mb": 1, "payables-mb": 1, "gifts-mb": 1 };
+  /* the one key we deliberately do NOT carry, and why, asserted rather than assumed */
+  const OMITTED = { gifts: "gftThru" };
+  const SKIP = ["id", "title", "kind", "size", "tiers", "actions", "state", "dataset", "goto", "sub", "updated"];
+
+  function checkSide(kind, label) {
+    const live = EX.dashboards[0].widgets.filter(function (w) {
+      return w.kind === kind && w.size === "wide" && !w.dataset && w.state === "ready";
+    })[0];
+    const card = dash.widgets.filter(function (w) { return w.kind === kind && w.size === "wide"; })[0];
+    A.ok(!!live, kind + ": her live " + label + " entry was found on her own dashboard");
+    A.ok(!!card, kind + ": the matching comparison card was found");
+    if (!live || !card) return;
+    Object.keys(live).forEach(function (key) {
+      if (SKIP.indexOf(key) > -1) return;
+      if (OMITTED[kind] === key) return;
+      const a = live[key], b = card[key];
+      if (a && typeof a === "object") {
+        A.ok(b && typeof b === "object" && b !== a,
+          kind + ": object-valued key '" + key + "' is carried as this card's OWN fresh map, not shared with hers");
+      } else {
+        A.eq(b, a, kind + ": state key '" + key + "' is copied verbatim from the live " + label + " entry");
+      }
+    });
+    /* and the three sizes of one widget never share a mutable state object */
+    const trio = dash.widgets.filter(function (w) { return w.kind === kind; });
+    Object.keys(live).forEach(function (key) {
+      if (SKIP.indexOf(key) > -1 || !(live[key] && typeof live[key] === "object")) return;
+      const seen = trio.map(function (w) { return w[key]; });
+      A.eq(new Set(seen).size, 3, kind + ": each size holds its own '" + key + "' map");
+    });
+  }
+  Object.keys(HER_LIVE).forEach(function (k) { checkSide(k, "Jo"); });
+  Object.keys(OUR_LIVE).forEach(function (k) { checkSide(k, "OC"); });
+
+  /* The one omission, proved harmless by rendering rather than argued. */
+  const gLive = EX.dashboards[0].widgets.filter(function (w) { return w.kind === "gifts" && w.size === "wide" && !w.dataset; })[0];
+  const gCard = dash.widgets.filter(function (w) { return w.kind === "gifts" && w.size === "wide"; })[0];
+  A.ok(!Object.prototype.hasOwnProperty.call(gCard, "gftThru"),
+    "her gifts receipts-through key is deliberately NOT set on the comparison card");
+  ["kpi", "wide", "xwide"].forEach(function (sz) {
+    const c = dash.widgets.filter(function (w) { return w.kind === "gifts" && w.size === sz; })[0];
+    const withKey = {}; Object.keys(c).forEach(function (k) { withKey[k] = c[k]; });
+    withKey.gftThru = gLive.gftThru;
+    A.same(EX.contentHTML(c), EX.contentHTML(withKey),
+      "gifts at " + sz + ": omitting that key renders identically to her own value, so the card IS in her default state");
+  });
+})();
+
+/* State keys on HER removed widgets are read by her render functions, and the
+   values we chose are her own defaults. Two proofs per widget, by rendering:
+     (a) flipping one key changes the output, so the key is genuinely live;
+     (b) her card renders identically to a bare card with no state at all, so
+         the values we carried ARE her defaults and nothing is being forced. */
+(function () {
+  const FLIP = {
+    budget: ["acctview", "expense"], pension: ["penSort", "name"], payroll: ["prScope", "admin"],
+    remittance: ["remSort", "name-asc"], ar: ["arGroup", "customer"], insurance: ["insType", "Medical"],
+    deposits: ["view", "dist"]
+  };
+  Object.keys(FLIP).forEach(function (k) {
+    const card = dash.widgets.filter(function (w) { return w.kind === k && w.size === "wide"; })[0];
+    const base = EX.contentHTML(card);
+    const flipped = {}; Object.keys(card).forEach(function (kk) { flipped[kk] = card[kk]; });
+    flipped[FLIP[k][0]] = FLIP[k][1];
+    A.changed(base, EX.contentHTML(flipped), k + ": her render reads the state key '" + FLIP[k][0] + "'");
+    const bare = { id: card.id, title: card.title, kind: k, size: "wide", tiers: ["kpi", "wide", "xwide"], state: "ready", updated: card.updated };
+    A.same(base, EX.contentHTML(bare), k + ": the state we carried is HER OWN default, so the card renders in her default state");
+  });
+})();
+
+/* ---------- 4. the note cards carry the real summaries ---------------- */
+(function () {
+  A.eq(Object.keys(EX.CMPNOTE_).length, 14, "the note lookup holds one summary per compared widget");
+  GROUPS.forEach(function (g) {
+    const n = g[0];
+    const note = EX.CMPNOTE_[n];
+    A.ok(!!note, n + ": a summary exists");
+    A.ok(note.rows.length >= 4 && note.rows.length <= 8,
+      n + ": the summary is 4 to 8 rows (" + note.rows.length + ")");
+    A.ok(!!note.open && note.open.length > 30, n + ": the summary carries this widget's open item");
+    const card = dash.widgets.filter(function (w) { return w.cmpN === n; })[0];
+    const html = EX.contentHTML(card);
+    A.contains(html, note.h, n + ": the rendered note leads with its framing line");
+    note.rows.forEach(function (r, i) {
+      A.contains(html, r, n + ": rendered note row " + (i + 1) + " is on screen");
+    });
+    A.contains(html, note.open, n + ": the open item is on screen, not dropped");
+    A.contains(html, "cmpnote-root", n + ": the note renders in our own root");
+    A.contains(html, "cap cmpnote-cap", n + ": the framing line reuses her .cap caption primitive");
+    /* static text only: no control, no handler hook, no popover trigger */
+    A.absent(html, "data-action", n + ": the note card emits NO data-action, so her dispatcher never sees it");
+    A.absent(html, "<button", n + ": the note card has no buttons");
+    A.absent(html, "aria-haspopup", n + ": the note card opens nothing");
+    A.absent(html, "<svg", n + ": the note card draws no chart");
+  });
+  /* an unknown widget number degrades honestly on her own empty block */
+  const stray = EX.cmpNoteContent({ id: "x", kind: "cmpnote-mb", size: "wide", cmpN: "W99" });
+  A.contains(stray, 'class="state" data-kind="empty"', "an unknown widget number falls back to her .state block");
+  A.noEmDash(stray, "the fallback note");
+})();
+
+/* ---------- 5. the new kind's footprint is one dispatch line + CSS ---- */
+(function () {
+  const LINE = 'if(w.kind==="cmpnote-mb")return cmpNoteContent(w);';
+  A.eq(S.split(LINE).length - 1, 1, "the dispatch line is present exactly once");
+  /* scoped to contentHTML's own body, not the first "return" in the file */
+  const fnStart = S.indexOf("  function contentHTML(w){");
+  const fnEnd = S.indexOf("\r\n  function titleHTML(w){", fnStart);
+  A.ok(fnStart > -1 && fnEnd > fnStart, "contentHTML's body was located");
+  const fn = S.slice(fnStart, fnEnd);
+  A.eq(fn.split(LINE).length - 1, 1, "the dispatch sits inside contentHTML's if-chain");
+  A.ok(fn.indexOf('if(w.kind==="status")return statusHTML();') < fn.indexOf(LINE),
+    "it is appended at the END of the chain, after her last existing branch");
+  const branches = fn.match(/if\(w\.kind==="[a-z-]+"\)/g) || [];
+  A.eq(branches[branches.length - 1], 'if(w.kind==="cmpnote-mb")',
+    "ours is the LAST kind branch in the chain, so no dispatch of hers was displaced");
+  A.ok(fn.indexOf(LINE) < fn.lastIndexOf('return "";'),
+    "and it precedes the chain's final fallthrough return");
+  A.eq(S.split('kind:"cmpnote-mb"').length - 1, 1,
+    "the new kind appears as a literal exactly once, in the card builder");
+  /* the tab's cards are BUILT, not typed as registry literals, which is what
+     keeps every other widget's registry line count where it was */
+  A.eq(S.split('kind:"gifts"').length - 1, 12, "no new kind:\"gifts\" literal was introduced");
+  A.eq((S.match(/,kind:"payables",/g) || []).length, 6, "her six payables registry lines are still six");
+  A.eq((S.match(/kind:"bank"/g) || []).length, 5, "her five bank registry lines are still five");
+  /* Every widget's own registry row count is unmoved, measured against the
+     pre-edit snapshot rather than against a hardcoded number, so this holds
+     if any of them is ever re-ported. */
+  (function () {
+    const dir = path.join(__dirname, "..");
+    const snaps = fs.readdirSync(dir)
+      .filter(function (f) { return /^index\.BACKUP-cmpdash-.*\.html$/.test(f); }).sort();
+    if (!snaps.length) return;
+    const old = fs.readFileSync(path.join(dir, snaps[snaps.length - 1]), "utf8");
+    ["budget", "pension", "payroll", "remittance", "ar", "insurance", "deposits", "pto", "loans",
+     "fixedassets", "purchasing", "bank", "payables", "gifts", "mystatus", "tasks",
+     "budget-mb", "pension-mb", "payroll-mb", "remittance-mb", "receivables-mb", "insurance-mb",
+     "deposits-mb", "pto-mb", "loans-mb", "fixedassets-mb", "purchasing-mb", "bank-mb",
+     "payables-mb", "gifts-mb"].forEach(function (k) {
+      A.eq(liveRows(shell.html, k), liveRows(old, k),
+        k + ": its live registry row count is unmoved, so its own driver still counts what it did");
+    });
+    /* and the harness's own textual extraction, which every -mb driver uses */
+    ["budget-mb", "pension-mb", "payroll-mb", "remittance-mb", "receivables-mb", "insurance-mb",
+     "deposits-mb", "pto-mb", "loans-mb", "fixedassets-mb", "purchasing-mb", "bank-mb",
+     "payables-mb", "gifts-mb"].forEach(function (k) {
+      A.eq(H.extractRegistry(shell.script, k).length,
+        H.extractRegistry(/<script>([\s\S]*)<\/script>/.exec(old)[1], k).length,
+        k + ": extractRegistry still returns the same number of entries as before the edit");
+    });
+  })();
+  /* our CSS: declared, ours alone, and it redeclares nothing of hers */
+  A.cssDeclares(shell.css, ["cmpnote-root", "cmpnote-cap", "cmpnote-list", "cmpnote-row",
+    "cmpnote-tx", "cmpnote-open"], "our note-card CSS");
+  const ours = shell.css.slice(
+    shell.css.indexOf("===== Side by side comparison note (cmpnote-mb) CSS"),
+    shell.css.indexOf("===== end Side by side comparison note CSS"));
+  A.ok(ours.length > 200, "our CSS block was located (" + ours.length + " bytes)");
+  const sels = (ours.match(/^\s*([^\n{}/][^\n{}]*)\{/gm) || []).map(function (s) { return s.trim(); });
+  A.ok(sels.length >= 6, "our CSS block declares at least six rules (" + sels.length + ")");
+  A.eq(sels.filter(function (s) { return s.indexOf(".cmpnote-") < 0; }).length, 0,
+    "EVERY selector in our block is .cmpnote- scoped: [" + sels.join(" ") + "]");
+  A.eq((ours.match(/\{/g) || []).length, (ours.match(/\}/g) || []).length,
+    "our CSS block is brace-balanced");
+  A.absent(ours, "--wn-500", "our block does not declare the token her own zero-axis rule is missing");
+  A.absent(ours, "(MB updated)", "our block header does not use the ported-widget marker");
+  A.absent(ours, "[data-action]", "our block adds no [data-action] selector to her shared components");
+  /* the note block borrows her primitives read-only and ships no handler */
+  const jsBlock = S.slice(S.indexOf("  var CMPNOTE_={"), S.indexOf("  var dashboards=["));
+  A.ok(jsBlock.length > 1000, "our JS block was located (" + jsBlock.length + " bytes)");
+  A.absent(jsBlock, "addEventListener", "our block wires NO listener");
+  A.absent(jsBlock, "data-action", "our block emits no data-action attribute");
+  A.absent(jsBlock, "setTimeout", "our block starts no timer, so it can never flash a skeleton");
+  A.absent(jsBlock, "pop=", "our block never assigns her popover state");
+  A.contains(jsBlock, "ICON(", "we reuse her ICON helper rather than shipping our own");
+})();
+
+/* ---------- 6. a no-em-dash sweep over all 98 cards, whole card ------- */
+(function () {
+  let swept = 0;
+  dash.widgets.forEach(function (w) {
+    A.noEmDash(w.title, "the title of " + w.id);
+    A.noEmDash(EX.contentHTML(w), "the body of " + w.id);
+    swept++;
+  });
+  A.eq(swept, 98, "the em-dash sweep covered all 98 cards, title and body");
+})();
+
+process.exit(A.report());

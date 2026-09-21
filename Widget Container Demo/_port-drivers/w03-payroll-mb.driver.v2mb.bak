@@ -1,0 +1,442 @@
+/* =====================================================================
+   w03-payroll-mb.driver.js , W03 Payroll Distributions (kind payroll-mb,
+   prefix prF) verification driver for the 2026-09-07 V2 re-port (v2.6).
+
+   W03 is a style-(a) port like W01/W02: prFHandleClick / prFPopContent are
+   real functions dispatched from Jo's shared listener, so the extracted
+   block is directly runnable and this driver calls them as the shell would.
+
+   V2 specifics asserted here (Step 4 "W03 - Payroll Distributions.md",
+   stamped 2026-09-07, + Step 5 v2 spec):
+     - THREE filter chips: Period / Distribution / Pay type (prDist + prPT
+       state; the old prScope, and its "pt" grouping value, are GONE)
+     - the standalone "By pay type" grouping view is genuinely absent
+       (functions, sort keys, badge markup, CSS)
+     - NESTED in-widget drill (v2.2): distribution -> employees -> pay
+       types, open/close both levels, collapse clears children, penny-exact
+       cross-footing; NO link-out, NO drill modal (prFOpenDist/prF-drilldist
+       removed)
+     - row-level PRF_PAYROLL_PERM gate: no permission = inert rows, pay-type
+       fallback when one distribution is chosen, handlers no-op
+     - default sort amt-desc; header clicks toggle (name asc first)
+     - ONE view-scoped export button, btn naked sm, data-prf="export-view",
+       present in every data-bearing state, absent in empty states, styled
+       by the shell's GLOBAL .btn family
+     - toggle segs [table,dist] with a stale "emp" falling back to table
+     - Glance headline is the distribution total (not W13's pending count)
+     - NO comparison fields (F3): no prScope/total.prior/diffAmount/diffPct
+       in live code
+     - empty / no-history / nothing-matches states
+     - no-em-dash sweep over every size x view x distribution x pay type
+     - titles use the (OC) convention
+
+   Run from this folder:  node w03-payroll-mb.driver.js
+   ===================================================================== */
+"use strict";
+const H = require("./jo-port-driver.js");
+
+const shell = H.loadShell();
+const S = shell.script;
+const A = new H.Assert("W03 payroll-mb (V2 re-port)");
+
+/* ---------- extraction (verbatim regions out of the real file) -------- */
+const block = "/*" + H.extractRegion(S,
+  '   Payroll Distributions (MB updated)    (prefix: prF, kind:"payroll-mb")',
+  '/* --- end Payroll Distributions (MB updated), V2 v2.6 re-port --- */');
+
+/* the block with its comments stripped: tombstoned identifiers may be named
+   in comments (that is what a tombstone is), but must not survive as CODE */
+const code = block.replace(/\/\*[\s\S]*?\*\//g, "");
+
+/* ---------- structural markers and dispatch (pre-existing lines) ------- */
+A.ok(S.indexOf('if(w.kind==="payroll-mb")return prFContent(w);') > -1, "contentHTML dispatch line present");
+A.ok(S.indexOf('if(w.kind==="payroll-mb")return {h:w.title,b:PRF_ABOUT};') > -1, "aboutOf branch present");
+A.ok(S.indexOf('if(a&&a.indexOf("prF-")===0&&prFHandleClick(a,id,t))return;') > -1, "click-listener dispatch present");
+A.ok(S.indexOf('if(pop.type==="prF-period"||pop.type==="prF-scope"||pop.type==="prF-pt")return prFPopContent();') > -1, "popContent dispatch covers all three chips");
+A.ok(S.indexOf('if(pop.type==="prF-period")return \'[data-action="prF-period"][data-id="\'+pop.id+\'"]\';') > -1, "triggerSelector period branch present");
+A.ok(S.indexOf('if(pop.type==="prF-scope")return \'[data-action="prF-scope"][data-id="\'+pop.id+\'"]\';') > -1, "triggerSelector distribution branch present");
+A.ok(S.indexOf('if(pop.type==="prF-pt")return \'[data-action="prF-pt"][data-id="\'+pop.id+\'"]\';') > -1, "triggerSelector pay-type branch present");
+A.ok(shell.css.indexOf("Payroll Distributions (MB updated), V2 v2.6 CSS") > -1, "CSS region marker (MB updated wording) present");
+
+/* ---------- V2 removals: nothing tombstoned survives as live code ------ */
+["prFPTFlat", "prFPTTotals", "prFDistBadge", "prFOpenDist", "prFScopeMeta",
+ "prFScopeLabel", "prFAllEmployees", "prFGlanceComp", "prF-drilldist",
+ "prF-set-scope", "prScope", "pr-dbadge", "pr-distcol", "prf-gcomp",
+ "prf-gseg", "wt-rowlink", "leg-link",
+ "total.prior", "diffAmount", "diffPct", ".prior"].forEach(function (bad) {
+  A.absent(code, bad, "V2-removed identifier " + bad + " absent from live prF code");
+});
+A.absent(code, '"emp","Employees"', "no Employees segment in the toggle");
+["prf-gcomp", "prf-gbar", "prf-gseg", "wt-rowlink", "leg-link"].forEach(function (bad) {
+  A.absent(shell.css, bad, "old-port CSS " + bad + " removed from the stylesheet");
+});
+/* Jo's own pr block still owns prScope untouched */
+A.ok(S.indexOf('if(a==="pr-set-scope"){var wps=find(id);if(wps)wps.prScope=t.getAttribute("data-s");') > -1, "Jo's own pr-set-scope handler untouched");
+
+/* ---------- registry (live entries only) ------------------------------- */
+const liveRegStart = S.indexOf('{id:"bgtF4"');
+const liveReg = S.slice(liveRegStart, S.indexOf('{id:"mct"', liveRegStart));
+const registry = H.extractRegistry(liveReg, "payroll-mb");
+A.eq(registry.length, 6, "six live payroll-mb registry entries");
+["prF", "prF_k", "prF_x", "prF2", "prF3", "prF4"].forEach(function (id, i) {
+  A.eq(registry[i].id, id, "registry order: " + id);
+});
+registry.forEach(function (w) {
+  A.ok(/\(OC[,)]/.test(w.title), "title uses the (OC) convention: " + w.title);
+  A.noEmDash(w.title, "registry title " + w.id);
+  A.eq(w.prSort, "amt-desc", w.id + " defaults to amount descending");
+  A.ok(w.prDist !== undefined && w.prPT !== undefined, w.id + " carries the two V2 filters");
+  A.absent(JSON.stringify(w), "prScope", "no prScope key on " + w.id);
+});
+A.eq(registry[0].size, "wide", "prF is the Explore card");
+A.eq(registry[1].size, "kpi", "prF_k is the Glance card");
+A.eq(registry[2].size, "xwide", "prF_x is the Detail card");
+A.eq(registry[3].prPT, "ot", "prF2 demos the pay-type FILTER (Overtime), replacing the dead by-pay-type view");
+A.eq(registry[4].prDist, "admin", "prF3 demos one distribution (employee list)");
+A.eq(registry[5].state, "empty", "prF4 is the no-history card");
+
+/* ---------- every class the markup emits is declared -------------------- */
+A.cssDeclares(shell.css, [
+  "pr-fchip", "pr-scope-ctx", "prf-cap", "prf-caret", "prf-dist-panel",
+  "prf-emp-panel", "prf-foot", "pr-distrow", "pr-emprow", "pr-empnest",
+  "pr-ptline", "pr-ptnest",
+  "dep-hd", "dep-hd-top", "dep-hd-toggle", "dep-hd-num", "pr-tools",
+  "scope-chip", "sc-nm", "filter-chip", "fc-label", "vtoggle", "vt",
+  "wt-row", "wt-head", "wt-rowh", "wt-sort", "wt-c2", "wt-pctcol", "lr-main",
+  "pct-bar", "pct-fill", "pct-num", "dep-total", "scroll",
+  "pr-split", "pr-split-table", "pr-split-chart", "pr-pop-dates",
+  "pr-date-input", "pr-dot", "pop-period",
+  "dist-wrap", "pie-wrap", "donut", "donut-c1", "donut-c2", "seg",
+  "legend", "legend-col", "legend-head", "legend-hd", "leg", "lg-main",
+  "lg-meta", "dot", "mi", "mi-gap", "mi-nm", "cap", "sep",
+  "state", "state-title", "state-sub", "kpi-row", "kpi-num", "metric-value",
+  "sr-only", "btn"], "W03 class list");
+/* the export button's own family: shell-global, not widget-scoped */
+A.contains(shell.css, ".btn.naked{", "global .btn.naked declared (the v2.6 fix is satisfied globally here)");
+A.contains(shell.css, ".btn.sm{", "global .btn.sm declared");
+
+/* ---------- run the real code ------------------------------------------ */
+const env = H.runBlock(block, { registry: registry, dataAttr: "data-action", globals: {
+  blueRamp: function (n) { var Hh = 249, Ss = 40, Lmin = 18, Lmax = 88, out = []; for (var i = 0; i < n; i++) { out.push("hsl(" + Hh + "," + Ss + "%," + Math.round(Lmin + (Lmax - Lmin) * (n > 1 ? i / (n - 1) : 0)) + "%)"); } return out; },
+  tog: function (opts, cur, w) { return '<div class="vtoggle" role="group" aria-label="View">' + opts.map(function (o) { return '<button class="vt' + (cur === o[0] ? " on" : "") + '" data-action="dep-view" data-id="' + w.id + '" data-v="' + o[0] + '" aria-pressed="' + (cur === o[0]) + '">' + (o[2] ? '<span class="material-symbols-rounded">' + o[2] + "</span>" : "") + o[1] + "</button>"; }).join("") + "</div>"; }
+} });
+const ctx = env.ctx, shim = env.shim, log = env.log;
+
+function w(id) { return registry.filter(function (x) { return x.id === id; })[0]; }
+function click(a, id, extra) {
+  const bag = Object.assign({ "data-id": id || "" }, extra || {});
+  return ctx.prFHandleClick(a, id, shim.mkTarget(bag));
+}
+function cents(x) { return Math.round(x * 100); }
+
+/* ---------- ground truth from the block's own data --------------------- */
+const wf = w("prF");
+const distTotals = ctx.prFDistTotals(wf);
+const grand = distTotals.reduce(function (s, a) { return s + a.net; }, 0);
+A.ok(grand > 0, "This month holds payroll (grand total " + grand + ")");
+A.eq(ctx.prFRunsInRange(wf).length, 3, "This month = 3 biweekly runs (Jul 1, 15, 29)");
+A.eq(ctx.prFRunsInRange({ range: "TQ" }).length, 7, "This quarter = 7 runs (rolling 3 months)");
+A.eq(ctx.prFRunsInRange({ range: "ALL" }).length, 13, "All time = all 13 runs");
+
+/* ---------- initial render at each tier -------------------------------- */
+const wideHTML = ctx.prFContent(wf);
+A.contains(wideHTML, 'data-action="prF-period"', "wide: period chip present");
+A.contains(wideHTML, 'data-action="prF-scope"', "wide: distribution chip present");
+A.contains(wideHTML, 'data-action="prF-pt"', "wide: pay-type chip present");
+A.contains(wideHTML, ">All distributions<", "wide: distribution chip reads All distributions");
+A.contains(wideHTML, ">All pay types<", "wide: pay-type chip reads All pay types");
+A.contains(wideHTML, ctx.prFMoney(grand), "wide: headline is the distribution total");
+A.contains(wideHTML, 'class="btn naked sm" data-action="prF-export-view" data-prf="export-view"', "wide: ONE export button, btn naked sm, data-prf export-view");
+A.eq(wideHTML.split('data-prf="export-view"').length - 1, 1, "wide: exactly one export button");
+A.contains(wideHTML, "Export to Excel", "wide: export label");
+A.contains(wideHTML, 'data-action="prF-dist-open"', "wide: distribution rows are drillable");
+A.contains(wideHTML, 'data-action="prF-sort"', "wide: sortable headers");
+A.contains(wideHTML, "arrow_downward", "wide: active sort arrow shows (amount descending)");
+A.contains(wideHTML, 'data-v="table"', "wide: Table segment");
+A.contains(wideHTML, 'data-v="dist"', "wide: Chart segment");
+A.absent(wideHTML, 'data-v="emp"', "wide: no Employees segment");
+A.contains(wideHTML, "% of total", "wide: percent column present");
+A.noEmDash(wideHTML, "wide default render");
+
+/* default sort is amount descending over the rendered rows */
+const rows0 = ctx.prFTableRows(wf);
+for (let i = 1; i < rows0.length; i++) A.ok(rows0[i - 1].net >= rows0[i].net, "amt-desc ordering row " + i);
+
+const kpiHTML = ctx.prFContent(w("prF_k"));
+A.contains(kpiHTML, ctx.prFMoney(grand), "Glance headline is the distribution total (not a pending-approval count)");
+A.absent(kpiHTML, "pending approval", "Glance never claims W13's pending-approval headline");
+A.contains(kpiHTML, 'data-action="prF-period"', "Glance keeps the period chip");
+A.contains(kpiHTML, "sr-only", "Glance carries sr-only text");
+A.absent(kpiHTML, 'data-prf="export-view"', "Glance has no export button");
+A.noEmDash(kpiHTML, "Glance render");
+
+const xHTML = ctx.prFContent(w("prF_x"));
+A.contains(xHTML, "pr-split", "Detail: table + donut side by side");
+A.contains(xHTML, "donut", "Detail: donut present");
+A.absent(xHTML, 'data-action="dep-view"', "Detail: view toggle hidden");
+A.eq(xHTML.split('data-prf="export-view"').length - 1, 1, "Detail: exactly ONE export (table caption, not doubled by the donut)");
+A.contains(xHTML, 'data-action="prF-dist-open"', "Detail: nested drill works at Detail too");
+A.noEmDash(xHTML, "Detail render");
+
+/* ---------- chips open the right popovers ------------------------------- */
+click("prF-period", "prF");
+A.ok(ctx.pop && ctx.pop.type === "prF-period", "period chip opens the period popover");
+let popHTML = ctx.prFPopContent();
+A.ok(popHTML.indexOf("Custom time span") > -1 && popHTML.indexOf("Custom time span") < popHTML.indexOf("This month"), "Custom row is FIRST in the period popover");
+["This month", "This period", "This quarter", "This year", "All time"].forEach(function (lbl, i, arr) {
+  A.contains(popHTML, lbl, "period preset present: " + lbl);
+  if (i) A.ok(popHTML.indexOf(arr[i - 1]) < popHTML.indexOf(lbl), "preset order, smallest first: " + arr[i - 1] + " before " + lbl);
+});
+A.contains(popHTML, 'class="pr-date-input"', "custom From/To fields use the shell's pr-date-input caret machinery");
+A.contains(popHTML, 'value="2026-07-01"', "From field pre-filled with the active window's begin");
+A.contains(popHTML, 'value="2026-07-31"', "To field pre-filled with the active window's end");
+A.noEmDash(popHTML, "period popover");
+click("prF-period", "prF");
+A.eq(ctx.pop, null, "period chip toggles its popover closed");
+
+click("prF-scope", "prF");
+A.ok(ctx.pop && ctx.pop.type === "prF-scope", "distribution chip opens the distribution popover");
+popHTML = ctx.prFPopContent();
+A.contains(popHTML, "All distributions", "distribution popover: All distributions row");
+A.eq(popHTML.split('data-action="prF-set-dist"').length - 1, 9, "distribution popover: All + 8 distributions");
+A.absent(popHTML, "By pay type", "NO By-pay-type row (the grouping view is gone; pay type is its own chip)");
+A.contains(popHTML, "pr-dot", "distribution popover keeps the colour swatches");
+A.noEmDash(popHTML, "distribution popover");
+
+click("prF-pt", "prF");
+A.ok(ctx.pop && ctx.pop.type === "prF-pt", "pay-type chip opens the pay-type popover");
+popHTML = ctx.prFPopContent();
+A.eq(popHTML.split('data-action="prF-set-pt"').length - 1, 9, "pay-type popover: All + the 8 pay types that paid out this window");
+A.contains(popHTML, "Overtime", "pay-type popover lists Overtime");
+A.noEmDash(popHTML, "pay-type popover");
+ctx.pop = null;
+
+/* ---------- pay-type filter is a real client-side filter ---------------- */
+click("prF-set-pt", "prF", { "data-s": "ot" });
+A.eq(wf.prPT, "ot", "prF-set-pt stores the filter");
+A.eq(ctx.pop, null, "picking a pay type closes the popover");
+const otRows = ctx.prFTableRows(wf);
+const otAgg = ctx.prFAgg(wf);
+const otTruth = ctx.PRF_DISTS.filter(function (d) { return (otAgg[d.id] || {}).ot > 0; }).length;
+A.eq(otRows.length, otTruth, "Overtime filter keeps exactly the distributions that paid overtime (" + otTruth + ")");
+const otTotal = otRows.reduce(function (s, a) { return s + a.net; }, 0);
+A.ok(otTotal < grand, "filtered total is a strict subset of the grand total");
+let html = ctx.prFContent(wf);
+A.contains(html, ">Overtime<", "chip label reflects the active pay type");
+A.contains(html, "Overtime across every distribution", "caption explains the per-distribution comparison");
+A.contains(html, "Overtime only", "context line names the narrowing filter");
+A.contains(html, ctx.prFMoney(otTotal), "headline total respects the pay-type filter");
+A.noEmDash(html, "Overtime-filtered render");
+/* the prF2 demo card is exactly this state */
+A.contains(ctx.prFContent(w("prF2")), "Overtime across every distribution", "prF2 card demos the pay-type filter");
+
+/* nothing-matches state: pastoral pays no overtime */
+click("prF-set-dist", "prF", { "data-s": "pastoral" });
+html = ctx.prFContent(wf);
+A.contains(html, "Nothing matches these filters", "impossible filter combo states itself");
+A.contains(html, "Pastoral Staff, Overtime only", "the empty-filters copy names both filters");
+A.contains(html, 'data-action="prF-pt"', "chips stay reachable to undo the combo");
+A.absent(html, 'data-prf="export-view"', "no export button when there is nothing to export");
+A.noEmDash(html, "nothing-matches state");
+click("prF-set-pt", "prF", { "data-s": "all" });
+click("prF-set-dist", "prF", { "data-s": "all" });
+A.ok(wf.prDist === "all" && wf.prPT === "all", "filters reset");
+
+/* ---------- nested drill: distribution -> employees -> pay types -------- */
+const renders0 = log.renders;
+click("prF-dist-open", "prF", { "data-d": "admin" });
+A.eq(wf.prDistOpen.admin, true, "distribution row opens");
+A.ok(log.renders > renders0, "opening a distribution re-renders");
+html = ctx.prFContent(wf);
+A.contains(html, "prf-dist-panel", "open distribution renders its employee panel");
+A.contains(html, 'data-action="prF-emp-open"', "employee rows are drillable");
+A.contains(html, "Employee", "employee panel header");
+const admEmps = ctx.prFEmpFiltered(wf, "admin");
+A.ok(admEmps.length >= 3 && admEmps.length <= 7, "3 to 7 employees per distribution (got " + admEmps.length + ")");
+const admTotal = distTotals.filter(function (d) { return d.id === "admin"; })[0].net;
+const empSum = admEmps.reduce(function (s, e) { return s + cents(e.total); }, 0);
+A.eq(empSum, cents(admTotal), "employee totals cross-foot to the distribution total TO THE PENNY");
+admEmps.forEach(function (e) {
+  const paySum = Object.keys(e.pay).reduce(function (s, k) { return s + cents(e.pay[k]); }, 0);
+  A.eq(paySum, cents(e.total), "pay types cross-foot for " + e.name);
+});
+A.contains(html, admEmps.length + " employee", "panel footer counts the employees");
+
+const key0 = ctx.prFEmpKey(admEmps[0]);
+click("prF-emp-open", "prF", { "data-e": key0 });
+A.eq(wf.prEmpOpen[key0], true, "employee row opens");
+html = ctx.prFContent(wf);
+A.contains(html, "prf-emp-panel", "open employee renders the pay-type panel");
+A.contains(html, "pr-ptnest", "pay-type lines carry the nested indent");
+A.contains(html, "of this person's pay", "per-person percent bars are labelled");
+A.noEmDash(html, "fully drilled render");
+/* collapse the distribution: the employee open-state inside it is cleared */
+click("prF-dist-open", "prF", { "data-d": "admin" });
+A.ok(!wf.prDistOpen.admin, "distribution row closes");
+A.ok(!wf.prEmpOpen[key0], "collapsing a distribution clears its open employees");
+/* changing a filter clears the drill */
+click("prF-dist-open", "prF", { "data-d": "admin" });
+click("prF-set-pt", "prF", { "data-s": "reg" });
+A.eq(Object.keys(wf.prDistOpen).length, 0, "changing the pay-type filter clears the open drill");
+click("prF-set-pt", "prF", { "data-s": "all" });
+
+/* one distribution chosen on the chip: top-level employee table */
+click("prF-set-dist", "prF", { "data-s": "admin" });
+html = ctx.prFContent(wf);
+A.contains(html, "Employees paid in Administration Staff", "chosen distribution lists its employees");
+A.contains(html, "cross-foot to the penny", "caption states the reconciliation discipline");
+A.contains(html, "Administration Staff, employees paid", "context line names the drill");
+A.eq(html.split('data-prf="export-view"').length - 1, 1, "employee view keeps the ONE export");
+A.contains(html, "Total, " + admEmps.length + " employee", "employee table total row");
+A.noEmDash(html, "one-distribution employee view");
+/* no route out: neither modal nor link */
+A.absent(html, "modal", "no drill modal markup");
+A.absent(html, "open_in_new", "no link-out icon");
+click("prF-set-dist", "prF", { "data-s": "all" });
+
+/* ---------- permission gate (row-level) --------------------------------- */
+ctx.PRF_PAYROLL_PERM = false;
+html = ctx.prFContent(wf);
+A.absent(html, 'data-action="prF-dist-open"', "no permission: distribution rows are inert (no handler path)");
+A.absent(html, "prf-caret", "no permission: no caret affordance");
+A.absent(html, 'role="button"', "no permission: no button role on rows");
+A.contains(html, ctx.prFMoney(grand), "no permission: totals still visible");
+A.contains(html, 'data-prf="export-view"', "no permission: totals export still offered");
+A.absent(html, "Click a distribution", "no permission: drill instruction gated out of the caption");
+const gateRenders = log.renders;
+click("prF-dist-open", "prF", { "data-d": "admin" });
+A.eq(log.renders, gateRenders, "no permission: prF-dist-open no-ops");
+A.eq(Object.keys(wf.prDistOpen).length, 0, "no permission: no drill state accrues");
+click("prF-set-dist", "prF", { "data-s": "admin" });
+html = ctx.prFContent(wf);
+A.contains(html, "Pay type", "no permission + one distribution: pay-type fallback table");
+["Whitfield", "Bell,", "Alvarez", "Nguyen", "Okafor", "Sullivan", "Ramirez", "Coleman"].forEach(function (nm) {
+  A.absent(html, nm, "no permission: employee name " + nm + " never renders");
+});
+A.contains(html, "Administration Staff by pay type", "fallback caption names the distribution");
+A.contains(html, "Administration Staff, all pay types", "fallback context line");
+A.noEmDash(html, "no-permission fallback view");
+click("prF-set-dist", "prF", { "data-s": "all" });
+ctx.PRF_PAYROLL_PERM = true;
+
+/* ---------- sorting: default amt-desc, header clicks toggle -------------- */
+A.eq(wf.prSort, "amt-desc", "sort default is amt-desc");
+click("prF-sort", "prF", { "data-k": "name" });
+A.eq(wf.prSort, "name-asc", "first click on a text column sorts ascending");
+let named = ctx.prFTableRows(wf);
+for (let i = 1; i < named.length; i++) A.ok(named[i - 1].name.localeCompare(named[i].name) <= 0, "name-asc ordering row " + i);
+click("prF-sort", "prF", { "data-k": "name" });
+A.eq(wf.prSort, "name-desc", "second click flips to descending");
+click("prF-sort", "prF", { "data-k": "amt" });
+A.eq(wf.prSort, "amt-desc", "amount column starts descending");
+click("prF-sort", "prF", { "data-k": "amt" });
+A.eq(wf.prSort, "amt-asc", "amount click flips to ascending");
+let amted = ctx.prFTableRows(wf);
+for (let i = 1; i < amted.length; i++) A.ok(amted[i - 1].net <= amted[i].net, "amt-asc ordering row " + i);
+wf.prSort = "amt-desc";
+/* sort also applies inside the employee table */
+click("prF-set-dist", "prF", { "data-s": "admin" });
+click("prF-sort", "prF", { "data-k": "name" });
+const eNamed = ctx.prFTableRows(wf);
+for (let i = 1; i < eNamed.length; i++) A.ok(eNamed[i - 1].name.localeCompare(eNamed[i].name) <= 0, "employee name-asc row " + i);
+wf.prSort = "amt-desc";
+click("prF-set-dist", "prF", { "data-s": "all" });
+
+/* ---------- view toggle, emp fallback ----------------------------------- */
+let togHTML = ctx.prFToggle(wf);
+A.eq(togHTML.split("data-v=").length - 1, 2, "toggle has exactly two segments");
+A.contains(togHTML, 'data-v="table" aria-pressed="true"', "Table pressed by default");
+wf.view = "dist";
+html = ctx.prFContent(wf);
+A.contains(html, "donut", "Chart view renders the donut");
+A.contains(html, "Distributions", "donut legend headed Distributions");
+A.eq(html.split('data-prf="export-view"').length - 1, 1, "Chart view keeps the ONE export on its caption row");
+A.contains(html, "Total for the selected period", "donut carries sr-only total text");
+A.noEmDash(html, "chart view");
+wf.view = "emp"; /* a stale session state from the removed Employees view */
+togHTML = ctx.prFToggle(wf);
+A.contains(togHTML, 'data-v="table" aria-pressed="true"', "stale emp view: Table segment marked pressed");
+A.absent(togHTML, 'data-v="dist" aria-pressed="true"', "stale emp view: Chart segment not pressed");
+html = ctx.prFContent(wf);
+A.contains(html, "wt-head", "stale emp view: the TABLE renders (fallback), not a dead view");
+A.absent(html, "donut-c1", "stale emp view: not the chart either");
+wf.view = "table";
+
+/* ---------- period changes recompute; custom range works ----------------- */
+click("prF-range-set", "prF", { "data-r": "TQ" });
+A.eq(wf.range, "TQ", "preset stored");
+A.eq(ctx.pop, null, "picking a preset closes the popover");
+const tqTotal = ctx.prFTableRows(wf).reduce(function (s, a) { return s + a.net; }, 0);
+A.ok(tqTotal > grand, "This quarter (7 runs) totals more than This month (3 runs)");
+A.contains(ctx.prFContent(wf), "This quarter", "period chip label follows the preset");
+click("prF-range-set", "prF", { "data-r": "CUSTOM" });
+A.eq(wf.range, "CUSTOM", "custom range selected");
+A.ok(wf.begin && wf.end, "custom selection seeds From/To so the fields are never blank");
+wf.begin = "2026-07-01"; wf.end = "2026-07-31";
+A.eq(ctx.prFRunsInRange(wf).length, 3, "custom July window holds the 3 July runs");
+wf.begin = "2020-01-01"; wf.end = "2020-12-31";
+html = ctx.prFContent(wf);
+A.contains(html, "No payroll runs in this range", "custom window with no runs shows the empty state");
+A.contains(html, 'data-action="prF-period"', "empty state keeps the period chip as the recovery");
+A.absent(html, 'data-prf="export-view"', "empty state offers no export");
+A.noEmDash(html, "custom-empty state");
+wf.range = "TM"; wf.begin = null; wf.end = null;
+
+/* ---------- no-history card (prF4) --------------------------------------- */
+html = ctx.prFContent(w("prF4"));
+A.contains(html, "No payroll runs in this range", "prF4 renders the no-history state");
+A.contains(html, "There's no payroll history", "no-history sub copy");
+A.contains(html, 'data-action="prF-scope"', "no-history state keeps the chips");
+A.absent(html, "wt-head", "no-history state renders no table");
+A.absent(html, 'data-prf="export-view"', "no-history state has no export");
+A.noEmDash(html, "no-history state");
+
+/* ---------- export stub --------------------------------------------------- */
+const st0 = log.status.length;
+click("prF-export-view", "prF");
+A.ok(log.status.length === st0 + 1 && log.status[st0].indexOf("Exporting all distributions") === 0, "export gives status feedback naming the view scope");
+A.contains(log.status[st0], "This month", "export names the period");
+A.noEmDash(log.status[st0], "export status line");
+click("prF-set-pt", "prF", { "data-s": "ot" });
+click("prF-export-view", "prF");
+A.contains(log.status[log.status.length - 1], "Overtime", "export names the active pay-type filter");
+click("prF-set-pt", "prF", { "data-s": "all" });
+
+/* ---------- about copy ----------------------------------------------------- */
+A.contains(ctx.PRF_ABOUT, "payroll permission", "about copy discloses the permission gate");
+A.noEmDash(ctx.PRF_ABOUT, "about copy");
+
+/* ---------- no-em-dash + no-comparison sweep over EVERY combination ------- */
+const distIds = ["all"].concat(ctx.PRF_DISTS.map(function (d) { return d.id; }));
+const ptIds = ["all"].concat(ctx.PRF_PT.map(function (p) { return p.id; }));
+let sweeps = 0, sweepBad = [];
+[["kpi"], ["wide", "table"], ["wide", "dist"], ["xwide"]].forEach(function (mode) {
+  [true, false].forEach(function (perm) {
+    ctx.PRF_PAYROLL_PERM = perm;
+    distIds.forEach(function (d) {
+      ptIds.forEach(function (p) {
+        const wv = { id: "swp", size: mode[0], view: mode[1] || "table", range: "TM",
+                     prDist: d, prPT: p, prSort: "amt-desc", prDistOpen: {}, prEmpOpen: {}, state: "ready" };
+        if (perm && d !== "all") { ctx.prFEmpFiltered(wv, d).forEach(function (e) { wv.prEmpOpen[ctx.prFEmpKey(e)] = true; }); }
+        if (perm && d === "all") { wv.prDistOpen = { admin: true, pastoral: true }; }
+        const out = ctx.prFContent(wv);
+        sweeps++;
+        if (out.indexOf(H.EM_DASH) > -1) sweepBad.push("em dash: " + mode.join("/") + " perm=" + perm + " " + d + "/" + p);
+        ["prior", "diffAmount", "diffPct", "vs last"].forEach(function (cmp) {
+          if (out.indexOf(cmp) > -1) sweepBad.push("comparison artifact " + cmp + ": " + mode.join("/") + " " + d + "/" + p);
+        });
+      });
+    });
+  });
+});
+ctx.PRF_PAYROLL_PERM = true;
+A.eq(sweepBad.length, 0, "sweep clean over " + sweeps + " combinations (size x view x perm x distribution x pay type, drills open): " + sweepBad.slice(0, 3).join("; "));
+A.eq(sweeps, 648, "sweep really covered 4 modes x 2 perm x 9 distributions x 9 pay types");
+/* popovers swept too */
+["prF-period", "prF-scope", "prF-pt"].forEach(function (tp) {
+  ctx.pop = { type: tp, id: "prF" };
+  A.noEmDash(ctx.prFPopContent(), "popover sweep " + tp);
+});
+ctx.pop = null;
+
+process.exit(A.report());

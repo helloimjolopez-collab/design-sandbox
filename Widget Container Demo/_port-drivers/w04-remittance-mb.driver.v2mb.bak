@@ -1,0 +1,521 @@
+/* =====================================================================
+   w04-remittance-mb.driver.js , W04 Remittance Pledges (kind remittance-mb,
+   prefix remF) verification driver for the 2026-09-07 V2 re-port (v3.5a).
+
+   W04 is a style-(a) port like W01/W02/W03: remFHandleClick / remFPopContent
+   are real functions dispatched from Jo's shared listeners, so the extracted
+   block is directly runnable and this driver calls them as the shell would.
+
+   V2 specifics asserted here (Step 4 "W04 - Remittance Pledges.md", verified
+   2026-08-30 v3.5a, + Step 5 v2 spec):
+     - EXCEPTION widget of the pledge pair: headline = behind-pace shortfall
+       in money, summed per row; "N of M behind pace"
+     - Jo's three pace cards (Behind / On track / Ahead) toggle a filter over
+       a FLAT table; Behind = shortfall > 0 (this widget's own rule), and the
+       cards AGREE with the header count under every date range
+     - receipts-only activities are a footer line, never a card, never
+       filtered away; the Total row covers every activity in scope, said in
+       the caption when a filter hides rows
+     - date range does two jobs: END is the pacing cutoff (cumulative),
+       START bounds pledge scope + the separate window-receipts figure;
+       presets This year / Last 30 days / Custom (inline From/To, no Refresh)
+     - drill SCREEN on Jo's modal shell: summary strip, term line, pace note,
+       pledge list 8/page with a real pager that never changes the totals
+     - THIRD drill level: per-pledge payment schedule, receipts applied
+       oldest first, first skipped date named
+     - Pacing Bars rows open the top-5-most-behind popup (v3.4 arity fix in),
+       schedules expandable there too
+     - exports scoped to the view; REMF_USE_POPUP rollback path intact
+     - cents reconciliation of the drill to its activity row
+     - v3.5a CSS split-selector guard (.remf-root .remf-root must not exist,
+       .rem-pledge-panel and .rem-pcards selectors whole)
+     - empty states, no-em-dash sweep everywhere, titles use (OC)
+
+   Run from this folder:  node w04-remittance-mb.driver.js
+   ===================================================================== */
+"use strict";
+const H = require("./jo-port-driver.js");
+
+const shell = H.loadShell();
+const S = shell.script;
+const A = new H.Assert("W04 remittance-mb (V2 re-port v3.5a)");
+
+/* ---------- extraction (verbatim region out of the real file) ---------- */
+const block = "/*" + H.extractRegion(S,
+  '   Remittance Pledges (MB updated)  (prefix: remF, kind:"remittance-mb")',
+  "/* --- end Remittance Pledges (MB updated), V2 v3.5a re-port --- */");
+const code = block.replace(/\/\*[\s\S]*?\*\//g, "");
+
+/* ---------- structural markers and dispatch (shared one-liners) -------- */
+A.ok(S.indexOf('if(w.kind==="remittance-mb")return remFContent(w);') > -1, "contentHTML dispatch present");
+A.ok(S.indexOf('if(w.kind==="remittance-mb")return {h:w.title,b:REMF_ABOUT};') > -1, "aboutOf branch present");
+A.ok(S.indexOf('if(a&&a.indexOf("remF-")===0&&remFHandleClick(a,id,t))return;') > -1, "click-listener dispatch present");
+A.ok(S.indexOf('if(pop.type==="remF-thru")return remFPopContent();') > -1, "popContent dispatch present (thru only)");
+A.ok(S.indexOf('if(pop.type==="remF-thru")return \'[data-action="remF-thru"][data-id="\'+pop.id+\'"]\';') > -1, "triggerSelector thru branch present");
+A.absent(S, "remF-pacef", "old pace-filter popover dispatch fully removed");
+A.ok(S.indexOf('if(modal.type==="remFdrill"||modal.type==="remFbehind")') > -1, "renderModal drill/behind branch present");
+A.ok(S.indexOf('if(modal.type==="remFdetail"){mr.innerHTML=remFDetailModalHTML();return;}') > -1, "renderModal rollback (remFdetail) branch present");
+A.ok(S.indexOf('e.target.classList.contains("remf-date-input")') > -1, "shared change listener carries the remf-date-input branch");
+A.ok(S.indexOf("remFSetCustomDate(wrf,whf,e.target.value)") > -1, "change branch applies the Custom date");
+A.ok(S.indexOf("if(w){remCommitThru(w,e.target.value);pop=null;render();}return true;}") > -1, "Jo's remHandleInput restored to her own single-path form");
+A.ok(shell.css.indexOf("Remittance Pledges (MB updated) (prefix: remF), V2 v3.5a CSS block") > -1, "CSS region marker present");
+
+/* ---------- old-port leftovers gone (live code, comments stripped) ------ */
+const Snc = S.replace(/\/\*[\s\S]*?\*\//g, "");
+["remFCommitThru", "remF-set-thru", "remF-refresh", "remFq-",
+ "remFMiniBar", "remFKpiHead", "REMF_STATE", "REMF_MODAL", "REMF_POP",
+ "remFRerender", "remFOnClick", "remFOpenPop", "remFSyncPop", "remFRenderModal("
+].forEach(function (bad) {
+  A.absent(Snc, bad, "old symbol gone from live code: " + bad);
+});
+A.absent(code.replace(/data-rempop/g, ""), "rempop", "old data-rempop hover attr gone from the remF block (Jo's own rows keep theirs)");
+A.absent(shell.css.replace(/\/\*[\s\S]*?\*\//g, ""), ".remF-", "old capital-F CSS classes gone from the stylesheet (comment mentions allowed)");
+A.absent(code, "Receipts through ", "old single-cutoff chip phrase gone from the remF block");
+
+/* ---------- v3.5a CSS split-selector guard ------------------------------ */
+const cssNc = shell.css.replace(/\/\*[\s\S]*?\*\//g, "");
+A.absent(cssNc, ".remf-root .remf-root", "no doubled .remf-root selector (the v3.5 fault)");
+A.contains(cssNc, ".remf-root .rem-pcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))", "pace-card grid selector whole");
+A.contains(cssNc, ".remf-root .rem-pledge-panel{", ".rem-pledge-panel selector whole and scoped");
+A.contains(cssNc, ".modal.modal-wide.rem-drill-modal{max-width:1240px;width:96vw;height:auto;max-height:88vh;}", "drill screen sized per v3.3 (1240px / 96vw / 88vh)");
+A.contains(cssNc, ".remf-root .pbar[data-remfpop]", "hover attr namespaced in CSS");
+{ /* every .remf-root rule opens at a selector, none floats as a bare property */
+  let depth = 0; const orphans = [];
+  cssNc.split("\n").forEach(function (ln) {
+    const s = ln.trim();
+    if (!s) return;
+    if (depth === 0 && s.indexOf("{") < 0 && s.indexOf("}") < 0 && s.indexOf(":") > -1 && s.indexOf(".remf") < 0 && /;$/.test(s) && /^[a-z-]+\s*:/.test(s)) orphans.push(s.slice(0, 60));
+    depth += (s.match(/{/g) || []).length - (s.match(/}/g) || []).length;
+  });
+  A.ok(orphans.length === 0, "no orphaned CSS property lines (split-selector guard): " + orphans.join(" | "));
+}
+
+/* ---------- registry ---------------------------------------------------- */
+const registry = H.extractRegistry(S, "remittance-mb");
+A.eq(registry.length, 4, "four live remittance-mb registry entries");
+["remF", "remF_k", "remF2", "remF3"].forEach(function (id, i) {
+  A.eq(registry[i].id, id, "registry order: " + id);
+});
+registry.forEach(function (w) {
+  A.ok(/\(OC[,)]/.test(w.title), "title uses the (OC) convention: " + w.title);
+  A.noEmDash(w.title, "registry title " + w.id);
+});
+A.eq(registry[0].size, "wide", "remF is the Explore card");
+A.eq(registry[1].size, "kpi", "remF_k is the Glance card");
+A.eq(registry[2].size, "xwide", "remF2 is the Detail card");
+A.eq(registry[3].state, "empty", "remF3 is the no-pledges card");
+registry.slice(0, 3).forEach(function (w) {
+  A.eq(w.range, "year", w.id + " defaults to This year");
+  A.eq(w.view, "table", w.id + " defaults to the Table view");
+  A.eq(w.paceF, "all", w.id + " starts unfiltered");
+  A.eq(w.remSort, "seq", w.id + " defaults to conference order");
+});
+
+/* ---------- every class the markup emits is declared -------------------- */
+A.cssDeclares(shell.css, [
+  "remf-root", "remf-w", "remf-chip", "remf-ahead", "remf-onpace",
+  "remf-behind", "remf-farbehind", "remf-neutral", "remf-pop-card",
+  "rem-pcards", "rem-pcard", "rem-pcard-top", "rem-pcard-ic", "rem-pcard-lbl",
+  "rem-pcard-n", "rem-pcard-sub", "rem-nopl-foot",
+  "rem-body", "rem-tbl", "rem-cap", "rem-cap-sort", "rem-scroll",
+  "rem-row", "rem-cell", "rem-num", "rem-pct", "rem-pct-v", "rem-nopct",
+  "rem-head", "rem-name", "rem-name-txt", "rem-name-nm", "rem-name-sub",
+  "rem-total", "rem-total-lead", "rem-row-drill", "rem-grp", "rem-grp-none",
+  "rem-bars", "rem-barrow", "rem-barrow-top", "rem-barrow-nmwrap",
+  "rem-barrow-nm", "rem-barrow-open", "rem-barrow-pct", "rem-barrow-cap",
+  "rem-barrow-click", "rem-vals", "rem-legend", "rem-legend-i", "rem-legend-sw",
+  "rem-legend-tick", "rem-glance-lbl", "rem-glance-note",
+  "pbar", "pbar-track", "pbar-fill", "pbar-tick", "pbar-sm",
+  "rem-hd", "dep-hd", "dep-hd-top", "dep-hd-toggle", "dep-hd-num",
+  "dep-hd-kpigrp", "vtoggle", "vt", "filter-chip", "fc-label", "rem-thru-chip",
+  "rem-spin", "rem-skel", "rem-sk-row", "sk", "gft-goalpill", "bank-pill",
+  "delta-pill", "scope-chip", "sc-nm", "kpi-row", "kpi-num", "metric-value",
+  "gl-sub", "state", "state-title", "state-sub", "sr-only", "wt-sort",
+  "mi", "mi-gap", "mi-nm", "cap", "rem-pop-dates", "rem-date-input",
+  "rem-drill-modal", "rem-detail-modal", "rem-detail-h", "rem-dsub",
+  "rem-dh-spacer", "rem-drill-b", "rem-detail-b", "rem-sum", "rem-sum-cell",
+  "rem-sum-k", "rem-sum-v", "rem-sum-stat", "rem-term-line", "rem-catchup",
+  "rem-ph-h", "rem-ph-tbl", "rem-ph-row", "rem-ph-head", "rem-ph-amt",
+  "rem-ph-total", "rem-tab-empty", "rem-behind-sec",
+  "rem-pledge-panel", "rem-pl-cap", "rem-pl-tbl", "rem-pl-row", "rem-pl-head",
+  "rem-pl-cell", "rem-pl-nm", "rem-pl-date", "rem-pl-stat", "rem-pl-pager",
+  "rem-pl-count", "rem-pl-pages", "rem-pl-pgbtn", "rem-caret",
+  "rem-plh", "rem-plh-hd", "rem-plh-t", "rem-plh-m", "rem-plh-flag",
+  "rem-plh-ok", "rem-plh-row", "rem-plh-head", "rem-plh-num", "rem-plh-st",
+  "rem-plh-foot", "btn", "iconbtn", "modal-backdrop"], "W04 class list");
+
+/* ---------- run the real code ------------------------------------------ */
+const env = H.runBlock(block, { registry: registry, dataAttr: "data-action" });
+const ctx = env.ctx, shim = env.shim, log = env.log;
+
+function w(id) { return registry.filter(function (x) { return x.id === id; })[0]; }
+function click(a, id, extra) {
+  const bag = Object.assign({ "data-id": id || "" }, extra || {});
+  return ctx.remFHandleClick(a, id, shim.mkTarget(bag));
+}
+function money(n) { return ctx.remFMoney(n); }
+function cents(x) { return Math.round(x * 100); }
+
+/* ---------- ground truth at the default window (This year, end Jul 31) --- */
+const wf = w("remF");
+let t = ctx.remFTotals(wf);
+A.eq(t.paid, 36400, "cumulative paid = 36,400 (mock anchor)");
+A.eq(t.expected, 40385, "expected by now = 40,385 (per-term pacing)");
+A.eq(t.behindCount, 2, "2 activities behind (shortfall > 0)");
+A.eq(t.pacedCount, 5, "5 paced activities in scope");
+A.eq(t.noPledgeCount, 1, "1 receipts-only activity (Youth Ministry)");
+A.eq(t.behindShortfall, 8268, "behind shortfall = per-row sum 8,268 (never netted)");
+A.eq(t.windowPaid, 31400, "window receipts (This year) = 31,400");
+A.eq(t.status, "behind", "portfolio reads behind pace");
+
+/* cards vs header: MUST agree under every date range (the v3.5 departure) */
+function agree(label) {
+  const tt = ctx.remFTotals(wf), st = ctx.remFBandStats(wf);
+  A.eq(st.behind.n, tt.behindCount, "cards Behind count == header behind count (" + label + ")");
+  A.eq(st.behind.n + st.ontrack.n + st.ahead.n, tt.pacedCount, "cards partition the paced set (" + label + ")");
+  A.eq(st.neutral.n, tt.noPledgeCount, "receipts-only rows sit outside the cards (" + label + ")");
+}
+agree("This year");
+wf.range = "last30"; agree("Last 30 days");
+const t30 = ctx.remFTotals(wf);
+A.eq(t30.behindShortfall, 8268, "pacing is cumulative to END: Last 30 days shortfall unchanged");
+A.eq(t30.windowPaid, 3300, "but the START does real work: window receipts = 3,300");
+wf.range = "custom"; wf.rStart = "2026-03-01"; wf.rEnd = "2026-06-30"; agree("Custom Mar-Jun");
+const tCust = ctx.remFTotals(wf);
+A.ok(tCust.expected < 40385, "custom earlier END re-paces (expected drops)");
+A.eq(ctx.remFThru(wf), "2026-06-30", "remFThru returns the range END");
+A.eq(ctx.remFRangeStart(wf), "2026-03-01", "remFRangeStart returns the range START");
+wf.range = "year"; wf.rStart = null; wf.rEnd = null;
+A.eq(ctx.remFRangeBounds(wf).start, "2026-01-01", "This year starts Jan 1");
+A.eq(ctx.remFRangeBounds(wf).end, "2026-07-31", "This year ends today (anchor)");
+wf.range = "last30";
+A.eq(ctx.remFRangeBounds(wf).start, "2026-07-01", "Last 30 days starts end-30");
+wf.range = "year";
+A.eq(ctx.remFRangePhrase(wf), "Receipts from Jan 1 to Jul 31, 2026", "chip phrase shows the shared year once");
+
+/* ---------- initial render at each tier -------------------------------- */
+let wide = ctx.remFContent(wf);
+A.contains(wide, 'class="remf-root remf-w" data-tier="explore"', "wide: remf-root wrapper with explore tier");
+A.contains(wide, 'data-action="remF-thru"', "wide: receipts window chip");
+A.contains(wide, "Receipts from Jan 1 to Jul 31, 2026", "wide: chip reads the range");
+A.contains(wide, money(8268), "wide: headline is the behind-pace shortfall");
+A.contains(wide, "2 of 5 behind pace", "wide: N of M behind pace pill");
+A.contains(wide, "Behind pace", "wide: warn pill text");
+A.absent(wide, "% of pledged", "wide: no goal-percent pill (W17's language)");
+A.contains(wide, "rem-pcard-behind", "wide: Behind pace card");
+A.contains(wide, "rem-pcard-ontrack", "wide: On track pace card");
+A.contains(wide, "rem-pcard-ahead", "wide: Ahead pace card");
+A.contains(wide, money(23400) + " outstanding", "wide: Behind card money = 16,800 + 6,600");
+A.contains(wide, 'data-action="remF-set-pacef" data-id="remF" data-v="behind"', "wide: Behind card is a filter toggle");
+A.contains(wide, ">YTD Paid ", "wide: YTD Paid column head");
+A.eq(wide.split("rem-row-drill").length - 1, 5, "wide: five PACED activity rows, FLAT (receipts-only is footer, not a row)");
+A.absent(wide, "rem-grp-btn", "wide: v3.0 collapsible group headers retired");
+A.contains(wide, "rem-nopl-foot", "wide: receipts-only footer line");
+A.contains(wide, "1 activity with receipts but no pledge term in this window, " + money(500) + " received", "wide: footer states count and money");
+A.contains(wide, "Total (6 activities)", "wide: Total covers every activity in scope");
+A.contains(wide, "Totals cross-foot every activity in scope.", "wide: caption says so");
+A.contains(wide, money(31400) + " of that arrived inside the selected window", "wide: caption carries the window figure");
+A.contains(wide, 'data-v="table"', "wide: Table segment");
+A.contains(wide, 'data-v="bars"', "wide: Pacing bars segment");
+A.absent(wide, 'data-v="variance"', "wide: Pace variance segment stays dropped (v3.2)");
+A.contains(wide, 'data-action="remF-open"', "wide: rows open the drill screen");
+A.contains(wide, 'aria-haspopup="dialog"', "wide: row is a dialog opener, not an expander");
+A.absent(wide, 'aria-expanded="false" aria-label="General Fund', "wide: no aria-expanded on drill rows");
+A.noEmDash(wide, "wide default render");
+
+const kpi = ctx.remFContent(w("remF_k"));
+A.contains(kpi, 'data-tier="glance"', "Glance: tier attr");
+A.contains(kpi, money(8268), "Glance: headline is the shortfall money");
+A.contains(kpi, "2 of 5 behind pace", "Glance: sub-line");
+A.contains(kpi, money(31400) + " received in this window", "Glance: window receipts note");
+A.contains(kpi, money(500) + " of it against no pledge", "Glance: receipts-only note");
+A.absent(kpi, "rem-pcard", "Glance: no pace cards (Explore and Detail only)");
+A.absent(kpi, "rem-row-drill", "Glance: no table");
+A.absent(kpi, "rem-legend", "Glance: no legend");
+A.noEmDash(kpi, "Glance render");
+
+const det = ctx.remFContent(w("remF2"));
+A.contains(det, 'data-tier="detail"', "Detail: tier attr");
+A.contains(det, "vtoggle", "Detail: view toggle visible (single full-width panel)");
+A.contains(det, "rem-pcards", "Detail: pace cards present");
+A.eq(det.split("rem-row-drill").length - 1, 5, "Detail: same flat table, larger size");
+A.noEmDash(det, "Detail render");
+
+const empty = ctx.remFContent(w("remF3"));
+A.contains(empty, "No remittance pledges yet", "empty state title");
+A.contains(empty, "state-sub", "empty state guidance");
+A.absent(empty, "rem-pcard", "empty state carries no cards");
+A.noEmDash(empty, "empty state");
+const emptyK = ctx.remFContent({ id: "tmpE", size: "kpi", state: "empty" });
+A.contains(emptyK, "None set up", "Glance empty variant");
+A.noEmDash(emptyK, "Glance empty variant");
+
+/* ---------- card filter toggling ---------------------------------------- */
+click("remF-set-pacef", "remF", { "data-v": "behind" });
+A.eq(wf.paceF, "behind", "Behind card filters the table");
+let filt = ctx.remFContent(wf);
+A.eq(filt.split("rem-row-drill").length - 1, 2, "filter: only the 2 behind rows shown");
+A.contains(filt, "Showing 2 of 5 paced activities; the Total below still covers every activity in scope.", "filter: caption says the Total is unfiltered");
+A.contains(filt, "Total (6 activities)", "filter: Total row untouched");
+A.contains(filt, money(40385), "filter: Total expected unchanged");
+A.contains(filt, money(36400), "filter: Total paid unchanged");
+A.contains(filt, "rem-nopl-foot", "filter: receipts-only footer NEVER filtered away");
+A.contains(filt, 'data-action="remF-set-pacef" data-id="remF" data-v="all" aria-pressed="true"', "filter: active card carries data-v=all (its own clear control)");
+A.noEmDash(filt, "filtered render");
+click("remF-set-pacef", "remF", { "data-v": "all" });
+A.eq(wf.paceF, "all", "clicking the active card clears the filter");
+A.eq(ctx.remFContent(wf).split("rem-row-drill").length - 1, 5, "filter cleared: all five paced rows back");
+click("remF-set-pacef", "remF", { "data-v": "ahead" });
+filt = ctx.remFContent(wf);
+A.eq(filt.split("rem-row-drill").length - 1, 2, "Ahead card: District (paid in full) + Outreach");
+click("remF-set-pacef", "remF", { "data-v": "ontrack" });
+filt = ctx.remFContent(wf);
+A.eq(filt.split("rem-row-drill").length - 1, 1, "On track card: Capital Campaign only");
+click("remF-set-pacef", "remF", { "data-v": "all" });
+
+/* a window with no paced pledges: clean message, cards at zero, header agrees */
+wf.range = "custom"; wf.rStart = "2025-01-01"; wf.rEnd = "2025-06-30";
+const tNone = ctx.remFTotals(wf), stNone = ctx.remFBandStats(wf);
+A.eq(tNone.pacedCount, 0, "pre-pledge window: nothing paced");
+A.eq(stNone.behind.n, 0, "pre-pledge window: cards agree at zero");
+let noneHTML = ctx.remFContent(wf);
+A.contains(noneHTML, "No activities have a pledge term in this window.", "pre-pledge window message");
+A.noEmDash(noneHTML, "pre-pledge window render");
+wf.range = "year"; wf.rStart = null; wf.rEnd = null;
+
+/* ---------- receipts window popover + custom dates ----------------------- */
+click("remF-thru", "remF");
+A.ok(ctx.pop && ctx.pop.type === "remF-thru" && ctx.pop.id === "remF", "chip opens the receipts-window popover");
+let popHTML = ctx.remFPopContent();
+["This year", "Last 30 days", "Custom"].forEach(function (o) { A.contains(popHTML, o, "popover option: " + o); });
+A.absent(popHTML, "Refresh", "no Refresh button (presets apply on click)");
+A.absent(popHTML, "End of last month", "old preset gone");
+A.absent(popHTML, ">Today<", "old Today preset gone");
+A.noEmDash(popHTML, "popover");
+click("remF-thru", "remF");
+A.eq(ctx.pop, null, "chip toggles the popover closed");
+
+click("remF-thru", "remF");
+click("remF-set-range", "remF", { "data-r": "custom" });
+A.eq(wf.range, "custom", "Custom selected");
+A.ok(ctx.pop && ctx.pop.type === "remF-thru", "popover stays open for Custom");
+A.ok(wf.remLoading, "range change is a data fetch: loading flips on");
+A.ok(log.timers > 0, "loading timer armed");
+A.contains(ctx.remFContentInner(wf), "rem-skel", "skeleton renders while loading");
+wf.remLoading = false;
+popHTML = ctx.remFPopContent();
+A.contains(popHTML, 'id="remfFrom-remF"', "Custom reveals the From field");
+A.contains(popHTML, 'id="remfTo-remF"', "Custom reveals the To field");
+A.contains(popHTML, 'class="pr-date-input remf-date-input"', "date fields ride the shell's caret machinery, not Jo's rem-date-input path");
+A.contains(popHTML, 'data-which="start"', "From field maps to the range start");
+A.noEmDash(popHTML, "custom popover");
+A.ok(ctx.remFSetCustomDate(wf, "end", "2026-06-30"), "custom To applies on change");
+A.eq(wf.rEnd, "2026-06-30", "rEnd stored");
+A.eq(ctx.remFRangePhrase(wf), "Receipts from Jan 1 to Jun 30, 2026", "chip re-reads the custom range");
+A.ok(!ctx.remFSetCustomDate(wf, "end", "garbage"), "malformed date rejected");
+wf.remLoading = false;
+click("remF-set-range", "remF", { "data-r": "year" });
+A.eq(wf.range, "year", "preset applies immediately");
+A.eq(ctx.pop, null, "preset closes the popover");
+wf.remLoading = false; wf.rStart = null; wf.rEnd = null;
+
+/* sort is a client re-render, never a load */
+click("remF-sort", "remF", { "data-k": "name" });
+A.eq(wf.remSort, "name-asc", "name sorts ascending first");
+A.ok(!wf.remLoading, "sort does NOT flip loading");
+let rows = ctx.remFRows(wf);
+A.eq(rows[0].name, "Capital Campaign Pledge", "name asc: Capital Campaign first");
+click("remF-sort", "remF", { "data-k": "name" });
+A.eq(wf.remSort, "name-desc", "second click flips direction");
+click("remF-sort", "remF", { "data-k": "status" });
+A.eq(wf.remSort, "status-asc", "Most behind first = status ascending");
+rows = ctx.remFRows(wf);
+A.eq(rows[0].name, "General Fund Apportionment", "most behind first: General Fund leads");
+A.eq(rows[rows.length - 1].name, "Youth Ministry Fund", "no-pledge row sorts last");
+wf.remSort = "seq";
+
+/* ---------- view toggle + pacing bars ----------------------------------- */
+click("remF-view", "remF", { "data-v": "bars" });
+A.eq(wf.view, "bars", "toggle writes the view");
+let bars = ctx.remFContent(wf);
+A.contains(bars, "rem-barrow-click", "bars: rows are clickable");
+A.contains(bars, 'data-action="remF-baropen"', "bars: rows open the top-5 popup");
+A.absent(bars, 'data-action="remF-open"', "bars: rows never open the full drill");
+A.absent(bars, "rem-pledge-panel", "bars: no inline pledge panel");
+A.contains(bars, "data-remfpop=", "bars: hover payload namespaced (Jo's pbar listener can't grab it)");
+A.contains(bars, "pbar-tick", "bars: navy expected tick");
+A.contains(bars, "Expected by now", "bars: legend explains the tick");
+A.contains(bars, money(7200) + " paid &middot; " + money(13912) + " expected by now", "bars: GF caption values");
+A.noEmDash(bars, "bars render");
+/* stale view state falls back to the table */
+wf.view = "variance";
+A.contains(ctx.remFContent(wf), "rem-pcards", "stale 'variance' state falls back to the table");
+wf.view = "bars";
+
+/* bar hover card via the block's own mousemove listener */
+shim.fireMove("pbar", { "data-remfpop": "General Fund Apportionment|24000|7200|13912|16800|30|58|farbehind|About 102 days behind schedule" });
+A.ok(ctx.remFPopEl, "hover card mounts");
+A.contains(ctx.remFPopEl.innerHTML, "Pledged", "hover card shows Pledged");
+A.contains(ctx.remFPopEl.innerHTML, "About 102 days behind schedule", "hover card carries the day phrase");
+A.contains(ctx.remFPopEl.innerHTML, "60+ days behind", "hover card status label");
+A.noEmDash(ctx.remFPopEl.innerHTML, "hover card");
+shim.fireMove("elsewhere", {});
+A.ok(!ctx.remFPopEl, "hover card hides off the bars");
+
+/* ---------- behind popup (top 5 most behind) ----------------------------- */
+click("remF-baropen", "remF", { "data-seq": "1" });
+A.ok(ctx.modal && ctx.modal.type === "remFbehind" && ctx.modal.seq === "1", "bars row opens the behind popup");
+let behindHTML = ctx.remFBehindModalHTML();
+A.contains(behindHTML, "modal-backdrop", "behind popup: Jo's backdrop");
+A.contains(behindHTML, "rem-drill-modal remf-root", "behind popup: same drill shell + scoped root");
+A.contains(behindHTML, "Pledges most behind pace", "behind popup: header sub");
+A.contains(behindHTML, "Most behind pledges", "behind popup: lower section heading");
+A.contains(behindHTML, 'data-action="remF-export-drill"', "behind popup: activity-scoped export");
+const act1 = ctx.remFActBySeq(1);
+const plRows1 = ctx.remFPledgeRows(wf, act1);
+const behindN = plRows1.filter(function (it) { return it.p.shortfall > 0; }).length;
+const shownN = Math.min(5, behindN);
+A.eq(behindHTML.split('data-action="remF-plopen"').length - 1, shownN, "behind popup: exactly min(5, behind) pledge rows");
+if (behindN > 5) A.contains(behindHTML, "Showing the 5 furthest behind of " + behindN + " pledges behind pace.", "behind popup: cap note");
+else A.contains(behindHTML, "Showing all " + behindN, "behind popup: shows-all note");
+A.absent(behindHTML, "page 1 of", "behind popup: no pager");
+A.noEmDash(behindHTML, "behind popup");
+/* v3.4 arity fix: a schedule can expand inside this popup */
+const firstBehindId = plRows1.filter(function (it) { return it.p.shortfall > 0; })[0].pl.id;
+A.contains(behindHTML, 'data-pl="' + firstBehindId + '"', "behind popup rows carry real pledge ids (v3.4 fix, no data-seq=undefined)");
+A.absent(behindHTML, 'data-seq="undefined"', "behind popup: the v2.3 undefined-seq bug stays dead");
+click("remF-plopen", "remF", { "data-pl": firstBehindId });
+A.ok(wf.plOpen[firstBehindId], "pledge schedule expands inside the popup");
+A.contains(ctx.remFBehindModalHTML(), "rem-plh", "behind popup: schedule table renders");
+click("remF-plopen", "remF", { "data-pl": firstBehindId });
+click("remF-detail-close", "remF");
+A.eq(ctx.modal, null, "behind popup closes");
+click("remF-view", "remF", { "data-v": "table" });
+
+/* ---------- drill screen (Table view) ------------------------------------ */
+click("remF-open", "remF", { "data-seq": "1" });
+A.ok(ctx.modal && ctx.modal.type === "remFdrill" && ctx.modal.seq === "1", "activity row opens the drill screen");
+A.eq(wf.plPage["1"], 1, "drill opens at page 1");
+let drill = ctx.remFDrillModalHTML();
+A.contains(drill, "modal-backdrop", "drill: Jo's backdrop");
+A.contains(drill, "rem-drill-modal remf-root", "drill: Jo's drill-modal shell, scoped root");
+A.contains(drill, "Pledges behind this activity", "drill: header sub");
+A.contains(drill, ">Total pledge<", "drill: summary strip");
+A.contains(drill, ">Expected by now<", "drill: summary expected");
+A.contains(drill, "Pledge term Jan 1, 2026 to Dec 31, 2026", "drill: term line");
+A.contains(drill, "behind the expected pace", "drill: pace note for a behind activity");
+A.contains(drill, ">Name<", "drill: pledge table Name column (CorePerson Last, First)");
+A.contains(drill, 'data-action="remF-export-drill" data-id="remF" data-seq="1"', "drill: export scoped to THIS activity");
+A.contains(drill, "Open in Remittance", "drill: link-out intact");
+A.eq(drill.split('data-action="remF-plopen"').length - 1, 8, "drill: 8 pledges per page (v3.4)");
+const total1 = plRows1.length, pages1 = Math.ceil(total1 / 8);
+A.ok(total1 >= 60 && total1 <= 72, "drill: 60-72 seeded pledges (" + total1 + ")");
+A.contains(drill, total1 + " pledges &middot; page 1 of " + pages1, "drill: pager caption");
+A.noEmDash(drill, "drill screen page 1");
+/* most-behind-first ordering */
+for (let i = 1; i < plRows1.length; i++) A.ok(plRows1[i - 1].p.shortfall >= plRows1[i].p.shortfall, i === 1 ? "drill rows sorted shortfall descending" : "drill sort row " + i);
+
+/* cents reconciliation of the drill to its activity row */
+const row1 = ctx.remFFindRow(wf, "1");
+const pls1 = ctx.remFPledgesFor(act1, null, ctx.remFThru(wf));
+A.eq(pls1.reduce(function (s, p) { return s + cents(p.goal); }, 0), cents(row1.total), "pledge goals sum to the activity Pledge, to the cent");
+A.eq(pls1.reduce(function (s, p) { return s + cents(p.paid); }, 0), cents(row1.paid), "pledge paids sum to the activity Paid, to the cent");
+A.eq(pls1.reduce(function (s, p) { return s + cents(Math.max(0, p.goal - p.paid)); }, 0), cents(row1.outstanding), "pledge outstandings sum to the activity Outstanding, to the cent");
+A.ok(ctx.remFPledgesFor(act1, null, ctx.remFThru(wf)) === pls1, "pledge set memoised (deterministic across re-renders)");
+/* window-keyed memo (v3.0 fix): a different END re-seeds and still reconciles */
+wf.range = "custom"; wf.rStart = null; wf.rEnd = "2026-06-30";
+const rowC = ctx.remFFindRow(wf, "1");
+const plsC = ctx.remFPledgesFor(act1, null, "2026-06-30");
+A.eq(plsC.reduce(function (s, p) { return s + cents(p.paid); }, 0), cents(rowC.paid), "drill reconciles to the row under a moved window too");
+wf.range = "year"; wf.rEnd = null;
+
+/* pager: pages change, totals never move */
+click("remF-ppage", "remF", { "data-seq": "1", "data-p": "2" });
+A.eq(wf.plPage["1"], 2, "pager: page 2 selected");
+let drill2 = ctx.remFDrillModalHTML();
+A.changed(drill2, drill, "pager: page 2 renders different pledges");
+A.contains(drill2, "page 2 of " + pages1, "pager: caption updates");
+A.contains(drill2, money(row1.total), "pager: activity totals unaffected by paging");
+click("remF-ppage", "remF", { "data-seq": "1", "data-p": "0" });
+A.eq(wf.plPage["1"], 2, "pager: page 0 refused");
+click("remF-ppage", "remF", { "data-seq": "1", "data-p": "1" });
+
+/* ---------- third drill level: the payment schedule ---------------------- */
+const item1 = plRows1[0];               /* most behind pledge of activity 1 */
+click("remF-plopen", "remF", { "data-pl": item1.pl.id });
+A.ok(wf.plOpen[item1.pl.id], "pledge row expands its schedule");
+drill = ctx.remFDrillModalHTML();
+A.contains(drill, "rem-plh", "schedule region renders");
+A.contains(drill, "Receipts are applied oldest first", "schedule: allocation rule stated");
+A.contains(drill, "Totals here reconcile to " + money(item1.pl.paid) + " received on this pledge.", "schedule: reconciles to the pledge");
+const sch = ctx.remFSchedule(item1.pl, act1, ctx.remFThru(wf));
+const summ = ctx.remFScheduleSummary(sch);
+A.ok(summ.missed.length > 0, "most-behind pledge has missed instalments");
+A.contains(drill, "First skipped payment: " + ctx.remFFmtDate(summ.firstMissed), "schedule: FIRST skipped date named");
+/* oldest-first allocation: once an instalment is missed, nothing later is funded */
+let seenMissed = false, oldestFirstOK = true;
+sch.forEach(function (x) {
+  if (x.status === "missed") seenMissed = true;
+  else if (seenMissed && (x.status === "paid" || x.status === "part") && x.amount > 0) oldestFirstOK = false;
+});
+A.ok(oldestFirstOK, "oldest-first: no funded instalment after the first missed one");
+A.ok(sch.filter(function (x) { return x.status === "missed"; }).every(function (x) { return x.due <= ctx.remFThru(wf); }), "missed only ever applies to instalments already due");
+const schedTotal = sch.reduce(function (s, x) { return s + cents(x.applied); }, 0);
+A.eq(schedTotal, cents(item1.pl.paid), "schedule applied sums to the pledge paid, to the cent");
+A.noEmDash(drill, "drill with schedule open");
+click("remF-plopen", "remF", { "data-pl": item1.pl.id });
+A.ok(!wf.plOpen[item1.pl.id], "schedule collapses again");
+
+/* fully-paid pledge (if any) shows the clean flag */
+const fullItem = plRows1.filter(function (it) { return it.p.status === "full"; })[0];
+if (fullItem) {
+  const schF = ctx.remFSchedule(fullItem.pl, act1, ctx.remFThru(wf));
+  A.eq(ctx.remFScheduleSummary(schF).missed.length, 0, "fully-paid pledge: nothing skipped");
+}
+
+/* ---------- exports (view-scoped, Rule 11 stubs) ------------------------- */
+click("remF-export-drill", "remF", { "data-seq": "1" });
+A.contains(log.status[log.status.length - 1], "Exporting the pledges behind General Fund Apportionment", "drill export names the activity (scoped to the view)");
+click("remF-export", "remF");
+A.contains(log.status[log.status.length - 1], "payment history", "history export stub");
+click("remF-open-record", "remF", { "data-seq": "1" });
+A.contains(log.status[log.status.length - 1], "Opening General Fund Apportionment in the Remittance module", "link-out stub names the activity");
+click("remF-detail-close", "remF");
+A.eq(ctx.modal, null, "drill closes");
+
+/* ---------- keyboard ------------------------------------------------------ */
+shim.fireKey("Enter", { "data-action": "remF-open", "data-id": "remF", "data-seq": "3" }, "div");
+A.ok(ctx.modal && ctx.modal.type === "remFdrill" && ctx.modal.seq === "3", "Enter on a row opens the drill");
+shim.fireKey("Escape", {}, "div");
+A.eq(ctx.modal, null, "Escape closes the drill");
+
+/* ---------- REMF_USE_POPUP rollback path --------------------------------- */
+A.eq(ctx.REMF_USE_POPUP, false, "REMF_USE_POPUP defaults false");
+ctx.modal = { type: "remFdetail", id: "remF", seq: "1" };
+const hist = ctx.remFDetailModalHTML();
+A.contains(hist, "Payment history", "history modal preserved (rollback-able)");
+A.contains(hist, "rem-detail-modal remf-root", "history modal on Jo's shell too");
+A.contains(hist, "Receipts on or before " + ctx.remFFmtDate(ctx.remFThru(wf)), "history modal lists receipts to the window end");
+A.noEmDash(hist, "history modal");
+ctx.modal = null;
+
+/* ---------- no-em-dash sweep over every combination ----------------------- */
+let combos = 0;
+["kpi", "wide", "xwide"].forEach(function (size) {
+  ["table", "bars"].forEach(function (view) {
+    ["all", "behind", "ontrack", "ahead"].forEach(function (pf) {
+      ["year", "last30", "custom"].forEach(function (range) {
+        const ww = { id: "sweep", size: size, state: "ready", view: view, paceF: pf,
+          range: range, rStart: "2026-02-01", rEnd: "2026-07-15", remSort: "seq" };
+        const out = ctx.remFContent(ww);
+        if (String(out).indexOf(H.EM_DASH) > -1) A.noEmDash(out, "sweep " + size + "/" + view + "/" + pf + "/" + range);
+        combos++;
+      });
+    });
+  });
+});
+A.eq(combos, 72, "em-dash sweep covered 72 combinations (all clean unless flagged above)");
+A.noEmDash(ctx.remFContent({ id: "sweepE", size: "wide", state: "empty" }), "sweep empty state");
+A.noEmDash(ctx.REMF_ABOUT, "about text");
+
+process.exit(A.report());

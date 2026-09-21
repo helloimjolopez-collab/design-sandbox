@@ -1,0 +1,326 @@
+/* =====================================================================
+   w02-pension-oc.driver.js , W02 Pension Plans (kind pension-oc, prefix
+   penO) verification driver for the 2026-09-07 V2 re-port (Step 4 v2.2).
+
+   W02 is a style-(a) port like W01: penOHandleClick / penOPopContent are
+   real functions dispatched from Jo's shared listener, so the extracted
+   block is directly runnable and this driver calls them as the shell would.
+
+   V2.2 specifics asserted here (Step 4 "W02 - Pension Plans.md", 2026-08-30):
+     - the Districts ROSTER is genuinely absent (functions, state key, handlers)
+     - the view toggle has exactly 3 segments (Table / Pie / By district)
+     - a stale penViewM of "dist" falls back to Table, Table marked pressed,
+       at both Explore and Detail, without throwing or rendering a roster
+     - the appointees modal carries penf-detail-modal and the 960px flex-row
+       CSS exists at 0,4,0 without touching Jo's own pen modal rules
+
+   Run from this folder:  node w02-pension-oc.driver.js
+   ===================================================================== */
+"use strict";
+const H = require("./jo-port-driver.js");
+
+const shell = H.loadShell();
+const S = shell.script;
+const A = new H.Assert("W02 pension-oc (V2 re-port)");
+
+/* ---------- extraction (verbatim regions out of the real file) -------- */
+const block = "/*" + H.extractRegion(S,
+  '   Pension Plans (MB updated)  (prefix: penO, kind:"pension-oc")',
+  '/* --- renderModal() branch: if(modal.type==="penOdetail"){mr.innerHTML=penODetailModalHTML();return;} */');
+
+/* ---------- structural markers and dispatch (Jo's pre-existing lines) -- */
+A.ok(S.indexOf('if(w.kind==="pension-oc")return penOContent(w);') > -1, "contentHTML dispatch line present");
+A.ok(S.indexOf('if(w.kind==="pension-oc")return {h:w.title,b:PENO_ABOUT};') > -1, "aboutOf branch present");
+A.ok(S.indexOf('if(a&&a.indexOf("penO-")===0&&penOHandleClick(a,id,t))return;') > -1, "click-listener dispatch present");
+A.ok(S.indexOf('if(pop.type==="penO-dist")return penOPopContent();') > -1, "popContent dispatch present");
+A.ok(S.indexOf('if(pop.type==="penO-dist")return \'[data-action="penO-dist"][data-id="\'+pop.id+\'"]\';') > -1, "triggerSelector branch present");
+A.ok(S.indexOf('if(modal.type==="penOdetail"){mr.innerHTML=penODetailModalHTML();return;}') > -1, "renderModal dispatch present");
+A.ok(shell.css.indexOf("Pension Plans (MB updated): ONLY the new grouped-bar") > -1, "CSS region marker (MB updated wording) present");
+
+/* v2.2: the Districts roster never reaches this port, in any form */
+["penODistTable", "penODistData", "penOPeopleIn", "penDistOpen",
+ 'penO-dist-open', 'penO-export-dist', "penf-dist-panel", "penf-dist-foot"].forEach(function (bad) {
+  A.absent(S, bad, "roster artifact " + bad + " absent from the script");
+});
+A.absent(block, '"dist","Districts"', "no Districts segment in the toggle");
+
+/* v2.2/v2.2a modal CSS, scoped to OUR class so Jo's cascade is untouched */
+A.contains(shell.css, ".modal.modal-wide.penf-detail-modal{max-width:960px;}", "modal width pinned at 960px");
+A.contains(shell.css, ".modal.modal-wide.penf-detail-modal .modal-b{display:flex;align-items:flex-start;gap:16px;", "modal body is a deliberate flex row");
+A.contains(shell.css, ".modal.modal-wide.penf-detail-modal .pen-detail-scroll{flex:1 1 auto;min-width:0;}", "table takes the majority of the modal");
+A.contains(shell.css, ".modal.modal-wide.penf-detail-modal .pen-dtotal{flex:0 0 190px;", "summary is a 190px right rail");
+A.contains(shell.css, "align-self:stretch;}", "rail divider runs the full body height");
+A.contains(shell.css, ".pen-detail-modal{max-width:960px;}", "Jo's own pen modal rule still present, untouched");
+
+/* every class our markup emits is declared (ours in our block, hers in hers) */
+A.cssDeclares(shell.css, ["penf-explore-chart", "penf-gwrap", "penf-grow", "penf-ggroup", "penf-gplot",
+  "penf-gbar", "penf-gfill", "penf-gx", "penf-gx-d", "penf-gx-t", "penf-glegend", "penf-gleg",
+  "penf-detail-modal",
+  "dep-hd", "dep-hd-top", "dep-hd-toggle", "dep-hd-num", "dep-hd-kpigrp", "filter-chip", "fc-label",
+  "vtoggle", "vt", "bank-pill", "bgt-spin", "wt-row", "wt-head", "wt-sort", "wt-c2", "lr-main",
+  "pen-hd", "pen-numwrap", "pen-caption", "pen-body", "pen-tscroll", "pen-row", "pen-plan",
+  "pen-dot", "pen-plan-nm", "pen-none", "pen-c-cnt", "pen-c-share", "pen-share", "pen-share-track",
+  "pen-share-fill", "pen-share-pct", "pen-total", "pen-full", "pen-col", "pen-col-chart",
+  "pen-chartwrap", "pen-pie", "pen-leg", "pen-chart-empty", "pen-skel", "pen-sk-row", "pen-empty",
+  "pen-clickable", "pen-detail-modal", "pen-detail-h", "pen-dsub", "pen-dh-spacer",
+  "pen-detail-scroll", "pen-drow", "pen-dhead", "pen-dc", "pen-dtotal",
+  "pie-wrap", "donut", "donut-c1", "donut-c2", "legend", "legend-col", "legend-head", "legend-hd",
+  "leg", "lg-main", "lg-meta", "dot", "state", "state-title", "state-sub", "kpi-row", "kpi-num",
+  "gl-sub", "sr-only", "metric-value", "dep-total", "dep-full", "dep-col", "dep-col-h",
+  "mi", "mi-gap", "cap", "sk", "scroll", "modal", "modal-wide", "modal-backdrop", "modal-h",
+  "modal-b", "modal-f", "modal-title", "iconbtn", "btn"],
+  "W02 class list");
+
+/* ---------- registry (live entries only, not the block's comment) ------ */
+const liveRegStart = S.indexOf('{id:"insO4"');
+const liveReg = S.slice(liveRegStart, S.indexOf('{id:"loan6"', liveRegStart));
+const registry = H.extractRegistry(liveReg, "pension-oc");
+A.eq(registry.length, 4, "four live pension-oc registry entries");
+["penO", "penO_k", "penO2", "penO3"].forEach(function (id, i) {
+  A.eq(registry[i].id, id, "registry order: " + id);
+});
+registry.forEach(function (w) {
+  A.ok(/\(OC[,)]/.test(w.title), "title uses the (OC) convention: " + w.title);
+  A.noEmDash(w.title, "registry title " + w.id);
+});
+A.eq(registry[0].size, "wide", "penO is the Explore card");
+A.eq(registry[1].size, "kpi", "penO_k is the Glance card");
+A.eq(registry[2].size, "xwide", "penO2 is the Detail card");
+A.ok(registry[3].state === "empty" && registry[3].dataset === "none", "penO3 is the empty-state card");
+registry.forEach(function (w) {
+  A.absent(JSON.stringify(w), "penDistOpen", "no roster state key on " + w.id);
+});
+
+/* ---------- run the real code ------------------------------------------ */
+const env = H.runBlock(block, { registry: registry, dataAttr: "data-action" });
+const ctx = env.ctx, shim = env.shim, log = env.log;
+
+function w(id) { return registry.filter(function (x) { return x.id === id; })[0]; }
+function click(a, id, extra) {
+  const bag = Object.assign({ "data-id": id || "" }, extra || {});
+  return ctx.penOHandleClick(a, id, shim.mkTarget(bag));
+}
+
+/* ---------- initial render at each tier -------------------------------- */
+const kpiHTML = ctx.penOContent(w("penO_k"));
+A.contains(kpiHTML, "$48,252.43", "Glance headline is the reconciled 48,252.43 total");
+A.contains(kpiHTML, "10 appointees", "Glance badge counts 10 appointees");
+A.contains(kpiHTML, "across 5 plans, all districts", "Glance caption names plans and scope");
+A.contains(kpiHTML, "sr-only", "Glance carries sr-only text");
+
+const wideHTML = ctx.penOContent(w("penO"));
+A.contains(wideHTML, "pen-tscroll", "Explore default view is the table");
+A.eq((wideHTML.match(/data-action="penO-view"/g) || []).length, 3, "Explore toggle has exactly 3 segments");
+A.absent(wideHTML, 'data-v="dist"', "no Districts segment rendered");
+A.contains(wideHTML, ">Table<", "segment 1 is Table");
+A.contains(wideHTML, ">Pie<", "segment 2 is Pie");
+A.contains(wideHTML, ">By district<", "segment 3 is By district");
+A.contains(wideHTML, 'data-v="table" aria-pressed="true"', "Table marked pressed by default");
+A.contains(wideHTML, "pen-share-track", "Explore table shows the share bar");
+A.contains(wideHTML, "Total annual contribution (10 appointees)", "table footer totals the appointees");
+A.contains(wideHTML, "Employee Before Tax-UMPIP", "largest plan present");
+A.ok(wideHTML.indexOf("Employee Before Tax-UMPIP") < wideHTML.indexOf("Flat CRSP-DB"), "amt-desc default sort: UMPIP before Flat CRSP-DB");
+
+const xwideHTML = ctx.penOContent(w("penO2"));
+A.contains(xwideHTML, "pen-full", "Detail renders the synced two panels");
+A.eq((xwideHTML.match(/data-action="penO-chart"/g) || []).length, 2, "Detail chart toggle is 2-way");
+A.absent(xwideHTML, 'data-action="penO-view"', "Detail has no 3-way view toggle");
+A.contains(xwideHTML, "Share of total", "Detail right panel defaults to the pie");
+A.contains(xwideHTML, "pen-c-share", "Detail table shows share as a text % column");
+A.contains(xwideHTML, "donut", "Detail pie renders the donut");
+
+/* ---------- district popover and the ONLY fetch ------------------------ */
+const timersBefore = log.timers;
+A.ok(click("penO-dist", "penO"), "district chip handled");
+A.ok(ctx.pop && ctx.pop.type === "penO-dist" && ctx.pop.id === "penO", "district popover state set");
+const popHTML = ctx.penOPopContent();
+A.eq((popHTML.match(/data-action="penO-set-dist"/g) || []).length, 4, "popover lists all 4 district options");
+A.contains(popHTML, 'aria-selected="true" data-action="penO-set-dist" data-id="penO" data-v="All Districts"', "current district checked");
+A.noEmDash(popHTML, "district popover");
+A.eq(log.timers, timersBefore, "opening the popover does not fetch");
+
+click("penO-set-dist", "penO", { "data-v": "District 1" });
+const w1 = w("penO");
+A.eq(w1.penDist, "District 1", "district filter set");
+A.ok(w1.penloading === true, "district change triggers the fetch flag");
+A.eq(log.timers, timersBefore + 1, "district change arms exactly one load timer");
+A.ok(ctx.pop === null, "popover closed on selection");
+A.ok(log.status.some(function (s) { return s.indexOf("Showing pension plans for District 1") > -1; }), "status announces the new district");
+const loadingHTML = ctx.penOContent(w1);
+A.contains(loadingHTML, "pen-skel", "loading renders the skeleton");
+A.contains(loadingHTML, "bgt-spin", "spinner rides in the chip while loading");
+w1.penloading = false;
+
+const d1HTML = ctx.penOContent(w1);
+A.contains(d1HTML, "$22,873.84", "District 1 total is the sum of its 4 appointees");
+A.contains(d1HTML, "4 appointees", "District 1 badge count");
+A.contains(d1HTML, "Total annual contribution (4 appointees)", "District 1 table footer");
+A.absent(d1HTML, "Rev. ", "plan table never lists people directly");
+A.absent(d1HTML, "CRSP-DC", "plans with no District 1 appointees drop out");
+
+/* re-selecting the SAME district must not fetch again */
+click("penO-dist", "penO");
+click("penO-set-dist", "penO", { "data-v": "District 1" });
+A.eq(log.timers, timersBefore + 1, "re-selecting the same district does not re-fetch");
+A.ok(!w1.penloading, "no loading flag on a no-op selection");
+
+/* ---------- sort: client-side, never a fetch --------------------------- */
+const timersSort = log.timers;
+click("penO-sort", "penO", { "data-k": "plan" });
+A.eq(w1.penSort, "plan-asc", "first click on Plan sorts ascending");
+const planAsc = ctx.penOContent(w1);
+A.ok(planAsc.indexOf("CPP") < planAsc.indexOf("Employee Before Tax-UMPIP"), "plan-asc puts CPP first");
+click("penO-sort", "penO", { "data-k": "plan" });
+A.eq(w1.penSort, "plan-desc", "second click flips to descending");
+click("penO-sort", "penO", { "data-k": "count" });
+A.eq(w1.penSort, "count-desc", "first click on Appointees sorts descending");
+click("penO-sort", "penO", { "data-k": "amt" });
+A.eq(w1.penSort, "amt-desc", "first click on Amount sorts descending");
+A.eq(log.timers, timersSort, "sorting never fetches");
+A.ok(!w1.penloading, "sorting never flips the loading flag");
+
+/* ---------- 3-way view toggle at Explore ------------------------------- */
+click("penO-view", "penO", { "data-v": "pie" });
+A.eq(w1.penViewM, "pie", "view toggle sets pie");
+const pieHTML = ctx.penOContent(w1);
+A.contains(pieHTML, "donut", "pie view renders the donut");
+A.contains(pieHTML, 'data-v="pie" aria-pressed="true"', "Pie marked pressed");
+A.contains(pieHTML, "Annual contribution by plan", "pie legend heading");
+A.contains(pieHTML, 'data-action="penO-open"', "pie legend entries drill");
+click("penO-view", "penO", { "data-v": "gbar" });
+A.eq(w1.penViewM, "gbar", "view toggle sets the grouped bar");
+const gbarD1 = ctx.penOContent(w1);
+A.eq((gbarD1.match(/penf-ggroup/g) || []).length, 1, "filtered district charts one group");
+A.contains(gbarD1, "$22,873.84", "group total under the district");
+A.eq(log.timers, timersSort, "view switches never fetch");
+
+w1.penDist = "All Districts";
+const gbarAll = ctx.penOContent(w1);
+A.eq((gbarAll.match(/penf-ggroup/g) || []).length, 3, "All Districts charts 3 district groups");
+A.eq((gbarAll.match(/data-dist="/g) || []).length, (gbarAll.match(/penf-gbar /g) || []).length, "every bar drills to plan AND district");
+A.contains(gbarAll, "sr-only", "grouped bar values live as text");
+A.contains(gbarAll, "penf-glegend", "grouped bar shows the plan legend");
+
+/* ---------- v2.2: stale "dist" state falls back to Table --------------- */
+w1.penViewM = "dist";
+let staleHTML = "";
+try { staleHTML = ctx.penOContent(w1); } catch (e) { staleHTML = "THREW: " + e.message; }
+A.absent(staleHTML, "THREW", "stale dist state does not throw at Explore");
+A.contains(staleHTML, "pen-tscroll", "stale dist state renders the table");
+A.contains(staleHTML, 'data-v="table" aria-pressed="true"', "stale dist state marks Table pressed");
+A.absent(staleHTML, ">Districts<", "no roster segment or heading rendered");
+A.absent(staleHTML, 'data-v="dist"', "no dist segment rendered on stale state");
+const w2 = w("penO2");
+w2.penViewM = "dist";
+let staleDetail = "";
+try { staleDetail = ctx.penOContent(w2); } catch (e) { staleDetail = "THREW: " + e.message; }
+A.absent(staleDetail, "THREW", "stale dist state does not throw at Detail");
+A.contains(staleDetail, "pen-full", "Detail still renders its two panels on stale state");
+w1.penViewM = "table"; w2.penViewM = "table";
+
+/* ---------- 2-way chart toggle at Detail ------------------------------- */
+click("penO-chart", "penO2", { "data-v": "gbar" });
+A.eq(w2.penChartL, "gbar", "Detail chart toggle sets the grouped bar");
+const detGbar = ctx.penOContent(w2);
+A.contains(detGbar, "By district and plan", "Detail right-panel heading follows the chart");
+A.contains(detGbar, "penf-grow", "Detail right panel renders the grouped bar");
+click("penO-chart", "penO2", { "data-v": "pie" });
+A.eq(w2.penChartL, "pie", "Detail chart toggle back to pie");
+A.contains(ctx.penOContent(w2), "Share of total", "Detail heading back to Share of total");
+
+/* ---------- drill modal (960px appointees overlay) ---------------------- */
+click("penO-open", "penO", { "data-plan": "CPP" });
+A.ok(ctx.modal && ctx.modal.type === "penOdetail" && ctx.modal.plan === "CPP", "table drill opens the modal");
+A.ok(ctx.modal.dist === null, "table drill carries no explicit district (filter applies)");
+let mHTML = ctx.penODetailModalHTML();
+A.contains(mHTML, "penf-detail-modal", "modal carries our scoped class");
+A.contains(mHTML, "Pension Plan: Appointees", "modal title");
+["Appointee", "Church / organisation", "District", "Annual amount"].forEach(function (c) {
+  A.contains(mHTML, c, "modal column: " + c);
+});
+A.contains(mHTML, "Rev. Thomas Ashford", "CPP appointee 1 listed");
+A.contains(mHTML, "Rev. Grace Bellamy", "CPP appointee 2 listed");
+A.contains(mHTML, "2 appointees", "modal footer count");
+A.contains(mHTML, "$6,682.56", "modal footer total");
+A.contains(mHTML, "Export to Excel", "modal has its own export");
+A.noEmDash(mHTML, "appointees modal");
+
+/* grouped-bar drill scopes to plan AND district */
+click("penO-open", "penO", { "data-plan": "Employee Before Tax-UMPIP", "data-dist": "District 2" });
+A.eq(ctx.modal.dist, "District 2", "grouped-bar drill carries the district");
+mHTML = ctx.penODetailModalHTML();
+A.contains(mHTML, "Rev. Naomi Adler", "District 2 UMPIP appointee listed");
+A.absent(mHTML, "Rev. Jonathan Pierce", "no District 1 appointee leaks into a District 2 drill");
+A.contains(mHTML, "District 2", "modal subtitle names the district");
+A.contains(mHTML, "1 appointee<", "singular appointee count");
+
+/* a plan absent from the drilled district shows the modal empty state */
+click("penO-open", "penO", { "data-plan": "CPP", "data-dist": "District 3" });
+mHTML = ctx.penODetailModalHTML();
+A.contains(mHTML, "No appointees on this plan", "modal empty state renders");
+A.contains(mHTML, "District 3", "modal empty state names the scope");
+A.noEmDash(mHTML, "modal empty state");
+
+/* export + close */
+click("penO-export", "penO", { "data-plan": "CPP" });
+A.ok(log.status.some(function (s) { return s.indexOf("Exporting the appointees on CPP") > -1; }), "modal export announces the appointee detail");
+click("penO-detail-close", "penO");
+A.ok(ctx.modal === null, "modal closes");
+
+/* the widget filter carries into a filter-scoped drill */
+w1.penDist = "District 1";
+click("penO-open", "penO", { "data-plan": "Employee Before Tax-UMPIP" });
+mHTML = ctx.penODetailModalHTML();
+A.contains(mHTML, "Rev. Jonathan Pierce", "filtered drill lists the District 1 appointee");
+A.absent(mHTML, "Rev. Caleb Monroe", "filtered drill excludes other districts");
+click("penO-detail-close", "penO");
+w1.penDist = "All Districts";
+
+/* ---------- empty states ------------------------------------------------ */
+const w3 = w("penO3");
+const emptyWide = ctx.penOContent(w3);
+A.contains(emptyWide, "No active pension appointments", "empty state title");
+A.contains(emptyWide, "Pension Billing module", "empty state guidance names the module");
+A.absent(emptyWide, "dep-hd", "empty state has no duplicated header");
+A.noEmDash(emptyWide, "empty state");
+const w3k = Object.assign({}, w3, { size: "kpi" });
+const emptyKpi = ctx.penOContent(w3k);
+A.contains(emptyKpi, "No appointments", "Glance empty variant");
+A.contains(emptyKpi, "no active pension appointments", "Glance empty caption");
+const readyNone = Object.assign({}, w3, { state: "ready", size: "wide" });
+A.contains(ctx.penOContent(readyNone), "No active pension appointments", "dataset none with ready state still lands on the empty state");
+A.contains(ctx.penOGroupedBar(readyNone), "Nothing to chart", "grouped bar empty branch");
+A.contains(ctx.penOPieChart(readyNone), "Nothing to chart", "pie empty branch");
+
+/* Glance caption follows the district filter */
+const gk = Object.assign({}, w("penO_k"), { penDist: "District 1" });
+A.contains(ctx.penOContent(gk), "district 1", "Glance caption lowercases the filtered district");
+
+/* ---------- no-em-dash sweep over every combination -------------------- */
+let sweeps = 0;
+["kpi", "wide", "xwide"].forEach(function (size) {
+  ["table", "pie", "gbar", "dist"].forEach(function (view) {
+    ["pie", "gbar"].forEach(function (chart) {
+      ctx.PENO_DISTRICTS.forEach(function (dist) {
+        [undefined, "none"].forEach(function (ds) {
+          const s = Object.assign({}, w("penO"), { size: size, penViewM: view, penChartL: chart, penDist: dist, dataset: ds });
+          const html = ctx.penOContent(s);
+          if (String(html).indexOf(H.EM_DASH) > -1) A.noEmDash(html, "sweep " + size + "/" + view + "/" + chart + "/" + dist + "/" + (ds || "live"));
+          sweeps++;
+        });
+      });
+    });
+  });
+});
+A.eq(sweeps, 192, "sweep covered all 192 combinations");
+A.noEmDash(kpiHTML + wideHTML + xwideHTML + loadingHTML + popHTML + emptyWide + emptyKpi, "primary renders");
+A.noEmDash(ctx.PENO_ABOUT, "about copy");
+A.contains(ctx.PENO_ABOUT, "active", "about copy explains the active-appointments basis");
+
+/* loading header while a district fetch is in flight, at Detail too */
+const wl = Object.assign({}, w("penO2"), { penloading: true });
+const loadDetail = ctx.penOContent(wl);
+A.contains(loadDetail, "pen-skel", "Detail loading skeleton");
+A.noEmDash(loadDetail, "Detail loading render");
+
+process.exit(A.report());

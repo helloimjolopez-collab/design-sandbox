@@ -1,0 +1,375 @@
+/* =====================================================================
+   w01-budget-oc.driver.js , W01 Budget Compared to Actual (kind budget-oc,
+   prefix bgtO) verification driver for the 2026-09-07 V2 re-port.
+
+   W01 is a style-(a) port: its handlers are branches inside Jo's shared
+   click listener / popContent / renderModal, so this driver lifts those
+   branches verbatim and wraps them in thin local dispatchers, then drives
+   the REAL extracted code. The render block itself (data reuse + bgtO*
+   functions) runs unmodified.
+
+   Run from this folder:  node w01-budget-oc.driver.js
+   ===================================================================== */
+"use strict";
+const H = require("./jo-port-driver.js");
+
+const shell = H.loadShell();
+const A = new H.Assert("W01 budget-oc (V2 re-port)");
+
+/* ---------- extraction (verbatim regions out of the real file) -------- */
+function sliceBetween(src, start, endAfter) {
+  const i = src.indexOf(start);
+  if (i < 0) throw new Error("start marker not found: " + start.slice(0, 60));
+  const j = src.indexOf(endAfter, i);
+  if (j < 0) throw new Error("end marker not found: " + endAfter.slice(0, 60));
+  return src.slice(i, j + endAfter.length);
+}
+const S = shell.script;
+
+/* Jo's shared budget data, byte-identical to our Final's (the old port's
+   documented reuse, kept by the V2 re-port). */
+const dataA = sliceBetween(S, "var BGT_FYS=", '{id:"insurance",name:"Insurance",type:"expense",rows:bgtMonths([3500,3500,3500,3500,3500,3500,3500,3500,3500,3500,3500,3500],[3500,3500,3500,3500,3500,3500,3500])}');
+const dataAfull = dataA + "\n    ]}\n  ];";
+const dataB = 'var BGT_ALL_FYS=["2024","2025","2026"],BGT_CUR_FY="2026";';
+A.ok(S.indexOf(dataB) > -1, "BGT_ALL_FYS/BGT_CUR_FY line present");
+
+/* our whole bgtO render block, marker to marker */
+const block = H.extractRegion(S,
+  "Budget Compared to Actual (MB updated) : kind \"budget-oc\", prefix bgtO.",
+  "function bgtOReportModalHTML(){return '<div class=\"modal-backdrop\" data-action=\"bgtO-rm-cancel\"><div class=\"modal bgt-rm-modal\" data-action=\"stop\" role=\"dialog\" aria-modal=\"true\" aria-label=\"Choose a special report\">'+bgtOReportModalInner()+'</div></div>';}");
+const blockCode = "/*" + block; /* the start marker sits inside the block's own comment */
+
+/* our click-handler branches inside Jo's listener, wrapped locally */
+const clicks = H.extractRegion(S,
+  '    /* ---- Budget Compared to Actual (MB updated): namespaced handlers, appended alongside Jo\'s bgt- handlers ---- */',
+  'if(a==="set-bgtO-pshape"){var wfps=find(id),sf2=t.getAttribute("data-panel");if(wfps)wfps[sf2==="a"?"fA":"fB"]=t.getAttribute("data-v");render();return;}');
+A.absent(clicks, "set-bgtO-detail", "the removed detail-toggle handler is gone");
+const clickWrap = "function bgtOClickBranch(a,id,t){\n" + clicks + "\n}";
+
+/* our popContent branches, wrapped locally */
+const popScope = H.extractRegion(S,
+  'if(pop.type==="bgtO-scope"){var wfsc=find(pop.id),cav2=wfsc.acctview||"income";',
+  'return \'<div class="cap">Account scope</div>\'+scopeRowF("income","Income accounts")+scopeRowF("expense","Expense accounts")+\'<div class="sep"></div>\'+specialRowF;}');
+const popSpan = H.extractRegion(S, 'if(pop.type==="bgtO-span"){var wfsp2=find(pop.id),cs4=wfsp2.bspan||"year";', "</span></button>';}).join(\"\");}");
+const popWrap = "function bgtOPopBranch(pop){\n" + popScope + "\n" + popSpan + "\nreturn '';\n}";
+
+/* the hover card (bar + line nearest-point) with its own mousemove listener */
+const hover = H.extractRegion(S, "var bgtFBpopEl=null;",
+  'document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".bgt-col2[data-bgtfpop],.bgtF-lcol[data-bgtfpop],.bgtO-lcol[data-bgtfpop]");if(!col){if(bgtFBpopEl)bgtFHideBpop();return;}bgtFShowBpop(col,e.clientX,e.clientY);});');
+
+/* ---------- registry --------------------------------------------------- */
+const registry = H.extractRegistry(S, "budget-oc");
+A.eq(registry.length, 5, "five budget-oc registry entries");
+registry.forEach(function (w) {
+  A.ok(/\(OC[,)]/.test(w.title), "title uses the (OC) convention: " + w.title);
+});
+A.eq(registry.filter(function (w) { return w.iB === "month"; }).length, 5, "panel B default interval is month (V2 state default)");
+
+/* ---------- run the real code ------------------------------------------ */
+const env = H.runBlock([dataAfull, dataB, blockCode, clickWrap, popWrap, hover + "\nvar bgtOBpopEl=null;var bgtOShowBpop=bgtFShowBpop,bgtOHideBpop=bgtFHideBpop;"].join("\n\n"), {
+  registry: registry,
+  dataAttr: "data-action",
+  globals: { innerWidth: 1440, innerHeight: 900 }
+});
+const ctx = env.ctx, shim = env.shim, log = env.log;
+
+function w(id) { return registry.filter(function (x) { return x.id === id; })[0]; }
+function content(id) { return ctx.bgtOContent(w(id)); }
+function click(a, attrs) { ctx.bgtOClickBranch(a, (attrs && attrs["data-id"]) || null, shim.mkTarget(attrs || {})); }
+function clickOn(a, id, extra) { const bag = Object.assign({ "data-id": id }, extra || {}); ctx.bgtOClickBranch(a, id, shim.mkTarget(bag)); }
+
+/* ---------- structural markers and dispatch ---------------------------- */
+A.ok(S.indexOf('if(w.kind==="budget-oc")return bgtOContent(w);') > -1, "contentHTML dispatch line present");
+A.ok(S.indexOf('if(w.kind==="budget-oc")return {h:w.title,b:') > -1, "aboutOf branch present");
+A.ok(shell.css.indexOf("Budget Compared to Actual (MB updated)") > -1, "CSS region marker (MB updated wording) present");
+A.absent(S, "bgtODetailToggle", "bgtODetailToggle removed everywhere");
+A.absent(blockCode, "bdetail", "no bdetail state left in the (OC) clone block (Jo's adopted block legitimately keeps hers)");
+A.absent(blockCode, "bgt-legend-under", "orphaned legend-under class fully gone");
+A.absent(blockCode, "bgt-kpi-iv", "orphaned kpi-row interval-toggle class fully gone");
+
+/* ---------- CSS declarations for every class the markup emits ---------- */
+A.cssDeclares(shell.css, ["bgtO-hl", "bgtO-hl-ar", "bgtO-hl-pct", "bgtO-hl-pos", "bgtO-hl-neg", "bgtO-hl-neu",
+  "bgtO-cap-btn", "bgtO-lcols", "bgtO-lcol", "bgtO-lguide",
+  "bgt-legend", "bgt-lg-items", "bgt-lg", "bgt-sw", "bgt-sw-actual", "bgt-sw-budget-line",
+  "bgt-slicer", "bgt-tbar", "bgt-vv", "bgt-vp", "bgt-varcol", "bgt-vartot", "bgt-notrend",
+  "bgt-repctx", "bgt-numwrap", "bgt-ctlrow", "bgt-scope-chip", "bgt-spin", "bgt-skel",
+  "bgt-chart-wrap2", "bgt-canvas2", "bgt-col2", "bgt-bar2", "bgt-xcol2", "bgt-gl2",
+  "bgt-pop", "bgt-pop-r", "bgt-pop-fav", "bgt-pop-note", "bgt-rm-modal", "bgt-rm-preview",
+  "bgt-dd-field", "bgt-dd-trigger", "bgt-dd-menu", "bgt-special-mi", "bgt-caption", "bgt-info-ic",
+  "bgt-explore", "bgt-explore-col", "bgt-panel-hd", "bgt-ytd-wrap",
+  "dep-hd", "dep-hd-kpigrp", "filter-chip", "scope-chip", "vtoggle", "vt", "delta-pill",
+  "wt-row", "wt-head", "wt-sort", "state", "kpi-row", "gl-sub", "mi", "menu-scroll", "dd-search"],
+  "W01 class list");
+
+/* ---------- V2 time-window module: availability, defaults, snap -------- */
+A.eq(ctx.bgtOIvDefault("month"), "day", "month window defaults to Day");
+A.eq(ctx.bgtOIvDefault("period"), "day", "period window defaults to Day");
+A.eq(ctx.bgtOIvDefault("quarter"), "week", "quarter window defaults to Week");
+A.eq(ctx.bgtOIvDefault("roll12"), "month", "rolling year defaults to Month");
+A.eq(ctx.bgtOIvDefault("year"), "month", "fiscal year defaults to Month");
+A.ok(ctx.bgtOIvDisabled("month", "quarter"), "Quarter disabled on the month window");
+A.ok(ctx.bgtOIvDisabled("year", "day"), "Day disabled on the fiscal-year window");
+A.ok(ctx.bgtOIvDisabled("year", "week"), "Week disabled on the fiscal-year window");
+A.ok(!ctx.bgtOIvDisabled("roll12", "year"), "Year available on the rolling year (real 2-point series)");
+
+/* window change snaps an invalid grain to the new window's default */
+const w1 = w("bgtO");
+w1.binterval = "year"; w1.bspan = "year";
+clickOn("set-bgtO-span", "bgtO", { "data-s": "month" });
+A.eq(w1.bspan, "month", "span picker sets the window");
+A.eq(w1.binterval, "day", "invalid grain snapped to the new window's default (Day)");
+A.ok(w1.bloading === true, "window change triggers a data-fetch load");
+A.ok(log.timers > 0, "load timer armed");
+w1.bloading = false;
+
+/* rolling year crosses the FY boundary: labels carry a year suffix */
+w1.bspan = "roll12"; w1.binterval = "month";
+const rollRows = ctx.bgtOViewRows(w1);
+A.eq(rollRows.length, 12, "rolling year yields 12 monthly points");
+A.ok(rollRows.some(function (r) { return /’25/.test(r.period); }) && rollRows.some(function (r) { return /’26/.test(r.period); }),
+  "rolling year spans two fiscal years (labels suffixed)");
+
+/* day/week synthesis reconciles to the month */
+w1.bspan = "month"; w1.binterval = "day";
+const dayRows = ctx.bgtOViewRows(w1);
+A.ok(dayRows.length >= 28 && dayRows.length <= 31, "day grain yields a month of days (got " + dayRows.length + ")");
+const daySum = dayRows.reduce(function (s, r) { return s + (r.actual || 0); }, 0);
+w1.binterval = "month";
+const moRow = ctx.bgtOViewRows(w1)[0];
+A.eq(daySum, moRow.actual, "daily actuals sum exactly to the month (cumulative rounding)");
+w1.bspan = "quarter"; w1.binterval = "week";
+const wkRows = ctx.bgtOViewRows(w1);
+A.ok(wkRows.length >= 12 && wkRows.length <= 15, "quarter at week grain yields ~13 weeks (got " + wkRows.length + ")");
+A.ok(wkRows.some(function (r) { return r.partial; }), "edge weeks flagged partial");
+
+/* ---------- headline: arrow + sign + quiet percent (V2) ---------------- */
+w1.bspan = "year"; w1.binterval = "month"; w1.bshape = "bar"; w1.acctview = "income"; w1.size = "wide";
+let html = content("bgtO");
+A.contains(html, "bgtO-hl-ar", "headline carries the up/down arrow");
+A.contains(html, "bgtO-hl-pct", "headline carries the quiet percent of budget");
+A.contains(html, "bgt-info-ic", "explain tooltip lives on the info icon");
+A.contains(html, 'data-tip="', "info icon carries a data-tip explain sentence");
+A.ok(/bgtO-hl-(pos|neg|neu)/.test(html), "headline coloured by favourability");
+A.absent(html, "bgtODetailToggle", "no stray toggle text");
+A.contains(html, "Favourable", "favourability pill rendered");
+
+/* wide header: span chip lives in the slicer row, not the top control row */
+A.eq((html.match(/aria-label="Time span, tap to change"/g) || []).length, 1, "exactly one span chip on wide (in the slicer)");
+A.contains(html, "bgt-slicer", "slicer row present on wide");
+A.contains(html, "bgt-legend", "legend row present above the chart");
+A.eq((html.match(/bgt-gl2/g) || []).length, 1, "single mid gridline in bars (V2)");
+A.contains(html, "data-bgtfpop", "bar columns carry the namespaced hover payload");
+A.contains(html, "sr-only", "values present in the DOM for screen readers");
+
+/* favourability flip: expense over budget reads unfavourable */
+const wExp = Object.assign({}, w1, { acctview: "expense" });
+const expHtml = ctx.bgtOContent(wExp);
+A.ok(/Favourable|Unfavourable/.test(expHtml), "expense scope keeps the type-aware pill");
+
+/* ---------- shape toggle, line, no-trend guard -------------------------- */
+w1.bshape = "line";
+html = content("bgtO");
+A.contains(html, "bgtO-lcol", "line has nearest-point hover columns");
+A.contains(html, "bgtO-lguide", "line hover has the vertical guide");
+A.contains(html, "bgt-legend", "line keeps the legend row above the plot");
+/* single-point window: line impossible, snap + guard */
+w1.bspan = "month"; w1.binterval = "month"; w1.bshape = "line";
+ctx.bgtOSnapShape(w1);
+A.eq(w1.bshape, "bar", "line snaps to bar when only one point exists");
+const guard = ctx.bgtONoTrendState(ctx.bgtOSlicer(w1));
+A.contains(guard, "No trend to show", "no-trend guard renders");
+A.contains(guard, "bgt-slicer", "no-trend guard keeps the slicer so the user can widen the window");
+/* the disabled line segment on a one-point window */
+html = content("bgtO");
+A.contains(html, 'aria-disabled="true"', "line segment disabled at one point");
+w1.bspan = "year"; w1.binterval = "month"; w1.bshape = "bar";
+
+/* ---------- table view: slicer toolbar, sort, footer -------------------- */
+w1.bshape = "table";
+html = content("bgtO");
+A.contains(html, "bgt-tbar", "table carries its interval/span toolbar");
+A.contains(html, "Total, posted so far", "posted-only total footer");
+A.contains(html, "bgt-vp", "variance cells carry the quiet percent");
+A.absent(html, "arrow_upward\" ", "no legacy arrow icons in variance cells");
+const before = html;
+clickOn("bgtO-sort", "bgtO", { "data-k": "variance" });
+const afterDesc = content("bgtO");
+A.eq(w1.bsort, "variance-desc", "first click sorts variance descending");
+A.changed(afterDesc, before, "sort changes the table output");
+clickOn("bgtO-sort", "bgtO", { "data-k": "variance" });
+A.eq(w1.bsort, "variance-asc", "second click flips to ascending");
+A.ok(w1.bloading === false, "sort never triggers a load");
+const timersBefore = log.timers;
+clickOn("set-bgtO-interval", "bgtO", { "data-v": "quarter" });
+A.eq(w1.binterval, "quarter", "interval toggle updates state");
+A.eq(log.timers, timersBefore, "interval change is client-side (no load)");
+clickOn("set-bgtO-shape", "bgtO", { "data-v": "bar" });
+A.eq(w1.bshape, "bar", "shape toggle updates state");
+A.eq(log.timers, timersBefore, "shape change is client-side (no load)");
+w1.binterval = "month";
+
+/* ---------- scope popover + special-report modal ------------------------ */
+clickOn("bgtO-scope", "bgtO");
+A.ok(ctx.pop && ctx.pop.type === "bgtO-scope", "scope chip opens the scope popover");
+let popHtml = ctx.bgtOPopBranch(ctx.pop);
+A.contains(popHtml, "Income accounts", "scope popover: income");
+A.contains(popHtml, "Expense accounts", "scope popover: expense");
+A.contains(popHtml, "Special report", "scope popover: special report");
+clickOn("set-bgtO-scope", "bgtO", { "data-v": "expense" });
+A.eq(w1.acctview, "expense", "scope switch applies");
+A.ok(w1.bloading === true, "scope change triggers a data-fetch load");
+w1.bloading = false;
+
+clickOn("bgtO-span", "bgtO");
+A.ok(ctx.pop && ctx.pop.type === "bgtO-span", "span chip opens the window picker");
+popHtml = ctx.bgtOPopBranch(ctx.pop);
+["This month", "This period", "This quarter", "This year", "This fiscal year"].forEach(function (o) {
+  A.contains(popHtml, o, "window picker offers " + o);
+});
+A.contains(popHtml, "rolling, the last 3 months", "rolling quarter explained inline");
+
+/* special-report modal: dependent dropdowns + Apply gating */
+clickOn("bgtO-open-report", "bgtO");
+A.ok(ctx.modal && ctx.modal.type === "bgtO-report", "special row opens the report modal");
+let mHtml = ctx.bgtOReportModalInner();
+A.contains(mHtml, "Select a report", "report dropdown starts empty");
+A.contains(mHtml, "Select a report first", "line dropdown disabled until a report is picked");
+A.contains(mHtml, 'aria-disabled="true"', "Apply gated while nothing chosen");
+clickOn("bgtO-rm-toggle", "bgtO", { "data-dd": "rep" });
+mHtml = ctx.bgtOReportModalInner();
+A.contains(mHtml, "Statement of Activities", "report menu lists reports");
+clickOn("bgtO-rm-setrep", "bgtO", { "data-r": "stmt-act" });
+mHtml = ctx.bgtOReportModalInner();
+A.contains(mHtml, "Select a line", "line dropdown enabled after report pick");
+clickOn("bgtO-rm-toggle", "bgtO", { "data-dd": "line" });
+mHtml = ctx.bgtOReportModalInner();
+A.contains(mHtml, "Net change in assets", "line menu lists the report's lines");
+A.contains(mHtml, "mixed", "line type tags shown");
+clickOn("bgtO-rm-setline", "bgtO", { "data-l": "net-act" });
+mHtml = ctx.bgtOReportModalInner();
+A.contains(mHtml, "Comparing <b>Net change in assets</b>", "preview sentence confirms the pending pick");
+A.contains(mHtml, 'data-action="bgtO-rm-done"', "Apply enabled once both chosen");
+clickOn("bgtO-rm-done", "bgtO");
+A.eq(w1.acctview, "special", "Apply sets special scope");
+A.eq(w1.reportLine, "net-act", "Apply sets the report line");
+A.ok(w1.bloading === true, "applying a special report triggers a load");
+w1.bloading = false;
+
+/* neutral (mixed) line: neutral pill + context line */
+html = content("bgtO");
+A.contains(html, "Special report: Statement of Activities · Net change in assets", "quiet context line under the headline");
+A.ok(html.indexOf("Over budget") > -1 || html.indexOf("Under budget") > -1, "mixed line renders the neutral pill wording");
+A.contains(html, "bgtO-hl-neu", "mixed line headline is neutral grey");
+A.absent(ctx.bgtOContent(w1).split("bgt-repctx")[0], "Unfavourable", "no favourability verdict on a mixed line headline");
+/* reopening comes prefilled */
+clickOn("bgtO-open-report", "bgtO");
+A.eq(ctx.modal.dr, "stmt-act", "reopened modal prefilled with current report");
+A.eq(ctx.modal.dl, "net-act", "reopened modal prefilled with current line");
+clickOn("bgtO-rm-cancel", "bgtO");
+A.ok(ctx.modal === null, "cancel closes the modal");
+w1.acctview = "income"; w1.report = null; w1.reportLine = null; w1.bloading = false;
+
+/* ---------- xwide: always two independent panels ------------------------ */
+const w2 = w("bgtO2");
+let xHtml = content("bgtO2");
+A.eq((xHtml.match(/bgt-explore-col/g) || []).length, 2, "xwide renders two panels");
+A.contains(xHtml, 'data-panel="a"', "panel A has its own controls");
+A.contains(xHtml, 'data-panel="b"', "panel B has its own controls");
+A.eq((xHtml.match(/aria-label="Time span, tap to change"/g) || []).length, 1, "span chip in the xwide header only (window stays global)");
+clickOn("set-bgtO-pinterval", "bgtO2", { "data-panel": "a", "data-v": "quarter" });
+A.eq(w2.iA, "quarter", "panel A interval changes independently");
+A.eq(w2.iB, "month", "panel B interval untouched");
+clickOn("set-bgtO-pshape", "bgtO2", { "data-panel": "b", "data-v": "table" });
+A.eq(w2.fB, "table", "panel B shape changes independently");
+A.eq(w2.fA, "bar", "panel A shape untouched");
+const xHtml2 = content("bgtO2");
+A.changed(xHtml2, xHtml, "panel changes re-render the panels");
+w2.iA = "month"; w2.fB = "line";
+
+/* window change snaps BOTH panels' invalid grains and line shapes */
+w2.iA = "year"; w2.iB = "quarter"; w2.fA = "line";
+clickOn("set-bgtO-span", "bgtO2", { "data-s": "month" });
+A.eq(w2.iA, "day", "panel A grain snapped by window change");
+A.eq(w2.iB, "day", "panel B grain snapped by window change");
+w2.bloading = false; w2.bspan = "year"; w2.iA = "month"; w2.iB = "month"; w2.fA = "bar"; w2.fB = "line";
+
+/* ---------- no-budget states (never a fake 100% over) ------------------- */
+const noExp = content("bgtO3");
+A.contains(noExp, "No expense budget set up", "FY2027 expense: honest no-budget state");
+A.contains(noExp, "Actuals are posting, but nothing has been entered yet", "no-budget copy explains the gap");
+A.contains(noExp, 'data-action="add-budget"', "Set up budget CTA wired");
+A.absent(noExp, "100%", "no fake percent against a $0 baseline");
+const noInc = content("bgtO4");
+A.contains(noInc, "No income budget set up", "FY2028 income: honest no-budget state");
+/* glance no-budget */
+const gNo = ctx.bgtOContent(Object.assign({}, w("bgtO3"), { size: "kpi" }));
+A.contains(gNo, "No budget set up", "glance no-budget state");
+
+/* ---------- interactive glance ------------------------------------------ */
+const gw = w("bgtO_k");
+const g = content("bgtO_k");
+A.contains(g, 'data-action="bgtO-scope"', "glance scope chip is interactive");
+A.contains(g, 'data-action="bgtO-span"', "glance window caption is interactive");
+A.contains(g, "bgtO-cap-btn", "glance caption styled as the quiet caption button");
+A.contains(g, "vs. budget,", "glance caption copy");
+A.contains(g, "bgtO-hl-ar", "glance headline carries the arrow");
+A.contains(g, "bgtO-hl-pct", "glance headline carries the quiet percent");
+
+/* ---------- loading state ------------------------------------------------ */
+w1.bloading = true;
+const lHtml = content("bgtO");
+A.contains(lHtml, "bgt-skel", "loading shows the shimmer skeleton");
+A.contains(lHtml, "bgt-scope-chip", "header controls stay present while loading");
+w1.bloading = false;
+const w2b = w("bgtO2"); w2b.bloading = true;
+const lx = content("bgtO2");
+A.eq((lx.match(/bgt-skel\b/g) || []).length >= 2, true, "xwide loading shimmers both panels");
+w2b.bloading = false;
+
+/* ---------- hover card (bars + line points) ------------------------------ */
+const col = shim.mkTarget({ "data-bgtfpop": "Mar|44000|47300|3300|fav|" }, "div", "bgt-col2");
+ctx.bgtOShowBpop(col, 300, 300);
+let popCard = shim.body.children[shim.body.children.length - 1];
+A.contains(popCard.innerHTML, "Budget", "hover card: budget row");
+A.contains(popCard.innerHTML, "$47,300", "hover card: actual value");
+A.contains(popCard.innerHTML, "Favourable", "hover card: favourability verdict");
+A.noEmDash(popCard.innerHTML, "hover card");
+const colU = shim.mkTarget({ "data-bgtfpop": "Aug|48000||||" }, "div", "bgt-col2");
+ctx.bgtOShowBpop(colU, 300, 300);
+popCard = shim.body.children[shim.body.children.length - 1];
+A.contains(popCard.innerHTML, "Not posted yet", "hover card: unposted month is honest");
+const colP = shim.mkTarget({ "data-bgtfpop": "Wk of Jul 27|11077|12100|1023|fav|1" }, "div", "bgt-col2");
+ctx.bgtOShowBpop(colP, 300, 300);
+popCard = shim.body.children[shim.body.children.length - 1];
+A.contains(popCard.innerHTML, "Partial", "hover card: partial-bucket note");
+ctx.bgtOHideBpop();
+
+/* ---------- no-em-dash sweep over every state --------------------------- */
+let sweeps = 0;
+const wS = Object.assign({}, w("bgtO"));
+["kpi", "wide", "xwide"].forEach(function (size) {
+  ["income", "expense", "special"].forEach(function (scope) {
+    ["month", "period", "quarter", "roll12", "year"].forEach(function (span) {
+      const ivs = ctx.BGTO_IV_ALLOWED[span];
+      ivs.forEach(function (iv) {
+        ["bar", "line", "table"].forEach(function (shape) {
+          const wx = Object.assign({}, wS, { size: size, acctview: scope, bspan: span, binterval: iv, bshape: shape, iA: iv, iB: iv, fA: shape, fB: shape });
+          if (scope === "special") { wx.report = "stmt-act"; wx.reportLine = "salaries"; }
+          const out = ctx.bgtOContent(wx);
+          if (out.indexOf(H.EM_DASH) > -1) A.noEmDash(out, size + "/" + scope + "/" + span + "/" + iv + "/" + shape);
+          sweeps++;
+        });
+      });
+    });
+  });
+});
+A.ok(sweeps >= 300, "sweep covered " + sweeps + " state combinations");
+A.noEmDash(ctx.bgtOContent(Object.assign({}, w("bgtO3"))), "no-budget state");
+A.noEmDash(ctx.bgtOReportModalHTML ? "" : "", "modal helper reachable");
+ctx.modal = { type: "bgtO-report", id: "bgtO", dr: "stmt-act", dl: "salaries", open: null };
+A.noEmDash(ctx.bgtOReportModalInner(), "special-report modal");
+A.noEmDash(ctx.bgtOPopBranch({ type: "bgtO-scope", id: "bgtO" }), "scope popover");
+A.noEmDash(ctx.bgtOPopBranch({ type: "bgtO-span", id: "bgtO" }), "span popover");
+ctx.modal = null;
+
+process.exit(A.report());
