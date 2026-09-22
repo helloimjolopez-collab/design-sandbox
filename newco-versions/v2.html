@@ -3,10 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<!-- Keep this out of search results. Hosting is public (a prototyping tool
-     needs anonymous access), so indexing is what we suppress. -->
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-<meta name="googlebot" content="noindex, nofollow">
 <style>
   :root { color-scheme: light }
   body { margin:0; padding:0; font:14px -apple-system,BlinkMacSystemFont,sans-serif;
@@ -15,7 +12,7 @@
 </style>
 </head>
 <body>
-<title>NEWCO 1</title>
+<title>NewCo Version 2</title>
 <!--
   SOURCES (only these):
   · Pathway repo (pathway-ds), token architecture + naming, NavShell spec §4/§5/§11,
@@ -1851,6 +1848,69 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   @media (prefers-reduced-motion: reduce) {
     .spd-widget__refresh.is-refreshing .material-symbols-rounded { animation: none; }
   }
+</style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   VERSION 2 · Warm-neutral greige surfaces
+   Canvas/chrome #F9F7F6 · sheet #FDFCFC · raised #FFFFFF
+
+   Surface family shifts from V1's rosy warm (#F7F3F3, R > G = B) to a warm
+   NEUTRAL (#F9F7F6, R > G > B — faint brown lean, no pink). Everything that
+   touches those surfaces is re-derived into the same family so the result
+   stays coherent rather than mixing a rosy tint over neutral greige.
+
+   Elevation: geometry and alphas held EXACTLY at V1 so the subtlety is
+   identical; only the shadow colour rotates from #3A3236 (rosy near-black)
+   to #383431 (warm-neutral near-black, mirroring the surface's R>G>B).
+   Exception: the widget shadow is nudged up ~1 step because #FFFFFF cards on
+   an #FDFCFC sheet have a 3-value fill step where V1 had 6 — so slightly more
+   shadow is needed to hold the same apparent lift.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Surfaces ── */
+  --semantic-color-light-mode-surface-canvas-light: #F9F7F6;
+  --semantic-color-light-mode-surface-nav-light: #F9F7F6;
+  --semantic-color-light-mode-surface-sheet-base: #FDFCFC;
+  --semantic-color-light-mode-surface-widget-header: #FCFBFA;
+  --semantic-color-light-mode-surface-widget-base: #FFFFFF;
+  --semantic-color-light-mode-fill-static-neutral-subtle: #F9F7F6;
+
+  /* ── Surface-adjacent neutrals, re-derived into the warm-neutral family ── */
+  --semantic-color-light-mode-stroke-static-neutral-light: #EAE6E3;
+  --semantic-color-light-mode-stroke-static-neutral-faint: rgba(56, 52, 49, 0.05);
+  --semantic-color-light-mode-stroke-action-secondary-inverse-base: #D6D0CA;
+  --semantic-color-light-mode-fill-action-secondary-base: #F1EEEB;
+  --semantic-color-light-mode-fill-action-secondary-hover: #E9E5E1;
+  --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(80, 74, 66, 0.06);
+
+  /* ── Elevation ladder, retinted to #383431 ── */
+  --spd-elevation-sheet:
+    0 1px 3px rgba(56, 52, 49, 0.05),
+    0 10px 30px -16px rgba(56, 52, 49, 0.13);
+  --spd-elevation-widget:
+    0 1px 2px rgba(56, 52, 49, 0.06),
+    0 2px 6px -2px rgba(56, 52, 49, 0.075);
+  --spd-elevation-lift:
+    0 2px 5px rgba(56, 52, 49, 0.06),
+    0 6px 16px -6px rgba(56, 52, 49, 0.11);
+  --spd-elevation-overlay:
+    0 4px 10px rgba(56, 52, 49, 0.07),
+    0 14px 32px -10px rgba(56, 52, 49, 0.15);
+}
+
+/* ── One-off shadows that carried the old rosy tint, brought into family ── */
+.spd-mrail__inner { box-shadow: 3px 0 10px -7px rgba(56, 52, 49, 0.16); }
+.spd-widget__content { box-shadow: 0 -1px 2px rgba(56, 52, 49, 0.03); }
+.spd-drawer.is-open { box-shadow: 0 24px 60px -20px rgba(34, 30, 26, 0.4); }
+*:hover::-webkit-scrollbar-thumb { background: rgba(56, 52, 49, 0.16); }
+
+/* Top-nav org chip: translucent white reads slightly flatter on the lighter
+   canvas, so the border firms up a touch to keep the chip legible. */
+.spd-topnav__org {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(56, 52, 49, 0.13);
+}
 </style>
 
 <script>

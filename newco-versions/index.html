@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow">
+<title>NewCo Versions</title>
+<style>
+  html, body { height: 100%; margin: 0; background: #000; }
+
+  /* Each version is the ORIGINAL prototype file, unmodified except for its
+     colour override, loaded in its own frame. Nothing is re-created, so
+     nothing can be lost in translation. Frames load on first selection and
+     are then kept, so switching back is instant and keeps its state. */
+  #stages { position: fixed; inset: 0; }
+  #stages iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: none; }
+  #stages iframe.is-active { display: block; }
+
+  /* ═══ CONTROL PANEL ════════════════════════════════════════════════════
+     Deliberately alien to every prototype palette: pure black, terminal
+     green, monospace caps, so it reads as instrumentation and never as part
+     of the design under review. Bottom-right, dimmed until pointed at. The
+     wrapper is pointer-events:none, so it can never swallow a click meant
+     for the prototype. Click-only: no keyboard shortcuts, because a stray
+     keystroke during a moderated session must not change what is on screen. */
+  #dock {
+    position: fixed;
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index: 2147483000; pointer-events: none;
+    display: flex; justify-content: flex-end;
+  }
+  #panel {
+    pointer-events: auto;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 3px; padding: 4px;
+    background: #050505; border: 1px solid #14C46B; border-radius: 11px;
+    box-shadow: 0 8px 26px -8px rgba(0,0,0,.7), 0 0 0 1px rgba(20,196,107,.16);
+    font: 500 10.5px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: .07em; text-transform: uppercase;
+    opacity: .55; transition: opacity .2s cubic-bezier(.2,0,.2,1);
+  }
+  #panel:hover, #panel:focus-within { opacity: 1; }
+  #panel button {
+    appearance: none; -webkit-appearance: none; border: 0; margin: 0;
+    cursor: pointer; white-space: nowrap; font: inherit;
+    letter-spacing: inherit; text-transform: inherit;
+    padding: 7px 9px; border-radius: 7px;
+    background: transparent; color: #3E8A62;
+    transition: background .15s ease, color .15s ease;
+  }
+  #panel button:hover { background: rgba(20,196,107,.14); color: #8FEFBC; }
+  #panel button[aria-pressed="true"] { background: #14C46B; color: #02130A; }
+  #panel button:focus-visible { outline: 2px solid #8FEFBC; outline-offset: 2px; }
+  #sep { width: 1px; align-self: stretch; margin: 2px 4px; background: rgba(20,196,107,.32); }
+  @media (max-width: 680px) {
+    #panel { font-size: 9.5px; }
+    #panel button { padding: 6px 7px; }
+  }
+</style>
+</head>
+<body>
+<div id="stages"></div>
+
+<div id="dock">
+  <div id="panel" role="group" aria-label="Prototype controls">
+    <button type="button" data-key="v1" data-src="v1.html" aria-pressed="false">Version 1</button>
+    <button type="button" data-key="v2" data-src="v2.html" aria-pressed="false">Version 2</button>
+    <button type="button" data-key="v4" data-src="v4.html" aria-pressed="false">Version 4</button>
+    <span id="sep" aria-hidden="true"></span>
+    <button type="button" data-key="words" data-src="words.html" aria-pressed="false">List of Words</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var stages = document.getElementById("stages");
+  var buttons = Array.prototype.slice.call(
+    document.querySelectorAll("#panel button[data-key]"));
+  var frames = {};
+
+  function show(key, src, label) {
+    if (!frames[key]) {
+      var f = document.createElement("iframe");
+      f.src = src;
+      f.title = label;
+      frames[key] = f;
+      stages.appendChild(f);
+    }
+    Object.keys(frames).forEach(function (k) {
+      frames[k].classList.toggle("is-active", k === key);
+    });
+    buttons.forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-key") === key ? "true" : "false");
+    });
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () {
+      show(b.getAttribute("data-key"), b.getAttribute("data-src"), b.textContent);
+    });
+  });
+
+  /* Always opens on Version 1, so every session starts in a known state. */
+  show("v1", "v1.html", "Version 1");
+})();
+</script>
+</body>
+</html>

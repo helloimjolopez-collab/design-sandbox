@@ -3,10 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<!-- Keep this out of search results. Hosting is public (a prototyping tool
-     needs anonymous access), so indexing is what we suppress. -->
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-<meta name="googlebot" content="noindex, nofollow">
 <style>
   :root { color-scheme: light }
   body { margin:0; padding:0; font:14px -apple-system,BlinkMacSystemFont,sans-serif;
@@ -15,7 +12,7 @@
 </style>
 </head>
 <body>
-<title>NEWCO 2</title>
+<title>NewCo Version 4</title>
 <!--
   SOURCES (only these):
   · Pathway repo (pathway-ds), token architecture + naming, NavShell spec §4/§5/§11,
@@ -1855,64 +1852,166 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
-   VERSION 2 · Warm-neutral greige surfaces
-   Canvas/chrome #F9F7F6 · sheet #FDFCFC · raised #FFFFFF
+   VERSION 4 · White page, dark top nav
+   Side nav / canvas / sheet / raised all #FFFFFF · top nav #443C7D
 
-   Surface family shifts from V1's rosy warm (#F7F3F3, R > G = B) to a warm
-   NEUTRAL (#F9F7F6, R > G > B — faint brown lean, no pink). Everything that
-   touches those surfaces is re-derived into the same family so the result
-   stays coherent rather than mixing a rosy tint over neutral greige.
+   TWO STRUCTURAL NOTES
 
-   Elevation: geometry and alphas held EXACTLY at V1 so the subtlety is
-   identical; only the shadow colour rotates from #3A3236 (rosy near-black)
-   to #383431 (warm-neutral near-black, mirroring the surface's R>G>B).
-   Exception: the widget shadow is nudged up ~1 step because #FFFFFF cards on
-   an #FDFCFC sheet have a 3-value fill step where V1 had 6 — so slightly more
-   shadow is needed to hold the same apparent lift.
+   1. `.spd-topnav` and the side nav share ONE token
+      (--semantic-color-light-mode-surface-nav-light). Splitting them is done
+      by re-pointing that token INSIDE the `.spd-topnav` scope. Because custom
+      properties inherit, that single declaration recolours the bar AND every
+      descendant that consumes it (including the avatar's inline ring, which
+      CSS could not otherwise reach because inline styles win).
+
+   2. The same trick drives the whole foreground inversion: the text, icon and
+      interaction-state tokens are re-pointed on `.spd-topnav`, so every
+      descendant flips to white automatically rather than being hunted
+      selector by selector. The popovers are DOM children of the bar, so they
+      would inherit white-on-white — they are explicitly reset below.
+
+   ELEVATION
+   All four surfaces are now pure #FFFFFF, so there is ZERO fill contrast
+   anywhere: the shadow is doing 100% of the depth work where V1 had a
+   luminance step helping it. Alphas are therefore raised ~1.35×, and the tint
+   moves from warm #3A3236 to #302D3B — a neutral near-black carrying a
+   whisper of the brand indigo. A warm shadow on pure white reads as dirty
+   yellow; a faintly cool one reads clean and ties to the #443C7D bar.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Surfaces ── */
-  --semantic-color-light-mode-surface-canvas-light: #F9F7F6;
-  --semantic-color-light-mode-surface-nav-light: #F9F7F6;
-  --semantic-color-light-mode-surface-sheet-base: #FDFCFC;
-  --semantic-color-light-mode-surface-widget-header: #FCFBFA;
+  /* ── Surfaces: everything white ── */
+  --semantic-color-light-mode-surface-canvas-light: #FFFFFF;
+  --semantic-color-light-mode-surface-nav-light: #FFFFFF;
+  --semantic-color-light-mode-surface-sheet-base: #FFFFFF;
+  --semantic-color-light-mode-surface-widget-header: #FCFCFD;
   --semantic-color-light-mode-surface-widget-base: #FFFFFF;
-  --semantic-color-light-mode-fill-static-neutral-subtle: #F9F7F6;
+  --semantic-color-light-mode-fill-static-neutral-subtle: #F7F7FA;
 
-  /* ── Surface-adjacent neutrals, re-derived into the warm-neutral family ── */
-  --semantic-color-light-mode-stroke-static-neutral-light: #EAE6E3;
-  --semantic-color-light-mode-stroke-static-neutral-faint: rgba(56, 52, 49, 0.05);
-  --semantic-color-light-mode-stroke-action-secondary-inverse-base: #D6D0CA;
-  --semantic-color-light-mode-fill-action-secondary-base: #F1EEEB;
-  --semantic-color-light-mode-fill-action-secondary-hover: #E9E5E1;
-  --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(80, 74, 66, 0.06);
+  /* ── Strokes firm up slightly: on pure white a rosy hairline disappears,
+        and it is now the only non-shadow separator available. ── */
+  --semantic-color-light-mode-stroke-static-neutral-light: #E8E7EE;
+  --semantic-color-light-mode-stroke-static-neutral-faint: rgba(48, 45, 59, 0.06);
+  --semantic-color-light-mode-stroke-action-secondary-inverse-base: #D3D1DE;
+  --semantic-color-light-mode-fill-action-secondary-base: #F3F2F7;
+  --semantic-color-light-mode-fill-action-secondary-hover: #E9E8F1;
+  --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(48, 45, 59, 0.05);
 
-  /* ── Elevation ladder, retinted to #383431 ── */
+  /* ── Elevation ladder, retinted to #302D3B and strengthened ── */
   --spd-elevation-sheet:
-    0 1px 3px rgba(56, 52, 49, 0.05),
-    0 10px 30px -16px rgba(56, 52, 49, 0.13);
+    0 1px 3px rgba(48, 45, 59, 0.07),
+    0 10px 30px -16px rgba(48, 45, 59, 0.18);
   --spd-elevation-widget:
-    0 1px 2px rgba(56, 52, 49, 0.06),
-    0 2px 6px -2px rgba(56, 52, 49, 0.075);
+    0 1px 2px rgba(48, 45, 59, 0.06),
+    0 2px 6px -2px rgba(48, 45, 59, 0.085);
   --spd-elevation-lift:
-    0 2px 5px rgba(56, 52, 49, 0.06),
-    0 6px 16px -6px rgba(56, 52, 49, 0.11);
+    0 2px 5px rgba(48, 45, 59, 0.08),
+    0 6px 16px -6px rgba(48, 45, 59, 0.15);
   --spd-elevation-overlay:
-    0 4px 10px rgba(56, 52, 49, 0.07),
-    0 14px 32px -10px rgba(56, 52, 49, 0.15);
+    0 4px 10px rgba(48, 45, 59, 0.09),
+    0 14px 32px -10px rgba(48, 45, 59, 0.19);
 }
 
-/* ── One-off shadows that carried the old rosy tint, brought into family ── */
-.spd-mrail__inner { box-shadow: 3px 0 10px -7px rgba(56, 52, 49, 0.16); }
-.spd-widget__content { box-shadow: 0 -1px 2px rgba(56, 52, 49, 0.03); }
-.spd-drawer.is-open { box-shadow: 0 24px 60px -20px rgba(34, 30, 26, 0.4); }
-*:hover::-webkit-scrollbar-thumb { background: rgba(56, 52, 49, 0.16); }
+/* ── One-off shadows brought into the cool family ── */
+.spd-mrail__inner { box-shadow: 3px 0 10px -7px rgba(48, 45, 59, 0.15); }
+.spd-widget__content { box-shadow: 0 -1px 2px rgba(48, 45, 59, 0.035); }
+.spd-drawer.is-open { box-shadow: 0 24px 60px -20px rgba(28, 26, 38, 0.4); }
+*:hover::-webkit-scrollbar-thumb { background: rgba(48, 45, 59, 0.16); }
 
-/* Top-nav org chip: translucent white reads slightly flatter on the lighter
-   canvas, so the border firms up a touch to keep the chip legible. */
+/* ═══ THE DARK TOP NAV ═══════════════════════════════════════════════════ */
+.spd-topnav {
+  /* Recolours the bar and the avatar's inline ring in one move. */
+  --semantic-color-light-mode-surface-nav-light: #443C7D;
+
+  /* Foreground tokens re-pointed for a dark ground. */
+  --semantic-color-light-mode-text-static-primary-base: #FFFFFF;
+  --semantic-color-light-mode-text-static-secondary-base: rgba(255, 255, 255, 0.88);
+  --semantic-color-light-mode-text-static-secondary-subtle: rgba(255, 255, 255, 0.76);
+  --semantic-color-light-mode-text-static-tertiary-base: rgba(255, 255, 255, 0.62);
+
+  /* Interaction states: white tints instead of ink tints. */
+  --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(255, 255, 255, 0.14);
+  --semantic-color-light-mode-fill-contextual-navitem-active: rgba(255, 255, 255, 0.2);
+
+  /* Logo + waffle go mono white, STEPPED (100 / 72 / 46%), matching the
+     exported mono assets. Scoping the primitives means the SVG needs no
+     markup change and nothing outside the bar is affected. */
+  --spd-logo-word: #FFFFFF;
+  --primitive-color-purple-600: #FFFFFF;
+  --primitive-color-purple-300: rgba(255, 255, 255, 0.72);
+  --primitive-color-purple-100: rgba(255, 255, 255, 0.46);
+}
+
+/* Org chip: glass-on-dark instead of glass-on-light. */
 .spd-topnav__org {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(56, 52, 49, 0.13);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+.spd-topnav__org:hover { background: rgba(255, 255, 255, 0.2); }
+.spd-topnav__org:active { background: rgba(255, 255, 255, 0.26); }
+
+/* Logo active chip was a 14% tint of the purple primary — invisible on purple. */
+.spd-topnav__logo.is-active { background: rgba(255, 255, 255, 0.18); }
+.spd-topnav__logo:active { background: rgba(255, 255, 255, 0.24); }
+
+/* Pressed states for the bar's buttons. */
+.spd-topnav .spd-topnav__iconbtn:active { background: rgba(255, 255, 255, 0.22); }
+.spd-topnav .spd-tms__trigger:active { background: rgba(255, 255, 255, 0.22); }
+
+/* Dividers. */
+.spd-topnav__brandsep,
+.spd-topnav__leadsep { background: rgba(255, 255, 255, 0.22); }
+
+/* ═══ PRODUCT NAME STAYS WHITE ON EVERY ROUTE ════════════════════════════
+   ModuleBadge sets the current module's icon AND name with INLINE styles
+   (style={{color: moduleInkDeep(id)}}), so they tint per module — People
+   green, Accounting blue, and so on. That is correct in NEWCO 1/2/3, where
+   the bar is light. Here the bar is a fixed dark surface, so those tints
+   would be unreadable and inconsistent.
+
+   Inline styles outrank normal CSS declarations, so `!important` is required:
+   an important author declaration is the one thing that beats a normal inline
+   style. Scoped to `.spd-tms__current` (the bar's own "you are here" label)
+   so the module tiles inside the switcher popover keep their real colours.  */
+.spd-topnav .spd-tms__current,
+.spd-topnav .spd-tms__current .spd-tms__name,
+.spd-topnav .spd-tms__current .spd-tms__badge,
+.spd-topnav .spd-tms__current .spd-tms__badge .material-symbols-rounded {
+  color: #FFFFFF !important;
+}
+/* Home renders the "spired" wordmark here instead of a module name; its paths
+   use a presentation attribute, which plain CSS beats without !important. */
+.spd-topnav .spd-tms__current svg path { fill: #FFFFFF; }
+
+/* Focus rings: the purple ring is invisible on purple. Scoped to the bar's own
+   controls so menu items keep the standard ring. */
+.spd-topnav__iconbtn:focus-visible,
+.spd-topnav__org:focus-visible,
+.spd-topnav__logo:focus-visible,
+.spd-topnav .spd-tms__trigger:focus-visible,
+.spd-topnav .spd-acct__avatar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.78);
+}
+
+/* ═══ POPOVERS STAY LIGHT ════════════════════════════════════════════════
+   These are DOM descendants of the dark bar, so they inherit its white text
+   tokens. Reset every re-pointed value back to the light-mode original. ══ */
+.spd-topnav .spd-tms__menu,
+.spd-topnav .spd-acct__menu,
+.spd-topnav .spd-acctapp__menu,
+.spd-topnav .spd-acctctx__menu,
+.spd-swpop {
+  --semantic-color-light-mode-surface-nav-light: #FFFFFF;
+  --semantic-color-light-mode-text-static-primary-base: #202020;
+  --semantic-color-light-mode-text-static-secondary-base: #484848;
+  --semantic-color-light-mode-text-static-secondary-subtle: #606060;
+  --semantic-color-light-mode-text-static-tertiary-base: #928B92;
+  --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(48, 45, 59, 0.05);
+  --semantic-color-light-mode-fill-contextual-navitem-active: rgba(110, 100, 184, 0.14);
+  --spd-logo-word: #19143C;
+  --primitive-color-purple-600: #41377D;
+  --primitive-color-purple-300: #6E64BE;
+  --primitive-color-purple-100: #9691F5;
 }
 </style>
 
