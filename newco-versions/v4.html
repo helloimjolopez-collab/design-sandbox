@@ -1173,6 +1173,9 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     display: flex; align-items: center; gap: 8px; width: 100%; height: 38px; padding: 0 8px 0 6px;
     border-radius: 11px; border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
     background: var(--primitive-color-warm-100); cursor: pointer; font-family: inherit;
+    /* Buttons do not inherit colour from their parent, so the chevron would
+       fall back to the UA black and vanish on the Midnight surface. */
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
   .spd-acctapp__btn:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
@@ -1184,12 +1187,22 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .spd-acctapp__opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 8px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 12.5px; color: var(--semantic-color-light-mode-text-static-secondary-base); text-align: left; white-space: nowrap; }
   .spd-acctapp__opt:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-acctapp__opt.is-active { color: var(--semantic-color-light-mode-text-static-primary-base); font-weight: 600; }
+  /* ── Midnight: the Accounting app switcher was built on light-only values —
+        a warm-100 pill and a chip mixed toward #FFFFFF — so on the dark nav
+        surface it rendered as a near-white blob carrying near-white text.
+        These mix toward `transparent` rather than a surface token, so they sit
+        correctly on whatever dark surface each version resolves. The hover
+        rule is repeated here because the mode-scoped base outranks the plain
+        `:hover` and would otherwise swallow it. Light mode is unchanged. ── */
+  html[data-spd-mode="midnight"] .spd-acctapp__btn { background: color-mix(in srgb, #FFFFFF 7%, transparent); }
+  html[data-spd-mode="midnight"] .spd-acctapp__btn:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  html[data-spd-mode="midnight"] .spd-acctapp__glyph { background: color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-amber-base) 24%, transparent); }
 
   /* Accounting context toolbar (top-right of the page) — elevated (lift), each
      item a switchable dropdown (company / fiscal period / bank account). */
   .spd-acctctx { display: inline-flex; align-items: center; height: 48px; padding: 0 4px; border-radius: 13px; background: var(--semantic-color-light-mode-surface-widget-base); box-shadow: var(--spd-elevation-lift); border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light); }
   .spd-acctctx__item { position: relative; }
-  .spd-acctctx__btn { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border-radius: 9px; border: none; background: transparent; cursor: pointer; font-family: inherit; transition: background var(--motion-duration-2) var(--motion-easing-standard); }
+  .spd-acctctx__btn { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border-radius: 9px; border: none; background: transparent; cursor: pointer; font-family: inherit; color: var(--semantic-color-light-mode-text-static-secondary-base); transition: background var(--motion-duration-2) var(--motion-easing-standard); }
   .spd-acctctx__btn:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-acctctx__stack { display: flex; flex-direction: column; gap: 1px; text-align: left; }
   .spd-acctctx__lbl { font-size: 9.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; color: var(--semantic-color-light-mode-text-static-tertiary-base); }
