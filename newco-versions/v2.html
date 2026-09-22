@@ -852,7 +852,33 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
      Unpinned, it keeps 30 so it still sits over the side-nav glyph. */
   .spd-shell:has(.spd-mrail:not(.is-collapsed)) .spd-topnav { padding-left: 14px; }
   /* Left cluster aligns over the side-nav column: logo + tight waffle/label. */
-  .spd-topnav__lead { display: flex; align-items: center; gap: 3px; min-width: 0; }
+  /* ── Brand block = ONE control ─────────────────────────────────────────
+     The logo, the divider, the module icon, the module name and the chevron
+     are a single button: one hover tint across the whole area, one touch
+     target, one click that opens the module switcher. The negative margin
+     offsets the new padding so the logo stays optically where it was. */
+  .spd-topnav__lead {
+    display: flex; align-items: center; gap: 3px; min-width: 0;
+    appearance: none; -webkit-appearance: none; border: 0;
+    font: inherit; color: inherit; text-align: left;
+    margin: 0 0 0 -4px; padding: 0 8px 0 4px;
+    border-radius: 12px; cursor: pointer; background: transparent;
+    transition: background var(--motion-duration-2) var(--motion-easing-standard);
+  }
+  .spd-topnav__lead:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  .spd-topnav__lead.is-active { background: color-mix(in srgb, var(--semantic-color-light-mode-fill-action-primary-base) 14%, transparent); }
+  .spd-topnav__lead:focus-visible { outline: 2px solid var(--semantic-color-light-mode-fill-action-primary-base); outline-offset: 2px; }
+  /* One tint, not two: the logo keeps its own :hover rule for the standalone
+     showcase mark, but must not paint a second box inside the lead. */
+  .spd-topnav__lead .spd-topnav__logo:hover { background: transparent; }
+  /* Chevron: sits tight against the module name and inherits the module's own
+     colour (set inline), so the switcher affordance reads as part of the name
+     rather than as separate grey chrome. Flips while the switcher is open. */
+  .spd-topnav__leadchev {
+    display: inline-flex; align-items: center; flex-shrink: 0; margin-left: -2px;
+    transition: transform var(--motion-duration-2) var(--motion-easing-standard);
+  }
+  .spd-topnav__lead.is-active .spd-topnav__leadchev { transform: rotate(180deg); }
   /* Home: mark + "spired" wordmark tight, so they read as the one Spired logo. */
   .spd-topnav__lead--brand { gap: 4px; }
   .spd-topnav__org {
@@ -1005,7 +1031,13 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .spd-topnav__logo:hover .spd-logobar:nth-child(1) { animation-delay: 0s; }
   .spd-topnav__logo:hover .spd-logobar:nth-child(2) { animation-delay: 0.085s; }
   .spd-topnav__logo:hover .spd-logobar:nth-child(3) { animation-delay: 0.17s; }
+  /* Same ascent, triggered from anywhere in the unified brand block. */
+  .spd-topnav__lead:hover .spd-logobar { animation: spd-boot-rise 0.58s cubic-bezier(0.22, 0.85, 0.3, 1) both; }
+  .spd-topnav__lead:hover .spd-logobar:nth-child(1) { animation-delay: 0s; }
+  .spd-topnav__lead:hover .spd-logobar:nth-child(2) { animation-delay: 0.085s; }
+  .spd-topnav__lead:hover .spd-logobar:nth-child(3) { animation-delay: 0.17s; }
   @media (prefers-reduced-motion: reduce) { .spd-topnav__logo:hover .spd-logobar { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .spd-topnav__lead:hover .spd-logobar { animation: none; } }
 
   /* ── Module section nav, the single side nav (current module's own). The
      header + footer are fixed; the list between them scrolls. ───────────── */
@@ -1197,7 +1229,8 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
   .spd-tms__trigger:hover, .spd-tms__trigger.is-open { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
-  /* Current-module label, non-interactive "you are here", no hover/cursor. */
+  /* Current-module label. Part of the unified brand-block button above, so
+     it carries no hover or cursor of its own. */
   .spd-tms__current {
     display: flex; align-items: center; gap: 5px; height: 38px; padding: 0 10px 0 2px;
     max-width: 240px; user-select: none;
@@ -2890,7 +2923,16 @@ function ModuleBadge({
       key: i,
       d: d,
       fill: "var(--spd-logo-word)"
-    }))));
+    }))), React.createElement("span", {
+      className: "spd-topnav__leadchev",
+      "aria-hidden": "true",
+      style: {
+        color: "var(--spd-logo-word)"
+      }
+    }, React.createElement(Icon, {
+      name: "expand_more",
+      size: 18
+    })));
   }
   return (React.createElement("div", {
       className: "spd-tms__current",
@@ -2909,7 +2951,16 @@ function ModuleBadge({
       style: {
         color: moduleInkDeep(mod.id)
       }
-    }, mod.name))
+    }, mod.name), React.createElement("span", {
+      className: "spd-topnav__leadchev",
+      "aria-hidden": "true",
+      style: {
+        color: moduleInkDeep(mod.id)
+      }
+    }, React.createElement(Icon, {
+      name: "expand_more",
+      size: 18
+    })))
   );
 }
 function SwitcherPopover({
@@ -3674,15 +3725,18 @@ function TopNav({
   return React.createElement("header", {
     className: "spd-topnav",
     role: "banner"
-  }, React.createElement("div", {
-    className: "spd-topnav__lead" + (isHome ? " spd-topnav__lead--brand" : "")
   }, React.createElement("button", {
-    className: "spd-topnav__logo" + (logoActive ? " is-active" : ""),
+    type: "button",
+    className: "spd-topnav__lead" + (isHome ? " spd-topnav__lead--brand" : "") + (logoActive ? " is-active" : ""),
     "data-sw-logo": true,
     onClick: onLogoClick,
     onMouseEnter: onLogoEnter,
     onMouseLeave: onLogoLeave,
-    "aria-label": logoLabel
+    "aria-label": logoLabel,
+    "aria-haspopup": "menu",
+    "aria-expanded": logoActive ? "true" : "false"
+  }, React.createElement("span", {
+    className: "spd-topnav__logo"
   }, React.createElement("span", {
     className: "spd-topnav__logo-mark"
   }, React.createElement(LogoMark, {
