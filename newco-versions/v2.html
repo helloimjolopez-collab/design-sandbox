@@ -884,6 +884,23 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   /* Pinned to rail: the block keeps its exact appearance but stops behaving
      like a control, because the rail is already the module switcher. */
   .spd-topnav__lead.is-static { cursor: default; }
+  /* Toggle + brand block sit together on the left. The group keeps the header
+     at two flex children, so space-between still pins the globals right. */
+  .spd-topnav__leadgroup { display: flex; align-items: center; gap: 2px; min-width: 0; }
+  /* Mobile only: reveal/hide the MODULE'S OWN side nav. Deliberately separate
+     from the brand block, which is the module switcher: two components, two
+     controls. Hidden on desktop, where the rail collapse does this job. */
+  .spd-topnav__navtoggle {
+    display: none;
+    appearance: none; -webkit-appearance: none; border: 0; margin: 0; padding: 0;
+    width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px;
+    align-items: center; justify-content: center;
+    background: transparent; cursor: pointer;
+    color: var(--semantic-color-light-mode-text-static-secondary-base);
+    transition: background var(--motion-duration-2) var(--motion-easing-standard);
+  }
+  .spd-topnav__navtoggle:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
+  .spd-topnav__navtoggle:focus-visible { outline: 2px solid var(--semantic-color-light-mode-fill-action-primary-base); outline-offset: 2px; }
   .spd-topnav__lead.is-static:hover { background: transparent; }
   .spd-topnav__lead.is-static:hover .spd-logobar { animation: none; }
   /* Home: mark + "spired" wordmark tight, so they read as the one Spired logo. */
@@ -1158,14 +1175,14 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     background: var(--primitive-color-warm-100); cursor: pointer; font-family: inherit;
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
-  .spd-acctapp__btn:hover { background: var(--primitive-color-warm-200); }
+  .spd-acctapp__btn:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-acctapp__glyph { width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: color-mix(in oklch, var(--semantic-color-light-mode-fill-static-accent-amber-base) 18%, #FFFFFF); color: var(--semantic-color-light-mode-fill-static-accent-amber-base); }
   .spd-acctapp__name { flex: 1; text-align: left; font-size: 12.5px; font-weight: 600; color: var(--semantic-color-light-mode-text-static-primary-base); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .spd-acctapp__menu, .spd-acctctx__menu { position: absolute; z-index: 40; background: var(--semantic-color-light-mode-surface-widget-base); border-radius: 12px; box-shadow: var(--spd-elevation-overlay); padding: 6px; border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light); }
   .spd-acctapp__menu { top: 46px; left: 0; min-width: 210px; }
   .spd-acctapp__cap { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--semantic-color-light-mode-text-static-tertiary-base); padding: 5px 8px 6px; }
   .spd-acctapp__opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 8px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 12.5px; color: var(--semantic-color-light-mode-text-static-secondary-base); text-align: left; white-space: nowrap; }
-  .spd-acctapp__opt:hover { background: var(--primitive-color-warm-100); }
+  .spd-acctapp__opt:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-acctapp__opt.is-active { color: var(--semantic-color-light-mode-text-static-primary-base); font-weight: 600; }
 
   /* Accounting context toolbar (top-right of the page) — elevated (lift), each
@@ -1173,7 +1190,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .spd-acctctx { display: inline-flex; align-items: center; height: 48px; padding: 0 4px; border-radius: 13px; background: var(--semantic-color-light-mode-surface-widget-base); box-shadow: var(--spd-elevation-lift); border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light); }
   .spd-acctctx__item { position: relative; }
   .spd-acctctx__btn { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; border-radius: 9px; border: none; background: transparent; cursor: pointer; font-family: inherit; transition: background var(--motion-duration-2) var(--motion-easing-standard); }
-  .spd-acctctx__btn:hover { background: var(--primitive-color-warm-100); }
+  .spd-acctctx__btn:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-acctctx__stack { display: flex; flex-direction: column; gap: 1px; text-align: left; }
   .spd-acctctx__lbl { font-size: 9.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; color: var(--semantic-color-light-mode-text-static-tertiary-base); }
   .spd-acctctx__val { font-size: 12.5px; font-weight: 500; color: var(--semantic-color-light-mode-text-static-secondary-base); white-space: nowrap; }
@@ -1489,6 +1506,8 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
     /* Side nav + top-bar switcher give way to the drawer. */
     .spd-modnav, .spd-tms, .spd-topnav__brandsep { display: none; }
+    /* The side nav moves into the drawer, so its toggle appears in the bar. */
+    .spd-topnav__navtoggle { display: inline-flex; }
 
     .spd-body { padding-top: 0; }
     .spd-sheet { min-width: 0; margin-right: 0; border-radius: 0; }
@@ -1818,7 +1837,8 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   }
   .spd-table td { padding: 15px 20px; border-bottom: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-faint); font-size: 14px; }
   .spd-table tbody tr { transition: background var(--motion-duration-2) var(--motion-easing-standard); }
-  .spd-table tbody tr:hover { background: var(--primitive-color-warm-100); }
+  /* Rows, menus and nav items share ONE selection-hover fill. */
+  .spd-table tbody tr:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   html[data-spd-mode="midnight"] .spd-table tbody tr:hover { background: color-mix(in srgb, #FFFFFF 5%, var(--semantic-color-light-mode-surface-sheet-base)); }
   .spd-table tbody tr:last-child td { border-bottom: none; }
 
@@ -3652,22 +3672,8 @@ function MobileNavDrawer({
     "aria-hidden": "true"
   }), React.createElement("nav", {
     className: "spd-drawer" + (open ? " is-open" : ""),
-    "aria-label": "Navigation"
-  }, React.createElement("div", {
-    className: "spd-modnav__list spd-stagger"
-  }, React.createElement("p", {
-    className: "spd-sidenav__section-label"
-  }, "Modules"), RAIL_TOP.map(id => {
-    const m = MODULE_MAP[id];
-    return React.createElement(SectionItem, {
-      key: id,
-      icon: m.icon,
-      label: m.name,
-      color: m.color,
-      active: id === moduleId,
-      onClick: () => onSwitchModule(id)
-    });
-  })), mod.nav && mod.nav.filter(n => !n.to).length > 0 && React.createElement("div", {
+    "aria-label": mod.name + " navigation"
+  }, mod.nav && mod.nav.filter(n => !n.to).length > 0 && React.createElement("div", {
     className: "spd-modnav__list spd-stagger",
     style: {
       marginTop: 8
@@ -3692,14 +3698,27 @@ function TopNav({
   logoLabel,
   logoActive,
   moduleId,
-  pinned
+  pinned,
+  onToggleMobileNav,
+  mobileNavOpen
 }) {
   const midnight = mode === "midnight";
   const isHome = moduleId === "home";
   return React.createElement("header", {
     className: "spd-topnav",
     role: "banner"
-  }, React.createElement(pinned ? "div" : "button", pinned ? {
+  }, React.createElement("div", {
+    className: "spd-topnav__leadgroup"
+  }, React.createElement("button", {
+    type: "button",
+    className: "spd-topnav__navtoggle",
+    onClick: onToggleMobileNav,
+    "aria-expanded": mobileNavOpen ? "true" : "false",
+    "aria-label": (mobileNavOpen ? "Hide " : "Show ") + MODULE_MAP[moduleId].name + " navigation"
+  }, React.createElement(SidebarToggleIcon, {
+    collapsed: !mobileNavOpen,
+    size: 18
+  })), React.createElement(pinned ? "div" : "button", pinned ? {
     /* Rail is pinned, so this is a label, not a control: same look, no
        chevron, no click, no hover. `is-static` neutralises hover + cursor. */
     className: "spd-topnav__lead is-static" + (isHome ? " spd-topnav__lead--brand" : "")
@@ -3725,7 +3744,7 @@ function TopNav({
   }), React.createElement(ModuleBadge, {
     moduleId: moduleId,
     showChevron: !pinned
-  })), React.createElement("div", {
+  }))), React.createElement("div", {
     style: {
       display: "flex",
       alignItems: "center",
@@ -8480,11 +8499,10 @@ function App() {
   const [switching, setSwitching] = useState(false);
   const hoverTimer = useRef(null);
   const onLogoClick = () => {
+    /* The brand block is the MODULE SWITCHER at every breakpoint. The module's
+       own side nav is a separate control: the sidebar toggle left of the logo
+       on mobile, the rail collapse on desktop. */
     clearTimeout(hoverTimer.current);
-    if (window.matchMedia("(max-width: 768px)").matches) {
-      setMobileNav(o => !o);
-      return;
-    }
     setSwitcherOpen(o => !o);
   };
   const hoverOpen = () => {
@@ -8580,7 +8598,9 @@ function App() {
     logoLabel: logoLabel,
     logoActive: switcherOpen,
     moduleId: moduleId,
-    pinned: switcherPinned
+    pinned: switcherPinned,
+    onToggleMobileNav: () => setMobileNav(o => !o),
+    mobileNavOpen: mobileNav
   }), switcherOpen && React.createElement(SwitcherPopover, {
     moduleId: moduleId,
     pinned: switcherPinned,
