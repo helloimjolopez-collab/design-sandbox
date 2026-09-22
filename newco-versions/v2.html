@@ -438,7 +438,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     /* ONE hover fill everywhere, a mauve-NEUTRAL darkening (in-family with the
        warm ramp, never yellow-brown, never obviously purple), used by top-nav
        buttons, org, account menu, table rows, unpin & the switcher. */
-    --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(86, 76, 90, 0.06);
+    --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(160, 149, 149, 0.12); /* #A09595 @ 12% */
     /* Active nav: translucent amethyst tint (Pathway's alpha-tint recipe),        reads clearly against the warm sand canvas, unlike a flat pale fill. */
     --semantic-color-light-mode-fill-contextual-navitem-active: rgba(110,100,184,0.14);
     --semantic-color-light-mode-text-contextual-navitem-base: #484848;
@@ -451,8 +451,9 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     --semantic-color-light-mode-fill-action-primary-hover: #5C52A8;
     --semantic-color-light-mode-text-action-primary-base: #5951A0;
     /* Secondary action = a VISIBLE warm-neutral fill (from the ramp, in-family),        warm-300 so it's clearly a button, not invisible on the near-white sheet. */
-    --semantic-color-light-mode-fill-action-secondary-base: #F4EFEF;
-    --semantic-color-light-mode-fill-action-secondary-hover: #ECE4E4;
+    --semantic-color-light-mode-fill-action-secondary-base: #F5F1F1;
+    --semantic-color-light-mode-fill-action-secondary-hover: #F1EAEA;
+    --semantic-color-light-mode-fill-action-secondary-pressed: #ECE3E3;
     --semantic-color-light-mode-text-action-secondary-base: var(--primitive-color-warm-950);
     --spd-logo-word: #19143C;
     /* Badge palette, recipe read from Figma: soft translucent tint + deep
@@ -603,6 +604,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     --semantic-color-light-mode-text-action-primary-base: #ABA5EC;
     --semantic-color-light-mode-fill-action-secondary-base: rgba(170,166,200,0.10);
     --semantic-color-light-mode-fill-action-secondary-hover: rgba(170,166,200,0.18);
+    --semantic-color-light-mode-fill-action-secondary-pressed: rgba(170,166,200,0.26);
     --semantic-color-light-mode-text-action-secondary-base: #D9D6E8;
     --spd-logo-word: #FFFFFF;
     --spd-badge-plum-bg: rgba(200,150,170,0.14);   --spd-badge-plum-fg: #DFB4CE;
@@ -879,6 +881,11 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     transition: transform var(--motion-duration-2) var(--motion-easing-standard);
   }
   .spd-topnav__lead.is-active .spd-topnav__leadchev { transform: rotate(180deg); }
+  /* Pinned to rail: the block keeps its exact appearance but stops behaving
+     like a control, because the rail is already the module switcher. */
+  .spd-topnav__lead.is-static { cursor: default; }
+  .spd-topnav__lead.is-static:hover { background: transparent; }
+  .spd-topnav__lead.is-static:hover .spd-logobar { animation: none; }
   /* Home: mark + "spired" wordmark tight, so they read as the one Spired logo. */
   .spd-topnav__lead--brand { gap: 4px; }
   .spd-topnav__org {
@@ -968,7 +975,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
      mix toward mud/grey (complements), which is why the purple read flat. */
   /* Hover = a plain WARM-NEUTRAL step (never the module tint, on Home the purple
      tint read cool/blue). The active state is what carries colour. */
-  .spd-navitem:hover { background: var(--primitive-color-warm-300); --spd-navink: var(--spd-navink-strong); }
+  .spd-navitem:hover { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); --spd-navink: var(--spd-navink-strong); }
   /* Active = a light BUT vibrant tonal chip. Mixed in OKLCH (not sRGB) so it stays
      chromatic/poppy as it lightens, an sRGB white-mix washes out to grey. Sits
      clearly on the surface + coloured stripe; icon + label are near-black. */
@@ -1091,12 +1098,14 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     width: 178px; justify-content: flex-start; padding: 0 11px; gap: 9px;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--semantic-color-light-mode-fill-static-accent-mauve-base) 38%, #FFFFFF);
   }
-  /* People / in-content table search, in-family warm-neutral fill, a rounded
-     rectangle, with a clear focused state (brightens + primary ring). */
+  /* People / in-content table search: a white surface with a hairline neutral
+     stroke (the same one the cards use), and a clear focused state (primary
+     ring). Midnight resolves the same tokens to its own dark surface. */
   .spd-tablesearch {
     flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px;
     height: 40px; padding: 0 14px; border-radius: 14px;
-    background: var(--spd-search-fill); /* SAME fill as the side-nav search */
+    background: var(--semantic-color-light-mode-fill-static-neutral-light);
+    border: 0.5px solid var(--semantic-color-light-mode-stroke-static-neutral-light);
     box-shadow: none;
     transition: box-shadow var(--motion-duration-2) var(--motion-easing-standard);
   }
@@ -1201,7 +1210,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     width: 44px; height: 32px; border-radius: 999px;
     transition: background var(--motion-duration-2) var(--motion-easing-standard);
   }
-  .spd-modnav.is-rail .spd-navitem:hover .spd-navitem__glyph { background: var(--primitive-color-warm-300); }
+  .spd-modnav.is-rail .spd-navitem:hover .spd-navitem__glyph { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-modnav.is-rail .spd-navitem.is-active .spd-navitem__glyph { background: color-mix(in oklch, var(--sel) 20%, #FFFFFF); }
   html[data-spd-mode="midnight"] .spd-modnav.is-rail .spd-navitem:hover .spd-navitem__glyph { background: color-mix(in srgb, #FFFFFF 8%, var(--semantic-color-light-mode-surface-nav-light)); }
   html[data-spd-mode="midnight"] .spd-modnav.is-rail .spd-navitem.is-active .spd-navitem__glyph { background: color-mix(in oklch, var(--sel) 48%, var(--semantic-color-light-mode-surface-nav-light)); }
@@ -1349,7 +1358,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   /* MD3 nav-rail model: the fill/hover live on the ICON as a fully-rounded-corner
      RECTANGLE (a stadium, wider than tall, never a circle, never the whole row).
      Colour mixed with WHITE so it stays clean, never grey. */
-  .spd-mrail__item:hover .spd-mrail__badge { background: var(--primitive-color-warm-300); }
+  .spd-mrail__item:hover .spd-mrail__badge { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   .spd-mrail__unpin:hover .spd-mrail__badge { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
   html[data-spd-mode="midnight"] .spd-mrail__item:hover .spd-mrail__badge { background: color-mix(in srgb, #FFFFFF 7%, transparent); }
   html[data-spd-mode="midnight"] .spd-mrail__unpin:hover .spd-mrail__badge { background: var(--semantic-color-light-mode-fill-contextual-navitem-hover); }
@@ -1698,6 +1707,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   }
   /* Its own clearly-noticeable warm step (a fill button darkening on hover),      NOT the barely-there neutral used for table rows / nav items. */
   .spd-btn--ghost:hover { background: var(--semantic-color-light-mode-fill-action-secondary-hover); }
+  .spd-btn--ghost:active { background: var(--semantic-color-light-mode-fill-action-secondary-pressed); }
   /* Gradient fill, a whisper of the brand gradient for quiet-but-special
      actions: pale lavender wash, purple text, hairline stroke. */
   .spd-btn--gradient {
@@ -1913,9 +1923,10 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   --semantic-color-light-mode-stroke-static-neutral-light: #EAE6E3;
   --semantic-color-light-mode-stroke-static-neutral-faint: rgba(56, 52, 49, 0.05);
   --semantic-color-light-mode-stroke-action-secondary-inverse-base: #D6D0CA;
-  --semantic-color-light-mode-fill-action-secondary-base: #F1EEEB;
-  --semantic-color-light-mode-fill-action-secondary-hover: #E9E5E1;
-  --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(80, 74, 66, 0.06);
+  --semantic-color-light-mode-fill-action-secondary-base: #F5F1F1;
+  --semantic-color-light-mode-fill-action-secondary-hover: #F1EAEA;
+  --semantic-color-light-mode-fill-action-secondary-pressed: #ECE3E3;
+  --semantic-color-light-mode-fill-contextual-navitem-hover: rgba(160, 149, 149, 0.12); /* #A09595 @ 12% */
 
   /* ── Elevation ladder, retinted to #383431 ── */
   --spd-elevation-sheet:
@@ -2286,21 +2297,6 @@ const MODULES = [{
     label: "Dashboard",
     icon: "dashboard"
   }, {
-    id: "nav-concept",
-    to: "concept"
-  }, {
-    id: "r-people",
-    to: "people",
-    group: "Recent"
-  }, {
-    id: "r-giving",
-    to: "giving",
-    group: "Recent"
-  }, {
-    id: "r-accounting",
-    to: "accounting",
-    group: "Recent"
-  }, {
     id: "explore",
     label: "Explore Products",
     icon: "explore",
@@ -2335,6 +2331,10 @@ const MODULES = [{
   icon: "group",
   color: "var(--semantic-color-light-mode-fill-static-accent-magenta-base)",
   nav: [{
+    id: "dashboard",
+    label: "Dashboard",
+    icon: "dashboard"
+  }, {
     id: "directory",
     label: "Directory",
     icon: "contacts"
@@ -2358,6 +2358,10 @@ const MODULES = [{
   icon: "volunteer_activism",
   color: "var(--semantic-color-light-mode-fill-static-accent-jade-base)",
   nav: [{
+    id: "dashboard",
+    label: "Dashboard",
+    icon: "dashboard"
+  }, {
     id: "overview",
     label: "Overview",
     icon: "dashboard"
@@ -2400,6 +2404,10 @@ const MODULES = [{
   icon: "photo_library",
   color: "var(--semantic-color-light-mode-fill-static-accent-mauve-base)",
   nav: [{
+    id: "dashboard",
+    label: "Dashboard",
+    icon: "dashboard"
+  }, {
     id: "library",
     label: "Library",
     icon: "perm_media"
@@ -2415,6 +2423,10 @@ const MODULES = [{
   icon: "health_and_safety",
   color: "var(--semantic-color-light-mode-fill-static-accent-red-base)",
   nav: [{
+    id: "dashboard",
+    label: "Dashboard",
+    icon: "dashboard"
+  }, {
     id: "checkin",
     label: "Check-In",
     icon: "how_to_reg"
@@ -2422,50 +2434,6 @@ const MODULES = [{
     id: "background",
     label: "Background Checks",
     icon: "verified_user"
-  }]
-}, {
-  id: "concept",
-  name: "Design Concept",
-  short: "Concept",
-  icon: "palette",
-  demo: true,
-  color: "var(--semantic-color-light-mode-fill-static-accent-amethyst-base)",
-  nav: [{
-    id: "motion",
-    label: "Motion",
-    icon: "animation"
-  }, {
-    id: "spiredlogo",
-    label: "Spired Logo Animation",
-    icon: "auto_awesome_motion"
-  }, {
-    id: "aimark",
-    label: "AI Assistant Logo",
-    icon: "blur_on"
-  }, {
-    id: "loading",
-    label: "Loading States",
-    icon: "sync"
-  }, {
-    id: "errors",
-    label: "Error States",
-    icon: "error"
-  }, {
-    id: "validation",
-    label: "Validation States",
-    icon: "rule"
-  }, {
-    id: "states",
-    label: "Component States",
-    icon: "touch_app"
-  }, {
-    id: "feedback",
-    label: "System Feedback",
-    icon: "campaign"
-  }, {
-    id: "ia",
-    label: "Information Architecture",
-    icon: "account_tree"
   }]
 }];
 const MODULE_MAP = Object.fromEntries(MODULES.map(m => [m.id, m]));
@@ -2893,13 +2861,14 @@ function SidebarToggleIcon({
     strokeLinecap: "round"
   }));
 }
-const RAIL_TOP = ["home", "people", "giving", "accounting", "media", "safety", "concept"];
+const RAIL_TOP = ["home", "people", "giving", "accounting", "media", "safety"];
 const moduleGlyphColor = id => id === "home" ? "var(--spd-home-glyph)" : MODULE_MAP[id].color;
 const moduleInk = id => id === "home" ? "var(--spd-home-ink)" : `color-mix(in srgb, ${MODULE_MAP[id].color} 60%, var(--semantic-color-light-mode-text-static-primary-base))`;
 const moduleInkDeep = id => id === "home" ? "var(--spd-home-ink-deep)" : `color-mix(in srgb, ${MODULE_MAP[id].color} 44%, var(--semantic-color-light-mode-text-static-primary-base))`;
 const moduleBadgeFill = id => id === "home" ? "var(--semantic-color-light-mode-fill-static-accent-amethyst-light)" : `color-mix(in srgb, ${moduleGlyphColor(id)} 17%, transparent)`;
 function ModuleBadge({
-  moduleId
+  moduleId,
+  showChevron = true
 }) {
   const mod = MODULE_MAP[moduleId];
   if (mod.id === "home") {
@@ -2923,7 +2892,7 @@ function ModuleBadge({
       key: i,
       d: d,
       fill: "var(--spd-logo-word)"
-    }))), React.createElement("span", {
+    }))), showChevron && React.createElement("span", {
       className: "spd-topnav__leadchev",
       "aria-hidden": "true",
       style: {
@@ -2951,7 +2920,7 @@ function ModuleBadge({
       style: {
         color: moduleInkDeep(mod.id)
       }
-    }, mod.name), React.createElement("span", {
+    }, mod.name), showChevron && React.createElement("span", {
       className: "spd-topnav__leadchev",
       "aria-hidden": "true",
       style: {
@@ -3531,6 +3500,10 @@ function ModuleNav({
   const [q, setQ] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const isAcct = mod.id === "accounting";
+  /* The side-nav header search is removed: the header carries only the
+     Accounting app switcher and the rail collapse toggle. Flip this to true
+     to bring back the search field and its Accounting search button. */
+  const showNavSearch = false;
   const [acctApp, setAcctApp] = useState(ACCT_APPS[0]);
   const [acctItem, setAcctItem] = useState(ACCT_APPS[0].nav[0].id);
   const navSource = isAcct ? acctApp.nav : mod.nav;
@@ -3555,7 +3528,7 @@ function ModuleNav({
     "aria-label": mod.name + " navigation"
   }, React.createElement("div", {
     className: "spd-modnav__header" + (isAcct ? " spd-modnav__header--acct" : "")
-  }, isAcct && !rail ? (searchOpen ? React.createElement("label", {
+  }, isAcct && !rail ? (showNavSearch && searchOpen ? React.createElement("label", {
     className: "spd-modnav__search spd-modnav__search--fill"
   }, React.createElement(Icon, {
     name: "search",
@@ -3585,7 +3558,7 @@ function ModuleNav({
   }))) : React.createElement(React.Fragment, null, React.createElement(AccountingAppSwitcher, {
     app: acctApp,
     onPick: pickApp
-  }), React.createElement("button", {
+  }), showNavSearch && React.createElement("button", {
     type: "button",
     className: "spd-modnav__searchbtn",
     onClick: () => setSearchOpen(true),
@@ -3593,7 +3566,7 @@ function ModuleNav({
   }, React.createElement(Icon, {
     name: "search",
     size: 19
-  })))) : !rail && React.createElement("label", {
+  })))) : showNavSearch && !rail && React.createElement("label", {
     className: "spd-modnav__search"
   }, React.createElement(Icon, {
     name: "search",
@@ -3718,14 +3691,19 @@ function TopNav({
   onLogoLeave,
   logoLabel,
   logoActive,
-  moduleId
+  moduleId,
+  pinned
 }) {
   const midnight = mode === "midnight";
   const isHome = moduleId === "home";
   return React.createElement("header", {
     className: "spd-topnav",
     role: "banner"
-  }, React.createElement("button", {
+  }, React.createElement(pinned ? "div" : "button", pinned ? {
+    /* Rail is pinned, so this is a label, not a control: same look, no
+       chevron, no click, no hover. `is-static` neutralises hover + cursor. */
+    className: "spd-topnav__lead is-static" + (isHome ? " spd-topnav__lead--brand" : "")
+  } : {
     type: "button",
     className: "spd-topnav__lead" + (isHome ? " spd-topnav__lead--brand" : "") + (logoActive ? " is-active" : ""),
     "data-sw-logo": true,
@@ -3745,7 +3723,8 @@ function TopNav({
     className: "spd-topnav__leadsep",
     "aria-hidden": "true"
   }), React.createElement(ModuleBadge, {
-    moduleId: moduleId
+    moduleId: moduleId,
+    showChevron: !pinned
   })), React.createElement("div", {
     style: {
       display: "flex",
@@ -4476,7 +4455,7 @@ function PeoplePage() {
   }), React.createElement("input", {
     value: query,
     onChange: e => setQuery(e.target.value),
-    placeholder: "Search...",
+    placeholder: "Search for people",
     style: {
       flex: 1,
       border: "none",
@@ -8488,7 +8467,12 @@ function App() {
   const [booting, setBooting] = useState(true);
   const [mode, setMode] = useState("light");
   const [moduleId, setModuleId] = useState("people");
-  const [itemByModule, setItemByModule] = useState({});
+  /* Dashboard is now first in every module's nav, but only a few modules have
+     a real page behind an item. People opens on its Directory page so the
+     first screen is the real thing, not a placeholder. */
+  const [itemByModule, setItemByModule] = useState({
+    people: "directory"
+  });
   const [mobileNav, setMobileNav] = useState(false);
   const [navRail, setNavRail] = useState(false);
   const [switcherPinned, setSwitcherPinned] = useState(false);
@@ -8546,7 +8530,8 @@ function App() {
     setMobileNav(false);
   };
   const goModuleFromNav = id => {
-    if (moduleId === "home") setSwitcherPinned(true);
+    /* Navigate only. The rail is NEVER pinned automatically: pinning is the
+       user's choice, made from the switcher popover's "Pin to rail". */
     goModule(id);
   };
   const goModuleHome = () => goItem(firstItemOf(moduleId));
@@ -8594,7 +8579,8 @@ function App() {
     onLogoLeave: hoverClose,
     logoLabel: logoLabel,
     logoActive: switcherOpen,
-    moduleId: moduleId
+    moduleId: moduleId,
+    pinned: switcherPinned
   }), switcherOpen && React.createElement(SwitcherPopover, {
     moduleId: moduleId,
     pinned: switcherPinned,
