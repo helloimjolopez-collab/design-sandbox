@@ -1466,8 +1466,11 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   /* Mobile drawer scrim (hidden until the rail opens on small screens).
      NOTE: distinct class from the dialog backdrop .spd-scrim, reusing that
      name pulled in its fade-to-opacity:1 animation and veiled the whole app. */
+  /* Starts BELOW the 60px top bar (same edge as the drawer) so the bar is
+     never dimmed: the sidebar toggle stays lit and tappable, and is the
+     obvious way to close the nav again. */
   .spd-navscrim {
-    position: fixed; inset: 0; z-index: 40; background: rgba(20,18,30,0.34);
+    position: fixed; top: 60px; right: 0; bottom: 0; left: 0; z-index: 40; background: rgba(20,18,30,0.34);
     opacity: 0; pointer-events: none;
     transition: opacity var(--motion-duration-4) var(--motion-easing-standard);
   }
