@@ -5749,6 +5749,33 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     if(fmt==="line"&&rows.length<2)return bgtNoTrendState(slic);
     return (fmt==="line")?bgtLine(w,rows,slic):bgtBars(w,rows,slic);
   }
+  /* W01: cumulative-variance sparkline for the Glance. Each posted period's dot is the running
+     variance THROUGH that period, coloured by favourability at that point; the final dot equals the
+     span variance shown in the KPI headline (so the end of the line reads the same number as the KPI).
+     No daily/weekly grain exists in the budget model, so the sparkline follows the same posted periods
+     the KPI sums — it never invents data. */
+  function bgtGlanceSpark(w,vt,neutral){
+    var mm=bgtSpanMonthly(w,w.bspan||"year").filter(function(r){return r.actual!=null;});
+    if(mm.length<2)return '';
+    var cb=0,ca=0,pts=[];
+    mm.forEach(function(r){cb+=r.budget;ca+=r.actual;pts.push({label:r.m,v:bgtVariance(vt,cb,ca)});});
+    var n=pts.length,vals=pts.map(function(p){return p.v;});
+    var lo=Math.min.apply(null,vals.concat([0])),hi=Math.max.apply(null,vals.concat([0]));
+    var pad=(hi-lo)*0.14||1;lo-=pad;hi+=pad;var span=(hi-lo)||1;
+    var W=120,H=40;
+    function X(i){return n>1?(4+(i/(n-1))*(W-8)):W/2;}
+    function Y(v){return (H-5)-((v-lo)/span)*(H-10);}
+    var zy=Y(0).toFixed(1);
+    function favCol(v){return neutral?"var(--txt-secondary)":(v>=0?"var(--pos-100)":"var(--red-100)");}
+    var d=pts.map(function(p,i){return (i?"L":"M")+X(i).toFixed(1)+","+Y(p.v).toFixed(1);}).join(" ");
+    var dots=pts.map(function(p,i){
+      var last=i===n-1,word=neutral?(p.v>=0?"over budget":"under budget"):(p.v>=0?"favourable":"unfavourable");
+      var tip=p.label+" (running total through this month): "+money(Math.abs(p.v))+" "+word+", against budget "+bgtSpanLabel(w.bspan||"year").toLowerCase()+".";
+      tip=tip.replace(/"/g,"&quot;");
+      return '<circle class="bgt-sk-dot'+(last?" last":"")+'" cx="'+X(i).toFixed(1)+'" cy="'+Y(p.v).toFixed(1)+'" r="'+(last?3.4:2.2)+'" fill="'+favCol(p.v)+'" tabindex="0" role="img" data-tip="'+tip+'" data-tip-plain aria-label="'+tip+'"></circle>';
+    }).join("");
+    return '<div class="bgt-glspark" role="img" aria-label="Cumulative budget variance by month, ending at '+money(Math.abs(pts[n-1].v))+'"><svg viewBox="0 0 120 40" preserveAspectRatio="xMidYMid meet"><line class="bgt-sk-zero" x1="0" y1="'+zy+'" x2="120" y2="'+zy+'"></line><path class="bgt-sk-line" d="'+d+'" stroke="'+favCol(pts[n-1].v)+'"></path>'+dots+'</svg></div>';
+  }
   function bgtGlance(w){
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
     var rows=bgtSet(w),label=(w.acctview==="special")?bgtScopeContext(w).replace(/^Special report: /,""):bgtScopeShort(w);
