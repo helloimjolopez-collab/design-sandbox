@@ -2621,9 +2621,16 @@
   var DEPTH_LABEL={kpi:"Glance",wide:"Explore",xwide:"Detail"};
   /* G1: step a widget down to the largest size that fits the current breakpoint (phone->Glance, tablet->Explore, desktop->Detail), never above the chosen size. */
   /* G1 caps: each size has a canonical minimum width and works at that width or wider, never narrower.
-     Glance min 275, Explore min 566, Detail min 1148 (design-system canonical). curCap returns the
-     largest size the current width can host; anything above the cap steps down and is dropped from the picker. */
-  function curCap(){var iw=(typeof innerWidth!=="undefined"?innerWidth:1200);return iw>=1148?"xwide":iw>=566?"wide":"kpi";}
+     Glance min 275, Explore min 566, Detail min 1148 (design-system canonical). A widget may snap to the
+     grid and flex WIDER, but never render below its size's min. The gate is the actual GRID width (the
+     .dashboard content box, which already excludes the sidenav), not the viewport, so a size never renders
+     into less room than it needs and clips. curCap returns the largest size the grid can host; anything
+     above the cap steps down and is dropped from the size picker. */
+  function gridW(){
+    try{var g=document.querySelector(".dashboard");if(g){var cs=getComputedStyle(g);var w=g.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);if(w>0)return w;}}catch(_){}
+    var iw=(typeof innerWidth!=="undefined"?innerWidth:1200);return (iw>900)?(iw-272):Math.max(0,iw-32);
+  }
+  function curCap(){var w=gridW();return w>=1148?"xwide":w>=566?"wide":"kpi";}
   function fitSize(w){var cap=SIZES.indexOf(curCap());var want=SIZES.indexOf(w.size);if(want<0)want=cap;var lim=Math.min(cap,want);var t=(w.tiers&&w.tiers.length)?w.tiers:SIZES;for(var i=lim;i>=0;i--){if(t.indexOf(SIZES[i])>-1)return SIZES[i];}return SIZES[0];}
   var __bpCap=curCap();
   if(typeof window!=="undefined"&&window.addEventListener){window.addEventListener("resize",function(){var b=curCap();if(b!==__bpCap){__bpCap=b;if(typeof render==="function")render();}});}
