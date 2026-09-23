@@ -695,7 +695,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
     background: var(--primitive-color-warm-300);
     border-radius: 8px;
   }
-  /* Collab "thinking": three little rounded bars (echoing the Spired logo
+  /* Collab "thinking": three little rounded bars (echoing the NewCo logo
      pieces) that rise in sequence, the brand's ascent motion in miniature. */
   .spd-thinkbars { display: inline-flex; align-items: flex-end; gap: 4px; height: 16px; }
   .spd-thinkbars i {
@@ -903,7 +903,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .spd-topnav__navtoggle:focus-visible { outline: 2px solid var(--semantic-color-light-mode-fill-action-primary-base); outline-offset: 2px; }
   .spd-topnav__lead.is-static:hover { background: transparent; }
   .spd-topnav__lead.is-static:hover .spd-logobar { animation: none; }
-  /* Home: mark + "spired" wordmark tight, so they read as the one Spired logo. */
+  /* Home: mark + "NewCo" wordmark tight, so they read as the one NewCo logo. */
   .spd-topnav__lead--brand { gap: 4px; }
   .spd-topnav__org {
     display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
@@ -1547,7 +1547,7 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
       --semantic-layout-units-contextual-page-padding-bottom: 40px;
     }
     /* Tight bar: the org switcher folds away (still reachable in-app), so the
-       Spired wordmark and the essential globals (notifications, account) breathe. */
+       NewCo wordmark and the essential globals (notifications, account) breathe. */
     .spd-topnav__org { display: none; }
   }
 
@@ -2060,8 +2060,10 @@ function(a,b,c){if(!Vd(b))throw Error(n(200));return Wd(null,a,b,!1,c)};Q.unmoun
 .spd-topnav .spd-tms__current .spd-topnav__leadchev .material-symbols-rounded {
   color: #FFFFFF !important;
 }
-/* Home renders the "spired" wordmark here instead of a module name; its paths
-   use a presentation attribute, which plain CSS beats without !important. */
+/* Home renders the "NewCo" wordmark here instead of a module name. It is SVG
+   text carrying a fill, which plain CSS beats without !important; `path` is
+   kept so any future outlined mark in this slot is covered too. */
+.spd-topnav .spd-tms__current svg text,
 .spd-topnav .spd-tms__current svg path { fill: #FFFFFF; }
 
 /* Focus rings: the purple ring is invisible on purple. Scoped to the bar's own
@@ -2113,21 +2115,42 @@ const {
   useEffect,
   useRef
 } = React;
+/* Three ascending DOTS. Same three brand purples, same order (bottom first,
+   so the rise animation still cascades upward), same shared viewBox, so every
+   consumer of this data is unchanged. */
 const LOGO_MARK_PATHS = [{
-  d: "M170.9,305.1c-6.4,0-11.5-5.2-11.5-11.5s4.5-10.8,10.3-11.4l104.2-10.9c.6,0,1.2,0,1.8,0,9.4,0,17,7.6,17,17s-7.6,17-17,17h-104.8Z",
+  d: "M176,287a17,17 0 1,0 34,0a17,17 0 1,0 -34,0Z",
   fill: "var(--primitive-color-purple-600)"
 }, {
-  d: "M203.2,271.5c-5.1.8-10.1-2.3-11.6-7.3-1.7-5.6,1.4-11.4,7-13.1l73.1-22.4c8.6-2.6,17.6,2.2,20.2,10.8,2.6,8.6-2.2,17.6-10.8,20.2-.8.2-1.6.4-2.4.5l-75.6,11.3Z",
+  d: "M209,245a17,17 0 1,0 34,0a17,17 0 1,0 -34,0Z",
   fill: "var(--primitive-color-purple-300)"
 }, {
-  d: "M270.6,188.2c6.9-4.1,15.9-1.8,20,5.2,4.1,6.9,1.8,15.9-5.2,20-.8.5-1.7.9-2.6,1.2l-47,16.6c-4.3,1.5-9.3-.2-11.7-4.3s-1.2-10.7,3.5-13.4l43-25.3Z",
+  d: "M242,203a17,17 0 1,0 34,0a17,17 0 1,0 -34,0Z",
   fill: "var(--primitive-color-purple-100)"
 }];
-const LOGO_WORD_PATHS = ["M531.1,305.1v-105.6h25.9v105.6h-25.9Z", "M543.9,186.2c-9,0-15.3-6.7-15.3-15.4s6.4-15.3,15.3-15.3,15.4,7.4,15.4,15.3-6.4,15.4-15.4,15.4Z", "M354.3,307.5c-19.4,0-35-8-43.7-22.3l17.4-14c6,8.7,14.5,15.2,25.6,15.2s17-2.7,17-9.7c0-10.4-10.5-11.9-21.3-14.7-21.2-5-34.7-10.9-34.7-31.9s19.2-32.9,41.4-32.9,33.5,6.7,40.2,20.8l-17.1,13.7c-4.8-7.9-12.7-13.7-22.4-13.7s-15.9,2.8-15.9,9.8,11.8,11.1,20.4,12.9c21.2,5,36.1,10.3,36.1,31.7s-18.8,35-43,35Z", "M470.2,307.5c-14.4,0-28.4-6.1-35.8-16.6v54.5h-25.9v-145.9h25.9v14.2c7.6-10.8,21-16.6,35.6-16.6,33.2,0,47.2,28.2,47.2,55.4s-14.3,55-47,55ZM462.4,285.1c19.2,0,28.6-15.7,28.6-32.6s-8.7-32.7-28.5-32.7-28.7,16.9-28.7,32.8,9.1,32.5,28.6,32.5Z", "M578.8,305.1v-105.6h25.9v18.7c6.1-12.8,17.4-19.5,31.6-19.5s5,.1,6.2.4v24.2c-21.4-3.8-37.8,9.1-37.8,29.7v52h-25.9Z", "M699.5,307.4c-35.5,0-55.2-24.3-55.2-55s18.8-55.2,53.1-55.2,50.5,24.2,50.5,52.1-.4,8.1-.6,10.1h-77.6c2.7,15.9,13.7,25.8,32.1,25.8s21.8-4.8,28.9-12.6l14.8,15.5c-9.6,12.7-26.7,19.3-46.1,19.3ZM722.5,240.9c-1-13.6-8.9-24.3-25.4-24.3s-25.1,10.6-27.3,24.3h52.7Z", "M802.9,307.5c-31.5,0-47-26.1-47-55s14.7-55.4,47.3-55.4,27.9,5.4,35.6,15.9v-57.4h25.8v149.4h-25.8v-13.6c-7.4,9.7-20.3,15.9-35.9,15.9ZM810.8,285.1c18.3,0,28.5-14.2,28.5-32.5s-8.3-32.8-28.6-32.8-28.6,16.8-28.6,32.7,9.7,32.6,28.7,32.6Z"];
 const MARK_VB = "159.4 184.1 135.3 121.2";
 const LOGO_VB = "159.4 155.5 705.2 189.9";
 const MONO_OPS = [1, 0.7, 0.45];
-function SpiredMark({
+/* The logotype was outlined letterforms of the confidential brand. It is now
+   set as live text in the app's own face, so this file holds no trace of the
+   real logotype. x/baseline are the wordmark's original coordinates in the
+   shared logo viewBox, so every layout around it is unchanged. */
+function LogoWord({
+  fill
+}) {
+  return React.createElement("text", {
+    x: 310,
+    y: 305,
+    fill: fill || "var(--spd-logo-word)",
+    style: {
+      fontFamily: "inherit",
+      fontSize: 168,
+      fontWeight: 700,
+      letterSpacing: "-4px"
+    }
+  }, "NewCo");
+}
+function NewCoMark({
   size = 22,
   withWordmark = false,
   mono,
@@ -2148,11 +2171,9 @@ function SpiredMark({
     d: p.d,
     fill: mono || p.fill,
     fillOpacity: mono && !solid ? MONO_OPS[i] : 1
-  })), withWordmark && LOGO_WORD_PATHS.map((d, i) => React.createElement("path", {
-    key: "w" + i,
-    d: d,
-    fill: mono || "var(--spd-logo-word)"
-  })));
+  })), withWordmark && React.createElement(LogoWord, {
+    fill: mono
+  }));
 }
 function LogoMark({
   size = 24
@@ -2205,7 +2226,7 @@ function AscensionField({
     opacity: "0.95"
   }));
 }
-function SpiredLoader({
+function NewCoLoader({
   label,
   size = 56,
   mono,
@@ -2266,11 +2287,7 @@ function BootLogo() {
     fill: p.fill
   }))), React.createElement("g", {
     className: "spd-boot-word"
-  }, LOGO_WORD_PATHS.map((d, i) => React.createElement("path", {
-    key: i,
-    d: d,
-    fill: "var(--spd-logo-word)"
-  }))));
+  }, React.createElement(LogoWord, null)));
 }
 function RingLoader({
   size = 18,
@@ -2334,7 +2351,7 @@ function PressableMark({
     onClick: onClick
   }, React.createElement("span", {
     className: "spd-pressmark__mark"
-  }, React.createElement(SpiredMark, {
+  }, React.createElement(NewCoMark, {
     size: size,
     withWordmark: withWordmark
   })));
@@ -3028,11 +3045,7 @@ function ModuleBadge({
       style: {
         display: "block"
       }
-    }, LOGO_WORD_PATHS.map((d, i) => React.createElement("path", {
-      key: i,
-      d: d,
-      fill: "var(--spd-logo-word)"
-    }))), showChevron && React.createElement("span", {
+    }, React.createElement(LogoWord, null)), showChevron && React.createElement("span", {
       className: "spd-topnav__leadchev",
       "aria-hidden": "true",
       style: {
@@ -4240,7 +4253,7 @@ function HomePage() {
       justifyContent: "center",
       padding: 32
     }
-  }, React.createElement(SpiredLoader, {
+  }, React.createElement(NewCoLoader, {
     size: 38,
     mono: "var(--primitive-color-neutral-300)",
     label: "Loading usage…"
@@ -4271,7 +4284,7 @@ function HomePage() {
       gap: 12,
       padding: 32
     }
-  }, React.createElement(SpiredMark, {
+  }, React.createElement(NewCoMark, {
     size: 26,
     mono: "var(--semantic-color-light-mode-stroke-action-secondary-inverse-base)"
   }), React.createElement("p", {
@@ -4866,7 +4879,7 @@ function DoDont({
     className: "spd-dodont__t"
   }, p)));
 }
-function SpiredLogoPage() {
+function NewCoLogoPage() {
   const [run, setRun] = useState(0);
   const stage = {
     display: "flex",
@@ -4902,8 +4915,8 @@ function SpiredLogoPage() {
   }, React.createElement(ConceptHeader, {
     gradient: true,
     tone: "motion",
-    title: "Spired Logo Animation",
-    lead: "Every way the Spired mark moves: the boot assembly on app load, the loading marks it becomes, and the hover replay of its ascent.",
+    title: "NewCo Logo Animation",
+    lead: "Every way the NewCo mark moves: the boot assembly on app load, the loading marks it becomes, and the hover replay of its ascent.",
     action: React.createElement("button", {
       className: "spd-btn spd-btn--onhero",
       onClick: () => setRun(r => r + 1)
@@ -4921,9 +4934,9 @@ function SpiredLogoPage() {
   }, React.createElement(BootLogo, null)), React.createElement(ShowcaseLabel, null, "Loading marks, the logo at work"), React.createElement("div", {
     className: "spd-card",
     style: stage
-  }, cell("Full colour", React.createElement(SpiredLoader, {
+  }, cell("Full colour", React.createElement(NewCoLoader, {
     size: 48
-  })), cell("Grayscale (in-container)", React.createElement(SpiredLoader, {
+  })), cell("Grayscale (in-container)", React.createElement(NewCoLoader, {
     size: 40,
     mono: "var(--primitive-color-neutral-300)"
   })), cell("Ring (buttons)", React.createElement(RingLoader, {
@@ -4937,7 +4950,7 @@ function SpiredLogoPage() {
       width: 64,
       height: 64
     },
-    "aria-label": "Spired mark"
+    "aria-label": "NewCo mark"
   }, React.createElement("span", {
     className: "spd-topnav__logo-mark"
   }, React.createElement(LogoMark, {
@@ -5966,7 +5979,7 @@ function CtxFullChat() {
   })))));
 }
 function CollabThinking() {
-  const phrases = ["Collab is thinking", "Getting ’spired", "Working on it"];
+  const phrases = ["Collab is thinking", "Getting there", "Working on it"];
   const [i, setI] = useState(0);
   useEffect(() => {
     const id = setInterval(() => setI(x => (x + 1) % 3), 2200);
@@ -5999,7 +6012,7 @@ function CtxWorking() {
   return React.createElement("div", {
     style: g
   }, React.createElement(CtxFrame, {
-    label: "Thinking: three little bars rise like the Spired logo pieces; the phrase can vary (“Collab is thinking”, “Getting ’spired”)."
+    label: "Thinking: three little bars rise like the NewCo logo pieces; the phrase can vary (“Collab is thinking”, “Getting there”)."
   }, React.createElement(CollabThinking, null)), React.createElement(CtxFrame, {
     label: "Working: the mono / two-tone mark spins as a gentle loader."
   }, React.createElement("div", {
@@ -6101,7 +6114,7 @@ function CollabContexts() {
     style: g2
   }, React.createElement(CtxSidePanel, null), React.createElement(CtxFullChat, null))), React.createElement(CtxGroup, {
     title: "Working states",
-    hint: "When Collab is busy, the phrase can lean into the brand (“getting ’spired”), and the mark either spins or the little bars rise."
+    hint: "When Collab is busy, the phrase can lean into the product (“getting there”), and the mark either spins or the little bars rise."
   }, React.createElement(CtxWorking, null)));
 }
 function AiMarkPage() {
@@ -6412,7 +6425,7 @@ function LoadingStatesPage() {
   }, React.createElement(PrincipleCard, {
     icon: "fullscreen",
     title: "Page / big feature → full-colour mark",
-    body: "Fetching a whole page or major feature earns the full-colour Spired mark rising bottom-to-top. It's the boot screen and route-level loads only."
+    body: "Fetching a whole page or major feature earns the full-colour NewCo mark rising bottom-to-top. It's the boot screen and route-level loads only."
   }), React.createElement(PrincipleCard, {
     icon: "widgets",
     title: "Widget / card / modal → grayscale mark",
@@ -6439,7 +6452,7 @@ function LoadingStatesPage() {
       justifyContent: "center",
       gap: 12
     }
-  }, React.createElement(SpiredLoader, {
+  }, React.createElement(NewCoLoader, {
     size: 46,
     label: "Loading NewCo…"
   }), React.createElement("span", {
@@ -6461,7 +6474,7 @@ function LoadingStatesPage() {
       justifyContent: "center",
       gap: 12
     }
-  }, React.createElement(SpiredLoader, {
+  }, React.createElement(NewCoLoader, {
     size: 34,
     mono: "var(--primitive-color-neutral-300)"
   }), React.createElement("span", {
@@ -6486,7 +6499,7 @@ function LoadingStatesPage() {
       justifyContent: "center",
       padding: 32
     }
-  }, React.createElement(SpiredLoader, {
+  }, React.createElement(NewCoLoader, {
     size: 34,
     mono: "var(--primitive-color-neutral-300)",
     label: "Gathering the latest…"
@@ -6611,7 +6624,7 @@ function LoadingStatesPage() {
     }
   }, React.createElement(RingLoader, {
     size: 22
-  }), React.createElement(SpiredLoader, {
+  }), React.createElement(NewCoLoader, {
     size: 26,
     mono: "var(--primitive-color-neutral-300)"
   })), React.createElement("p", {
@@ -8593,7 +8606,7 @@ function ModulePlaceholder({
 }
 const CONCEPT_PAGES = {
   motion: MotionPage,
-  spiredlogo: SpiredLogoPage,
+  newcologo: NewCoLogoPage,
   aimark: AiMarkPage,
   loading: LoadingStatesPage,
   errors: ErrorStatesPage,
@@ -8758,7 +8771,7 @@ function App() {
     }
   }, switching ? React.createElement("div", {
     className: "spd-modload"
-  }, React.createElement(SpiredLoader, {
+  }, React.createElement(NewCoLoader, {
     size: 30,
     gap: 18,
     label: "Opening " + mod.name + "…"
