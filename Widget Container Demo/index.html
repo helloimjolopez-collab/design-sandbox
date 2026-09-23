@@ -2600,6 +2600,11 @@
   var SIZES=["kpi","wide","xwide"];
   var SIZE_LABEL={kpi:"Glance",wide:"Explore",xwide:"Detail"};
   var DEPTH_LABEL={kpi:"Glance",wide:"Explore",xwide:"Detail"};
+  /* G1: step a widget down to the largest size that fits the current breakpoint (phone->Glance, tablet->Explore, desktop->Detail), never above the chosen size. */
+  function curCap(){var iw=(typeof innerWidth!=="undefined"?innerWidth:1200);return iw>=1024?"xwide":iw>=768?"wide":"kpi";}
+  function fitSize(w){var cap=SIZES.indexOf(curCap());var want=SIZES.indexOf(w.size);if(want<0)want=cap;var lim=Math.min(cap,want);var t=(w.tiers&&w.tiers.length)?w.tiers:SIZES;for(var i=lim;i>=0;i--){if(t.indexOf(SIZES[i])>-1)return SIZES[i];}return SIZES[0];}
+  var __bpCap=curCap();
+  if(typeof window!=="undefined"&&window.addEventListener){window.addEventListener("resize",function(){var b=curCap();if(b!==__bpCap){__bpCap=b;if(typeof render==="function")render();}});}
 
   var DEP_TYPES=["Checking","Savings","Money Market","Certificate of Deposit","Escrow","Restricted Funds","Endowment","Trust Accounts","Operating Reserve","Payroll Clearing","Grant Funds","Building Fund"];
   var DEP=(function(){var out=[],seed=42;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
@@ -8801,7 +8806,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   }
 
 
-  function contentHTML(w){
+  function contentHTML(w){var __rs=w.size,__es=fitSize(w);if(__es!==__rs){w.size=__es;try{return contentHTML(w);}finally{w.size=__rs;}}
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
     if(w.kind==="payroll")return prContent(w); // prContent renders its own toolbar even when state==="empty" — the toolbar never disappears just because the chosen period has no data
@@ -8849,7 +8854,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function addWidgetPlaceholderHTML(){
     return '<section class="widget widget-add" data-size="kpi"><button class="widget-add-btn" data-action="add-widget" aria-label="Add widget">'+ICON("add")+'<span>Add widget</span></button></section>';}
   function widgetHTML(w){
-    return '<section class="widget" data-id="'+w.id+'" data-size="'+w.size+'" data-manage="'+manage+'" data-dragging="'+(dragId===w.id)+'"'+(manage?' draggable="true"':'')+'>'+
+    return '<section class="widget" data-id="'+w.id+'" data-size="'+fitSize(w)+'" data-manage="'+manage+'" data-dragging="'+(dragId===w.id)+'"'+(manage?' draggable="true"':'')+'>'+
       '<div class="whead"><span class="wdrag">'+ICON("drag_indicator")+'</span>'+titleHTML(w)+(manage?'':hoverIconsHTML(w))+'<span class="wspace"></span><div class="wactions">'+actionsHTML(w)+'</div></div><div class="wcontent">'+contentHTML(w)+'</div></section>';
   }
   function tbLeftHTML(){var d=cur();
@@ -8926,7 +8931,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
       var togs=[["active","Active accounts only"],["funded","Funded (balance &gt; $0)"]];
       var togHTML=togs.map(function(o){var on=!!wa["f_"+o[0]];return '<button class="mi'+(on?" check":"")+'" data-action="toggle-advf" data-id="'+wa.id+'" data-k="'+o[0]+'">'+ICON(on?"check_box":"check_box_outline_blank")+o[1]+'</button>';}).join("");
       return '<div class="cap">Sort by</div>'+sortHTML+'<div class="sep"></div><div class="cap">Show</div>'+togHTML+'<div class="sep"></div><button class="mi" data-action="clear-advf" data-id="'+wa.id+'">'+ICON("filter_alt_off")+'Clear filters &amp; sort</button>';}
-    if(pop.type==="size"){var w=find(pop.id);return '<div class="depthpick" role="group" aria-label="Depth">'+SIZES.map(function(sz){var ok=(w.tiers||[]).indexOf(sz)>-1;return '<span class="depthcell"><button class="glyph'+(ok?"":" disabled")+'" data-size="'+sz+'"'+(ok?' data-action="pick-size" data-id="'+w.id+'" aria-pressed="'+(w.size===sz)+'"':' aria-disabled="true"')+'>'+(sz==="xwide"?'<span class="gf"></span><span class="gf"></span>':'<span class="gf"></span>')+'</button><span class="depthname">'+DEPTH_LABEL[sz]+'</span></span>';}).join("")+'</div>';}
+    if(pop.type==="size"){var w=find(pop.id);return '<div class="depthpick" role="group" aria-label="Depth">'+SIZES.map(function(sz){var ok=(w.tiers||[]).indexOf(sz)>-1&&SIZES.indexOf(sz)<=SIZES.indexOf(curCap());return '<span class="depthcell"><button class="glyph'+(ok?"":" disabled")+'" data-size="'+sz+'"'+(ok?' data-action="pick-size" data-id="'+w.id+'" aria-pressed="'+(w.size===sz)+'"':' aria-disabled="true"')+'>'+(sz==="xwide"?'<span class="gf"></span><span class="gf"></span>':'<span class="gf"></span>')+'</button><span class="depthname">'+DEPTH_LABEL[sz]+'</span></span>';}).join("")+'</div>';}
     if(pop.type==="switcher"){var rows=dashboards.map(function(d){return '<button class="mi'+(d.id===currentId?" check":"")+'" data-action="select-dash" data-did="'+d.id+'">'+(d.id===currentId?ICON("check"):'<span class="mi-gap"></span>')+d.name+(defaultId===d.id?'<span class="k">Default</span>':"")+'</button>';}).join("");return rows+'<div class="sep"></div><button class="mi" data-action="set-default"'+(defaultId===currentId?' aria-disabled="true"':'')+'>'+ICON("push_pin")+'Set current as default</button><button class="mi" data-action="rename-dash">'+ICON("edit")+'Rename current…</button><button class="mi" data-danger data-action="delete-dash"'+(isSystem()?' aria-disabled="true"':'')+'>'+ICON("delete")+'Delete current…</button><div class="sep"></div><button class="mi" data-action="new-dash">'+ICON("add")+'New dashboard</button>';}
     if(pop.type==="save"){var sys=isSystem();return '<button class="mi" '+(sys?'aria-disabled="true" data-action="noop"':'data-action="save-update"')+'>'+ICON("save")+'Update this dashboard<span class="k">⌘S</span></button><button class="mi" data-action="save-new">'+ICON("save_as")+'Save as new dashboard…</button>';}
     if(pop.type==="mys-opts")return mysPopContent();
