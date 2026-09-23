@@ -6049,6 +6049,31 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     return (fmt==="line")?bgtFLine(w,rows,""):bgtFBars(w,rows,"");
   }
   /* Glance (KPI size): interactive. The scope chip is the same control as the bigger sizes (opens the scope popover; Special report opens the dialog), the "vs. budget, [window]" caption opens the five-window picker, and the big number carries the same arrow/sign/percent as the header headline. */
+  /* W01: cumulative-variance favourability sparkline for the budget-mb Glance. Running variance
+     through each posted period, coloured by favourability at that point; the final dot equals the
+     window variance in the KPI headline. Follows the same posted periods the KPI sums, never invents data. */
+  function bgtFGlanceSpark(w,vt,neutral){
+    var mm=bgtFSpanMonthly(w,w.bspan||"year").filter(function(r){return r.actual!=null;});
+    if(mm.length<2)return '';
+    var cb=0,ca=0,pts=[];
+    mm.forEach(function(r){cb+=r.budget;ca+=r.actual;pts.push({label:r.m,v:bgtFVariance(vt,cb,ca)});});
+    var n=pts.length,vals=pts.map(function(p){return p.v;});
+    var lo=Math.min.apply(null,vals.concat([0])),hi=Math.max.apply(null,vals.concat([0]));
+    var pad=(hi-lo)*0.14||1;lo-=pad;hi+=pad;var span=(hi-lo)||1;
+    var W=120,H=40;
+    function X(i){return n>1?(4+(i/(n-1))*(W-8)):W/2;}
+    function Y(v){return (H-5)-((v-lo)/span)*(H-10);}
+    var zy=Y(0).toFixed(1);
+    function favCol(v){return neutral?"var(--txt-secondary)":(v>=0?"var(--pos-100)":"var(--red-100)");}
+    var d=pts.map(function(p,i){return (i?"L":"M")+X(i).toFixed(1)+","+Y(p.v).toFixed(1);}).join(" ");
+    var dots=pts.map(function(p,i){
+      var last=i===n-1,word=neutral?(p.v>=0?"over budget":"under budget"):(p.v>=0?"favourable":"unfavourable");
+      var tip=p.label+" (running total through this month): "+money(Math.abs(p.v))+" "+word+", against budget "+bgtFSpanLabel(w.bspan||"year").toLowerCase()+".";
+      tip=tip.replace(/"/g,"&quot;");
+      return '<circle class="bgt-sk-dot'+(last?" last":"")+'" cx="'+X(i).toFixed(1)+'" cy="'+Y(p.v).toFixed(1)+'" r="'+(last?3.4:2.2)+'" fill="'+favCol(p.v)+'" tabindex="0" role="img" data-tip="'+tip+'" data-tip-plain aria-label="'+tip+'"></circle>';
+    }).join("");
+    return '<div class="bgt-glspark" role="img" aria-label="Cumulative budget variance by month, ending at '+money(Math.abs(pts[n-1].v))+'"><svg viewBox="0 0 120 40" preserveAspectRatio="xMidYMid meet"><line class="bgt-sk-zero" x1="0" y1="'+zy+'" x2="120" y2="'+zy+'"></line><path class="bgt-sk-line" d="'+d+'" stroke="'+favCol(pts[n-1].v)+'"></path>'+dots+'</svg></div>';
+  }
   function bgtFGlance(w){
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
     var rows=bgtFSet(w),label=(w.acctview==="special")?bgtFScopeContext(w).replace(/^Special report: /,""):bgtFScopeShort(w);
