@@ -15,27 +15,43 @@
     font-family: 'Google Sans Flex', ui-sans-serif, system-ui, -apple-system, sans-serif;
   }
   /* Rows are hard-coded rather than left to flex-wrap, so the grouping matches
-     Figma "NewCo testing Round 1" node 2-8 exactly at any width. */
-  .rows { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 580px; }
-  .row  { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip {
-    display: inline-flex; align-items: center; justify-content: center;
-    height: 36px; padding: 0 18px; border-radius: 999px;
-    background: #FFFFFF; color: #0A0A0A;
-    font-size: 13.5px; font-weight: 500; letter-spacing: .1px;
-    white-space: nowrap; user-select: none;
+     Figma "NewCo testing Round 1" node 2-8 exactly. The type scales with the
+     viewport so a row still holds on one line as the window narrows. */
+  .rows {
+    display: flex; flex-direction: column;
+    gap: clamp(12px, 1.6vw, 22px);
+    /* Hug the widest row so the block sits optically centred instead of
+       leaving a band of dead space to its right. */
+    width: fit-content; max-width: 100%;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: clamp(18px, 2.4vw, 38px); }
+  /* Plain words, NOT controls. The filled pill read as a button and people
+     tried to click it, so there is no fill, no border, no radius and no
+     padding box: just large white type. The gap between words is well wider
+     than a word-space so they still read as separate items, and the cursor
+     stays the neutral arrow (a pointer would say "button", an I-beam would
+     say "selectable text"). */
+  .word {
+    color: #FFFFFF;
+    font-size: clamp(17px, 3.4vw, 42px);
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    line-height: 1.15;
+    white-space: nowrap;
+    user-select: none;
+    cursor: default;
   }
 </style>
 </head>
 <body>
   <div class="rows">
-    <div class="row"><span class="chip">Approachable</span><span class="chip">Bland</span><span class="chip">Calm</span><span class="chip">Boring</span><span class="chip">Clean</span></div>
-    <div class="row"><span class="chip">Busy</span><span class="chip">Comfortable</span><span class="chip">Cluttered</span><span class="chip">Familiar</span></div>
-    <div class="row"><span class="chip">Dated</span><span class="chip">Fresh</span><span class="chip">Impersonal</span><span class="chip">Friendly</span></div>
-    <div class="row"><span class="chip">Intimidating</span><span class="chip">High quality</span><span class="chip">Overwhelming</span><span class="chip">Inviting</span></div>
-    <div class="row"><span class="chip">Sterile</span><span class="chip">Optimistic</span><span class="chip">Unattractive</span><span class="chip">Organised</span></div>
-    <div class="row"><span class="chip">Professional</span><span class="chip">Reliable</span><span class="chip">Sophisticated</span></div>
-    <div class="row"><span class="chip">Trustworthy</span><span class="chip">OTHER</span></div>
+    <div class="row"><span class="word">Approachable</span><span class="word">Bland</span><span class="word">Calm</span><span class="word">Boring</span><span class="word">Clean</span></div>
+    <div class="row"><span class="word">Busy</span><span class="word">Comfortable</span><span class="word">Cluttered</span><span class="word">Familiar</span></div>
+    <div class="row"><span class="word">Dated</span><span class="word">Fresh</span><span class="word">Impersonal</span><span class="word">Friendly</span></div>
+    <div class="row"><span class="word">Intimidating</span><span class="word">High quality</span><span class="word">Overwhelming</span><span class="word">Inviting</span></div>
+    <div class="row"><span class="word">Sterile</span><span class="word">Optimistic</span><span class="word">Unattractive</span><span class="word">Organised</span></div>
+    <div class="row"><span class="word">Professional</span><span class="word">Reliable</span><span class="word">Sophisticated</span></div>
+    <div class="row"><span class="word">Trustworthy</span><span class="word">OTHER</span></div>
   </div>
 </body>
 </html>
