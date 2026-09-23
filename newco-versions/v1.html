@@ -2033,7 +2033,9 @@ function AscensionField({
   const [a, b, c] = colors;
   return React.createElement("svg", {
     viewBox: "0 0 400 300",
-    preserveAspectRatio: "none",
+    /* Circles must stay circular, so this no longer stretches to fit; it
+       slices from the bottom-right, the corner the slabs rose from. */
+    preserveAspectRatio: "xMaxYMax slice",
     "aria-hidden": "true",
     style: {
       position: "absolute",
@@ -2042,16 +2044,22 @@ function AscensionField({
       height: "100%",
       opacity
     }
-  }, React.createElement("polygon", {
-    points: "0,300 400,300 400,230 0,300",
+  }, React.createElement("circle", {
+    cx: 248,
+    cy: 300,
+    r: 122,
     fill: a,
     opacity: "0.9"
-  }), React.createElement("polygon", {
-    points: "0,300 400,300 400,255 0,300",
+  }), React.createElement("circle", {
+    cx: 322,
+    cy: 248,
+    r: 86,
     fill: b,
     opacity: "0.9"
-  }), React.createElement("polygon", {
-    points: "0,300 400,300 400,278 0,300",
+  }), React.createElement("circle", {
+    cx: 374,
+    cy: 203,
+    r: 56,
     fill: c,
     opacity: "0.95"
   }));
@@ -2143,6 +2151,10 @@ function RingLoader({
     fill: "var(--primitive-color-purple-100)",
     op: 0.45
   }];
+  /* Dot sizes keep the old long/medium/short hierarchy; the ring is inset by
+     the largest dot so none of them clip the viewBox edge. */
+  const dotR = [strokeWidth * 0.85, strokeWidth * 0.7, strokeWidth * 0.55];
+  const ringR = (size - 2 * dotR[0]) / 2 - 0.25;
   return React.createElement("svg", {
     className: "spd-ring",
     width: size,
@@ -2150,19 +2162,18 @@ function RingLoader({
     viewBox: `0 0 ${size} ${size}`,
     fill: "none",
     "aria-hidden": "true"
-  }, segs.map((s, i) => React.createElement("circle", {
-    key: i,
-    cx: c,
-    cy: c,
-    r: r,
-    stroke: mono || s.fill,
-    strokeOpacity: mono ? s.op : 1,
-    strokeWidth: strokeWidth,
-    strokeLinecap: "round",
-    fill: "none",
-    strokeDasharray: `${s.frac * circ} ${circ}`,
-    strokeDashoffset: -s.off * circ
-  })));
+  }, segs.map((s, i) => {
+    /* Sit each dot where the middle of its arc used to be. */
+    const a = 2 * Math.PI * (s.off + s.frac / 2) - Math.PI / 2;
+    return React.createElement("circle", {
+      key: i,
+      cx: c + ringR * Math.cos(a),
+      cy: c + ringR * Math.sin(a),
+      r: dotR[i],
+      fill: mono || s.fill,
+      fillOpacity: mono ? s.op : 1
+    });
+  }));
 }
 function PressableMark({
   size = 28,
