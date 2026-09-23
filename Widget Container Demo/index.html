@@ -95,7 +95,9 @@
      ~275px, growing to ~330px at 1440; tablet ~352px; mobile ~360px). Below the
      floor the grid stops shrinking and .appmain scrolls — the "stopping point"
      rather than an ever-shrinking glance. */
-  .dashboard{display:grid;grid-template-columns:repeat(4,minmax(60px,1fr));grid-auto-rows:48px;gap:16px;grid-auto-flow:row dense;}
+  /* grid-auto-flow:row (NOT dense): widgets hold their source order, so resizing a widget grows it IN PLACE
+     and reflows the rest around it, instead of dense back-filling relocating it to the bottom of the board. */
+  .dashboard{display:grid;grid-template-columns:repeat(4,minmax(60px,1fr));grid-auto-rows:48px;gap:16px;grid-auto-flow:row;}
   /* Column count keys off the GRID width (the .shell container), not the viewport, so the track's own
      minimum (8 cols = 720px, 12 cols = 1148px) never exceeds the room the grid actually has and never
      overflows behind the sidenav. Mirrors the canonical size floors used by curCap. */
