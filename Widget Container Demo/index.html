@@ -471,12 +471,16 @@
   .pct-fill{display:block;height:100%;min-width:2px;background:var(--chart);border-radius:3px 0 0 3px;box-shadow:inset -1px 0 0 var(--chart-strong);}
   .pct-num{font-variant-numeric:tabular-nums;min-width:32px;text-align:right;}
   /* Full size (xwide): table + donut shown together, no toggle needed since both fit. Equal column widths — neither side should dominate. */
-  .pr-split{display:flex;gap:24px;align-items:flex-start;min-width:0;}
-  .pr-split-table{flex:1 1 0;min-width:0;}
-  .pr-split-chart{flex:1 1 0;min-width:0;display:flex;justify-content:center;}
-  .pr-split-chart .dist-wrap{padding:0;width:100%;max-width:340px;}
-  .pr-split-chart .pie-wrap.row{flex-direction:column;align-items:center;}
-  .pr-split-chart .legend-col{max-width:100%;width:100%;}
+  /* Detail: table + donut as two clearly-separate views, each in its own subtly-stroked panel. The donut
+     keeps its legend to the RIGHT (row), never stacked/clipped. Detail only renders when the grid has room
+     (>=1148), so there is always space for the side-by-side pair; narrower sizes use the single-view toggle. */
+  .pr-split{display:flex;gap:16px;align-items:stretch;min-width:0;padding:8px 16px 12px;}
+  .pr-split-table,.pr-split-chart{flex:1 1 0;min-width:0;border:0.5px solid var(--stroke-container);border-radius:10px;}
+  .pr-split-table{overflow:hidden;}
+  .pr-split-chart{display:flex;align-items:center;justify-content:center;padding:12px;}
+  .pr-split-chart .dist-wrap{padding:0;width:100%;}
+  .pr-split-chart .pie-wrap.row{flex-direction:row;align-items:center;gap:16px;}
+  .pr-split-chart .legend-col{flex:1;min-width:0;width:auto;max-width:none;}
   /* Glance within-period composition (no trend): a 100%-stacked distribution bar
      + the single leading cost centre labelled beneath it. */
   .prf-gcomp{width:100%;margin-top:8px;display:flex;flex-direction:column;gap:6px;}
