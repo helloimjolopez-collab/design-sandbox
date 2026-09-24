@@ -9738,7 +9738,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="add-widget-cat"){if(modal)modal.cat=t.getAttribute("data-c");renderModal();return;}
     if(a==="add-widget-view"){if(modal)modal.awView=t.getAttribute("data-v");renderModal();return;}
     if(a==="add-widget-pick"){var _pidx=+t.getAttribute("data-idx"),p=PALETTE[_pidx];if(p){addCount++;var nw2=Object.assign({id:"n"+Date.now()+addCount,kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now"},p.props());cur().widgets.push(nw2);setStatus('Added “'+p.title+'” to “'+cur().name+'”.');
-      if(modal&&modal.type==="addwidget"){if(!modal.added)modal.added={};var _n=(modal.added[_pidx]||0)+1;modal.added[_pidx]=_n;dashDirty=true;
+      if(modal&&modal.type==="addwidget"){if(!modal.added)modal.added={};var _n=(modal.added[_pidx]||0)+1;modal.added[_pidx]=_n;
         /* Update the clicked card/row in place — no full re-render, so the modal doesn't flash or lose scroll.
            The dashboard behind (hidden by the modal) is rebuilt once, when the picker closes. */
         var _host=t.closest&&t.closest(".aw-card,.aw-row");if(_host){_host.classList.add("is-added");var _b=_host.querySelector(".aw-add-btn");if(_b){_b.classList.add("is-added");_b.innerHTML=ICON("check")+"Added"+(_n>1?" · "+_n:"");}}
