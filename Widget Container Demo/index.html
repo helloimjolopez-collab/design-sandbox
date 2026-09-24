@@ -8173,6 +8173,99 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoData(w){if(w.state==="empty")return [];if(w.dataset==="approved")return PTO_DEPTS_APPROVED;if(w.dataset==="alt")return PTO_DEPTS_ALT;return PTO_DEPTS_MAIN;}
   function ptoTypes(w){return (w.dataset==="alt")?PTO_TYPES_ALT:PTO_TYPES;}
   function ptoVisTypes(w){return ptoTypes(w).filter(function(t){return !t.hidden;});}
+
+  /* ===== W09 full redesign: flat approval queue + leave calendar ===================
+     Grounded in the brief: approval is department/permission-based; only Pending and
+     Approved exist (no reject); undo = un-approving; leave type is client-renamable so
+     no per-type icons; Pay Group kept as a filter option (department is the default). */
+  var PTO_TODAY_ISO="2026-07-23";
+  var PTO_PAYGROUPS={"d-admin":"Salaried Staff","d-fac":"Hourly Staff","d-music":"Salaried Staff"};
+  function ptoPayGroupOf(deptId){return PTO_PAYGROUPS[deptId]||"Salaried Staff";}
+  function ptoStatus3(r){return r.status==="approved"?"approved":(r.date<PTO_TODAY_ISO?"outstanding":"pending");}
+  function ptoTypeLabel(w,key){var ts=ptoTypes(w);for(var i=0;i<ts.length;i++)if(ts[i].key===key)return ts[i].label;return key;}
+  function ptoAllRows(w){var out=[];ptoData(w).forEach(function(d){d.emps.forEach(function(e){e.recs.forEach(function(r){out.push({id:r.id,date:r.date,day:r.day,type:r.type,hrs:r.hrs,status:r.status,s3:ptoStatus3(r),by:r.by,on:r.on,emp:e.name,empId:e.id,dept:d.name,deptId:d.id,pg:ptoPayGroupOf(d.id)});});});});return out;}
+  function ptoDeptList(w){var seen={},out=[];ptoData(w).forEach(function(d){if(!seen[d.id]){seen[d.id]=1;out.push(d);}});return out;}
+  function ptoPGList(w){var seen={},out=[];ptoData(w).forEach(function(d){var pg=ptoPayGroupOf(d.id);if(!seen[pg]){seen[pg]=1;out.push(pg);}});return out;}
+  function ptoDeptCur(w){return w.ptoDept||"all";}
+  function ptoPGCur(w){return w.ptoPG||"all";}
+  function ptoTileOf(w){return w.ptoTile||"pending";}
+  function ptoRangeOf(w){return w.ptoRange||"month";}
+  function ptoInRange(dateISO,range){var span={day:1,week:7,month:31,quarter:92,year:400}[range]||31;var diff=Math.round((Date.parse(dateISO)-Date.parse(PTO_TODAY_ISO))/86400000);return diff>=-span&&diff<=span;}
+  function ptoBaseRows(w){var dept=ptoDeptCur(w),pg=ptoPGCur(w),range=ptoRangeOf(w);return ptoAllRows(w).filter(function(r){if(dept!=="all"&&r.deptId!==dept)return false;if(pg!=="all"&&r.pg!==pg)return false;return ptoInRange(r.date,range);});}
+  function ptoQueueRows(w){var tile=ptoTileOf(w);return ptoBaseRows(w).filter(function(r){if(tile==="pending")return r.s3!=="approved";if(tile==="approved")return r.s3==="approved";return true;});}
+  function ptoCount(w,tile){var b=ptoBaseRows(w);if(tile==="pending")return b.filter(function(r){return r.s3!=="approved";}).length;if(tile==="approved")return b.filter(function(r){return r.s3==="approved";}).length;return b.length;}
+  function ptoKpiCards(w){var cur=ptoTileOf(w),tiles=[["all","All"],["pending","Pending"],["approved","Approved"]];
+    return '<div class="pto-cards" role="group" aria-label="Filter by status">'+tiles.map(function(t){var on=cur===t[0],n=ptoCount(w,t[0]);return '<button class="pto-card'+(on?" sel":"")+'" data-action="pto-tile" data-id="'+w.id+'" data-t="'+t[0]+'" aria-pressed="'+on+'"><span class="pto-card-lbl">'+t[1]+'</span><span class="pto-card-n">'+n+'</span></button>';}).join("")+'</div>';}
+  function ptoDeptChip(w){var cur=ptoDeptCur(w),d=ptoDeptList(w).filter(function(x){return x.id===cur;})[0],lbl=cur==="all"?"All departments":(d?d.name:"All departments");return '<button class="filter-chip" data-action="pto-dept" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Department, tap to change"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function ptoPGChip(w){var cur=ptoPGCur(w);return '<button class="filter-chip" data-action="pto-pg" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pay group, tap to change"><span class="fc-label">'+(cur==="all"?"All pay groups":cur)+'</span>'+ICON("expand_more")+'</button>';}
+  function ptoView2Toggle(w){var v=w.ptoQView||"queue";return '<div class="vtoggle" role="group" aria-label="View">'+
+    '<button class="vt'+(v==="queue"?" on":"")+'" data-action="pto-qview" data-id="'+w.id+'" data-v="queue" aria-pressed="'+(v==="queue")+'">'+ICON("list_alt")+'Approval Queue</button>'+
+    '<button class="vt'+(v==="calendar"?" on":"")+'" data-action="pto-qview" data-id="'+w.id+'" data-v="calendar" aria-pressed="'+(v==="calendar")+'">'+ICON("calendar_month")+'Leave Calendar</button></div>';}
+  function ptoRangeToggle(w){if((w.ptoQView||"queue")==="calendar")return "";var cur=ptoRangeOf(w),opts=[["day","D","Day"],["week","W","Week"],["month","M","Month"],["quarter","Q","Quarter"],["year","Y","Year"]];return '<div class="vtoggle pto-range" role="group" aria-label="Time range">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="pto-range" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'" data-tip="'+o[2]+'" data-tip-plain>'+o[1]+'</button>';}).join("")+'</div>';}
+  function ptoStatusBadge(r){
+    if(r.s3==="approved")return '<span class="pto-sb pto-sb-ok" data-tip="Approved'+(r.by?" by "+r.by:"")+(r.on?" on "+r.on:"")+'." data-tip-plain>'+ICON("check_circle")+'Approved</span>';
+    if(r.s3==="outstanding")return '<span class="pto-sb pto-sb-out" data-tip="Past its date and still not approved." data-tip-plain>'+ICON("error")+'Outstanding</span>';
+    return '<span class="pto-sb pto-sb-pend" data-tip="Awaiting your approval." data-tip-plain>'+ICON("schedule")+'Pending</span>';}
+  function ptoAllSelected(w){var rows=ptoQueueRows(w).filter(function(r){return r.s3!=="approved";}),sel=w.ptoSel||{};return !!rows.length&&rows.every(function(r){return sel[r.id];});}
+  function ptoQueueTable(w){
+    var rows=ptoQueueRows(w).slice(),sk=(w.ptoSort||"date-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,sel=w.ptoSel||{};
+    rows.sort(function(a,b){if(key==="emp")return dir*a.emp.localeCompare(b.emp);if(key==="dept")return dir*a.dept.localeCompare(b.dept);if(key==="status")return dir*a.s3.localeCompare(b.s3);return dir*(a.date<b.date?-1:a.date>b.date?1:0);});
+    if(!rows.length)return '<div class="state pto-state" data-kind="empty"><span class="material-symbols-rounded pto-state-ic ok">check_circle</span><div class="state-title">You are all caught up</div><div class="state-sub">No time off matches these filters.</div></div>';
+    var anyAct=rows.some(function(r){return r.s3!=="approved";});
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pto-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
+    var head='<div class="wt-row wt-head pto-qrow"><span class="pto-qc-chk">'+(anyAct?'<button class="pto-chk" data-action="pto-selall" data-id="'+w.id+'" aria-label="Select all actionable rows">'+ICON(ptoAllSelected(w)?"check_box":"check_box_outline_blank")+'</button>':'')+'</span><span class="pto-qc-date">'+sb("date","Date")+'</span><span class="pto-qc-emp lr-main">'+sb("emp","Employee")+'</span><span class="pto-qc-dept">'+sb("dept","Department")+'</span><span class="pto-qc-type">Leave type</span><span class="pto-qc-status">'+sb("status","Status")+'</span><span class="pto-qc-act"></span></div>';
+    var body=rows.map(function(r){
+      var act=r.s3!=="approved",chk=act?('<button class="pto-chk" data-action="pto-selrec" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Select">'+ICON(sel[r.id]?"check_box":"check_box_outline_blank")+'</button>'):'';
+      var action=(r.s3==="approved")
+        ?('<button class="pto-undo" data-action="pto-undo" data-id="'+w.id+'" data-rec="'+r.id+'" data-tip="Undo approval, back to Pending." data-tip-plain aria-label="Undo approval">'+ICON("undo")+'Undo</button>')
+        :('<button class="btn primary sm pto-approve" data-action="pto-approve" data-id="'+w.id+'" data-rec="'+r.id+'">'+ICON("check")+'Approve</button>'+(r.s3==="outstanding"?'<button class="pto-dismiss" data-action="pto-dismiss" data-id="'+w.id+'" data-rec="'+r.id+'" data-tip="Dismiss this outstanding request." data-tip-plain aria-label="Dismiss">'+ICON("close")+'</button>':''));
+      return '<div class="wt-row pto-qrow" data-acct="'+r.emp.replace(/"/g,"&quot;")+'"><span class="pto-qc-chk">'+chk+'</span><span class="pto-qc-date">'+ptoFmtDate(r.date)+'</span><span class="pto-qc-emp lr-main"><button class="pto-emp-link" data-action="pto-drill" data-id="'+w.id+'" data-emp="'+r.empId+'">'+r.emp+'</button></span><span class="pto-qc-dept"><span class="pto-dept-badge">'+ICON("groups")+r.dept+'</span></span><span class="pto-qc-type">'+ptoTypeLabel(w,r.type)+'</span><span class="pto-qc-status">'+ptoStatusBadge(r)+'</span><span class="pto-qc-act">'+action+'</span></div>';
+    }).join("");
+    var selN=Object.keys(sel).filter(function(k){return sel[k];}).length;
+    var bulk=selN?'<div class="pto-bulkbar"><span class="pto-bulk-n">'+selN+' selected</span><button class="btn primary sm" data-action="pto-bulk-approve" data-id="'+w.id+'">'+ICON("check")+'Approve '+selN+'</button><button class="btn naked sm" data-action="pto-selclear" data-id="'+w.id+'">Clear</button></div>':'';
+    var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search by person" aria-label="Search by person"></div></div>';
+    return search+bulk+'<div class="scroll pto-qtbl">'+head+body+'</div>';}
+  function ptoCalendar(w){
+    var rows=ptoBaseRows(w),year=2026,mon=6,todayD=23;
+    var startDow=new Date(year,mon,1).getDay(),days=new Date(year,mon+1,0).getDate(),byDay={};
+    rows.forEach(function(r){var p=r.date.split("-");if(+p[0]===year&&(+p[1]-1)===mon){var d=+p[2];byDay[d]=byDay[d]||{ap:0,pe:0,out:0};if(r.s3==="approved")byDay[d].ap++;else if(r.s3==="outstanding")byDay[d].out++;else byDay[d].pe++;}});
+    var dow=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(x){return '<div class="pto-cal-dow">'+x+'</div>';}).join("");
+    var cells="";for(var i=0;i<startDow;i++)cells+='<div class="pto-cal-cell pto-cal-empty"></div>';
+    for(var dd=1;dd<=days;dd++){var c=byDay[dd]||{ap:0,pe:0,out:0},isT=(dd===todayD),has=(c.ap||c.pe||c.out);
+      var chips='';if(c.ap)chips+='<span class="pto-cal-chip ap">'+c.ap+'</span>';if(c.pe)chips+='<span class="pto-cal-chip pe">'+c.pe+'</span>';if(c.out)chips+='<span class="pto-cal-chip out">'+ICON("error")+c.out+'</span>';
+      var iso=year+'-'+String(mon+1).padStart(2,"0")+'-'+String(dd).padStart(2,"0");
+      cells+='<div class="pto-cal-cell'+(isT?" today":"")+(has?" has":"")+'"'+(has?' data-action="pto-day" data-id="'+w.id+'" data-d="'+iso+'" role="button" tabindex="0" aria-label="'+ptoFmtDate(iso)+', '+c.ap+' approved, '+c.pe+' pending, '+c.out+' outstanding"':'')+'><span class="pto-cal-d">'+dd+'</span><span class="pto-cal-chips">'+chips+'</span></div>';}
+    var legend='<div class="pto-cal-legend"><span class="pto-cal-lg ap">Approved</span><span class="pto-cal-lg pe">Pending</span><span class="pto-cal-lg out">Outstanding</span></div>';
+    return '<div class="pto-cal-wrap"><div class="pto-cal-hd"><span class="pto-cal-mon">July 2026</span>'+legend+'</div><div class="pto-cal-grid pto-cal-dowrow">'+dow+'</div><div class="pto-cal-grid pto-cal-days">'+cells+'</div></div>';}
+  function ptoHead2(w){
+    return '<div class="dep-hd pto-hd"><div class="dep-hd-top"><div class="pto-filters">'+ptoDeptChip(w)+ptoPGChip(w)+'</div><div class="dep-hd-toggle">'+ptoView2Toggle(w)+'</div></div></div>'+
+      '<div class="pto-cards-row">'+ptoKpiCards(w)+ptoRangeToggle(w)+'</div>';}
+  function ptoGlance2(w){
+    if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">No access</span></span><div class="metric-value" style="font-size:18px;color:var(--txt-subtle)">—</div></div></div>';
+    var b=ptoBaseRows(w),pend=b.filter(function(r){return r.s3!=="approved";}).length,appr=b.filter(function(r){return r.s3==="approved";}).length;
+    return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Scheduled time off</span></span><div class="dep-hd-kpigrp"><span class="metric-value">'+pend+'</span><span class="bank-pill">'+ICON("schedule")+'pending</span></div><div class="gl-sub"><span class="bank-caption">'+appr+' approved</span></div></div></div>';}
+  /* Employee drill (scrim overlay): the person isolated, with their own KPIs. */
+  function ptoDrillModalHTML(){
+    var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
+    var rows=ptoAllRows(w).filter(function(r){return r.empId===modal.emp;}).sort(function(a,b){return a.date<b.date?-1:1;});
+    var nm=rows.length?rows[0].emp:"Employee",dept=rows.length?rows[0].dept:"";
+    var pend=rows.filter(function(r){return r.s3!=="approved";}).length,appr=rows.filter(function(r){return r.s3==="approved";}).length;
+    var kpis='<div class="pto-drill-kpis"><span class="pto-drill-kpi"><b>'+rows.length+'</b> total</span><span class="pto-drill-kpi"><b>'+pend+'</b> pending</span><span class="pto-drill-kpi"><b>'+appr+'</b> approved</span></div>';
+    var list=rows.map(function(r){var act=r.s3!=="approved";
+      var action=act?('<button class="btn primary sm pto-approve" data-action="pto-approve" data-id="'+w.id+'" data-rec="'+r.id+'">'+ICON("check")+'Approve</button>'):('<button class="pto-undo" data-action="pto-undo" data-id="'+w.id+'" data-rec="'+r.id+'">'+ICON("undo")+'Undo</button>');
+      return '<div class="pto-drill-row"><span class="pto-drill-date">'+ptoFmtDate(r.date)+'</span><span class="pto-drill-type">'+ptoTypeLabel(w,r.type)+'</span><span class="pto-drill-st">'+ptoStatusBadge(r)+'</span><span class="pto-drill-act">'+action+'</span></div>';}).join("");
+    return '<div class="modal-backdrop" data-action="modal-close"><div class="modal modal-wide pto-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Time off for '+nm.replace(/"/g,"&quot;")+'"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">person</span>'+nm+'<span class="pto-drill-dept">'+dept+'</span></span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b pto-drill-b">'+kpis+'<div class="pto-drill-list">'+list+'</div></div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">Done</button></div></div></div>';}
+  /* Approve confirmation (single or bulk). */
+  function ptoApproveModalHTML(){
+    var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
+    var ids=modal.recs||[],n=ids.length;
+    var rows=ptoAllRows(w).filter(function(r){return ids.indexOf(r.id)>-1;}).sort(function(a,b){return a.date<b.date?-1:1;});
+    var list=rows.map(function(r){return '<div class="pto-cf-row"><span class="pto-cf-date">'+ptoFmtDate(r.date)+'</span><span class="pto-cf-day">'+r.emp+'</span><span class="pto-cf-hr">'+ptoTypeLabel(w,r.type)+'</span></div>';}).join("");
+    var head='<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--pos-100,#36a14f)">event_available</span>Approve time off</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div>';
+    var intro='<div class="pto-cf-intro">Approving <b>'+n+' request'+(n===1?"":"s")+'</b>. You can undo this afterwards from the Approved badge.</div>';
+    var body='<div class="modal-b pto-cf-b" data-action="stop">'+intro+'<div class="pto-cf-list">'+list+'</div></div>';
+    var footer='<div class="modal-f pto-cf-f"><button class="btn naked sm" data-action="modal-close">Cancel</button><button class="btn primary sm" data-action="pto-approve-confirm" data-id="'+w.id+'">'+ICON("check")+'Approve '+n+'</button></div>';
+    return '<div class="modal-backdrop" data-action="modal-close"><div class="modal pto-cf-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Confirm approval">'+head+body+footer+'</div></div>';}
   function ptoYears(w){var s={};ptoData(w).forEach(function(d){d.emps.forEach(function(e){e.recs.forEach(function(r){s[r.date.slice(0,4)]=1;});});});return Object.keys(s).sort().reverse();}
   function ptoCurYear(w){if(w.ptoYear)return w.ptoYear;var ys=ptoYears(w);return ys[0]||"2026";}
   function ptoRecsForYear(e,year){return e.recs.filter(function(r){return r.date.slice(0,4)===year;});}
