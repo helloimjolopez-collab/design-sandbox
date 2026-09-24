@@ -9427,10 +9427,10 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function awCatListHTML(){
     var cats=paletteCats(),curc=(modal&&modal.cat)||"All",added=(modal&&modal.added)||{};
     var catCount={},total=0;PALETTE.forEach(function(p,i){var n=added[i]||0;if(n){catCount[p.cat]=(catCount[p.cat]||0)+n;total+=n;}});
-    var all='<button class="aw-cat'+(curc==="All"?" sel":"")+'" data-action="add-widget-cat" data-c="All"><span class="aw-cat-lbl">All widgets</span></button>';
-    var addedFilter='<button class="aw-cat aw-cat-added'+(curc==="__added"?" sel":"")+'" data-action="add-widget-cat" data-c="__added" data-added-filter'+(total>0?"":" hidden")+'>'+ICON("check_circle")+'<span class="aw-cat-lbl">Added</span><span class="aw-cat-badge on" data-added-badge>'+total+'</span></button>';
-    var rest=cats.map(function(c){var cc=catCount[c]||0;return '<button class="aw-cat'+(curc===c?" sel":"")+'" data-action="add-widget-cat" data-c="'+c.replace(/"/g,"&quot;")+'"><span class="aw-cat-lbl">'+c+'</span><span class="aw-cat-badge" data-cat-badge="'+c.replace(/"/g,"&quot;")+'"'+(cc>0?"":" hidden")+'>'+cc+'</span></button>';}).join("");
-    return all+addedFilter+rest;
+    var all='<button class="aw-cat'+(curc==="All"?" sel":"")+'" data-action="add-widget-cat" data-c="All">All widgets</button>';
+    var addedFilter='<button class="aw-cat aw-cat-added'+(curc==="__added"?" sel":"")+'" data-action="add-widget-cat" data-c="__added" data-added-filter'+(total>0?"":" hidden")+'>Added<span class="aw-cat-n" data-added-n>('+total+')</span></button>';
+    var rest=cats.map(function(c){var cc=catCount[c]||0;return '<button class="aw-cat'+(curc===c?" sel":"")+'" data-action="add-widget-cat" data-c="'+c.replace(/"/g,"&quot;")+'">'+c+'<span class="aw-cat-n" data-cat-badge="'+c.replace(/"/g,"&quot;")+'"'+(cc>0?"":" hidden")+'>('+cc+')</span></button>';}).join("");
+    return all+addedFilter+'<div class="aw-cat-sep"></div>'+rest;
   }
   function addWidgetModalHTML(){
     var curc=(modal&&modal.cat)||"All",q=((modal&&modal.q)||"").trim().toLowerCase(),qEsc=((modal&&modal.q)||"").replace(/</g,"&lt;").replace(/"/g,"&quot;"),added=(modal&&modal.added)||{},view=(modal&&modal.awView)||"tiles";
@@ -9679,7 +9679,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var a=t.getAttribute("data-action"),id=t.getAttribute("data-id");
     if(a==="noop"){pop=null;render();return;}
     if(a==="stop"){return;}
-    if(a==="modal-close"){modal=null;pop=null;render();return;}
+    if(a==="modal-close"){if(typeof awHideHover==="function")awHideHover();modal=null;pop=null;render();return;}
     if(faHandleClick(a,id,t))return;
     if(a&&a.indexOf("ins-")===0&&insHandleClick(a,id,t))return;
     if(a&&a.indexOf("ap-")===0&&apHandleClick(a,id,t))return;
