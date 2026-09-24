@@ -9386,7 +9386,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var items=PALETTE.map(function(p,i){return {p:p,i:i};}).filter(function(x){return curc==="All"||x.p.cat===curc;}).filter(function(x){return !q||(x.p.title+" "+x.p.desc).toLowerCase().indexOf(q)>-1;});
     var cards=items.map(function(x){var n=added[x.i]||0;
       var addLbl=n>0?('<span class="aw-card-add is-added">'+ICON("check")+'Added'+(n>1?" · "+n:"")+'</span>'):('<span class="aw-card-add">'+ICON("add")+'Add</span>');
-      return '<button class="aw-card'+(n>0?" is-added":"")+'" data-action="add-widget-pick" data-idx="'+x.i+'">'+awPreviewHTML(x.p)+'<span class="aw-card-body"><span class="aw-card-main"><span class="aw-card-nm">'+x.p.title+'</span><span class="aw-card-desc">'+x.p.desc+'</span></span>'+addLbl+'</span></button>';
+      return '<div class="aw-card'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'">'+awPreviewHTML(x.p)+'<span class="aw-card-body"><span class="aw-card-main"><span class="aw-card-nm">'+x.p.title+'</span><span class="aw-card-desc">'+x.p.desc+'</span></span>'+addLbl+'</span></div>';
     }).join("");
     if(!items.length)cards='<div class="aw-empty">'+ICON("search_off")+'<div>No widgets match “'+qEsc+'”.</div></div>';
     var totalAdded=Object.keys(added).reduce(function(s,k){return s+added[k];},0);
