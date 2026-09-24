@@ -9696,6 +9696,8 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="mct-unsave"){var wus=find(id),uid=t.getAttribute("data-t");if(wus){var arr2=mctSavedIds(wus);var ui=arr2.indexOf(uid);if(ui>-1)arr2.splice(ui,1);}setStatus("Removed from My Tasks.");render();return;}
     if(a==="refresh-all"){pop=null;refreshAll();return;}
     if(a==="wfind"){if(pop&&pop.type==="wfind"){pop=null;}else{widgetFindQuery="";pop={type:"wfind"};}render();return;}
+    if(a==="wswap"){if(pop&&pop.type==="wswap"&&pop.id===id){pop=null;}else{pop={type:"wswap",id:id,q:""};}render();return;}
+    if(a==="wswap-pick"){var _swi=+t.getAttribute("data-idx"),sp=PALETTE[_swi],sw=find(id);if(sp&&sw){var repl=Object.assign({id:sw.id,kind:sp.kind,title:sp.title,size:sw.size,tiers:sw.tiers||["kpi","wide","xwide"],state:"ready",updated:"just now"},sp.props());var arr=cur().widgets;for(var _k=0;_k<arr.length;_k++){if(arr[_k].id===sw.id){arr[_k]=repl;break;}}setStatus('Swapped to “'+sp.title+'”.');}pop=null;render();return;}
     if(a==="wfind-go"){var wtgt=find(id);pop=null;render();var _wt=document.querySelector('.widget[data-id="'+id+'"]');if(_wt){try{_wt.scrollIntoView({behavior:"smooth",block:"center"});}catch(_sc){_wt.scrollIntoView();}_wt.classList.add("widget-flash");setTimeout(function(){if(_wt)_wt.classList.remove("widget-flash");},1400);}setStatus("Jumped to "+((wtgt&&wtgt.title)||"the widget")+".");return;}
     if(a==="manage"){manage=true;pop=null;setStatus("Editing “"+cur().name+"”. Rename, drag, resize, duplicate, remove.");render();return;}
     if(a==="cancel"){manage=false;pop=null;setStatus("Discarded changes.");render();return;}
