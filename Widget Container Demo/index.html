@@ -9399,10 +9399,12 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function awAddBtn(x,n){return '<button class="aw-add-btn'+(n>0?" is-added":"")+'" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="'+(n>0?"Added":"Add")+" "+x.p.title.replace(/"/g,"&quot;")+'">'+(n>0?ICON("check")+"Added"+(n>1?" · "+n:""):ICON("add")+"Add")+'</button>';}
   function addWidgetModalHTML(){
     var cats=paletteCats(),curc=(modal&&modal.cat)||"All",q=((modal&&modal.q)||"").trim().toLowerCase(),qEsc=((modal&&modal.q)||"").replace(/</g,"&lt;").replace(/"/g,"&quot;"),added=(modal&&modal.added)||{},view=(modal&&modal.awView)||"tiles";
-    var catList='<button class="aw-cat'+(curc==="All"?" sel":"")+'" data-action="add-widget-cat" data-c="All">All widgets</button>'+cats.map(function(c){return '<button class="aw-cat'+(curc===c?" sel":"")+'" data-action="add-widget-cat" data-c="'+c.replace(/"/g,"&quot;")+'">'+c+'</button>';}).join("");
-    var items=PALETTE.map(function(p,i){return {p:p,i:i};}).filter(function(x){return curc==="All"||x.p.cat===curc;}).filter(function(x){return !q||(x.p.title+" "+x.p.desc).toLowerCase().indexOf(q)>-1;});
+    var catCount={},total=0;PALETTE.forEach(function(p,i){var n=added[i]||0;if(n){catCount[p.cat]=(catCount[p.cat]||0)+n;total+=n;}});
+    var addedFilter=total>0?'<button class="aw-cat aw-cat-added'+(curc==="__added"?" sel":"")+'" data-action="add-widget-cat" data-c="__added">'+ICON("check_circle")+'<span class="aw-cat-lbl">Added</span><span class="aw-cat-badge on">'+total+'</span></button>':"";
+    var catList='<button class="aw-cat'+(curc==="All"?" sel":"")+'" data-action="add-widget-cat" data-c="All"><span class="aw-cat-lbl">All widgets</span></button>'+addedFilter+cats.map(function(c){var cc=catCount[c]||0;return '<button class="aw-cat'+(curc===c?" sel":"")+'" data-action="add-widget-cat" data-c="'+c.replace(/"/g,"&quot;")+'"><span class="aw-cat-lbl">'+c+'</span>'+(cc>0?'<span class="aw-cat-badge">'+cc+'</span>':"")+'</button>';}).join("");
+    var items=PALETTE.map(function(p,i){return {p:p,i:i};}).filter(function(x){return curc==="__added"?(added[x.i]||0)>0:(curc==="All"||x.p.cat===curc);}).filter(function(x){return !q||(x.p.title+" "+x.p.desc).toLowerCase().indexOf(q)>-1;});
     var body;
-    if(!items.length){body='<div class="aw-empty">'+ICON("search_off")+'<div>No widgets match “'+qEsc+'”.</div></div>';}
+    if(!items.length){body='<div class="aw-empty">'+ICON(curc==="__added"?"widgets":"search_off")+'<div>'+(curc==="__added"?"You haven’t added any widgets yet.":"No widgets match “"+qEsc+"”.")+'</div></div>';}
     else if(view==="list"){
       body='<div class="aw-list">'+items.map(function(x){var n=added[x.i]||0;
         return '<div class="aw-row'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'"><span class="aw-row-main"><span class="aw-row-nm">'+x.p.title+'</span><span class="aw-row-desc">'+x.p.desc+'</span></span><span class="aw-row-cat">'+x.p.cat+'</span>'+awAddBtn(x,n)+'</div>';
