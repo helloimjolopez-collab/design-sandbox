@@ -8348,13 +8348,11 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     var pend=ptoPending(w);
     return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">'+ptoCurYear(w)+'</span></span><div class="metric-value">'+pend.records+'</div><div class="gl-sub">'+(pend.records?('<span class="bank-pill">'+ICON("groups")+pend.employees+' employee'+(pend.employees===1?"":"s")+'</span>'):'<span class="pto-caption">nothing awaiting approval</span>')+'</div></div></div>';}
   function ptoContent(w){
-    if(w.size==="kpi")return ptoGlance(w);
+    if(w.size==="kpi")return ptoGlance2(w);
     if(w.state==="empty")return ptoNoAccessState();
-    if(w.ptoLoading)return ptoHeaderBlock(w)+ptoSkeleton();
-    var head=ptoHeaderBlock(w),tree=ptoTree(w);
-    if(!tree.length)return head+ptoEmptyForView(w);
-    var body=tree.map(function(node){var open=!!(w.ptoExpand&&w.ptoExpand[node.dept.id]);var out=ptoDeptRow(w,node);if(open)out+=node.emps.map(function(en){return ptoEmpRows(w,en);}).join("");return out;}).join("");
-    return head+'<div class="scroll pto-tbl">'+body+'</div>';
+    if(w.ptoLoading)return ptoHead2(w)+ptoSkeleton();
+    var head=ptoHead2(w),view=w.ptoQView||"queue";
+    return head+'<div class="pto-body">'+(view==="calendar"?ptoCalendar(w):ptoQueueTable(w))+'</div>';
   }
   function ptoLoad(w){w.ptoLoading=true;clearTimeout(timers["pto-"+w.id]);timers["pto-"+w.id]=setTimeout(function(){w.ptoLoading=false;render();},700);}
 
