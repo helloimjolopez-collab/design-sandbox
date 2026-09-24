@@ -7018,13 +7018,29 @@ function purOrders(w){var d=w.dataset;if(d==="single")return PUR_ORDERS_SINGLE;i
 function purVisible(w){return purOrders(w).filter(function(o){return !o.rej;});}
 function purStatusLabel(s){for(var i=0;i<PUR_STATUS.length;i++)if(PUR_STATUS[i][0]===s)return PUR_STATUS[i][1];return PUR_STATUS[1][1];}
 function purForStatus(w){var s=w.pstatus||"mine";return purVisible(w).filter(function(o){return o.status===s;});}
-function purPathsForStatus(w){var seen={},out=[];purForStatus(w).forEach(function(o){if(!seen[o.path]){seen[o.path]=1;out.push(o.path);}});return out;}
+/* W13: KPI selection tiles replace the old status dropdown + "$X to approve" badge.
+   Tiles: All / Pending / Approved / Rejected. "Pending" respects the Pending-me/All scope
+   (w.pscope, default "me"). Rejected is a deliberate expansion beyond today's product. */
+var PUR_TILES=[["all","All"],["pending","Pending"],["approved","Approved"],["rejected","Rejected"]];
+function purTileOf(w){return w.ptile||"pending";}
+function purScopeOf(w){return w.pscope||"me";}
+function purTileMatch(o,tile,w){
+  if(tile==="rejected")return !!o.rej;
+  if(o.rej)return false;
+  if(tile==="approved")return o.status==="approved";
+  if(tile==="pending"){if(o.status==="approved")return false;return (purScopeOf(w)==="me")?(o.status==="mine"||o.status==="next"):true;}
+  return true; /* all (non-rejected) */
+}
+function purForTile(w){var tile=purTileOf(w);return purOrders(w).filter(function(o){return purTileMatch(o,tile,w);});}
+function purTileCount(w,tile){return purOrders(w).filter(function(o){return purTileMatch(o,tile,w);}).length;}
+function purTileSum(w,tile){return purSum(purOrders(w).filter(function(o){return purTileMatch(o,tile,w);}));}
+function purPathsForStatus(w){var seen={},out=[];purForTile(w).forEach(function(o){if(!seen[o.path]){seen[o.path]=1;out.push(o.path);}});return out;}
 function purPathCur(w){var paths=purPathsForStatus(w);if(w.ppath&&paths.indexOf(w.ppath)>-1)return w.ppath;return "All approval paths";}
-function purFiltered(w){var fs=purForStatus(w),cp=purPathCur(w);if(cp==="All approval paths")return fs;return fs.filter(function(o){return o.path===cp;});}
+function purFiltered(w){var fs=purForTile(w),cp=purPathCur(w);if(cp==="All approval paths")return fs;return fs.filter(function(o){return o.path===cp;});}
 function purSum(list){return list.reduce(function(s,o){return s+o.amount;},0);}
 function purFindOrder(w,oid){var list=purOrders(w);for(var i=0;i<list.length;i++)if(list[i].id===oid)return list[i];return null;}
-function purColLabel(w){return (w.pstatus||"mine")==="approved"?"Order#":"Requisition#";}
-function purCountLabel(w){var s=w.pstatus||"mine";return s==="approved"?"approved orders":s==="unapproved"?"unapproved requests":s==="next"?"awaiting my approval next":"awaiting my approval";}
+function purColLabel(w){return purTileOf(w)==="approved"?"Order#":"Requisition#";}
+function purCountLabel(w){var t=purTileOf(w);return t==="approved"?"approved orders":t==="rejected"?"rejected requests":t==="pending"?"pending requests":"requests";}
 function purCanAct(o){return !o.rej&&(o.status==="next"||o.status==="mine");}
 function purEncData(w){var vis=purVisible(w),map={};vis.forEach(function(o){map[o.per]=(map[o.per]||0)+o.amount;});var out=[];PUR_PERIODS.forEach(function(lbl,i){if(map[i]>0)out.push({per:lbl,i:i,amt:map[i]});});return out;}
 function purEncTotal(w){return purEncData(w).reduce(function(s,r){return s+r.amt;},0);}
