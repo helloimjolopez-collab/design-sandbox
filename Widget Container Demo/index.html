@@ -4797,11 +4797,13 @@ var LOAN_BUCKETS=[
   {key:"cur",label:"Current",   sub:"not yet due",           hi:0,       sev:0},
   {key:"b1", label:"1-30 days", sub:"up to 1 month past due", hi:30,     sev:1},
   {key:"b2", label:"31-60 days",sub:"1 to 2 months past due", hi:60,     sev:2},
-  {key:"b3", label:"90+ days",  sub:"most overdue",           hi:Infinity,sev:3}
+  {key:"b3", label:"61-90 days",sub:"2 to 3 months past due", hi:90,     sev:3},
+  {key:"b4", label:"90+ days",  sub:"most overdue",           hi:Infinity,sev:4}
 ];
-/* Amethyst severity ramp: light (Current) deepening to dark (90+). No red;
-   severity reads from depth of amethyst + order + labels + text. */
-var LOAN_SEV_COLORS=["--am-200","--am-300","--am-500","--am-700"];
+/* Amethyst severity ramp for the donut (G8, no red). The aging FILTER CARDS use a separate semantic
+   scale (LOAN_CARD_COLORS): Current blue, 1-30 purple, 31-60 amber, 61-90 orange, 90+ red (Jo's spec). */
+var LOAN_SEV_COLORS=["--am-100","--am-200","--am-400","--am-600","--am-700"];
+var LOAN_CARD_COLORS=["--brand-100","--am-500","#c98a1e","#d1651c","--red-100"];
 /* Loan types are organisation-defined (not a fixed list). Live values. */
 var LOAN_TYPES=["All","Church - Special","Church Expansion","Individual"];
 
