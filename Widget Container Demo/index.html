@@ -8421,21 +8421,8 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      darker), never the sole signal , sign + label carry overdue. */
   function apMiniBar(frac,cls){var pct=Math.max(3,Math.round(frac*100));return '<span class="ap-sum-track" aria-hidden="true"><span class="ap-sum-fill'+(cls?" "+cls:"")+'" style="width:'+pct+'%"></span></span>';}
   function apPanel(w){
-    var sel=apSel(w),grand=apTotalDue(w),bd=apBandData(w),n=apData(w).length;
     var out='<div class="ap-panel">';
-    var allSel=(sel==="total");
-    out+='<button class="ap-sum-row ap-sum-all'+(allSel?" sel":"")+'" data-action="ap-set-due" data-due="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="ap-sum-main"><span class="ap-sum-lbl">'+ICON("account_balance_wallet")+'All due dates</span><span class="ap-sum-meta">'+n+' invoice'+(n===1?"":"s")+' outstanding</span></span><span class="ap-sum-val">'+apMoney(grand)+'</span></button>';
-    AP_BANDS.forEach(function(b){var d=bd[b.id],over=(b.id==="overdue"),has=d.count>0,frac=grand>0?d.total/grand:0,isSel=(sel===b.id);
-      out+='<button class="ap-sum-row'+(isSel?" sel":"")+(has?"":" ap-static")+'"'+(has?' data-action="ap-set-due" data-due="'+b.id+'" data-id="'+w.id+'" aria-pressed="'+isSel+'"':' disabled aria-disabled="true"')+'>'+
-        '<span class="ap-sum-main">'+
-          '<span class="ap-sum-lbl'+(over&&has?" over":"")+'">'+ICON(b.glyph)+b.label+'</span>'+
-          apMiniBar(frac,(over?"over":"")+(has?"":" zero"))+
-          '<span class="ap-sum-meta">'+(has?(d.count+' invoice'+(d.count===1?"":"s")+', '+Math.round(frac*100)+'% of total'):'nothing due')+'</span>'+
-        '</span>'+
-        '<span class="ap-sum-val'+(over&&has?" over":"")+'">'+apMoney(d.total)+'</span></button>';
-    });
-    var vend=apVendors(w).slice(0,5),vmax=vend.length?vend[0].total:1;
-    out+='<div class="ap-sum-sep"></div><div class="dep-col-h ap-sum-h">Top vendors owed</div>';
+    var vend=apVendors(w).slice(0,6),vmax=vend.length?vend[0].total:1;
     vend.forEach(function(v){var frac=vmax>0?v.total/vmax:0;
       out+='<div class="ap-sum-row ap-static"><span class="ap-sum-main"><span class="ap-sum-lbl">'+v.vendor+'</span>'+
         apMiniBar(frac,"")+
