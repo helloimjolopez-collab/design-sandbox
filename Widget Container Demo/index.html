@@ -8464,13 +8464,22 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   function apSkeleton(){var rows="";[82,58,70,48,64].forEach(function(wd){rows+='<div class="ap-sk-row"><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:72px;height:12px;border-radius:4px"></span><span class="sk" style="width:'+wd+'px;height:12px;border-radius:4px"></span></div>';});return '<div class="ap-skel">'+rows+'</div>';}
 
   /* ---- entry point (single apContent) ------------------------------- */
+  /* W16: one aging-horizon filter as tappable cards under the KPI (widget-wide): Overdue (emphasised),
+     Due this week, Due this month, Later, plus All. Amount-led + count; reuses the ap-set-due handler. */
+  function apBucketCards(w){
+    var sel=apSel(w),grand=apTotalDue(w),bd=apBandData(w),n=apData(w).length,allSel=(sel==="total");
+    var cards='<button class="loan-card ap-card loan-card-all'+(allSel?" sel":"")+'" data-action="ap-set-due" data-due="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="loan-card-lbl">All dates</span><span class="loan-card-pct ap-card-amt">'+apMoney(grand)+'</span><span class="loan-card-cnt">'+n+' invoice'+(n===1?"":"s")+'</span></button>';
+    AP_BANDS.forEach(function(b){var d=bd[b.id],has=d.count>0,isSel=(sel===b.id),over=(b.id==="overdue");
+      cards+='<button class="loan-card ap-card'+(isSel?" sel":"")+(has?"":" loan-card-static")+(over&&has?" ap-card-over":"")+'"'+(has?' data-action="ap-set-due" data-due="'+b.id+'" data-id="'+w.id+'" aria-pressed="'+isSel+'"':' disabled aria-disabled="true"')+' data-tip="'+apEsc(b.label+": "+apMoney(d.total)+", "+d.count+" invoice"+(d.count===1?"":"s")+".")+'" data-tip-plain><span class="loan-card-lbl">'+b.label+'</span><span class="loan-card-pct ap-card-amt'+(over&&has?" ap-over-num":"")+'">'+apMoney(d.total)+'</span><span class="loan-card-cnt">'+d.count+' invoice'+(d.count===1?"":"s")+'</span></button>';});
+    return '<div class="loan-cards ap-cards" role="group" aria-label="Filter by due horizon">'+cards+'</div>';
+  }
   function apContent(w){
     if(w.size==="kpi")return apGlance(w);
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
     if(w.aploading)return apHeaderBlock(w,"loading")+apSkeleton();
-    var mh=apHeaderBlock(w);
-    if(w.size==="xwide")return mh+apFull(w);
-    return mh+apTable(w);
+    var mh=apHeaderBlock(w),cards=apBucketCards(w);
+    if(w.size==="xwide")return mh+cards+apFull(w);
+    return mh+cards+apTable(w);
   }
 
   /* ---- loading: only on a data-fetch (filter change), never on sort -- */
