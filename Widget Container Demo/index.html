@@ -9268,7 +9268,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   }
 
 
-  function contentHTML(w){var __rs=w.size,__es=fitSize(w);if(__es!==__rs){w.size=__es;try{return contentHTML(w);}finally{w.size=__rs;}}
+  function contentHTML(w){var __rs=w.size,__es=w.__forceSize?w.size:fitSize(w);if(__es!==__rs){w.size=__es;try{return contentHTML(w);}finally{w.size=__rs;}}
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
     if(w.kind==="payroll")return prContent(w); // prContent renders its own toolbar even when state==="empty" — the toolbar never disappears just because the chosen period has no data
