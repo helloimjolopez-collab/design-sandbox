@@ -1615,31 +1615,44 @@
   .aw-cat:hover{background:var(--wn-100);color:var(--txt-primary);}
   .aw-cat.sel{background:var(--brand-10);color:var(--brand-500);font-weight:600;}
   .aw-right{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;min-height:0;}
-  .aw-toolbar{flex:0 0 auto;padding:12px 16px 8px;}
-  .aw-search{max-width:none;width:100%;}
-  .aw-grid{flex:1 1 auto;min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:2px 16px 16px;overflow:auto;align-content:start;}
-  .aw-card{display:flex;flex-direction:column;align-items:stretch;gap:9px;text-align:left;border:1px solid var(--stroke-widget);border-radius:12px;padding:9px;background:var(--surface-sheet);cursor:pointer;font-family:inherit;transition:border-color var(--dur),box-shadow var(--dur);}
+  .aw-toolbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 16px 10px;}
+  .aw-search{flex:1 1 auto;max-width:none;}
+  .aw-viewtoggle{flex:0 0 auto;}
+  .aw-scroll{flex:1 1 auto;min-width:0;min-height:0;overflow:auto;padding:2px 16px 16px;}
+  .aw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start;}
+  /* Tile: heading + description + Add lead; the preview is a clearly-labelled, recessed sample below. */
+  .aw-card{display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:left;border:1px solid var(--stroke-widget);border-radius:12px;padding:12px 12px 12px;background:var(--surface-widget);cursor:pointer;font-family:inherit;transition:border-color var(--dur),box-shadow var(--dur);}
   .aw-card:hover{border-color:var(--brand-100);box-shadow:0 0 0 3px var(--brand-10);}
   .aw-card.is-added{border-color:var(--pos-100);box-shadow:0 0 0 3px color-mix(in srgb,var(--pos-100) 16%,transparent);}
-  .aw-prev{position:relative;height:118px;border-radius:9px;overflow:hidden;background:var(--surface-canvas);pointer-events:none;display:block;}
-  .aw-prev-widget{display:block;margin:0;border:1px solid var(--stroke-container);border-radius:9px;box-shadow:none;height:auto;min-height:0;background:#fdfdfd;}
-  .aw-prev-widget .wcontent{display:block;margin:0;border:0;border-radius:9px 9px 0 0;padding:8px 10px 4px;background:var(--surface-sheet);}
-  .aw-prev::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(to bottom,rgba(255,255,255,0),var(--surface-sheet));}
+  .aw-card-head{display:flex;align-items:flex-start;gap:10px;}
+  .aw-card-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto;}
+  .aw-card-nm{font-size:14px;font-weight:650;color:var(--txt-primary);line-height:1.25;}
+  .aw-card-desc{font-size:12px;color:var(--txt-secondary);line-height:1.42;}
+  /* Add button: a real, unmistakable action, visually distinct from anything inside the preview. */
+  .aw-add-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;font-family:inherit;font-size:12px;font-weight:600;color:var(--brand-600);background:var(--brand-10);border:1px solid var(--brand-100);border-radius:999px;padding:4px 12px 4px 9px;cursor:pointer;white-space:nowrap;transition:background var(--dur),border-color var(--dur),color var(--dur);}
+  .aw-add-btn:hover{background:var(--brand-50);border-color:var(--brand-200);}
+  .aw-add-btn .material-symbols-rounded{font-size:16px;}
+  .aw-add-btn.is-added{color:var(--pos-200);background:color-mix(in srgb,var(--pos-100) 14%,transparent);border-color:var(--pos-100);}
+  .aw-prev{position:relative;height:104px;border-radius:9px;overflow:hidden;background:var(--surface-canvas);border:1px solid var(--stroke-widget);pointer-events:none;display:block;}
+  .aw-prev-tag{position:absolute;top:6px;left:6px;z-index:2;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-subtle);background:color-mix(in srgb,var(--surface-widget) 86%,transparent);border:1px solid var(--stroke-widget);border-radius:5px;padding:1px 5px;pointer-events:none;}
+  .aw-prev-stage{position:absolute;inset:0;padding:6px;}
+  .aw-prev-widget{display:block;margin:0;border:1px solid var(--stroke-container);border-radius:8px;box-shadow:none;height:100%;min-height:0;background:#fdfdfd;overflow:hidden;opacity:.92;}
+  .aw-prev-widget .wcontent{display:block;margin:0;border:0;border-radius:8px 8px 0 0;padding:22px 10px 4px;background:var(--surface-sheet);}
+  .aw-prev::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30px;background:linear-gradient(to bottom,rgba(255,255,255,0),var(--surface-canvas));}
   .aw-prev-empty{display:flex;align-items:center;justify-content:center;color:var(--cn-40);}
   .aw-prev-empty .material-symbols-rounded{font-size:34px;}
-  .aw-card-body{display:flex;align-items:flex-start;gap:8px;padding:0 3px 2px;}
-  .aw-card-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto;}
-  .aw-card-nm{font-size:13px;font-weight:600;color:var(--txt-primary);}
-  .aw-card-desc{font-size:11.5px;color:var(--txt-subtle);line-height:1.4;}
-  .aw-card-add{flex:0 0 auto;display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--brand-500);white-space:nowrap;}
-  .aw-card-add .material-symbols-rounded{font-size:16px;}
-  .aw-card-add.is-added{color:var(--pos-100);}
-  .aw-empty{grid-column:1 / -1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:34px 12px;color:var(--txt-subtle);font-size:13px;text-align:center;}
+  /* List view: compact rows, no preview — pure name / description / category / Add. */
+  .aw-list{display:flex;flex-direction:column;gap:6px;}
+  .aw-row{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--stroke-widget);border-radius:10px;padding:9px 11px;background:var(--surface-widget);cursor:pointer;font-family:inherit;transition:border-color var(--dur),box-shadow var(--dur);}
+  .aw-row:hover{border-color:var(--brand-100);box-shadow:0 0 0 3px var(--brand-10);}
+  .aw-row.is-added{border-color:var(--pos-100);box-shadow:0 0 0 3px color-mix(in srgb,var(--pos-100) 16%,transparent);}
+  .aw-row-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto;}
+  .aw-row-nm{font-size:13.5px;font-weight:650;color:var(--txt-primary);}
+  .aw-row-desc{font-size:11.5px;color:var(--txt-secondary);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .aw-row-cat{flex:0 0 auto;font-size:11px;font-weight:500;color:var(--txt-subtle);}
+  .aw-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:40px 12px;color:var(--txt-subtle);font-size:13px;text-align:center;}
   .aw-empty .material-symbols-rounded{font-size:26px;color:var(--cn-40);}
-  .aw-f{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-  .aw-added-sum{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--txt-secondary);min-width:0;}
-  .aw-added-sum .material-symbols-rounded{font-size:16px;color:var(--pos-100);flex:0 0 auto;}
-  .aw-added-none{color:var(--txt-subtle);font-weight:400;}
+  .aw-f{display:flex;align-items:center;justify-content:flex-end;gap:12px;}
   .tb-autosave{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--txt-subtle);font-weight:500;}
   .tb-autosave .material-symbols-rounded{font-size:16px;color:var(--pos-100);}
   @media(max-width:640px){.aw-grid{grid-template-columns:1fr;}.aw-cats{flex-basis:118px;}}
