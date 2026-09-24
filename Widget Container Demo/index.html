@@ -9392,15 +9392,15 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     {cat:"Tasks", kind:"tasks", title:"Main Content Tasks", desc:"A quick launcher for common accounting tasks.", props:function(){return {mctQ:""};}}
   ];
   function paletteCats(){var seen={},out=[];PALETTE.forEach(function(p){if(!seen[p.cat]){seen[p.cat]=1;out.push(p.cat);}});return out;}
-  /* Live glance-size preview of a palette widget, so you can see what each one looks like before adding.
-     Rendered non-interactively and defensively (a preview never breaks the picker). */
-  /* Small, clearly-labelled sample of a widget. Rendered non-interactively and defensively so a
-     bad preview never breaks the picker, and always framed as a preview (never mistaken for live data). */
+  /* An accurate, full glance-size sample of the widget (its real content, nothing cropped), rendered
+     non-interactively on the widget's own light fill. Defensive: a bad preview never breaks the picker. */
+  function awGlanceContent(p){
+    var tw=Object.assign({id:"__awprev",kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now",goto:false,__forceSize:true},p.props());
+    return contentHTML(tw);
+  }
   function awPreviewHTML(p){
-    try{
-      var tw=Object.assign({id:"__awprev",kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now",goto:false,__forceSize:true},p.props());
-      return '<div class="aw-prev" aria-hidden="true"><span class="aw-prev-tag">Preview</span><div class="aw-prev-widget" data-size="kpi"><div class="wcontent">'+contentHTML(tw)+'</div></div></div>';
-    }catch(_e){return '<div class="aw-prev aw-prev-empty" aria-hidden="true"><span class="aw-prev-tag">Preview</span>'+ICON("dashboard")+'</div>';}
+    try{return '<div class="aw-prev" aria-hidden="true"><div class="wcontent">'+awGlanceContent(p)+'</div></div>';}
+    catch(_e){return '<div class="aw-prev aw-prev-empty" aria-hidden="true">'+ICON("dashboard")+'</div>';}
   }
   function awAddBtn(x,n){return '<button class="aw-add-btn'+(n>0?" is-added":"")+'" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="'+(n>0?"Added":"Add")+" "+x.p.title.replace(/"/g,"&quot;")+'">'+(n>0?ICON("check")+"Added"+(n>1?" · "+n:""):ICON("add")+"Add")+'</button>';}
   /* Left-rail categories with a live per-category "added" count, plus an "Added" filter to review
