@@ -8950,12 +8950,16 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     FA_CATALOG[dim].forEach(function(name){var v=faSum(FA_ASSETS.filter(function(a){return a[dim]===name;}),m);if(v>0)rows.push({name:name,val:v});});
     if(faHasNA(dim)){var vn=faSum(FA_ASSETS.filter(function(a){return a[dim]==null;}),m);if(vn>0)rows.push({name:FA_NA_LABEL,val:vn,na:true});}
     rows.sort(function(a,b){return b.val-a.val;});return rows;}
-  function faColumns(w){var sel=faMeasure(w),cols=[sel];FA_MEASURES.forEach(function(mm){if(mm[0]!==sel)cols.push(mm[0]);});return cols;}
   function faChip(action,id,label){return '<button class="filter-chip fa-chip" data-action="'+action+'" data-id="'+id+'" aria-haspopup="listbox" aria-label="'+label.replace(/"/g,"&quot;")+', tap to change"><span class="fc-label">'+label+'</span>'+ICON("expand_more")+'</button>';}
-  function faControls(w){return '<div class="bgt-ctlrow fa-ctlrow">'+
-    faChip("fa-groupby",w.id,"Group by: "+faDimLabel(faDim(w)))+
-    faChip("fa-group",w.id,faGroupLabel(w))+
-    faChip("fa-measure",w.id,faMeasureLabel(faMeasure(w)))+'</div>';}
+  function faControls(w){return '<div class="bgt-ctlrow fa-ctlrow">'+faChip("fa-group",w.id,faGroupLabel(w))+'</div>';}
+  function faViewToggle(w){var v=faView(w);return '<div class="vtoggle" role="group" aria-label="View">'+
+    '<button class="vt'+(v==="table"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'" data-tip="Every asset as a sortable table." data-tip-plain>'+ICON("table_rows")+'Table</button>'+
+    '<button class="vt'+(v==="chart"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="chart" aria-pressed="'+(v==="chart")+'" data-tip="Net book value and depreciation by class." data-tip-plain>'+ICON("bar_chart")+'Chart</button>'+
+  '</div>';}
+  function faRows(w){var list=faTableAssets(w).slice(),sk=(w.faSort||"net-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+    list.sort(function(a,b){if(key==="tag")return dir*a.tag.localeCompare(b.tag);if(key==="name")return dir*a.name.localeCompare(b.name);if(key==="cls")return dir*String(a.cls||"").localeCompare(String(b.cls||""));if(key==="bld")return dir*String(a.bld||"").localeCompare(String(b.bld||""));return dir*((a[key]||0)-(b[key]||0));});
+    return list;}
+  function faSortBtn(w,k,label){var sk=(w.faSort||"net-desc").split("-"),on=sk[0]===k,dir=sk[1]==="asc"?1:-1,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="fa-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
   function faHeader(w){var m=faMeasure(w),list=faTableAssets(w),total=faSum(list,m),n=list.length,numInner;
     var faCost=faSum(list,"cost"),faAcc=faSum(list,"acc"),faPd=faCost>0?Math.round(faAcc/faCost*100):0;
     if(w.faLoading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
