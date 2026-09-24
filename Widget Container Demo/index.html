@@ -8904,6 +8904,14 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     {tag:"FA-1011",name:"Portable Classroom",cap:120000,cost:120000,dep:120000,acc:60000,net:60000,cls:"Buildings",bld:null,room:null,aacct:"1500 Buildings",dacct:"1591 Accum Deprec - Buildings",eacct:"6600 Depreciation Expense"},
     {tag:"FA-1012",name:"Grand Piano",cap:55000,cost:55000,dep:50000,acc:11000,net:44000,cls:"Equipment",bld:"Main Campus",room:"Sanctuary",aacct:null,dacct:"1593 Accum Deprec - Equipment",eacct:"6600 Depreciation Expense"}
   ];
+  /* W11: bigger illustrative dataset (~52 assets) so Load-more, scroll and search are meaningful. */
+  (function(){var CL=["Buildings","Vehicles","Equipment","Land","Furniture & Fixtures"],BL=["Main Campus","Annex","Off-site Storage",null],RM=["Sanctuary","Kitchen","Office 201","Choir Room",null];
+    var AA={Buildings:"1500 Buildings",Land:"1510 Land",Vehicles:"1520 Vehicles",Equipment:"1530 Equipment","Furniture & Fixtures":"1540 Furniture & Fixtures"};
+    var DA={Buildings:"1591 Accum Deprec - Buildings",Vehicles:"1592 Accum Deprec - Vehicles",Equipment:"1593 Accum Deprec - Equipment","Furniture & Fixtures":"1594 Accum Deprec - F&F"};
+    var NM=["HVAC Unit","Server Rack","Choir Risers","Storage Shed","Sound Console","Folding Tables","Projector","Kitchen Freezer","Office Desks","Security System","Baptistry Heater","Lawn Tractor","Nursery Furniture","Spare Van","Library Shelving","Stage Lighting","Water Heater","Copier B","Upright Piano","Playground Slide","Fellowship Chairs","Boiler","Camera System","Podium","Parking Land B","Modular Office","Kitchen Range B","Robe Cabinet","Generator","Exterior Signage"];
+    for(var i=0;i<40;i++){var c=CL[i%CL.length],cap=8000+((i*4637)%420000),isLand=(c==="Land"),acc=isLand?0:Math.round(cap*((i%9)+1)/13),net=cap-acc;
+      FA_ASSETS.push({tag:"FA-"+(1100+i),name:NM[i%NM.length]+" "+(i+1),cap:cap,cost:cap,dep:cap,acc:acc,net:net,cls:c,bld:BL[i%BL.length],room:(c==="Equipment"||c==="Furniture & Fixtures")?RM[i%RM.length]:null,aacct:AA[c]||null,dacct:isLand?null:DA[c],eacct:"6600 Depreciation Expense"});}
+  })();
   /* Verified FA selector dims only (brief §2/§15): Class / Building / Room /
      Asset Account / Accumulated Depreciation Account. "Expense Account" was not
      in the audited selector, so it is not offered (no invented dimensions). */
