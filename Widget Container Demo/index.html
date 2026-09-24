@@ -5044,15 +5044,42 @@ function loanFull(w){
 
 function loanSkeleton(){var rows="";[82,58,70,48,64].forEach(function(wd){rows+='<div class="loan-sk-row"><span class="sk" style="width:70px;height:12px;border-radius:4px"></span><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:'+wd+'px;height:12px;border-radius:4px"></span></div>';});return '<div class="loan-skel" aria-busy="true">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
 
+/* W10 data view: Table (default) or the balance-by-range Pie. */
+function loanView(w){return w.loanView||"table";}
+function loanViewToggle(w){if(w.size==="xwide")return "";var v=loanView(w);
+  return '<div class="vtoggle" role="group" aria-label="Data view">'+
+    '<button class="vt'+(v==="table"?" on":"")+'" data-action="loan-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'" data-tip="See the loans as a sortable table." data-tip-plain>'+ICON("table_rows")+'Table</button>'+
+    '<button class="vt'+(v==="pie"?" on":"")+'" data-action="loan-view" data-id="'+w.id+'" data-v="pie" aria-pressed="'+(v==="pie")+'" data-tip="See the balance by aging range as a donut." data-tip-plain>'+ICON("donut_small")+'Pie</button>'+
+  '</div>';}
+/* Aging filter cards under the KPI: band label, share as a large colour-coded number (semantic scale,
+   never larger than the KPI), loan count, tappable to filter the whole widget. */
+function loanBucketCards(w){
+  var sel=loanSel(w),grand=loanTotal(w),bs=loanBuckets(w),n=loanCount(w),allSel=(sel==="total");
+  var cards='<button class="loan-card loan-card-all'+(allSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="loan-card-lbl">All bands</span><span class="loan-card-pct">100%</span><span class="loan-card-cnt">'+n+' loan'+(n===1?"":"s")+'</span></button>';
+  bs.forEach(function(r,i){var has=r.total>0,isSel=(sel===r.key),share=grand>0?Math.round(r.total/grand*100):0,col=LOAN_CARD_COLORS[i]||LOAN_CARD_COLORS[LOAN_CARD_COLORS.length-1],cv=col.charAt(0)==="#"?col:("var("+col+")");
+    cards+='<button class="loan-card'+(isSel?" sel":"")+(has?"":" loan-card-static")+'"'+(has?' data-action="loan-set-bucket" data-bucket="'+r.key+'" data-id="'+w.id+'" aria-pressed="'+isSel+'"':' disabled aria-disabled="true"')+' data-tip="'+loanEsc(r.label+": "+loanMoney(r.total)+", "+r.count+" loan"+(r.count===1?"":"s")+", "+share+"% of the balance.")+'" data-tip-plain>'+
+      '<span class="loan-card-lbl">'+r.label+'</span><span class="loan-card-pct" style="color:'+cv+'">'+share+'%</span><span class="loan-card-cnt">'+r.count+' loan'+(r.count===1?"":"s")+'</span></button>';});
+  return '<div class="loan-cards" role="group" aria-label="Filter by aging band">'+cards+'</div>';
+}
+/* Balance-by-range interactive donut (G8, amethyst): slices + legend clickable to filter. */
+function loanDonut(w){
+  var bs=loanBuckets(w).filter(function(r){return r.total>0;}),tot=bs.reduce(function(s,r){return s+r.total;},0),sel=loanSel(w);
+  if(tot<=0)return '<div class="loan-zeroline">'+ICON("info")+'No balance to chart for this selection.</div>';
+  var R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+  bs.forEach(function(r){var frac=r.total/tot,len=frac*C,pct=Math.round(frac*100),d=' data-action="loan-set-bucket" data-bucket="'+r.key+'" data-id="'+w.id+'" role="button" tabindex="0"';
+    arcs+='<circle class="seg loan-slice'+(sel===r.key?" sel":"")+'"'+d+' aria-label="'+loanEsc(r.label+", "+loanMoney(r.total)+", "+pct+"%, filter")+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="var('+r.color+')" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+    legend+='<div class="leg loan-leg'+(sel===r.key?" sel":"")+'"'+d+'><span class="dot" style="background:var('+r.color+')"></span><span class="lg-main">'+r.label+'</span><span class="lg-meta">'+loanMoney(r.total)+' · '+pct+'%</span></div>';});
+  return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="200" height="200" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+loanMoney(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">balance</text></svg><div class="legend-col"><div class="legend" style="max-height:220px">'+legend+'</div></div></div></div>';
+}
 /* Single entry point, dispatched by w.kind==="loans". */
 function loanContent(w){
   if(w.state==="empty"||!loanDataset(w).length)return loanEmpty(w);
   if(w.size==="kpi")return loanGlance(w);
   if(w.loanloading)return loanHeaderBlock(w,"loading")+loanSkeleton();
   if(!loanFiltered(w).length)return loanControlsHeader(w)+'<div class="loan-body">'+loanScopedEmpty(w)+'</div>';
-  var mh=loanHeaderBlock(w);
-  if(w.size==="xwide")return mh+loanFull(w);
-  return mh+'<div class="loan-body">'+loanTable(w)+'</div>';
+  var mh=loanHeaderBlock(w),cards=loanBucketCards(w),view=loanView(w);
+  if(w.size==="xwide")return mh+'<div class="loan-body">'+cards+'<div class="loan-split"><section class="loan-split-table">'+loanTable(w)+'</section><section class="loan-split-chart">'+loanDonut(w)+'</section></div></div>';
+  return mh+'<div class="loan-body">'+cards+(view==="pie"?loanDonut(w):loanTable(w))+'</div>';
 }
 function loanControlsHeader(w){return '<div class="dep-hd"><div class="dep-hd-top"><div class="loan-ctlrow">'+loanTypeChip(w)+'</div><div class="dep-hd-toggle"></div></div></div>';}
 function loanScopedEmpty(w){var ty=(w.loanType&&w.loanType!=="All")?w.loanType:"";if(!ty)return loanEmpty(w);return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">No '+loanEsc(ty)+' loans</div><div class="state-sub">No loans of this type are carrying a balance. Pick another type above to see the rest.</div></div>';}
