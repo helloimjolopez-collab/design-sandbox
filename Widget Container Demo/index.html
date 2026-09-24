@@ -9402,6 +9402,25 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     try{return '<div class="aw-prev" aria-hidden="true"><div class="wcontent">'+awGlanceContent(p)+'</div></div>';}
     catch(_e){return '<div class="aw-prev aw-prev-empty" aria-hidden="true">'+ICON("dashboard")+'</div>';}
   }
+  /* Hover preview: a larger, clearer look at a widget without leaving the picker. */
+  var awHoverIdx=null;
+  function awHideHover(){var h=document.getElementById("awHover");if(h)h.parentNode.removeChild(h);awHoverIdx=null;}
+  function awShowHover(host){
+    var idx=+host.getAttribute("data-idx");if(isNaN(idx))return;
+    if(awHoverIdx===idx&&document.getElementById("awHover"))return;
+    var p=PALETTE[idx];if(!p)return;awHoverIdx=idx;awHideHover();
+    var el=document.createElement("div");el.id="awHover";el.className="aw-hovercard";
+    var content="";try{content=awGlanceContent(p);}catch(_e){content='<div style="padding:16px;color:var(--txt-subtle)">Preview unavailable</div>';}
+    el.innerHTML='<div class="aw-hc-head"><span class="aw-hc-nm">'+p.title+'</span><span class="aw-hc-cat">'+p.cat+'</span></div><div class="aw-hc-prev"><div class="wcontent">'+content+'</div></div>';
+    document.body.appendChild(el);
+    var r=host.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight,vw=window.innerWidth,vh=window.innerHeight,gap=12;
+    var left=r.right+gap;if(left+W>vw-8)left=r.left-gap-W;if(left<8)left=Math.max(8,Math.round((vw-W)/2));
+    var top=Math.round(r.top+r.height/2-H/2);top=Math.max(8,Math.min(top,vh-H-8));
+    el.style.left=left+"px";el.style.top=top+"px";
+  }
+  document.addEventListener("mouseover",function(e){if(!(modal&&modal.type==="addwidget"))return;if(!e.target.closest)return;var host=e.target.closest(".aw-card,.aw-row");if(host&&host.getAttribute("data-action")==="add-widget-pick")awShowHover(host);});
+  document.addEventListener("mouseout",function(e){if(!document.getElementById("awHover"))return;if(!e.target.closest)return;var host=e.target.closest(".aw-card,.aw-row");if(!host)return;var to=e.relatedTarget;if(!(to&&to.closest&&to.closest(".aw-card,.aw-row")===host))awHideHover();});
+  document.addEventListener("scroll",function(){if(document.getElementById("awHover"))awHideHover();},true);
   function awAddBtn(x,n){return '<button class="aw-add-btn'+(n>0?" is-added":"")+'" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="'+(n>0?"Added":"Add")+" "+x.p.title.replace(/"/g,"&quot;")+'">'+(n>0?ICON("check")+"Added"+(n>1?" · "+n:""):ICON("add")+"Add")+'</button>';}
   /* Left-rail categories with a live per-category "added" count, plus an "Added" filter to review
      everything added in one place. Regenerated cheaply on each add (no preview re-render). */
