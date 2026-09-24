@@ -7810,7 +7810,7 @@ function arFAgingTable(w){
   var b=arFBuckets(w),tot=arFTotal(w),sk=(w.arFSort||"band-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,rows=b.slice();
   if(key==="amount")rows.sort(function(a,c){return dir*(a.total-c.total);});
   else if(key==="count")rows.sort(function(a,c){return dir*(a.count-c.count);});
-  else if(dir<0)rows.reverse();
+  else if(key==="band"&&dir<0)rows.reverse();
   var head='<div class="wt-row wt-head arF-tbl-head"><span class="lr-main">'+arFSortBtn(w,"band","Aging")+'</span><span class="wt-c2 arF-tc">'+arFSortBtn(w,"count","Invoices")+'</span><span class="wt-c2">'+arFSortBtn(w,"amount","Amount")+'</span></div>';
   var body=rows.map(function(r){var share=tot?Math.round(r.total/tot*100):0,live=r.total>0,click=live?(' data-action="arF-open" data-id="'+w.id+'" data-mode="aging" data-key="'+r.key+'" role="button" tabindex="0" aria-label="'+arFEsc(r.label+", "+money(r.total)+", "+r.count+" invoices, open")+'"'):'';
     return '<div class="wt-row arF-trow'+(live?" wt-rowlink":" arF-trow-zero")+'"'+click+'><span class="lr-main"><span class="arF-sevdot" style="background:var('+r.color+')"></span>'+r.label+'</span><span class="wt-c2 arF-tc">'+r.count+'</span><span class="wt-c2">'+money(r.total)+'</span></div>';}).join("");
