@@ -7566,16 +7566,19 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
      aboutOf() ........... if(w.kind==="receivables-mb")return {...}; */
 
 /* (1) DATA ------------------------------------------------------------- */
+/* Six aging bands (W05): Current = not yet due (days <= 0); overdue counts ANY day past due,
+   starting the 1-30 band at day 1. */
 var ARF_BUCKETS=[
-  {key:"cur",label:"Current",sub:"not yet overdue",hi:30,sev:0},
-  {key:"b1",label:"31-60 days",sub:"1 to 2 months over",hi:60,sev:1},
-  {key:"b2",label:"61-90 days",sub:"2 to 3 months over",hi:90,sev:2},
-  {key:"b3",label:"91-120 days",sub:"3 to 4 months over",hi:120,sev:3},
-  {key:"b4",label:"121+ days",sub:"over 4 months over",hi:Infinity,sev:4}
+  {key:"cur",label:"Current",sub:"not yet due",hi:0,sev:0},
+  {key:"b1",label:"1-30 days",sub:"up to a month over",hi:30,sev:1},
+  {key:"b2",label:"31-60 days",sub:"1 to 2 months over",hi:60,sev:2},
+  {key:"b3",label:"61-90 days",sub:"2 to 3 months over",hi:90,sev:3},
+  {key:"b4",label:"91-120 days",sub:"3 to 4 months over",hi:120,sev:4},
+  {key:"b5",label:"121+ days",sub:"over 4 months over",hi:Infinity,sev:5}
 ];
 /* Amethyst severity ramp, light (Current) deepening to dark (121+). No red:
    severity reads from depth of amethyst + order + labels + text. */
-var ARF_SEV_COLORS=["--am-200","--am-300","--am-400","--am-500","--am-700"];
+var ARF_SEV_COLORS=["--am-100","--am-200","--am-300","--am-400","--am-500","--am-700"];
 var ARF_RC=["All","Church","Insurance Billing","Pension Billing","School"];
 var ARF_SOURCE=["All","Insurance Billing","Pension Billing"];
 /* Unpaid invoices with a balance remaining, aged by days past due. Some tabs
