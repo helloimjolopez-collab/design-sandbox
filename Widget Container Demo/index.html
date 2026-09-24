@@ -9417,8 +9417,8 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var content="";try{content=awGlanceContent(p);}catch(_e){content='<div style="padding:16px;color:var(--txt-subtle)">Preview unavailable</div>';}
     el.innerHTML='<div class="aw-hc-head"><span class="aw-hc-nm">'+p.title+'</span><span class="aw-hc-cat">'+p.cat+'</span></div><div class="aw-hc-prev"><div class="wcontent">'+content+'</div></div>';
     document.body.appendChild(el);
-    var r=host.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight,vw=window.innerWidth,vh=window.innerHeight,gap=12;
-    var left=r.right+gap;if(left+W>vw-8)left=r.left-gap-W;if(left<8)left=Math.max(8,Math.round((vw-W)/2));
+    var r=host.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight,vw=window.innerWidth,vh=window.innerHeight;
+    var left=Math.round(r.left+r.width/2-W/2);left=Math.max(8,Math.min(left,vw-W-8));
     var top=Math.round(r.top+r.height/2-H/2);top=Math.max(8,Math.min(top,vh-H-8));
     el.style.left=left+"px";el.style.top=top+"px";
   }
