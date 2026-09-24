@@ -4868,7 +4868,7 @@ function loanTotal(w){return loanFiltered(w).reduce(function(s,x){return s+x.amo
 function loanCount(w){return loanFiltered(w).length;}
 function loanPastDue(w){return loanFiltered(w).filter(function(x){return x.days>0;}).reduce(function(s,x){return s+x.amount;},0);}
 function loanPastDueCount(w){return loanFiltered(w).filter(function(x){return x.days>0;}).length;}
-function loan90(w){return loanFiltered(w).filter(function(x){return loanBucketOf(x.days)==="b3";}).reduce(function(s,x){return s+x.amount;},0);}
+function loan90(w){return loanFiltered(w).filter(function(x){return loanBucketOf(x.days)==="b4";}).reduce(function(s,x){return s+x.amount;},0);}
 function loanPct(w){var t=loanTotal(w);return t>0?Math.round(loanPastDue(w)/t*100):0;}
 function loanWorstBucket(w){var nz=loanBuckets(w).filter(function(r){return r.total>0;});return nz.length?nz[nz.length-1]:null;}
 function loanFind(w,acct){var ls=loanDataset(w);for(var i=0;i<ls.length;i++)if(ls[i].acct===acct)return ls[i];return null;}
