@@ -7786,17 +7786,54 @@ function arFInlineList(w){
   return '<div class="arF-illist">'+rows+'</div>'+more+foot;
 }
 
+/* W05 data view: Table (default) or interactive Pie, under either content view (Aging / Customers). */
+function arFDataView(w){return w.arFView||"table";}
+function arFDataViewToggle(w){var v=arFDataView(w);
+  return '<div class="vtoggle" role="group" aria-label="Data view">'+
+    '<button class="vt'+(v==="table"?" on":"")+'" data-action="arF-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'" data-tip="See the figures as a sortable table." data-tip-plain>'+ICON("table_rows")+'Table</button>'+
+    '<button class="vt'+(v==="pie"?" on":"")+'" data-action="arF-view" data-id="'+w.id+'" data-v="pie" aria-pressed="'+(v==="pie")+'" data-tip="See the share as an interactive donut." data-tip-plain>'+ICON("donut_small")+'Pie</button>'+
+  '</div>';}
+function arFDefaultSort(group){return group==="customer"?"total-desc":"band-asc";}
+function arFSortBtn(w,k,label){var sk=(w.arFSort||"total-desc").split("-"),on=sk[0]===k,dir=sk[1]==="asc"?1:-1;var ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";
+  return '<button class="wt-sort" data-action="arF-wsort" data-id="'+w.id+'" data-k="'+k+'" aria-label="Sort by '+label+'">'+label+ICON(ic)+'</button>';}
+function arFAgingTable(w){
+  var b=arFBuckets(w),tot=arFTotal(w),sk=(w.arFSort||"band-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,rows=b.slice();
+  if(key==="amount")rows.sort(function(a,c){return dir*(a.total-c.total);});
+  else if(key==="count")rows.sort(function(a,c){return dir*(a.count-c.count);});
+  else if(dir<0)rows.reverse();
+  var head='<div class="wt-row wt-head arF-tbl-head"><span class="lr-main">'+arFSortBtn(w,"band","Aging")+'</span><span class="wt-c2 arF-tc">'+arFSortBtn(w,"count","Invoices")+'</span><span class="wt-c2">'+arFSortBtn(w,"amount","Amount")+'</span></div>';
+  var body=rows.map(function(r){var share=tot?Math.round(r.total/tot*100):0,live=r.total>0,click=live?(' data-action="arF-open" data-id="'+w.id+'" data-mode="aging" data-key="'+r.key+'" role="button" tabindex="0" aria-label="'+arFEsc(r.label+", "+money(r.total)+", "+r.count+" invoices, open")+'"'):'';
+    return '<div class="wt-row arF-trow'+(live?" wt-rowlink":" arF-trow-zero")+'"'+click+'><span class="lr-main"><span class="arF-sevdot" style="background:var('+r.color+')"></span>'+r.label+'</span><span class="wt-c2 arF-tc">'+r.count+'</span><span class="wt-c2">'+money(r.total)+'</span></div>';}).join("");
+  return '<div class="scroll arF-tbl">'+head+body+'</div><div class="dep-total"><span>Total outstanding</span><span>'+money(tot)+'</span></div>';
+}
+function arFCustTable(w){
+  var rows=arFCustomers(w),tot=arFTotal(w);
+  var head='<div class="wt-row wt-head arF-tbl-head"><span class="lr-main">'+arFSortBtn(w,"customer","Customer")+'</span><span class="wt-c2 arF-tc">'+arFSortBtn(w,"aging","Aging")+'</span><span class="wt-c2">'+arFSortBtn(w,"total","Balance")+'</span></div>';
+  var body=rows.map(function(r){var ageLbl=r.maxDays<=0?"Current":(r.maxDays+"d");
+    return '<div class="wt-row arF-trow wt-rowlink" data-action="arF-open" data-id="'+w.id+'" data-mode="customer" data-key="'+arFEsc(r.customer)+'" role="button" tabindex="0" aria-label="'+arFEsc(r.customer+", "+money(r.total)+", oldest "+ageLbl+", open")+'"><span class="lr-main"><span class="arF-sevdot" style="background:var('+ARF_SEV_COLORS[r.worst]+')"></span><span class="arF-trow-nm">'+r.customer+'<span class="arF-trow-sub">'+r.count+' invoice'+(r.count>1?"s":"")+'</span></span></span><span class="wt-c2 arF-tc">'+ageLbl+'</span><span class="wt-c2">'+money(r.total)+'</span></div>';}).join("");
+  return '<div class="scroll arF-tbl">'+head+body+'</div><div class="dep-total"><span>Total outstanding</span><span>'+money(tot)+'</span></div>';
+}
+/* Interactive canonical donut (G8): slices AND legend are clickable to open the invoices behind them. */
+function arFPie(w,group){
+  var cust=(group==="customer"),segs;
+  if(cust){segs=arFCustomers(w).map(function(r){return {key:r.customer,label:r.customer,total:r.total,count:r.count,color:ARF_SEV_COLORS[r.worst]};});}
+  else{segs=arFBuckets(w).filter(function(r){return r.total>0;}).map(function(r){return {key:r.key,label:r.label,total:r.total,count:r.count,color:r.color};});}
+  var tot=segs.reduce(function(s,a){return s+a.total;},0);
+  if(tot<=0)return '<div class="arF-zeroline">'+ICON("info")+'Nothing to show for this selection.</div>';
+  var R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+  segs.forEach(function(a,i){var frac=a.total/tot,len=frac*C,pct=Math.round(frac*100),d=' data-action="arF-open" data-id="'+w.id+'" data-mode="'+(cust?"customer":"aging")+'" data-key="'+arFEsc(a.key)+'" role="button" tabindex="0"';
+    arcs+='<circle class="seg arF-slice"'+d+' aria-label="'+arFEsc(a.label+", "+money(a.total)+", "+pct+"%, open invoices")+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="var('+a.color+')" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+    legend+='<div class="leg arF-leg"'+d+'><span class="dot" style="background:var('+a.color+')"></span><span class="lg-main">'+a.label+'</span><span class="lg-meta">'+money(a.total)+' · '+pct+'%</span></div>';});
+  return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="200" height="200" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">outstanding</text></svg><div class="legend-col"><div class="legend" style="max-height:220px">'+legend+'</div></div></div></div>';
+}
 function arFContent(w){
   if(w.state==="empty")return arFEmpty(w);
   if(w.size==="kpi")return arFGlance(w);
   if(w.arFloading)return arFHeaderBlock(w,"loading")+arFSkeleton();
-  var mh=arFHeaderBlock(w);
-  if(w.size==="xwide"){var grp=w.arFGroup||"aging",gh=(grp==="customer")?[ICON("groups"),"Top overdue customers"]:[ICON("stacked_bar_chart"),"By aging"];
-    return mh+'<div class="arF-explore">'+
-      '<section class="arF-panel"><h4 class="arF-panel-h">'+gh[0]+gh[1]+'</h4>'+arFBar(w)+'</section>'+
-      '<section class="arF-panel"><h4 class="arF-panel-h">'+ICON("receipt_long")+'Invoice detail</h4>'+arFInlineList(w)+'</section>'+
-    '</div>';}
-  return mh+'<div class="arF-body">'+arFBar(w)+'</div>';
+  var mh=arFHeaderBlock(w),group=w.arFGroup||"aging",view=arFDataView(w);
+  var viewbar='<div class="arF-viewbar">'+arFDataViewToggle(w)+'</div>';
+  var content=(view==="pie")?arFPie(w,group):(group==="customer"?arFCustTable(w):arFAgingTable(w));
+  return mh+'<div class="arF-body">'+viewbar+content+'</div>';
 }
 
 /* Drill-to-detail focus overlay: report-style list (Customer, Bill To, Due Date,
