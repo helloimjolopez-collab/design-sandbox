@@ -7164,11 +7164,11 @@ function purEncView(w){var v=w.encview||"chart";
   return toggle+(v==="table"?purEncTable(w):purEnc(w));}
 function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(w);
   return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Committed, not yet paid</div>'+purEncView(w)+'</div></div>';}
-function purGlance(w){var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);
+function purGlance(w){var pend=purOrders(w).filter(function(o){return purTileMatch(o,"pending",w);}),count=pend.length,out=purSum(pend);
   return '<div class="kpi-row"><div class="kpi-num">'+
-    '<div class="pur-gl-top">'+purStatusChip(w)+'</div>'+
+    '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Purchase approvals</span></span>'+
     '<div class="metric-value">'+count+'</div>'+
-    '<div class="gl-sub"><span class="bank-caption">'+money(out)+' outstanding</span></div>'+
+    '<div class="gl-sub"><span class="bank-caption">'+money(out)+' pending</span></div>'+
     '</div></div>';}
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
