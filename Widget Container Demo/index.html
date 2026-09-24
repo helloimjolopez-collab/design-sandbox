@@ -4946,17 +4946,11 @@ function loanHeaderBlock(w,mode){
     numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:130px;height:22px;border-radius:6px"></span><span class="sk" style="width:130px;height:20px;border-radius:999px"></span></div>';
     ctx="Updating loans with a balance…";
   }else{
-    numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+loanMoney(loanTotal(w))+'</span>'+loanBadge(w)+'</div>';
-    /* The badge already carries the past-due read. Add only the incremental
-       90+ tranche, and only at wide, where the aging/risk panel is not shown
-       (at xwide the panel states 90+, so no header echo). No line when clean. */
-    var nine=loan90(w);
-    ctx=(w.size!=="xwide"&&nine>0)?(loanMoney(nine)+' of that is 90+ days past due'):"";
+    numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+loanMoney(loanTotal(w))+'</span></div>';
   }
-  var ctxLine=ctx?'<div class="loan-ctx">'+ctx+'</div>':"";
   return '<div class="dep-hd">'+
-    '<div class="dep-hd-top"><div class="loan-ctlrow">'+loanTypeChip(w)+'</div><div class="dep-hd-toggle"></div></div>'+
-    '<div class="dep-hd-num"><div class="loan-numwrap">'+numInner+ctxLine+'</div></div>'+
+    '<div class="dep-hd-top"><div class="loan-ctlrow">'+loanTypeChip(w)+'</div><div class="dep-hd-toggle">'+loanViewToggle(w)+'</div></div>'+
+    '<div class="dep-hd-num"><div class="loan-numwrap">'+numInner+'</div></div>'+
   '</div>';
 }
 
