@@ -9448,6 +9448,25 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="pto-approve-emp"){modal={type:"pto-confirm",id:id,emp:t.getAttribute("data-emp")};modalMounted=false;pop=null;render();return;}
     if(a==="pto-approve-emp-confirm"){var wpc=find(id),ec=ptoFindEmp(wpc,t.getAttribute("data-emp"));if(ec){var rc=ptoRecsForYear(ec,ptoCurYear(wpc)),cnt=0;rc.forEach(function(r){if(r.status!=="approved"){r.status="approved";r.by=PTO_ME;r.on=PTO_TODAY;cnt++;}});setStatus("Approved "+cnt+" day"+(cnt===1?"":"s")+" for "+ec.name+".");}modal=null;modalMounted=false;pop=null;render();return;}
     if(a==="pto-unapprove-emp"){var wpx=find(id),ex=ptoFindEmp(wpx,t.getAttribute("data-emp"));if(ex){ptoRecsForYear(ex,ptoCurYear(wpx)).forEach(function(r){r.status="pending";r.by=null;r.on=null;});setStatus("Moved all of "+ex.name+"'s time off back to pending.");}render();return;}
+    /* W09 handlers */
+    if(a==="pto-tile"){var wt9=find(id);if(wt9){wt9.ptoTile=t.getAttribute("data-t");wt9.ptoSel={};}render();return;}
+    if(a==="pto-dept"){pop=(pop&&pop.type==="pto-dept"&&pop.id===id)?null:{type:"pto-dept",id:id};render();return;}
+    if(a==="set-pto-dept"){var wsd=find(id);if(wsd){wsd.ptoDept=t.getAttribute("data-d");wsd.ptoSel={};}pop=null;render();return;}
+    if(a==="pto-pg"){pop=(pop&&pop.type==="pto-pg"&&pop.id===id)?null:{type:"pto-pg",id:id};render();return;}
+    if(a==="set-pto-pg"){var wsp=find(id);if(wsp){wsp.ptoPG=t.getAttribute("data-g");wsp.ptoSel={};}pop=null;render();return;}
+    if(a==="pto-qview"){var wqv=find(id);if(wqv)wqv.ptoQView=t.getAttribute("data-v");render();return;}
+    if(a==="pto-range"){var wr9=find(id);if(wr9)wr9.ptoRange=t.getAttribute("data-v");render();return;}
+    if(a==="pto-sort"){var ws9=find(id),k9=t.getAttribute("data-k");if(ws9){var cs9=(ws9.ptoSort||"date-asc").split("-");ws9.ptoSort=(cs9[0]===k9)?(k9+"-"+(cs9[1]==="asc"?"desc":"asc")):(k9+"-asc");}render();return;}
+    if(a==="pto-approve"){modal={type:"pto-approve",id:id,recs:[t.getAttribute("data-rec")]};modalMounted=false;pop=null;render();return;}
+    if(a==="pto-bulk-approve"){var wba=find(id),selb=(wba&&wba.ptoSel)||{},idsb=Object.keys(selb).filter(function(k){return selb[k];});if(idsb.length){modal={type:"pto-approve",id:id,recs:idsb};modalMounted=false;pop=null;render();}return;}
+    if(a==="pto-approve-confirm"){var wac=find(id),idsa=(modal&&modal.recs)||[],cnta=0;idsa.forEach(function(rid){var ra=ptoFindRec(wac,rid);if(ra&&ra.status!=="approved"){ra.status="approved";ra.by=PTO_ME;ra.on=PTO_TODAY;cnta++;}});if(wac)wac.ptoSel={};setStatus("Approved "+cnta+" request"+(cnta===1?"":"s")+".");modal=null;modalMounted=false;pop=null;render();return;}
+    if(a==="pto-undo"){var wu9=find(id),ru9=ptoFindRec(wu9,t.getAttribute("data-rec"));if(ru9){ru9.status="pending";ru9.by=null;ru9.on=null;setStatus("Moved back to pending.");}render();return;}
+    if(a==="pto-dismiss"){var wdi=find(id),ridd=t.getAttribute("data-rec");if(wdi){ptoData(wdi).forEach(function(d){d.emps.forEach(function(e){e.recs=e.recs.filter(function(x){return x.id!==ridd;});});});setStatus("Dismissed the outstanding request.");}render();return;}
+    if(a==="pto-selrec"){var wsr9=find(id),ridr=t.getAttribute("data-rec");if(wsr9){wsr9.ptoSel=wsr9.ptoSel||{};if(wsr9.ptoSel[ridr])delete wsr9.ptoSel[ridr];else wsr9.ptoSel[ridr]=true;}render();return;}
+    if(a==="pto-selall"){var wsa9=find(id);if(wsa9){var rowsa=ptoQueueRows(wsa9).filter(function(r){return r.s3!=="approved";}),alls=ptoAllSelected(wsa9);wsa9.ptoSel={};if(!alls)rowsa.forEach(function(r){wsa9.ptoSel[r.id]=true;});}render();return;}
+    if(a==="pto-selclear"){var wsc9=find(id);if(wsc9)wsc9.ptoSel={};render();return;}
+    if(a==="pto-drill"){modal={type:"pto-drill",id:id,emp:t.getAttribute("data-emp")};modalMounted=false;pop=null;render();return;}
+    if(a==="pto-day"){var wday=find(id);if(wday){wday.ptoQView="queue";}setStatus("Showing the approval queue.");render();return;}
     if(a&&a.indexOf("arF-")===0&&arFHandleClick(a,id,t))return; // Receivable Invoices Outstanding (MB updated), additive
     if(a&&a.indexOf("ar-")===0&&arHandleClick(a,id,t))return;
     if(purHandleClick(a,t,id))return;
