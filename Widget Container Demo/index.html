@@ -9673,7 +9673,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="new-dash"){addCount++;var nw={id:"nd"+Date.now(),name:"New dashboard "+addCount,custom:true,widgets:[]};dashboards.push(nw);currentId=nw.id;manage=true;focusDash=true;pop=null;setStatus("New dashboard created.");render();return;}
     if(a==="add-widget"){if(!manage)manage=true;modal={type:"addwidget",cat:"All",id:cur().id};modalMounted=false;pop=null;render();return;}
     if(a==="add-widget-cat"){if(modal)modal.cat=t.getAttribute("data-c");renderModal();return;}
-    if(a==="add-widget-pick"){var p=PALETTE[+t.getAttribute("data-idx")];if(p){addCount++;var nw2=Object.assign({id:"n"+Date.now()+addCount,kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now"},p.props());cur().widgets.push(nw2);setStatus('Added “'+p.title+'” to “'+cur().name+'”.');}render();return;}
+    if(a==="add-widget-pick"){var _pidx=+t.getAttribute("data-idx"),p=PALETTE[_pidx];if(p){addCount++;var nw2=Object.assign({id:"n"+Date.now()+addCount,kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now"},p.props());cur().widgets.push(nw2);if(modal&&modal.type==="addwidget"){if(!modal.added)modal.added={};modal.added[_pidx]=(modal.added[_pidx]||0)+1;}setStatus('Added “'+p.title+'” to “'+cur().name+'”.');}render();return;}
     if(a==="done-manage"){manage=false;pop=null;setStatus("Saved changes to “"+cur().name+"”.");render();return;}
     if(a==="wmenu"){pop=(pop&&pop.type==="wmenu"&&pop.id===id)?null:{type:"wmenu",id:id};render();return;}
     if(a==="expmenu"){pop=(pop&&pop.type==="expmenu"&&pop.id===id)?null:{type:"expmenu",id:id};render();return;}
