@@ -7668,10 +7668,10 @@ function arFOverdueCount(w){return arFFiltered(w).filter(function(x){return x.da
 function arFWorstBucket(w){var nz=arFBuckets(w).filter(function(r){return r.total>0;});return nz.length?nz[nz.length-1]:null;}
 function arFCustomers(w){
   var inv=arFFiltered(w),m={},order=[];
-  inv.forEach(function(x){if(!m[x.customer]){m[x.customer]={customer:x.customer,total:0,count:0,worst:0};order.push(x.customer);}var g=m[x.customer];g.total+=x.amount;g.count++;var sev=arFSevOf(x.days);if(sev>g.worst)g.worst=sev;});
+  inv.forEach(function(x){if(!m[x.customer]){m[x.customer]={customer:x.customer,total:0,count:0,worst:0,maxDays:-99999};order.push(x.customer);}var g=m[x.customer];g.total+=x.amount;g.count++;var sev=arFSevOf(x.days);if(sev>g.worst)g.worst=sev;if(x.days>g.maxDays)g.maxDays=x.days;});
   var rows=order.map(function(c){return m[c];});
   var sk=(w.arFSort||"total-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-  rows.sort(function(a,b){if(key==="customer")return dir*a.customer.localeCompare(b.customer);return dir*(a.total-b.total);});
+  rows.sort(function(a,b){if(key==="customer")return dir*a.customer.localeCompare(b.customer);if(key==="aging")return dir*(a.maxDays-b.maxDays);return dir*(a.total-b.total);});
   return rows;
 }
 function arFDetailInvoices(w,mode,key){
@@ -7699,8 +7699,8 @@ function arFAgeSr(w){var b=arFBuckets(w);return 'Outstanding by age: '+b.map(fun
    red is reserved for the app delta pill, not used here. */
 function arFOverduePill(w){
   var tot=arFTotal(w),over=arFOverdue(w),oc=arFOverdueCount(w),pct=tot>0?Math.round(over/tot*100):0;
-  if(over>0)return '<span class="bank-pill" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is more than 30 days past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue ('+pct+'%)</span>';
-  return '<span class="delta-pill" data-tip="Every outstanding invoice is still current, 30 days or less past due." data-tip-plain>'+ICON("check")+'All current</span>';
+  if(over>0)return '<span class="bank-pill" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue ('+pct+'%)</span>';
+  return '<span class="delta-pill" data-tip="Every outstanding invoice is still within terms, not yet past due." data-tip-plain>'+ICON("check")+'All current</span>';
 }
 
 /* GLANCE (kpi): total owed + overdue badge on the LEFT, a plain context line,
