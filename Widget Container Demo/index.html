@@ -8940,11 +8940,11 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(g===FA_ALL)return FA_ASSETS.slice();
     if(g===FA_NA)return FA_ASSETS.filter(function(a){return a[dim]==null;});
     return FA_ASSETS.filter(function(a){return a[dim]===g;});}
-  function faGroupOptions(w){var dim=faDim(w),out=[{v:FA_ALL,label:"All groups",count:FA_ASSETS.length}];
+  function faGroupOptions(w){var dim=faDim(w),out=[{v:FA_ALL,label:"All classes",count:FA_ASSETS.length}];
     FA_CATALOG[dim].forEach(function(name){out.push({v:name,label:name,count:FA_ASSETS.filter(function(a){return a[dim]===name;}).length});});
     if(faHasNA(dim))out.push({v:FA_NA,label:FA_NA_LABEL,count:FA_ASSETS.filter(function(a){return a[dim]==null;}).length,na:true});
     return out;}
-  function faGroupLabel(w){var g=faGroup(w);if(g===FA_ALL)return "All groups";if(g===FA_NA)return FA_NA_LABEL;return g;}
+  function faGroupLabel(w){var g=faGroup(w);if(g===FA_ALL)return "All classes";if(g===FA_NA)return FA_NA_LABEL;return g;}
   function faSum(list,m){return list.reduce(function(s,a){return s+(a[m]||0);},0);}
   function faPieData(w){var dim=faDim(w),m=faMeasure(w),rows=[];
     FA_CATALOG[dim].forEach(function(name){var v=faSum(FA_ASSETS.filter(function(a){return a[dim]===name;}),m);if(v>0)rows.push({name:name,val:v});});
