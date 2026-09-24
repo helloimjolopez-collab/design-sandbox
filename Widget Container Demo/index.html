@@ -1606,20 +1606,18 @@
   .pto-drill-date{flex:0 0 96px;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
   .pto-drill-type{flex:1 1 auto;}
   .pto-drill-act{flex:0 0 auto;margin-left:auto;}
-  /* Add-widget picker modal */
-  .aw-modal.modal-wide{height:auto;max-height:90vh;width:min(900px,94vw);}
-  .aw-modal .modal-b{padding:0;display:block;flex:0 1 auto;min-height:0;}
-  .aw-b{display:flex;gap:0;max-height:min(60vh,520px);min-height:0;}
-  .aw-cats{flex:0 0 184px;display:flex;flex-direction:column;gap:2px;padding:14px 10px;border-right:1px solid var(--stroke-widget);overflow:auto;}
-  .aw-cat{display:flex;align-items:center;gap:8px;border:0;background:transparent;font-family:inherit;font-size:13px;color:var(--txt-secondary);text-align:left;padding:8px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;}
-  .aw-cat-lbl{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;}
-  .aw-cat .material-symbols-rounded{font-size:16px;flex:0 0 auto;}
+  /* Add-widget picker modal — fixed dialog height so the footer (Done) is always pinned bottom-right. */
+  .aw-modal.modal-wide{height:min(86vh,660px);max-height:92vh;width:min(900px,94vw);}
+  .aw-modal.modal-wide .modal-b{flex:1 1 auto;min-height:0;display:block;padding:0;}
+  .aw-b{display:flex;gap:0;height:100%;min-height:0;}
+  .aw-cats{flex:0 0 186px;display:flex;flex-direction:column;gap:1px;padding:14px 10px;border-right:1px solid var(--stroke-widget);overflow:auto;}
+  .aw-cat{display:block;border:0;background:transparent;font-family:inherit;font-size:13px;color:var(--txt-secondary);text-align:left;padding:8px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .aw-cat:hover{background:var(--wn-100);color:var(--txt-primary);}
   .aw-cat.sel{background:var(--brand-10);color:var(--brand-500);font-weight:600;}
-  .aw-cat-added{color:var(--pos-100);}.aw-cat-added.sel{background:var(--pos-10);color:var(--pos-100);}
-  .aw-cat-badge{flex:0 0 auto;min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;}
-  .aw-cat-badge.on{color:#fff;background:var(--pos-100);}
-  .aw-cat.sel .aw-cat-badge{background:#fff;color:var(--brand-500);}
+  .aw-cat-n{margin-left:5px;color:var(--txt-subtle);font-weight:500;font-variant-numeric:tabular-nums;}
+  .aw-cat:hover .aw-cat-n{color:var(--txt-secondary);}
+  .aw-cat.sel .aw-cat-n{color:var(--brand-400);}
+  .aw-cat-sep{height:1px;background:var(--stroke-widget);margin:7px 8px;}
   .aw-cats [hidden]{display:none!important;}
   .aw-right{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;min-height:0;}
   .aw-toolbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 16px 10px;}
@@ -1627,34 +1625,40 @@
   .aw-viewtoggle{flex:0 0 auto;}
   .aw-scroll{flex:1 1 auto;min-width:0;min-height:0;overflow:auto;padding:2px 18px 18px;}
   .aw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-content:start;}
-  /* Tile: heading + description + Add lead; the preview is a clearly-labelled, recessed sample below. */
-  .aw-card{display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:left;border:1px solid var(--stroke-widget);border-radius:12px;padding:12px 12px 12px;background:var(--surface-widget);cursor:pointer;font-family:inherit;transition:border-color var(--dur),box-shadow var(--dur);}
+  /* Tile: a light heading row (elegant hierarchy from size + colour, not heavy weight) over an accurate,
+     full, un-cropped glance preview of the real widget on its own light fill. */
+  .aw-card{display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:left;border:1px solid var(--stroke-widget);border-radius:12px;padding:12px;background:var(--surface-widget);cursor:pointer;font-family:inherit;transition:border-color var(--dur),box-shadow var(--dur);}
   .aw-card:hover{border-color:var(--brand-100);box-shadow:0 0 0 3px var(--brand-10);}
   .aw-card.is-added{border-color:var(--pos-100);box-shadow:0 0 0 3px color-mix(in srgb,var(--pos-100) 16%,transparent);}
   .aw-card-head{display:flex;align-items:flex-start;gap:10px;}
-  .aw-card-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto;}
-  .aw-card-nm{font-size:14px;font-weight:650;color:var(--txt-primary);line-height:1.25;}
-  .aw-card-desc{font-size:12px;color:var(--txt-secondary);line-height:1.42;}
-  /* Add button: a real, unmistakable action, visually distinct from anything inside the preview. */
+  .aw-card-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto;}
+  .aw-card-nm{font-size:13px;font-weight:600;color:var(--txt-primary);line-height:1.3;}
+  .aw-card-desc{font-size:11.5px;color:var(--txt-subtle);line-height:1.4;}
+  /* Add button: a real, unmistakable action; the added state is a solid accessible green, not faint. */
   .aw-add-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;font-family:inherit;font-size:12px;font-weight:600;color:var(--brand-500);background:var(--brand-10);border:1px solid var(--brand-100);border-radius:999px;padding:4px 12px 4px 9px;cursor:pointer;white-space:nowrap;transition:background var(--dur),border-color var(--dur),color var(--dur);}
   .aw-add-btn:hover{background:color-mix(in srgb,var(--brand-100) 16%,#fff);border-color:var(--brand-300);}
   .aw-add-btn .material-symbols-rounded{font-size:16px;}
-  .aw-add-btn.is-added{color:var(--pos-100);background:var(--pos-10);border-color:var(--pos-100);}
-  /* Preview: a plain dark stage with the sample widget sitting on it — no gradients or nested strokes. */
-  .aw-prev{position:relative;height:110px;border-radius:10px;overflow:hidden;background:#22212a;padding:13px 14px 0;pointer-events:none;display:block;}
-  .aw-prev-tag{position:absolute;top:8px;right:9px;z-index:2;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.42);pointer-events:none;}
-  .aw-prev-widget{display:block;margin:0 auto;border:0;border-radius:8px 8px 0 0;box-shadow:0 8px 20px rgba(0,0,0,.32);height:100%;min-height:0;background:#fdfdfd;overflow:hidden;}
-  .aw-prev-widget .wcontent{display:block;margin:0;border:0;border-radius:8px 8px 0 0;padding:10px 12px 4px;background:var(--surface-sheet);}
-  .aw-prev-empty{display:flex;align-items:center;justify-content:center;padding:0;color:rgba(255,255,255,.35);}
+  .aw-add-btn.is-added{color:#fff;background:#137a3a;border-color:#137a3a;}
+  /* Preview: the real glance widget, flush and un-cropped, on the widget's own light fill. No labels. */
+  .aw-prev{display:block;border-radius:8px;overflow:hidden;background:#fdfdfd;border:1px solid var(--stroke-container);pointer-events:none;}
+  .aw-prev .wcontent{display:block;margin:0;border:0;border-radius:8px 8px 0 0;padding:10px 12px 8px;background:var(--surface-sheet);}
+  .aw-prev-empty{display:flex;align-items:center;justify-content:center;min-height:96px;color:var(--cn-40);}
   .aw-prev-empty .material-symbols-rounded{font-size:34px;}
+  /* Hover preview: a larger, clearer look at the widget without leaving the picker. */
+  .aw-hovercard{position:fixed;z-index:130;width:400px;max-width:84vw;background:var(--surface-widget);border:1px solid var(--stroke-container);border-radius:12px;box-shadow:0 18px 48px rgba(41,39,36,.30);overflow:hidden;pointer-events:none;}
+  .aw-hc-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:11px 14px 9px;}
+  .aw-hc-nm{font-size:13px;font-weight:600;color:var(--txt-primary);}
+  .aw-hc-cat{font-size:11px;color:var(--txt-subtle);flex:0 0 auto;}
+  .aw-hc-prev{background:#fdfdfd;border-top:1px solid var(--stroke-widget);}
+  .aw-hc-prev .wcontent{display:block;margin:0;border:0;padding:12px 14px 12px;background:var(--surface-sheet);}
   /* List view: compact rows, no preview — pure name / description / category / Add. */
   .aw-list{display:flex;flex-direction:column;gap:6px;}
   .aw-row{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--stroke-widget);border-radius:10px;padding:9px 11px;background:var(--surface-widget);cursor:pointer;font-family:inherit;transition:border-color var(--dur),box-shadow var(--dur);}
   .aw-row:hover{border-color:var(--brand-100);box-shadow:0 0 0 3px var(--brand-10);}
   .aw-row.is-added{border-color:var(--pos-100);box-shadow:0 0 0 3px color-mix(in srgb,var(--pos-100) 16%,transparent);}
   .aw-row-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto;}
-  .aw-row-nm{font-size:13.5px;font-weight:650;color:var(--txt-primary);}
-  .aw-row-desc{font-size:11.5px;color:var(--txt-secondary);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .aw-row-nm{font-size:13px;font-weight:600;color:var(--txt-primary);}
+  .aw-row-desc{font-size:11.5px;color:var(--txt-subtle);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .aw-row-cat{flex:0 0 auto;font-size:11px;font-weight:500;color:var(--txt-subtle);}
   .aw-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:40px 12px;color:var(--txt-subtle);font-size:13px;text-align:center;}
   .aw-empty .material-symbols-rounded{font-size:26px;color:var(--cn-40);}
