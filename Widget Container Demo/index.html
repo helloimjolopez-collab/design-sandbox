@@ -9735,8 +9735,15 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="delete-dash"){if(isSystem()){pop=null;render();return;}var dn=cur().name;dashboards=dashboards.filter(function(d){return d.id!==currentId;});if(defaultId===currentId)defaultId="sys";currentId=defaultId;manage=false;pop=null;setStatus("Deleted “"+dn+"”.");render();return;}
     if(a==="new-dash"){addCount++;var nw={id:"nd"+Date.now(),name:"New dashboard "+addCount,custom:true,widgets:[]};dashboards.push(nw);currentId=nw.id;manage=true;focusDash=true;pop=null;setStatus("New dashboard created.");render();return;}
     if(a==="add-widget"){if(!manage)manage=true;modal={type:"addwidget",cat:"All",id:cur().id};modalMounted=false;pop=null;render();return;}
-    if(a==="add-widget-cat"){if(modal)modal.cat=t.getAttribute("data-c");renderModal();return;}
-    if(a==="add-widget-pick"){var _pidx=+t.getAttribute("data-idx"),p=PALETTE[_pidx];if(p){addCount++;var nw2=Object.assign({id:"n"+Date.now()+addCount,kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now"},p.props());cur().widgets.push(nw2);if(modal&&modal.type==="addwidget"){if(!modal.added)modal.added={};modal.added[_pidx]=(modal.added[_pidx]||0)+1;}setStatus('Added “'+p.title+'” to “'+cur().name+'”.');}render();return;}
+    if(a==="add-widget-cat"){if(modal)modal.cat=t.getAttribute("data-c");dashDirty=true;renderModal();return;}
+    if(a==="add-widget-view"){if(modal)modal.awView=t.getAttribute("data-v");renderModal();return;}
+    if(a==="add-widget-pick"){var _pidx=+t.getAttribute("data-idx"),p=PALETTE[_pidx];if(p){addCount++;var nw2=Object.assign({id:"n"+Date.now()+addCount,kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now"},p.props());cur().widgets.push(nw2);setStatus('Added “'+p.title+'” to “'+cur().name+'”.');
+      if(modal&&modal.type==="addwidget"){if(!modal.added)modal.added={};var _n=(modal.added[_pidx]||0)+1;modal.added[_pidx]=_n;dashDirty=true;
+        /* Update the clicked card/row in place — no full re-render, so the modal doesn't flash or lose scroll.
+           The dashboard behind (hidden by the modal) is rebuilt once, when the picker closes. */
+        var _host=t.closest&&t.closest(".aw-card,.aw-row");if(_host){_host.classList.add("is-added");var _b=_host.querySelector(".aw-add-btn");if(_b){_b.classList.add("is-added");_b.innerHTML=ICON("check")+"Added"+(_n>1?" · "+_n:"");}}
+        return;}}
+      render();return;}
     if(a==="done-manage"){manage=false;pop=null;setStatus("Saved changes to “"+cur().name+"”.");render();return;}
     if(a==="wmenu"){pop=(pop&&pop.type==="wmenu"&&pop.id===id)?null:{type:"wmenu",id:id};render();return;}
     if(a==="expmenu"){pop=(pop&&pop.type==="expmenu"&&pop.id===id)?null:{type:"expmenu",id:id};render();return;}
