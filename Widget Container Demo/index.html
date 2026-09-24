@@ -623,6 +623,17 @@
   /* a11y: also reveal on keyboard focus within the header */
   .whead:focus-within .wmini{opacity:1;pointer-events:auto;}
   .wmini:focus-visible{opacity:1;pointer-events:auto;}
+  /* Persistent "view details" affordance on glance widgets — always visible so drilling in never requires a resize */
+  .wmini-persist{opacity:.55;pointer-events:auto;}
+  .widget[data-size="kpi"] .wmini-persist{opacity:.7;pointer-events:auto;}
+  .whead:hover .wmini-persist,.wmini-persist:hover,.wmini-persist:focus-visible{opacity:1;pointer-events:auto;}
+  /* Glance chart segments: hover feedback (brighten hovered, dim siblings) so slices/bars feel interactive */
+  .prf-gseg,.arF-seg,.loan-seg{transition:opacity .12s ease,filter .12s ease;cursor:help;}
+  .prf-gbar:hover .prf-gseg,.arF-stack:hover .arF-seg,.loan-stack:hover .loan-seg{opacity:.45;}
+  .prf-gbar .prf-gseg:hover,.arF-stack .arF-seg:hover,.loan-stack .loan-seg:hover{opacity:1;filter:brightness(1.09) saturate(1.05);}
+  /* Glance drill overlay: show the Explore view of a glance widget without resizing it on the grid */
+  .glance-drill-modal .modal-b{padding:14px 18px 6px;}
+  .glance-drill-wc{background:var(--surface-sheet);border:0.5px solid var(--stroke-container);border-radius:12px;overflow:hidden;max-height:72vh;overflow-y:auto;}
   .wtip-h{font-weight:600;font-size:13px;color:var(--txt-primary);padding:5px 9px 2px;}
   .wtip-b{font-size:12px;line-height:1.45;color:var(--txt-secondary);padding:0 9px 6px;max-width:264px;}
   .dep-col{flex:1;min-width:0;display:flex;flex-direction:column;border:1px solid var(--stroke-widget);border-radius:9px;overflow:hidden;}
