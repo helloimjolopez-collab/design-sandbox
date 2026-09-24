@@ -9339,12 +9339,27 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     {cat:"Tasks", kind:"tasks", title:"Main Content Tasks", desc:"A quick launcher for common accounting tasks.", props:function(){return {mctQ:""};}}
   ];
   function paletteCats(){var seen={},out=[];PALETTE.forEach(function(p){if(!seen[p.cat]){seen[p.cat]=1;out.push(p.cat);}});return out;}
+  /* Live glance-size preview of a palette widget, so you can see what each one looks like before adding.
+     Rendered non-interactively and defensively (a preview never breaks the picker). */
+  function awPreviewHTML(p){
+    try{
+      var tw=Object.assign({id:"__awprev",kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now",goto:false,__forceSize:true},p.props());
+      return '<span class="aw-prev" aria-hidden="true"><span class="widget aw-prev-widget" data-size="kpi"><span class="wcontent">'+contentHTML(tw)+'</span></span></span>';
+    }catch(_e){return '<span class="aw-prev aw-prev-empty" aria-hidden="true">'+ICON("dashboard")+'</span>';}
+  }
   function addWidgetModalHTML(){
-    var cats=paletteCats(),curc=(modal&&modal.cat)||"All";
+    var cats=paletteCats(),curc=(modal&&modal.cat)||"All",q=((modal&&modal.q)||"").trim().toLowerCase(),qEsc=((modal&&modal.q)||"").replace(/</g,"&lt;").replace(/"/g,"&quot;"),added=(modal&&modal.added)||{};
     var catList='<button class="aw-cat'+(curc==="All"?" sel":"")+'" data-action="add-widget-cat" data-c="All">All widgets</button>'+cats.map(function(c){return '<button class="aw-cat'+(curc===c?" sel":"")+'" data-action="add-widget-cat" data-c="'+c.replace(/"/g,"&quot;")+'">'+c+'</button>';}).join("");
-    var items=PALETTE.map(function(p,i){return {p:p,i:i};}).filter(function(x){return curc==="All"||x.p.cat===curc;});
-    var cards=items.map(function(x){return '<button class="aw-card" data-action="add-widget-pick" data-idx="'+x.i+'"><span class="aw-card-main"><span class="aw-card-nm">'+x.p.title+'</span><span class="aw-card-desc">'+x.p.desc+'</span></span><span class="aw-card-add">'+ICON("add")+'Add</span></button>';}).join("");
-    return '<div class="modal-backdrop" data-action="modal-close"><div class="modal modal-wide aw-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Add widget"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">dashboard_customize</span>Add widget</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b aw-b"><div class="aw-cats">'+catList+'</div><div class="aw-grid">'+cards+'</div></div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">Done</button></div></div></div>';
+    var items=PALETTE.map(function(p,i){return {p:p,i:i};}).filter(function(x){return curc==="All"||x.p.cat===curc;}).filter(function(x){return !q||(x.p.title+" "+x.p.desc).toLowerCase().indexOf(q)>-1;});
+    var cards=items.map(function(x){var n=added[x.i]||0;
+      var addLbl=n>0?('<span class="aw-card-add is-added">'+ICON("check")+'Added'+(n>1?" · "+n:"")+'</span>'):('<span class="aw-card-add">'+ICON("add")+'Add</span>');
+      return '<button class="aw-card'+(n>0?" is-added":"")+'" data-action="add-widget-pick" data-idx="'+x.i+'">'+awPreviewHTML(x.p)+'<span class="aw-card-body"><span class="aw-card-main"><span class="aw-card-nm">'+x.p.title+'</span><span class="aw-card-desc">'+x.p.desc+'</span></span>'+addLbl+'</span></button>';
+    }).join("");
+    if(!items.length)cards='<div class="aw-empty">'+ICON("search_off")+'<div>No widgets match “'+qEsc+'”.</div></div>';
+    var totalAdded=Object.keys(added).reduce(function(s,k){return s+added[k];},0);
+    var footL=totalAdded>0?('<span class="aw-added-sum">'+ICON("check_circle")+totalAdded+' widget'+(totalAdded>1?"s":"")+' added to “'+cur().name+'”</span>'):'<span class="aw-added-sum aw-added-none">Widgets you add appear on your dashboard right away.</span>';
+    var search='<div class="aw-search dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" id="awq" placeholder="Search widgets" value="'+qEsc+'" autocomplete="off" aria-label="Search widgets"></div>';
+    return '<div class="modal-backdrop" data-action="modal-close"><div class="modal modal-wide aw-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Add widget"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">dashboard_customize</span>Add widget</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b aw-b"><div class="aw-cats">'+catList+'</div><div class="aw-right"><div class="aw-toolbar">'+search+'</div><div class="aw-grid">'+cards+'</div></div></div><div class="modal-f aw-f">'+footL+'<button class="btn primary sm" data-action="modal-close">Done</button></div></div></div>';
   }
   /* Glance drill overlay: the widget's fuller Explore view in a scrim, so more detail is one tap away. */
   function glanceDrillModalHTML(){var mw=modal.mw;if(!mw)return '<div class="modal-backdrop" data-action="modal-close"></div>';
