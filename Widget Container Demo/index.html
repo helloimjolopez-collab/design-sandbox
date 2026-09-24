@@ -8929,9 +8929,12 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   var FA_PIE=["var(--am-600)","var(--am-400)","var(--am-300)","var(--am-500)","var(--am-200)","var(--am-700)","var(--am-100)"];
   function faDimLabel(d){for(var i=0;i<FA_DIMS.length;i++)if(FA_DIMS[i][0]===d)return FA_DIMS[i][1];return "Class";}
   function faMeasureLabel(m){for(var i=0;i<FA_MEASURES.length;i++)if(FA_MEASURES[i][0]===m)return FA_MEASURES[i][1];return "Net Value";}
-  function faDim(w){return w.faGroupBy||"cls";}
-  function faMeasure(w){return w.faMeasure||"net";}
-  function faGroup(w){return w.faGroup||FA_ALL;}
+  /* W11 (G10): Group-by dimension removed. Classifications are table columns; the one filter narrows by
+     Class. NBV is the lead measure everywhere. */
+  function faDim(w){return "cls";}
+  function faMeasure(w){return "net";}
+  function faGroup(w){var g=w&&w.faGroup;if(g===FA_ALL||g===FA_NA)return g;if(g&&FA_CATALOG.cls.indexOf(g)>-1)return g;return FA_ALL;}
+  function faView(w){return w.faView||"table";}
   function faHasNA(dim){return FA_ASSETS.some(function(a){return a[dim]==null;});}
   function faTableAssets(w){var dim=faDim(w),g=faGroup(w);
     if(g===FA_ALL)return FA_ASSETS.slice();
