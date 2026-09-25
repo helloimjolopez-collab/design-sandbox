@@ -5523,6 +5523,16 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
    {id:"bk-spe",  name:"Special Events Checking",    type:"Checking",     acct:"••4025", acctFull:"0044174025", a:[26000,12800,300,-9400,-2100,0]}
   ];
   function setStatus(s){document.getElementById("status").textContent=s;}
+  /* Transient confirmation toast (bottom-right), auto-dismissing. */
+  var _toastTimer=null;
+  function toast(msg,icon){
+    var host=document.getElementById("toastHost");
+    if(!host){host=document.createElement("div");host.id="toastHost";host.className="toast-host";document.body.appendChild(host);}
+    host.innerHTML='<div class="toast" role="status" aria-live="polite"><span class="material-symbols-rounded">'+(icon||"check_circle")+'</span><span class="toast-msg">'+msg+'</span></div>';
+    var el=host.firstChild;requestAnimationFrame(function(){el.classList.add("in");});
+    if(_toastTimer)clearTimeout(_toastTimer);
+    _toastTimer=setTimeout(function(){if(el){el.classList.remove("in");setTimeout(function(){if(host)host.innerHTML="";},240);}},3400);
+  }
 
   /* generic content */
   var RANGE_BARS={W:[40,55,48,62,58,70,66],M:[52,60,45,68,72,64,80,76],Q:[52,68,45,80,62,90,70,84],F:[50,64,58,74,66,86,78,90],Y:[60,64,70,66,78,72,85,80,88,84,92,96]};
