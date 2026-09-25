@@ -9415,7 +9415,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var p=PALETTE[idx];if(!p)return;awHoverIdx=idx;awHideHover();
     var el=document.createElement("div");el.id="awHover";el.className="aw-hovercard";
     var content="";try{content=awGlanceContent(p);}catch(_e){content='<div style="padding:16px;color:var(--txt-subtle)">Preview unavailable</div>';}
-    el.innerHTML='<div class="aw-hc-head"><span class="aw-hc-nm">'+p.title+'</span><span class="aw-hc-cat">'+p.cat+'</span></div><div class="aw-hc-prev"><div class="wcontent">'+content+'</div></div>';
+    el.innerHTML='<div class="aw-hc-head"><span class="aw-hc-nm">'+awAppBadge(p)+p.title+'</span><span class="aw-hc-cat">'+p.cat+'</span></div><div class="aw-hc-prev"><div class="wcontent">'+content+'</div></div>';
     document.body.appendChild(el);
     var r=host.getBoundingClientRect(),W=el.offsetWidth,H=el.offsetHeight,vw=window.innerWidth,vh=window.innerHeight;
     var left=Math.round(r.left+r.width/2-W/2);left=Math.max(8,Math.min(left,vw-W-8));
@@ -9452,7 +9452,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
       }).join("")+'</div>';
     }else{
       body='<div class="aw-grid">'+items.map(function(x){var n=added[x.i]||0;
-        return '<div class="aw-card'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'"><div class="aw-card-head"><div class="aw-card-main"><div class="aw-card-nm">'+x.p.title+'</div><div class="aw-card-desc">'+x.p.desc+'</div></div>'+awAddBtn(x,n)+'</div>'+awPreviewHTML(x.p)+'</div>';
+        return '<div class="aw-card'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'"><div class="aw-card-head"><div class="aw-card-main"><div class="aw-card-nm">'+awAppBadge(x.p)+x.p.title+'</div><div class="aw-card-desc">'+x.p.desc+'</div></div>'+awAddBtn(x,n)+'</div>'+awPreviewHTML(x.p)+'</div>';
       }).join("")+'</div>';
     }
     var search='<div class="aw-search dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" id="awq" placeholder="Search widgets" value="'+qEsc+'" autocomplete="off" aria-label="Search widgets"></div>';
