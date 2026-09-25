@@ -638,10 +638,11 @@
   /* a11y: also reveal on keyboard focus within the header */
   .whead:focus-within .wmini{opacity:1;pointer-events:auto;}
   .wmini:focus-visible{opacity:1;pointer-events:auto;}
-  /* Persistent "view details" affordance on glance widgets — always visible so drilling in never requires a resize */
-  .wmini-persist{opacity:.55;pointer-events:auto;}
-  .widget[data-size="kpi"] .wmini-persist{opacity:.7;pointer-events:auto;}
-  .whead:hover .wmini-persist,.wmini-persist:hover,.wmini-persist:focus-visible{opacity:1;pointer-events:auto;}
+  /* "View details" hint on glance widgets — surfaces when the KPI content is hovered, so drilling in never requires a resize */
+  .glance-hint{position:absolute;right:10px;bottom:8px;z-index:4;display:inline-flex;align-items:center;gap:4px;font-family:inherit;font-size:11px;font-weight:600;color:var(--brand-500);background:var(--surface-widget);border:1px solid var(--brand-100);border-radius:999px;padding:3px 10px 3px 7px;cursor:pointer;opacity:0;transform:translateY(3px);pointer-events:none;transition:opacity .14s var(--ease),transform .14s var(--ease);box-shadow:0 2px 8px rgba(41,39,36,.12);}
+  .glance-hint .material-symbols-rounded{font-size:14px;}
+  .widget[data-size="kpi"] .wcontent:hover .glance-hint,.glance-hint:focus-visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+  @media(hover:none){.widget[data-size="kpi"] .glance-hint{opacity:1;transform:none;pointer-events:auto;}}
   /* Glance chart segments: hover feedback (brighten hovered, dim siblings) so slices/bars feel interactive */
   .prf-gseg,.arF-seg,.loan-seg{transition:opacity .12s ease,filter .12s ease;cursor:help;}
   .prf-gbar:hover .prf-gseg,.arF-stack:hover .arF-seg,.loan-stack:hover .loan-seg{opacity:.45;}
