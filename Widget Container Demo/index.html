@@ -9449,6 +9449,8 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   document.addEventListener("mouseover",function(e){if(!(modal&&modal.type==="addwidget"))return;if(!e.target.closest)return;var host=e.target.closest(".aw-card,.aw-row");if(host&&host.getAttribute("data-action")==="add-widget-pick")awShowHover(host);});
   document.addEventListener("mouseout",function(e){if(!document.getElementById("awHover"))return;if(!e.target.closest)return;var host=e.target.closest(".aw-card,.aw-row");if(!host)return;var to=e.relatedTarget;if(!(to&&to.closest&&to.closest(".aw-card,.aw-row")===host))awHideHover();});
   document.addEventListener("scroll",function(){if(document.getElementById("awHover"))awHideHover();},true);
+  /* Combobox: focusing the toolbar search opens its results dropdown (typing filters live). */
+  document.addEventListener("focusin",function(e){if(e.target&&e.target.id==="wfindq"){if(!(pop&&pop.type==="wfind")){pop={type:"wfind"};e.target.setAttribute("aria-expanded","true");renderOverlay();}}});
   /* Which accounting application each widget belongs to (shown as a small module badge in the picker). */
   var WIDGET_APP={bank:"GL","deposits-mb":"GL","budget-mb":"GL","payroll-mb":"PR",pto:"PR","pension-mb":"PR","insurance-mb":"PR","receivables-mb":"AR",payables:"AP","remittance-mb":"AR",gifts:"AR",fixedassets:"FA",loans:"GL",purchasing:"PO",tasks:""};
   var APP_NAME={GL:"General Ledger",AP:"Accounts Payable",AR:"Accounts Receivable",PR:"Payroll",FA:"Fixed Assets",PO:"Purchasing"};
