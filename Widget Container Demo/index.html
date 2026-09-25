@@ -9457,6 +9457,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   document.addEventListener("scroll",function(){if(document.getElementById("awHover"))awHideHover();},true);
   /* Combobox: focusing the toolbar search opens its results dropdown (typing filters live). */
   document.addEventListener("focusin",function(e){if(e.target&&e.target.id==="wfindq"){if(!(pop&&pop.type==="wfind")){pop={type:"wfind"};e.target.setAttribute("aria-expanded","true");renderOverlay();}}});
+  document.addEventListener("keydown",function(e){if(!(pop&&pop.type==="wfind"))return;if(e.key==="Escape"){pop=null;render();var _wq=document.getElementById("wfindq");if(_wq)_wq.blur();return;}if(e.key==="Enter"){var _first=document.querySelector("#wfindList .wfind-opt");if(_first){if(e.preventDefault)e.preventDefault();_first.click();}return;}});
   /* Which accounting application each widget belongs to (shown as a small module badge in the picker). */
   var WIDGET_APP={bank:"GL","deposits-mb":"GL","budget-mb":"GL","payroll-mb":"PR",pto:"PR","pension-mb":"PR","insurance-mb":"PR","receivables-mb":"AR",payables:"AP","remittance-mb":"AR",gifts:"AR",fixedassets:"FA",loans:"GL",purchasing:"PO",tasks:""};
   var APP_NAME={GL:"General Ledger",AP:"Accounts Payable",AR:"Accounts Receivable",PR:"Payroll",FA:"Fixed Assets",PO:"Purchasing"};
