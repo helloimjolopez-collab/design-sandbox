@@ -9425,6 +9425,10 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   document.addEventListener("mouseover",function(e){if(!(modal&&modal.type==="addwidget"))return;if(!e.target.closest)return;var host=e.target.closest(".aw-card,.aw-row");if(host&&host.getAttribute("data-action")==="add-widget-pick")awShowHover(host);});
   document.addEventListener("mouseout",function(e){if(!document.getElementById("awHover"))return;if(!e.target.closest)return;var host=e.target.closest(".aw-card,.aw-row");if(!host)return;var to=e.relatedTarget;if(!(to&&to.closest&&to.closest(".aw-card,.aw-row")===host))awHideHover();});
   document.addEventListener("scroll",function(){if(document.getElementById("awHover"))awHideHover();},true);
+  /* Which accounting application each widget belongs to (shown as a small module badge in the picker). */
+  var WIDGET_APP={bank:"GL","deposits-mb":"GL","budget-mb":"GL","payroll-mb":"PR",pto:"PR","pension-mb":"PR","insurance-mb":"PR","receivables-mb":"AR",payables:"AP","remittance-mb":"AR",gifts:"AR",fixedassets:"FA",loans:"GL",purchasing:"PO",tasks:""};
+  var APP_NAME={GL:"General Ledger",AP:"Accounts Payable",AR:"Accounts Receivable",PR:"Payroll",FA:"Fixed Assets",PO:"Purchasing"};
+  function awAppBadge(p){var a=WIDGET_APP[p.kind];if(!a)return"";return '<span class="aw-app aw-app-'+a+'" title="'+(APP_NAME[a]||a)+'">'+a+'</span>';}
   function awAddBtn(x,n){return '<button class="aw-add-btn'+(n>0?" is-added":"")+'" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="'+(n>0?"Added":"Add")+" "+x.p.title.replace(/"/g,"&quot;")+'">'+(n>0?ICON("check")+"Added"+(n>1?" · "+n:""):ICON("add")+"Add")+'</button>';}
   /* Left-rail categories with a live per-category "added" count, plus an "Added" filter to review
      everything added in one place. Regenerated cheaply on each add (no preview re-render). */
