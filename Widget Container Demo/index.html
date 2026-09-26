@@ -9442,6 +9442,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   var awHoverIdx=null;
   function awHideHover(){var h=document.getElementById("awHover");if(h)h.parentNode.removeChild(h);awHoverIdx=null;}
   function awShowHover(host){
+    if(!host||!host.isConnected)return;
     var idx=+host.getAttribute("data-idx");if(isNaN(idx))return;
     if(awHoverIdx===idx&&document.getElementById("awHover"))return;
     var p=PALETTE[idx];if(!p)return;awHoverIdx=idx;awHideHover();
