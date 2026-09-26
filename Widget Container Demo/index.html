@@ -9842,8 +9842,11 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="delete-dash"){if(isSystem()){pop=null;render();return;}var dn=cur().name;dashboards=dashboards.filter(function(d){return d.id!==currentId;});if(defaultId===currentId)defaultId="sys";currentId=defaultId;manage=false;pop=null;setStatus("Deleted “"+dn+"”.");render();return;}
     if(a==="new-dash"){addCount++;var nw={id:"nd"+Date.now(),name:"New dashboard "+addCount,custom:true,widgets:[]};dashboards.push(nw);currentId=nw.id;manage=true;focusDash=true;pop=null;setStatus("New dashboard created.");render();return;}
     if(a==="add-widget"){if(!manage)manage=true;modal={type:"addwidget",cat:"All",id:cur().id};modalMounted=false;pop=null;render();return;}
-    if(a==="add-widget-cat"){if(modal)modal.cat=t.getAttribute("data-c");renderModal();return;}
-    if(a==="add-widget-view"){if(modal)modal.awView=t.getAttribute("data-v");renderModal();return;}
+    if(a==="add-widget-cat"){if(modal)modal.cat=t.getAttribute("data-c");
+      /* Switch category with pure show/hide — no modal rebuild, so previews never re-render or flash. */
+      var _cc=modal?modal.cat:"All";document.querySelectorAll(".aw-cats .aw-cat").forEach(function(b){b.classList.toggle("sel",b.getAttribute("data-c")===_cc);});
+      var _sc=document.querySelector(".aw-scroll");if(_sc)_sc.scrollTop=0;awApplyFilter();return;}
+    if(a==="add-widget-view"){if(modal)modal.awView=t.getAttribute("data-v");renderModal();awApplyFilter();return;}
     if(a==="add-widget-pick"){var _pidx=+t.getAttribute("data-idx"),p=PALETTE[_pidx];if(p){addCount++;var nw2=Object.assign({id:"n"+Date.now()+addCount,kind:p.kind,title:p.title,size:"kpi",tiers:["kpi","wide","xwide"],state:"ready",updated:"just now"},p.props());cur().widgets.push(nw2);setStatus('Added “'+p.title+'” to “'+cur().name+'”.');
       if(modal&&modal.type==="addwidget"){if(typeof awHoverCancel==="function")awHoverCancel();if(typeof awHideHover==="function")awHideHover();if(!modal.added)modal.added={};var _n=(modal.added[_pidx]||0)+1;modal.added[_pidx]=_n;
         /* Update the clicked card/row in place — no full re-render, so the modal doesn't flash or lose scroll.
