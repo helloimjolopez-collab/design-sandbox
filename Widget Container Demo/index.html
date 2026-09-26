@@ -9481,20 +9481,37 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var rest=cats.map(function(c){var cc=catCount[c]||0;return '<button class="aw-cat'+(curc===c?" sel":"")+'" data-action="add-widget-cat" data-c="'+c.replace(/"/g,"&quot;")+'">'+c+'<span class="aw-cat-n" data-cat-badge="'+c.replace(/"/g,"&quot;")+'"'+(cc>0?"":" hidden")+'>('+cc+')</span></button>';}).join("");
     return all+addedFilter+'<div class="aw-cat-sep"></div>'+rest;
   }
+  var AW_EMPTY='<div class="aw-empty" hidden><span class="material-symbols-rounded">search_off</span><div class="aw-empty-msg"></div></div>';
+  /* Show/hide filtering — never re-renders the cards (so live previews are built once and switching
+     category/search never flashes). Called after any filter change. */
+  function awApplyFilter(){
+    if(!(modal&&modal.type==="addwidget"))return;
+    var scope=modal.cat||"All",q=((modal.q||"")+"").trim().toLowerCase(),added=modal.added||{};
+    var host=document.querySelector(".aw-scroll");if(!host)return;var any=false;
+    host.querySelectorAll(".aw-card,.aw-row").forEach(function(el){
+      var idx=+el.getAttribute("data-idx"),cat=el.getAttribute("data-cat"),txt=el.getAttribute("data-search")||"";
+      var okCat=scope==="All"?true:(scope==="__added"?((added[idx]||0)>0):(cat===scope));
+      var show=okCat&&(!q||txt.indexOf(q)>-1);el.hidden=!show;if(show)any=true;
+    });
+    var empty=host.querySelector(".aw-empty");
+    if(empty){empty.hidden=any;if(!any){var ic=empty.querySelector(".material-symbols-rounded"),msg=empty.querySelector(".aw-empty-msg");
+      if(scope==="__added"){if(ic)ic.textContent="widgets";if(msg)msg.textContent="You haven’t added any widgets yet.";}
+      else{if(ic)ic.textContent="search_off";if(msg)msg.textContent="No widgets match “"+(modal.q||"")+"”.";}}}
+  }
   function addWidgetModalHTML(){
-    var curc=(modal&&modal.cat)||"All",q=((modal&&modal.q)||"").trim().toLowerCase(),qEsc=((modal&&modal.q)||"").replace(/</g,"&lt;").replace(/"/g,"&quot;"),added=(modal&&modal.added)||{},view=(modal&&modal.awView)||"tiles";
+    var qEsc=((modal&&modal.q)||"").replace(/</g,"&lt;").replace(/"/g,"&quot;"),added=(modal&&modal.added)||{},view=(modal&&modal.awView)||"tiles";
     var catList=awCatListHTML();
-    var items=PALETTE.map(function(p,i){return {p:p,i:i};}).filter(function(x){return curc==="__added"?(added[x.i]||0)>0:(curc==="All"||x.p.cat===curc);}).filter(function(x){return !q||(x.p.title+" "+x.p.desc).toLowerCase().indexOf(q)>-1;});
+    var allItems=PALETTE.map(function(p,i){return {p:p,i:i};});
+    function meta(x){return ' data-idx="'+x.i+'" data-cat="'+x.p.cat.replace(/"/g,"&quot;")+'" data-search="'+(x.p.title+" "+x.p.desc).toLowerCase().replace(/"/g,"&quot;")+'"';}
     var body;
-    if(!items.length){body='<div class="aw-empty">'+ICON(curc==="__added"?"widgets":"search_off")+'<div>'+(curc==="__added"?"You haven’t added any widgets yet.":"No widgets match “"+qEsc+"”.")+'</div></div>';}
-    else if(view==="list"){
-      body='<div class="aw-list">'+items.map(function(x){var n=added[x.i]||0;
-        return '<div class="aw-row'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'">'+awAppBadge(x.p)+'<span class="aw-row-main"><span class="aw-row-nm">'+x.p.title+'</span><span class="aw-row-desc">'+x.p.desc+'</span></span><span class="aw-row-cat">'+x.p.cat+'</span>'+awAddBtn(x,n)+'</div>';
-      }).join("")+'</div>';
+    if(view==="list"){
+      body='<div class="aw-list">'+allItems.map(function(x){var n=added[x.i]||0;
+        return '<div class="aw-row'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick"'+meta(x)+' aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'">'+awAppBadge(x.p)+'<span class="aw-row-main"><span class="aw-row-nm">'+x.p.title+'</span><span class="aw-row-desc">'+x.p.desc+'</span></span><span class="aw-row-cat">'+x.p.cat+'</span>'+awAddBtn(x,n)+'</div>';
+      }).join("")+AW_EMPTY+'</div>';
     }else{
-      body='<div class="aw-grid">'+items.map(function(x){var n=added[x.i]||0;
-        return '<div class="aw-card'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick" data-idx="'+x.i+'" aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'"><div class="aw-card-head"><div class="aw-card-main"><div class="aw-card-nm">'+awAppBadge(x.p)+x.p.title+'</div><div class="aw-card-desc">'+x.p.desc+'</div></div>'+awAddBtn(x,n)+'</div>'+awPreviewHTML(x.p)+'</div>';
-      }).join("")+'</div>';
+      body='<div class="aw-grid">'+allItems.map(function(x){var n=added[x.i]||0;
+        return '<div class="aw-card'+(n>0?" is-added":"")+'" role="button" tabindex="0" data-action="add-widget-pick"'+meta(x)+' aria-label="Add '+x.p.title.replace(/"/g,"&quot;")+'"><div class="aw-card-head"><div class="aw-card-main"><div class="aw-card-nm">'+awAppBadge(x.p)+x.p.title+'</div><div class="aw-card-desc">'+x.p.desc+'</div></div>'+awAddBtn(x,n)+'</div>'+awPreviewHTML(x.p)+'</div>';
+      }).join("")+AW_EMPTY+'</div>';
     }
     var search='<div class="aw-search dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" id="awq" placeholder="Search widgets" value="'+qEsc+'" autocomplete="off" aria-label="Search widgets"></div>';
     var viewToggle='<div class="vtoggle aw-viewtoggle" role="group" aria-label="View as"><button class="vt'+(view==="tiles"?" on":"")+'" data-action="add-widget-view" data-v="tiles" data-tip="Tiles" aria-label="Tiles" aria-pressed="'+(view==="tiles")+'">'+ICON("grid_view")+'</button><button class="vt'+(view==="list"?" on":"")+'" data-action="add-widget-view" data-v="list" data-tip="List" aria-label="List" aria-pressed="'+(view==="list")+'">'+ICON("view_list")+'</button></div>';
