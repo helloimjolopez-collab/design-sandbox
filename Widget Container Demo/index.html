@@ -9844,7 +9844,17 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="expmenu"){pop=(pop&&pop.type==="expmenu"&&pop.id===id)?null:{type:"expmenu",id:id};render();return;}
     if(a==="export-do"){var wex=find(id);showModal("Export "+t.getAttribute("data-fmt"),"This would export the current view of <b>"+(wex?wex.title:"")+"</b> as <b>"+t.getAttribute("data-fmt")+"</b>.");return;}
     if(a==="wsize"){pop=(pop&&pop.type==="size"&&pop.id===id)?null:{type:"size",id:id};render();return;}
-    if(a==="pick-size"){var w=find(id);if(w)w.size=t.getAttribute("data-size");pop=null;setStatus("“"+w.title+"” → "+DEPTH_LABEL[w.size]+".");render();return;}
+    if(a==="pick-size"){var w=find(id);if(!w){pop=null;render();return;}var arr=cur().widgets;
+      /* Keep the resized widget ANCHORED in place: measure its row before the change, and if growing it
+         bumps it down a row (because it no longer fits beside its left-hand neighbours), move it to the
+         start of that same row so IT stays put and the neighbours reflow around it — never the reverse.
+         Purely measurement-driven, so when the layout isn't measurable it just no-ops. */
+      function _rectOf(wid){var n=document.querySelector('#dashboard .widget[data-id="'+wid+'"]');return n?n.getBoundingClientRect():null;}
+      var _wr=_rectOf(w.id),_leftMates=[];
+      if(_wr&&_wr.width){arr.forEach(function(o){if(o===w)return;var r=_rectOf(o.id);if(r&&r.width&&Math.abs(r.top-_wr.top)<8&&r.left<_wr.left-1)_leftMates.push({o:o,left:r.left});});_leftMates.sort(function(a,b){return a.left-b.left;});}
+      w.size=t.getAttribute("data-size");pop=null;setStatus("“"+w.title+"” → "+DEPTH_LABEL[w.size]+".");render();
+      if(_wr&&_wr.width&&_leftMates.length){var _nr=_rectOf(w.id);if(_nr&&_nr.top>_wr.top+8){var _wi=arr.indexOf(w);if(_wi>-1)arr.splice(_wi,1);var _fi=arr.indexOf(_leftMates[0].o);if(_fi<0)_fi=0;arr.splice(_fi,0,w);render();}}
+      return;}
     if(a==="depfilter"){filterQuery="";pop=(pop&&pop.type==="depfilter"&&pop.id===id)?null:{type:"depfilter",id:id};render();return;}
     if(a==="set-scope"){var wsc2=find(id),mode=t.getAttribute("data-mode"),val=t.getAttribute("data-v");if(wsc2){if(mode==="account"){wsc2.acct=val;wsc2.acctType=t.getAttribute("data-type");wsc2.acctNo=t.getAttribute("data-acctno");}else{if(mode==="all")wsc2.filter="All types";else if(mode==="type")wsc2.filter=val;wsc2.acct=null;wsc2.acctType=null;wsc2.acctNo=null;}wsc2.trIso=null;}pop=null;render();return;}
     if(a==="pick-acct"){var wpa=find(id);if(wpa)openAcct(wpa,t.getAttribute("data-v"),t.getAttribute("data-type"),t.getAttribute("data-acctno"));return;}
