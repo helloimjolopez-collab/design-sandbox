@@ -7220,9 +7220,9 @@ function purVisible(w){return purOrders(w).filter(function(o){return !o.rej;});}
 function purStatusLabel(s){for(var i=0;i<PUR_STATUS.length;i++)if(PUR_STATUS[i][0]===s)return PUR_STATUS[i][1];return PUR_STATUS[1][1];}
 function purForStatus(w){var s=w.pstatus||"mine";return purVisible(w).filter(function(o){return o.status===s;});}
 /* W13: KPI selection tiles replace the old status dropdown + "$X to approve" badge.
-   Tiles: All / Pending / Approved / Rejected. "Pending" respects the Pending-me/All scope
-   (w.pscope, default "me"). Rejected is a deliberate expansion beyond today's product. */
-var PUR_TILES=[["all","All"],["pending","Pending"],["approved","Approved"],["rejected","Rejected"]];
+   Tiles: All / Pending / Approved. (Rejected is not surfaced by today's product, so it's out.)
+   "Pending" respects the Awaiting-me / Everyone scope (w.pscope, default "me"). */
+var PUR_TILES=[["all","All"],["pending","Pending"],["approved","Approved"]];
 function purTileOf(w){return w.ptile||"pending";}
 function purScopeOf(w){return w.pscope||"me";}
 function purTileMatch(o,tile,w){
