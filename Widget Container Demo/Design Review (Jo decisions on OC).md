@@ -109,6 +109,11 @@ Grounded facts from the brief: approval is department-based and permission-gated
 - **G11:** all toggles use the canonical styling. The "$5,195 to approve" KPI badge is replaced by the KPI selection tiles.
 - **Flag:** the approve / reject API is unconfirmed; chart scope (recommend Encumbrances shows all commitments, independent of the queue filter); the payment-location dispute stays out of scope.
 
+> **UPDATE 2026-09-28 (Jo, reverses two of the above — for Oisin's awareness):**
+> - **Encumbrances REMOVED from Purchasing** (reverses "Keep Encumbrances"). Rationale: this widget's job is *approving requests*; a committed-not-spent chart answers a **budget** question, not an approvals one, and it was costing a whole row + a non-canonical toggle. Committed-budget awareness, if we want it, belongs **in the purchase-order approval detail** as a decision-time budget check ("this order draws on *Technology* — $X of $Y remaining after commitments"), scoped to the line the PO hits — NOT as a standalone chart here, and NOT the general-ledger Budget-vs-Actual view (that's the macro "are we on track" view, wrong altitude for an approver). That contextual budget check needs PO→budget-line linkage data (backend gap) — future enhancement, not faked now.
+> - **Rejected tile REMOVED** (today's product doesn't surface rejected orders). Tiles are now **All / Pending / Approved**.
+> - The **Approvals | Encumbrances** data selector and the **"$X · pending requests" KPI number** are gone (the tiles are the headline, per G11). The pending-scope control is kept but relabelled **Awaiting me / Everyone** (was "Pending me / All") and only shows on the Pending tile.
+
 ## W15 Bank Balances (keep Jo's)
 - **Keep Jo's** money-first glance (total, delta versus beginning balance, overdrawn flag) and the searchable, sortable table. **Fix the below-the-fold clipping on the glance (G12).**
 - **Accept from OC:** the accessible real-table markup (header cells and scope); red off the bars (amethyst ramp), red kept only on the Overdrawn chip; totals and bar scale over the whole set; the bigger 52-account dataset.
