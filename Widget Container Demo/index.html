@@ -7375,7 +7375,6 @@ function purGlance(w){var pend=purOrders(w).filter(function(o){return purTileMat
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
 function purBody(w){
-  if((w.pdata||"queue")==="committed")return purEnc(w);
   if((w.qview||"table")==="kanban")return purKanban(w);
   return purFiltered(w).length?purTable(w,w.size==="xwide"):purCaughtUp(w);
 }
