@@ -7301,17 +7301,15 @@ function purKpiTiles(w){var cur=purTileOf(w);
    Labelled "Everyone" (not "All") to avoid clashing with the "All" status tile. */
 function purScopeToggle(w){if(purTileOf(w)!=="pending")return "";var sc=purScopeOf(w);
   return '<div class="vtoggle pur-scope" role="group" aria-label="Pending scope"><button class="vt'+(sc==="me"?" on":"")+'" data-action="pur-scope" data-id="'+w.id+'" data-s="me" aria-pressed="'+(sc==="me")+'">Awaiting me</button><button class="vt'+(sc==="all"?" on":"")+'" data-action="pur-scope" data-id="'+w.id+'" data-s="all" aria-pressed="'+(sc==="all")+'">Everyone</button></div>';}
+/* Header = the status tiles (the headline: each carries its own count + amount, per G11) plus the
+   approvals-queue controls. No separate "$X pending" KPI number (the tiles replaced it), and no
+   Approvals|Encumbrances data selector (this widget is the approvals queue). */
 function purHeaderBlock(w,mode){
-  var loading=(mode==="loading"),d=w.pdata||"queue";
-  var numInner,leftControls="",rightToggle="",tilesRow="";
-  if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:46px;height:24px;border-radius:6px"></span><span class="sk" style="width:150px;height:15px;border-radius:6px"></span></div>';}
-  else if(d==="committed"){var enc=purEncTotal(w);numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(enc)+'</span><span class="bank-pill">encumbered, not yet paid</span></div>';}
-  else{var filtered=purFiltered(w),count=filtered.length,out=purSum(filtered);numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+count+'</span><span class="bgt-caption pur-kpi-cap">'+money(out)+' · '+purCountLabel(w)+'</span></div>';leftControls=purPathChip(w)+purScopeToggle(w);rightToggle=purQviewToggle(w);tilesRow='<div class="pur-tiles-row">'+purKpiTiles(w)+'</div>';}
-  return '<div class="pur-tabrow">'+purDataTabs(w)+'</div>'+
-    '<div class="dep-hd pur-hd">'+
+  var leftControls=purPathChip(w)+purScopeToggle(w),rightToggle=purQviewToggle(w);
+  return '<div class="dep-hd pur-hd">'+
       '<div class="dep-hd-top"><div class="pur-filters">'+leftControls+'</div><div class="dep-hd-toggle">'+rightToggle+'</div></div>'+
-      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
-    '</div>'+tilesRow;
+    '</div>'+
+    '<div class="pur-tiles-row">'+purKpiTiles(w)+'</div>';
 }
 function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="pur-sk-line"><span class="sk" style="height:12px;flex:1"></span><span class="sk" style="height:12px;width:74px"></span></div>';}).join("");return '<div class="pur-skel"><div class="pur-skel-rows">'+rows+'</div><div class="pur-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
 function purAgeCell(o){var warn=o.age>=30;return '<span class="pur-c-age'+(warn?" pur-age-warn":"")+'" data-tip="Waiting '+o.age+' day'+(o.age===1?"":"s")+' since it was issued." data-tip-plain>'+ICON("schedule")+o.age+'d<span class="sr-only"> waiting</span></span>';}
