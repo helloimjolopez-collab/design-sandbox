@@ -7296,8 +7296,11 @@ function purKanban(w){
 function purKpiTiles(w){var cur=purTileOf(w);
   return '<div class="pur-tiles" role="group" aria-label="Filter by approval status">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),on=cur===id,rej=(id==="rejected");
     return '<button class="pur-tile'+(on?" sel":"")+(rej?" pur-tile-rej":"")+'" data-action="pur-tile" data-id="'+w.id+'" data-t="'+id+'" aria-pressed="'+on+'"><span class="pur-tile-lbl">'+t[1]+'</span><span class="pur-tile-n">'+cnt+'</span><span class="pur-tile-amt">'+money(amt)+'</span></button>';}).join("")+'</div>';}
+/* Pending-scope filter: shown ONLY when the Pending tile is active, so it reads as a way to narrow the
+   pending queue (awaiting my action vs everyone's) rather than a control competing with the status tiles.
+   Labelled "Everyone" (not "All") to avoid clashing with the "All" status tile. */
 function purScopeToggle(w){if(purTileOf(w)!=="pending")return "";var sc=purScopeOf(w);
-  return '<div class="vtoggle pur-scope" role="group" aria-label="Pending scope"><button class="vt'+(sc==="me"?" on":"")+'" data-action="pur-scope" data-id="'+w.id+'" data-s="me" aria-pressed="'+(sc==="me")+'">Pending me</button><button class="vt'+(sc==="all"?" on":"")+'" data-action="pur-scope" data-id="'+w.id+'" data-s="all" aria-pressed="'+(sc==="all")+'">All</button></div>';}
+  return '<div class="vtoggle pur-scope" role="group" aria-label="Pending scope"><button class="vt'+(sc==="me"?" on":"")+'" data-action="pur-scope" data-id="'+w.id+'" data-s="me" aria-pressed="'+(sc==="me")+'">Awaiting me</button><button class="vt'+(sc==="all"?" on":"")+'" data-action="pur-scope" data-id="'+w.id+'" data-s="all" aria-pressed="'+(sc==="all")+'">Everyone</button></div>';}
 function purHeaderBlock(w,mode){
   var loading=(mode==="loading"),d=w.pdata||"queue";
   var numInner,leftControls="",rightToggle="",tilesRow="";
