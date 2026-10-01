@@ -7341,11 +7341,14 @@ function purScopeToggle(w){if(purTileOf(w)!=="pending")return "";var sc=purScope
    approvals-queue controls. No separate "$X pending" KPI number (the tiles replaced it), and no
    Approvals|Encumbrances data selector (this widget is the approvals queue). */
 function purHeaderBlock(w,mode){
-  var leftControls=purPathChip(w)+purScopeToggle(w),rightToggle=purQviewToggle(w);
+  /* Kanban lanes ARE the statuses, so the status tiles (and the pending-scope filter, which only makes
+     sense alongside the Pending tile) are hidden in kanban; they belong to the table view. */
+  var isK=(w.qview==="kanban");
+  var leftControls=purPathChip(w)+(isK?"":purScopeToggle(w)),rightToggle=purQviewToggle(w);
   return '<div class="dep-hd pur-hd">'+
       '<div class="dep-hd-top"><div class="pur-filters">'+leftControls+'</div><div class="dep-hd-toggle">'+rightToggle+'</div></div>'+
     '</div>'+
-    '<div class="pur-tiles-row">'+purKpiTiles(w)+'</div>';
+    (isK?"":'<div class="pur-tiles-row">'+purKpiTiles(w)+'</div>');
 }
 function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="pur-sk-line"><span class="sk" style="height:12px;flex:1"></span><span class="sk" style="height:12px;width:74px"></span></div>';}).join("");return '<div class="pur-skel"><div class="pur-skel-rows">'+rows+'</div><div class="pur-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
 function purAgeCell(o){var warn=o.age>=30;return '<span class="pur-c-age'+(warn?" pur-age-warn":"")+'" data-tip="Waiting '+o.age+' day'+(o.age===1?"":"s")+' since it was issued." data-tip-plain>'+ICON("schedule")+o.age+'d<span class="sr-only"> waiting</span></span>';}
