@@ -8093,9 +8093,9 @@ function arFBar(w,forceGroup){
       '<span class="sr-only">'+r.label+': '+money(r.total)+', '+r.count+' invoices, '+share+'% of the outstanding balance.</span>'+
     '</div>';
   }).join("");
-  var zline=(!cust&&zeros.length)?'<div class="arF-zeroline">'+ICON("done")+'No balance in '+zeros.map(function(z){return z.label;}).join(", ")+'</div>':"";
+  /* Empty aging bands are not shown at all (no faint "no balance in..." line). */
   var body=rows.length?bars:'<div class="arF-zeroline">'+ICON("info")+'Nothing to show for this selection.</div>';
-  return '<div class="arF-bars" role="img" aria-label="Outstanding balance by '+(cust?"customer, worst overdue first":"aging bucket, current to most overdue")+'">'+body+'</div>'+zline;
+  return '<div class="arF-bars" role="img" aria-label="Outstanding balance by '+(cust?"customer, worst overdue first":"aging bucket, current to most overdue")+'">'+body+'</div>';
 }
 
 function arFSkeleton(){var bars="";[90,64,48,34,22].forEach(function(wd){bars+='<div class="arF-sk-row"><span class="sk" style="width:70px;height:12px;border-radius:4px"></span><span class="sk arF-sk-bar" style="width:'+wd+'%"></span></div>';});return '<div class="arF-skel"><div class="arF-skel-bars">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
