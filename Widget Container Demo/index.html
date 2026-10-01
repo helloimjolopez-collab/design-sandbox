@@ -9603,6 +9603,13 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function addWidgetPlaceholderHTML(){
     return '<section class="widget widget-add" data-size="kpi"><button class="widget-add-btn" data-action="add-widget" aria-label="Add widget">'+ICON("add")+'<span>Add widget</span></button></section>';}
   function widgetHTML(w){
+    /* Financial KPIs band uses glance styling with NO widget header in normal view (the tile labels carry
+       the meaning). A subtle refresh sits in the corner. In edit mode the header returns so it stays
+       draggable / removable like any other widget. */
+    if(w.kind==="finkpi"&&!manage){
+      return '<section class="widget widget-band" data-id="'+w.id+'" data-size="band" data-manage="false" data-dragging="'+(dragId===w.id)+'">'+
+        '<div class="wcontent">'+contentHTML(w)+'<button class="fkpi-refresh" data-action="refresh" data-id="'+w.id+'" data-tip="Refresh · updated '+w.updated+'" aria-label="Refresh financial KPIs">'+ICON("refresh")+'</button></div></section>';
+    }
     /* On Glance, a "View details" hint that surfaces when you hover the KPI content, opening the fuller
        Explore view in an overlay — so drilling in never requires resizing the widget. */
     var drillHint=(!manage&&fitSize(w)==="kpi"&&w.tiers&&w.tiers.indexOf("wide")>-1)?'<button class="glance-hint" data-action="glance-drill" data-id="'+w.id+'" aria-label="View more details">'+ICON("open_in_full")+'View details</button>':'';
