@@ -8125,7 +8125,8 @@ function arFDefaultSort(group){return group==="customer"?"total-desc":"band-asc"
 function arFSortBtn(w,k,label){var sk=(w.arFSort||"total-desc").split("-"),on=sk[0]===k,dir=sk[1]==="asc"?1:-1;var ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";
   return '<button class="wt-sort" data-action="arF-wsort" data-id="'+w.id+'" data-k="'+k+'" aria-label="Sort by '+label+'">'+label+ICON(ic)+'</button>';}
 function arFAgingTable(w){
-  var b=arFBuckets(w),tot=arFTotal(w),sk=(w.arFSort||"band-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,rows=b.slice();
+  /* Only show aging bands that actually have a balance; empty bands are not rendered at all. */
+  var b=arFBuckets(w),tot=arFTotal(w),sk=(w.arFSort||"band-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,rows=b.filter(function(x){return x.total>0;});
   if(key==="amount")rows.sort(function(a,c){return dir*(a.total-c.total);});
   else if(key==="count")rows.sort(function(a,c){return dir*(a.count-c.count);});
   else if(key==="band"&&dir<0)rows.reverse();
