@@ -7331,11 +7331,16 @@ function purForStatus(w){var s=w.pstatus||"mine";return purVisible(w).filter(fun
 var PUR_TILES=[["all","All"],["pending","Pending"],["approved","Approved"]];
 function purTileOf(w){return w.ptile||"pending";}
 function purScopeOf(w){return w.pscope||"me";}
+/* "For me" = requests that involve this approver: awaiting me (mine) or routed to me next (next),
+   plus the approved orders I signed off (synthetic: no per-user approver attribution in the mock,
+   so a deterministic ~half of approved orders are attributed to me). "All" drops this restriction. */
+function purMine(o){if(o.status==="mine"||o.status==="next")return true;if(o.status==="approved")return (purHash(o.id)%2===0);return false;}
 function purTileMatch(o,tile,w){
   if(tile==="rejected")return !!o.rej;
   if(o.rej)return false;
+  if(purScopeOf(w)==="me"&&!purMine(o))return false; /* For-me scope now applies across EVERY tile */
   if(tile==="approved")return o.status==="approved";
-  if(tile==="pending"){if(o.status==="approved")return false;return (purScopeOf(w)==="me")?(o.status==="mine"||o.status==="next"):true;}
+  if(tile==="pending")return o.status!=="approved";
   return true; /* all (non-rejected) */
 }
 function purForTile(w){var tile=purTileOf(w);return purOrders(w).filter(function(o){return purTileMatch(o,tile,w);});}
