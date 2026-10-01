@@ -8320,12 +8320,11 @@ function arFHandleClick(a,id,t){
   if(a==="arF-wl-more"){if(modal)modal.page=(modal.page||1)+1;renderModal();return true;}
   if(a==="arF-export"){if(modal)modal.export=true;renderModal();return true;}
   if(a==="arF-export-cancel"){if(modal)modal.export=false;renderModal();return true;}
-  if(a==="arF-export-do"){var sn=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;if(modal)modal.export=false;setStatus("Exported "+(sn?sn+" selected":"all")+" to Excel (Customer, Invoice #, Due date, Days past due, Outstanding, Last contacted).");renderModal();return true;}
-  if(a==="arF-statements"){var s2=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;setStatus("Preparing statements for "+(s2?s2+" selected":"all")+" customers in Accounts Receivable…");return true;}
-  if(a==="arF-statement"){setStatus("Opening a statement for "+t.getAttribute("data-cust")+" in Accounts Receivable…");return true;}
-  if(a==="arF-followup"){setStatus("Follow-up logged for "+t.getAttribute("data-cust")+".");return true;}
-  if(a==="arF-record-pay"){setStatus("Opening Record Customer Payment for "+t.getAttribute("data-cust")+"…");return true;}
-  if(a==="arF-open-invoice"){setStatus("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Receivable…");return true;}
+  if(a==="arF-export-do"){var sn=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;if(modal)modal.export=false;renderModal();toast("Exported "+(sn?sn+" selected":"all")+" to Excel (Customer, Invoice #, Due date, Days past due, Outstanding)");return true;}
+  if(a==="arF-statement"){toast("Opening a statement for "+t.getAttribute("data-cust")+" in Accounts Receivable","mail");return true;}
+  if(a==="arF-record-pay"){toast("Opening Record Payment for "+t.getAttribute("data-cust")+" in Accounts Receivable","payments");return true;}
+  if(a==="arF-open-invoice"){toast("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Receivable","open_in_new");return true;}
+  if(a==="arF-copy-inv"){var _civ=t.getAttribute("data-inv");try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(_civ);}catch(_e){}toast("Copied invoice "+_civ,"content_copy");return true;}
   return false;
 }
 /* popContent branches (routed from popContent(): arF-rc / arF-source -> arFPopContent) */
