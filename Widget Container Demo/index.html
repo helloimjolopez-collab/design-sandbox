@@ -8261,28 +8261,36 @@ function arFDetailModalInner(){
   var head='<div class="modal-h arF-wl-h"><div class="arF-wl-htext"><span class="modal-title"><span class="material-symbols-rounded arF-wl-tic">receipt_long</span>Receivable Invoices Outstanding</span>'+
     '<span class="arF-wl-sub">'+subj+' · '+custN+' customer'+(custN===1?"":"s")+' · '+money(grand)+'</span></div>'+
     '<button class="iconbtn" data-action="arF-detail-close" aria-label="Close">'+ICON("close")+'</button></div>';
-  var sortLbl={oldest:"Oldest first",owed:"Most owed",name:"Name"}[sort];
-  var controls='<div class="arF-wl-controls"><div class="arF-wl-search"><span class="material-symbols-rounded">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customers" aria-label="Search customers" value="'+arFEsc(modal.q||"")+'"></div>'+
-    '<button class="arF-wl-sort" data-action="arF-sort">'+ICON("swap_vert")+sortLbl+'</button></div>';
-  var page=modal.page||1,PAGE=12,shown=groups.slice(0,page*PAGE);
-  var rows=shown.map(function(g){
-    var open=modal.exp===g.customer,sel=!!(modal.sel&&modal.sel[g.customer]),c=arFContact(g.customer);
-    var age='<span class="arF-wl-age s'+g.worst+'">'+(g.oldest>0?(g.oldest+"d overdue"):"Current")+'</span>';
-    var last=c.last?'<span class="arF-wl-last" data-tip="'+arFEsc(c.last.via+" on "+arFFmtDate(c.last.iso))+'" data-tip-plain>'+ICON("history")+c.last.days+'d ago</span>':'<span class="arF-wl-last none">'+ICON("error_outline")+'Not contacted</span>';
-    var row='<div class="arF-wl-row'+(open?" open":"")+'"><span class="arF-wl-check" role="checkbox" aria-checked="'+sel+'" tabindex="0" data-action="arF-check" data-cust="'+arFEsc(g.customer)+'" aria-label="Select '+arFEsc(g.customer)+'">'+ICON(sel?"check_box":"check_box_outline_blank")+'</span>'+
-      '<button class="arF-wl-main" data-action="arF-cust-exp" data-cust="'+arFEsc(g.customer)+'" aria-expanded="'+open+'"><span class="arF-wl-exp">'+ICON(open?"expand_more":"chevron_right")+'</span><span class="arF-wl-nm">'+g.customer+'</span><span class="arF-wl-meta">'+age+'<span class="arF-wl-cnt">'+g.count+' inv</span>'+last+'</span><span class="arF-wl-amt">'+money(g.total)+'</span></button>';
-    if(open)row+=arFCustPanel(w,g,c);
-    return row+'</div>';
-  }).join("");
-  var more=groups.length>shown.length?'<button class="depf-more" data-action="arF-wl-more"><span class="depf-more-n">Show more ('+(groups.length-shown.length)+' of '+groups.length+' left)</span></button>':'';
-  var listBody=shown.length?('<div class="arF-wl-headrow"><span class="arF-wl-check"></span><span class="arF-wl-hnm">Customer</span><span class="arF-wl-hmeta">Oldest, invoices, last contact</span><span class="arF-wl-hamt">Outstanding</span></div>'+rows+more):('<div class="state" data-kind="empty">'+ICON("search_off")+'<div class="state-title">No customers match</div></div>');
-  var list='<div class="arF-wl-list" id="arFwlScroll">'+listBody+'</div>';
+  var controls='<div class="arF-wl-controls"><div class="arF-wl-search"><span class="material-symbols-rounded">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customers" aria-label="Search customers" value="'+arFEsc(modal.q||"")+'"></div></div>';
   var selN=modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;
-  var selAll=modal.sel&&groups.length&&groups.every(function(g){return modal.sel[g.customer];});
+  var selAll=custN>0&&groups.every(function(g){return modal.sel&&modal.sel[g.customer];});
+  var headIco=selAll?"check_box":(selN?"indeterminate_check_box":"check_box_outline_blank");
+  var headRow='<div class="arF-wl-head"><span class="arF-wl-c-check" role="checkbox" aria-checked="'+(!!selAll)+'" tabindex="0" data-action="arF-selall" aria-label="Select all customers">'+ICON(headIco)+'</span><span class="arF-wl-c-cust">Customer</span><span class="arF-wl-c-age">Oldest</span><span class="arF-wl-c-amt">Outstanding</span><span class="arF-wl-c-exp" aria-hidden="true"></span></div>';
+  var body="";
+  if(!custN){body='<div class="state" data-kind="empty">'+ICON("search_off")+'<div class="state-title">No customers match "'+arFEsc(modal.q||"")+'"</div></div>';}
+  else{ARF_BUCKETS.slice().sort(function(a,b){return b.sev-a.sev;}).forEach(function(bk){
+    var custs=groups.filter(function(g){return g.worst===bk.sev;}).sort(function(a,b){return b.total-a.total;});
+    if(!custs.length)return;
+    var bktot=custs.reduce(function(s,g){return s+g.total;},0);
+    body+='<div class="arF-wl-bkh"><span class="arF-sevdot" style="background:var('+ARF_SEV_COLORS[bk.sev]+')"></span><span class="arF-wl-bkh-t">'+bk.label+'</span><span class="arF-wl-bkh-m">'+custs.length+' customer'+(custs.length>1?"s":"")+' · '+money(bktot)+'</span></div>';
+    body+=custs.map(function(g){
+      var open=modal.exp===g.customer,sel=!!(modal.sel&&modal.sel[g.customer]);
+      var ageTxt=g.oldest>0?(g.oldest+'d overdue'):'Current';
+      return '<div class="arF-wl-item'+(open?" open":"")+'">'+
+        '<div class="arF-wl-row">'+
+          '<span class="arF-wl-c-check" role="checkbox" aria-checked="'+sel+'" tabindex="0" data-action="arF-check" data-cust="'+arFEsc(g.customer)+'" aria-label="Select '+arFEsc(g.customer)+'">'+ICON(sel?"check_box":"check_box_outline_blank")+'</span>'+
+          '<button class="arF-wl-c-cust arF-wl-open" data-action="arF-cust-exp" data-cust="'+arFEsc(g.customer)+'" aria-expanded="'+open+'"><span class="arF-wl-nm">'+g.customer+'</span><span class="arF-wl-sub2">'+g.count+' invoice'+(g.count>1?"s":"")+'</span></button>'+
+          '<span class="arF-wl-c-age"><span class="arF-sevdot sm" style="background:var('+ARF_SEV_COLORS[g.worst]+')"></span>'+ageTxt+'</span>'+
+          '<span class="arF-wl-c-amt">'+money(g.total)+'</span>'+
+          '<button class="arF-wl-c-exp arF-wl-chev" data-action="arF-cust-exp" data-cust="'+arFEsc(g.customer)+'" aria-label="'+(open?"Collapse":"Expand")+' '+arFEsc(g.customer)+'">'+ICON(open?"expand_less":"expand_more")+'</button>'+
+        '</div>'+
+        (open?arFCustPanel(w,g,arFContact(g.customer)):"")+
+      '</div>';
+    }).join("");
+  });}
+  var list='<div class="arF-wl-list" id="arFwlScroll">'+headRow+body+'</div>';
   var scopeTxt=selN>0?(selN+" selected"):("all "+custN);
-  var foot='<div class="modal-f arF-wl-f"><label class="arF-wl-selall"><span role="checkbox" aria-checked="'+(!!selAll)+'" tabindex="0" data-action="arF-selall">'+ICON(selAll?"check_box":"check_box_outline_blank")+'</span>Select all</label><span class="arF-wl-fspace"></span>'+
-    '<button class="btn naked sm" data-action="arF-export">'+ICON("download")+'Export '+scopeTxt+'</button>'+
-    '<button class="btn outlined sm" data-action="arF-statements">'+ICON("mail")+'Print statements ('+(selN||custN)+')</button></div>';
+  var foot='<div class="modal-f arF-wl-f"><span class="arF-wl-fnote">'+(selN?(selN+' selected'):(custN+' customer'+(custN===1?"":"s")+' · '+money(grand)))+'</span><span class="arF-wl-fspace"></span><button class="btn primary sm" data-action="arF-export">'+ICON("download")+'Export '+scopeTxt+'</button></div>';
   var inner=head+'<div class="modal-b arF-wl-b">'+controls+list+'</div>'+foot;
   if(modal.export)inner+=arFExportPreview(w,groups,selN);
   return inner;
