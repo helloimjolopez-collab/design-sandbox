@@ -331,7 +331,7 @@
   .dep-q{flex:1;min-width:0;border:0;background:transparent;font-family:inherit;font-size:13px;color:var(--txt-primary);outline:none;}
   .dep-q::placeholder{font-size:13px;color:var(--txt-subtle);}
   .dep-hd-kpigrp{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;}
-  .dep-hd-r{display:flex;align-items:center;gap:10px;min-width:0;}
+  .dep-hd-r{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px 10px;min-width:0;}
   .dep-search-inline{flex:0 0 auto;width:200px;max-width:46vw;}
   /* Fills the shared right-hand column edge-to-edge, so it renders exactly as wide as the view-toggle pill row above it — search and breakdown-toggle never both render at once, so this can always claim the full column. */
   .hd-search{flex:1 1 auto;width:auto;max-width:none;min-width:0;}
@@ -7505,7 +7505,6 @@ function purGlance(w){var pend=purOrders(w).filter(function(o){return purTileMat
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
 function purBody(w){
-  if((w.qview||"table")==="kanban")return purKanban(w);
   return purFiltered(w).length?purTable(w,w.size==="xwide"):purCaughtUp(w);
 }
 function purContent(w){
