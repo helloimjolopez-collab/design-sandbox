@@ -7291,22 +7291,41 @@ function purHash(s){var h=0,z=String(s);for(var i=0;i<z.length;i++)h=(h*31+z.cha
 function purSteps(o){return o.amount>3000?3:o.amount>1200?2:1;}
 function purDone(o){var Y=purSteps(o);if(o.status==="approved")return Y;if(o.status==="mine")return Math.max(0,Y-1);if(o.status==="next")return Math.max(0,Y-2);return 0;}
 function purPStage(o){if(o.status!=="approved")return "pending";var m=purHash(o.id)%3;return m===0?"paid":m===1?"payapproved":"approved";}
+/* Budget fit: does this request fit the remaining budget on its line? (SYNTHETIC data; see annex.) */
+function purBudget(o){var m=PUR_PATH_META[o.path]||{},dept=m.dept||o.path||"",budget=m.budget||0,committed=m.committed||0,remaining=budget-committed;return {dept:dept,budget:budget,remaining:remaining,fits:o.amount<=remaining,over:o.amount-remaining};}
+/* Drag a card that is awaiting MY approval onto a forward lane to open the SAME review/confirm dialog
+   as a tap (design doc W13: "drag a card or open it, both trigger the same confirm-and-review dialog"). */
+var purDragOid=null,purDragWid=null;
+function purClearDrop(){var hs=document.querySelectorAll(".pur-kcol.pur-drop");for(var i=0;i<hs.length;i++)hs[i].classList.remove("pur-drop");}
+document.addEventListener("dragstart",function(e){var c=e.target.closest&&e.target.closest('.pur-kcard[draggable="true"]');if(!c)return;purDragOid=c.getAttribute("data-oid");purDragWid=c.getAttribute("data-id");if(e.dataTransfer){e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",purDragOid||"");}catch(_){}}c.classList.add("pur-dragging");});
+document.addEventListener("dragend",function(e){var c=e.target.closest&&e.target.closest(".pur-kcard");if(c)c.classList.remove("pur-dragging");purClearDrop();purDragOid=null;purDragWid=null;});
+document.addEventListener("dragover",function(e){if(!purDragOid)return;var lane=e.target.closest&&e.target.closest(".pur-kcol");if(lane&&lane.getAttribute("data-lane")!=="pending"){e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect="move";}});
+document.addEventListener("dragenter",function(e){if(!purDragOid)return;var lane=e.target.closest&&e.target.closest(".pur-kcol");if(lane&&lane.getAttribute("data-lane")!=="pending"){purClearDrop();lane.classList.add("pur-drop");}});
+document.addEventListener("drop",function(e){if(!purDragOid)return;var lane=e.target.closest&&e.target.closest(".pur-kcol");if(!(lane&&lane.getAttribute("data-lane")!=="pending"))return;e.preventDefault();var oid=purDragOid,wid=purDragWid;purDragOid=null;purDragWid=null;purClearDrop();var wd=find(wid);if(wd){modal={type:"pur-po",id:wid,oid:oid,confirmReject:false,note:""};modalMounted=false;pop=null;render();}});
 function purKanban(w){
   var cp=purPathCur(w),all=purVisible(w).filter(function(o){return cp==="All approval paths"||o.path===cp;});
+  var mg=(typeof manage!=="undefined"&&manage);
   var lanes=[["pending","Pending approval","neutral"],["approved","Approved","ok"],["payapproved","Approved for payment","ok"],["paid","Paid / closed","done"]];
   var cols=lanes.map(function(L){
     var key=L[0],items=all.filter(function(o){return purPStage(o)===key;});
     var cards=items.map(function(o){
-      var needsMe=(key==="pending"&&o.status==="mine"),Y=purSteps(o),X=purDone(o);
-      var foot=needsMe?'<span class="pur-kc-need">'+ICON("error")+'your approval</span>':(key==="pending"?'<span class="pur-kc-prog">'+X+' of '+Y+' approved</span>':'');
-      var cls=needsMe?"pur-kcard-action":(key==="paid"?"pur-kcard-done":(key==="pending"?"":"pur-kcard-ok"));
-      return '<button class="pur-kcard '+cls+'" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Purchase order '+o.num+', '+o.vendor+', '+money(o.amount)+(needsMe?', awaiting your approval, tap to review':', tap to open')+'">'+
-        '<span class="pur-kc-top"><span class="pur-kc-num">'+o.num+'</span>'+purKAge(o)+'</span>'+
-        '<span class="pur-kc-vendor">'+o.vendor+'</span>'+
-        '<span class="pur-kc-foot"><span class="pur-kc-amt">'+money(o.amount)+'</span>'+foot+'</span>'+
-      '</button>';
+      var needsMe=(key==="pending"&&o.status==="mine");
+      var m=PUR_PATH_META[o.path]||{},req=m.req||"Unassigned",dept=m.dept||o.path||"",b=purBudget(o);
+      var badge;
+      if(needsMe)badge='<span class="pur-kc-badge need" data-tip="Waiting on your approval" data-tip-plain>'+ICON("how_to_reg")+'Awaiting you</span>';
+      else if(key==="pending")badge='<span class="pur-kc-badge wait">'+ICON("hourglass_top")+'In approval</span>';
+      else if(key==="paid")badge='<span class="pur-kc-badge done">'+ICON("task_alt")+'Complete</span>';
+      else badge='<span class="pur-kc-badge okb">'+ICON("check_circle")+(key==="payapproved"?"For payment":"Approved")+'</span>';
+      var bud=b.budget?('<span class="pur-kc-bud '+(b.fits?"ok":"over")+'" data-tip="'+dept+' budget has '+money(Math.max(0,b.remaining))+' remaining. This '+money(o.amount)+' request '+(b.fits?"fits.":"is over by "+money(b.over)+".")+'" data-tip-plain>'+ICON(b.fits?"savings":"error")+'<span class="pur-kc-bud-t">'+(b.fits?"Fits budget":"Over budget")+'</span><span class="pur-kc-bud-s">'+money(Math.max(0,b.remaining))+' left in '+dept+'</span></span>'):'';
+      return '<div class="pur-kcard'+(needsMe?" needs":"")+'" role="button" tabindex="0" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'"'+((needsMe&&!mg)?' draggable="true"':'')+' aria-label="Request from '+req+', '+dept+', '+money(o.amount)+', vendor '+o.vendor+(needsMe?'. Awaiting your approval. Tap or drag to a forward lane to review.':'. Tap to open.')+'">'+
+        '<div class="pur-kc-r1"><span class="pur-kc-amt">'+money(o.amount)+'</span>'+badge+'</div>'+
+        '<div class="pur-kc-who"><span class="pur-kc-req">'+req+'</span><span class="pur-kc-dept">'+dept+'</span></div>'+
+        '<span class="pur-kc-vend" data-tip="Vendor" data-tip-plain>'+ICON("storefront")+'<span class="pur-kc-vend-nm">'+o.vendor+'</span></span>'+
+        bud+
+        '<span class="pur-kc-ref">'+o.num+'</span>'+
+      '</div>';
     }).join("")||'<div class="pur-kempty">None</div>';
-    return '<div class="pur-kcol pur-kcol-'+L[2]+'"><div class="pur-kcol-h"><span class="pur-kcol-t">'+L[1]+'</span><span class="pur-kcol-n">'+items.length+'</span></div><div class="pur-kcol-b">'+cards+'</div></div>';
+    return '<div class="pur-kcol pur-kcol-'+L[2]+'" data-lane="'+key+'" data-id="'+w.id+'"><div class="pur-kcol-h"><span class="pur-kcol-t">'+L[1]+'</span><span class="pur-kcol-n">'+items.length+'</span></div><div class="pur-kcol-b">'+cards+'</div></div>';
   }).join("");
   return '<div class="pur-kanban pur-kanban-4">'+cols+'</div>';
 }
