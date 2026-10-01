@@ -9368,6 +9368,28 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   }
 
 
+  /* ===== Financial KPIs band (W-new): one full-width size only. Three YTD tiles
+     (income, expenses, net income), each with its value, a trend badge vs the previous
+     year, and "vs previous yr". Trend colour is by FAVOURABILITY, not just direction:
+     income up / net up / expenses down are favourable (positive), the reverse unfavourable. */
+  var FINKPI={ytd:[
+    {key:"income", label:"Total income", value:1284500, deltaPct:6.2,  dir:"up",   good:true},
+    {key:"expense",label:"Total expenses",value:1097800, deltaPct:4.1,  dir:"up",   good:false},
+    {key:"net",    label:"Net income",   value:186700,  deltaPct:21.3, dir:"up",   good:true}
+  ]};
+  function finkpiTile(t){
+    var fav=t.good, arrow=t.dir==="up"?"trending_up":"trending_down";
+    var badge='<span class="fkpi-trend '+(fav?"fav":"unfav")+'" data-tip="'+(fav?"Favourable":"Unfavourable")+' change versus the same period last year" data-tip-plain>'+ICON(arrow)+(t.dir==="up"?"+":"")+t.deltaPct.toFixed(1)+'%</span>';
+    return '<div class="fkpi-tile">'+
+      '<div class="fkpi-lbl">'+t.label+'<span class="fkpi-period">YTD</span></div>'+
+      '<div class="fkpi-num">'+money(t.value)+'</div>'+
+      '<div class="fkpi-foot">'+badge+'<span class="fkpi-vs">vs previous yr</span></div>'+
+    '</div>';
+  }
+  function finkpiContent(w){
+    if(w.state==="error"){var xc=ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">Could not load financial KPIs</div></div>';}
+    return '<div class="fkpi-row">'+FINKPI.ytd.map(finkpiTile).join("")+'</div>';
+  }
   function contentHTML(w){var __rs=w.size,__es=w.__forceSize?w.size:fitSize(w);if(__es!==__rs){w.size=__es;try{return contentHTML(w);}finally{w.size=__rs;}}
     if(w.state==="loading")return '<div class="skeleton" aria-busy="true"><div class="sk" style="width:55%"></div><div class="sk" style="flex:1"></div></div>';
     if(w.state==="error"){var xc=ERROR_COPY[w.kind]||ERROR_COPY.deposits;return '<div class="state" data-kind="error">'+ICON("error")+'<div class="state-title">'+xc.title+'</div><div class="state-sub">'+xc.sub+'</div><button class="btn sm outlined" data-action="retry" data-id="'+w.id+'">Retry</button></div>';}
