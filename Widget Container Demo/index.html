@@ -5290,8 +5290,9 @@ function loanViewToggle(w){if(w.size==="xwide")return "";var v=loanView(w);
 function loanBucketCards(w){
   var sel=loanSel(w),grand=loanTotal(w),bs=loanBuckets(w),n=loanCount(w),allSel=(sel==="total");
   var cards='<button class="loan-card loan-card-all'+(allSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="loan-card-lbl">All bands</span><span class="loan-card-pct">100%</span><span class="loan-card-cnt">'+n+' loan'+(n===1?"":"s")+'</span></button>';
-  bs.forEach(function(r,i){var has=r.total>0,isSel=(sel===r.key),share=grand>0?Math.round(r.total/grand*100):0,col=LOAN_CARD_COLORS[i]||LOAN_CARD_COLORS[LOAN_CARD_COLORS.length-1],cv=col.charAt(0)==="#"?col:("var("+col+")");
-    cards+='<button class="loan-card'+(isSel?" sel":"")+(has?"":" loan-card-static")+'"'+(has?' data-action="loan-set-bucket" data-bucket="'+r.key+'" data-id="'+w.id+'" aria-pressed="'+isSel+'"':' disabled aria-disabled="true"')+' data-tip="'+loanEsc(r.label+": "+loanMoney(r.total)+", "+r.count+" loan"+(r.count===1?"":"s")+", "+share+"% of the balance.")+'" data-tip-plain>'+
+  /* Only show aging bands that actually carry a balance; empty bands are not rendered (no disabled cards). */
+  bs.forEach(function(r,i){var has=r.total>0,isSel=(sel===r.key),share=grand>0?Math.round(r.total/grand*100):0,col=LOAN_CARD_COLORS[i]||LOAN_CARD_COLORS[LOAN_CARD_COLORS.length-1],cv=col.charAt(0)==="#"?col:("var("+col+")");if(!has)return;
+    cards+='<button class="loan-card'+(isSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="'+r.key+'" data-id="'+w.id+'" aria-pressed="'+isSel+'" data-tip="'+loanEsc(r.label+": "+loanMoney(r.total)+", "+r.count+" loan"+(r.count===1?"":"s")+", "+share+"% of the balance.")+'" data-tip-plain>'+
       '<span class="loan-card-lbl">'+r.label+'</span><span class="loan-card-pct" style="color:'+cv+'">'+share+'%</span><span class="loan-card-cnt">'+r.count+' loan'+(r.count===1?"":"s")+'</span></button>';});
   return '<div class="loan-cards" role="group" aria-label="Filter by aging band">'+cards+'</div>';
 }
