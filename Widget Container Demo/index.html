@@ -8214,20 +8214,19 @@ function arFContact(name){
    collection next steps (open invoice, statement, follow-up, payment). */
 function arFCustPanel(w,g,c){
   var invRows=g.invs.map(function(x){var od=x.days>0;
-    return '<div class="arF-ci"><span class="arF-ci-inv">'+x.inv+((x.attachments&&x.attachments.length)?'<span class="arF-ci-doc" data-tip="'+arFEsc(x.attachments[0].name)+'" data-tip-plain>'+ICON("attach_file")+'</span>':'')+'</span>'+
-      '<span class="arF-ci-due">due '+arFFmtDate(x.due)+'</span>'+
+    return '<div class="arF-ci">'+
+      '<span class="arF-ci-inv"><span class="arF-ci-num">'+x.inv+'</span><button class="arF-ci-copy" data-action="arF-copy-inv" data-inv="'+arFEsc(x.inv)+'" data-tip="Copy invoice number" data-tip-plain aria-label="Copy invoice number '+arFEsc(x.inv)+'">'+ICON("content_copy")+'</button></span>'+
+      '<span class="arF-ci-due">Due '+arFFmtDate(x.due)+'</span>'+
       '<span class="arF-ci-days'+(od?" over":"")+'">'+(od?(x.days+"d overdue"):"Not due")+'</span>'+
       '<span class="arF-ci-amt">'+money(x.amount)+'</span>'+
-      '<button class="arF-ci-open" data-action="arF-open-invoice" data-inv="'+arFEsc(x.inv)+'" aria-label="Open invoice '+arFEsc(x.inv)+' in Accounts Receivable">'+ICON("open_in_new")+'</button></div>';
+      '<button class="arF-ci-open" data-action="arF-open-invoice" data-inv="'+arFEsc(x.inv)+'" data-cust="'+arFEsc(g.customer)+'" data-tip="Open invoice in Accounts Receivable" data-tip-plain aria-label="Open invoice '+arFEsc(x.inv)+' in Accounts Receivable">'+ICON("open_in_new")+'<span>Open</span></button></div>';
   }).join("");
-  var activity=c.last?('<span class="arF-cp-actline">'+ICON("history")+c.last.via+' on '+arFFmtDate(c.last.iso)+'</span>'):('<span class="arF-cp-actline arF-cp-none">'+ICON("error_outline")+'No contact logged yet</span>');
   return '<div class="arF-cp">'+
-    '<div class="arF-cp-contact"><span class="arF-cp-ci">'+ICON("mail")+c.email+'</span><span class="arF-cp-ci">'+ICON("call")+c.phone+'</span>'+activity+'</div>'+
-    '<div class="arF-cp-invs">'+invRows+'</div>'+
+    '<div class="arF-cp-contact"><span class="arF-cp-ci">'+ICON("mail")+'<span>'+c.email+'</span></span><span class="arF-cp-ci">'+ICON("call")+'<span>'+c.phone+'</span></span></div>'+
+    '<div class="arF-cp-invs"><div class="arF-ci arF-ci-head"><span class="arF-ci-inv">Invoice</span><span class="arF-ci-due">Due</span><span class="arF-ci-days">Status</span><span class="arF-ci-amt">Amount</span><span class="arF-ci-open" aria-hidden="true"></span></div>'+invRows+'</div>'+
     '<div class="arF-cp-actions">'+
+      '<button class="btn primary sm" data-action="arF-record-pay" data-cust="'+arFEsc(g.customer)+'">'+ICON("payments")+'Record payment</button>'+
       '<button class="btn outlined sm" data-action="arF-statement" data-cust="'+arFEsc(g.customer)+'">'+ICON("mail")+'Send statement</button>'+
-      '<button class="btn naked sm" data-action="arF-followup" data-cust="'+arFEsc(g.customer)+'">'+ICON("event_note")+'Record a follow-up</button>'+
-      '<button class="btn naked sm" data-action="arF-record-pay" data-cust="'+arFEsc(g.customer)+'">'+ICON("payments")+'Record a payment</button>'+
     '</div></div>';
 }
 /* Export preview: shows the exact scope (selected vs all), the columns and the
