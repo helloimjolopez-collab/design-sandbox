@@ -17,22 +17,71 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@helloimjolopez-pathway/pathway-tokens@10.0.4/dist/themes/light.css">
 <style>
   :root{
-    --cn-0:#fff;--cn-30:#ededed;--cn-40:#e1e1e1;--cn-110:#7b7b7b;--cn-130:#606060;--cn-150:#484848;--cn-190:#202020;
-    --wn-0:#fefefd;--wn-100:#fbfaf8;--wn-200:#f7f5f3;--wn-250:#f3f0ec;--wn-300:#eeebe6;--wn-400:#d4cfc8;--wn-750:#87827b;--wn-950:#292724;
-    --brand-10:#eef2fb;--brand-70:#6e8bd4;--brand-100:#4b6ec3;--brand-300:#3a5aaa;--brand-400:#345499;--brand-500:#2d4889;--brand-90:#5475c6;
-    --red-10:#faefef;--red-100:#b03a3a;--red-130:#882727;--green-120:#1f602e;--green-10:#edf6f0;
-    /* Pathway "Static/Positive" + "Static/Negative" tokens, pulled directly from the design system file's variables panel (fileKey 3sw45aVcngFAmpbP6cfrXP) rather than guessed. --red-100 already matched the design system exactly (#b03a3a); --pos-100 is the real Positive token (#36a14f) — used for the Budget widget's explicit red/green favourability coding, kept separate from --green-120/--txt-pos so nothing else in the app silently changes color. */
-    --pos-100:#36a14f;--pos-10:#f0faf1;
-    --txt-primary:var(--cn-190);--txt-secondary:var(--cn-150);--txt-subtle:var(--cn-130);--txt-pos:var(--green-120);
-    /* Two distinct stroke roles, each internally consistent:
-         --stroke-container = the widget outline + content-sheet edge. Canonical "Stroke/Static/Neutral/Base"
-                              (#D8D3CD), from the design system variables panel (fileKey 3sw45aVcngFAmpbP6cfrXP).
-         --stroke-widget    = the lighter internal hairline shared by ALL dividers, table lines and separators,
-                              kept at --wn-300 so every divider is one consistent color, distinct from the container. */
-    --surface-canvas:#FAFAFA;--surface-widget:var(--wn-0);--surface-header:var(--wn-200);--stroke-widget:var(--wn-300);--stroke-container:#D8D3CD;--surface-sheet:#FFFFFF;
-    --focus:var(--brand-70);
-    /* Amethyst primitives — charts & graphs only (app UI stays brand blue) */
-    --am-700:#463f7f;--am-600:#4f4890;--am-500:#5951a0;--am-400:#7a72ba;--am-300:#9c95cf;--am-200:#c3bee6;--am-100:#e8e6f5;--am-50:#f4f2fa;
+    /* ------------------------------------------------------------------------
+       EVERY colour below is an alias onto a Pathway DS token loaded from the two
+       CDN stylesheets above (primitives.css + themes/light.css). The demo keeps
+       its short internal names (--cn-*, --wn-*, --brand-* …) so the thousands of
+       existing usages don't change; each name simply forwards to the DS token
+       whose published value matches. Exact matches are marked ✓.
+       ------------------------------------------------------------------------ */
+    /* Cool-neutral ramp — text / grey UI (all exact ✓) */
+    --cn-0:var(--primitive-color-cool-neutral-0);      /* #ffffff ✓ */
+    --cn-30:var(--primitive-color-cool-neutral-50);    /* #ededed ✓ */
+    --cn-40:var(--primitive-color-cool-neutral-75);    /* #e1e1e1 ✓ */
+    --cn-110:var(--primitive-color-cool-neutral-300);  /* #7b7b7b ✓ */
+    --cn-130:var(--primitive-color-cool-neutral-400);  /* #606060 ✓ */
+    --cn-150:var(--primitive-color-cool-neutral-500);  /* #484848 ✓ */
+    --cn-190:var(--primitive-color-cool-neutral-700);  /* #202020 ✓ */
+    /* Warm-neutral ramp — surfaces / warm hairlines */
+    --wn-0:var(--primitive-color-warm-neutral-0);      /* #fefefd ✓ */
+    --wn-100:var(--primitive-color-warm-neutral-10);   /* #fcfbfa ≈ #fbfaf8 */
+    --wn-200:var(--primitive-color-warm-neutral-25);   /* #f9f7f5 ≈ #f7f5f3 */
+    --wn-250:var(--primitive-color-warm-neutral-50);   /* #f3f0ec ✓ */
+    --wn-300:var(--primitive-color-warm-neutral-50);   /* divider hairline ≈ #eeebe6 */
+    --wn-400:var(--primitive-color-warm-neutral-100);  /* #d8d3cd ≈ #d4cfc8 */
+    --wn-750:var(--primitive-color-warm-neutral-350);  /* #87827b ✓ */
+    --wn-950:var(--primitive-color-warm-neutral-700);  /* #2b2926 ≈ #292724 */
+    /* Brand ramp (all exact ✓) */
+    --brand-10:var(--primitive-color-brand-10);        /* #eef2fb ✓ */
+    --brand-70:var(--primitive-color-brand-200);       /* #6e8bd4 ✓ */
+    --brand-90:var(--primitive-color-brand-300);       /* #5475c6 ✓ */
+    --brand-100:var(--primitive-color-brand-350);      /* #4b6ec3 ✓ */
+    --brand-300:var(--primitive-color-brand-450);      /* #3a5aaa ✓ */
+    --brand-400:var(--primitive-color-brand-500);      /* #345499 ✓ */
+    --brand-500:var(--primitive-color-brand-550);      /* #2d4889 ✓ */
+    /* Status ramps — Static/Negative (red) + Static/Positive (green), all exact ✓ */
+    --red-10:var(--primitive-color-red-25);            /* #faefef ✓ */
+    --red-100:var(--primitive-color-red-400);          /* #b03a3a ✓ */
+    --red-130:var(--primitive-color-red-600);          /* #882727 ✓ */
+    --green-120:var(--primitive-color-green-600);      /* #1f602e ✓ */
+    --green-10:var(--primitive-color-green-25);        /* positive subtle tint */
+    --pos-100:var(--primitive-color-green-350);        /* #36a14f ✓ */
+    --pos-10:var(--primitive-color-green-0);           /* positive faint tint */
+    /* Text roles — forwarded to DS foreground semantics where the value matches,
+       primitive otherwise (cool-grey text over warm surfaces). */
+    --txt-primary:var(--semantic-color-foreground-static-neutral-bold);    /* cool-neutral-700 #202020 ✓ */
+    --txt-secondary:var(--semantic-color-foreground-static-neutral-subtle);/* cool-neutral-500 #484848 ✓ */
+    --txt-subtle:var(--cn-130);                                            /* cool-neutral-400 (no exact semantic) */
+    --txt-pos:var(--green-120);
+    /* Surfaces + strokes. Canvas uses the DS surface semantic; widget/header
+       surfaces stay WARM (warm-neutral) per the demo's warm-surface / cool-text
+       system; container stroke is the canonical #d8d3cd (warm-neutral-100). */
+    --surface-canvas:var(--semantic-color-fill-surface-canvas);  /* cool-neutral-10 #fafafa ✓ */
+    --surface-widget:var(--wn-0);
+    --surface-header:var(--wn-200);
+    --surface-sheet:var(--primitive-color-cool-neutral-0);       /* #ffffff ✓ */
+    --stroke-widget:var(--wn-300);
+    --stroke-container:var(--primitive-color-warm-neutral-100);  /* #d8d3cd ✓ */
+    --focus:var(--semantic-color-stroke-focusring-base);         /* brand-200 #6e8bd4 ✓ */
+    /* Amethyst ramp — charts & graphs only (app UI stays brand blue) */
+    --am-700:var(--primitive-color-amethyst-600);  /* #464080 ≈ #463f7f */
+    --am-600:var(--primitive-color-amethyst-600);  /* #464080 */
+    --am-500:var(--primitive-color-amethyst-500);  /* #5951a0 ✓ */
+    --am-400:var(--primitive-color-amethyst-350);  /* #877ec8 ≈ #7a72ba */
+    --am-300:var(--primitive-color-amethyst-300);  /* #9a90d0 ≈ #9c95cf */
+    --am-200:var(--primitive-color-amethyst-100);  /* #cbc6e8 ≈ #c3bee6 */
+    --am-100:var(--primitive-color-amethyst-50);   /* #e8e6f5 ✓ */
+    --am-50:var(--primitive-color-amethyst-25);    /* #f4f2fa ✓ */
     --chart:var(--am-500);--chart-strong:var(--am-700);--chart-soft:var(--am-200);--chart-fill:var(--am-500);--brand-fill:var(--am-500);
     --dur:150ms;--dur2:300ms;--ease:cubic-bezier(.4,0,.2,1);--dec:cubic-bezier(0,0,.2,1);--r:12px;
   }
