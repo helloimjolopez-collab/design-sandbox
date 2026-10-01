@@ -10134,7 +10134,8 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   document.addEventListener("mouseout",function(e){var t=e.target;if(t.closest&&t.closest(".tr-lg-row")){var plot=t.closest(".tr-plot"),cvx=plot&&plot.querySelector(".tr-canvas");var to=e.relatedTarget;if(cvx&&!(to&&to.closest&&(to.closest(".tr-lg-row")||to.closest(".tr-canvas"))))trHighlight(cvx,null);return;}if(!lnCanvas)return;var cv=t.closest&&t.closest(".tr-canvas");if(!cv)return;if(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest(".tr-canvas"))return;hideLnTip();});
   document.addEventListener("click",function(e){var cv=e.target.closest&&e.target.closest(".tr-canvas");if(!cv||cv.getAttribute("data-multi")!=="1")return;if(lnActive==null)return;var wid=cv.getAttribute("data-id"),wc=find(wid);if(wc){wc.trIso=(wc.trIso===lnActive)?null:lnActive;hideLnTip();render();}},true);
   window.addEventListener("scroll",function(e){var t=e.target;if(t&&t.closest&&(t.closest("#overlay")||t.closest(".menu-scroll")||t.closest(".scroll")))return;hideTip();if(pop){pop=null;render();}},true);
-  window.addEventListener("resize",function(){if(pop)renderOverlay();});
+  var __awWide=window.innerWidth>=AW_MINW;
+  window.addEventListener("resize",function(){if(pop)renderOverlay();var nw=window.innerWidth>=AW_MINW;if(nw!==__awWide){__awWide=nw;render();}});
   /* Bank Balances: single-account bar hover popover card */
   var bankPopEl=null;
   function bankHideBpop(){if(bankPopEl){bankPopEl.remove();bankPopEl=null;}}
