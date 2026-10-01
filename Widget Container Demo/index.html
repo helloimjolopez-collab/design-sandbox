@@ -9491,6 +9491,9 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   /* Widget-shaped "Add widget" tile — appears in the grid itself whenever the dashboard has 0 or 1 real widgets (an empty or near-empty dashboard shouldn't rely on the toolbar button alone to make "add a widget" obvious). */
   /* W-dashboard: Add-widget catalog (modal), grounded in the Figma "Add Widget & Manage" flow:
      left category list + right grid of widget cards (name + description + Add), footer Done. */
+  /* Add-widget (and edit) is a desktop interaction: the picker needs room for the category rail + card
+     grid + previews, which truncates on tablet and below. Below this width the flow is not offered. */
+  var AW_MINW=900;
   var PALETTE=[
     {cat:"Overview", kind:"finkpi", title:"Financial KPIs", desc:"Income, expenses and net income year-to-date, each with its trend vs last year. Full-width band, one size.", props:function(){return {size:"band",tiers:["band"]};}},
     {cat:"Cash & banking", kind:"bank", title:"Bank Balances", desc:"Current balance of each active bank account, with overdrawn flags.", props:function(){return {view:"table"};}},
