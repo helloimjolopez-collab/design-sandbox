@@ -7532,11 +7532,16 @@ function purEncView(w){var v=w.encview||"chart";
   return toggle+(v==="table"?purEncTable(w):purEnc(w));}
 function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(w);
   return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Committed, not yet paid</div>'+purEncView(w)+'</div></div>';}
-function purGlance(w){var pend=purOrders(w).filter(function(o){return purTileMatch(o,"pending",w);}),count=pend.length,out=purSum(pend);
+/* Glance = the one actionable thing an approver cares about: how many requests are awaiting THEIR
+   approval and their value. If none, a calm caught-up state. The auto "View details" hint drills into
+   the For-me pending queue (progressive disclosure to the actual approve/reject action). */
+function purGlance(w){var mine=purOrders(w).filter(function(o){return !o.rej&&o.status!=="approved"&&(o.status==="mine"||o.status==="next");});
+  var count=mine.length,out=purSum(mine);
+  if(!count)return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">Purchase approvals</span></span><div class="metric-value" style="font-size:19px">All caught up</div><div class="gl-sub"><span class="bank-caption">Nothing is awaiting your approval</span></div></div></div>';
   return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="gl-ctx"><span class="sc-nm">Purchase approvals</span></span>'+
+    '<span class="gl-ctx"><span class="sc-nm">Awaiting your approval</span></span>'+
     '<div class="metric-value">'+count+'</div>'+
-    '<div class="gl-sub"><span class="bank-caption">'+money(out)+' pending</span></div>'+
+    '<div class="gl-sub"><span class="bank-caption">'+money(out)+' across '+count+' request'+(count>1?'s':'')+'</span></div>'+
     '</div></div>';}
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
