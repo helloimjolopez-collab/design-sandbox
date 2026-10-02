@@ -1547,8 +1547,11 @@
 .arF-ci-head .arF-ci-amt{text-align:right;}
 .arF-ci-inv{display:inline-flex;align-items:center;gap:6px;min-width:0;}
 .arF-ci-num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.arF-ci-copy{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:0;background:transparent;color:var(--txt-subtle);border-radius:5px;cursor:pointer;padding:0;}
+/* Copy appears only on hover/focus of the invoice (always visible on touch), never a permanent icon. */
+.arF-ci-copy{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:0;background:transparent;color:var(--txt-subtle);border-radius:5px;cursor:pointer;padding:0;opacity:0;pointer-events:none;transition:opacity var(--dur);}
+.arF-ci:hover .arF-ci-copy,.arF-ci-inv:hover .arF-ci-copy,.arF-ci-copy:focus-visible{opacity:1;pointer-events:auto;}
 .arF-ci-copy:hover{background:var(--wn-200);color:var(--txt-primary);}
+@media(hover:none){.arF-ci-copy{opacity:1;pointer-events:auto;}}
 .arF-ci-copy .material-symbols-rounded{font-size:14px;}
 .arF-ci-due{color:var(--txt-secondary);white-space:nowrap;}
 .arF-ci-days{color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;}
