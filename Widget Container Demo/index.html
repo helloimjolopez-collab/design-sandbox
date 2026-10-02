@@ -5639,6 +5639,11 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
   function cur(){for(var i=0;i<dashboards.length;i++)if(dashboards[i].id===currentId)return dashboards[i];return dashboards[0];}
   function isSystem(){return !cur().custom;}
   function find(id){if(modal&&modal.mw&&modal.mw.id===id)return modal.mw;var ws=cur().widgets;for(var i=0;i<ws.length;i++)if(ws[i].id===id)return ws[i];}
+/* Reusable copyable code/number: shows a copy affordance only on hover/focus (always on touch). The
+   copy button is the innermost [data-action], so inside a clickable row the delegated handler matches
+   it first and the row action never fires (no conflicting hover/click destinations). `full` lets the
+   copied value differ from the shown text (e.g. a masked ••1450 that copies the full account number). */
+function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"/g,"&quot;");return '<span class="codecopy"><span class="cc-txt">'+txt+'</span><button class="cc-btn" data-action="copy-code" data-copy="'+esc+'" data-tip="Copy" data-tip-plain tabindex="-1" aria-label="Copy '+esc+'">'+ICON("content_copy")+'</button></span>';}
   var manage=false,pop=null,renaming=null,dragId=null,addCount=0,timers={},focusDash=false,dashRenaming=false,infoTimer=null,companyQuery="",filterQuery="",prFocusId=null,bankQuery="",purQuery="",purPopEl=null,widgetFindQuery="";
   var ABOUT={
     dep:{h:"Deposits on Hand",b:"Money your organization holds on behalf of others, such as congregation or member deposits that may earn interest."},
