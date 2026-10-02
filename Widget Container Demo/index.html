@@ -7752,14 +7752,17 @@ function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(
 /* Glance = the one actionable thing an approver cares about: how many requests are awaiting THEIR
    approval and their value. If none, a calm caught-up state. The auto "View details" hint drills into
    the For-me pending queue (progressive disclosure to the actual approve/reject action). */
-function purGlance(w){var mine=purOrders(w).filter(function(o){return !o.rej&&o.status!=="approved"&&(o.status==="mine"||o.status==="next");});
-  var count=mine.length,out=purSum(mine);
-  if(!count)return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">Purchase approvals</span></span><div class="metric-value" style="font-size:19px">All caught up</div><div class="gl-sub"><span class="bank-caption">Nothing is awaiting your approval</span></div></div></div>';
-  return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="gl-ctx"><span class="sc-nm">Awaiting your approval</span></span>'+
-    '<div class="metric-value">'+count+'</div>'+
-    '<div class="gl-sub"><span class="bank-caption">'+money(out)+' across '+count+' request'+(count>1?'s':'')+'</span></div>'+
-    '</div></div>';}
+/* Glance = the three status tiles (All / Pending / Approved), each with its count + amount, each tappable
+   to open the detail overlay scoped to that status. Uses the room the glance actually has instead of one
+   number + a thin caption. */
+function purGlance(w){
+  return '<div class="pur-gl-tiles">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),m=PUR_TILE_META[id]||PUR_TILE_META.all;
+    return '<button class="pur-gl-tile pur-tile-'+m.tone+'" data-action="pur-gl-tile" data-id="'+w.id+'" data-t="'+id+'" aria-label="'+t[1]+', '+cnt+' request'+(cnt===1?"":"s")+', '+money(amt)+'. Open.">'+
+      '<span class="pur-gl-top"><span class="pur-gl-ic material-symbols-rounded">'+m.ic+'</span><span class="pur-gl-lbl">'+t[1]+'</span></span>'+
+      '<span class="pur-gl-n">'+cnt+'</span>'+
+      '<span class="pur-gl-amt">'+money(amt)+'</span>'+
+    '</button>';
+  }).join("")+'</div>';}
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
 function purBody(w){
