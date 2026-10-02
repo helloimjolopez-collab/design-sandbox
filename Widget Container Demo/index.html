@@ -7466,11 +7466,11 @@ function purTable(w,full){
   rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="num"||key==="vendor")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
   function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pur-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
   var numLbl=purColLabel(w);
-  var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-age">'+sb("age","Age")+'</span><span class="wt-c2">'+sb("amount","Amount")+'</span></div>';
+  var head='<div class="wt-row wt-head"><span class="pur-c-num">'+sb("num",numLbl)+'</span><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="pur-c-date">'+sb("issued","Issued")+'</span><span class="pur-c-status">'+sb("status","Status")+'</span><span class="wt-c2">'+sb("amount","Amount")+'</span></div>';
   var body=rows.map(function(o){
-    var act=purCanAct(o);
-    var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', waiting '+o.age+' days, amount '+money(o.amount)+'. '+(act?"Opens to approve or reject.":"Opens the purchase order.")+'</span>';
-    return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', amount '+money(o.amount)+(act?', open to approve or reject':', open record')+'"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purAgeCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span></div>';
+    var act=purCanAct(o),stLbl=(o.status==="approved")?"Approved":"Pending";
+    var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', status '+stLbl+', amount '+money(o.amount)+'. '+(act?"Opens to approve or reject.":"Opens the purchase order.")+'</span>';
+    return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', '+stLbl+', amount '+money(o.amount)+(act?', open to approve or reject':', open record')+'"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purStatusCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span></div>';
   }).join("");
   var tot=purSum(rows),n=rows.length;
   var totLbl=(w.pstatus||"mine")==="approved"?(n+" order"+(n===1?"":"s")):(n+" request"+(n===1?"":"s"));
