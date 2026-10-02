@@ -8445,17 +8445,11 @@ function arFHandleClick(a,id,t){
   if(a==="arF-wsort"){var ws2=find(id);if(ws2){var wk=t.getAttribute("data-k"),cs=(ws2.arFSort||"total-desc").split("-");ws2.arFSort=(cs[0]===wk)?(wk+"-"+(cs[1]==="asc"?"desc":"asc")):(wk+"-"+((wk==="customer"||wk==="band")?"asc":"desc"));}render();return true;}
   if(a==="arF-open"){if(!find(id))return true;modal={type:"arFdetail",id:id,mode:t.getAttribute("data-mode"),key:t.getAttribute("data-key"),q:"",sort:"oldest",page:1,exp:null,sel:{},export:false};modalMounted=false;pop=null;render();return true;}
   if(a==="arF-detail-close"){modal=null;modalMounted=false;pop=null;render();return true;}
-  if(a==="arF-cust-exp"){if(modal){var cx=t.getAttribute("data-cust");modal.exp=(modal.exp===cx)?null:cx;}renderModal();return true;}
-  if(a==="arF-check"){if(modal){var cc=t.getAttribute("data-cust");modal.sel=modal.sel||{};if(modal.sel[cc])delete modal.sel[cc];else modal.sel[cc]=true;}renderModal();return true;}
-  if(a==="arF-selall"){if(modal){var wv=find(modal.id),gs=arFCustGroups(arFDetailInvoices(wv,modal.mode,modal.key)),allsel=gs.length&&gs.every(function(g){return modal.sel&&modal.sel[g.customer];});modal.sel={};if(!allsel)gs.forEach(function(g){modal.sel[g.customer]=true;});}renderModal();return true;}
+  if(a==="arF-check"){if(modal){var cc=t.getAttribute("data-inv");modal.sel=modal.sel||{};if(modal.sel[cc])delete modal.sel[cc];else modal.sel[cc]=true;}renderModal();return true;}
+  if(a==="arF-selall"){if(modal){var wv=find(modal.id),q=(modal.q||"").trim().toLowerCase(),inv=arFDetailInvoices(wv,modal.mode,modal.key);if(q)inv=inv.filter(function(x){return x.customer.toLowerCase().indexOf(q)>-1||String(x.inv).toLowerCase().indexOf(q)>-1;});var allsel=inv.length&&inv.every(function(x){return modal.sel&&modal.sel[x.inv];});modal.sel={};if(!allsel)inv.forEach(function(x){modal.sel[x.inv]=true;});}renderModal();return true;}
   if(a==="arF-sort"){if(modal){var ord=["oldest","owed","name"];modal.sort=ord[(ord.indexOf(modal.sort||"oldest")+1)%3];}renderModal();return true;}
-  if(a==="arF-wl-more"){if(modal)modal.page=(modal.page||1)+1;renderModal();return true;}
-  if(a==="arF-export"){if(modal)modal.export=true;renderModal();return true;}
-  if(a==="arF-export-cancel"){if(modal)modal.export=false;renderModal();return true;}
-  if(a==="arF-export-do"){var sn=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;if(modal)modal.export=false;renderModal();toast("Exported "+(sn?sn+" selected":"all")+" to Excel (Customer, Invoice #, Due date, Days past due, Outstanding)");return true;}
-  if(a==="arF-clearsel"){if(modal)modal.sel={};renderModal();return true;}
+  if(a==="arF-export"){var sn=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;toast("Exported "+(sn?sn+" invoice"+(sn>1?"s":""):"all invoices")+" to Excel (Customer, Invoice #, Due date, Days past due, Outstanding)","download");return true;}
   if(a==="arF-open-invoice"){toast("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Receivable","open_in_new");return true;}
-  if(a==="arF-copy-inv"){var _civ=t.getAttribute("data-inv");try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(_civ);}catch(_e){}toast("Copied invoice "+_civ,"content_copy");return true;}
   return false;
 }
 /* popContent branches (routed from popContent(): arF-rc / arF-source -> arFPopContent) */
