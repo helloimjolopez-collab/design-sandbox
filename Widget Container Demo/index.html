@@ -4049,7 +4049,7 @@ function remGlance(w){
   var t=remTotals(w),expTot=Math.round(t.annual*t.pctYear);
   var pop=["All pledges",t.annual,t.paid,expTot,t.out,(t.annual>0?Math.round(t.pctPaid*100):0),Math.round(t.pctYear*100),(t.allPaid?"full":t.status)].join("|");
   return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+
+    '<span class="gl-ctx"><span class="sc-nm">Remittance pledges</span></span>'+
     '<div class="metric-value">'+money(t.paid)+'</div>'+
     '<div class="gl-sub">'+remPaceBadge(t)+'</div>'+
     '<span class="sr-only">'+money(t.paid)+' paid of '+money(t.annual)+' pledged. '+remPct(t.pctPaid)+' received against '+remPct(t.pctYear)+' of the calendar year elapsed. '+money(t.out)+' outstanding.</span>'+
@@ -4057,7 +4057,7 @@ function remGlance(w){
 
 /* ---- empty state (denominational default) -------------------- */
 function remEmpty(w){
-  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span><div class="metric-value" style="font-size:16px">None set up</div><div class="gl-sub"><span class="bgt-caption">no pledges to pace yet</span></div></div></div>';
+  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">Remittance pledges</span></span><div class="metric-value" style="font-size:16px">None set up</div><div class="gl-sub"><span class="bgt-caption">no pledges to pace yet</span></div></div></div>';
   return '<div class="state rem-empty" data-kind="empty">'+ICON("volunteer_activism")+'<div class="state-title">No remittance pledges yet</div><div class="state-sub">Once your conference or denomination sets up this organisation’s pledges, you will see what is pledged, paid and outstanding, and whether you are keeping pace with the year.</div></div>';}
 
 function remSkeleton(){var rows="";[72,58,80,50,66].forEach(function(wd){rows+='<div class="rem-sk-row"><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk rem-sk-bar" style="width:'+wd+'%"></span><span class="sk" style="width:44px;height:12px;border-radius:4px"></span></div>';});return '<div class="rem-skel" aria-busy="true">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading</div></div>';}
@@ -4579,7 +4579,7 @@ function remFDrillModalHTML(){
   '</div></div>';
 }
 function remFEmpty(w){
-  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span><div class="metric-value" style="font-size:16px">None set up</div><div class="gl-sub"><span class="bgt-caption">no pledges to pace yet</span></div></div></div>';
+  if(w.size==="kpi")return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">Remittance pledges</span></span><div class="metric-value" style="font-size:16px">None set up</div><div class="gl-sub"><span class="bgt-caption">no pledges to pace yet</span></div></div></div>';
   return '<div class="state rem-empty" data-kind="empty">'+ICON("volunteer_activism")+'<div class="state-title">No remittance pledges yet</div><div class="state-sub">Once your conference or denomination sets up this organisation\'s pledges, you will see what is pledged, paid and outstanding, and whether you are keeping pace over each pledge\'s term.</div></div>';
 }
 function remFSkeleton(){var rows="";[72,58,80,50,66].forEach(function(wd){rows+='<div class="rem-sk-row"><span class="sk" style="flex:1;height:12px;border-radius:4px"></span><span class="sk" style="width:'+wd+'%;height:8px;border-radius:5px"></span><span class="sk" style="width:44px;height:12px;border-radius:4px"></span></div>';});return '<div class="rem-skel" aria-busy="true">'+rows+'<div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading</div></div>';}
@@ -4943,7 +4943,7 @@ function gftGlance(w){
     ?'<span class="gft-glance-cap"><span class="gft-sevdot"></span>'+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind schedule</span>'
     :'<span class="gft-glance-cap gft-cap-ok">'+ICON("check")+'On track or ahead across every purpose</span>';
   return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+gftEsc(gftPurposeCur(w))+'</span></span>'+
+    '<span class="gl-ctx"><span class="sc-nm">'+gftEsc(gftPurposeCur(w))+'</span></span>'+
     '<div class="metric-value">'+money(o.received)+'</div>'+
     '<div class="gl-sub">'+gftStatusPill(o.status,Math.abs(o.remaining),thru)+'<span class="gft-goalpill">'+gftPct(o.fulfilled)+' of goal</span></div>'+
     (o.pledgeTotal>0?'<div class="gft-glance-read">'+goal+read+'</div>':"")+
@@ -6208,12 +6208,12 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
     var bs=bgtBasis(w),vt=bs.type,neutral=bs.neutral;
     var rows=bgtSet(w),label=(w.acctview==="special")?bgtScopeContext(w).replace(/^Special report: /,""):bgtScopeShort(w);
     if(!bgtHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+
-      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+label+'</span></span>'+
+      '<span class="gl-ctx"><span class="sc-nm">'+label+'</span></span>'+
       '<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div>'+
       '</div></div>';
     var sv=bgtSpanVariance(w,vt),v=sv.v;
     return '<div class="kpi-row"><div class="kpi-num">'+
-      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">'+label+'</span></span>'+
+      '<span class="gl-ctx"><span class="sc-nm">'+label+'</span></span>'+
       '<div class="metric-value">'+money(Math.abs(v||0))+'</div>'+
       '<div class="gl-sub">'+bgtFavPill(v,neutral)+'<span class="bgt-caption">vs. budget, '+bgtSpanLabel(w.bspan||"year")+'</span></div>'+
       '</div></div>';}
@@ -7530,7 +7530,7 @@ function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(
   return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">'+purColLabel(w)+' queue</div>'+left+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Committed, not yet paid</div>'+purEncView(w)+'</div></div>';}
 function purGlance(w){var pend=purOrders(w).filter(function(o){return purTileMatch(o,"pending",w);}),count=pend.length,out=purSum(pend);
   return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Purchase approvals</span></span>'+
+    '<span class="gl-ctx"><span class="sc-nm">Purchase approvals</span></span>'+
     '<div class="metric-value">'+count+'</div>'+
     '<div class="gl-sub"><span class="bank-caption">'+money(out)+' pending</span></div>'+
     '</div></div>';}
@@ -8600,9 +8600,9 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     return '<div class="dep-hd pto-hd"><div class="dep-hd-top"><div class="pto-filters">'+ptoDeptChip(w)+ptoPGChip(w)+'</div><div class="dep-hd-toggle">'+ptoView2Toggle(w)+'</div></div></div>'+
       '<div class="pto-cards-row">'+ptoKpiCards(w)+ptoRangeToggle(w)+'</div>';}
   function ptoGlance2(w){
-    if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">No access</span></span><div class="metric-value" style="font-size:18px;color:var(--txt-subtle)">—</div></div></div>';
+    if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">No access</span></span><div class="metric-value" style="font-size:18px;color:var(--txt-subtle)">—</div></div></div>';
     var b=ptoBaseRows(w),pend=b.filter(function(r){return r.s3!=="approved";}).length,appr=b.filter(function(r){return r.s3==="approved";}).length;
-    return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">Scheduled time off</span></span><div class="dep-hd-kpigrp"><span class="metric-value">'+pend+'</span><span class="bank-pill">'+ICON("schedule")+'pending</span></div><div class="gl-sub"><span class="bank-caption">'+appr+' approved</span></div></div></div>';}
+    return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">Scheduled time off</span></span><div class="dep-hd-kpigrp"><span class="metric-value">'+pend+'</span><span class="bank-pill">'+ICON("schedule")+'pending</span></div><div class="gl-sub"><span class="bank-caption">'+appr+' approved</span></div></div></div>';}
   /* Employee drill (scrim overlay): the person isolated, with their own KPIs. */
   function ptoDrillModalHTML(){
     var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
@@ -8703,9 +8703,9 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     return '<div class="state pto-state" data-kind="empty">'+ICON("event_busy")+'<div class="state-title">No scheduled time off</div><div class="state-sub">There is no time off recorded for '+y+'.</div></div>';}
   function ptoNoAccessState(){return '<div class="state pto-state" data-kind="empty">'+ICON("lock")+'<div class="state-title">No access to time-off data</div><div class="state-sub">You have the Payroll module, but you’re not permitted to view time-off records here. Ask an administrator if you need access.</div></div>';}
   function ptoGlance(w){
-    if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">No departments</span></span><div class="metric-value">0</div><div class="gl-sub"><span class="pto-caption">no approval rights</span></div></div></div>';
+    if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">No departments</span></span><div class="metric-value">0</div><div class="gl-sub"><span class="pto-caption">no approval rights</span></div></div></div>';
     var pend=ptoPending(w);
-    return '<div class="kpi-row"><div class="kpi-num"><span class="scope-chip" style="cursor:default"><span class="sc-nm">'+ptoCurYear(w)+'</span></span><div class="metric-value">'+pend.records+'</div><div class="gl-sub">'+(pend.records?('<span class="bank-pill">'+ICON("groups")+pend.employees+' employee'+(pend.employees===1?"":"s")+'</span>'):'<span class="pto-caption">nothing awaiting approval</span>')+'</div></div></div>';}
+    return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">'+ptoCurYear(w)+'</span></span><div class="metric-value">'+pend.records+'</div><div class="gl-sub">'+(pend.records?('<span class="bank-pill">'+ICON("groups")+pend.employees+' employee'+(pend.employees===1?"":"s")+'</span>'):'<span class="pto-caption">nothing awaiting approval</span>')+'</div></div></div>';}
   function ptoContent(w){
     if(w.size==="kpi")return ptoGlance2(w);
     if(w.state==="empty")return ptoNoAccessState();
@@ -8935,7 +8935,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div></div>';}
     var tot=apTotalDue(w);
     return '<div class="kpi-row"><div class="kpi-num">'+
-      '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Accounts payable</span></span>'+
+      '<span class="gl-ctx"><span class="sc-nm">Accounts payable</span></span>'+
       '<div class="metric-value">'+apMoney(tot)+'</div>'+
       '<div class="gl-sub">'+apBadge(w)+apWeekPill(w)+'</div>'+
       '</div></div>';}
