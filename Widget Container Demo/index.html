@@ -5369,7 +5369,7 @@ function loanLastCell(x){
 function loanRowHTML(w,x){
   var lbl=x.name+", account "+x.acct+", "+(x.days>0?(x.days+" days past due"):"current")+", "+loanMoney(x.amount)+" due, tap to open the loan";
   return '<div class="wt-row loan-row" data-action="loan-open" data-id="'+w.id+'" data-acct="'+loanEsc(x.acct)+'" role="button" tabindex="0" aria-label="'+loanEsc(lbl)+'">'+
-    '<span class="loan-c-acct">'+x.acct+'</span>'+
+    '<span class="loan-c-acct">'+codeCopy(x.acct)+'</span>'+
     '<span class="lr-main lr-stack loan-c-name"><span class="loan-nm-wrap"><span class="lr-link loan-nm">'+x.name+'</span><span class="loan-type-sub">'+x.type+'</span></span></span>'+
     loanLastCell(x)+
     '<span class="wt-c2 loan-c-amt">'+loanMoney(x.amount)+'</span>'+
@@ -5953,7 +5953,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name",((w.filter&&w.filter.indexOf("All")!==0)||w.acct)?"Account":"Name")+'</span><span class="dt-c dt-type">'+sb("type","Type")+'</span><span class="dt-c dt-tr">'+sb("trend","Trend")+'</span><span class="wt-c2">'+sb("net","Balance")+'</span></div>';
     var leaf=w.leaf;var body=rows.map(function(a){var tp=trendPct(a),tn=tp<0,esc=a.type.replace(/"/g,"&quot;"),aesc=a.name.replace(/"/g,"&quot;");
       /* Two accounts can legitimately share the exact same name (Shelby doesn't enforce uniqueness), so the account number is always shown under the name — not just on hover — and doubles as the tooltip content together with the full name for whenever the name itself gets truncated. */
-      var tip=aesc+', Account '+(a.acctFull||a.acct),nmBlock='<span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain>'+'<span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.acct+'</span></span>';
+      var tip=aesc+', Account '+(a.acctFull||a.acct),nmBlock='<span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain>'+'<span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.acct,a.acctFull)+'</span></span>';
       return '<div class="wt-row'+(leaf?'':' wt-rowh')+'" data-id="'+w.id+'" data-acct="'+a.name+'">'+(leaf?'<span class="lr-main lr-stack">'+nmBlock+'</span>':'<span class="lr-main lr-stack lr-link" data-action="pick-acct" data-v="'+aesc+'" data-type="'+esc+'" data-acctno="'+a.acct+'" data-id="'+w.id+'">'+nmBlock+'</span>')+'<span class="dt-c dt-type"><span class="type-badge tb-static" title="'+esc+'"><span class="material-symbols-rounded tb-ic">category</span><span class="tb-nm">'+a.type+'</span></span></span><span class="dt-c dt-tr"><span class="rtrend'+(tn?" neg":"")+'"><span class="material-symbols-rounded">'+(tn?"arrow_drop_down":"arrow_drop_up")+'</span>'+Math.abs(tp).toFixed(1)+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
   /* Balance Trend — a line per account over trailing months; a declining account is flagged (demo: Missions Reserve). Compare-To = the range control. */
@@ -7220,7 +7220,7 @@ function mysPopContent(){
       var tip=aesc+', Account '+(a.acctFull||a.acct)+(neg?'. This account is overdrawn.':'');
       var pill=neg?'<span class="bank-tag-over">Overdrawn</span>':'';
       return '<div class="wt-row" data-acct="'+aesc+'">'+
-        '<span class="lr-main lr-stack lr-link bank-namecell" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+', tap to open" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.acct+'</span></span>'+
+        '<span class="lr-main lr-stack lr-link bank-namecell" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" data-tip="'+tip+', tap to open" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.acct,a.acctFull)+'</span></span>'+
         (full?'<span class="wt-type">'+a.type+'</span>':'')+
         '<span class="wt-c2 bank-bal'+(neg?" bank-neg":"")+'">'+pill+'<span class="bank-bal-amt">'+bankMoney(end)+'</span></span></div>';
     }).join("");
@@ -7548,7 +7548,7 @@ function purTable(w,full){
   var body=rows.map(function(o){
     var act=purCanAct(o),stLbl=(o.status==="approved")?"Approved":"Pending";
     var sr='<span class="sr-only">'+numLbl+' '+o.num+', '+o.vendor+', issued '+o.issued+', status '+stLbl+', amount '+money(o.amount)+'. '+(act?"Opens to approve or reject.":"Opens the purchase order.")+'</span>';
-    return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', '+stLbl+', amount '+money(o.amount)+(act?', open to approve or reject':', open record')+'"><span class="pur-c-num">'+o.num+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purStatusCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span></div>';
+    return '<div class="wt-row pur-rowclick" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" role="button" tabindex="0" aria-label="Purchase order '+o.num+', '+o.vendor+', '+stLbl+', amount '+money(o.amount)+(act?', open to approve or reject':', open record')+'"><span class="pur-c-num">'+codeCopy(o.num)+'</span><span class="lr-main">'+o.vendor+sr+'</span><span class="pur-c-date">'+o.issued+'</span>'+purStatusCell(o)+'<span class="wt-c2">'+money(o.amount)+'</span></div>';
   }).join("");
   var tot=purSum(rows),n=rows.length;
   var totLbl=(w.pstatus||"mine")==="approved"?(n+" order"+(n===1?"":"s")):(n+" request"+(n===1?"":"s"));
@@ -8931,7 +8931,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     var daysIcon=od?"warning":(n===0?"today":"schedule");
     return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(x.vendor+" "+x.inv)+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
       '<span class="lr-main">'+x.vendor+'</span>'+
-      '<span class="ap-c-inv">'+x.inv+'</span>'+
+      '<span class="ap-c-inv">'+codeCopy(x.inv)+'</span>'+
       '<span class="ap-c-duedate">'+apFmtShort(x.due)+'</span>'+
       '<span class="ap-c-status"><span class="ap-pill'+(od?" warn":"")+'">'+ICON(daysIcon)+apDaysShort(x.due)+'</span></span>'+
       '<span class="wt-c2">'+apMoney(x.amount)+'</span></div>';}
@@ -9520,7 +9520,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     function clsBadge(c){return '<span class="type-badge tb-static"><span class="material-symbols-rounded tb-ic">category</span><span class="tb-nm">'+(c||"Unclassified")+'</span></span>';}
     var head='<div class="wt-row wt-head fa-row"><span class="lr-main">'+faSortBtn(w,"name","Asset")+'</span><span class="fa-c-cls">'+faSortBtn(w,"cls","Class")+'</span><span class="fa-c-num">'+faSortBtn(w,"cost","Cost")+'</span><span class="fa-c-num">'+faSortBtn(w,"acc","Depreciation")+'</span><span class="fa-c-num fa-emph">'+faSortBtn(w,"net","Net value")+'</span></div>';
     var body=view.map(function(a){var tip=(a.name+', '+a.tag+(a.bld?', '+a.bld:'')).replace(/"/g,"&quot;");return '<div class="wt-row fa-row" data-acct="'+a.name.replace(/"/g,"&quot;")+'">'+
-      '<span class="lr-main lr-stack"><span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.tag+'</span></span></span>'+
+      '<span class="lr-main lr-stack"><span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.tag)+'</span></span></span>'+
       '<span class="fa-c-cls">'+clsBadge(a.cls)+'</span>'+
       '<span class="fa-c-num">'+money(a.cost)+'</span><span class="fa-c-num">'+money(a.acc)+'</span><span class="fa-c-num fa-emph">'+money(a.net)+'</span></div>';}).join("");
     var more=rem>0?'<div class="depf-more-row"><button class="depf-more" data-action="fa-more" data-id="'+w.id+'" aria-label="Load more assets, '+rem+' remaining">Load more<span class="depf-more-n">'+rem+'</span></button></div>':'';
@@ -10434,7 +10434,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-depf="tsort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
     var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name",((w.filter&&w.filter.indexOf("All")!==0)||w.acct)?"Account":"Name")+'</span><span class="dt-c dt-type">'+sb("type","Type")+'</span><span class="dt-c dt-tr">'+sb("trend","Trend")+'</span><span class="wt-c2">'+sb("net","Balance")+'</span></div>';
     var leaf=w.leaf;var body=pageRows.map(function(a){var tp=trendPct(a),tn=tp<0,esc=a.type.replace(/"/g,"&quot;"),aesc=a.name.replace(/"/g,"&quot;");
-      var tip=aesc+', Account '+(a.acctFull||a.acct),nmBlock='<span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+a.acct+'</span></span>';
+      var tip=aesc+', Account '+(a.acctFull||a.acct),nmBlock='<span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.acct,a.acctFull)+'</span></span>';
       return '<div class="wt-row'+(leaf?'':' wt-rowh')+'" data-id="'+w.id+'" data-acct="'+a.name+'">'+(leaf?'<span class="lr-main lr-stack">'+nmBlock+'</span>':'<span class="lr-main lr-stack lr-link" data-depf="pick-acct" data-v="'+aesc+'" data-type="'+esc+'" data-acctno="'+a.acct+'" data-id="'+w.id+'">'+nmBlock+'</span>')+'<span class="dt-c dt-type"><span class="type-badge tb-static" title="'+esc+'"><span class="material-symbols-rounded tb-ic">category</span><span class="tb-nm">'+a.type+'</span></span></span><span class="dt-c dt-tr"><span class="rtrend'+(tn?" neg":"")+'"><span class="material-symbols-rounded">'+(tn?"arrow_drop_down":"arrow_drop_up")+'</span>'+Math.abs(tp).toFixed(1)+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     var pager=(remaining>0)?('<div class="depf-more-row"><button class="depf-more" data-depf="tmore" data-id="'+w.id+'" aria-label="Load more accounts, '+remaining+' remaining">Load more<span class="depf-more-n">'+remaining+'</span></button></div>'):'';
     return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>'+pager;}
