@@ -7435,9 +7435,10 @@ function purKanban(w){
   }).join("");
   return '<div class="pur-kanban pur-kanban-4">'+cols+'</div>';
 }
+var PUR_TILE_META={all:{ic:"receipt_long",tone:"neutral"},pending:{ic:"hourglass_top",tone:"pending"},approved:{ic:"check_circle",tone:"approved"},rejected:{ic:"cancel",tone:"rejected"}};
 function purKpiTiles(w){var cur=purTileOf(w);
-  return '<div class="pur-tiles" role="group" aria-label="Filter by approval status">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),on=cur===id,rej=(id==="rejected");
-    return '<button class="pur-tile'+(on?" sel":"")+(rej?" pur-tile-rej":"")+'" data-action="pur-tile" data-id="'+w.id+'" data-t="'+id+'" aria-pressed="'+on+'"><span class="pur-tile-lbl">'+t[1]+'</span><span class="pur-tile-n">'+cnt+'</span><span class="pur-tile-amt">'+money(amt)+'</span></button>';}).join("")+'</div>';}
+  return '<div class="pur-tiles" role="group" aria-label="Filter by approval status">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),on=cur===id,m=PUR_TILE_META[id]||PUR_TILE_META.all;
+    return '<button class="pur-tile pur-tile-'+m.tone+(on?" sel":"")+'" data-action="pur-tile" data-id="'+w.id+'" data-t="'+id+'" aria-pressed="'+on+'"><span class="pur-tile-top"><span class="pur-tile-ic material-symbols-rounded">'+m.ic+'</span><span class="pur-tile-lbl">'+t[1]+'</span></span><span class="pur-tile-n">'+cnt+'</span><span class="pur-tile-amt">'+money(amt)+'</span></button>';}).join("")+'</div>';}
 /* Scope filter: "For me" vs "All", always present. It narrows EVERY status tile (All / Pending /
    Approved) to the requests that involve this approver, so you can see your own slice of each. */
 function purScopeToggle(w){var sc=purScopeOf(w);
