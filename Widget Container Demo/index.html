@@ -10386,7 +10386,10 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   document.addEventListener("blur",function(e){var c=e.target.classList;if(c&&c.contains("wtitle-input"))commit(e.target);if(c&&c.contains("dash-name-input"))commitDash(e.target);},true);
   function commit(inp){var w=find(inp.getAttribute("data-id"));if(w){var v=inp.value.trim();if(v)w.title=v;}renaming=null;render();}
   function commitDash(inp){var v=inp.value.trim();if(v)cur().name=v;dashRenaming=false;render();}
-  document.addEventListener("dragstart",function(e){var s=e.target.closest&&e.target.closest(".widget");if(!s||!manage)return;dragId=s.getAttribute("data-id");render();});
+  document.addEventListener("dragstart",function(e){var s=e.target.closest&&e.target.closest(".widget");if(!s||!manage){return;}dragId=s.getAttribute("data-id");try{if(e.dataTransfer){e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",dragId||"");}}catch(_){}
+    /* Do NOT render() here: rebuilding the dashboard mid-dragstart destroys the dragged node and the
+       browser cancels the drag. Just mark the node directly for visual feedback. */
+    s.classList.add("widget-dragging");});
   document.addEventListener("dragover",function(e){if(manage&&e.target.closest&&e.target.closest(".widget"))e.preventDefault();});
   document.addEventListener("drop",function(e){if(!manage)return;var s=e.target.closest&&e.target.closest(".widget");if(!s||!dragId)return;e.preventDefault();var ws=cur().widgets,tid=s.getAttribute("data-id"),f=ws.findIndex(function(x){return x.id===dragId;}),to=ws.findIndex(function(x){return x.id===tid;});if(f>-1&&to>-1&&f!==to){var m=ws.splice(f,1)[0];ws.splice(to,0,m);}dragId=null;render();});
   document.addEventListener("dragend",function(){dragId=null;render();});
