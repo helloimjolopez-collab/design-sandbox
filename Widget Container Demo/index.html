@@ -7455,11 +7455,14 @@ function purHeaderBlock(w,mode){
     '<div class="pur-tiles-row">'+purKpiTiles(w)+'</div>';
 }
 function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="pur-sk-line"><span class="sk" style="height:12px;flex:1"></span><span class="sk" style="height:12px;width:74px"></span></div>';}).join("");return '<div class="pur-skel"><div class="pur-skel-rows">'+rows+'</div><div class="pur-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
-function purAgeCell(o){var warn=o.age>=30;return '<span class="pur-c-age'+(warn?" pur-age-warn":"")+'" data-tip="Waiting '+o.age+' day'+(o.age===1?"":"s")+' since it was issued." data-tip-plain>'+ICON("schedule")+o.age+'d<span class="sr-only"> waiting</span></span>';}
+/* Status cell: icon + text + colour (never colour alone). "Pending" covers everything not yet fully
+   approved; "Approved" is a fully-approved order. Mirrors the PO_Order status field in production. */
+function purStatusCell(o){var ap=(o.status==="approved"),lbl=ap?"Approved":"Pending",ic=ap?"check_circle":"hourglass_top",tone=ap?"approved":"pending";
+  return '<span class="pur-c-status"><span class="pur-badge pur-badge-'+tone+'">'+ICON(ic)+lbl+'</span></span>';}
 function purTable(w,full){
   var rows=purFiltered(w).slice();
-  var sk=(w.psort||"age-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-  function val(o){if(key==="num")return o.num;if(key==="vendor")return o.vendor;if(key==="amount")return o.amount;return o.age;}
+  var sk=(w.psort||"issued-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
+  function val(o){if(key==="num")return o.num;if(key==="vendor")return o.vendor;if(key==="amount")return o.amount;if(key==="status")return (o.status==="approved")?1:0;return o.age;}
   rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="num"||key==="vendor")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
   function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pur-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded">'+ic+'</span></button>';}
   var numLbl=purColLabel(w);
