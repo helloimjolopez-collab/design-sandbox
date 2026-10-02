@@ -3056,6 +3056,112 @@
         <div class="toolbar"><div class="tb-left" id="tbLeft"></div><div class="tb-right" id="tbRight"></div></div>
         <div class="statusline" id="status"></div>
         <div class="dashboard" id="dashboard"></div>
+        <section class="spec" id="specView" hidden aria-label="Implementation specification">
+          <header class="spec-hd">
+            <h1 class="spec-title">Accounting Dashboard — Implementation Spec</h1>
+            <p class="spec-lead">Everything an engineer needs to build the dashboard and its widgets correctly: design tokens, responsive grid, the three widget sizes, resize reflow, the add-widget flow, overlays, and accessibility. All visual values resolve from the Pathway Design System tokens, not hand-authored values.</p>
+            <div class="spec-links">
+              <a class="spec-link" href="#" target="_blank" rel="noopener">${ICON_FIGMA}Figma — design source (placeholder)</a>
+              <a class="spec-link" href="#" target="_blank" rel="noopener">${ICON_SP}Widget-by-widget docs — SharePoint (placeholder)</a>
+            </div>
+          </header>
+
+          <div class="spec-sec" id="spec-tokens">
+            <h2>1. Design tokens</h2>
+            <p>All colour, spacing, radius, border, type and motion come from the Pathway Design System, loaded over CDN from the published package. Source of truth: <code>github.com/helloimjolopez-collab/pathway-ds</code> · package <code>@helloimjolopez-pathway/pathway-tokens@10.0.4</code>.</p>
+            <ul class="spec-ul">
+              <li><b>Primitives</b> (<code>--primitive-color-{family}-{step}</code>) — the raw ramps (cool-neutral, warm-neutral, brand, amethyst, red, green, saffron, orange, and the accent families). Alpha variants on anchor steps (e.g. <code>--primitive-color-green-350-16</code>) for tints; steps 4/8/16/24/36/50/70.</li>
+              <li><b>Semantics</b> (<code>--semantic-color-{fill|foreground|stroke}-*</code>) — role tokens. Surfaces are <b>warm</b> (widget/header = <code>fill-static-neutral-faint</code>, warm-neutral-0 #fefefd), text is <b>cool grey</b> (<code>foreground-static-neutral-*</code>), canvas = <code>fill-surface-canvas</code> (cool-neutral-10 #fafafa).</li>
+              <li><b>Rule:</b> semantic where a role fits, primitive only where no semantic exists (categorical chart series, alpha scrims/shadows). Nothing wears a raw hex.</li>
+            </ul>
+            <h3>Type scale (<code>--semantic-type-*</code>)</h3>
+            <table class="spec-tbl"><thead><tr><th>Token</th><th>Size</th><th>Used for</th></tr></thead><tbody>
+              <tr><td>font-size-xxl / xxxl</td><td>32 / 36px</td><td>n/a (reserved)</td></tr>
+              <tr><td>font-size-xl</td><td>24px</td><td>KPI metric values</td></tr>
+              <tr><td>font-size-l</td><td>20px</td><td>Overlay titles</td></tr>
+              <tr><td>font-size-r / m</td><td>16 / 18px</td><td>Section headings</td></tr>
+              <tr><td>font-size-s</td><td>14px</td><td>Body / table rows</td></tr>
+              <tr><td>font-size-xs</td><td>12px</td><td>Secondary, badges</td></tr>
+              <tr><td>font-size-xxs / xxxs</td><td>11 / 10px</td><td>Column headers, captions</td></tr>
+            </tbody></table>
+            <p>Families: <b>Red Hat Display</b> (metric values, titles), <b>Red Hat Text</b> (body), Material Symbols Rounded (icons). Weights 400/500/600/700.</p>
+            <h3>Spacing, radius, border (<code>--semantic-layout-units-*</code>)</h3>
+            <table class="spec-tbl"><thead><tr><th>Scale</th><th>Values</th></tr></thead><tbody>
+              <tr><td>gap</td><td>2 · 4 · 6 · 8 · 12 · 16 (base) · 24 · 36px</td></tr>
+              <tr><td>padding</td><td>2 · 4 · 6 · 8 · 12 · 14 (medium) · 16 (base) · 24 · 36 · 48px</td></tr>
+              <tr><td>corner radius</td><td>2 · 4 · 8 (base) · 12 (large) · 16 (xlarge) · 999 (full)</td></tr>
+              <tr><td>border width</td><td>0.5 · 0.75 · 1 · 1.5 · 2 · 4px</td></tr>
+              <tr><td>touch target</td><td>36 (desktop) · 44 (AA) · 48 (AAA)</td></tr>
+            </tbody></table>
+            <h3>Motion</h3>
+            <p>Easing from DS: <code>--motion-easing-standard</code> (enter/most), <code>--motion-easing-decelerate</code> (overlays). Durations 150ms (micro) / 300ms (enter). Respects <code>prefers-reduced-motion</code>.</p>
+            <h3>Elevation</h3>
+            <p>DS <code>--elevation-widget / sheet / lift / overlay</code> for card and overlay shadows (never hand-rolled rgba).</p>
+          </div>
+
+          <div class="spec-sec" id="spec-grid">
+            <h2>2. Responsive grid</h2>
+            <p>The dashboard is a CSS grid whose column count is driven by <b>container</b> width (<code>@container</code> on <code>.dashboard</code>), so it responds to the content area, not the viewport.</p>
+            <table class="spec-tbl"><thead><tr><th>Container width</th><th>Columns</th><th>Min col</th></tr></thead><tbody>
+              <tr><td>&lt; 720px</td><td>4</td><td>60px</td></tr>
+              <tr><td>≥ 720px</td><td>8</td><td>76px</td></tr>
+              <tr><td>≥ 1148px</td><td>12</td><td>81px</td></tr>
+            </tbody></table>
+            <p><code>grid-auto-rows: 48px</code>, <code>gap: 16px</code> (gap-base), <code>grid-auto-flow: row</code>. Widgets span whole columns/rows; height is a row-span multiple of 48 + gaps.</p>
+          </div>
+
+          <div class="spec-sec" id="spec-sizes">
+            <h2>3. Widget sizes</h2>
+            <p>Three sizes — <b>Glance</b> (kpi), <b>Explore</b> (wide), <b>Detail</b> (xwide) — plus <b>Band</b> (the full-width Financial KPIs). Column span adapts to the current column count; row span is fixed per size.</p>
+            <table class="spec-tbl"><thead><tr><th>Size</th><th>4-col</th><th>8-col</th><th>12-col</th><th>Rows</th><th>Role</th></tr></thead><tbody>
+              <tr><td><b>Glance</b> (kpi)</td><td>span 4</td><td>span 4</td><td>span 3</td><td>3 (~144px)</td><td>Headline metric + the one actionable number; hover "View details" drills to Explore without resizing.</td></tr>
+              <tr><td><b>Explore</b> (wide)</td><td>span 4</td><td>span 8</td><td>span 6</td><td>8</td><td>Table or chart with controls (filter, sort, view toggle, search).</td></tr>
+              <tr><td><b>Detail</b> (xwide)</td><td>span 4</td><td>span 8</td><td>span 12</td><td>9</td><td>Table + chart side by side; fullest in-grid view.</td></tr>
+              <tr><td><b>Band</b></td><td colspan="3">full row (1 / -1)</td><td>3</td><td>Full-width KPI band; single size only.</td></tr>
+            </tbody></table>
+          </div>
+
+          <div class="spec-sec" id="spec-reflow">
+            <h2>4. Resize reflow</h2>
+            <p>When a widget is resized, or the container crosses a breakpoint, its size is <b>clamped to the current column cap</b> (<code>fitSize()</code> against <code>curCap()</code>): a widget can never request more columns than the grid currently offers, so it never overflows the viewport or pushes content off-screen. The grid then re-places following widgets automatically (<code>grid-auto-flow: row</code>). On an explicit resize, the widget is scrolled back into view (<code>scrollIntoView</code>, centered) so the user stays oriented. Cap mapping: content width ≥1148 → Detail allowed; ≥566 → Explore; else Glance.</p>
+          </div>
+
+          <div class="spec-sec" id="spec-add">
+            <h2>5. Add-widget &amp; manage flow</h2>
+            <ul class="spec-ul">
+              <li><b>Manage dashboard</b> enters manage mode: every widget gets a drag-to-move handle, plus resize / duplicate / remove, and the dashboard name becomes editable. Done exits.</li>
+              <li><b>Add widget</b> opens a catalog: a category rail (with counts), a searchable list/tile view, an accurate glance-size preview of each widget, an Add / Added state per card, and a module badge (AP/AR/GL/PR/FA/PO). Done confirms with a toast: single → "<i>[Widget]</i> has been added to the dashboard"; multiple → "<i>N</i> widgets added to the dashboard".</li>
+              <li><b>Swap</b>: a widget's header chevron opens a searchable list to swap it for another widget, keeping its current size.</li>
+              <li>An "Add widget" affordance is always available at the end of the dashboard.</li>
+            </ul>
+          </div>
+
+          <div class="spec-sec" id="spec-overlays">
+            <h2>6. Overlays</h2>
+            <p>All focus/detail overlays share <b>one canonical size</b>: <code>width: min(960px, 94vw)</code>, <code>height: min(86vh, 680px)</code>, fixed height with the body scrolling internally — so an overlay never resizes or jumps as its content re-renders. The scrim has no re-entrance animation. Small confirm/picker dialogs are a separate compact class. Every overlay states its subject once (no header/footer duplication), uses one table pattern with cells aligned under headers, status as icon+text badges (never colour alone), and a single clear action hierarchy. Per-row actions sit inline; bulk actions (e.g. Export) live with the selection summary in the toolbar.</p>
+          </div>
+
+          <div class="spec-sec" id="spec-a11y">
+            <h2>7. Accessibility</h2>
+            <ul class="spec-ul">
+              <li><b>Colour contrast</b> from the semantic foreground tokens meets WCAG AA for text; status is never communicated by colour alone — always icon + text.</li>
+              <li><b>Focus</b> uses the DS focus ring (<code>--semantic-color-stroke-focusring-base</code>, 2px, 2px offset) on all interactive elements.</li>
+              <li><b>Keyboard</b>: all controls reachable and operable; checkboxes/toggles expose <code>role</code> + <code>aria-checked</code>/<code>aria-pressed</code>; menus use <code>aria-haspopup</code>/<code>aria-expanded</code>.</li>
+              <li><b>Screen reader</b>: each row has an <code>aria-label</code> summarising its data and action; live region announces status changes.</li>
+              <li><b>Motion</b>: honours <code>prefers-reduced-motion</code>. <b>Touch</b>: hover-only affordances (e.g. copy) reveal on tap where there is no hover.</li>
+              <li>Interactive elements look interactive; static context never looks tappable.</li>
+            </ul>
+          </div>
+
+          <div class="spec-sec" id="spec-breakpoints">
+            <h2>8. What changes / is unavailable at smaller sizes</h2>
+            <ul class="spec-ul">
+              <li><b>Add-widget / manage flow</b>: desktop only — disabled below <b>900px</b> (the catalog needs the rail + grid + preview). Tablet and below show a hint instead.</li>
+              <li><b>Column reflow</b>: 12 → 8 → 4 columns as the container narrows; widgets clamp Detail → Explore → Glance so nothing overflows.</li>
+              <li>Overlays go full-screen on small viewports.</li>
+            </ul>
+          </div>
+        </section>
       </div>
     </main>
   </div>
