@@ -861,7 +861,10 @@
   .widget[data-size="kpi"]{background:var(--surface-widget);}
   .widget[data-size="kpi"] .wcontent{background:transparent;box-shadow:none;border-radius:0;border:none;margin:0;}
   /* navigation dialog — explains exactly where a tap would take you */
-  .modal-backdrop{position:fixed;inset:0;z-index:2000;background:var(--primitive-color-cool-neutral-900-36);display:flex;align-items:center;justify-content:center;padding:20px;animation:pop var(--dur2) var(--dec);}
+  /* No entrance animation on the backdrop: several detail overlays rebuild their whole DOM on each
+     in-modal interaction, which re-created this element and replayed the pop every time (the "glitch").
+     The scrim now just appears, consistent with the modal box (whose animation is also disabled). */
+  .modal-backdrop{position:fixed;inset:0;z-index:2000;background:var(--primitive-color-cool-neutral-900-36);display:flex;align-items:center;justify-content:center;padding:20px;}
   .modal{background:var(--surface-widget);border-radius:14px;box-shadow:var(--elevation-overlay);max-width:390px;width:100%;overflow:hidden;animation:modalIn var(--dur2) var(--ease);}
   @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
   @media(prefers-reduced-motion:reduce){.modal{animation:none!important;}}
