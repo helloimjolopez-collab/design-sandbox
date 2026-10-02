@@ -91,7 +91,11 @@
     --am-100:var(--primitive-color-amethyst-50);   /* #e8e6f5 ✓ */
     --am-50:var(--primitive-color-amethyst-25);    /* #f4f2fa ✓ */
     --chart:var(--am-500);--chart-strong:var(--am-700);--chart-soft:var(--am-200);--chart-fill:var(--am-500);--brand-fill:var(--am-500);
-    --dur:150ms;--dur2:300ms;--ease:cubic-bezier(.4,0,.2,1);--dec:cubic-bezier(0,0,.2,1);--r:12px;
+    /* Motion easings and radius now ride DS tokens. Durations (150/300ms) have no DS duration token
+       in this package (motion.css ships only loop durations), so they stay as raw ms until one exists. */
+    --dur:150ms;--dur2:300ms;
+    --ease:var(--motion-easing-standard);--dec:var(--motion-easing-decelerate);
+    --r:var(--semantic-layout-units-cornerradius-large);
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--surface-canvas);font-family:'Red Hat Text',sans-serif;color:var(--txt-primary);}
