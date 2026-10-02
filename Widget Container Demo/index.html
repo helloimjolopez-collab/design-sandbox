@@ -10430,7 +10430,10 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
       content='<div class="acctm-chart tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-multi="0" data-blob="'+blob.replace(/"/g,"&quot;")+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div><div class="tr-xax">'+xl+'</div></div>';
     }
     return '<div class="acctm">'+head+content+'</div>';}
-  function depFOpenAcct(w,name,type,acctNo){var a=acctNo?DEPF_DEP.filter(function(x){return x.acct===acctNo;})[0]:DEPF_DEP.filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;var ctx={aname:a.name,atype:a.type,acctNo:a.acct,range:w.range||"Q",mview:"trend"};modal={t:a.name,glyph:"account_balance_wallet",depf:ctx,b:depFAcctModalBody(ctx)};modalMounted=false;depFClosePop();pop=null;render();}
+  /* Isolating a single account opens the SAME scoped overlay the rest of the widget uses (identical to
+     isolating a type): standard modal-wide size, the Compare-to range menu, the Trend/Table toggle, and
+     the "Account" table header — not a bespoke mini-modal. */
+  function depFOpenAcct(w,name,type,acctNo){var a=acctNo?DEPF_DEP.filter(function(x){return x.acct===acctNo;})[0]:DEPF_DEP.filter(function(x){return x.name===name&&(!type||x.type===type);})[0];if(!a)return;var mw=Object.assign({},w,{id:"__depftypemodal",acct:a.name,acctType:a.type,acctNo:a.acct,filter:"All types",bd:"total",size:"wide",view:"trend",trIso:null,tshown:50,range:w.range||"Q",state:"ready"});modal={t:a.name+" "+a.acct,glyph:"account_balance_wallet",scoped:true,mw:mw};modalMounted=false;depFClosePop();pop=null;render();}
   /* Owner change 3: chart click drills into scope, it does not expand. A type series sets the top-left scope to that type and flips the breakdown to By Account. */
   function depFDrillType(w,typeName){if(!typeName)return;w.filter=typeName;w.acct=null;w.acctType=null;w.acctNo=null;w.bd="group";w.trIso=null;w.tshown=50;}
   /* W07: tapping an account type (slice or legend) opens a MODAL with that type's own by-account pie,
