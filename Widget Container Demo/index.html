@@ -8120,6 +8120,14 @@ var ARF_INV_SINGLE=[
     ARF_INV.push({inv:"INV-"+(2600+i),customer:nm,billTo:nm,due:iso,days:daysPast,amount:amt,rc:rc[0],source:rc[1],lines:[{desc:"Outstanding balance",qty:1,unit:amt}],attachments:(i%3===0?[{name:"INV-"+(2600+i)+".pdf",size:"72 KB"}]:[]),note:"",payments:[]});
   });
 })();
+/* A customer with MULTIPLE outstanding invoices in one bucket, so the overlay's multi-invoice grouping
+   is real and testable (e.g. open the 1-30 day bucket -> Hope Center shows four invoices). */
+(function(){var hc="Hope Center",base=new Date(2026,6,23);
+  [[5,1850],[12,980],[20,3200],[28,640]].forEach(function(p,i){
+    var due=new Date(base.getTime()-p[0]*86400000),iso=due.getFullYear()+"-"+String(due.getMonth()+1).padStart(2,"0")+"-"+String(due.getDate()).padStart(2,"0");
+    ARF_INV.push({inv:"INV-29"+(10+i),customer:hc,billTo:hc,due:iso,days:p[0],amount:p[1],rc:"Church",source:"",lines:[{desc:"Outstanding balance",qty:1,unit:p[1]}],attachments:[],note:"",payments:[]});
+  });
+})();
 
 /* (2) RENDER ----------------------------------------------------------- */
 function arFEsc(s){return String(s).replace(/"/g,"&quot;");}
