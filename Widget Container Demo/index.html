@@ -8394,12 +8394,16 @@ function arFDetailModalInner(){
   var headIco=selAll?"check_box":(selN?"indeterminate_check_box":"check_box_outline_blank");
   var headRow='<div class="arF-wl-head"><span class="arF-wl-c-check" role="checkbox" aria-checked="'+(!!selAll)+'" tabindex="0" data-action="arF-selall" aria-label="Select all customers">'+ICON(headIco)+'</span><span class="arF-wl-c-cust">Customer</span><span class="arF-wl-c-age">Oldest</span><span class="arF-wl-c-amt">Outstanding</span><span class="arF-wl-c-exp" aria-hidden="true"></span></div>';
   var body="";
+  /* Only group by aging bucket when the scope actually spans MORE THAN ONE bucket (e.g. All outstanding
+     or a single customer). When the overlay is already focused on one bucket, the header names it once;
+     repeating a bucket sub-header + its count here would just restate the same thing a third time. */
+  var bucketsPresent=ARF_BUCKETS.filter(function(bk){return groups.some(function(g){return g.worst===bk.sev;});}).length;
   if(!custN){body='<div class="state" data-kind="empty">'+ICON("search_off")+'<div class="state-title">No customers match "'+arFEsc(modal.q||"")+'"</div></div>';}
   else{ARF_BUCKETS.slice().sort(function(a,b){return b.sev-a.sev;}).forEach(function(bk){
     var custs=groups.filter(function(g){return g.worst===bk.sev;}).sort(function(a,b){return b.total-a.total;});
     if(!custs.length)return;
     var bktot=custs.reduce(function(s,g){return s+g.total;},0);
-    body+='<div class="arF-wl-bkh"><span class="arF-sevdot" style="background:var('+ARF_SEV_COLORS[bk.sev]+')"></span><span class="arF-wl-bkh-t">'+bk.label+'</span><span class="arF-wl-bkh-m">'+custs.length+' customer'+(custs.length>1?"s":"")+' · '+money(bktot)+'</span></div>';
+    if(bucketsPresent>1)body+='<div class="arF-wl-bkh"><span class="arF-sevdot" style="background:var('+ARF_SEV_COLORS[bk.sev]+')"></span><span class="arF-wl-bkh-t">'+bk.label+'</span><span class="arF-wl-bkh-m">'+custs.length+' customer'+(custs.length>1?"s":"")+' · '+money(bktot)+'</span></div>';
     body+=custs.map(function(g){
       var open=modal.exp===g.customer,sel=!!(modal.sel&&modal.sel[g.customer]);
       var ageTxt=g.oldest>0?(g.oldest+'d overdue'):'Current';
