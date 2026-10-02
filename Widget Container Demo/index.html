@@ -9981,7 +9981,10 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="noop"){pop=null;render();return;}
     if(a==="stop"){return;}
     if(a==="modal-close"){if(typeof awHideHover==="function")awHideHover();
-      if(modal&&modal.type==="addwidget"){var _tot=0;if(modal.added)Object.keys(modal.added).forEach(function(k){_tot+=modal.added[k];});var _dn=cur().name;manage=false;modal=null;pop=null;render();if(_tot>0)toast(_tot+" widget"+(_tot>1?"s":"")+" added to “"+_dn+"”");return;}
+      if(modal&&modal.type==="addwidget"){var _tot=0,_oneKind=null;if(modal.added)Object.keys(modal.added).forEach(function(k){_tot+=modal.added[k];if(modal.added[k]>0)_oneKind=k;});manage=false;modal=null;pop=null;render();
+        if(_tot===1){var _p=null;for(var _i=0;_i<PALETTE.length;_i++){if(PALETTE[_i].kind===_oneKind){_p=PALETTE[_i];break;}}toast((_p?_p.title:"Widget")+" has been added to the dashboard");}
+        else if(_tot>1){toast(_tot+" widgets added to the dashboard");}
+        return;}
       modal=null;pop=null;render();return;}
     if(faHandleClick(a,id,t))return;
     if(a&&a.indexOf("ins-")===0&&insHandleClick(a,id,t))return;
