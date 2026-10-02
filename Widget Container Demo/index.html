@@ -801,6 +801,14 @@
   .dep-actions{display:flex;gap:8px;padding:4px 14px 12px;}
 
   .widget[data-manage="true"]{border-style:dashed;cursor:grab;}
+  .widget[data-manage="true"]:active{cursor:grabbing;}
+  /* Drag affordances: the dragged widget fades; other widgets dim slightly so the drop zone reads; the
+     target widget gets a brand outline and an insertion bar on the edge the drop will snap to. */
+  .dash-dragging .widget:not(.widget-dragging){opacity:.9;}
+  .widget.wdrop-before,.widget.wdrop-after{outline:2px solid var(--brand-100);outline-offset:-1px;}
+  .widget.wdrop-before::after,.widget.wdrop-after::after{content:"";position:absolute;left:8px;right:8px;height:4px;border-radius:999px;background:var(--brand-100);box-shadow:0 0 0 2px var(--brand-10);z-index:6;pointer-events:none;}
+  .widget.wdrop-before::after{top:-3px;}
+  .widget.wdrop-after::after{bottom:-3px;}
   .widget[data-manage="true"] .wdrag{display:inline-flex;}
   .widget[data-dragging="true"],.widget-dragging{opacity:.5;}
   /* Widget-shaped "Add widget" placeholder — shown whenever a dashboard has 0 or 1 real widgets, so there's always an obvious, in-grid way to add the next one (not just the toolbar button) */
