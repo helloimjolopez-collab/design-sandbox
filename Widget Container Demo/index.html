@@ -8384,9 +8384,13 @@ function arFDetailModalInner(){
   var head='<div class="modal-h arF-wl-h"><div class="arF-wl-htext"><span class="modal-title"><span class="material-symbols-rounded arF-wl-tic">receipt_long</span>Receivable Invoices Outstanding</span>'+
     '<span class="arF-wl-sub">'+subj+' · '+custN+' customer'+(custN===1?"":"s")+' · '+money(grand)+'</span></div>'+
     '<button class="iconbtn" data-action="arF-detail-close" aria-label="Close">'+ICON("close")+'</button></div>';
-  var controls='<div class="arF-wl-controls"><div class="arF-wl-search"><span class="material-symbols-rounded">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customers" aria-label="Search customers" value="'+arFEsc(modal.q||"")+'"></div></div>';
   var selN=modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;
   var selAll=custN>0&&groups.every(function(g){return modal.sel&&modal.sel[g.customer];});
+  /* Export is a bulk UTILITY, so it lives quietly in the top toolbar as a secondary action (never a
+     competing primary, never floating bottom-right). It exports the selection, or all when nothing is
+     selected; a Clear chip appears only while a selection is active. */
+  var exportLbl=selN>0?("Export "+selN+" selected"):"Export all";
+  var controls='<div class="arF-wl-controls"><div class="arF-wl-search"><span class="material-symbols-rounded">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customers" aria-label="Search customers" value="'+arFEsc(modal.q||"")+'"></div><div class="arF-wl-tools">'+(selN>0?'<button class="arF-wl-clear" data-action="arF-clearsel" aria-label="Clear selection">'+ICON("close")+'Clear ('+selN+')</button>':'')+'<button class="btn secondary sm arF-wl-export" data-action="arF-export">'+ICON("download")+exportLbl+'</button></div></div>';
   var headIco=selAll?"check_box":(selN?"indeterminate_check_box":"check_box_outline_blank");
   var headRow='<div class="arF-wl-head"><span class="arF-wl-c-check" role="checkbox" aria-checked="'+(!!selAll)+'" tabindex="0" data-action="arF-selall" aria-label="Select all customers">'+ICON(headIco)+'</span><span class="arF-wl-c-cust">Customer</span><span class="arF-wl-c-age">Oldest</span><span class="arF-wl-c-amt">Outstanding</span><span class="arF-wl-c-exp" aria-hidden="true"></span></div>';
   var body="";
