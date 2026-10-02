@@ -8344,13 +8344,14 @@ function arFCustPanel(w,g,c){
       '<span class="arF-ci-amt">'+money(x.amount)+'</span>'+
       '<button class="arF-ci-open" data-action="arF-open-invoice" data-inv="'+arFEsc(x.inv)+'" data-cust="'+arFEsc(g.customer)+'" data-tip="Open invoice in Accounts Receivable" data-tip-plain aria-label="Open invoice '+arFEsc(x.inv)+' in Accounts Receivable">'+ICON("open_in_new")+'<span>Open</span></button></div>';
   }).join("");
+  /* Per-invoice action is ONLY "Open" (out to the real AR invoice record, per the W05 brief — that is
+     where recording a payment or sending a statement actually happens in the product). The old in-panel
+     "Record payment" / "Send statement" primaries and the invented contact block are removed: they were
+     unconfirmed, created two competing primaries, and would multiply into a mess on multi-invoice
+     customers. Open sits inline inside each invoice row, so 12 invoices read as 12 tidy rows. */
   return '<div class="arF-cp">'+
-    '<div class="arF-cp-contact"><span class="arF-cp-ci">'+ICON("mail")+'<span>'+c.email+'</span></span><span class="arF-cp-ci">'+ICON("call")+'<span>'+c.phone+'</span></span></div>'+
     '<div class="arF-cp-invs"><div class="arF-ci arF-ci-head"><span class="arF-ci-inv">Invoice</span><span class="arF-ci-due">Due</span><span class="arF-ci-days">Status</span><span class="arF-ci-amt">Amount</span><span class="arF-ci-open" aria-hidden="true"></span></div>'+invRows+'</div>'+
-    '<div class="arF-cp-actions">'+
-      '<button class="btn primary sm" data-action="arF-record-pay" data-cust="'+arFEsc(g.customer)+'">'+ICON("payments")+'Record payment</button>'+
-      '<button class="btn outlined sm" data-action="arF-statement" data-cust="'+arFEsc(g.customer)+'">'+ICON("mail")+'Send statement</button>'+
-    '</div></div>';
+  '</div>';
 }
 /* Export preview: shows the exact scope (selected vs all), the columns and the
    first rows, so Maria sees what she is exporting before she commits. */
