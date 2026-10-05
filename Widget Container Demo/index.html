@@ -8991,9 +8991,14 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     return '<div class="dep-hd pto-hd"><div class="dep-hd-top"><div class="pto-filters">'+ptoDeptChip(w)+ptoPGChip(w)+'</div><div class="dep-hd-toggle">'+ptoView2Toggle(w)+'</div></div></div>'+
       '<div class="pto-cards-row">'+ptoKpiCards(w)+ptoRangeToggle(w)+'</div>';}
   function ptoGlance2(w){
-    if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">No access</span></span><div class="metric-value" style="font-size:18px;color:var(--txt-subtle)">—</div></div></div>';
-    var b=ptoBaseRows(w),pend=b.filter(function(r){return r.s3!=="approved";}).length,appr=b.filter(function(r){return r.s3==="approved";}).length;
-    return '<div class="kpi-row"><div class="kpi-num"><span class="gl-ctx"><span class="sc-nm">Scheduled time off</span></span><div class="dep-hd-kpigrp"><span class="metric-value">'+pend+'</span><span class="bank-pill">'+ICON("schedule")+'pending</span></div><div class="gl-sub"><span class="bank-caption">'+appr+' approved</span></div></div></div>';}
+    if(w.state==="empty")return '<div class="pto-glance"><span class="sc-nm">Scheduled time off</span><div class="pto-gl-kpi"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No access</span></div></div>';
+    var b=ptoBaseRows(w),pend=b.filter(function(r){return r.s3!=="approved";}).length,appr=b.filter(function(r){return r.s3==="approved";}).length,tot=b.length;
+    var caught=(pend===0);
+    return '<div class="pto-glance">'+
+      '<span class="sc-nm">Scheduled time off</span>'+
+      '<div class="pto-gl-kpi"><span class="metric-value">'+pend+'</span><span class="pto-gl-cap">'+(pend===1?"request pending":"pending your approval")+'</span></div>'+
+      (caught?'<div class="pto-gl-status ok">'+ICON("check_circle")+'All caught up</div>':'<div class="pto-gl-status">'+appr+' approved · '+tot+' this period</div>')+
+    '</div>';}
   /* Employee drill (scrim overlay): the person isolated, with their own KPIs. */
   function ptoDrillModalHTML(){
     var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
