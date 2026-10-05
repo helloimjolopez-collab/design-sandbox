@@ -3073,11 +3073,12 @@
   .remF-pct-v{font-weight:700;font-variant-numeric:tabular-nums;}
   .remF-nopct{color:var(--txt-subtle);}
   .remF-head{position:sticky;top:0;z-index:1;background:var(--surface-widget);font-size:11px;font-weight:600;color:var(--txt-subtle);}
-  .remF-head .remF-cell{white-space:normal;overflow:visible;}
+  .remF-head .remF-cell{white-space:nowrap;overflow:visible;}
   .remF-num .wt-sort,.remF-pct .wt-sort{justify-content:flex-end;width:100%;}
-  /* Header labels may wrap to two lines within their column (e.g. "Expected by now"),
-     so a long head never collides with the column beside it; data numbers stay single-line. */
-  .remF-head .remF-num .wt-sort,.remF-head .remF-pct .wt-sort{display:inline;width:auto;line-height:1.15;}
+  /* Right-aligned numeric headers put the sort chevron on the LEFT of the label (row-reverse),
+     so the label's right edge lines up exactly with the numbers below it. No stacking, no drift. */
+  .remF-head .remF-num .wt-sort,.remF-head .remF-pct .wt-sort{flex-direction:row-reverse;}
+  .remF-head .remF-num .wt-sort .material-symbols-rounded,.remF-head .remF-pct .wt-sort .material-symbols-rounded{margin-right:1px;}
   .remF-name{display:flex;flex-direction:column;gap:3px;min-width:0;}
   .remF-name-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;color:var(--txt-primary);}
   .remF-name-sub{font-size:11px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
