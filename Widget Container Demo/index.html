@@ -4869,7 +4869,8 @@ function remFTable(w){
   rows.forEach(function(r){tt.total+=r.total;tt.expected+=r.expected;tt.paid+=r.paid;tt.out+=r.outstanding;});
   var tBand=(tt.paid<tt.expected)?"behind":(((tt.total-tt.paid)<=0)?"ahead":"ontrack"),totPct=tt.total>0?remFPct(tt.paid/tt.total):"n/a";
   var tPaidPct=tt.total>0?Math.min(100,tt.paid/tt.total*100):0,tExpPct=tt.total>0?Math.min(100,tt.expected/tt.total*100):0;
-  var totMini=tt.total>0?('<span class="rem-minirow"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+tBand+'" style="width:'+tPaidPct.toFixed(1)+'%"></span></span><span class="rem-mini-mark" style="left:'+tExpPct.toFixed(1)+'%"></span></span><span class="rem-mini-pct">'+totPct+'</span></span>'):'<span class="remF-nopct">n/a</span>';
+  var totGap=(tExpPct>tPaidPct)?'<span class="rem-bargap" style="left:'+tPaidPct.toFixed(1)+'%;width:'+(tExpPct-tPaidPct).toFixed(1)+'%"></span>':'';
+  var totMini=tt.total>0?('<span class="rem-minirow"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+tBand+'" style="width:'+tPaidPct.toFixed(1)+'%"></span>'+totGap+'</span></span><span class="rem-mini-pct">'+totPct+'</span></span>'):'<span class="remF-nopct">n/a</span>';
   var tBehind=rows.reduce(function(s,r){return s+remFBehindFor(r);},0);
   var tot='<div class="remF-row remF-total">'+
     '<span class="remF-cell remF-seq"></span>'+
