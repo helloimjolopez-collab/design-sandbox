@@ -5769,12 +5769,15 @@ function loanTable(w){
   var head='<div class="wt-row wt-head loan-head"><span class="loan-c-acct">'+sb("acct","Account")+'</span><span class="lr-main loan-c-name">'+sb("name","Borrower")+'</span><span class="loan-c-last">'+sb("last","Last payment")+'</span><span class="wt-c2 loan-c-amt">'+sb("amt","Amount due")+'</span></div>';
   var body;
   if(sel==="total"){
+    /* Aging bands render as expandable accordion buckets: band header (dot, label, count, subtotal)
+       with a chevron; tap to collapse/expand its loans. Bands open by default. */
+    var openB=w.loanOpenBands||{};
     body=LOAN_BUCKETS.map(function(b){
       var br=rows.filter(function(x){return loanBucketOf(x.days)===b.key;});
       if(!br.length)return "";
-      var st=br.reduce(function(s,x){return s+x.amount;},0),over=(b.sev>=1);
-      var gh='<div class="wt-row loan-grp"><span class="loan-grp-nm'+(over?" over":"")+'"><span class="loan-grp-dot" style="background:var('+LOAN_SEV_COLORS[b.sev]+')"></span>'+b.label+' <span class="loan-grp-ct">'+br.length+' loan'+(br.length===1?"":"s")+'</span></span><span class="loan-grp-amt">'+loanMoney(st)+'</span></div>';
-      return gh+br.map(function(x){return loanRowHTML(w,x);}).join("");
+      var st=br.reduce(function(s,x){return s+x.amount;},0),over=(b.sev>=1),isOpen=(openB[b.key]!==false);
+      var gh='<div class="wt-row loan-grp loan-grp-btn'+(isOpen?" open":"")+'" role="button" tabindex="0" data-action="loan-band-toggle" data-id="'+w.id+'" data-band="'+b.key+'" aria-expanded="'+isOpen+'" aria-label="'+loanEsc(b.label+", "+br.length+" loan"+(br.length===1?"":"s")+", "+loanMoney(st)+", "+(isOpen?"expanded":"collapsed")+". Tap to "+(isOpen?"collapse":"expand")+".")+'"><span class="loan-grp-nm'+(over?" over":"")+'"><span class="loan-grp-caret material-symbols-rounded" aria-hidden="true">'+(isOpen?"expand_more":"chevron_right")+'</span><span class="loan-grp-dot" style="background:var('+LOAN_SEV_COLORS[b.sev]+')"></span>'+b.label+' <span class="loan-grp-ct">'+br.length+' loan'+(br.length===1?"":"s")+'</span></span><span class="loan-grp-amt">'+loanMoney(st)+'</span></div>';
+      return gh+(isOpen?br.map(function(x){return loanRowHTML(w,x);}).join(""):"");
     }).join("");
   }else{
     body=rows.map(function(x){return loanRowHTML(w,x);}).join("");
