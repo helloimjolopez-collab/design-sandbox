@@ -5346,8 +5346,8 @@ function gftHandleClick(a,id,t){
   if(a==="gft-sort"){var ws=find(id),k=t.getAttribute("data-k");if(ws){var cs=(ws.gftSort||"fulfilled-asc").split("-");ws.gftSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+(k==="purpose"?"asc":"desc"));}render();return true;}
   /* Row / bar / follow-up tap -> the donors behind that purpose, in a focus overlay. */
   if(a==="gft-open"){var wo=find(id);if(!wo)return true;modal={type:"gftdetail",id:id,purpose:t.getAttribute("data-purpose"),view:t.getAttribute("data-view")||"all",exp:null};modalMounted=false;pop=null;render();return true;}
-  if(a==="gft-d-view"){if(modal){modal.view=t.getAttribute("data-v");modal.exp=null;}render();return true;}
-  if(a==="gft-d-exp"){if(modal){var dn=t.getAttribute("data-donor");modal.exp=(modal.exp===dn)?null:dn;}render();return true;}
+  if(a==="gft-d-view"){if(modal){modal.view=t.getAttribute("data-v");modal.exp=null;}renderModal();return true;}
+  if(a==="gft-d-exp"){if(modal){var dn=t.getAttribute("data-donor");modal.exp=(modal.exp===dn)?null:dn;}renderModal();return true;}
   if(a==="gft-detail-close"){modal=null;modalMounted=false;pop=null;render();return true;}
   if(a==="gft-export"){pop=null;setStatus("Exporting this pledge detail to Excel…");render();return true;}
   if(a==="gft-open-donor"){setStatus("Opening the donor record for "+t.getAttribute("data-donor")+" in Donors and Gifts…");return true;}
