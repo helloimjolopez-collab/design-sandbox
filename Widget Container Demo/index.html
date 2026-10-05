@@ -3040,22 +3040,27 @@
   .remF-row{display:grid;grid-template-columns:minmax(150px,2fr) 76px 80px 80px 80px 110px;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid var(--stroke-widget);font-size:13px;}
   .remF-row>.remF-name{padding-right:10px;}
   .remF-num.remF-alignL{text-align:left;}
-  .remF-cards{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:2px 0 0;}
-  .remF-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 11px;border:1px solid var(--stroke-widget);border-radius:10px;background:var(--surface-widget);cursor:pointer;text-align:left;font-family:inherit;min-width:0;transition:background .12s,border-color .12s;}
-  .remF-card-sk{height:58px;border-radius:10px;}
-  .remF-card:hover{background:var(--wn-100);}
-  .remF-card:focus-visible{outline:2px solid var(--am-400);outline-offset:2px;}
-  .remF-card-top{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--txt-subtle);}
-  .remF-card-top .material-symbols-rounded{font-size:15px;font-variation-settings:'FILL' 1;}
-  .remF-card-behind .remF-card-top .material-symbols-rounded{color:var(--primitive-color-saffron-500);}
-  .remF-card-ontrack .remF-card-top .material-symbols-rounded{color:var(--am-600);}
-  .remF-card-ahead .remF-card-top .material-symbols-rounded{color:var(--green-120);}
-  .remF-card-n{font-size:22px;font-weight:700;line-height:1;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
-  .remF-card-sub{font-size:11px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;}
-  .remF-card.on{border-width:2px;padding:8px 10px;}
-  .remF-card-behind.on{border-color:var(--primitive-color-saffron-300);background:var(--primitive-color-saffron-75);}
-  .remF-card-ontrack.on{border-color:var(--am-400);background:var(--am-100);}
-  .remF-card-ahead.on{border-color:var(--primitive-color-jade-300);background:var(--primitive-color-jade-25);}
+  /* Pace tiles: the canonical toned filter-tile (same as .pur-tile / .ap-tile). The status tone
+     colours the WHOLE tile (fill + icon + number + label) from one matched semantic set:
+     Behind = attention, On track = info, Ahead = positive. */
+  .remF-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:2px 0 0;}
+  .remF-tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:9px 12px;border:0.5px solid var(--stroke-container);border-radius:12px;background:var(--surface-sheet);cursor:pointer;text-align:left;font-family:inherit;min-width:0;transition:border-color var(--dur),box-shadow var(--dur);}
+  .remF-tile-sk{height:56px;border-radius:12px;}
+  .remF-tile:hover{border-color:var(--brand-100);box-shadow:0 0 0 2px var(--brand-10);}
+  .remF-tile:focus-visible{outline:2px solid var(--am-400);outline-offset:2px;}
+  .remF-tile-top{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:100%;}
+  .remF-tile .material-symbols-rounded{font-size:16px;font-variation-settings:'FILL' 1;}
+  .remF-tile-lbl{font-size:12px;font-weight:600;color:var(--txt-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .remF-tile-n{font-size:22px;font-weight:700;line-height:1.1;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+  .remF-tile-behind{background:var(--semantic-color-fill-static-attention-subtle);border-color:var(--semantic-color-stroke-static-attention-subtle);}
+  .remF-tile-behind .material-symbols-rounded,.remF-tile-behind .remF-tile-lbl,.remF-tile-behind .remF-tile-n{color:var(--semantic-color-foreground-static-attention-on-subtle);}
+  .remF-tile-ontrack{background:var(--semantic-color-fill-static-info-subtle);border-color:var(--semantic-color-stroke-static-info-subtle);}
+  .remF-tile-ontrack .material-symbols-rounded,.remF-tile-ontrack .remF-tile-lbl,.remF-tile-ontrack .remF-tile-n{color:var(--semantic-color-foreground-static-info-on-subtle);}
+  .remF-tile-ahead{background:var(--semantic-color-fill-static-positive-subtle);border-color:var(--semantic-color-stroke-static-positive-subtle);}
+  .remF-tile-ahead .material-symbols-rounded,.remF-tile-ahead .remF-tile-lbl,.remF-tile-ahead .remF-tile-n{color:var(--semantic-color-foreground-static-positive-on-subtle);}
+  .remF-tile-behind.sel{border-color:var(--semantic-color-foreground-static-attention-on-subtle);box-shadow:0 0 0 2px var(--semantic-color-stroke-static-attention-subtle);}
+  .remF-tile-ontrack.sel{border-color:var(--semantic-color-foreground-static-info-on-subtle);box-shadow:0 0 0 2px var(--semantic-color-stroke-static-info-subtle);}
+  .remF-tile-ahead.sel{border-color:var(--semantic-color-foreground-static-positive-on-subtle);box-shadow:0 0 0 2px var(--semantic-color-stroke-static-positive-subtle);}
   .remF-glancewrap{display:flex;flex-direction:column;gap:9px;padding:10px 12px;height:100%;justify-content:center;}
   .remF-glancewrap .scope-chip,.remF-glancewrap .filter-chip{align-self:flex-start;}
   .remF-gl-cap{font-size:12px;font-weight:600;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
