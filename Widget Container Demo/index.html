@@ -4963,6 +4963,31 @@ function remFChStatusChip(c){
   if(c.status==="onpace")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'On track</span>';
   return '<span class="rem-st rem-st-behind">'+ICON("error")+'Behind</span>';
 }
+/* Each member-church pledge resolves to a schedule of installments across the fund's own term,
+   at the fund's payment frequency. Paid amount fills installments chronologically from what the
+   church has remitted; status is paid / part paid / overdue (past due, unpaid) / upcoming. */
+function remFChurchInstallments(c,r,iso){
+  var begin=remFParse(r.begin),end=remFParse(r.end);
+  var totalMonths=Math.max(1,(end.getFullYear()-begin.getFullYear())*12+(end.getMonth()-begin.getMonth()));
+  var count=Math.max(1,Math.round((r.freq||12)*(totalMonths/12)));
+  var stepMonths=Math.max(1,Math.round(totalMonths/count));
+  var each=Math.max(0,Math.round(c.pledged/count/5)*5);
+  var asOf=remFParse(iso),remaining=c.remitted,acc=0,list=[];
+  for(var i=0;i<count;i++){
+    var due=new Date(begin.getFullYear(),begin.getMonth()+stepMonths*(i+1),begin.getDate());
+    var amount=(i===count-1)?Math.max(0,c.pledged-acc):each;acc+=amount;
+    var paidAmt=Math.max(0,Math.min(amount,remaining));remaining-=paidAmt;
+    var status=(amount>0&&paidAmt>=amount)?"paid":(paidAmt>0?"partial":(due<asOf?"overdue":"due"));
+    list.push({due:remFISO(due),amount:amount,paid:paidAmt,status:status});
+  }
+  return list;
+}
+function remFInstChip(s){
+  if(s==="paid")return '<span class="rem-ist rem-ist-paid">'+ICON("check_circle")+'Paid</span>';
+  if(s==="partial")return '<span class="rem-ist rem-ist-part">'+ICON("adjust")+'Part paid</span>';
+  if(s==="overdue")return '<span class="rem-ist rem-ist-over">'+ICON("error")+'Overdue</span>';
+  return '<span class="rem-ist rem-ist-due">'+ICON("schedule")+'Upcoming</span>';
+}
 function remFChurchesFor(r){
   var pace=r.pace||0,names=REM_CHURCH_NAMES,per=r.total/names.length;
   return names.map(function(nm,i){
