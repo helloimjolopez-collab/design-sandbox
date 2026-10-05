@@ -5037,7 +5037,8 @@ function remFDetailModalInner(){
   var multiY=(r.end.slice(0,4)!==r.begin.slice(0,4));
   /* Compact one-line recap of the fund (no oversized snapshot card). */
   function sc(k,v){return '<span class="rem-dsum-i"><span class="rem-dsum-k">'+k+'</span><span class="rem-dsum-v">'+v+'</span></span>';}
-  var summary='<div class="rem-dsum">'+sc("Pledged",money(r.total))+sc("Expected by now",money(r.expected))+sc("Paid",money(r.paid))+sc("Outstanding",money(r.outstanding))+sc("% Paid",(r.pctPaid==null?"n/a":remFPct(r.pctPaid)))+'<span class="rem-dsum-stat">'+remFStatusChip(r)+'</span></div>';
+  var termStr=remFFmtDate(r.begin)+' to '+remFFmtDate(r.end)+(multiY?' (multi-year)':'');
+  var summary='<div class="rem-dsum">'+sc("Term",termStr)+sc("Pledged",money(r.total))+sc("Paid",money(r.paid))+sc("Expected by now",money(r.expected))+sc("Outstanding",'<span class="remF-neg">'+money(r.outstanding)+'</span>')+sc("% Paid",(r.pctPaid==null?"n/a":remFPct(r.pctPaid)))+'<span class="rem-dsum-stat">'+remFStatusChip(r)+'</span></div>';
   /* Sorting lives in the column headers (canonical chevrons), not a separate toggle. */
   function sb(k,label,cls){var on=ds.key===k,ic=on?(ds.dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="remF-dsort" data-k="'+k+'" aria-label="Sort by '+label+'">'+label+' '+ICON(ic)+'</button>';}
   var head='<div class="wt-row rem-ch-row rem-ch-head"><span class="rem-ch-nm">'+sb("name","Member church")+'</span><span class="rem-ch-dist">'+sb("dist","District")+'</span><span class="rem-ch-n">'+sb("pledged","Pledged")+'</span><span class="rem-ch-n">'+sb("remitted","Remitted")+'</span><span class="rem-ch-n">'+sb("outstanding","Outstanding")+'</span><span class="rem-ch-pct">'+sb("pct","% Rem.")+'</span><span class="rem-ch-stat">'+sb("pacing","Pacing")+'</span></div>';
