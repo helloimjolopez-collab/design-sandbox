@@ -9121,14 +9121,15 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     return '<div class="dep-hd ap-hd"><div class="ap-hd-row"><div class="ap-hd-kpi">'+kpi+'</div>'+search+'</div></div>';}
 
   /* ---- the hero: dense due-date table, grouped by aging band --------- */
-  function apRowHTML(x){var od=apIsOverdue(x.due),n=apDiffDays(x.due);
-    var daysIcon=od?"warning":(n===0?"today":"schedule");
-    return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(x.vendor+" "+x.inv)+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
+  function apRowHTML(x){var od=apIsOverdue(x.due);
+    /* Status: plain "Due in …" text for upcoming (aligns under the Status header); a negative badge ONLY when overdue. */
+    var statusCell=od?('<span class="ap-badge-over">'+apOverdueText(x.due)+'</span>'):('<span class="ap-duein">'+apDueText(x.due)+'</span>');
+    return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(apRowSearch(x))+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
       '<span class="lr-main">'+x.vendor+'</span>'+
       '<span class="ap-c-inv">'+codeCopy(x.inv)+'</span>'+
       '<span class="ap-c-duedate">'+apFmtShort(x.due)+'</span>'+
-      '<span class="ap-c-status"><span class="ap-pill'+(od?" warn":"")+'">'+ICON(daysIcon)+apDaysShort(x.due)+'</span></span>'+
-      '<span class="wt-c2">'+apMoney(x.amount)+'</span></div>';}
+      '<span class="ap-c-status">'+statusCell+'</span>'+
+      '<span class="wt-c2 ap-c-amt">'+apMoney(x.amount)+'</span></div>';}
   function apTable(w){
     var sel=apSel(w),rows=apRows(w);
     var sk=(w.apsort||"due-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
