@@ -7221,29 +7221,29 @@ function mysContent(w){
   return mysHeaderBlock(w,sel)+'<div class="scroll mys-list">'+body+'</div>';
 }
 
+/* Inner content only (patched in place so the dialog never re-animates / loses focus). */
+function mysConfigModalInner(){
+  var w=find(modal.id);if(!w)return "";
+  var draft=modal.draft||[],ql=(modal.q||"").toLowerCase();
+  var listHTML="";
+  ["GL","AP","PUR","HR"].forEach(function(ar){
+    var items=MYS_QUERIES.filter(function(x){return x.area===ar&&(!ql||x.name.toLowerCase().indexOf(ql)>-1||x.sys.toLowerCase().indexOf(ql)>-1||MYS_AREA[ar].toLowerCase().indexOf(ql)>-1);});
+    if(!items.length)return;
+    listHTML+='<div class="mys-cfg-grp">'+MYS_AREA[ar]+'</div>'+items.map(function(x){var on=draft.indexOf(x.id)>-1;
+      return '<button class="mys-cfg-item'+(on?" on":"")+'" role="checkbox" aria-checked="'+on+'" data-action="mys-toggle" data-q="'+x.id+'" data-id="'+w.id+'"><span class="mys-cfg-chk material-symbols-rounded" aria-hidden="true">'+(on?"check_box":"check_box_outline_blank")+'</span><span class="mys-cfg-nm">'+x.name+'</span></button>';}).join("");
+  });
+  if(!listHTML)listHTML='<div class="mys-cfg-none">No matches for "'+(modal.q||"").replace(/"/g,"&quot;")+'"</div>';
+  return '<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">tune</span>Configure My Status</span><button class="iconbtn" data-action="mys-config-cancel" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="mys-cfg-subbar">'+draft.length+' selected</div>'+
+    '<div class="modal-b mys-cfg-b">'+
+      '<div class="dd-search mys-cfg-search">'+ICON("search")+'<input class="dd-input" id="mysConfigQ" placeholder="Search by name or area" value="'+(modal.q||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div>'+
+      '<div class="mys-cfg-scroll" id="mysCfgScroll">'+listHTML+'</div>'+
+    '</div>'+
+    '<div class="modal-f"><button class="btn naked sm" data-action="mys-config-cancel">Cancel</button><button class="btn primary sm" data-action="mys-config-done" data-id="'+w.id+'">Done</button></div>';
+}
 function mysConfigModalHTML(){
   var w=find(modal.id);if(!w)return "";
-  var draft=modal.draft||[],q=(modal.q||"").toLowerCase();
-  var avail=MYS_QUERIES.filter(function(x){return draft.indexOf(x.id)<0;});
-  var availM=avail.filter(function(x){return !q||x.name.toLowerCase().indexOf(q)>-1||x.sys.toLowerCase().indexOf(q)>-1||MYS_AREA[x.area].toLowerCase().indexOf(q)>-1;});
-  var availHTML="";
-  ["GL","AP","PUR","HR"].forEach(function(ar){var items=availM.filter(function(x){return x.area===ar;});if(!items.length)return;
-    availHTML+='<div class="cap">'+MYS_AREA[ar]+'</div>'+items.map(function(x){
-      return '<button class="mi mys-avail" data-action="mys-add" data-q="'+x.id+'" data-id="'+w.id+'"><span class="mys-dot mys-dot-'+x.urgency+'" aria-hidden="true"></span><span class="mi-nm">'+x.name+'</span><span class="mys-add-ic" aria-hidden="true">'+ICON("add")+'</span></button>';}).join("");});
-  if(!availM.length)availHTML='<div class="mi-note" style="color:var(--txt-subtle)">'+(q?('No queries match "'+(modal.q||"").replace(/"/g,"&quot;")+'"'):'All available queries are already showing.')+'</div>';
-  var selHTML=draft.length?draft.map(function(qid){var x=mysFind(qid);if(!x)return "";
-      return '<button class="mi mys-selrow" data-action="mys-remove" data-q="'+x.id+'" data-id="'+w.id+'"><span class="mys-dot mys-dot-'+x.urgency+'" aria-hidden="true"></span><span class="mi-nm">'+x.name+'</span><span class="mys-rm-ic" aria-hidden="true" title="Remove">'+ICON("close")+'</span></button>';}).join("")
-    :'<div class="mys-empty-col">'+ICON("checklist")+'<span>Nothing selected yet. Add queries from the left.</span></div>';
-  var body='<div class="mys-cfg">'+
-      '<div class="mys-cfg-col mys-cfg-avail"><div class="mys-cfg-h">Available queries</div>'+
-        '<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="mysConfigQ" placeholder="Search queries or areas" value="'+(modal.q||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div>'+
-        '<div class="menu-scroll mys-cfg-scroll" role="listbox">'+availHTML+'</div></div>'+
-      '<div class="mys-cfg-col mys-cfg-sel"><div class="mys-cfg-h">Showing on my dashboard <span class="mys-cfg-n">'+draft.length+'</span></div>'+
-        '<div class="menu-scroll mys-cfg-scroll">'+selHTML+'</div></div></div>';
-  return '<div class="modal-backdrop" data-action="mys-config-cancel"><div class="modal modal-wide mys-cfg-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Configure My Status">'+
-    '<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">tune</span>Configure My Status</span><button class="iconbtn" data-action="mys-config-cancel" aria-label="Close">'+ICON("close")+'</button></div>'+
-    '<div class="modal-b mys-cfg-b">'+body+'</div>'+
-    '<div class="modal-f"><button class="btn naked sm" data-action="mys-config-cancel">Cancel</button><button class="btn primary sm" data-action="mys-config-done" data-id="'+w.id+'">Done</button></div></div></div>';}
+  return '<div class="modal-backdrop" data-action="mys-config-cancel"><div class="modal modal-wide mys-cfg-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Configure My Status">'+mysConfigModalInner()+'</div></div>';}
 function mysDetailModalHTML(){
   var q=mysFind(modal.q);if(!q)return "";
   var recs=q.records||[],cols=recs.length?Object.keys(recs[0]):[];
