@@ -9845,6 +9845,26 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     });
     return '<div class="scroll ins-tscroll">'+insFHeadRow(w)+html+'</div>'+insFTotalRow(gEnroll,gCost);
   }
+  /* Enrolment share by insurance type, as a canonical donut (shared .donut/.legend atoms). */
+  var INSF_PIE=["var(--am-600)","var(--am-400)","var(--am-300)","var(--am-500)","var(--am-200)","var(--am-700)"];
+  function insFDonut(w){
+    var rows=insFFiltered(w),groups={},order=[];
+    rows.forEach(function(p){if(!(p.type in groups)){groups[p.type]=0;order.push(p.type);}groups[p.type]+=p.enroll;});
+    var data=order.map(function(ty){return {type:ty,enroll:groups[ty]};}).filter(function(d){return d.enroll>0;});
+    data.sort(function(a,b){return b.enroll-a.enroll;});
+    var tot=data.reduce(function(s,d){return s+d.enroll;},0);
+    if(tot<=0)return '<div class="ins-none">No enrolment to chart for this selection.</div>';
+    var R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+    data.forEach(function(d,i){var frac=d.enroll/tot,len=frac*C,pct=Math.round(frac*100),c=INSF_PIE[i%INSF_PIE.length];
+      arcs+='<circle class="seg" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      legend+='<div class="leg"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+d.type+'</span><span class="lg-meta">'+insFNum(d.enroll)+' · '+pct+'%</span></div>';});
+    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="200" height="200" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+insFNum(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">enrolled</text></svg><div class="legend-col"><div class="legend" style="max-height:220px">'+legend+'</div></div></div></div>';
+  }
+  function insFViewToggle(w){var v=w.insView||"table";
+    return '<div class="vtoggle" role="group" aria-label="Data view">'+
+      '<button class="vt'+(v==="table"?" on":"")+'" data-action="insF-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'" data-tip="Plans as a sortable table." data-tip-plain>'+ICON("table_rows")+'Table</button>'+
+      '<button class="vt'+(v==="pie"?" on":"")+'" data-action="insF-view" data-id="'+w.id+'" data-v="pie" aria-pressed="'+(v==="pie")+'" data-tip="Enrolment share by insurance type." data-tip-plain>'+ICON("donut_small")+'Pie</button>'+
+    '</div>';}
 
   /* (6) HEADER / GLANCE / STATES */
   /* Header: filter chip (top row) + a canonical headline (total enrolled) with
