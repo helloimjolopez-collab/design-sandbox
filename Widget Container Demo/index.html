@@ -9248,22 +9248,11 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   function apTable(w){
     var sel=apSel(w),rows=apRows(w);
     var sk=(w.apsort||"due-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"swap_vert";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ap-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
+    function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="ap-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
     var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("vendor","Vendor")+'</span><span class="ap-c-inv">'+sb("inv","Invoice")+'</span><span class="ap-c-duedate">'+sb("due","Due date")+'</span><span class="ap-c-status">'+sb("status","Status")+'</span><span class="wt-c2 ap-c-amt">'+sb("amt","Amount")+'</span></div>';
-    var body;
-    if(sel==="total"){
-      /* grouped: one subheader per non-empty aging band + its subtotal. Rows
-         keep the current sort within each band. This is the aging report. */
-      body=AP_BANDS.map(function(b){
-        var br=rows.filter(function(x){return apBandOf(x.due)===b.id;});
-        if(!br.length)return "";
-        var st=br.reduce(function(s,x){return s+x.amount;},0),over=(b.id==="overdue");
-        var gh='<div class="wt-row ap-grp"><span class="ap-grp-nm'+(over?" over":"")+'">'+ICON(b.glyph)+b.label+' <span class="ap-grp-ct">'+br.length+' invoice'+(br.length===1?"":"s")+'</span></span><span class="ap-grp-amt'+(over?" over":"")+'">'+apMoney(st)+'</span></div>';
-        return gh+br.map(apRowHTML).join("");
-      }).join("");
-    }else{
-      body=rows.map(apRowHTML).join("");
-    }
+    /* One flat, sorted list for every filter (including All dates); the Status column and the tiles
+       carry overdue/upcoming, so no band section headers. */
+    var body=rows.map(apRowHTML).join("");
     var tot=rows.reduce(function(s,x){return s+x.amount;},0);
     var footLbl=apSelLabel(w)+' ('+rows.length+' invoice'+(rows.length===1?"":"s")+')';
     return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>'+footLbl+'</span><span>'+apMoney(tot)+'</span></div>';
