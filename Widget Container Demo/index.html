@@ -9062,7 +9062,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
 
   function apDueDates(w){var seen={},out=[];apData(w).forEach(function(x){if(!seen[x.due]){seen[x.due]=1;out.push(x.due);}});out.sort(function(a,b){return apParse(a)-apParse(b);});return out;}
   function apByDate(w){var dates=apDueDates(w);return dates.map(function(iso){var inv=apData(w).filter(function(x){return x.due===iso;});var tot=inv.reduce(function(s,x){return s+x.amount;},0);return {iso:iso,total:tot,count:inv.length,overdue:apIsOverdue(iso)};});}
-  function apBandData(w){var res={overdue:{total:0,count:0},week:{total:0,count:0},month:{total:0,count:0},later:{total:0,count:0}};apData(w).forEach(function(x){var b=apBandOf(x.due);res[b].total+=x.amount;res[b].count++;});return res;}
+  function apBandData(w){var res={overdue:{total:0,count:0},month:{total:0,count:0},later:{total:0,count:0}};apData(w).forEach(function(x){var b=apBandOf(x.due);res[b].total+=x.amount;res[b].count++;});return res;}
   function apTotalDue(w){return apData(w).reduce(function(s,x){return s+x.amount;},0);}
   function apOverdueTotal(w){return apData(w).filter(function(x){return apIsOverdue(x.due);}).reduce(function(s,x){return s+x.amount;},0);}
   function apOverdueCount(w){return apData(w).filter(function(x){return apIsOverdue(x.due);}).length;}
@@ -9070,7 +9070,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
   function apVendors(w){var m={},order=[];apData(w).forEach(function(x){if(!m[x.vendor]){m[x.vendor]={vendor:x.vendor,total:0,count:0,over:0};order.push(x.vendor);}var e=m[x.vendor];e.total+=x.amount;e.count++;if(apIsOverdue(x.due))e.over+=x.amount;});var arr=order.map(function(k){return m[k];});arr.sort(function(a,b){return b.total-a.total;});return arr;}
 
   /* current selection: "total" | band id | ISO date. Defaults to Total. */
-  function apIsBand(v){return v==="overdue"||v==="week"||v==="month"||v==="later";}
+  function apIsBand(v){return v==="overdue"||v==="month"||v==="later";}
   function apSel(w){var v=w&&w.apDue;if(v==null||v==="total")return "total";if(apIsBand(v))return v;var dates=apDueDates(w);return dates.indexOf(v)>-1?v:"total";}
   function apSelLabel(w){var s=apSel(w);if(s==="total")return "All due dates";if(apIsBand(s)){for(var i=0;i<AP_BANDS.length;i++)if(AP_BANDS[i].id===s)return AP_BANDS[i].label;}return "Due "+apFmtLong(s);}
 
