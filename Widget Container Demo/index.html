@@ -8575,14 +8575,15 @@ function arFExportPreview(w,groups,selN){
    small column header (Invoice # / Due / Status / Amount), so invoice-level
    columns never compete with the customer-level columns above. */
 function arFCustPanel(g){
-  var head='<div class="arF-ci arF-ci-head"><span class="arF-ci-inv">Invoice #</span><span class="arF-ci-due">Due</span><span class="arF-ci-days">Status</span><span class="arF-ci-amt">Amount</span><span aria-hidden="true"></span></div>';
+  /* Header cells are positional (grid columns), so they always sit over their data columns. */
+  var head='<div class="arF-ci arF-ci-head"><span class="arF-colh">Invoice #</span><span class="arF-colh">Due</span><span class="arF-colh">Status</span><span class="arF-colh num">Amount</span><span aria-hidden="true"></span></div>';
   var rows=g.invs.map(function(x){
     return '<div class="arF-ci">'+
       '<span class="arF-ci-inv">'+codeCopy(x.inv)+'</span>'+
       '<span class="arF-ci-due">'+arFFmtDate(x.due)+'</span>'+
-      '<span class="arF-ci-days">'+arFStatusBadge(x)+'</span>'+
+      '<span class="arF-ci-status">'+arFStatusBadge(x)+'</span>'+
       '<span class="arF-ci-amt">'+money(x.amount)+'</span>'+
-      '<button class="arF-ci-open" data-action="arF-open-invoice" data-inv="'+arFEsc(x.inv)+'" data-cust="'+arFEsc(g.customer)+'" data-tip="Open in Accounts Receivable" data-tip-plain aria-label="Open invoice '+arFEsc(x.inv)+' in Accounts Receivable">'+ICON("open_in_new")+'Open</button>'+
+      '<span class="arF-ci-act"><button class="arF-ci-open" data-action="arF-open-invoice" data-inv="'+arFEsc(x.inv)+'" data-cust="'+arFEsc(g.customer)+'" data-tip="Open in Accounts Receivable" data-tip-plain aria-label="Open invoice '+arFEsc(x.inv)+' in Accounts Receivable">'+ICON("open_in_new")+'</button></span>'+
     '</div>';
   }).join("");
   return '<div class="arF-cp"><div class="arF-cp-invs">'+head+rows+'</div></div>';
