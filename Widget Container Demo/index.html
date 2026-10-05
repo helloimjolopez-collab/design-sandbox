@@ -4879,11 +4879,11 @@ function remFBandStats(w){var rows=remFCompute(w),s={behind:{n:0,out:0},ontrack:
 function remFPaceCards(w,drill){
   var cur=w.remPaceF||"all",st=remFBandStats(w);
   var defs=[["behind","Behind","error"],["ontrack","On track","check_circle"],["ahead","Ahead","trending_up"]];
-  return '<div class="remF-cards" role="group" aria-label="'+(drill?"Pledge pace, tap to open":"Filter pledges by pace")+'">'+defs.map(function(d){
-    var b=st[d[0]],top='<span class="remF-card-top">'+ICON(d[2])+'<span class="remF-card-lbl">'+d[1]+'</span></span><span class="remF-card-n">'+b.n+'</span><span class="remF-card-sub">'+money(b.out)+' outstanding</span>';
-    if(drill)return '<button class="remF-card remF-card-'+d[0]+'" data-action="remF-drill" data-id="'+w.id+'" data-band="'+d[0]+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', '+money(b.out)+' outstanding, tap to open">'+top+'</button>';
+  return '<div class="remF-tiles" role="group" aria-label="'+(drill?"Pledge pace, tap to open":"Filter pledges by pace")+'">'+defs.map(function(d){
+    var b=st[d[0]],top='<span class="remF-tile-top">'+ICON(d[2])+'<span class="remF-tile-lbl">'+d[1]+'</span></span><span class="remF-tile-n">'+b.n+'</span>';
+    if(drill)return '<button class="remF-tile remF-tile-'+d[0]+'" data-action="remF-drill" data-id="'+w.id+'" data-band="'+d[0]+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', tap to open">'+top+'</button>';
     var on=cur===d[0];
-    return '<button class="remF-card remF-card-'+d[0]+(on?" on":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', '+money(b.out)+' outstanding, tap to filter">'+top+'</button>';
+    return '<button class="remF-tile remF-tile-'+d[0]+(on?" sel":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', tap to filter">'+top+'</button>';
   }).join("")+'</div>';
 }
 function remFHeaderBlock(w,mode){
@@ -4891,7 +4891,7 @@ function remFHeaderBlock(w,mode){
   if(mode==="loading"){
     return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div><div class="remF-cards"><span class="sk remF-card-sk"></span><span class="sk remF-card-sk"></span><span class="sk remF-card-sk"></span></div></div>';
   }
-  return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div>'+remFKpiHead(remFTotals(w))+remFPaceCards(w)+'</div>';
+  return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div>'+remFPaceCards(w)+'</div>';
 }
 /* ---- Glance (kpi): Jo's remGlance shape, money + pace badge + goal pill + one
    small graded flat fill with the navy expected tick; legend hidden. ---- */
