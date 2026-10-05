@@ -4889,9 +4889,10 @@ function remFHeaderBlock(w,mode){
 function remFGlance(w){
   var t=remFTotals(w);
   return '<div class="kpi-row"><div class="kpi-num">'+
+    '<span class="gl-ctx"><span class="sc-nm">Remittance pledges</span></span>'+
     '<div class="metric-value">'+money(t.paid)+'</div>'+
-    '<div class="gl-sub">'+remFPaceBadge(t)+'<span class="gft-goalpill">of '+money(t.total)+' pledged</span></div>'+
-    '<span class="sr-only">'+money(t.paid)+' remitted of '+money(t.total)+' pledged, '+remFPct(t.pctPaid)+'; '+(t.status==="behind"?money(t.shortfall)+' behind the expected pace':'at or ahead of the expected pace')+' as of '+remFFmtDate(t.iso)+'.</span>'+
+    '<div class="gl-sub"><span class="gft-goalpill">of '+money(t.total)+' pledged</span>'+(t.out>0?('<span class="remF-gl-out">'+money(t.out)+' outstanding</span>'):'')+'</div>'+
+    '<span class="sr-only">'+money(t.paid)+' remitted of '+money(t.total)+' pledged, '+remFPct(t.pctPaid)+', as of '+remFFmtDate(t.iso)+'.</span>'+
   '</div></div>';
 }
 function remFDrillModalHTML(){
