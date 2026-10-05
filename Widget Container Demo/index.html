@@ -10265,9 +10265,9 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="mys-toggle"){var qid=t.getAttribute("data-q");if(modal){modal.draft=modal.draft||[];var ix=modal.draft.indexOf(qid);if(ix>-1)modal.draft.splice(ix,1);else modal.draft.push(qid);}renderModal();return;}
     if(a==="mys-config-done"){var wcd=find(modal.id);var chg=JSON.stringify(wcd.selected)!==JSON.stringify(modal.draft);wcd.selected=modal.draft.slice();modal=null;pop=null;if(chg){wcd.state="loading";render();clearTimeout(timers[wcd.id]);timers[wcd.id]=setTimeout(function(){wcd.state="ready";wcd.updated="just now";render();},700);}else render();return;}
     if(a==="mys-config-cancel"){modal=null;pop=null;render();return;}
-    if(a==="mys-row"){var qq=t.getAttribute("data-q"),mq=mysFind(qq);if(mq&&mq.count>0){if(mq.click==="detail"){modal={type:"mysdetail",id:id,q:qq};modalMounted=false;pop=null;render();}else{showModal("Opens the "+mq.navTo+" page","This count links out of the dashboard to <b>"+mq.navTo+"</b>, where you can work through these "+mq.count+" records. Use the browser back button to return to the dashboard.");}}return;}
+    if(a==="mys-row"){var qq=t.getAttribute("data-q"),mq=mysFind(qq);if(mq&&mq.count>0){if(mq.click==="detail"){modal={type:"mysdetail",id:id,q:qq};modalMounted=false;pop=null;render();}else{showModal("Opens "+mq.navTo,"This opens <b>"+mq.navTo+"</b> in the main app, where you can work through these "+mq.count+". Use the browser back button to return to the dashboard.");}}return;}
     if(a==="mys-detail-close"){modal=null;pop=null;render();return;}
-    if(a==="mys-detail-export"){var qe=mysFind(t.getAttribute("data-q"));showModal("Export to Excel","This would export the "+(qe?qe.count:0)+" records in <b>"+(qe?qe.name:"")+"</b> as an Excel file.");return;}
+    if(a==="mys-detail-export"){var qe=mysFind(t.getAttribute("data-q"));showModal("Export to Excel","This would export the "+(qe?qe.count:0)+" rows in <b>"+(qe?qe.name:"")+"</b> as an Excel file.");return;}
     if(a==="mys-mode"){var wmm2=find(id);if(wmm2)wmm2.mode=t.getAttribute("data-m");pop=null;render();return;}
     if(a==="mys-opts"){pop=(pop&&pop.type==="mys-opts"&&pop.id===id)?null:{type:"mys-opts",id:id};render();return;}
     if(a==="mys-hidezero"){var wmh=find(id);if(wmh)wmh.hideZero=!wmh.hideZero;pop=null;render();return;}
