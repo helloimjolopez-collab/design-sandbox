@@ -9922,13 +9922,18 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(!list.length)return '<div class="fa-tbl"><div class="state fa-inline-empty" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No assets in this class</div><div class="state-sub">Nothing is assigned to '+faGroupLabel(w)+' yet.</div></div></div>';
     var PER=50,shown=Math.min(Math.max(PER,w.faShown||PER),list.length);w.faShown=shown;var rem=list.length-shown,view=list.slice(0,shown);
     function clsBadge(c){return '<span class="type-badge tb-static"><span class="material-symbols-rounded tb-ic">category</span><span class="tb-nm">'+(c||"Unclassified")+'</span></span>';}
-    var head='<div class="wt-row wt-head fa-row"><span class="lr-main">'+faSortBtn(w,"name","Asset")+'</span><span class="fa-c-cls">'+faSortBtn(w,"cls","Class")+'</span><span class="fa-c-num">'+faSortBtn(w,"cost","Cost")+'</span><span class="fa-c-num">'+faSortBtn(w,"acc","Depreciation")+'</span><span class="fa-c-num fa-emph">'+faSortBtn(w,"net","Net value")+'</span></div>';
+    /* W11 View 3: the detail table carries all 5 financial measures at large/expanded;
+       medium keeps the 3 key columns. Net value is the emphasised lead everywhere. */
+    var showAll=(w.size==="large"||w.size==="xwide"||w.size==="detail");
+    var MCOLS=showAll?[["cap","Capitalized"],["cost","Cost"],["dep","Depreciable"],["acc","Accum. deprec."],["net","Net value"]]
+                     :[["cost","Cost"],["acc","Accum. deprec."],["net","Net value"]];
+    var head='<div class="wt-row wt-head fa-row"><span class="lr-main">'+faSortBtn(w,"name","Asset")+'</span><span class="fa-c-cls">'+faSortBtn(w,"cls","Class")+'</span>'+MCOLS.map(function(c){return '<span class="fa-c-num'+(c[0]==="net"?" fa-emph":"")+'">'+faSortBtn(w,c[0],c[1])+'</span>';}).join("")+'</div>';
     var body=view.map(function(a){var tip=(a.name+', '+a.tag+(a.bld?', '+a.bld:'')).replace(/"/g,"&quot;");return '<div class="wt-row fa-row" data-acct="'+a.name.replace(/"/g,"&quot;")+'">'+
       '<span class="lr-main lr-stack"><span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.tag)+'</span></span></span>'+
       '<span class="fa-c-cls">'+clsBadge(a.cls)+'</span>'+
-      '<span class="fa-c-num">'+money(a.cost)+'</span><span class="fa-c-num">'+money(a.acc)+'</span><span class="fa-c-num fa-emph">'+money(a.net)+'</span></div>';}).join("");
+      MCOLS.map(function(c){return '<span class="fa-c-num'+(c[0]==="net"?" fa-emph":"")+'">'+money(a[c[0]])+'</span>';}).join("")+'</div>';}).join("");
     var more=rem>0?'<div class="depf-more-row"><button class="depf-more" data-action="fa-more" data-id="'+w.id+'" aria-label="Load more assets, '+rem+' remaining">Load more<span class="depf-more-n">'+rem+'</span></button></div>':'';
-    var totals='<div class="wt-row fa-row fa-total-row"><span class="lr-main">Total ('+list.length+(list.length===1?" asset":" assets")+')</span><span class="fa-c-cls"></span><span class="fa-c-num">'+money(faSum(list,"cost"))+'</span><span class="fa-c-num">'+money(faSum(list,"acc"))+'</span><span class="fa-c-num fa-emph">'+money(faSum(list,"net"))+'</span></div>';
+    var totals='<div class="wt-row fa-row fa-total-row"><span class="lr-main">Total ('+list.length+(list.length===1?" asset":" assets")+')</span><span class="fa-c-cls"></span>'+MCOLS.map(function(c){return '<span class="fa-c-num'+(c[0]==="net"?" fa-emph":"")+'">'+money(faSum(list,c[0]))+'</span>';}).join("")+'</div>';
     var search=(list.length>8)?'<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search assets" aria-label="Search assets by name"></div></div>':'';
     return search+'<div class="fa-tbl"><div class="scroll fa-tbl-scroll">'+head+body+more+totals+'</div></div>';}
   /* Depreciation story per group: Net Book Value + Accumulated = Cost, as one
