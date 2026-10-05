@@ -11021,7 +11021,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function depFGlance(w){var p=depFMetricParts(w);return '<div class="kpi-row"><div class="kpi-num">'+depFScopeChip(w)+'<div class="metric-value" data-depf-num data-latest="'+money(p.latest)+'">'+money(p.latest)+'</div><div class="gl-sub">'+depFDelta(p)+depFRangeBtn(w)+'</div></div>'+depFSparkHTML(p)+'</div>';}
   function depFHeaderBlock(w){var p=depFMetricParts(w);var v=w.view||"table";
     var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(p.latest)+'</span><span class="delta-grp">'+depFDelta(p)+depFRangeBtn(w)+'</span></div>';
-    var showSearch=(v==="table"||v==="dist"||v==="balances");
+    var showSearch=(v==="table"||v==="dist"||v==="balances")&&!(w.acct||w.leaf);
     var searchHTML=showSearch?'<div class="dep-search hd-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div>':'';
     return '<div class="dep-hd"><div class="dep-hd-top">'+depFScopeChip(w)+'<div class="dep-hd-toggle">'+depFToggle(w)+'</div></div><div class="dep-hd-num">'+numInner+'<div class="dep-hd-r">'+depFBreakToggle(w)+searchHTML+'</div></div></div>';}
   function depFContent(w){
