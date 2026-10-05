@@ -6621,7 +6621,16 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtFHeadlineInner(v,neutral,sumB){
     if(v==null)return {cls:"",html:money(0),pct:""};
     var neg=v<0,cls=neutral?" bgtF-hl-neu":(neg?" bgtF-hl-neg":" bgtF-hl-pos");
-    return {cls:cls,html:(neg?"−":"+")+money(Math.abs(v)),pct:""};
+    /* Variance as a share of the window's posted budget (the standard budget-vs-actual %). */
+    var pct=(sumB>0)?((Math.round(Math.abs(v)/sumB*1000)/10)+"% of budget"):"";
+    return {cls:cls,html:(neg?"−":"+")+money(Math.abs(v)),pct:pct};
+  }
+  /* "% of budget used" (expenses) / "received" (income) / plain "of budget" (mixed report lines). */
+  function bgtFUsedWord(w){var av=w.acctview||"income";if(av==="expense")return "used";if(av==="income")return "received";var ln=(av==="special")?bgtFReportLine(w):null;return (ln&&ln.type==="expense")?"used":(ln&&ln.type==="income")?"received":"of budget";}
+  function bgtFUsedLine(w,sumA,sumB){
+    if(!(sumB>0))return "";
+    var used=Math.round(sumA/sumB*100),word=bgtFUsedWord(w),cap=(word==="of budget")?(used+"% of budget"):(used+"% of budget "+word);
+    return '<div class="bgtF-usedline"><span class="bgtF-usedbar" aria-hidden="true"><span class="bgtF-usedfill" style="width:'+Math.min(100,used)+'%"></span></span><span class="bgtF-usedtxt">'+cap+'</span></div>';
   }
   function bgtFScopeShort(w){var av=w.acctview||"income";return av==="expense"?"Expense accounts":av==="special"?"Special report":"Income accounts";}
   function bgtFScopeContext(w){if((w.acctview||"income")!=="special")return "";return "Special report: "+bgtFReport(w).name+" · "+bgtFReportLine(w).name;}
