@@ -9056,6 +9056,12 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function apIsOverdue(iso){return apDiffDays(iso)<0;}
   function apDaysLabel(iso){var n=apDiffDays(iso);if(n<0)return "Overdue by "+(-n)+" day"+((-n)===1?"":"s");if(n===0)return "Due today";return "Due in "+n+" day"+(n===1?"":"s");}
 function apDaysShort(iso){var n=apDiffDays(iso);if(n<0)return "Overdue "+(-n)+"d";if(n===0)return "Due today";return "Due "+n+"d";}
+/* Plain, readable due text (never "2d" which reads like "second"): "Due in 2d", "Due in 3w", "Due in 2mo". */
+function apDueText(iso){var n=apDiffDays(iso);if(n===0)return "Due today";if(n<14)return "Due in "+n+"d";if(n<56)return "Due in "+Math.round(n/7)+"w";return "Due in "+Math.round(n/30)+"mo";}
+function apOverdueText(iso){var n=-apDiffDays(iso);return n<14?("Overdue "+n+"d"):("Overdue "+Math.round(n/7)+"w");}
+/* Search haystack for a row: vendor, invoice, and the due date in several spellings
+   (abbrev + full month, both "25 July" and "July 25") so typing a month, a date or a vendor all work. */
+function apRowSearch(x){var d=apParse(x.due),full=AP_MONTHS_FULL[d.getMonth()],day=d.getDate(),yr=d.getFullYear();return [x.vendor,x.inv,apFmtLong(x.due),apFmtShort(x.due),full,full+" "+day,day+" "+full,full+" "+yr].join(" ");}
 function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()];if(d.getFullYear()!==AP_TODAY.getFullYear())s+=" "+d.getFullYear();return s;}
   function apBandOf(iso){var n=apDiffDays(iso);if(n<0)return "overdue";if(n<=30)return "month";return "later";}
   function apEsc(s){return String(s).replace(/"/g,"&quot;");}
