@@ -9824,9 +9824,12 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     rows.forEach(function(p){if(!groups[p.type]){groups[p.type]=[];order.push(p.type);}groups[p.type].push(p);});
     function subEnroll(ty){return groups[ty].reduce(function(s,p){return s+p.enroll;},0);}
     function subCost(ty){return groups[ty].reduce(function(s,p){return s+insFCost(p);},0);}
-    order.sort(function(a,b){return subEnroll(b)-subEnroll(a);});
     var sk=(w.insSort||"count-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    function sortIn(arr){return arr.slice().sort(function(a,b){if((a.enroll===0)!==(b.enroll===0))return a.enroll===0?1:-1;if(key==="plan")return dir*a.plan.localeCompare(b.plan);return dir*(a.enroll-b.enroll);});}
+    /* All columns sort. share tracks enrolment (share = enrolled / total); cost = enrolled x rate. */
+    function planVal(p){return key==="cost"?insFCost(p):p.enroll;}
+    function grpVal(ty){return key==="cost"?subCost(ty):subEnroll(ty);}
+    order.sort(function(a,b){return key==="plan"?dir*a.localeCompare(b):dir*(grpVal(a)-grpVal(b));});
+    function sortIn(arr){return arr.slice().sort(function(a,b){if((a.enroll===0)!==(b.enroll===0))return a.enroll===0?1:-1;if(key==="plan")return dir*a.plan.localeCompare(b.plan);return dir*(planVal(a)-planVal(b));});}
     var exp=w.insExpanded||{},html="";
     order.forEach(function(ty){
       var list=groups[ty],se=subEnroll(ty),sc=subCost(ty),open=!!exp[ty],gid=insFTypeGroupId(w,ty);
