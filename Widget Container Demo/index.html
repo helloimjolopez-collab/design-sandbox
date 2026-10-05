@@ -1196,37 +1196,29 @@
 .pur-status-chip{max-width:210px;}
 .pur-tiles-row{padding:4px 14px 10px;}
 .pur-tiles{display:flex;gap:8px;flex-wrap:wrap;}
-.pur-tile{flex:1 1 0;min-width:72px;display:flex;flex-direction:column;gap:1px;align-items:flex-start;padding:7px 10px;border:0.5px solid var(--stroke-container);border-radius:10px;background:var(--surface-sheet);cursor:pointer;font-family:inherit;text-align:left;transition:border-color var(--dur),box-shadow var(--dur);}
-.pur-tile:hover{border-color:var(--cn-40);}
+/* ONE KPI filter tile, used identically at every size (explore/detail filter row AND the glance). */
+.pur-tile{flex:1 1 0;min-width:92px;display:flex;flex-direction:column;gap:3px;align-items:flex-start;padding:9px 12px;border:0.5px solid var(--stroke-container);border-radius:12px;background:var(--surface-sheet);cursor:pointer;font-family:inherit;text-align:left;transition:border-color var(--dur),box-shadow var(--dur);}
+.pur-tile:hover{border-color:var(--brand-100);box-shadow:0 0 0 2px var(--brand-10);}
+.pur-tile:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
 .pur-tile.sel{border-color:var(--brand-100);box-shadow:0 0 0 2px var(--brand-10);}
 .pur-tile-rej.sel{border-color:var(--red-100);box-shadow:0 0 0 2px var(--red-10);}
-.pur-tile-top{display:inline-flex;align-items:center;gap:5px;}
-.pur-tile-ic{font-size:15px;}
-.pur-tile-lbl{font-size:11px;color:var(--txt-subtle);white-space:nowrap;}
-.pur-tile-n{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;}
-.pur-tile-amt{font-size:11px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;}
-/* KPI-tile colour coding: the status tone colours the WHOLE tile — background fill, icon, number,
-   label and amount — not just the icon. Neutral (All) stays on the plain sheet. Applies to the
-   explore/detail (.pur-tile) AND glance (.pur-gl-tile) tiles, which share the .pur-tile-<tone> class. */
-.pur-tile-neutral .pur-tile-ic,.pur-tile-neutral .pur-gl-ic{color:var(--semantic-color-foreground-static-neutral-subtle);}
-/* Pending = attention; the fill / foreground / stroke come from ONE matched semantic set. */
+.pur-tile-top{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:100%;}
+.pur-tile-ic{font-size:16px;}
+.pur-tile-lbl{font-size:12px;font-weight:600;color:var(--txt-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pur-tile-n{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;color:var(--txt-primary);}
+.pur-tile-amt{font-size:12px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* KPI-tile colour coding: the status tone colours the WHOLE tile (bg fill + icon + number + label + amount)
+   from one matched semantic set. Neutral (All) stays on the plain sheet. Same rules apply at every size. */
+.pur-tile-neutral .pur-tile-ic{color:var(--semantic-color-foreground-static-neutral-subtle);}
 .pur-tile-pending{background:var(--semantic-color-fill-static-attention-subtle);border-color:var(--semantic-color-stroke-static-attention-subtle);}
-.pur-tile-pending .pur-tile-ic,.pur-tile-pending .pur-gl-ic,.pur-tile-pending .pur-tile-n,.pur-tile-pending .pur-gl-n,.pur-tile-pending .pur-tile-lbl,.pur-tile-pending .pur-gl-lbl,.pur-tile-pending .pur-tile-amt,.pur-tile-pending .pur-gl-amt{color:var(--semantic-color-foreground-static-attention-on-subtle);}
-/* Approved = positive. */
+.pur-tile-pending .pur-tile-ic,.pur-tile-pending .pur-tile-n,.pur-tile-pending .pur-tile-lbl,.pur-tile-pending .pur-tile-amt{color:var(--semantic-color-foreground-static-attention-on-subtle);}
 .pur-tile-approved{background:var(--semantic-color-fill-static-positive-subtle);border-color:var(--semantic-color-stroke-static-positive-subtle);}
-.pur-tile-approved .pur-tile-ic,.pur-tile-approved .pur-gl-ic,.pur-tile-approved .pur-tile-n,.pur-tile-approved .pur-gl-n,.pur-tile-approved .pur-tile-lbl,.pur-tile-approved .pur-gl-lbl,.pur-tile-approved .pur-tile-amt,.pur-tile-approved .pur-gl-amt{color:var(--semantic-color-foreground-static-positive-on-subtle);}
+.pur-tile-approved .pur-tile-ic,.pur-tile-approved .pur-tile-n,.pur-tile-approved .pur-tile-lbl,.pur-tile-approved .pur-tile-amt{color:var(--semantic-color-foreground-static-positive-on-subtle);}
 .pur-tile-pending.sel{border-color:var(--semantic-color-foreground-static-attention-on-subtle);box-shadow:0 0 0 2px var(--semantic-color-stroke-static-attention-subtle);}
 .pur-tile-approved.sel{border-color:var(--semantic-color-foreground-static-positive-on-subtle);box-shadow:0 0 0 2px var(--semantic-color-stroke-static-positive-subtle);}
-/* Glance: three tappable KPI tiles (All / Pending / Approved) */
-.pur-gl-tiles{display:flex;gap:8px;align-items:stretch;padding:12px 14px;}
-.pur-gl-tile{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:3px;padding:10px 12px;border:0.5px solid var(--stroke-container);border-radius:12px;background:var(--surface-sheet);cursor:pointer;font-family:inherit;text-align:left;transition:border-color var(--dur),box-shadow var(--dur);}
-.pur-gl-tile:hover{border-color:var(--brand-100);box-shadow:0 0 0 2px var(--brand-10);}
-.pur-gl-tile:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
-.pur-gl-top{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:100%;}
-.pur-gl-ic{font-size:16px;}
-.pur-gl-lbl{font-size:12px;font-weight:600;color:var(--txt-subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.pur-gl-n{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.05;color:var(--txt-primary);}
-.pur-gl-amt{font-size:12px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* Glance just gives the SAME tiles room: full-width row with padding; tiles stretch to equal height. */
+.pur-gl-tiles{padding:12px 14px;align-items:stretch;}
+.pur-gl-tiles .pur-tile{padding:11px 13px;}
 /* Row Status badge: icon + text + tone tint (never colour alone) */
 .pur-c-status{flex:0 0 108px;min-width:0;display:inline-flex;align-items:center;}
 .pur-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;line-height:1;padding:3px 8px;border-radius:var(--semantic-layout-units-cornerradius-full);white-space:nowrap;}
