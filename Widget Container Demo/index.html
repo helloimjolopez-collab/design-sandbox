@@ -6860,16 +6860,13 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var rows=bgtFSet(w),label=(w.acctview==="special")?bgtFScopeContext(w).replace(/^Special report: /,""):bgtFScopeShort(w);
     var chip='<button class="scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
     if(!bgtFHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div></div></div>';
+    /* Per W01: KPI/glance size shows the Variance ($) headline (colour-coded) + a trend sparkline. Nothing else. */
     var sv=bgtFSpanVariance(w,vt),v=sv.v,hv=bgtFHeadlineInner(v,neutral,sv.sumB);
-    /* Clear hierarchy, nothing crammed: left column = variance headline (primary), one meta line
-       (favourable + variance %), one "% of budget used" line; the sparkline sits to the right.
-       No span chip here (that lives at larger sizes) so the card does not overflow. */
+    var word=neutral?(v<0?"Under budget":"Over budget"):(v<0?"Unfavourable":"Favourable");
     var headline='<span class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</span>';
-    var meta='<div class="bgtF-gl-meta">'+bgtFFavPill(v,neutral)+(hv.pct?'<span class="bgtF-gl-pct">'+hv.pct+'</span>':'')+'</div>';
-    var used=(sv.sumB>0)?('<div class="bgtF-gl-used">'+Math.round(sv.sumA/sv.sumB*100)+'% of budget '+bgtFUsedWord(w)+'</div>'):'';
-    if(bgtFUsedWord(w)==="of budget")used=(sv.sumB>0)?('<div class="bgtF-gl-used">'+Math.round(sv.sumA/sv.sumB*100)+'% of budget</div>'):'';
+    var cap='<span class="bgtF-gl-cap bgtF-hl'+hv.cls+'">'+word+'</span>';
     var spark=bgtFGlanceSpark(w,vt,neutral);
-    return '<div class="kpi-row bgtF-gl"><div class="kpi-num bgtF-gl-left">'+chip+headline+meta+used+'</div>'+spark+'</div>';}
+    return '<div class="kpi-row bgtF-gl"><div class="kpi-num bgtF-gl-left">'+chip+headline+cap+'</div>'+spark+'</div>';}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtFPanel(w,side){
     var interval=w[side==="a"?"iA":"iB"]||bgtFIvDefault(w.bspan||"year");
