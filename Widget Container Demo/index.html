@@ -5712,7 +5712,7 @@ function loanGlance(w){
     read='<div class="loan-glance-read">'+loanStackBar(w)+call+'</div>';
   }
   return '<div class="kpi-row"><div class="kpi-num">'+
-    '<div class="metric-value">'+loanMoney(tot)+'</div>'+
+    '<div class="loan-kpigrp"><span class="loan-klbl">Total outstanding</span><div class="metric-value">'+loanMoney(tot)+'</div></div>'+
     read+
     '<span class="sr-only">'+loanAgeSr(w)+'</span>'+
   '</div></div>';
@@ -5940,6 +5940,7 @@ function loanHandleClick(a,id,t){
   if(a==="loan-set-type"){var wt=find(id);if(wt){var nv=t.getAttribute("data-v");if((wt.loanType||"All")!==nv){wt.loanType=nv;wt.loanBucket="total";loanLoad(wt);}}pop=null;render();return true;}
   if(a==="loan-sort"){var ws=find(id),k=t.getAttribute("data-k");if(ws){var cs=(ws.loanSort||"days-desc").split("-");ws.loanSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="name"||k==="last")?"asc":"desc"));}render();return true;}
   if(a==="loan-set-bucket"){var wb=find(id);if(wb){var nb=t.getAttribute("data-bucket");wb.loanBucket=(wb.loanBucket===nb)?"total":nb;}render();return true;}
+  if(a==="loan-band-toggle"){var wbt=find(id);if(wbt){wbt.loanOpenBands=wbt.loanOpenBands||{};var bk=t.getAttribute("data-band");wbt.loanOpenBands[bk]=(wbt.loanOpenBands[bk]===false);}render();return true;}
   if(a==="loan-view"){var wv=find(id);if(wv)wv.loanView=t.getAttribute("data-v");render();return true;}
   if(a==="loan-open"){var wop=find(id);if(!wop)return true;modal={type:"loandetail",id:id,acct:t.getAttribute("data-acct")};modalMounted=false;pop=null;render();return true;}
   if(a==="loan-detail-close"){modal=null;pop=null;render();return true;}
