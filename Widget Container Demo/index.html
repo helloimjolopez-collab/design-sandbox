@@ -7115,8 +7115,10 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var col=meta.kind==="distpt"?"Pay type":"Distribution",drill=(meta.kind==="all");
     var head2='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"name",col)+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
     var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
-      var nm=drill?'<span class="lr-main lr-link" data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" data-tip="'+a.name+', tap to see its pay types" data-tip-plain>'+a.name+'</span>':'<span class="lr-main">'+a.name+'</span>';
-      return '<div class="wt-row wt-rowh'+(drill?" wt-rowlink":"")+'">'+nm+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+      /* Whole row is the drill target (same in Explore and Detail), so the row isn't "clickable-looking" but dead. */
+      var rowAttr=drill?' data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+a.name+', tap to see its pay types" data-tip-plain':'';
+      var nm='<span class="lr-main'+(drill?" lr-link":"")+'">'+a.name+'</span>';
+      return '<div class="wt-row wt-rowh'+(drill?" wt-rowlink":"")+'"'+rowAttr+'>'+nm+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     return '<div class="scroll">'+head2+body2+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
   function prFDonut(w,forceSize){var meta=prFScopeMeta(w),rows=prFChartRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),R=52,C=2*Math.PI*R,off=0,arcs="",legend="",ramp=blueRamp(rows.length),drill=(meta.kind==="all");
     rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];
