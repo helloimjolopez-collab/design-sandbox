@@ -4995,9 +4995,11 @@ function remFContent(w){
 function remFChStatusChip(c){
   if(c.status==="neutral")return '<span class="rem-st rem-st-none">No pledge</span>';
   if(c.status==="full")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'Paid in full</span>';
-  if(c.status==="onpace")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'On track</span>';
+  if(c.status==="onpace")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+(c.grace?'On track (grace)':'On track')+'</span>';
   return '<span class="rem-st rem-st-behind">'+ICON("error")+'Behind</span>';
 }
+function remFChStatusWord(c){return c.status==="neutral"?"no pledge":c.status==="full"?"paid in full":c.status==="behind"?"behind pace":(c.grace?"on track, in grace":"on track");}
+function remFShortDate(iso){var d=remFParse(iso);return REMF_MON[d.getMonth()]+" "+d.getFullYear();}
 /* Each member-church pledge resolves to a schedule of installments across the fund's own term,
    at the fund's payment frequency. Paid amount fills installments chronologically from what the
    church has remitted; status is paid / part paid / overdue (past due, unpaid) / upcoming. */
