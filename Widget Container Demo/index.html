@@ -9110,17 +9110,15 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      payable + overdue badge (LEFT), one quiet context line under it stating
      count, cash-needed-within-7-days, and "as of". */
   function apHeaderBlock(w,mode){
-    var numInner,ctx;
+    var kpi;
     if(mode==="loading"){
-      numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:110px;height:20px;border-radius:999px"></span></div>';
-      ctx="Updating outstanding invoices…";
+      kpi='<span class="sk" style="width:150px;height:26px;border-radius:6px"></span>';
     }else{
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+apMoney(apTotalDue(w))+'</span>'+apBadge(w)+apWeekPill(w)+'</div>';
+      kpi='<span class="metric-value">'+apMoney(apTotalDue(w))+'</span><span class="ap-hd-cap">total due</span>';
     }
-    return '<div class="dep-hd">'+
-      '<div class="dep-hd-top">'+apDueChip(w)+'<div class="dep-hd-toggle"></div></div>'+
-      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
-      '</div>';}
+    /* KPI on the left; a small search inline on the right (type a vendor, invoice or date). */
+    var search='<div class="dep-search ap-hd-search"><span class="material-symbols-rounded">search</span><input class="dep-q" placeholder="Search vendor, invoice or date" aria-label="Search invoices by vendor, invoice number or date"></div>';
+    return '<div class="dep-hd ap-hd"><div class="ap-hd-row"><div class="ap-hd-kpi">'+kpi+'</div>'+search+'</div></div>';}
 
   /* ---- the hero: dense due-date table, grouped by aging band --------- */
   function apRowHTML(x){var od=apIsOverdue(x.due),n=apDiffDays(x.due);
