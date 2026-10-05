@@ -9879,7 +9879,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
       var tot=insFTotal(w),n=insFPlanCount(w);
       numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+insFNum(tot)+'</span><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span></div>';
     }
-    return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insFTypeChip(w)+'<div class="dep-hd-toggle"></div></div>'+
+    return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insFTypeChip(w)+'<div class="dep-hd-toggle">'+insFViewToggle(w)+'</div></div>'+
       '<div class="dep-hd-num">'+numInner+'</div></div>';
   }
   function insFGlance(w){
@@ -9903,7 +9903,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     else if(w.size==="kpi")inner=insFGlance(w);
     else if(w.insloading)inner=insFHeader(w,"loading")+insFSkeleton();
     else if(!insFFiltered(w).length)inner=insFHeader(w)+'<div class="ins-body">'+insFScopedEmpty(w)+'</div>';
-    else inner=insFHeader(w)+'<div class="ins-body">'+insFNestedTable(w)+'</div>';
+    else inner=insFHeader(w)+'<div class="ins-body">'+((w.insView||"table")==="pie"?insFDonut(w):insFNestedTable(w))+'</div>';
     return '<div class="insf-scope" data-tier="'+(w.size||"wide")+'">'+inner+'</div>';
   }
   function insFScopedEmpty(w){var ty=w.insType||"All";if(ty==="All")return insFEmpty(w);return '<div class="state" data-kind="empty">'+ICON("shield_person")+'<div class="state-title">No '+insFEsc(ty)+' plans</div><div class="state-sub">There are no '+insFEsc(ty.toLowerCase())+' plans set up right now. Pick another type above to see the rest.</div></div>';}
