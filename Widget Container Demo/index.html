@@ -7158,7 +7158,9 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
      (Jo's standard: drill = focus overlay always). Reuses the scoped mini-widget
      mechanism (like Deposits' openAcct): a clone scoped to the distribution,
      rendered xwide so the table + synced donut show together. */
-  function prFOpenDist(w,distId){if(!w)return;var mw=Object.assign({},w,{id:"__prfdrill",prScope:distId,size:"xwide",view:"table",state:"ready"});
+  /* Focus overlay opens at "wide" so it carries the Table/Chart toggle (one view at a time), rather than
+     a forced side-by-side donut that truncated. */
+  function prFOpenDist(w,distId){if(!w)return;var mw=Object.assign({},w,{id:"__prfdrill",prScope:distId,size:"wide",view:"table",state:"ready"});
     modal={t:"Payroll Distributions: "+prFDistName(distId),glyph:"payments",scoped:true,mw:mw};modalMounted=false;pop=null;render();}
   function prFHandleClick(a,id,t){
     if(a==="prF-drilldist"){prFOpenDist(find(id),t.getAttribute("data-dist"));return true;}
