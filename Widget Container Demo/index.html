@@ -9196,12 +9196,18 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   /* W16: one aging-horizon filter as tappable cards under the KPI (widget-wide): Overdue (emphasised),
      Due this week, Due this month, Later, plus All. Amount-led + count; reuses the ap-set-due handler. */
   function apBucketCards(w){
-    var sel=apSel(w),grand=apTotalDue(w),bd=apBandData(w),n=apData(w).length,allSel=(sel==="total");
-    var cards='<button class="loan-card ap-card loan-card-all'+(allSel?" sel":"")+'" data-action="ap-set-due" data-due="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="loan-card-lbl">All dates</span><span class="loan-card-pct ap-card-amt">'+apMoney(grand)+'</span><span class="loan-card-cnt">'+n+' invoice'+(n===1?"":"s")+'</span></button>';
-    /* Only show due horizons that actually have invoices; empty horizons are not rendered (no disabled cards). */
-    AP_BANDS.forEach(function(b){var d=bd[b.id],has=d.count>0,isSel=(sel===b.id),over=(b.id==="overdue");if(!has)return;
-      cards+='<button class="loan-card ap-card'+(isSel?" sel":"")+(over?" ap-card-over":"")+'" data-action="ap-set-due" data-due="'+b.id+'" data-id="'+w.id+'" aria-pressed="'+isSel+'" data-tip="'+apEsc(b.label+": "+apMoney(d.total)+", "+d.count+" invoice"+(d.count===1?"":"s")+".")+'" data-tip-plain><span class="loan-card-lbl">'+b.label+'</span><span class="loan-card-pct ap-card-amt'+(over?" ap-over-num":"")+'">'+apMoney(d.total)+'</span><span class="loan-card-cnt">'+d.count+' invoice'+(d.count===1?"":"s")+'</span></button>';});
-    return '<div class="loan-cards ap-cards" role="group" aria-label="Filter by due horizon">'+cards+'</div>';
+    var sel=apSel(w),grand=apTotalDue(w),bd=apBandData(w),n=apData(w).length;
+    function tile(id,label,icon,tone,amt,cnt){var isSel=(sel===id);
+      return '<button class="ap-tile ap-tile-'+tone+(isSel?" sel":"")+'" data-action="ap-set-due" data-due="'+id+'" data-id="'+w.id+'" aria-pressed="'+isSel+'">'+
+        '<span class="ap-tile-top"><span class="ap-tile-ic material-symbols-rounded" aria-hidden="true">'+icon+'</span><span class="ap-tile-lbl">'+label+'</span></span>'+
+        '<span class="ap-tile-amt">'+apMoney(amt)+'</span>'+
+        '<span class="ap-tile-cnt">'+cnt+' invoice'+(cnt===1?"":"s")+'</span>'+
+      '</button>';}
+    /* Three fixed filters, each with its own icon + tone (icon + label carry the meaning, colour reinforces it). */
+    var cards=tile("total","All dates","receipt_long","neutral",grand,n)+
+      tile("month","Due this month","calendar_month","month",bd.month.total,bd.month.count)+
+      tile("overdue","Overdue","error","over",bd.overdue.total,bd.overdue.count);
+    return '<div class="ap-tiles" role="group" aria-label="Filter by due date">'+cards+'</div>';
   }
   function apContent(w){
     if(w.size==="kpi")return apGlance(w);
