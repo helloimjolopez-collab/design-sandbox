@@ -7913,11 +7913,14 @@ function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(
    to open the detail overlay scoped to that status. Uses the room the glance actually has instead of one
    number + a thin caption. */
 function purGlance(w){
-  return '<div class="pur-gl-tiles">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),m=PUR_TILE_META[id]||PUR_TILE_META.all;
-    return '<button class="pur-gl-tile pur-tile-'+m.tone+'" data-action="pur-gl-tile" data-id="'+w.id+'" data-t="'+id+'" aria-label="'+t[1]+', '+cnt+' request'+(cnt===1?"":"s")+', '+money(amt)+'. Open.">'+
-      '<span class="pur-gl-top"><span class="pur-gl-ic material-symbols-rounded">'+m.ic+'</span><span class="pur-gl-lbl">'+t[1]+'</span></span>'+
-      '<span class="pur-gl-n">'+cnt+'</span>'+
-      '<span class="pur-gl-amt">'+money(amt)+'</span>'+
+  /* Same tile component as the explore/detail filter tiles (identical .pur-tile styling, toning and
+     type), so the KPI tiles look consistent at every size. Only the action differs (glance opens an
+     overlay), and the glance container gives them room to breathe. */
+  return '<div class="pur-tiles pur-gl-tiles" role="group" aria-label="Purchasing by status">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),m=PUR_TILE_META[id]||PUR_TILE_META.all;
+    return '<button class="pur-tile pur-tile-'+m.tone+'" data-action="pur-gl-tile" data-id="'+w.id+'" data-t="'+id+'" aria-label="'+t[1]+', '+cnt+' request'+(cnt===1?"":"s")+', '+money(amt)+'. Open.">'+
+      '<span class="pur-tile-top"><span class="pur-tile-ic material-symbols-rounded">'+m.ic+'</span><span class="pur-tile-lbl">'+t[1]+'</span></span>'+
+      '<span class="pur-tile-n">'+cnt+'</span>'+
+      '<span class="pur-tile-amt">'+money(amt)+'</span>'+
     '</button>';
   }).join("")+'</div>';}
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
