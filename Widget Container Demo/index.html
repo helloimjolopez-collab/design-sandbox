@@ -6723,6 +6723,18 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtFNoBudgetState(w,av){var lbl=(av==="special")?"budget for this report line":av+" budget";return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No '+lbl+' set up</div><div class="state-sub">Actuals are posting, but nothing has been entered yet to compare them against.</div><button class="btn outlined" data-action="add-budget" data-id="'+w.id+'">'+ICON("add")+'Set up budget</button></div>';}
   function bgtFExplain(w,vt,neutral,variance,sumA,sumB){var sp=bgtFSpanPhrase(w.bspan||"year");if(variance==null)return "Nothing posted yet for this scope.";var amt=money(Math.abs(variance));if(neutral){var over=sumA>sumB;return amt+" "+(over?"over":"under")+" budget, "+sp+".";}var fav=variance>=0;if(vt==="expense")return (fav?"Favourable: spending is ":"Unfavourable: spending is ")+amt+(fav?" under budget":" over budget")+", "+sp+".";return (fav?"Favourable: income has come in ":"Unfavourable: income has come in ")+amt+(fav?" higher":" lower")+" than budgeted, "+sp+".";}
   /* Header: row 1 scope chip left (+ span chip at Explore size), Bar/Line/Table toggle right (not at Explore, where each panel carries its own); row 2 the window's variance + pill + info icon, plus a quiet special-report context line. */
+  /* W01 KPI header strip: labeled figures above the chart. Wide (Medium) = Variance + % Used (trimmed
+     pair); xwide (Large/Expanded) = YTD Budget · YTD Actual · Variance · % Used. */
+  function bgtFKpiStrip(w,full){
+    var bs=bgtFBasis(w),sv=bgtFSpanVariance(w,bs.type),b=sv.sumB,a=sv.sumA,v=sv.v;
+    if(!(b>0)||v==null)return '<div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:18px;color:var(--txt-subtle)">No posted actuals yet</span></div>';
+    var hv=bgtFHeadlineInner(v,bs.neutral,b),pct=Math.round(a/b*100);
+    var uw=bgtFUsedWord(w),pctLbl=(uw==="used")?"% used":(uw==="received")?"% received":"% of budget";
+    function cell(lbl,val,vcls){return '<div class="bgtF-kpi"><span class="bgtF-kpi-l">'+lbl+'</span><span class="bgtF-kpi-v'+(vcls||"")+'">'+val+'</span></div>';}
+    var cells=cell("Variance",hv.html,hv.cls+" bgtF-hl"+hv.cls)+cell(pctLbl,pct+"%");
+    if(full)cells=cell("YTD Budget",money(b))+cell("YTD Actual",money(a))+cells;
+    return '<div class="bgtF-kpistrip">'+cells+'</div>';
+  }
   function bgtFHeaderBlock(w,mode){
     var xw=(w.size==="xwide"),loading=(mode==="loading"),controlsOnly=(mode===true);
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
@@ -6732,10 +6744,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var numInner,ivTog="";
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
     else{
-      var sv=bgtFSpanVariance(w,vt),variance=sv.v;
-      var explainTip=bgtFExplain(w,vt,neutral,variance,sv.sumA,sv.sumB).replace(/"/g,"&quot;");
-      var hv=bgtFHeadlineInner(variance,neutral,sv.sumB);
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+(hv.pct?'<span class="bgtF-hl-pct">'+hv.pct+'</span>':'')+'</span>'+bgtFFavPill(variance,neutral,explainTip)+'</div>'+bgtFUsedLine(w,sv.sumA,sv.sumB);
+      numInner=bgtFKpiStrip(w,xw);
       ivTog='<div class="bgt-kpi-iv">'+bgtFIntervalToggle(w,w.binterval||bgtFIvDefault(w.bspan||"year"),"set-bgtF-interval")+'</div>';
     }
     var ctx=bgtFScopeContext(w);
