@@ -4786,10 +4786,12 @@ function remFRows(w){
   });
 }
 function remFSortBtn(w,k,label,tip){
-  var sk=(w.remSort||"seq").split("-"),on=sk[0]===k,dir=sk[1]==="asc"?1:-1;
+  var sk=(w.remSort||"seq").split("-"),on=sk[0]===k,dir=sk[1]==="desc"?-1:1;
   var ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";
   return '<button class="wt-sort'+(on?" on":"")+'" data-action="remF-sort" data-id="'+w.id+'" data-k="'+k+'"'+(tip?' data-tip="'+remFEsc(tip)+'" data-tip-plain':'')+'>'+label+' '+ICON(ic)+'</button>';
 }
+/* Count of member-church pledges BEHIND pace for a fund (the per-activity "pledges behind" figure). */
+function remFBehindFor(r){if(!r||r.total<=0)return 0;return remFChurchesFor(r).filter(function(c){return c.status==="behind";}).length;}
 /* ---- report table (Version A columns in Jo's style, strictly tabular, no bar):
    Activity | Pledge | Expected | Paid | Outstanding | % Paid ---- */
 function remFHead(w){
