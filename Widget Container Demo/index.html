@@ -10961,11 +10961,12 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     return '<div class="vtoggle" role="group" aria-label="Trend breakdown">'+tb("total","Total")+tb("group",grp)+'</div>';}
   function depFTog2(opts,cur,w){return '<div class="vtoggle" role="group" aria-label="Break down by">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-depf="bd" data-id="'+w.id+'" data-b="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+(o[2]?'<span class="material-symbols-rounded">'+o[2]+'</span>':'')+o[1]+'</button>';}).join("")+'</div>';}
   /* Owner change 1: table with display-only pagination (50 rows/page). Sort + filter apply first; the Total row (and the KPI headline) cross-foot over the FULL scoped set, never the visible page. */
+  function depFInceptN(s){var M={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};var p=String(s||"").split(" ");return (+p[1]||0)*12+(M[p[0]]||0);}
   function depFTable(w,full){var rng=w.range||"Q";
     function trendPct(a){var s=depFAcctSeries(a,rng);return ((s[s.length-1]-s[0])/(s[0]||1))*100;}
     var rows=depFScope(w).slice();
     var sk=(w.tsort||"net-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    rows.sort(function(a,b){if(key==="name")return dir*a.name.localeCompare(b.name);if(key==="type")return dir*a.type.localeCompare(b.type);if(key==="trend")return dir*(trendPct(a)-trendPct(b));return dir*(a.net-b.net);});
+    rows.sort(function(a,b){if(key==="name")return dir*a.name.localeCompare(b.name);if(key==="type")return dir*a.type.localeCompare(b.type);if(key==="incept")return dir*(depFInceptN(a.incept)-depFInceptN(b.incept));if(key==="trend")return dir*(trendPct(a)-trendPct(b));return dir*(a.net-b.net);});
     var tot=rows.reduce(function(s,a){return s+a.net;},0);
     var PER=50,nRows=rows.length,shown=Math.min(Math.max(PER,w.tshown||PER),nRows);w.tshown=shown;
     var pageRows=rows.slice(0,shown),remaining=nRows-shown;
