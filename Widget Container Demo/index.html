@@ -5194,18 +5194,23 @@ function gftGlance(w){
   var o=gftOverall(w),thru=gftThru(w);
   var rPct=o.pledgeTotal>0?Math.min(100,o.received/o.pledgeTotal*100):0;
   var dPct=o.pledgeTotal>0?Math.min(100,o.due/o.pledgeTotal*100):0;
-  var gpop=["All purposes",o.pledgeTotal,o.received,o.due,o.outstanding,Math.round(rPct),Math.round(dPct),o.status].join("|");
-  var goal=o.pledgeTotal>0?pbarHTML({fill:rPct,mark:dPct,sm:true,pop:gftEsc(gpop),aria:gftEsc("Overall progress")}):"";
-  var read=(o.behindCount>0)
-    ?'<span class="gft-glance-cap"><span class="gft-sevdot"></span>'+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind schedule</span>'
-    :'<span class="gft-glance-cap gft-cap-ok">'+ICON("check")+'On track or ahead across every purpose</span>';
-  return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="gl-ctx"><span class="sc-nm">'+gftEsc(gftPurposeCur(w))+'</span></span>'+
-    '<div class="metric-value">'+money(o.received)+'</div>'+
-    '<div class="gl-sub">'+gftStatusPill(o.status,Math.abs(o.remaining),thru)+'<span class="gft-goalpill">'+gftPct(o.fulfilled)+' of goal</span></div>'+
-    (o.pledgeTotal>0?'<div class="gft-glance-read">'+goal+read+'</div>':"")+
+  var specific=(gftPurposeCur(w)!=="All purposes");
+  var expTip=gftEsc("Expected by "+gftFmtDate(thru)+": "+money(o.due));
+  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-tip="'+gftEsc(money(o.received)+" of "+money(o.pledgeTotal)+" received")+'" data-tip-plain><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div><span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+Math.max(0,dPct-rPct).toFixed(1)+'%" data-tip="'+expTip+'" data-tip-plain></span></div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" data-tip="'+expTip+'" data-tip-plain></span></div>'):'';
+  /* Purpose switcher so you can swap purpose even in the glance; status badge only for a single purpose. */
+  var chip=gftPurposeChip(w);
+  var statusLine=specific
+    ? gftStatusPill(o.status,Math.abs(o.remaining),thru)
+    : (o.behindCount>0
+        ? '<span class="gft-glance-cap"><span class="gft-sevdot"></span>'+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind schedule</span>'
+        : '<span class="gft-glance-cap gft-cap-ok">'+ICON("check")+'On track or ahead across every purpose</span>');
+  return '<div class="gft-glance">'+
+    '<div class="gft-glance-top"><span class="sc-nm">'+gftEsc(gftPurposeCur(w))+'</span>'+(chip?('<span class="gft-glance-swap">'+chip+'</span>'):'')+'</div>'+
+    '<div class="gft-glance-kpi"><span class="metric-value">'+money(o.received)+'</span><span class="gft-hd-cap">'+gftPct(o.fulfilled)+' of '+money(o.pledgeTotal)+' goal</span></div>'+
+    bar+
+    '<div class="gft-glance-status">'+statusLine+'</div>'+
     '<span class="sr-only">'+gftPct(o.fulfilled)+' of the '+money(o.pledgeTotal)+' pledged has been received ('+money(o.received)+') as of '+gftFmtDate(thru)+'. '+money(o.due)+' was expected by then. '+money(o.outstanding)+' is still outstanding.</span>'+
-  '</div></div>';
+  '</div>';
 }
 
 function gftEmpty(w){
