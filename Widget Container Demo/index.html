@@ -1568,113 +1568,86 @@
 .arF-iltotal{margin-top:2px;}
 /* ---- Receivables collections worklist overlay ---- */
 .arF-wl-modal{position:relative;overflow:hidden;}
-.arF-wl-h{align-items:center;border-bottom:1px solid var(--stroke-widget);}
+.arF-wl-h{align-items:center;padding-bottom:6px;}
 .arF-wl-h .modal-title{display:flex;align-items:center;gap:8px;}
 .arF-wl-tic{font-size:19px;color:var(--txt-subtle);}
-.arF-wl-sub{font-size:12px;font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;padding:2px 10px;margin-left:4px;white-space:nowrap;}
+.arF-wl-sub{font-size:12px;font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;padding:3px 10px;margin-left:4px;white-space:nowrap;}
+/* Aging badge beside the heading: legend swatch + label, fill + stroke the same hue as that bucket's legend colour. */
+.arF-agebadge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;line-height:1;padding:4px 11px 4px 8px;border-radius:999px;border:1px solid;white-space:nowrap;margin-left:4px;}
+.arF-agebadge .arF-sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto;}
+/* Persistent scope line directly under the heading (never under 11pt, never disappears). */
+.arF-wl-subbar{padding:0 20px 11px;font-size:12px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--stroke-widget);}
 .arF-wl-b{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:0;overflow:hidden;}
-.arF-wl-controls{display:flex;align-items:center;gap:10px;padding:12px 20px;}
-.arF-wl-search{flex:1 1 auto;display:flex;align-items:center;gap:6px;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:8px;padding:6px 10px;min-height:34px;box-sizing:border-box;transition:border-color var(--dur),box-shadow var(--dur);}
-.arF-wl-search .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
-.arF-wl-search .material-symbols-rounded{font-size:18px;color:var(--txt-subtle);}
+/* Toolbar: search sits on the RIGHT (with the general Export beside it); left stays clear. */
+.arF-wl-controls{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;}
+.arF-wl-ctrl-space{flex:1 1 auto;}
+.arF-wl-search{flex:0 0 auto;width:min(300px,52%);display:flex;align-items:center;gap:6px;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:8px;padding:6px 10px;min-height:34px;box-sizing:border-box;transition:border-color var(--dur),box-shadow var(--dur);}
+.arF-wl-search:focus-within{border-color:var(--brand-100);box-shadow:0 0 0 2px var(--brand-10);}
+.arF-wl-search .material-symbols-rounded{font-size:18px;color:var(--txt-subtle);flex:0 0 auto;}
 .arF-wl-q{flex:1;border:0;background:transparent;font:inherit;font-size:13px;outline:none;color:var(--txt-primary);}
-.arF-wl-sort{display:inline-flex;align-items:center;gap:4px;background:transparent;border:1px solid var(--wn-300);border-radius:8px;padding:6px 10px;font:inherit;font-size:12px;font-weight:500;color:var(--txt-secondary);cursor:pointer;white-space:nowrap;}
-.arF-wl-sort:hover{background:var(--wn-200);}
-.arF-wl-sort .material-symbols-rounded{font-size:16px;}
-.arF-wl-list{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 12px 8px;}
-  /* ===== Receivables overlay v3: prominent header + one aligned table ===== */
-  .arF-wl-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--txt-subtle);}
-  .arF-wl-eyebrow .material-symbols-rounded{font-size:15px;}
-  .arF-wl-title{display:inline-flex;align-items:center;gap:8px;font-family:'Red Hat Display',sans-serif;font-weight:700;font-size:20px;line-height:1.15;color:var(--txt-primary);}
-  .arF-wl-fig{font-size:13px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
-  .arF-sevdot.lg{width:12px;height:12px;border-radius:50%;flex:0 0 auto;}
-  .arF-wl-selnote{font-size:12px;font-weight:600;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
-  .arF-tr{display:grid;grid-template-columns:34px minmax(150px,1.5fr) 118px 152px 120px 78px;align-items:center;column-gap:12px;padding:9px 20px;}
-  .arF-th{position:sticky;top:0;z-index:1;background:var(--surface-widget);border-bottom:1px solid var(--stroke-widget);font-size:11px;font-weight:600;color:var(--txt-subtle);padding-top:7px;padding-bottom:7px;}
-  .arF-row{border-bottom:1px solid var(--stroke-widget);}
-  .arF-row:hover{background:var(--wn-100);}
-  .arF-row.sel{background:var(--brand-10);}
-  .arF-c-chk{display:inline-flex;align-items:center;justify-content:center;color:var(--txt-subtle);cursor:pointer;}
-  .arF-c-chk .material-symbols-rounded{font-size:19px;}
-  .arF-c-chk[aria-checked="true"],.arF-c-chk[aria-checked="mixed"]{color:var(--brand-100);}
-  .arF-c-chk[aria-checked="true"] .material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;}
-  .arF-c-inv{min-width:0;font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);}
-  .arF-th.arF-tr .arF-c-inv{font-weight:600;color:var(--txt-subtle);}
-  .arF-c-due{font-size:12.5px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .arF-c-status{min-width:0;}
-  .arF-c-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);white-space:nowrap;}
-  .arF-th.arF-tr .arF-c-amt{font-weight:600;color:var(--txt-subtle);}
-  .arF-c-open{justify-self:end;}
-  .arF-openbtn{display:inline-flex;align-items:center;gap:4px;background:transparent;border:0;color:var(--txt-secondary);cursor:pointer;border-radius:6px;padding:3px 7px;font:inherit;font-size:11.5px;font-weight:600;white-space:nowrap;}
-  .arF-openbtn:hover{background:var(--wn-200);color:var(--brand-500);}
-  .arF-openbtn .material-symbols-rounded{font-size:14px;}
-  .arF-grp{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:12px 20px 5px;border-bottom:1px solid var(--stroke-widget);}
-  .arF-grp-nm{font-size:13px;font-weight:700;color:var(--txt-primary);}
-  .arF-grp-meta{font-size:11.5px;color:var(--txt-subtle);font-variant-numeric:tabular-nums;}
-  .arF-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;line-height:1;padding:3px 8px;border-radius:999px;white-space:nowrap;}
-  .arF-badge .material-symbols-rounded{font-size:13px;}
-  .arF-badge-ok{color:var(--green-120);background:var(--pos-10);}
-  .arF-badge-sev1{color:var(--primitive-color-saffron-500);background:var(--primitive-color-saffron-25);}
-  .arF-badge-sev2{color:var(--primitive-color-orange-500);background:var(--primitive-color-orange-50);}
-  .arF-badge-sev3{color:var(--red-100);background:var(--red-10);}
-  .arF-badge-sev4{color:var(--red-130);background:var(--red-10);}
-/* Aligned grid "table" grouped by aging band (header + rows share one column template). */
-.arF-wl-head{display:grid;grid-template-columns:30px minmax(0,1fr) 150px 110px 34px;align-items:center;gap:10px;padding:7px 10px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);border-bottom:1px solid var(--stroke-widget);position:sticky;top:0;background:var(--cn-0);z-index:2;}
-.arF-wl-head .arF-wl-c-amt{text-align:right;}
+.arF-wl-list{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 0 4px;}
+/* === Selection strip: appears ONLY on selection, directly above the table, left-aligned
+      near the checkboxes, brand-tinted so it reads as "actions on what you just picked". === */
+.arF-wl-selbar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--brand-10);border-top:1px solid var(--brand-50);border-bottom:1px solid var(--brand-50);}
+.arF-sel-n{font-size:12px;font-weight:700;color:var(--brand-500);font-variant-numeric:tabular-nums;}
+.arF-sel-clear{display:inline-flex;align-items:center;gap:3px;border:0;background:transparent;color:var(--brand-500);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:3px 6px;border-radius:6px;}
+.arF-sel-clear:hover{background:var(--brand-50);}
+.arF-sel-clear .material-symbols-rounded{font-size:15px;}
+.arF-wl-tools{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;}
+/* === CANONICAL column-header style (matches .wt-head everywhere): 11px / 600 / --txt-subtle,
+      no uppercase, no letter-spacing. Numeric headers may be darker + stay 600 (the one allowed variant). === */
+.arF-colh{font-size:11px;font-weight:600;color:var(--txt-subtle);text-transform:none;letter-spacing:0;line-height:1.3;}
+.arF-colh.num{color:var(--txt-secondary);text-align:right;}
+.arF-colsort{display:inline-flex;align-items:center;gap:2px;background:transparent;border:0;cursor:pointer;padding:0;font-family:inherit;font-size:11px;font-weight:600;color:var(--txt-subtle);letter-spacing:0;text-transform:none;}
+.arF-colsort.num{color:var(--txt-secondary);justify-content:flex-end;width:100%;}
+.arF-colsort:hover{color:var(--txt-primary);}
+.arF-colsort .material-symbols-rounded{font-size:15px;opacity:.9;}
+.arF-colsort[aria-sort="none"] .material-symbols-rounded{opacity:.45;}
+/* Shared grid: customer-level header, every customer row, and the total row use ONE template. */
+.arF-wl-grid{display:grid;grid-template-columns:34px minmax(0,1fr) 120px 128px 40px;align-items:center;column-gap:10px;padding:0 16px;}
+.arF-wl-head{position:sticky;top:0;z-index:2;background:var(--surface-widget);border-bottom:1px solid var(--stroke-widget);padding-top:9px;padding-bottom:9px;}
 .arF-wl-c-check{display:inline-flex;align-items:center;justify-content:center;color:var(--txt-subtle);cursor:pointer;}
 .arF-wl-c-check .material-symbols-rounded{font-size:19px;}
-/* Checked/indeterminate boxes read as clearly selected (filled brand), not the same grey as unchecked. */
 .arF-wl-c-check[aria-checked="true"],.arF-wl-c-check[aria-checked="mixed"]{color:var(--brand-100);}
 .arF-wl-c-check[aria-checked="true"] .material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;}
-/* Export/clear live in a right-aligned toolbar next to the search, not a bottom-right primary. */
-.arF-wl-tools{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;}
-.arF-wl-clear{display:inline-flex;align-items:center;gap:3px;border:0;background:transparent;color:var(--txt-subtle);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:4px 6px;border-radius:6px;}
-.arF-wl-clear:hover{background:var(--wn-200);color:var(--txt-primary);}
-.arF-wl-clear .material-symbols-rounded{font-size:15px;}
-.arF-wl-bkh{display:flex;align-items:center;gap:8px;padding:11px 10px 5px;font-size:11px;color:var(--txt-secondary);}
-.arF-wl-bkh-t{font-weight:700;}
-.arF-wl-bkh-m{color:var(--txt-subtle);font-weight:500;font-variant-numeric:tabular-nums;}
 .arF-wl-item{border-bottom:1px solid var(--stroke-widget);}
-.arF-wl-row{display:grid;grid-template-columns:30px minmax(0,1fr) 150px 110px 34px;align-items:center;gap:10px;padding:0 10px;}
-.arF-wl-open{display:flex;flex-direction:column;align-items:flex-start;min-width:0;background:transparent;border:0;padding:9px 0;font:inherit;text-align:left;cursor:pointer;color:inherit;}
-.arF-wl-nm{display:flex;align-items:center;gap:7px;min-width:0;max-width:100%;font-weight:600;font-size:13px;color:var(--txt-primary);}
-.arF-wl-nmtxt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.arF-wl-row{padding-top:0;padding-bottom:0;}
+.arF-wl-row:hover{background:var(--wn-100);}
+.arF-wl-row.sel{background:var(--brand-10);}
+.arF-wl-open{display:flex;flex-direction:column;align-items:flex-start;min-width:0;background:transparent;border:0;padding:10px 0;font:inherit;text-align:left;cursor:pointer;color:inherit;}
+.arF-wl-nm{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:13px;color:var(--txt-primary);}
 .arF-wl-sub2{font-size:11px;color:var(--txt-subtle);}
-.arF-wl-c-age{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.arF-wl-c-age{font-size:12px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;}
 .arF-wl-c-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;font-size:13px;color:var(--txt-primary);}
 .arF-wl-chev{display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;color:var(--txt-subtle);cursor:pointer;padding:4px;border-radius:6px;}
 .arF-wl-chev:hover{background:var(--wn-200);color:var(--txt-primary);}
 .arF-wl-chev .material-symbols-rounded{font-size:20px;}
-.arF-sevdot.sm{width:7px;height:7px;}
-/* Expanded customer panel: contact, invoices (copyable numbers), clear primary/secondary actions. */
-.arF-cp{background:var(--wn-100);border-radius:8px;margin:0 0 10px 30px;padding:12px 14px;display:flex;flex-direction:column;gap:11px;}
-.arF-cp-contact{display:flex;flex-wrap:wrap;gap:16px;font-size:12.5px;color:var(--txt-secondary);}
-.arF-cp-ci{display:inline-flex;align-items:center;gap:6px;}
-.arF-cp-ci .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);}
+/* Total row: aligned to the same grid, amount sits under Balance; sticky to the bottom of the list. */
+.arF-wl-total{position:sticky;bottom:0;background:var(--surface-widget);border-top:1px solid var(--stroke-container);padding-top:11px;padding-bottom:11px;}
+.arF-wl-tl{grid-column:2;font-size:12px;font-weight:700;color:var(--txt-primary);}
+.arF-wl-tl-amt{grid-column:4;text-align:right;font-weight:700;font-size:13px;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+.arF-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;line-height:1;padding:3px 8px;border-radius:999px;white-space:nowrap;}
+.arF-badge .material-symbols-rounded{font-size:13px;}
+.arF-badge-ok{color:var(--green-120);background:var(--pos-10);}
+.arF-badge-sev1{color:var(--primitive-color-saffron-500);background:var(--primitive-color-saffron-25);}
+.arF-badge-sev2{color:var(--primitive-color-orange-500);background:var(--primitive-color-orange-50);}
+.arF-badge-sev3{color:var(--red-100);background:var(--red-10);}
+.arF-badge-sev4{color:var(--red-130);background:var(--red-10);}
+/* Expanded customer panel: that customer's invoices, in a sub-table whose header aligns over its columns. */
+.arF-cp{background:var(--wn-100);border-radius:8px;margin:2px 16px 10px;padding:8px;}
 .arF-cp-invs{display:flex;flex-direction:column;background:var(--cn-0);border:1px solid var(--stroke-widget);border-radius:8px;overflow:hidden;}
-.arF-ci{display:grid;grid-template-columns:minmax(0,1.3fr) 118px 132px 112px auto;align-items:center;gap:12px;padding:7px 12px;border-bottom:1px solid var(--wn-200);font-size:12.5px;}
+.arF-ci{display:grid;grid-template-columns:minmax(0,1fr) 118px 132px 108px 44px;align-items:center;column-gap:12px;padding:8px 14px;border-bottom:1px solid var(--wn-200);font-size:12px;}
 .arF-ci:last-child{border-bottom:0;}
-.arF-ci-head{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);background:var(--wn-100);}
-.arF-ci-head .arF-ci-amt{text-align:right;}
-.arF-ci-inv{display:inline-flex;align-items:center;gap:6px;min-width:0;}
-.arF-ci-num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-/* Copy appears only on hover/focus of the invoice (always visible on touch), never a permanent icon. */
-.arF-ci-copy{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:0;background:transparent;color:var(--txt-subtle);border-radius:5px;cursor:pointer;padding:0;opacity:0;pointer-events:none;transition:opacity var(--dur);}
-.arF-ci:hover .arF-ci-copy,.arF-ci-inv:hover .arF-ci-copy,.arF-ci-copy:focus-visible{opacity:1;pointer-events:auto;}
-.arF-ci-copy:hover{background:var(--wn-200);color:var(--txt-primary);}
-@media(hover:none){.arF-ci-copy{opacity:1;pointer-events:auto;}}
-.arF-ci-copy .material-symbols-rounded{font-size:14px;}
+.arF-ci-head{background:var(--wn-100);}
+.arF-ci-inv{display:inline-flex;align-items:center;gap:6px;min-width:0;font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);}
 .arF-ci-due{color:var(--txt-secondary);white-space:nowrap;}
-.arF-ci-days{color:var(--txt-subtle);font-variant-numeric:tabular-nums;white-space:nowrap;}
-.arF-ci-days.over{color:var(--am-700);font-weight:600;}
+.arF-ci-status{min-width:0;}
 .arF-ci-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt-primary);}
-.arF-ci-open{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;background:transparent;border:0.5px solid var(--stroke-widget);color:var(--txt-secondary);cursor:pointer;border-radius:6px;padding:3px 9px;font:inherit;font-size:11.5px;font-weight:500;white-space:nowrap;}
-.arF-ci-open:hover{border-color:var(--brand-100);color:var(--brand-500);}
-.arF-ci-open .material-symbols-rounded{font-size:14px;}
-.arF-ci-head .arF-ci-open{border:0;}
-.arF-cp-actions{display:flex;gap:8px;}
+.arF-ci-act{display:inline-flex;align-items:center;justify-content:center;}
+.arF-ci-open{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:transparent;border:0;color:var(--txt-subtle);cursor:pointer;border-radius:6px;padding:0;}
+.arF-ci-open:hover{background:var(--wn-200);color:var(--brand-500);}
+.arF-ci-open .material-symbols-rounded{font-size:17px;}
 .arF-wl-f{display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid var(--wn-300);}
-.arF-wl-fnote{font-size:12px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
 .arF-wl-fspace{flex:1 1 auto;}
 .arF-xp-back{position:absolute;inset:0;background:var(--primitive-color-cool-neutral-900-24);display:flex;align-items:center;justify-content:center;z-index:5;}
 .arF-xp{background:var(--cn-0);border-radius:12px;width:min(440px,90%);max-height:84%;display:flex;flex-direction:column;box-shadow:var(--elevation-lift);overflow:hidden;}
