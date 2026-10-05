@@ -5751,11 +5751,15 @@ function loanViewToggle(w){if(w.size==="xwide")return "";var v=loanView(w);
    never larger than the KPI), loan count, tappable to filter the whole widget. */
 function loanBucketCards(w){
   var sel=loanSel(w),grand=loanTotal(w),bs=loanBuckets(w),n=loanCount(w),allSel=(sel==="total");
-  var cards='<button class="loan-card loan-card-all'+(allSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="total" data-id="'+w.id+'" aria-pressed="'+allSel+'"><span class="loan-card-lbl">All bands</span><span class="loan-card-pct">100%</span><span class="loan-card-cnt">'+n+' loan'+(n===1?"":"s")+'</span></button>';
-  /* Only show aging bands that actually carry a balance; empty bands are not rendered (no disabled cards). */
-  bs.forEach(function(r,i){var has=r.total>0,isSel=(sel===r.key),share=grand>0?Math.round(r.total/grand*100):0,col=LOAN_CARD_COLORS[i]||LOAN_CARD_COLORS[LOAN_CARD_COLORS.length-1],cv=col.charAt(0)==="#"?col:("var("+col+")");if(!has)return;
+  var cards='<button class="loan-card loan-card-all'+(allSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="total" data-id="'+w.id+'" aria-pressed="'+allSel+'">'+
+    '<span class="loan-card-top"><span class="loan-card-ic material-symbols-rounded" aria-hidden="true">account_balance_wallet</span><span class="loan-card-lbl">All bands</span></span>'+
+    '<span class="loan-card-amt">'+loanMoney(grand)+'</span><span class="loan-card-cnt">'+n+' loan'+(n===1?"":"s")+'</span></button>';
+  /* Each band carries its aging legend colour as a leading swatch (the same colour as the chart/legend),
+     the band balance as the figure, and count + share beneath. Empty bands are not rendered. */
+  bs.forEach(function(r,i){var has=r.total>0,isSel=(sel===r.key),share=grand>0?Math.round(r.total/grand*100):0;if(!has)return;
     cards+='<button class="loan-card'+(isSel?" sel":"")+'" data-action="loan-set-bucket" data-bucket="'+r.key+'" data-id="'+w.id+'" aria-pressed="'+isSel+'" data-tip="'+loanEsc(r.label+": "+loanMoney(r.total)+", "+r.count+" loan"+(r.count===1?"":"s")+", "+share+"% of the balance.")+'" data-tip-plain>'+
-      '<span class="loan-card-lbl">'+r.label+'</span><span class="loan-card-pct" style="color:'+cv+'">'+share+'%</span><span class="loan-card-cnt">'+r.count+' loan'+(r.count===1?"":"s")+'</span></button>';});
+      '<span class="loan-card-top"><span class="loan-card-sw" style="background:var('+r.color+')" aria-hidden="true"></span><span class="loan-card-lbl">'+r.label+'</span></span>'+
+      '<span class="loan-card-amt">'+loanMoney(r.total)+'</span><span class="loan-card-cnt">'+r.count+' loan'+(r.count===1?"":"s")+' · '+share+'%</span></button>';});
   return '<div class="loan-cards" role="group" aria-label="Filter by aging band">'+cards+'</div>';
 }
 /* Balance-by-range interactive donut (G8, amethyst): slices + legend clickable to filter. */
