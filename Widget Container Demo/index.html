@@ -7188,32 +7188,37 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
 
   /* === MY STATUS (mys) render === */
 function mysConfigBtn(w){return '<button class="btn outlined sm mys-cfg-btn" data-action="mys-config" data-id="'+w.id+'" aria-haspopup="dialog">'+ICON("checklist")+'Configure</button>';}
-function mysActive(sel){return sel.filter(function(q){return q.count>0;}).slice().sort(function(a,b){return b.count-a.count;});}
+/* Items that genuinely need doing (action type, count>0) vs. informational items (info type, count>0)
+   vs. items that are currently clear. We never SUM counts across unlike items (a 42-row report and 7
+   unposted entries are not one "49"); each item keeps its own count. */
+function mysActionItems(sel){return sel.filter(function(q){return q.urgency==="action"&&q.count>0;}).slice().sort(function(a,b){return b.count-a.count;});}
+function mysInfoItems(sel){return sel.filter(function(q){return q.urgency==="info"&&q.count>0;}).slice().sort(function(a,b){return b.count-a.count;});}
 function mysClearList(sel){return sel.filter(function(q){return q.count<=0;});}
 function mysHeaderBlock(w,sel){
-  var active=mysActive(sel),n=active.length,recs=active.reduce(function(s,q){return s+q.count;},0);
-  var badge=n?('<span class="mys-hpill warn">'+ICON("pending_actions")+n+(n===1?" query needs attention":" queries need attention")+'</span>'):('<span class="mys-hpill ok">'+ICON("check_circle")+'All clear</span>');
-  return '<div class="dep-hd mys-hd"><div class="dep-hd-top"><div class="dep-hd-kpigrp"><span class="metric-value">'+recs+'</span>'+badge+'</div><div class="dep-hd-toggle">'+mysConfigBtn(w)+'</div></div><div class="dep-hd-num"><div class="mys-sub">Records waiting across your tracked queries. Select a count to work through it.</div></div></div>';
+  var n=mysActionItems(sel).length;
+  var status=n
+    ?'<span class="metric-value">'+n+'</span><span class="mys-hlabel">'+(n===1?"item needs action":"items need action")+'</span>'
+    :'<span class="mys-allclear-h">'+ICON("check_circle")+'You’re all caught up</span>';
+  return '<div class="dep-hd mys-hd"><div class="dep-hd-top"><div class="mys-hgrp">'+status+'</div><div class="dep-hd-toggle">'+mysConfigBtn(w)+'</div></div></div>';
 }
 function mysRowHTML(w,q){
   var zero=q.count<=0, clickable=!zero;
-  var aff=(!zero&&q.click==="nav")?'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens the '+q.navTo+' page (leaves the dashboard)" data-tip-plain>arrow_outward</span>':'';
-  var srClick=clickable?(q.click==="nav"?", opens the "+q.navTo+" page":", opens a record list"):", nothing to action";
+  var aff=(!zero&&q.click==="nav")?'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens '+q.navTo+' (leaves the dashboard)" data-tip-plain>arrow_outward</span>':'';
+  var srClick=clickable?(q.click==="nav"?", opens "+q.navTo:", opens the list"):", nothing to do";
   var nm='<span class="lr-main mys-nm">'+q.name+'</span>';
-  var count='<span class="wt-c2 mys-count'+(zero?" mys-count-zero":"")+'">'+q.count+'<span class="sr-only"> records'+srClick+'</span></span>';
-  var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+q.count+' records'+srClick+'"':' aria-disabled="true"';
+  var count='<span class="wt-c2 mys-count'+(zero?" mys-count-zero":"")+'">'+q.count+'<span class="sr-only">'+srClick+'</span></span>';
+  var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+q.count+srClick+'"':' aria-disabled="true"';
   return '<div class="wt-row mys-row'+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'>'+nm+aff+count+'</div>';
 }
 function mysContent(w){
   var sel=(w.selected||[]).map(mysFind).filter(Boolean);
-  if(!sel.length)return '<div class="state mys-empty" data-kind="empty">'+ICON("checklist")+'<div class="state-title">No records to display</div><div class="state-sub">Choose the queries you want to keep an eye on. Their live counts show up here.</div><button class="btn outlined" data-action="mys-config" data-id="'+w.id+'">'+ICON("checklist")+'Configure</button></div>';
-  var active=mysActive(sel),clear=mysClearList(sel);
-  var head='<div class="wt-row wt-head mys-headrow"><span class="lr-main">Query</span><span class="wt-c2 mys-countcol">Count</span></div>';
+  if(!sel.length)return '<div class="state mys-empty" data-kind="empty">'+ICON("checklist")+'<div class="state-title">Nothing to show yet</div><div class="state-sub">Pick the things you want to keep an eye on. Their live counts appear here.</div><button class="btn outlined" data-action="mys-config" data-id="'+w.id+'">'+ICON("checklist")+'Configure</button></div>';
+  var action=mysActionItems(sel),info=mysInfoItems(sel),clear=mysClearList(sel);
   var body="";
-  if(active.length)body+=active.map(function(q){return mysRowHTML(w,q);}).join("");
-  else body+='<div class="mys-allclear">'+ICON("task_alt")+'<span>Nothing needs your attention right now.</span></div>';
+  if(action.length)body+='<div class="cap mys-grp">Needs action</div>'+action.map(function(q){return mysRowHTML(w,q);}).join("");
+  if(info.length)body+='<div class="cap mys-grp">Good to know</div>'+info.map(function(q){return mysRowHTML(w,q);}).join("");
   if(clear.length)body+='<div class="cap mys-grp">Up to date</div>'+clear.map(function(q){return mysRowHTML(w,q);}).join("");
-  return mysHeaderBlock(w,sel)+'<div class="scroll mys-list">'+head+body+'</div>';
+  return mysHeaderBlock(w,sel)+'<div class="scroll mys-list">'+body+'</div>';
 }
 
 function mysConfigModalHTML(){
