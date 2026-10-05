@@ -10168,7 +10168,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     bgtLockBg(true);
     if(modal.type==="bgtreport"){if(modalMounted){var mm=mr.querySelector(".modal.bgt-rm-modal");if(mm){mm.innerHTML=bgtReportModalInner();return;}}mr.innerHTML=bgtReportModalHTML();modalMounted=true;return;}
     if(modal.type==="bgtF-report"){if(modalMounted){var mmF=mr.querySelector(".modal.bgt-rm-modal");if(mmF){mmF.innerHTML=bgtFReportModalInner();return;}}mr.innerHTML=bgtFReportModalHTML();modalMounted=true;return;}
-    if(modal.type==="mysconfig"){mr.innerHTML=mysConfigModalHTML();return;}
+    if(modal.type==="mysconfig"){if(modalMounted){var _mc=mr.querySelector(".modal.mys-cfg-modal");if(_mc){var _ms=mr.querySelector("#mysCfgScroll"),_mt=_ms?_ms.scrollTop:0;_mc.innerHTML=mysConfigModalInner();var _ms2=mr.querySelector("#mysCfgScroll");if(_ms2)_ms2.scrollTop=_mt;return;}}mr.innerHTML=mysConfigModalHTML();modalMounted=true;return;}
     if(modal.type==="pur-po"){if(modalMounted){var _pm=mr.querySelector(".modal.pur-po-modal");if(_pm){_pm.innerHTML=purPoModalInner();return;}}mr.innerHTML=purPoModalHTML();modalMounted=true;return;}
     if(modal.type==="pur-drill"){mr.innerHTML=purDrillModalHTML();return;}
     if(modal.type==="pto-confirm"){mr.innerHTML=ptoConfirmModalHTML();modalMounted=true;return;}
@@ -10262,8 +10262,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="bank-drill-back"){if(modal)modal.acct=null;render();return;}
     if(a==="bank-open-app"){setStatus("Opening "+t.getAttribute("data-name")+" in Bank Accounts…");return;}
     if(a==="mys-config"){var wc0=find(id);modal={type:"mysconfig",id:id,q:"",draft:(wc0.selected||[]).slice()};modalMounted=false;pop=null;render();return;}
-    if(a==="mys-add"){var wa2=find(modal.id);var qid=t.getAttribute("data-q");if(wa2&&modal.draft.indexOf(qid)<0)modal.draft.push(qid);renderModal();return;}
-    if(a==="mys-remove"){var qidr=t.getAttribute("data-q");if(modal)modal.draft=modal.draft.filter(function(x){return x!==qidr;});renderModal();return;}
+    if(a==="mys-toggle"){var qid=t.getAttribute("data-q");if(modal){modal.draft=modal.draft||[];var ix=modal.draft.indexOf(qid);if(ix>-1)modal.draft.splice(ix,1);else modal.draft.push(qid);}renderModal();return;}
     if(a==="mys-config-done"){var wcd=find(modal.id);var chg=JSON.stringify(wcd.selected)!==JSON.stringify(modal.draft);wcd.selected=modal.draft.slice();modal=null;pop=null;if(chg){wcd.state="loading";render();clearTimeout(timers[wcd.id]);timers[wcd.id]=setTimeout(function(){wcd.state="ready";wcd.updated="just now";render();},700);}else render();return;}
     if(a==="mys-config-cancel"){modal=null;pop=null;render();return;}
     if(a==="mys-row"){var qq=t.getAttribute("data-q"),mq=mysFind(qq);if(mq&&mq.count>0){if(mq.click==="detail"){modal={type:"mysdetail",id:id,q:qq};modalMounted=false;pop=null;render();}else{showModal("Opens the "+mq.navTo+" page","This count links out of the dashboard to <b>"+mq.navTo+"</b>, where you can work through these "+mq.count+" records. Use the browser back button to return to the dashboard.");}}return;}
