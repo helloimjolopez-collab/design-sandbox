@@ -8595,10 +8595,17 @@ function arFContent(w){
   if(w.state==="empty")return arFEmpty(w);
   if(w.size==="kpi")return arFGlance(w);
   if(w.arFloading)return arFHeaderBlock(w,"loading")+arFSkeleton();
-  var mh=arFHeaderBlock(w),group=w.arFGroup||"aging",view=arFDataView(w);
-  var viewbar='<div class="arF-viewbar">'+arFDataViewToggle(w)+'</div>';
-  var content=(view==="pie")?arFPie(w,group):(group==="customer"?arFCustTable(w):arFAgingTable(w));
-  return mh+'<div class="arF-body">'+viewbar+content+'</div>';
+  var mh=arFHeaderBlock(w),group=w.arFGroup||"aging";
+  var table=(group==="customer")?arFCustTable(w):arFAgingTable(w);
+  /* Explore (wide): the table only. Detail (xwide): table on the left, a share pie on the right.
+     Either way the only toggle is Aging / Customers (no Table/Pie switch). */
+  if(w.size==="xwide"){
+    return mh+'<div class="dep-full arF-full">'+
+      '<div class="dep-col"><div class="dep-col-h">'+(group==="customer"?"Customers, most owed first":"Aging, current to most overdue")+'</div>'+table+'</div>'+
+      '<div class="dep-col arF-col-chart"><div class="dep-col-h">Share of outstanding</div><div class="arF-chartwrap">'+arFPie(w,group)+'</div></div>'+
+    '</div>';
+  }
+  return mh+'<div class="arF-body">'+table+'</div>';
 }
 
 /* Drill-to-detail focus overlay: report-style list (Customer, Bill To, Due Date,
