@@ -5025,13 +5025,23 @@ function remFInstChip(s){
 }
 function remFChurchesFor(r){
   var pace=r.pace||0,names=REM_CHURCH_NAMES,per=r.total/names.length;
+  var bM=remFParse(r.begin),eM=remFParse(r.end);
+  var termMonths=Math.max(1,(eM.getFullYear()-bM.getFullYear())*12+(eM.getMonth()-bM.getMonth()));
+  var periods=Math.max(1,Math.round((r.freq||12)*(termMonths/12)));
   return names.map(function(nm,i){
     var s=r.seq*101+i;
     var pledged=Math.max(50,Math.round(per*(0.55+remRnd(s)*1.1)/25)*25);
     var remitted=Math.min(pledged,Math.round(pledged*Math.min(1,remRnd(s+3.7)*1.25)/25)*25);
     var out=Math.max(0,pledged-remitted),pct=pledged>0?remitted/pledged:null,expected=Math.round(pledged*pace);
-    var st=pledged<=0?"neutral":(out<=0?"full":(remitted>=expected?"onpace":"behind"));
-    return {name:nm,district:REM_DISTRICTS[i%5],pledged:pledged,remitted:remitted,outstanding:out,pctPaid:pct,expected:expected,gap:(pct==null?0:pct-pace),status:st};
+    /* Grace = behind expected by no more than one instalment's worth (the ~1-period band that
+       still counts as on track). Only a shortfall beyond grace is flagged Behind. */
+    var periodAmt=pledged/periods,shortfall=expected-remitted,grace=false,st;
+    if(pledged<=0)st="neutral";
+    else if(out<=0)st="full";
+    else if(shortfall<=0)st="onpace";
+    else if(shortfall<=periodAmt){st="onpace";grace=true;}
+    else st="behind";
+    return {name:nm,district:REM_DISTRICTS[i%5],pledged:pledged,remitted:remitted,outstanding:out,pctPaid:pct,expected:expected,gap:(pct==null?0:pct-pace),status:st,grace:grace,begin:r.begin,end:r.end,freq:r.freq,periods:periods};
   });
 }
 function remFDetailModalInner(){
