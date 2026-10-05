@@ -4890,27 +4890,31 @@ function remFChurchesFor(r){
     return {name:nm,district:REM_DISTRICTS[i%5],pledged:pledged,remitted:remitted,outstanding:out,pctPaid:pct,expected:expected,gap:(pct==null?0:pct-pace),status:st};
   });
 }
-function remFDetailModalHTML(){
+function remFDetailModalInner(){
   var w=find(modal.id);if(!w)return "";
   var r=remFFindRow(w,modal.seq);if(!r)return "";
-  var sort=modal.remDSort||"pacing";
+  var ds=modal.dsort||{key:"pacing",dir:"asc"};
   var churches=remFChurchesFor(r);
-  churches.sort(function(a,b){if(sort==="pct"){var pa=(a.pctPaid==null?-1:a.pctPaid),pb=(b.pctPaid==null?-1:b.pctPaid);return pa-pb;}return a.gap-b.gap;});
+  churches.sort(function(a,b){
+    var va,vb;
+    if(ds.key==="name"){va=a.name;vb=b.name;return (ds.dir==="asc"?1:-1)*String(va).localeCompare(String(vb));}
+    if(ds.key==="dist"){va=a.district;vb=b.district;return (ds.dir==="asc"?1:-1)*String(va).localeCompare(String(vb));}
+    if(ds.key==="pledged"){va=a.pledged;vb=b.pledged;}
+    else if(ds.key==="remitted"){va=a.remitted;vb=b.remitted;}
+    else if(ds.key==="outstanding"){va=a.outstanding;vb=b.outstanding;}
+    else if(ds.key==="pct"){va=(a.pctPaid==null?-1:a.pctPaid);vb=(b.pctPaid==null?-1:b.pctPaid);}
+    else {va=a.gap;vb=b.gap;} // pacing
+    return (ds.dir==="asc"?1:-1)*(va-vb);
+  });
   var behindN=churches.filter(function(c){return c.status==="behind";}).length;
-  var TOPN=12,shown=churches.slice(0,TOPN),more=churches.length-shown.length;
   var multiY=(r.end.slice(0,4)!==r.begin.slice(0,4));
-  var summary='<div class="rem-sum">'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">Total pledge</span><span class="rem-sum-v">'+money(r.total)+'</span></div>'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">Expected by now</span><span class="rem-sum-v">'+money(r.expected)+'</span></div>'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">Paid to date</span><span class="rem-sum-v">'+money(r.paid)+'</span></div>'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">Outstanding</span><span class="rem-sum-v">'+money(r.outstanding)+'</span></div>'+
-    '<div class="rem-sum-cell"><span class="rem-sum-k">% Paid</span><span class="rem-sum-v">'+(r.pctPaid==null?"n/a":remFPct(r.pctPaid))+'</span></div>'+
-    '<div class="rem-sum-cell rem-sum-stat">'+remFStatusChip(r)+'</div>'+
-  '</div>';
-  var toggle='<div class="vtoggle rem-dsort-tog" role="group" aria-label="Sort member churches">'+
-    [["pacing","Behind first"],["pct","% remitted"]].map(function(o){var on=sort===o[0];return '<button class="vt'+(on?" on":"")+'" data-action="remF-dsort" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+'</button>';}).join("")+'</div>';
-  var head='<div class="wt-row rem-ch-row rem-ch-head"><span class="rem-ch-nm">Member church</span><span class="rem-ch-dist">District</span><span class="rem-ch-n">Pledged</span><span class="rem-ch-n">Remitted</span><span class="rem-ch-n">Outstanding</span><span class="rem-ch-pct">% Rem.</span><span class="rem-ch-stat">Pacing</span></div>';
-  var body=shown.map(function(c){
+  /* Compact one-line recap of the fund (no oversized snapshot card). */
+  function sc(k,v){return '<span class="rem-dsum-i"><span class="rem-dsum-k">'+k+'</span><span class="rem-dsum-v">'+v+'</span></span>';}
+  var summary='<div class="rem-dsum">'+sc("Pledged",money(r.total))+sc("Expected by now",money(r.expected))+sc("Paid",money(r.paid))+sc("Outstanding",money(r.outstanding))+sc("% Paid",(r.pctPaid==null?"n/a":remFPct(r.pctPaid)))+'<span class="rem-dsum-stat">'+remFStatusChip(r)+'</span></div>';
+  /* Sorting lives in the column headers (canonical chevrons), not a separate toggle. */
+  function sb(k,label,cls){var on=ds.key===k,ic=on?(ds.dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="remF-dsort" data-k="'+k+'" aria-label="Sort by '+label+'">'+label+' '+ICON(ic)+'</button>';}
+  var head='<div class="wt-row rem-ch-row rem-ch-head"><span class="rem-ch-nm">'+sb("name","Member church")+'</span><span class="rem-ch-dist">'+sb("dist","District")+'</span><span class="rem-ch-n">'+sb("pledged","Pledged")+'</span><span class="rem-ch-n">'+sb("remitted","Remitted")+'</span><span class="rem-ch-n">'+sb("outstanding","Outstanding")+'</span><span class="rem-ch-pct">'+sb("pct","% Rem.")+'</span><span class="rem-ch-stat">'+sb("pacing","Pacing")+'</span></div>';
+  var body=churches.map(function(c){
     return '<div class="wt-row rem-ch-row">'+
       '<span class="rem-ch-nm">'+c.name+'</span>'+
       '<span class="rem-ch-dist">'+c.district+'</span>'+
@@ -4921,11 +4925,16 @@ function remFDetailModalHTML(){
       '<span class="rem-ch-stat">'+remFChStatusChip(c)+'</span>'+
     '</div>';
   }).join("");
-  var foot='<div class="rem-ch-foot">'+(sort==="pacing"?("The "+shown.length+" furthest behind"):("Top "+shown.length))+' of '+churches.length+' member churches'+(behindN?" · "+behindN+" behind pace":"")+(more>0?" · "+more+" more in the roster":"")+'</div>';
-  return '<div class="modal-backdrop" data-action="remF-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Member churches for '+remFEsc(r.name)+'">'+
-    '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">groups</span>'+r.name+'</span><span class="rem-dsub">member churches · '+remFFmtDate(r.begin)+' to '+remFFmtDate(r.end)+(multiY?" (multi-year)":"")+'</span><span class="rem-dh-spacer"></span>'+toggle+'<button class="btn naked sm" data-action="remF-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="remF-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
-    '<div class="modal-b rem-detail-b">'+summary+'<div class="rem-ch-tbl">'+head+body+'</div>'+foot+'</div>'+
-    '<div class="modal-f"><button class="btn naked sm" data-action="remF-open-record" data-id="'+w.id+'" data-seq="'+r.seq+'">'+ICON("open_in_new")+'Open in Remittance</button><button class="btn primary sm" data-action="remF-detail-close">Close</button></div></div></div>';
+  var totRem=churches.reduce(function(s,c){return s+c.remitted;},0);
+  var foot='<div class="dep-total rem-ch-total"><span>'+churches.length+' member church'+(churches.length===1?"":"es")+(behindN?' · '+behindN+' behind pace':'')+'</span><span>'+money(totRem)+' remitted</span></div>';
+  return '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded rem-detail-ic">groups</span>Member churches</span><span class="rem-dsub">'+remFEsc(r.name)+'</span><span class="rem-dh-spacer"></span><button class="iconbtn" data-action="remF-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="rem-detail-subbar">'+remFFmtDate(r.begin)+' to '+remFFmtDate(r.end)+(multiY?" · multi-year":"")+'</div>'+
+    '<div class="modal-b rem-detail-b">'+summary+'<div class="rem-ch-tbl">'+head+'<div class="rem-ch-scroll">'+body+'</div></div>'+foot+'</div>'+
+    '<div class="modal-f"><button class="btn secondary sm" data-action="remF-export" data-id="'+w.id+'">'+ICON("download")+'Export</button><span class="rem-dh-spacer"></span><button class="btn primary sm" data-action="remF-detail-close">Done</button></div>';
+}
+function remFDetailModalHTML(){
+  var w=find(modal.id);if(!w)return "";var r=remFFindRow(w,modal.seq);
+  return '<div class="modal-backdrop" data-action="remF-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Member churches for '+remFEsc(r?r.name:"")+'">'+remFDetailModalInner()+'</div></div>';
 }
 
 // ===== REGISTRY (see the dashboards[0].widgets array; entries appended there) ===
