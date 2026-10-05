@@ -8740,12 +8740,10 @@ function arFDetailModalInner(){
   /* Persistent scope line, directly under the heading, always available (never under 11pt). */
   var subbar='<div class="arF-wl-subbar">'+custN+' customer'+(custN===1?"":"s")+' · '+invN+' invoice'+(invN===1?"":"s")+'</div>';
   /* Toolbar: Export all + Search, both on the right. */
-  var controls='<div class="arF-wl-controls"><span class="arF-wl-ctrl-space"></span>'+
-    '<button class="btn secondary sm" data-action="arF-export" data-scope="all">'+ICON("download")+'Export all</button>'+
-    '<div class="arF-wl-search"><span class="material-symbols-rounded">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customer or invoice #" aria-label="Search" value="'+arFEsc(modal.q||"")+'"></div>'+
-  '</div>';
-  /* Selection strip: only when something is selected, above the table, by the checkboxes, brand-tinted. */
-  var selbar=selN>0?'<div class="arF-wl-selbar"><span class="arF-sel-n">'+selN+' customer'+(selN===1?"":"s")+' selected</span><button class="btn primary sm" data-action="arF-export" data-scope="sel">'+ICON("download")+'Export selected</button><button class="arF-sel-clear" data-action="arF-clearsel">'+ICON("close")+'Clear</button></div>':"";
+  /* Search on the top left. No standing Export — it only appears in the selection row once you pick customers. */
+  var controls='<div class="arF-wl-controls"><div class="arF-wl-search"><span class="material-symbols-rounded">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customer or invoice #" aria-label="Search" value="'+arFEsc(modal.q||"")+'"></div></div>';
+  /* Selection strip: its own row below the search, only when something is selected (details + actions together). */
+  var selbar=selN>0?'<div class="arF-wl-selbar"><span class="arF-sel-n">'+selN+' customer'+(selN===1?"":"s")+' selected</span><span class="arF-wl-ctrl-space"></span><button class="btn primary sm" data-action="arF-export" data-scope="sel">'+ICON("download")+'Export selected</button><button class="arF-sel-clear" data-action="arF-clearsel">'+ICON("close")+'Clear</button></div>':"";
   /* Sortable column header. */
   function mbtn(key,label,num){var on=ms.key===key,ic=on?(ms.dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="arF-colsort'+(num?" num":"")+'" data-action="arF-msort" data-k="'+key+'" aria-sort="'+(on?(ms.dir==="asc"?"ascending":"descending"):"none")+'" aria-label="Sort by '+label+'">'+label+ICON(ic)+'</button>';}
   var thead='<div class="arF-wl-grid arF-wl-head"><span class="arF-wl-c-check" role="checkbox" aria-checked="'+(allSel?"true":(selN?"mixed":"false"))+'" tabindex="0" data-action="arF-selall" aria-label="Select all customers">'+ICON(headIco)+'</span>'+mbtn("customer","Customer",false)+mbtn("oldest","Oldest",false)+mbtn("balance","Balance",true)+'<span aria-hidden="true"></span></div>';
