@@ -5095,8 +5095,13 @@ function gftHeaderBlock(w,mode){
   var top='<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>';
   if(loading){var numL='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:24px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';
     return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numL+'</div></div></div>';}
-  var pctPill='<span class="gft-goalpill">'+gftPct(o.fulfilled)+' of goal</span>';
-  var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(o.received)+'</span>'+gftStatusPill(o.status,Math.abs(o.remaining),thru)+pctPill+'</div>';
+  /* Badges (status + % of goal) are only meaningful for ONE purpose. For "All purposes" we
+     show just the KPI with a quiet "of $X pledged" caption; the per-purpose bars carry the detail. */
+  var specific=(gftPurposeCur(w)!=="All purposes");
+  var trail=specific
+    ?(gftStatusPill(o.status,Math.abs(o.remaining),thru)+'<span class="gft-goalpill">'+gftPct(o.fulfilled)+' of goal</span>')
+    :'<span class="gft-hd-cap">received of '+money(o.pledgeTotal)+' pledged</span>';
+  var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(o.received)+'</span>'+trail+'</div>';
   return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+'</div></div></div>';
 }
 
