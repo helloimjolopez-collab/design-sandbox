@@ -5245,7 +5245,7 @@ function gftDonorStatusChip(st){
   if(st==="complete")return '<span class="gft-dstatus gft-dstatus-ok">Fully paid</span>';
   return '<span class="gft-dstatus gft-dstatus-ok">On track</span>';
 }
-function gftDetailModalHTML(){
+function gftDetailModalInner(){
   var w=find(modal.id);if(!w)return "";
   var purpose=modal.purpose,thru=gftThru(w);
   var allRows=gftDonorsFor(w,purpose);
@@ -5255,7 +5255,7 @@ function gftDetailModalHTML(){
   var toggle='<div class="vtoggle gft-d-toggle" role="group" aria-label="Which donors">'+
     [["all","All donors"],["behind","Behind only"]].map(function(o){var on=view===o[0];return '<button class="vt'+(on?" on":"")+'" data-action="gft-d-view" data-v="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+(o[0]==="behind"?' ('+behindN+')':'')+'</button>';}).join("")+'</div>';
   var cols=["Donor","Pledged","Received","Due by "+gftFmtDate(thru),"Remaining","Last gift"];
-  var head='<div class="wt-row wt-head gft-drow"><span class="gft-dexp"></span>'+cols.map(function(c,i){return '<span class="gft-dc gft-dc'+i+'">'+c+'</span>';}).join("")+'<span class="gft-dstat-h"></span></div>';
+  var head='<div class="wt-row wt-head gft-drow"><span class="gft-dexp"></span>'+cols.map(function(c,i){return '<span class="gft-dc gft-dc'+i+'">'+c+'</span>';}).join("")+'<span class="gft-dstat-h">Status</span></div>';
   var body;
   if(rows.length){
     body=rows.map(function(r){
@@ -5277,10 +5277,17 @@ function gftDetailModalHTML(){
   }
   var totRem=rows.reduce(function(s,r){return s+r.remaining;},0),totRec=rows.reduce(function(s,r){return s+r.received;},0);
   var foot=rows.length?'<div class="dep-total gft-dtotal"><span>'+rows.length+' donor'+(rows.length===1?"":"s")+'</span><span class="gft-dtotal-nums">'+money(totRec)+' received'+(totRem>0?', '+money(totRem)+' behind':'')+'</span></div>':'';
-  return '<div class="modal-backdrop" data-action="gft-detail-close"><div class="modal modal-wide gft-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Gifts Pledges, donors behind '+gftEsc(purpose)+'">'+
-    '<div class="modal-h gft-detail-h"><span class="modal-title"><span class="material-symbols-rounded gft-detail-ic">volunteer_activism</span>Gifts Pledges: '+purpose+'</span><span class="gft-dsub">as of '+gftFmtDate(thru)+'</span><span class="gft-dh-spacer"></span>'+toggle+'<button class="btn naked sm" data-action="gft-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="gft-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
-    '<div class="modal-b gft-detail-b"><div class="gft-detail-scroll">'+head+body+'</div>'+foot+'</div>'+
-    '<div class="modal-f"><button class="btn primary sm" data-action="gft-detail-close">Close</button></div></div></div>';
+  /* Canonical heading (icon + title + purpose pill + close); "as of" + donor count on the persistent
+     subbar; the All/Behind toggle and Export in a toolbar, not crammed into the heading. */
+  return '<div class="modal-h gft-detail-h"><span class="modal-title"><span class="material-symbols-rounded gft-detail-ic">volunteer_activism</span>Gift pledges</span><span class="gft-dsub">'+gftEsc(purpose)+'</span><span class="gft-dh-spacer"></span><button class="iconbtn" data-action="gft-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+    '<div class="gft-detail-subbar">as of '+gftFmtDate(thru)+' · '+allRows.length+' donor'+(allRows.length===1?"":"s")+'</div>'+
+    '<div class="modal-b gft-detail-b"><div class="gft-detail-tools">'+toggle+'<span class="gft-dh-spacer"></span><button class="btn secondary sm" data-action="gft-export" data-id="'+w.id+'">'+ICON("download")+'Export</button></div>'+
+      '<div class="gft-detail-scroll">'+head+body+'</div>'+foot+'</div>'+
+    '<div class="modal-f"><button class="btn primary sm" data-action="gft-detail-close">Done</button></div>';
+}
+function gftDetailModalHTML(){
+  var w=find(modal.id);if(!w)return "";
+  return '<div class="modal-backdrop" data-action="gft-detail-close"><div class="modal modal-wide gft-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Gift pledges, '+gftEsc(modal.purpose)+'">'+gftDetailModalInner()+'</div></div>';
 }
 function gftDonorDrawer(w,r,thru){
   var hist=r.gifts.length
