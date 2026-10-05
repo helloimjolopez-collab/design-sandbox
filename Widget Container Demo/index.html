@@ -7451,11 +7451,11 @@ function mysPopContent(){
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
     else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?'<span class="bank-pill warn">'+ICON("warning")+'Overdrawn</span>':'')+basisPill+'</div>';}
     else{var tot=bankTotal(w);
-      /* KPI is the money + the unreconciled-basis chip. Account count moves to a
-         "showing X of Y" caption on the table; overdrawn moves to its own filter card. */
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span>'+basisPill+'</div>';}
+      /* KPI is the money + the unreconciled-basis chip + the overdrawn count (inline with the KPI,
+         not on the filter row). The overdrawn chip is still a tap-to-filter control. */
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span>'+basisPill+od+'</div>';}
     return '<div class="dep-hd">'+
-      '<div class="dep-hd-top"><div class="bank-hd-left">'+bankAcctChip(w)+od+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
+      '<div class="dep-hd-top"><div class="bank-hd-left">'+bankAcctChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
       '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
       '</div>';
   }
