@@ -10320,6 +10320,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(modal.type==="glancedrill"){mr.innerHTML=glanceDrillModalHTML();modalMounted=true;return;}
     if(modal.type==="pto-approve"){mr.innerHTML=ptoApproveModalHTML();modalMounted=true;return;}
     if(modal.type==="pto-drill"){mr.innerHTML=ptoDrillModalHTML();modalMounted=true;return;}
+    if(modal.type==="pto-day"){mr.innerHTML=ptoDayModalHTML();modalMounted=true;return;}
     if(modal.type==="mysdetail"){mr.innerHTML=mysDetailModalHTML();return;}
     if(modal.type==="artdetail"){mr.innerHTML=arDetailModalHTML();return;}
     if(modal.type==="arFdetail"){var _am=mr.querySelector(".arF-detail-modal");if(modalMounted&&_am){var _sc=mr.querySelector("#arFwlScroll"),_st=_sc?_sc.scrollTop:0;_am.innerHTML=arFDetailModalInner();var _sc2=mr.querySelector("#arFwlScroll");if(_sc2)_sc2.scrollTop=_st;return;}mr.innerHTML=arFDetailModalHTML();modalMounted=true;return;} // Receivable Invoices Outstanding (MB updated): incremental in-place update, no blink
@@ -10389,7 +10390,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="pto-selall"){var wsa9=find(id);if(wsa9){var rowsa=ptoQueueRows(wsa9).filter(function(r){return r.s3!=="approved";}),alls=ptoAllSelected(wsa9);wsa9.ptoSel={};if(!alls)rowsa.forEach(function(r){wsa9.ptoSel[r.id]=true;});}render();return;}
     if(a==="pto-selclear"){var wsc9=find(id);if(wsc9)wsc9.ptoSel={};render();return;}
     if(a==="pto-drill"){modal={type:"pto-drill",id:id,emp:t.getAttribute("data-emp")};modalMounted=false;pop=null;render();return;}
-    if(a==="pto-day"){var wday=find(id);if(wday){wday.ptoQView="queue";}setStatus("Showing the approval queue.");render();return;}
+    if(a==="pto-day"){if(!find(id))return;modal={type:"pto-day",id:id,day:t.getAttribute("data-d")};modalMounted=false;pop=null;render();return;}
     if(a&&a.indexOf("arF-")===0&&arFHandleClick(a,id,t))return; // Receivable Invoices Outstanding (MB updated), additive
     if(a&&a.indexOf("ar-")===0&&arHandleClick(a,id,t))return;
     if(purHandleClick(a,t,id))return;
