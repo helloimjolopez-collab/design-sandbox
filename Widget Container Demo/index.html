@@ -10801,12 +10801,14 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(modal.type==="apbill"){mountOrPatch(apBillModalHTML());return;}
     var body=(modal.scoped?'<div class="wcontent acct-mw">'+((modal.mw&&modal.mw.kind==="payroll-mb")?prFContent(modal.mw):(modal.mw&&modal.mw.kind==="deposits-mb")?depFContent(modal.mw):depContent(modal.mw))+'</div>':modal.b);
     if(modalMounted){var bEl=mr.querySelector(".modal-b");if(bEl){bEl.innerHTML=body;return;}}
-    /* One footer logic for every overlay: a secondary action (if any) bottom-LEFT as .btn.secondary,
-       the primary CTA "Done" bottom-RIGHT. No "Got it", no header/body-floating actions. */
-    var sec='';
-    if(modal.secondary){sec='<button class="btn secondary sm" data-action="'+modal.secondary.action+'"'+(modal.secondary.data||'')+'>'+(modal.secondary.icon?ICON(modal.secondary.icon):'')+modal.secondary.label+'</button>';}
-    else if(modal.scoped&&modal.mw&&modal.mw.kind==="payroll-mb"){sec='<button class="btn secondary sm" data-action="prF-modal-export">'+ICON("download")+'Export to Excel</button>';}
-    var mfoot='<div class="modal-f">'+(sec?sec+'<span class="modal-f-spacer"></span>':'')+'<button class="btn primary sm" data-action="modal-close">Done</button></div>';
+    /* Scoped read-only drills (payroll / deposits focus) are dismissed by the header × / Esc /
+       backdrop , no footer, so there's no redundant "Done" and no unexplained action. Other
+       overlays keep a secondary action (bottom-left) + Done (bottom-right). */
+    var mfoot='';
+    if(!modal.scoped){
+      var sec=modal.secondary?('<button class="btn secondary sm" data-action="'+modal.secondary.action+'"'+(modal.secondary.data||'')+'>'+(modal.secondary.icon?ICON(modal.secondary.icon):'')+modal.secondary.label+'</button>'):'';
+      mfoot='<div class="modal-f">'+(sec?sec+'<span class="modal-f-spacer"></span>':'')+'<button class="btn primary sm" data-action="modal-close">Done</button></div>';
+    }
     mr.innerHTML='<div class="modal-backdrop" data-action="modal-close"><div class="modal'+(modal.scoped?" modal-wide":"")+'" data-action="stop" role="dialog" aria-modal="true" aria-label="'+modal.t+'"><div class="modal-h"><span class="modal-title">'+(modal.glyph?'<span class="material-symbols-rounded" aria-hidden="true" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">'+modal.glyph+'</span>':'')+modal.t+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b">'+body+'</div>'+mfoot+'</div></div>';
     modalMounted=true;}
   function refresh(id){var w=find(id);if(!w)return;w.state="loading";render();clearTimeout(timers[id]);timers[id]=setTimeout(function(){w.state="ready";w.updated="just now";render();},1100);}
