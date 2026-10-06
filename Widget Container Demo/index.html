@@ -5401,6 +5401,14 @@ function gftDateChip(w){var thru=gftThru(w),spin=w.gftloading?'<span class="bgt-
 function gftPurposeChip(w){var all=gftAllPurposes(w);if(all.length<=1)return "";var cur=gftPurposeCur(w);return '<button class="filter-chip gft-purpchip" data-action="gft-purpose" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pledge purpose, tap to change"><span class="fc-label">'+gftEsc(cur)+'</span>'+ICON("expand_more")+'</button>';}
 function gftViewToggle(w){var v=w.gftView||"progress",opts=[["progress","Progress","insights"],["table","Table","table_rows"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="gft-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 
+/* Shared KPI supporting content (status badge + "% of $X goal" pill), so the glance
+   and the wide/xwide header read identically. */
+function gftKpiTrail(w,o,thru){
+  var specific=(gftPurposeCur(w)!=="All purposes");
+  var statusB=specific?gftMiniBadge(o,thru):(o.behindCount>0?('<span class="gft-mb gft-mb-behind">'+ICON("error")+o.behindCount+' behind</span>'):('<span class="gft-mb gft-mb-ontrack">'+ICON("check_circle")+'All on track</span>'));
+  var goalPill='<span class="gft-goalpill">'+gftPct(o.fulfilled)+' of '+money(o.pledgeTotal)+' goal</span>';
+  return statusB+goalPill;
+}
 function gftHeaderBlock(w,mode){
   var loading=(mode==="loading"),o=gftOverall(w),thru=gftThru(w);
   /* Explore shows progress + follow-up side by side, so the view toggle is hidden there. */
