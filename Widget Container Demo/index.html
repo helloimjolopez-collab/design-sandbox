@@ -9179,7 +9179,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoDeptCur(w){return w.ptoDept||"all";}
   function ptoPGCur(w){return w.ptoPG||"all";}
   function ptoTileOf(w){return w.ptoTile||"pending";}
-  function ptoRangeOf(w){return w.ptoRange||"month";}
+  function ptoRangeOf(w){return w.ptoRange||"year";}
   function ptoInRange(dateISO,range){var span={day:1,week:7,month:31,quarter:92,year:400}[range]||31;var diff=Math.round((Date.parse(dateISO)-Date.parse(PTO_TODAY_ISO))/86400000);return diff>=-span&&diff<=span;}
   function ptoBaseRows(w){var dept=ptoDeptCur(w),pg=ptoPGCur(w),range=ptoRangeOf(w);return ptoAllRows(w).filter(function(r){if(dept!=="all"&&r.deptId!==dept)return false;if(pg!=="all"&&r.pg!==pg)return false;return ptoInRange(r.date,range);});}
   function ptoQueueRows(w){var tile=ptoTileOf(w);return ptoBaseRows(w).filter(function(r){if(tile==="pending")return r.s3!=="approved";if(tile==="approved")return r.s3==="approved";return true;});}
