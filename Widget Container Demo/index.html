@@ -6799,15 +6799,19 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var neg=v<0,ic=neg?"arrow_downward":"arrow_upward";
     if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)"'+tipA+'>'+ICON(ic)+(neg?"Under budget":"Over budget")+pctHTML+'</span>';
     return '<span class="delta-pill'+(neg?" neg":"")+'"'+tipA+'>'+ICON(ic)+(neg?"Unfavourable":"Favourable")+pctHTML+'</span>';}
-  /* Small, fixed-width progress-to-budget bar: Actual as a share of Budget, favourability-coloured,
-     with its % and used/received label. Shared by the glance and the wide/xwide header. */
+  /* Small progress-to-budget bar: Actual as a share of Budget, favourability-coloured. The legend makes
+     spent/received %, the actual amount, and how much budget is LEFT crystal clear. Shared by glance + header. */
   function bgtFMiniBar(w){
     var bs=bgtFBasis(w),vt=bs.type,sv=bgtFSpanVariance(w,vt),b=sv.sumB,a=sv.sumA,v=sv.v;
     if(!(b>0))return '';
     var pct=Math.round(a/b*100),fillPct=Math.max(0,Math.min(100,pct));
     var favCls=bs.neutral?"neu":(v<0?"neg":"pos");
-    var uw=bgtFUsedWord(w),pctLbl=(uw==="used")?"used":(uw==="received")?"received":"of budget";
-    return '<div class="bgtF-glbar"><div class="bgtF-glbar-track"><div class="bgtF-glbar-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></div></div><span class="bgtF-glbar-lbl">'+pct+'% '+pctLbl+'</span></div>';}
+    var uw=bgtFUsedWord(w),verb=(uw==="used")?"spent":(uw==="received")?"received":"of budget";
+    var left=b-a,leftTxt=(left>0)?(money(left)+' left'):(left===0?'none left':(money(-left)+' over'));
+    return '<div class="bgtF-bar2">'+
+      '<div class="bgtF-bar2-row"><span class="bgtF-bar2-track"><span class="bgtF-bar2-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></span></span><span class="bgtF-bar2-pct">'+pct+'% '+verb+'</span></div>'+
+      '<div class="bgtF-bar2-legend"><span>'+money(a)+' of '+money(b)+'</span><span class="bgtF-bar2-dot" aria-hidden="true"></span><span class="bgtF-bar2-left'+(left<0?' bgtF-hl-neg':'')+'">'+leftTxt+'</span></div>'+
+    '</div>';}
   /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
   function bgtFHeadlineInner(v,neutral,sumB){
     if(v==null)return {cls:"",html:money(0),pct:""};
