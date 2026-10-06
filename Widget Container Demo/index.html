@@ -7077,10 +7077,9 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
        remaining crystal clear. One fixed window (YTD), no trend line. */
     var sv=bgtFSpanVariance(w,vt),v=sv.v,b=sv.sumB,a=sv.sumA,hv=bgtFHeadlineInner(v,neutral,b);
     var tip=bgtFExplain(w,vt,neutral,v,a,b),pct=bgtFVarPct(v,b);
-    var top='<div class="bgtF-gl-top">'+chip+'<span class="bgtF-gl-ytd">'+bgtFPeriodTag(w)+'</span></div>';
-    var metric='<div class="bgtF-gl-metricrow"><div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>'+bgtFFavPill(v,neutral,pct,tip)+'</div>';
-    return '<div class="kpi-row"><div class="kpi-num">'+top+metric+bgtFMiniBar(w)+'</div></div>';}
-  function bgtFPeriodTag(w){return {month:"MTD",period:"This period",quarter:"QTD",year:"YTD",fiscal:"FYTD"}[w.bspan||"year"]||"YTD";}
+    var metric='<div class="bgtF-gl-metricblock"><span class="bgtF-gl-eye">'+bgtFPeriodLabel(w)+'</span><div class="bgtF-gl-metricrow"><div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>'+bgtFFavPill(v,neutral,pct,tip)+'</div></div>';
+    return '<div class="kpi-row"><div class="kpi-num">'+chip+metric+bgtFMiniBar(w)+'</div></div>';}
+  function bgtFPeriodLabel(w){return {month:"Month to date",period:"This period",quarter:"Quarter to date",year:"Year to date",fiscal:"Fiscal year to date"}[w.bspan||"year"]||"Year to date";}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtFPanel(w,side){
     var interval=w[side==="a"?"iA":"iB"]||bgtFIvDefault(w.bspan||"year");
