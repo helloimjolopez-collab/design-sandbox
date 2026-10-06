@@ -9026,7 +9026,7 @@ function arFAgingTable(w){
 function arFCustTable(w){
   var rows=arFCustomers(w),tot=arFTotal(w);
   var head='<div class="wt-row wt-head arF-tbl-head"><span class="lr-main">'+arFSortBtn(w,"customer","Customer")+'</span><span class="wt-c2 arF-tc">'+arFSortBtn(w,"aging","Aging")+'</span><span class="wt-c2">'+arFSortBtn(w,"total","Balance")+'</span></div>';
-  var body=rows.map(function(r){var ageLbl=r.maxDays<=0?"Current":(r.maxDays+"d");
+  var body=rows.map(function(r){var ageLbl=arFBucketLabel(arFBucketOf(r.maxDays));
     return '<div class="wt-row arF-trow wt-rowlink" data-action="arF-open" data-id="'+w.id+'" data-mode="customer" data-key="'+arFEsc(r.customer)+'" role="button" tabindex="0" aria-label="'+arFEsc(r.customer+", "+money(r.total)+", oldest "+ageLbl+", open")+'"><span class="lr-main"><span class="arF-sevdot" style="background:var('+ARF_SEV_COLORS[r.worst]+')"></span><span class="arF-trow-nm">'+r.customer+'<span class="arF-trow-sub">'+r.count+' invoice'+(r.count>1?"s":"")+'</span></span></span><span class="wt-c2 arF-tc">'+ageLbl+'</span><span class="wt-c2">'+money(r.total)+'</span></div>';}).join("");
   return '<div class="scroll arF-tbl">'+head+body+'</div><div class="dep-total"><span>Total outstanding</span><span>'+money(tot)+'</span></div>';
 }
@@ -9202,11 +9202,11 @@ function arFDetailModalInner(){
     '<button class="btn naked sm" data-action="arF-share-do" data-fmt="print">'+ICON("print")+'Print</button></div>'):"";
   /* Sortable column header. */
   function mbtn(key,label,num){var on=ms.key===key,ic=on?(ms.dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="arF-colsort'+(num?" num":"")+'" data-action="arF-msort" data-k="'+key+'" aria-sort="'+(on?(ms.dir==="asc"?"ascending":"descending"):"none")+'" aria-label="Sort by '+label+'">'+label+ICON(ic)+'</button>';}
-  var thead='<div class="arF-wl-grid arF-wl-head"><span class="arF-wl-c-check" role="checkbox" aria-checked="'+(allSel?"true":(selN?"mixed":"false"))+'" tabindex="0" data-action="arF-selall" aria-label="Select all customers">'+ICON(headIco)+'</span>'+mbtn("customer","Customer",false)+mbtn("oldest","Oldest",false)+mbtn("balance","Balance",true)+'<span aria-hidden="true"></span></div>';
+  var thead='<div class="arF-wl-grid arF-wl-head"><span class="arF-wl-c-check" role="checkbox" aria-checked="'+(allSel?"true":(selN?"mixed":"false"))+'" tabindex="0" data-action="arF-selall" aria-label="Select all customers">'+ICON(headIco)+'</span>'+mbtn("customer","Customer",false)+mbtn("oldest","Aging bucket",false)+mbtn("balance","Balance",true)+'<span aria-hidden="true"></span></div>';
   var body="";
   if(!invs.length){body='<div class="state" data-kind="empty">'+ICON("search_off")+'<div class="state-title">No matches for "'+arFEsc(modal.q||"")+'"</div></div>';}
   else{groups.forEach(function(g){
-    var isOpen=!!exp[g.customer],csel=!!sel[g.customer],ageLbl=g.oldest<=0?"Current":(g.oldest+"d");
+    var isOpen=!!exp[g.customer],csel=!!sel[g.customer],ageLbl=arFBucketLabel(arFBucketOf(g.oldest));
     body+='<div class="arF-wl-item">'+
       '<div class="arF-wl-grid arF-wl-row'+(csel?" sel":"")+'">'+
         '<span class="arF-wl-c-check" role="checkbox" aria-checked="'+csel+'" tabindex="0" data-action="arF-check" data-cust="'+arFEsc(g.customer)+'" aria-label="Select '+arFEsc(g.customer)+'">'+ICON(csel?"check_box":"check_box_outline_blank")+'</span>'+
