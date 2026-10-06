@@ -5533,19 +5533,12 @@ function gftGlance(w){
   var markTip="Expected by "+asOf+": "+money(o.due)+" of "+money(o.pledgeTotal)+" goal";
   var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
   var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-tip="'+gftEsc(barHover)+'" data-tip-plain data-tip-lines><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" data-tip="'+gftEsc(markTip)+'" data-tip-plain data-tip-narrow></span></div>'):'';
-  var chip=gftPurposeChip(w);
-  var statusLine=specific
-    ? gftMiniBadge(o,thru)
-    : (o.behindCount>0
-        ? '<span class="gft-mb gft-mb-behind">'+ICON("error")+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind</span>'
-        : '<span class="gft-mb gft-mb-ontrack">'+ICON("check_circle")+'All on track</span>');
-  return '<div class="gft-glance">'+
-    '<div class="gft-glance-top">'+(chip?('<span class="sc-nm">Pledge progress</span><span class="gft-glance-swap">'+chip+'</span>'):('<span class="sc-nm">'+gftEsc(gftPurposeCur(w))+'</span>'))+'</div>'+
-    '<div class="gft-glance-kpi"><span class="metric-value">'+money(o.received)+'</span><span class="gft-hd-cap">'+gftPct(o.fulfilled)+' of '+money(o.pledgeTotal)+' goal</span></div>'+
+  return '<div class="kpi-row"><div class="kpi-num">'+
+    '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value">'+money(o.received)+'</span></span>'+
+    '<div class="gl-sub">'+gftKpiTrail(w,o,thru)+'</div>'+
     bar+
-    '<div class="gft-glance-status">'+statusLine+'</div>'+
     '<span class="sr-only">'+gftPct(o.fulfilled)+' of the '+money(o.pledgeTotal)+' pledged has been received ('+money(o.received)+') as of '+asOf+'. '+money(o.due)+' was expected by then. '+money(o.outstanding)+' is still outstanding.</span>'+
-  '</div>';
+  '</div></div>';
 }
 
 function gftEmpty(w){
