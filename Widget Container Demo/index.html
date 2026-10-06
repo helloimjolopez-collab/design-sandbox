@@ -9551,14 +9551,15 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      for (11.4), done as synced values-as-text, not an un-synced chart. The
      share bars are aria-hidden magnitude cues (amethyst; overdue a step
      darker), never the sole signal , sign + label carry overdue. */
-  function apMiniBar(frac,cls){var pct=Math.max(3,Math.round(frac*100));return '<span class="ap-sum-track" aria-hidden="true"><span class="ap-sum-fill'+(cls?" "+cls:"")+'" style="width:'+pct+'%"></span></span>';}
+  /* Top vendors owed: just who you owe and how much, biggest first. Not a progress toward anything,
+     so no bar. The invoice count and any overdue amount live on the row's hover, not in tiny text. */
   function apPanel(w){
     var out='<div class="ap-panel">';
-    var vend=apVendors(w).slice(0,6),vmax=vend.length?vend[0].total:1;
-    vend.forEach(function(v){var frac=vmax>0?v.total/vmax:0;
-      out+='<div class="ap-sum-row ap-static"><span class="ap-sum-main"><span class="ap-sum-lbl">'+v.vendor+'</span>'+
-        apMiniBar(frac,"")+
-        '<span class="ap-sum-meta">'+v.count+' invoice'+(v.count===1?"":"s")+(v.over>0?', <span class="ap-over">'+apMoney(v.over)+' overdue</span>':'')+'</span></span>'+
+    var vend=apVendors(w).slice(0,6);
+    vend.forEach(function(v){
+      var tip=v.count+' invoice'+(v.count===1?"":"s")+(v.over>0?(' · '+apMoney(v.over)+' overdue'):' · none overdue');
+      out+='<div class="ap-sum-row ap-static" data-tip="'+String(v.vendor+' · '+tip).replace(/"/g,"&quot;")+'" data-tip-plain tabindex="0">'+
+        '<span class="ap-sum-lbl'+(v.over>0?" over":"")+'">'+v.vendor+'</span>'+
         '<span class="ap-sum-val">'+apMoney(v.total)+'</span></div>';
     });
     return out+'</div>';
