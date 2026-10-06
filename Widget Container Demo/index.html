@@ -2737,7 +2737,8 @@
 .gft-glance-top .sc-nm{font-size:12px;font-weight:600;color:var(--txt-secondary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .gft-glance-swap{margin-left:auto;flex:0 0 auto;}
 .gft-glance-kpi{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
-.gft-glance-bar{margin-top:1px;}
+.gft-glance-bar{margin-top:0;}
+.kpi-row .gft-glance-bar{flex:0 0 40%;max-width:42%;min-width:110px;align-self:center;}
 .gft-glance-bar .gft-track{height:10px;}
 .gft-glance-status{margin-top:1px;}
 
@@ -7163,9 +7164,9 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
        remaining crystal clear. One fixed window (YTD), no trend line. */
     var sv=bgtFSpanVariance(w,vt),v=sv.v,b=sv.sumB,a=sv.sumA,hv=bgtFHeadlineInner(v,neutral,b);
     var pct=bgtFVarPct(v,b),tip=bgtFExplain(w,vt,neutral,v,a,b)+(pct?(' The '+pct+' is this variance as a share of the budget.'):'');
-    var top='<div class="bgtF-gl-top">'+chip+'<span class="bgtF-gl-per">'+bgtFPeriodTag(w)+'</span></div>';
+    var top='<div class="gl-chiprow">'+chip+'<span class="bgtF-gl-per">'+bgtFPeriodTag(w)+'</span></div>';
     var metric='<div class="bgtF-gl-metricrow"><div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>'+bgtFFavPill(v,neutral,pct,tip)+'</div>';
-    return '<div class="kpi-row"><div class="kpi-num">'+top+metric+bgtFMiniBar(w)+'</div></div>';}
+    return '<div class="kpi-row">'+top+'<div class="kpi-num">'+metric+'</div><div class="kpi-spark bgtF-gl-bar">'+bgtFMiniBar(w)+'</div></div>';}
   function bgtFPeriodTag(w){return {month:"MTD",period:"PERIOD",quarter:"QTD",year:"YTD",fiscal:"FYTD"}[w.bspan||"year"]||"YTD";}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtFPanel(w,side){
