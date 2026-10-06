@@ -7076,7 +7076,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
        (variance % inside it) on the same line; a small progress-to-budget bar that makes spent and
        remaining crystal clear. One fixed window (YTD), no trend line. */
     var sv=bgtFSpanVariance(w,vt),v=sv.v,b=sv.sumB,a=sv.sumA,hv=bgtFHeadlineInner(v,neutral,b);
-    var tip=bgtFExplain(w,vt,neutral,v,a,b),pct=bgtFVarPct(v,b);
+    var pct=bgtFVarPct(v,b),tip=bgtFExplain(w,vt,neutral,v,a,b)+(pct?(' The '+pct+' is this variance as a share of the budget.'):'');
     var top='<div class="bgtF-gl-top">'+chip+'<span class="bgtF-gl-per">'+bgtFPeriodTag(w)+'</span></div>';
     var metric='<div class="bgtF-gl-metricrow"><div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>'+bgtFFavPill(v,neutral,pct,tip)+'</div>';
     return '<div class="kpi-row"><div class="kpi-num">'+top+metric+bgtFMiniBar(w)+'</div></div>';}
