@@ -5451,6 +5451,10 @@ function gftMiniBadge(p,thru){
 /* One purpose = one row. Name at the start of the bar, Goal at the end (the bar's end IS the goal, no
    mid-bar marker). A small behind/on-track/ahead badge sits just left of the goal. The exact paid /
    percentage / goal / behind figures are on the bar's hover, keeping the row clean. */
+/* Data for the rich hover card (same card style as the Bank spark tooltip). */
+function gftTipData(p,asOf,title){
+  return {t:(title||p.purpose),pledged:money(p.pledgeTotal),exp:money(p.due),expDate:asOf,paid:money(p.received),pct:gftPct(p.fulfilled),owed:money(Math.max(0,p.outstanding)),dir:(p.remaining>0?"behind":(p.remaining<0?"ahead":"on")),amt:money(Math.abs(p.remaining))};
+}
 function gftBar(w,p,clickable){
   var thru=gftThru(w),asOf=gftFmtDate(thru);
   var rPct=p.pledgeTotal>0?Math.min(100,p.received/p.pledgeTotal*100):0;
