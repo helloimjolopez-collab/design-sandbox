@@ -3521,7 +3521,7 @@
      3. click-handler dispatch ...... if(a&&a.indexOf("pen-")===0&&penHandleClick(a,id,t))return;
      4. popContent() dispatch ....... if(pop.type==="pen-dist")return penPopContent();
      5. triggerSelector() branch .... if(pop.type==="pen-dist")return '[data-action="pen-dist"][data-id="'+pop.id+'"]';
-        renderModal() branch ........ if(modal.type==="pendetail"){mr.innerHTML=penDetailModalHTML();return;}
+        renderModal() branch ........ if(modal.type==="pendetail"){mountOrPatch(penDetailModalHTML());return;}
         aboutOf() branch (optional) . if(w.kind==="pension")return {h:w.title,b:PEN_ABOUT};
         (+ registry entries pen / pen2 / pen3 / pen4 below)
    ===================================================================== */
@@ -3835,7 +3835,7 @@ function penPopContent(){
 function penTriggerSelector(){if(pop.type==="pen-dist")return '[data-action="pen-dist"][data-id="'+pop.id+'"]';return null;}
 
 /* --- renderModal() branch: paste into renderModal() ---
-   if(modal.type==="pendetail"){mr.innerHTML=penDetailModalHTML();return;} */
+   if(modal.type==="pendetail"){mountOrPatch(penDetailModalHTML());return;} */
 
 /* --- input handler: none needed (district list is short, no search box) --- */
 
@@ -3889,7 +3889,7 @@ function penTriggerSelector(){if(pop.type==="pen-dist")return '[data-action="pen
      3. click-handler dispatch ...... if(a&&a.indexOf("penF-")===0&&penFHandleClick(a,id,t))return;
      4. popContent() branch ......... if(pop.type==="penF-dist")return penFPopContent();
         triggerSelector() branch .... if(pop.type==="penF-dist")return '[data-action="penF-dist"][data-id="'+pop.id+'"]';
-        renderModal() branch ........ if(modal.type==="penFdetail"){mr.innerHTML=penFDetailModalHTML();return;}
+        renderModal() branch ........ if(modal.type==="penFdetail"){mountOrPatch(penFDetailModalHTML());return;}
         aboutOf() branch (optional) . if(w.kind==="pension-mb")return {h:w.title,b:PENF_ABOUT};
      5. CSS .......................... one .penf-* block at the end of <style>
      (+ registry entries penF / penF2 / penF3 appended after Jo's pen entries)
@@ -4189,7 +4189,7 @@ function penFPopContent(){
   return "";
 }
 /* --- triggerSelector() branch: if(pop.type==="penF-dist")return '[data-action="penF-dist"][data-id="'+pop.id+'"]'; */
-/* --- renderModal() branch: if(modal.type==="penFdetail"){mr.innerHTML=penFDetailModalHTML();return;} */
+/* --- renderModal() branch: if(modal.type==="penFdetail"){mountOrPatch(penFDetailModalHTML());return;} */
 
 // ===== REGISTRY (appended after Jo's pen entries in the dashboards array) =====
 /*
@@ -4608,7 +4608,7 @@ function remPopContent(){
    triggerSelector():
        if(pop.type==="rem-thru")return '[data-action="rem-thru"][data-id="'+pop.id+'"]';
    renderModal():
-       if(modal.type==="remdetail"){mr.innerHTML=remDetailModalHTML();return;}
+       if(modal.type==="remdetail"){mountOrPatch(remDetailModalHTML());return;}
    No input-listener branch is required: the date field is read from the DOM
    at Refresh time, not tracked per keystroke.
    --------------------------------------------------------------- */
@@ -5624,7 +5624,7 @@ function gftTriggerSelector(){if(pop.type==="gft-date")return '[data-action="gft
      click dispatch ........ if(a&&a.indexOf("loan-")===0&&loanHandleClick(a,id,t))return;
      popContent() .......... if(pop.type==="loan-type")return loanPopContent();
      triggerSelector() ..... if(pop.type==="loan-type")return '[data-action="loan-type"][data-id="'+pop.id+'"]';
-     renderModal() ......... if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}
+     renderModal() ......... if(modal.type==="loandetail"){mountOrPatch(loanDetailModalHTML());return;}
    Every action is "loan-"-prefixed and routed to loanHandleClick; the only
    pop type is loan-type; the drill uses modal.type "loandetail"; the aging
    hover card mousemove listener lives inside this block. No other shell
@@ -6006,7 +6006,7 @@ var LOAN_REGISTRY=[
      click dispatch ...... if(a&&a.indexOf("loan-")===0&&loanHandleClick(a,id,t))return;
      popContent() ........ if(pop.type==="loan-type")return loanPopContent();
      triggerSelector() ... if(pop.type==="loan-type")return '[data-action="loan-type"][data-id="'+pop.id+'"]';
-     renderModal() ....... if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}                           */
+     renderModal() ....... if(modal.type==="loandetail"){mountOrPatch(loanDetailModalHTML());return;}                           */
 function loanHandleClick(a,id,t){
   if(a==="loan-type"){pop=(pop&&pop.type==="loan-type"&&pop.id===id)?null:{type:"loan-type",id:id};render();return true;}
   if(a==="loan-set-type"){var wt=find(id);if(wt){var nv=t.getAttribute("data-v");if((wt.loanType||"All")!==nv){wt.loanType=nv;wt.loanBucket="total";loanLoad(wt);}}pop=null;render();return true;}
@@ -8571,7 +8571,7 @@ function arPopContent(){
 /* triggerSelector branches (already inline in the shell's triggerSelector for
    ar-rc / ar-source; kept here for parity/verification). */
 function arTriggerSelector(){if(pop.type==="ar-rc")return '[data-action="ar-rc"][data-id="'+pop.id+'"]';if(pop.type==="ar-source")return '[data-action="ar-source"][data-id="'+pop.id+'"]';return null;}
-/* renderModal branch (already in the shell): if(modal.type==="artdetail"){mr.innerHTML=arDetailModalHTML();return;} */
+/* renderModal branch (already in the shell): if(modal.type==="artdetail"){mountOrPatch(arDetailModalHTML());return;} */
 /* contentHTML dispatch (already in the shell): if(w.kind==="ar")return arContent(w); */
 
 /* Bar hover popover (formatted card; reuses .bgt-pop styling) */
@@ -10613,24 +10613,24 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(modal.type==="bgtF-report"){if(modalMounted){var mmF=mr.querySelector(".modal.bgt-rm-modal");if(mmF){mmF.innerHTML=bgtFReportModalInner();return;}}mr.innerHTML=bgtFReportModalHTML();modalMounted=true;return;}
     if(modal.type==="mysconfig"){if(modalMounted){var _mc=mr.querySelector(".modal.mys-cfg-modal");if(_mc){var _ms=mr.querySelector("#mysCfgScroll"),_mt=_ms?_ms.scrollTop:0;_mc.innerHTML=mysConfigModalInner();var _ms2=mr.querySelector("#mysCfgScroll");if(_ms2)_ms2.scrollTop=_mt;return;}}mr.innerHTML=mysConfigModalHTML();modalMounted=true;return;}
     if(modal.type==="pur-po"){if(modalMounted){var _pm=mr.querySelector(".modal.pur-po-modal");if(_pm){_pm.innerHTML=purPoModalInner();return;}}mr.innerHTML=purPoModalHTML();modalMounted=true;return;}
-    if(modal.type==="pur-drill"){mr.innerHTML=purDrillModalHTML();return;}
-    if(modal.type==="pto-confirm"){mr.innerHTML=ptoConfirmModalHTML();modalMounted=true;return;}
+    if(modal.type==="pur-drill"){mountOrPatch(purDrillModalHTML());return;}
+    if(modal.type==="pto-confirm"){mountOrPatch(ptoConfirmModalHTML());return;}
     if(modal.type==="addwidget"){if(window.innerWidth<AW_MINW){if(typeof awHideHover==="function")awHideHover();modal=null;modalMounted=false;mr.innerHTML="";bgtLockBg(false);return;}if(typeof awHideHover==="function")awHideHover();mr.innerHTML=addWidgetModalHTML();awApplyFilter();modalMounted=true;return;}
-    if(modal.type==="glancedrill"){mr.innerHTML=glanceDrillModalHTML();modalMounted=true;return;}
-    if(modal.type==="pto-approve"){mr.innerHTML=ptoApproveModalHTML();modalMounted=true;return;}
-    if(modal.type==="pto-drill"){mr.innerHTML=ptoDrillModalHTML();modalMounted=true;return;}
-    if(modal.type==="pto-day"){mr.innerHTML=ptoDayModalHTML();modalMounted=true;return;}
-    if(modal.type==="mysdetail"){mr.innerHTML=mysDetailModalHTML();return;}
-    if(modal.type==="artdetail"){mr.innerHTML=arDetailModalHTML();return;}
+    if(modal.type==="glancedrill"){mountOrPatch(glanceDrillModalHTML());return;}
+    if(modal.type==="pto-approve"){mountOrPatch(ptoApproveModalHTML());return;}
+    if(modal.type==="pto-drill"){mountOrPatch(ptoDrillModalHTML());return;}
+    if(modal.type==="pto-day"){mountOrPatch(ptoDayModalHTML());return;}
+    if(modal.type==="mysdetail"){mountOrPatch(mysDetailModalHTML());return;}
+    if(modal.type==="artdetail"){mountOrPatch(arDetailModalHTML());return;}
     if(modal.type==="arFdetail"){var _am=mr.querySelector(".arF-detail-modal");if(modalMounted&&_am){var _sc=mr.querySelector("#arFwlScroll"),_st=_sc?_sc.scrollTop:0;_am.innerHTML=arFDetailModalInner();var _sc2=mr.querySelector("#arFwlScroll");if(_sc2)_sc2.scrollTop=_st;return;}mr.innerHTML=arFDetailModalHTML();modalMounted=true;return;} // Receivable Invoices Outstanding (MB updated): incremental in-place update, no blink
-    if(modal.type==="pendetail"){mr.innerHTML=penDetailModalHTML();return;}
-    if(modal.type==="penFdetail"){mr.innerHTML=penFDetailModalHTML();return;} // Pension Plans (MB updated), additive
+    if(modal.type==="pendetail"){mountOrPatch(penDetailModalHTML());return;}
+    if(modal.type==="penFdetail"){mountOrPatch(penFDetailModalHTML());return;} // Pension Plans (MB updated), additive
     if(modal.type==="remFdetail"){if(modalMounted){var _rm=mr.querySelector(".modal.rem-detail-modal");if(_rm){var _rs=mr.querySelector(".rem-ch-scroll"),_rt=_rs?_rs.scrollTop:0;_rm.innerHTML=remFDetailModalInner();var _rs2=mr.querySelector(".rem-ch-scroll");if(_rs2)_rs2.scrollTop=_rt;return;}}mr.innerHTML=remFDetailModalHTML();modalMounted=true;return;} // Remittance Pledges (MB updated), additive
-    if(modal.type==="remFdrill"){mr.innerHTML=remFDrillModalHTML();return;}
-    if(modal.type==="bankdrill"){mr.innerHTML=bankDrillModalHTML();return;}
-    if(modal.type==="remdetail"){mr.innerHTML=remDetailModalHTML();return;}
+    if(modal.type==="remFdrill"){mountOrPatch(remFDrillModalHTML());return;}
+    if(modal.type==="bankdrill"){mountOrPatch(bankDrillModalHTML());return;}
+    if(modal.type==="remdetail"){mountOrPatch(remDetailModalHTML());return;}
     if(modal.type==="gftdetail"){if(modalMounted){var _gm=mr.querySelector(".modal.gft-detail-modal");if(_gm){var _gs=mr.querySelector(".gft-detail-scroll"),_gt=_gs?_gs.scrollTop:0;_gm.innerHTML=gftDetailModalInner();var _gs2=mr.querySelector(".gft-detail-scroll");if(_gs2)_gs2.scrollTop=_gt;return;}}mr.innerHTML=gftDetailModalHTML();modalMounted=true;return;}
-    if(modal.type==="loandetail"){mr.innerHTML=loanDetailModalHTML();return;}
+    if(modal.type==="loandetail"){mountOrPatch(loanDetailModalHTML());return;}
     var body=(modal.scoped?'<div class="wcontent acct-mw">'+((modal.mw&&modal.mw.kind==="payroll-mb")?prFContent(modal.mw):(modal.mw&&modal.mw.kind==="deposits-mb")?depFContent(modal.mw):depContent(modal.mw))+'</div>':modal.b);
     if(modalMounted){var bEl=mr.querySelector(".modal-b");if(bEl){bEl.innerHTML=body;return;}}
     var mfoot='<div class="modal-f"><button class="btn primary sm" data-action="modal-close">'+(modal.scoped?"Done":"Got it")+'</button></div>';
