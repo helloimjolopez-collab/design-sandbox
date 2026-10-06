@@ -5181,8 +5181,8 @@ function remFDetailModalInner(){
     '</div>';
     if(!open)return row;
     var inst=remFChurchInstallments(c,r,iso);
-    var ihead='<div class="rem-inst-row rem-inst-head"><span class="rem-inst-i">#</span><span>Due date</span><span class="rem-inst-n">Amount</span><span class="rem-inst-n">Paid</span><span class="rem-inst-st">Status</span></div>';
-    var irows=inst.map(function(p,idx){return '<div class="rem-inst-row"><span class="rem-inst-i">'+(idx+1)+'</span><span>'+remFFmtDate(p.due)+'</span><span class="rem-inst-n">'+money(p.amount)+'</span><span class="rem-inst-n">'+money(p.paid)+'</span><span class="rem-inst-st">'+remFInstChip(p.status)+'</span></div>';}).join("");
+    var ihead='<div class="rem-inst-row rem-inst-head"><span class="rem-inst-due">Instalment</span><span></span><span></span><span class="rem-inst-n">Scheduled</span><span class="rem-inst-n">Paid</span><span class="rem-inst-n">Outstanding</span><span class="rem-inst-st">Status</span></div>';
+    var irows=inst.map(function(p,idx){var remn=Math.max(0,p.amount-p.paid);return '<div class="rem-inst-row"><span class="rem-inst-due"><span class="rem-inst-i">'+(idx+1)+'</span>'+remFFmtDate(p.due)+'</span><span></span><span></span><span class="rem-inst-n">'+money(p.amount)+'</span><span class="rem-inst-n">'+money(p.paid)+'</span><span class="rem-inst-n">'+(remn>0?money(remn):"&mdash;")+'</span><span class="rem-inst-st">'+remFInstChip(p.status)+'</span></div>';}).join("");
     return row+'<div class="rem-inst-panel">'+ihead+irows+'</div>';
   }).join("");
   var more=remaining>0?'<div class="depf-more-row"><button class="depf-more" data-action="remF-ch-more" aria-label="Load 20 more pledges, '+remaining+' remaining">Load 20 more<span class="depf-more-n">'+remaining+'</span></button></div>':'';
