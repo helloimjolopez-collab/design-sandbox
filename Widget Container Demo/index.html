@@ -2370,6 +2370,7 @@
   .pen-detail-modal .modal-b{display:block;overflow:auto;padding:0 18px 6px;}
   .pen-detail-h{align-items:center;}
   .pen-detail-h .modal-title{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;}
+  .loan-detail-h .modal-title{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;}
   .pen-dsub{font-size:12px;font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;padding:2px 10px;margin-left:6px;white-space:nowrap;max-width:44ch;overflow:hidden;text-overflow:ellipsis;align-self:center;}
   .pen-dh-spacer{flex:1;}
   .pen-detail-scroll{border:1px solid var(--stroke-widget);border-radius:10px;overflow:hidden;}
@@ -3808,7 +3809,7 @@ function penDetailModalHTML(){
   return '<div class="modal-backdrop" data-action="pen-detail-close"><div class="modal modal-wide pen-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Pension plan appointees, detail">'+
     '<div class="modal-h pen-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">diversity_3</span>Pension Plan: Appointees</span><span class="pen-dsub">'+penEsc(sub)+'</span><span class="pen-dh-spacer"></span><button class="btn naked sm" data-action="pen-export" data-id="'+w.id+'" data-plan="'+penEsc(plan)+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="pen-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
     '<div class="modal-b pen-detail-b"><div class="pen-detail-scroll">'+head+body+'</div>'+foot+'</div>'+
-    '<div class="modal-f"><button class="btn primary sm" data-action="pen-detail-close">Close</button></div></div></div>';
+    '<div class="modal-f"><button class="btn primary sm" data-action="pen-detail-close">Done</button></div></div></div>';
 }
 
 // ===== HANDLERS (click branches / popContent / renderModal / input / hover)
@@ -4555,7 +4556,7 @@ function remDetailModalHTML(){
   return '<div class="modal-backdrop" data-action="rem-detail-close"><div class="modal modal-wide rem-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Member churches for '+remEsc(r.name)+'">'+
     '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">groups</span>'+r.name+'</span><span class="rem-dsub">member churches · as of '+remFmtDate(remThru(w))+'</span><span class="rem-dh-spacer"></span>'+toggle+'<button class="btn naked sm" data-action="rem-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="rem-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
     '<div class="modal-b rem-detail-b">'+summary+'<div class="rem-ch-tbl">'+head+body+'</div>'+foot+'</div>'+
-    '<div class="modal-f"><button class="btn primary sm" data-action="rem-detail-close">Close</button></div></div></div>';}
+    '<div class="modal-f"><button class="btn primary sm" data-action="rem-detail-close">Done</button></div></div></div>';}
 
 // ===== REGISTRY =================================================
 /* Paste these objects into dashboards[0].widgets (same shape as ar/ap):
@@ -5992,7 +5993,7 @@ function loanDetailModalHTML(){
   return '<div class="modal-backdrop" data-action="loan-detail-close"><div class="modal modal-wide loan-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Loan detail">'+
     '<div class="modal-h loan-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">account_balance</span>Loan detail</span><span class="loan-dsub">'+x.name+'</span><span class="loan-dh-spacer"></span><button class="iconbtn" data-action="loan-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
     '<div class="modal-b loan-detail-b">'+grid+dormNote+'<div class="loan-dl-payh">Payment history</div>'+payTbl+actions+'</div>'+
-    '<div class="modal-f"><button class="btn primary sm" data-action="loan-detail-close">Close</button></div></div></div>';
+    '<div class="modal-f"><button class="btn primary sm" data-action="loan-detail-close">Done</button></div></div></div>';
 }
 
 /* ===== REGISTRY ======================================================= */
@@ -8242,7 +8243,7 @@ function purPoModalInner(){
   } else if(canAct){
     footer='<div class="modal-f pur-po-f">'+recordBtn+'<div class="pur-po-f-btns"><button class="btn outlined sm pur-po-reject-btn" data-action="pur-reject">'+ICON("close")+'Reject</button><button class="btn primary sm" data-action="pur-approve" data-id="'+w.id+'" data-oid="'+o.id+'">'+ICON("check")+'Approve</button></div></div>';
   } else {
-    footer='<div class="modal-f pur-po-f">'+recordBtn+'<button class="btn primary sm" data-action="modal-close">Close</button></div>';
+    footer='<div class="modal-f pur-po-f">'+recordBtn+'<button class="btn primary sm" data-action="modal-close">Done</button></div>';
   }
   var head='<div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded pur-po-title-ic">receipt_long</span>'+o.num+' · '+o.vendor+purPoStatusChip(o)+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div>';
   return head+body+footer;
@@ -8546,7 +8547,7 @@ function arDetailModalHTML(){
   return '<div class="modal-backdrop" data-action="ar-detail-close"><div class="modal modal-wide ar-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Receivable invoices outstanding, detail">'+
     '<div class="modal-h ar-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">receipt_long</span>Receivable Invoices Outstanding: Detail</span><span class="ar-dsub">'+subj+'</span><span class="ar-dh-spacer"></span><button class="btn naked sm" data-action="ar-export" data-id="'+w.id+'">'+ICON("download")+'Export to Excel</button><button class="iconbtn" data-action="ar-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
     '<div class="modal-b ar-detail-b"><div class="ar-detail-scroll">'+head+body+'</div>'+foot+'</div>'+
-    '<div class="modal-f"><button class="btn primary sm" data-action="ar-detail-close">Close</button></div></div></div>';
+    '<div class="modal-f"><button class="btn primary sm" data-action="ar-detail-close">Done</button></div></div></div>';
 }
 
 /* (3) HANDLERS --------------------------------------------------------- */
