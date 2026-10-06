@@ -7506,7 +7506,11 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
       var ec0=EMPTY_COPY.payroll;
       return prFHeaderBlock(w,(w.size==="xwide"),true)+'<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec0.title+'</div><div class="state-sub">'+ec0.sub+'</div></div>';}
     if(w.size==="xwide")return prFHeaderBlock(w,true)+'<div class="pr-split"><div class="pr-split-table">'+prFTableHTML(w)+'</div><div class="pr-split-chart">'+prFDonut(w,196)+'</div></div>';
-    var v=w.view||"table";return prFHeaderBlock(w)+(v==="dist"?prFDonut(w):prFTableHTML(w));}
+    var v=w.view||"table",main=prFHeaderBlock(w)+(v==="dist"?prFDonut(w):prFTableHTML(w));
+    /* In the distribution drill (a single distribution in focus), the pay-type breakdown is
+       followed by the employee breakdown for that distribution (permission-gated). */
+    if(w.drill&&w.prScope!=="all"&&w.prScope!=="pt")main+=prFEmpSection(w);
+    return main;}
   /* ---- handlers (namespaced prF-; routed via one dispatch line in the
      delegated click listener). View toggle reuses Jo's generic dep-view; the
      custom date fields reuse her global pr-date-input change/focus listeners. ---- */
@@ -7516,7 +7520,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
      rendered xwide so the table + synced donut show together. */
   /* Focus overlay opens at "wide" so it carries the Table/Chart toggle (one view at a time), rather than
      a forced side-by-side donut that truncated. */
-  function prFOpenDist(w,distId){if(!w)return;var mw=Object.assign({},w,{id:"__prfdrill",prScope:distId,size:"wide",view:"table",state:"ready"});
+  function prFOpenDist(w,distId){if(!w)return;var mw=Object.assign({},w,{id:"__prfdrill",prScope:distId,size:"wide",view:"table",state:"ready",drill:true,empOpen:{}});
     modal={t:"Payroll Distributions: "+prFDistName(distId),glyph:"payments",scoped:true,mw:mw};modalMounted=false;pop=null;render();}
   function prFHandleClick(a,id,t){
     if(a==="prF-drilldist"){prFOpenDist(find(id),t.getAttribute("data-dist"));return true;}
