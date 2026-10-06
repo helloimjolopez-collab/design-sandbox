@@ -11065,6 +11065,34 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   document.addEventListener("mouseout",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)hideTip();});
   document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)showTip(t);});
   document.addEventListener("focusout",hideTip);
+  /* Rich hover/focus card for the Gifts progress bars , same designed card as the Bank spark
+     tooltip (header + label/value rows + divider + emphasised pace row). */
+  var gftTipEl=null;
+  function gftTipHide(){if(gftTipEl){gftTipEl.remove();gftTipEl=null;}}
+  function gftTipBuild(d){
+    var pace;
+    if(d.dir==="behind")pace='<div class="bgt-pop-var"><span class="bgt-pop-lbl">Behind pace</span><span class="bgt-pop-fav warn">'+d.amt+'</span></div>';
+    else if(d.dir==="ahead")pace='<div class="bgt-pop-var"><span class="bgt-pop-lbl">Ahead of pace</span><span class="bgt-pop-fav">'+d.amt+'</span></div>';
+    else pace='<div class="bgt-pop-var"><span class="bgt-pop-lbl">On track</span><span class="bgt-pop-fav neutral">&mdash;</span></div>';
+    return '<div class="bgt-pop-h">'+d.t+'</div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Pledged</span><span class="bgt-pop-v">'+d.pledged+'</span></div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Expected by '+d.expDate+'</span><span class="bgt-pop-v">'+d.exp+'</span></div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Paid</span><span class="bgt-pop-v">'+d.paid+' ('+d.pct+')</span></div>'+
+      '<div class="bgt-pop-r"><span class="bgt-pop-lbl">Owed</span><span class="bgt-pop-v">'+d.owed+'</span></div>'+
+      '<div class="bgt-pop-div"></div>'+pace;
+  }
+  function gftTipParse(el){try{return JSON.parse(decodeURIComponent(el.getAttribute("data-gftip")));}catch(_e){return null;}}
+  function gftTipShowAt(d,cx,cy){
+    if(!gftTipEl){gftTipEl=document.createElement("div");gftTipEl.className="bgt-pop gft-rtip";document.body.appendChild(gftTipEl);}
+    gftTipEl.innerHTML=gftTipBuild(d);
+    var bw=gftTipEl.offsetWidth,bh=gftTipEl.offsetHeight,x=cx+14,y=cy-bh-10;
+    if(x+bw>innerWidth-8)x=cx-bw-14;if(x<8)x=8;if(y<8)y=cy+18;
+    gftTipEl.style.left=x+"px";gftTipEl.style.top=y+"px";
+  }
+  document.addEventListener("mousemove",function(e){var el=e.target.closest&&e.target.closest("[data-gftip]");if(!el){gftTipHide();return;}var d=gftTipParse(el);if(!d){gftTipHide();return;}gftTipShowAt(d,e.clientX,e.clientY);});
+  document.addEventListener("mouseout",function(e){var el=e.target.closest&&e.target.closest("[data-gftip]");if(el&&e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest("[data-gftip]")===el)return;gftTipHide();});
+  document.addEventListener("focusin",function(e){var el=e.target.closest&&e.target.closest("[data-gftip]");if(!el)return;var d=gftTipParse(el);if(!d)return;var r=el.getBoundingClientRect();gftTipShowAt(d,r.left+Math.min(90,r.width/2),r.top+6);});
+  document.addEventListener("focusout",function(e){var el=e.target.closest&&e.target.closest("[data-gftip]");if(el)gftTipHide();});
   /* Budget bar hover: a formatted popover card (Budget / Actual / Variance + favourable-or-unfavourable), not a one-line tooltip. Data rides on the column as data-bpop="period|budget|actual|variance|mode|partial". */
   var bpopEl=null;
   function bgtHideBpop(){if(bpopEl){bpopEl.remove();bpopEl=null;}}
