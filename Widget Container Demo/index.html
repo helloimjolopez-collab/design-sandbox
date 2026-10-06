@@ -9250,8 +9250,16 @@ function arFHandleClick(a,id,t){
   if(a==="arF-selall"){if(modal){var wv=find(modal.id),q=(modal.q||"").trim().toLowerCase(),inv=arFDetailInvoices(wv,modal.mode,modal.key);if(q)inv=inv.filter(function(x){return x.customer.toLowerCase().indexOf(q)>-1||String(x.inv).toLowerCase().indexOf(q)>-1;});var gs=arFCustGroups(inv);var allsel=gs.length&&gs.every(function(g){return modal.sel&&modal.sel[g.customer];});modal.sel={};if(!allsel)gs.forEach(function(g){modal.sel[g.customer]=true;});}renderModal();return true;}
   if(a==="arF-clearsel"){if(modal)modal.sel={};renderModal();return true;}
   if(a==="arF-msort"){if(modal){var mk=t.getAttribute("data-k"),cur=modal.msort||{key:"oldest",dir:"desc"};if(cur.key===mk)cur={key:mk,dir:(cur.dir==="asc"?"desc":"asc")};else cur={key:mk,dir:(mk==="customer"?"asc":"desc")};modal.msort=cur;}renderModal();return true;}
-  if(a==="arF-export"){var scope=t.getAttribute("data-scope"),sn=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0,useSel=(scope==="sel"&&sn>0);toast("Exported "+(useSel?sn+" customer"+(sn>1?"s":""):"all customers")+" to Excel (Customer, Invoice #, Due date, Days past due, Outstanding)","download");return true;}
+  if(a==="arF-share"){if(modal){var scp=t.getAttribute("data-scope");modal.shareMenu=(modal.shareMenu===scp)?null:scp;}renderModal();return true;}
+  if(a==="arF-share-do"){var fmt=t.getAttribute("data-fmt"),scope=modal&&modal.shareMenu,sn2=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;
+    var who=(scope==="sel"&&sn2>0)?(sn2+" selected customer"+(sn2>1?"s":"")):"the full customer list";
+    var verb={Excel:"Downloaded",PDF:"Downloaded",email:"Emailed",print:"Sent to print"}[fmt]||"Shared";
+    var noun={Excel:" as Excel (customer, aging bucket, invoices, balance)",PDF:" as a PDF",email:"",print:""}[fmt]||"";
+    toast(verb+" "+who+noun,{Excel:"table_view",PDF:"picture_as_pdf",email:"mail",print:"print"}[fmt]||"ios_share");
+    if(modal)modal.shareMenu=null;renderModal();return true;}
   if(a==="arF-open-invoice"){toast("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Receivable","open_in_new");return true;}
+  if(a==="arF-dl-invoice"){toast("Downloading invoice "+t.getAttribute("data-inv")+" (PDF)","download");return true;}
+  if(a==="arF-record-payment"){toast("Record a payment against invoice "+t.getAttribute("data-inv")+" in Accounts Receivable","payments");return true;}
   return false;
 }
 /* popContent branches (routed from popContent(): arF-rc / arF-source -> arFPopContent) */
