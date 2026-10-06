@@ -6788,7 +6788,26 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtFVariance(type,b,a){if(a==null)return null;return type==="expense"?(b-a):(a-b);}
   /* ---- controls (Jo's toggle primitive + tooltip convention) ---- */
   function bgtFTog(opts,cur,w,action,aria,extra){return '<div class="vtoggle" role="group" aria-label="'+(aria||"View")+'">'+opts.map(function(o){var dis=o[4];return '<button class="vt'+(cur===o[0]?" on":"")+(dis?" disabled":"")+'"'+(dis?' aria-disabled="true" tabindex="-1"':' data-action="'+action+'" data-id="'+w.id+'" data-v="'+o[0]+'"'+(extra||""))+(o[3]?' data-tip="'+o[3].replace(/"/g,"&quot;")+'" data-tip-plain data-tip-narrow':"")+' aria-pressed="'+(cur===o[0])+'">'+(o[2]?ICON(o[2]):"")+o[1]+'</button>';}).join("")+'</div>';}
-  function bgtFFavPill(v,neutral,tip){var tipA=tip?(' data-tip="'+tip+'" data-tip-plain data-tip-narrow tabindex="0"'):'';if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)"'+tipA+'>No data yet</span>';var neg=v<0,ic=neg?"arrow_downward":"arrow_upward";if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)"'+tipA+'>'+ICON(ic)+(neg?"Under budget":"Over budget")+'</span>';return '<span class="delta-pill'+(neg?" neg":"")+'"'+tipA+'>'+ICON(ic)+(neg?"Unfavourable":"Favourable")+'</span>';}
+  /* Variance as a % of the window's posted budget, bare number (e.g. "1.9%"). */
+  function bgtFVarPct(v,sumB){return (sumB>0&&v!=null)?((Math.round(Math.abs(v)/sumB*1000)/10)+"%"):"";}
+  /* Canonical favourability badge (standard .delta-pill). Carries the label plus, after a dot,
+     the variance percentage, all inside the one badge. Used at every size so it reads identically. */
+  function bgtFFavPill(v,neutral,pct,tip){
+    var tipA=tip?(' data-tip="'+tip+'" data-tip-plain data-tip-narrow tabindex="0"'):'';
+    var pctHTML=pct?('<span class="bgtF-pill-dot" aria-hidden="true"></span><span class="bgtF-pill-pct">'+pct+'</span>'):'';
+    if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)"'+tipA+'>No data yet</span>';
+    var neg=v<0,ic=neg?"arrow_downward":"arrow_upward";
+    if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)"'+tipA+'>'+ICON(ic)+(neg?"Under budget":"Over budget")+pctHTML+'</span>';
+    return '<span class="delta-pill'+(neg?" neg":"")+'"'+tipA+'>'+ICON(ic)+(neg?"Unfavourable":"Favourable")+pctHTML+'</span>';}
+  /* Small, fixed-width progress-to-budget bar: Actual as a share of Budget, favourability-coloured,
+     with its % and used/received label. Shared by the glance and the wide/xwide header. */
+  function bgtFMiniBar(w){
+    var bs=bgtFBasis(w),vt=bs.type,sv=bgtFSpanVariance(w,vt),b=sv.sumB,a=sv.sumA,v=sv.v;
+    if(!(b>0))return '';
+    var pct=Math.round(a/b*100),fillPct=Math.max(0,Math.min(100,pct));
+    var favCls=bs.neutral?"neu":(v<0?"neg":"pos");
+    var uw=bgtFUsedWord(w),pctLbl=(uw==="used")?"used":(uw==="received")?"received":"of budget";
+    return '<div class="bgtF-glbar"><div class="bgtF-glbar-track"><div class="bgtF-glbar-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></div></div><span class="bgtF-glbar-lbl">'+pct+'% '+pctLbl+'</span></div>';}
   /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
   function bgtFHeadlineInner(v,neutral,sumB){
     if(v==null)return {cls:"",html:money(0),pct:""};
