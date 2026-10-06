@@ -5441,16 +5441,12 @@ function gftSkeleton(){var rows=[92,70,54,38].map(function(wd){return '<div clas
    the row stays a clean glance. Tap opens the donors behind the purpose. */
 /* Small status badge: icon + colour + label, canonical semantic tokens (never colour alone). */
 function gftMiniBadge(p,thru){
-  var asOf=gftFmtDate(thru||GFT_TODAY),cls,ic,lbl,tip;
-  if(p.status==="complete"){cls="gft-mb-ahead";ic="check_circle";lbl="Funded";
-    tip="Fully funded\nReceived: "+money(p.received)+"\nGoal: "+money(p.pledgeTotal);}
-  else if(p.status==="behind"){cls="gft-mb-behind";ic="error";lbl="Behind";
-    tip="Behind by: "+money(p.remaining)+"\nExpected by "+asOf+": "+money(p.due)+"\nReceived: "+money(p.received);}
-  else if(p.status==="ahead"){cls="gft-mb-ahead";ic="trending_up";lbl="Ahead";
-    tip="Ahead by: "+money(Math.abs(p.remaining))+"\nExpected by "+asOf+": "+money(p.due)+"\nReceived: "+money(p.received);}
-  else {cls="gft-mb-ontrack";ic="check_circle";lbl="On track";
-    tip="On track\nExpected by "+asOf+": "+money(p.due)+"\nReceived: "+money(p.received);}
-  return '<span class="gft-mb '+cls+'" data-tip="'+gftEsc(tip)+'" data-tip-plain data-tip-lines tabindex="0">'+ICON(ic)+lbl+'</span>';
+  var cls,ic,lbl;
+  if(p.status==="complete"){cls="gft-mb-ahead";ic="check_circle";lbl="Funded";}
+  else if(p.status==="behind"){cls="gft-mb-behind";ic="error";lbl="Behind";}
+  else if(p.status==="ahead"){cls="gft-mb-ahead";ic="trending_up";lbl="Ahead";}
+  else {cls="gft-mb-ontrack";ic="check_circle";lbl="On track";}
+  return '<span class="gft-mb '+cls+'">'+ICON(ic)+lbl+'</span>';
 }
 /* One purpose = one row. Name at the start of the bar, Goal at the end (the bar's end IS the goal, no
    mid-bar marker). A small behind/on-track/ahead badge sits just left of the goal. The exact paid /
