@@ -6814,13 +6814,18 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtFMiniBar(w){
     var bs=bgtFBasis(w),vt=bs.type,sv=bgtFSpanVariance(w,vt),b=sv.sumB,a=sv.sumA,v=sv.v;
     if(!(b>0))return '';
-    var pct=Math.round(a/b*100),fillPct=Math.max(0,Math.min(100,pct));
+    var fillPct=Math.max(0,Math.min(100,Math.round(a/b*100)));
     var favCls=bs.neutral?"neu":(v<0?"neg":"pos");
-    var uw=bgtFUsedWord(w),verb=(uw==="used")?"spent":(uw==="received")?"received":"of budget";
-    var left=b-a,leftTxt=(left>0)?(money(left)+' left'):(left===0?'nothing left':(money(-left)+' over'));
+    var uw=bgtFUsedWord(w),verb=(uw==="used")?"spent":(uw==="received")?"received":"posted";
+    /* Delta wording follows favourability so the badge and bar never contradict: expenses frame as
+       budget LEFT / OVER BUDGET; income frames against TARGET (above target is good, not "over"). */
+    var diff=b-a,deltaTxt,unfav;
+    if(bs.neutral){deltaTxt=(diff>0)?(money(diff)+' under'):(diff<0?(money(-diff)+' over'):'on budget');unfav=false;}
+    else if(vt==="expense"){deltaTxt=(diff>0)?(money(diff)+' left'):(diff<0?(money(-diff)+' over budget'):'nothing left');unfav=(diff<0);}
+    else{deltaTxt=(a>b)?(money(a-b)+' above target'):(a<b?(money(b-a)+' to go'):'target met');unfav=(a<b);}
     return '<div class="bgtF-bar2">'+
       '<span class="bgtF-bar2-track"><span class="bgtF-bar2-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></span></span>'+
-      '<span class="bgtF-bar2-lbl">'+pct+'% '+verb+'<span class="bgtF-bar2-sep" aria-hidden="true">·</span><span class="bgtF-bar2-left'+(left<0?' bgtF-hl-neg':'')+'">'+leftTxt+'</span></span>'+
+      '<span class="bgtF-bar2-lbl">'+money(a)+' '+verb+'<span class="bgtF-bar2-sep" aria-hidden="true">·</span><span class="bgtF-bar2-left'+(unfav?' bgtF-hl-neg':'')+'">'+deltaTxt+'</span></span>'+
     '</div>';}
   /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
   function bgtFHeadlineInner(v,neutral,sumB){
