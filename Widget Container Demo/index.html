@@ -7509,13 +7509,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function prFDistBadge(distId){var c=PRF_DIST_COLORS[distId]||"var(--primitive-color-cool-neutral-250)";return '<span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+prFDistName(distId)+'</span></span>';}
   function prFSortBtn(w,k,label){var sk=(w.prSort||"amt-desc").split("-"),on=sk[0]===k,ic=on?(sk[1]==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="prF-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded" aria-hidden="true">'+ic+'</span></button>';}
   function prFTableHTML(w){var meta=prFScopeMeta(w),rows=prFTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
-    if(meta.kind==="pt"){
-      var head='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"pt","Pay type")+'</span><span class="pr-distcol">'+prFSortBtn(w,"dist","Distribution")+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
-      var body=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
-        return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.pt+'</span><span class="pr-distcol">'+prFDistBadge(a.distId)+'</span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'<span class="sr-only"> '+a.pt+', '+a.distName+'</span></span></div>';}).join("");
-      return '<div class="scroll">'+head+body+'</div><div class="dep-total"><span>Total, all pay types</span><span>'+money(tot)+'</span></div>';
-    }
-    var col=meta.kind==="distpt"?"Pay type":"Distribution",drill=(meta.kind==="all");
+    var col=(meta.kind==="distpt"||meta.kind==="pt")?"Pay type":"Distribution",drill=(meta.kind==="all");
     var head2='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"name",col)+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
     var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
       /* Whole row is the drill target (same in Explore and Detail), so the row isn't "clickable-looking" but dead. */
