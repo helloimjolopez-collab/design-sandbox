@@ -6901,13 +6901,13 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtFMiniBar(w){
     var bs=bgtFBasis(w),vt=bs.type,sv=bgtFSpanVariance(w,vt),b=sv.sumB,a=sv.sumA,v=sv.v;
     if(!(b>0))return '';
-    var fillPct=Math.max(0,Math.min(100,Math.round(a/b*100))),pctTxt=bgtFVarPct(v,b)||'0%';
+    var truePct=Math.max(0,Math.round(a/b*100)),fillPct=Math.min(100,truePct),pctTxt=bgtFVarPct(v,b)||'0%';
     var diff=b-a,lastLbl,lastVal;
     if(bs.neutral){lastLbl=(diff>=0)?'Under budget':'Over budget';lastVal=money(Math.abs(diff));}
     else if(vt==="expense"){if(diff>=0){lastLbl='Left in budget';lastVal=money(diff);}else{lastLbl='Over budget';lastVal=money(-diff);}}
     else{if(a>=b){lastLbl='Above target';lastVal=money(a-b);}else{lastLbl='To reach target';lastVal=money(b-a);}}
     var tip='Budget: '+money(b)+'\nActual: '+money(a)+'\nVariance: '+pctTxt+'\n'+lastLbl+': '+lastVal;
-    return '<div class="bgtF-bar3" data-tip="'+tip+'" data-tip-plain data-tip-lines tabindex="0" aria-label="'+fillPct+'% of budget. '+lastLbl+' '+lastVal+'">'+
+    return '<div class="bgtF-bar3" data-tip="'+tip+'" data-tip-plain data-tip-lines tabindex="0" aria-label="'+truePct+'% of budget. '+lastLbl+' '+lastVal+'">'+
       '<div class="bgtF-bar3-track"><div class="bgtF-bar3-fill" style="width:'+fillPct+'%"></div></div>'+
     '</div>';}
   /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
