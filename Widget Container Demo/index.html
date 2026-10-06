@@ -7023,15 +7023,17 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var rows=bgtFSet(w),label=(w.acctview==="special")?bgtFScopeContext(w).replace(/^Special report: /,""):bgtFScopeShort(w);
     var chip='<button class="scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
     if(!bgtFHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div></div></div>';
-    /* Glance: Variance ($) headline (colour-coded), the canonical Favourable/Unfavourable BADGE
-       and % used as the key signals, a trend sparkline. Standard kpi-row rhythm (no bespoke cramming). */
+    /* Glance (production-minimum): Variance ($) headline colour-coded, the canonical Favourable/
+       Unfavourable badge, and a progress-to-budget bar carrying % used. No ambiguous trend line. */
     var sv=bgtFSpanVariance(w,vt),v=sv.v,b=sv.sumB,a=sv.sumA,hv=bgtFHeadlineInner(v,neutral,b);
-    var pct=(b>0)?Math.round(a/b*100):0,uw=bgtFUsedWord(w),pctLbl=(uw==="used")?"used":(uw==="received")?"received":"of budget";
+    var pct=(b>0)?Math.round(a/b*100):0,fillPct=Math.max(0,Math.min(100,pct));
+    var uw=bgtFUsedWord(w),pctLbl=(uw==="used")?"used":(uw==="received")?"received":"of budget";
+    var favCls=neutral?"neu":(v<0?"neg":"pos");
     var tip=bgtFExplain(w,vt,neutral,v,a,b);
     var headline='<div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>';
-    var sub='<div class="gl-sub">'+bgtFFavPill(v,neutral,tip)+'<span class="bgt-glpct">'+pct+'% '+pctLbl+'</span></div>';
-    var spark=bgtFGlanceSpark(w,vt,neutral);
-    return '<div class="kpi-row"><div class="kpi-num">'+chip+headline+sub+'</div>'+spark+'</div>';}
+    var sub='<div class="gl-sub">'+bgtFFavPill(v,neutral,tip)+'</div>';
+    var bar='<div class="bgtF-glbar"><div class="bgtF-glbar-track"><div class="bgtF-glbar-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></div></div><span class="bgtF-glbar-lbl">'+pct+'% '+pctLbl+'</span></div>';
+    return '<div class="kpi-row"><div class="kpi-num">'+chip+headline+sub+bar+'</div></div>';}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
   function bgtFPanel(w,side){
     var interval=w[side==="a"?"iA":"iB"]||bgtFIvDefault(w.bspan||"year");
