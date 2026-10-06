@@ -6943,11 +6943,11 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:96px;height:20px;border-radius:999px"></span></div>';}
     else{
       /* Detail/Explore header: the big Variance ($) number with the Favourable/Unfavourable badge
-         (variance % inside it), and the same small progress-to-budget bar as the glance. */
+         (variance % inside it). No progress bar here: the bar is a glance-only device. */
       var bsv=bgtFSpanVariance(w,vt),hv=bgtFHeadlineInner(bsv.v,neutral,bsv.sumB);
       if(!(bsv.sumB>0)||bsv.v==null){numInner='<div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:18px;color:var(--txt-subtle)">No posted actuals yet</span></div>';}
-      else{var hpct=bgtFVarPct(bsv.v,bsv.sumB),htip=bgtFExplain(w,vt,neutral,bsv.v,bsv.sumA,bsv.sumB);
-        numInner='<div class="bgtF-kpihead"><div class="bgtF-gl-metricrow"><div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>'+bgtFFavPill(bsv.v,neutral,hpct,htip)+'</div>'+bgtFMiniBar(w)+'</div>';}
+      else{var hpct=bgtFVarPct(bsv.v,bsv.sumB),htip=bgtFExplain(w,vt,neutral,bsv.v,bsv.sumA,bsv.sumB)+(hpct?(' The '+hpct+' is this variance as a share of the budget.'):'');
+        numInner='<div class="bgtF-gl-metricrow"><div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>'+bgtFFavPill(bsv.v,neutral,hpct,htip)+'</div>';}
       ivTog='<div class="bgt-kpi-iv">'+bgtFIntervalToggle(w,w.binterval||bgtFIvDefault(w.bspan||"year"),"set-bgtF-interval")+'</div>';
     }
     var ctx=bgtFScopeContext(w);
