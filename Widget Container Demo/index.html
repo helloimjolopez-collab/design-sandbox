@@ -10603,6 +10603,10 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function bgtReportModalHTML(){return '<div class="modal-backdrop" data-action="bgt-rm-cancel"><div class="modal bgt-rm-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Choose a special report">'+bgtReportModalInner()+'</div></div>';}
   /* Freeze the background while any modal is open so scrolling happens inside the dialog, not the page behind it. The main scroller is .appmain; we also pin the sidenav. Restored the moment the modal closes. */
   function bgtLockBg(on){var v=on?"hidden":"";try{document.documentElement.style.overflow=v;}catch(e){}try{document.body.style.overflow=v;}catch(e2){}var am=document.querySelector(".appmain");if(am)am.style.overflow=v;var sn=document.querySelector(".sidenav");if(sn)sn.style.overflow=v;}
+  /* Mount a modal once, then PATCH its inner content on later renders instead of rebuilding the whole
+     backdrop+modal. Rebuilding re-creates the element and re-runs its entrance animation, which is the
+     "glitch on every tap" seen across overlays. Patching the existing .modal's children keeps it steady. */
+  function mountOrPatch(html){var mr=document.getElementById("modalRoot");if(modalMounted){var ex=mr.querySelector(".modal");if(ex){var tmp=document.createElement("div");tmp.innerHTML=html;var fr=tmp.querySelector(".modal");if(fr&&fr.className===ex.className){var sc=ex.querySelector(".scroll"),st=sc?sc.scrollTop:0;ex.innerHTML=fr.innerHTML;var sc2=ex.querySelector(".scroll");if(sc2)sc2.scrollTop=st;return;}}}mr.innerHTML=html;modalMounted=true;}
   function renderModal(){var mr=document.getElementById("modalRoot");if(!modal){mr.innerHTML="";modalMounted=false;bgtLockBg(false);return;}
     bgtLockBg(true);
     if(modal.type==="bgtreport"){if(modalMounted){var mm=mr.querySelector(".modal.bgt-rm-modal");if(mm){mm.innerHTML=bgtReportModalInner();return;}}mr.innerHTML=bgtReportModalHTML();modalMounted=true;return;}
