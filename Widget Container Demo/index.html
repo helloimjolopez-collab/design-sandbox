@@ -1362,7 +1362,7 @@
 .pur-tab.on{background:var(--surface-widget);color:var(--txt-primary);box-shadow:var(--elevation-widget);}
 .pur-tab:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
 .pur-tabrow + .dep-hd.pur-hd{padding-top:8px;}
-/* Approvals kanban: lanes = approval stages, cards = orders, tap to act */
+/* Approvals kanban: lanes = approval stages, cards = orders, act */
 .pur-kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:start;padding:8px 16px 6px;}
 .pur-kcol-done .pur-kcol-t{color:var(--txt-secondary);}
 .pur-kcol{display:flex;flex-direction:column;gap:8px;min-width:0;}
@@ -4413,7 +4413,7 @@ function remChurchesFor(w,seq){
    secondary fill, leading filter glyph and trailing chevron; sized to its
    content. A spinner shows while the new as-of date is being fetched. */
 function remThruChip(w){var iso=remThru(w),spin=w.remLoading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-  return '<button class="filter-chip rem-thru-chip" data-action="rem-thru" data-id="'+w.id+'" aria-haspopup="dialog" aria-expanded="'+(pop&&pop.type==="rem-thru"&&pop.id===w.id?"true":"false")+'" aria-label="Receipts through '+remEsc(remFmtDate(iso))+', tap to change"><span class="fc-label">'+spin+'Receipts through '+remFmtDate(iso)+'</span>'+ICON("expand_more")+'</button>';}
+  return '<button class="filter-chip rem-thru-chip" data-action="rem-thru" data-id="'+w.id+'" aria-haspopup="dialog" aria-expanded="'+(pop&&pop.type==="rem-thru"&&pop.id===w.id?"true":"false")+'" aria-label="Receipts through '+remEsc(remFmtDate(iso))+', change"><span class="fc-label">'+spin+'Receipts through '+remFmtDate(iso)+'</span>'+ICON("expand_more")+'</button>';}
 
 /* View toggle (Progress bars / Table), sibling-consistent with Gifts Pledges (Oisin W04 "Progress Bars default"; brief 11.2). */
 function remViewToggle(w){var v=w.remView||"progress",opts=[["progress","Progress","insights"],["table","Table","table_rows"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="rem-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
@@ -4879,7 +4879,7 @@ function remFMiniBar(r){
   return '<span class="rem-minirow" data-rempop="'+pop+'"><span class="rem-mini"><span class="rem-mini-track"><span class="rem-mini-fill rem-fill-'+st+'" style="width:'+paidPct.toFixed(1)+'%"></span>'+gap+'</span></span><span class="rem-mini-pct">'+remFPct(r.pctPaid)+'</span></span>';
 }
 /* Pace filter: a normal top-toolbar dropdown (View all / Behind / On track / Ahead). */
-function remFPaceChip(w){var v=w.remPaceF||"all";return '<button class="filter-chip" data-action="remF-pacef" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="remF-pacef"&&pop.id===w.id?"true":"false")+'" aria-label="Pace filter, tap to change"><span class="fc-label">'+remFPaceLabel(v)+'</span>'+ICON("expand_more")+'</button>';}
+function remFPaceChip(w){var v=w.remPaceF||"all";return '<button class="filter-chip" data-action="remF-pacef" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="remF-pacef"&&pop.id===w.id?"true":"false")+'" aria-label="Pace filter, change"><span class="fc-label">'+remFPaceLabel(v)+'</span>'+ICON("expand_more")+'</button>';}
 function remFStatusChip(r){
   var s=remFStatus(r);
   if(s==="neutral")return '<span class="rem-st rem-st-none">No pledge</span>';
@@ -4998,7 +4998,7 @@ function remFLegend(){
 /* ---- controls + header ---- */
 function remFThruChip(w){
   var iso=remFThru(w),spin=w.remLoading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-  return '<button class="filter-chip rem-thru-chip" data-action="remF-thru" data-id="'+w.id+'" aria-haspopup="dialog" aria-expanded="'+(pop&&pop.type==="remF-thru"&&pop.id===w.id?"true":"false")+'" aria-label="Receipts through '+remFEsc(remFFmtDate(iso))+', tap to change"><span class="fc-label">'+spin+'Receipts through '+remFFmtDate(iso)+'</span>'+ICON("expand_more")+'</button>';
+  return '<button class="filter-chip rem-thru-chip" data-action="remF-thru" data-id="'+w.id+'" aria-haspopup="dialog" aria-expanded="'+(pop&&pop.type==="remF-thru"&&pop.id===w.id?"true":"false")+'" aria-label="Receipts through '+remFEsc(remFFmtDate(iso))+', change"><span class="fc-label">'+spin+'Receipts through '+remFFmtDate(iso)+'</span>'+ICON("expand_more")+'</button>';
 }
 /* View toggle: 2-way Table (default) / Pacing bars, shown at Explore and Detail. */
 function remFViewToggle(w){
@@ -5031,12 +5031,12 @@ var REMF_BAND_TIP={
 function remFPaceCards(w,drill){
   var cur=w.remPaceF||"all",st=remFBandStats(w);
   var defs=[["behind","Behind","error"],["ontrack","On track","check_circle"],["ahead","Ahead","trending_up"]];
-  return '<div class="remF-tiles" role="group" aria-label="'+(drill?"Pledge pace, tap to open":"Filter pledges by pace")+'">'+defs.map(function(d){
+  return '<div class="remF-tiles" role="group" aria-label="'+(drill?"Pledge pace, open":"Filter pledges by pace")+'">'+defs.map(function(d){
     var b=st[d[0]],tip=REMF_BAND_TIP[d[0]];
     var top='<span class="remF-tile-head"><span class="remF-tile-top">'+ICON(d[2])+'<span class="remF-tile-lbl">'+d[1]+'</span></span><span class="remF-tile-info material-symbols-rounded" data-tip="'+remFEsc(tip)+'" data-tip-plain data-tip-narrow aria-hidden="true">info</span></span><span class="remF-tile-n">'+b.n+'</span>';
-    if(drill)return '<button class="remF-tile remF-tile-'+d[0]+'" data-action="remF-drill" data-id="'+w.id+'" data-band="'+d[0]+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+'. '+tip+' Tap to open.')+'">'+top+'</button>';
+    if(drill)return '<button class="remF-tile remF-tile-'+d[0]+'" data-action="remF-drill" data-id="'+w.id+'" data-band="'+d[0]+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+'. '+tip+' open.')+'">'+top+'</button>';
     var on=cur===d[0];
-    return '<button class="remF-tile remF-tile-'+d[0]+(on?" sel":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+'. '+tip+' Tap to filter.')+'">'+top+'</button>';
+    return '<button class="remF-tile remF-tile-'+d[0]+(on?" sel":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+'. '+tip+' filter.')+'">'+top+'</button>';
   }).join("")+'</div>';
 }
 function remFHeaderBlock(w,mode){
@@ -5403,8 +5403,8 @@ function gftStatusPill(status,amt,asOf){
 
 /* Controls (secondary-fill chips, sized to content). The date chip overrides
    the shared filter-chip glyph with a calendar (see gftv2_styles.css). */
-function gftDateChip(w){var thru=gftThru(w),spin=w.gftloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=(thru===GFT_TODAY?"Today, "+gftFmtDate(thru):gftFmtDate(thru));return '<button class="filter-chip gft-datechip" data-action="gft-date" data-id="'+w.id+'" aria-haspopup="dialog" aria-label="Gifts received through '+gftEsc(gftFmtDate(thru))+', tap to change">'+spin+'<span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
-function gftPurposeChip(w){var all=gftAllPurposes(w);if(all.length<=1)return "";var cur=gftPurposeCur(w);return '<button class="filter-chip gft-purpchip" data-action="gft-purpose" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pledge purpose, tap to change"><span class="fc-label">'+gftEsc(cur)+'</span>'+ICON("expand_more")+'</button>';}
+function gftDateChip(w){var thru=gftThru(w),spin=w.gftloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=(thru===GFT_TODAY?"Today, "+gftFmtDate(thru):gftFmtDate(thru));return '<button class="filter-chip gft-datechip" data-action="gft-date" data-id="'+w.id+'" aria-haspopup="dialog" aria-label="Gifts received through '+gftEsc(gftFmtDate(thru))+', change">'+spin+'<span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
+function gftPurposeChip(w){var all=gftAllPurposes(w);if(all.length<=1)return "";var cur=gftPurposeCur(w);return '<button class="filter-chip gft-purpchip" data-action="gft-purpose" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pledge purpose, change"><span class="fc-label">'+gftEsc(cur)+'</span>'+ICON("expand_more")+'</button>';}
 function gftViewToggle(w){var v=w.gftView||"progress",opts=[["progress","Progress","insights"],["table","Table","table_rows"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="gft-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 
 /* Shared KPI supporting content (status badge + "% of $X goal" pill), so the glance
@@ -5835,7 +5835,7 @@ function loanRows(w){
    + trailing chevron. Sized to its label. Drives the whole widget. */
 function loanTypeChip(w){
   var ty=w.loanType||"All",spin=w.loanloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-  return '<button class="filter-chip loan-chip" data-action="loan-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="loan-type"&&pop.id===w.id?"true":"false")+'" aria-label="Loan type, tap to change"><span class="fc-label">'+spin+(ty==="All"?"All loan types":ty)+'</span>'+ICON("expand_more")+'</button>';
+  return '<button class="filter-chip loan-chip" data-action="loan-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="loan-type"&&pop.id===w.id?"true":"false")+'" aria-label="Loan type, change"><span class="fc-label">'+spin+(ty==="All"?"All loan types":ty)+'</span>'+ICON("expand_more")+'</button>';
 }
 
 /* KPI badge: past-due money on an amethyst-neutral pill (no red), or a positive
@@ -5909,7 +5909,7 @@ function loanLastCell(x){
   return '<span class="loan-c-last">'+loanFmtDate(x.lastPay)+flag+'</span>';
 }
 function loanRowHTML(w,x){
-  var lbl=x.name+", account "+x.acct+", "+(x.days>0?(x.days+" days past due"):"current")+", "+loanMoney(x.amount)+" due, tap to open the loan";
+  var lbl=x.name+", account "+x.acct+", "+(x.days>0?(x.days+" days past due"):"current")+", "+loanMoney(x.amount)+" due, open the loan";
   return '<div class="wt-row loan-row" data-action="loan-open" data-id="'+w.id+'" data-acct="'+loanEsc(x.acct)+'" role="button" tabindex="0" aria-label="'+loanEsc(lbl)+'">'+
     '<span class="loan-c-acct">'+codeCopy(x.acct)+'</span>'+
     '<span class="lr-main lr-stack loan-c-name"><span class="loan-nm-wrap"><span class="lr-link loan-nm">'+x.name+'</span><span class="loan-type-sub">'+x.type+'</span></span></span>'+
@@ -5925,13 +5925,13 @@ function loanTable(w){
   var body;
   if(sel==="total"){
     /* Aging bands render as expandable accordion buckets: band header (dot, label, count, subtotal)
-       with a chevron; tap to collapse/expand its loans. Bands open by default. */
+       with a chevron; collapse/expand its loans. Bands open by default. */
     var openB=w.loanOpenBands||{};
     body=LOAN_BUCKETS.map(function(b){
       var br=rows.filter(function(x){return loanBucketOf(x.days)===b.key;});
       if(!br.length)return "";
       var st=br.reduce(function(s,x){return s+x.amount;},0),over=(b.sev>=1),isOpen=(openB[b.key]!==false);
-      var gh='<div class="wt-row loan-grp loan-grp-btn'+(isOpen?" open":"")+'" role="button" tabindex="0" data-action="loan-band-toggle" data-id="'+w.id+'" data-band="'+b.key+'" aria-expanded="'+isOpen+'" aria-label="'+loanEsc(b.label+", "+br.length+" loan"+(br.length===1?"":"s")+", "+loanMoney(st)+", "+(isOpen?"expanded":"collapsed")+". Tap to "+(isOpen?"collapse":"expand")+".")+'"><span class="loan-grp-nm'+(over?" over":"")+'"><span class="loan-grp-caret material-symbols-rounded" aria-hidden="true">'+(isOpen?"expand_more":"chevron_right")+'</span><span class="loan-grp-dot" style="background:var('+LOAN_SEV_COLORS[b.sev]+')"></span>'+b.label+' <span class="loan-grp-ct">'+br.length+' loan'+(br.length===1?"":"s")+'</span></span><span class="loan-grp-amt">'+loanMoney(st)+'</span></div>';
+      var gh='<div class="wt-row loan-grp loan-grp-btn'+(isOpen?" open":"")+'" role="button" tabindex="0" data-action="loan-band-toggle" data-id="'+w.id+'" data-band="'+b.key+'" aria-expanded="'+isOpen+'" aria-label="'+loanEsc(b.label+", "+br.length+" loan"+(br.length===1?"":"s")+", "+loanMoney(st)+", "+(isOpen?"expanded":"collapsed")+". "+(isOpen?"collapse":"expand")+".")+'"><span class="loan-grp-nm'+(over?" over":"")+'"><span class="loan-grp-caret material-symbols-rounded" aria-hidden="true">'+(isOpen?"expand_more":"chevron_right")+'</span><span class="loan-grp-dot" style="background:var('+LOAN_SEV_COLORS[b.sev]+')"></span>'+b.label+' <span class="loan-grp-ct">'+br.length+' loan'+(br.length===1?"":"s")+'</span></span><span class="loan-grp-amt">'+loanMoney(st)+'</span></div>';
       return gh+(isOpen?br.map(function(x){return loanRowHTML(w,x);}).join(""):"");
     }).join("");
   }else{
@@ -6472,7 +6472,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function filterBtn(w){var f=w.filter||"All types",allT=f.indexOf("All")===0;return '<button class="filter-chip" data-action="depfilter" data-id="'+w.id+'"><span class="fc-label">'+(allT?"All account types":f)+'</span>'+ICON("expand_more")+'</button>';}
   /* Two accounts can share a name (9.x elsewhere) so once scoped to one, the chip carries its last-2-digit suffix too — otherwise "Account: General" alone can't tell you which of several "General" accounts you're actually looking at. */
   function typeLabel(w){if(w.acct){var suf=w.acctNo?w.acctNo.slice(-2):"";return "Account: "+w.acct+(suf?" **"+suf:"");}var f=w.filter||"All types";return f.indexOf("All")===0?"All Accounts":"Account Type: "+f;}
-  function scopeChip(w){var lb=typeLabel(w);return '<button class="scope-chip" data-action="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Scope, tap to change" title="'+lb.replace(/"/g,"&quot;")+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  function scopeChip(w){var lb=typeLabel(w);return '<button class="scope-chip" data-action="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Scope, change" title="'+lb.replace(/"/g,"&quot;")+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
   function periodLbl(w){return {W:"week",M:"month",Q:"quarter",F:"fiscal year",Y:"calendar year"}[w.range||"Q"];}
   function secHead(t){return '<div class="dep-col-h" style="padding:8px 16px 4px">'+t+'</div>';}
   function tableHTML(rows,vlabel,wide){var tot=rows.reduce(function(s,a){return s+a.net;},0);
@@ -6630,7 +6630,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   /* The chip stays SHORT and fixed ("Income accounts" / "Expense accounts" / "Special report") so it never balloons or changes width as the report/line change. The full report+line reads as a quiet context line near the KPI instead (bgtScopeContext). */
   function bgtScopeShort(w){var av=w.acctview||"income";return av==="expense"?"Expense accounts":av==="special"?"Special report":"Income accounts";}
   function bgtScopeContext(w){if((w.acctview||"income")!=="special")return "";return "Special report: "+bgtReport(w).name+" · "+bgtReportLine(w).name;}
-  function bgtScopeChip(w){var spin=w.bloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip bgt-scope-chip" data-action="bgt-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change">'+spin+'<span class="fc-label">'+bgtScopeShort(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function bgtScopeChip(w){var spin=w.bloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip bgt-scope-chip" data-action="bgt-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, change">'+spin+'<span class="fc-label">'+bgtScopeShort(w)+'</span>'+ICON("expand_more")+'</button>';}
   /* Two independent axes, per the design decision:
        INTERVAL = what each bar/point represents — Month, Quarter, Fiscal period, or Year.
        TIME SPAN = how far back the data runs — this fiscal year, this fiscal period, last fiscal year, or all time.
@@ -6642,7 +6642,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtIntervalToggle(w,interval,action,extra){var single=bgtSpanSingle(w.bspan||"year");function d(v){return single&&(v==="quarter"||v==="year");}
     return bgtTog([["month","M","","Show budget vs actual for each month",d("month")],["quarter","Q","","Show budget vs actual for each quarter",d("quarter")],["period","P","","Show budget vs actual for each fiscal period",d("period")],["year","Y","","Show budget vs actual for each fiscal year",d("year")]],interval,w,action,"Interval",extra);}
   function bgtSpanLabel(s){return s==="period"?"This period":s==="lastperiod"?"Last period":s==="last"?"Last year":s==="all"?"All time":"This year";}
-  function bgtSpanChip(w,extra){return '<button class="filter-chip" data-action="bgt-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, tap to change"><span class="fc-label">'+bgtSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
+  function bgtSpanChip(w,extra){return '<button class="filter-chip" data-action="bgt-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, change"><span class="fc-label">'+bgtSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
   function bgtShapeToggle(w,fmt,action,extra,lineOff){return bgtTog([["bar","Bar","bar_chart","Budget and actual side by side"],["line","Line","show_chart",lineOff?"A line needs at least two periods, widen the time span or change the interval":"How budget and actual track over time (the trend)",!!lineOff],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
   /* Which fiscal years a span covers (special reports only carry the current year in this demo, so multi-year spans gracefully fall back to it). */
   function bgtSpanYears(w,span){if(w.acctview==="special")return [BGT_CUR_FY];if(span==="last")return ["2025"];if(span==="all")return BGT_ALL_FYS.slice();return [BGT_CUR_FY];}
@@ -6927,7 +6927,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   }
   function bgtFScopeShort(w){var av=w.acctview||"income";return av==="expense"?"Expense accounts":av==="special"?"Special report":"Income accounts";}
   function bgtFScopeContext(w){if((w.acctview||"income")!=="special")return "";return "Special report: "+bgtFReport(w).name+" · "+bgtFReportLine(w).name;}
-  function bgtFScopeChip(w){var spin=w.bloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip bgt-scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change">'+spin+'<span class="fc-label">'+bgtFScopeShort(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function bgtFScopeChip(w){var spin=w.bloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip bgt-scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, change">'+spin+'<span class="fc-label">'+bgtFScopeShort(w)+'</span>'+ICON("expand_more")+'</button>';}
   /* ═══ TIME WINDOW MODULE (owner-approved; W01 Final v2). Two axes: the WINDOW (span) is the slice shown; the INTERVAL (grain) is what each bar/point/row represents.
      Five windows, smallest first (also the picker order): This month, This period, This quarter (rolling 3 months), This year (rolling 12 months), This fiscal year (YTD).
      Law: AVAILABILITY, an interval is offered when it yields 2 to 31 points (plus a Month single-pair summary exception on the month/period windows); DEFAULT, each window's default is its smallest available interval (entry 0 below); TOGGLE, D W M P Q Y always shown in that fixed order, unavailable letters greyed and unclickable, changing the window snaps an invalid interval to the new window's default; ROLLING, the two rolling windows are anchored to an as-of date and may cross fiscal-year boundaries. ═══ */
@@ -6938,7 +6938,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return bgtFTog([["day","D","","Show budget vs actual for each day",d("day")],["week","W","","Show budget vs actual for each week",d("week")],["month","M","","Show budget vs actual for each month",d("month")],["period","P","","Show budget vs actual for each fiscal period",d("period")],["quarter","Q","","Show budget vs actual for each quarter",d("quarter")],["year","Y","","Show budget vs actual for each fiscal year",d("year")]],interval,w,action,"Interval",extra);}
   function bgtFSpanLabel(s){return s==="month"?"This month":s==="period"?"This period":s==="quarter"?"This quarter":s==="roll12"?"This year":"This fiscal year";}
   function bgtFSpanPhrase(s){return s==="month"?"this month":s==="period"?"this fiscal period":s==="quarter"?"the last 3 months":s==="roll12"?"the last 12 months":"this fiscal year to date";}
-  function bgtFSpanChip(w,extra){return '<button class="filter-chip" data-action="bgtF-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, tap to change"><span class="fc-label">'+bgtFSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
+  function bgtFSpanChip(w,extra){return '<button class="filter-chip" data-action="bgtF-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, change"><span class="fc-label">'+bgtFSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
   function bgtFShapeToggle(w,fmt,action,extra,lineOff){return bgtFTog([["bar","Bar","bar_chart","Budget and actual side by side"],["line","Line","show_chart",lineOff?"A line needs at least two periods, widen the time span or change the interval":"How budget and actual track over time (the trend)",!!lineOff],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
   /* Detail size: bar + line charts side by side, with a Charts / Table swap on the right. */
   function bgtFDetailToggle(w){return bgtFTog([["charts","Charts","bar_chart","Bar and line charts side by side"],["table","Table","table_rows","The exact figures, sortable"]],w.bdetail||"charts",w,"set-bgtF-detail","View");}
@@ -7157,7 +7157,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtFGlance(w){
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
     var rows=bgtFSet(w),label=(w.acctview==="special")?bgtFScopeContext(w).replace(/^Special report: /,""):bgtFScopeShort(w);
-    var chip='<button class="scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, tap to change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
+    var chip='<button class="scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
     if(!bgtFHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div></div></div>';
     /* Glance: scope + period tag; the Variance ($) headline with the Favourable/Unfavourable badge
        (variance % inside it) on the same line; a small progress-to-budget bar that makes spent and
@@ -7270,7 +7270,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function prPeriodBounds(w){var b=prRangeBoundsFor(w.range||"TY",w);return {start:new Date(b.begin),end:new Date(b.end)};}
   function prRunsInRange(w){var b=prPeriodBounds(w);return PR_RUNS.filter(function(x){return x.date>=b.start&&x.date<=b.end;});}
   function prPeriodLabel(w){var r=w.range||"TY";if(r==="CUSTOM")return "Custom";var m=PR_PRESETS.filter(function(o){return o[0]===r;})[0];return m?m[1]:"This year";}
-  function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period, tap to change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  function prPeriodChip(w){var lb=prPeriodLabel(w);return '<button class="scope-chip" data-action="prperiod" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period, change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
   function prAgg(w){var runs=prRunsInRange(w),agg={};PR_DISTS.forEach(function(ds){agg[ds.id]={};});
     runs.forEach(function(run){PR_DISTS.forEach(function(ds){var rc=run.cells[ds.id]||{};Object.keys(rc).forEach(function(pt){agg[ds.id][pt]=(agg[ds.id][pt]||0)+rc[pt];});});});return agg;}
   function prDistName(id){for(var i=0;i<PR_DISTS.length;i++)if(PR_DISTS[i].id===id)return PR_DISTS[i].name;return id;}
@@ -7295,7 +7295,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     else rows=prDrillRows(w,sc);
     return prSortRows(rows,w.prSort||"amt-desc",sc==="pt"?"pt":"other");}
   function prChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prPTTotals(w).sort(function(a,b){return b.net-a.net;});return prDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
-  function prScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="pr-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, tap to change what the breakdown is grouped by"><span class="fc-label">'+prScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function prScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="pr-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, change what the breakdown is grouped by"><span class="fc-label">'+prScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
   function prToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
   function prDistBadge(distId){var c=PR_DIST_COLORS[distId]||"var(--primitive-color-cool-neutral-250)";return '<span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+prDistName(distId)+'</span></span>';}
   function prSortBtn(w,k,label){var sk=(w.prSort||"amt-desc").split("-"),on=sk[0]===k,ic=on?(sk[1]==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pr-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded" aria-hidden="true">'+ic+'</span></button>';}
@@ -7439,7 +7439,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function prFPeriodBounds(w){var b=prFRangeBoundsFor(w.range||"TM",w);return {start:prFParseISO(b.begin),end:prFParseISO(b.end)};}
   function prFRunsInRange(w){var b=prFPeriodBounds(w);return PRF_RUNS.filter(function(x){return x.date>=b.start&&x.date<=b.end;});}
   function prFPeriodLabel(w){var r=w.range||"TM";if(r==="CUSTOM")return "Custom";var m=PRF_PRESETS.filter(function(o){return o[0]===r;})[0];return m?m[1]:"This month";}
-  function prFPeriodChip(w){var lb=prFPeriodLabel(w);return '<button class="scope-chip" data-action="prF-period" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period, tap to change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  function prFPeriodChip(w){var lb=prFPeriodLabel(w);return '<button class="scope-chip" data-action="prF-period" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Period, change" title="'+lb+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
   function prFAgg(w){var runs=prFRunsInRange(w),agg={};PRF_DISTS.forEach(function(ds){agg[ds.id]={};});
     runs.forEach(function(run){PRF_DISTS.forEach(function(ds){var rc=run.cells[ds.id]||{};Object.keys(rc).forEach(function(pt){agg[ds.id][pt]=(agg[ds.id][pt]||0)+rc[pt];});});});return agg;}
   function prFDistName(id){for(var i=0;i<PRF_DISTS.length;i++)if(PRF_DISTS[i].id===id)return PRF_DISTS[i].name;return id;}
@@ -7476,7 +7476,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var rows=emps.map(function(e){
       var isOpen=!!open[e.name];
       var sub=isOpen?'<div class="prf-emp-pts">'+e.pts.map(function(p){return '<div class="prf-emp-pt"><span class="prf-emp-pt-n">'+p.name+'</span><span class="prf-emp-pt-a">'+money(p.amt)+'</span></div>';}).join("")+'</div>':'';
-      return '<div class="prf-emp-row'+(isOpen?" open":"")+'" data-action="prF-emp-exp" data-id="'+w.id+'" data-emp="'+prFEsc(e.name)+'" role="button" tabindex="0" aria-expanded="'+isOpen+'" aria-label="'+prFEsc(e.name)+', '+money(e.total)+', tap to '+(isOpen?'collapse':'see pay types')+'">'+
+      return '<div class="prf-emp-row'+(isOpen?" open":"")+'" data-action="prF-emp-exp" data-id="'+w.id+'" data-emp="'+prFEsc(e.name)+'" role="button" tabindex="0" aria-expanded="'+isOpen+'" aria-label="'+prFEsc(e.name)+', '+money(e.total)+', '+(isOpen?'collapse':'see pay types')+'">'+
         '<span class="prf-emp-chev material-symbols-rounded" aria-hidden="true">'+(isOpen?"expand_more":"chevron_right")+'</span>'+
         '<span class="prf-emp-nm">'+e.name+'</span>'+
         '<span class="prf-emp-tot">'+money(e.total)+'</span></div>'+sub;
@@ -7503,7 +7503,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     else rows=prFDrillRows(w,sc);
     return prFSortRows(rows,w.prSort||"amt-desc",sc==="pt"?"pt":"other");}
   function prFChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prFDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prFPTTotals(w).sort(function(a,b){return b.net-a.net;});return prFDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
-  function prFScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="prF-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, tap to change what the breakdown is grouped by"><span class="fc-label">'+prFScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function prFScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="prF-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, change what the breakdown is grouped by"><span class="fc-label">'+prFScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
   function prFToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
   function prFDistBadge(distId){var c=PRF_DIST_COLORS[distId]||"var(--primitive-color-cool-neutral-250)";return '<span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+prFDistName(distId)+'</span></span>';}
   function prFSortBtn(w,k,label){var sk=(w.prSort||"amt-desc").split("-"),on=sk[0]===k,ic=on?(sk[1]==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="prF-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded" aria-hidden="true">'+ic+'</span></button>';}
@@ -7518,7 +7518,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var head2='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"name",col)+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
     var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
       /* Whole row is the drill target (same in Explore and Detail), so the row isn't "clickable-looking" but dead. */
-      var rowAttr=drill?' data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+a.name+', tap to see its pay types" data-tip-plain':'';
+      var rowAttr=drill?' data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+a.name+', see its pay types" data-tip-plain':'';
       var nm='<span class="lr-main'+(drill?" lr-link":"")+'">'+a.name+'</span>';
       return '<div class="wt-row wt-rowh'+(drill?" wt-rowlink":"")+'"'+rowAttr+'>'+nm+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     return '<div class="scroll">'+head2+body2+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
@@ -7526,7 +7526,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     rows.forEach(function(a,i){var frac=tot?a.net/tot:0,len=frac*C,c=ramp[i];
       arcs+='<circle class="seg" data-seg="'+i+'" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
       var nmEsc=String(a.name).replace(/"/g,"&quot;");
-      var tip=nmEsc+' · '+money(a.net)+' · '+Math.round(frac*100)+'%'+(drill?' · tap to see its pay types':'');
+      var tip=nmEsc+' · '+money(a.net)+' · '+Math.round(frac*100)+'%'+(drill?' · see its pay types':'');
       var la=(drill?' class="leg leg-link" data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0"':' class="leg"')+' data-tip="'+tip+'" data-tip-plain aria-label="'+nmEsc+(drill?", see its pay types":"")+'"';
       legend+='<div'+la+' data-seg="'+i+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+a.name+'</span><span class="lg-meta">'+money(a.net)+' &middot; '+Math.round(frac*100)+'%</span></div>';});
     var DS=forceSize||({wide:250,xwide:280}[w.size]||190);
@@ -7848,7 +7848,7 @@ function mysPopContent(){
     var bw=brsTip.offsetWidth,bh=brsTip.offsetHeight,x=e.clientX+14,y=e.clientY-bh-10;if(x+bw>innerWidth-8)x=e.clientX-bw-14;if(y<8)y=e.clientY+18;
     brsTip.style.left=x+"px";brsTip.style.top=y+"px";
   });
-  function bankAcctChip(w){var sel=bankSelected(w);var spin=w.bkloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=sel?(sel.name+" "+sel.acct):"All Bank Accounts";return '<button class="filter-chip bank-acct-chip" data-action="bank-acct" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Bank account, tap to change the view"><span class="fc-label">'+spin+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function bankAcctChip(w){var sel=bankSelected(w);var spin=w.bkloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=sel?(sel.name+" "+sel.acct):"All Bank Accounts";return '<button class="filter-chip bank-acct-chip" data-action="bank-acct" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Bank account, change the view"><span class="fc-label">'+spin+lbl+'</span>'+ICON("expand_more")+'</button>';}
   function bankViewToggle(w){var v=w.bkview||"table";var opts=[["table","Table","table_rows"],["chart","Bars","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="bank-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
   function bankHeaderBlock(w,mode){
     var loading=(mode==="loading"),sel=bankSelected(w);
@@ -7888,7 +7888,7 @@ function mysPopContent(){
       var tip=aesc+', Account '+(a.acctFull||a.acct)+(neg?'. This account is overdrawn.':'');
       var pill=neg?'<span class="bank-tag-over">Overdrawn</span>':'';
       return '<div class="wt-row" data-acct="'+aesc+'">'+
-        '<span class="lr-main lr-stack lr-link bank-namecell" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+tip+', tap to open" data-tip-plain aria-label="'+a.name+', open account"><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.acct,a.acctFull)+'</span></span>'+
+        '<span class="lr-main lr-stack lr-link bank-namecell" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+tip+', open" data-tip-plain aria-label="'+a.name+', open account"><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.acct,a.acctFull)+'</span></span>'+
         (full?'<span class="wt-type">'+a.type+'</span>':'')+
         '<span class="wt-c2 bank-bal'+(neg?" bank-neg":"")+'">'+pill+'<span class="bank-bal-amt">'+bankMoney(end)+'</span></span></div>';
     }).join("");
@@ -7915,7 +7915,7 @@ function mysPopContent(){
       var aesc=a.name.replace(/"/g,"&quot;");
       var tip=aesc+', '+bankMoney(e)+(neg?'. This account is overdrawn.':'');
       var barStyle=neg?('right:'+(100-zero)+'%;width:'+wd+'%'):('left:'+zero+'%;width:'+wd+'%');
-      return '<div class="bank-hb-row" data-acct="'+aesc+'"><span class="lr-link bank-hb-name" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+tip+', tap to open" data-tip-plain aria-label="'+a.name+', open account">'+a.name+'</span>'+
+      return '<div class="bank-hb-row" data-acct="'+aesc+'"><span class="lr-link bank-hb-name" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+tip+', open" data-tip-plain aria-label="'+a.name+', open account">'+a.name+'</span>'+
         '<span class="bank-hb-track"><span class="bank-hb-zero" style="left:'+zero+'%"></span><span class="bank-hb-fill'+(neg?' neg':'')+'" style="'+barStyle+'"></span></span>'+
         '<span class="bank-hb-val'+(neg?' bank-neg':'')+'">'+(neg?'<span class="material-symbols-rounded bank-hb-warn" data-tip="This account is overdrawn (a negative balance)." data-tip-plain>error</span>':'')+bankMoney(e)+'</span>'+
         '<span class="sr-only">'+aesc+', balance '+bankMoney(e)+(neg?', overdrawn':'')+'</span></div>';
@@ -7979,7 +7979,7 @@ function mysPopContent(){
         '<div class="gl-sub">'+(neg?'<span class="bank-pill warn">'+ICON("error")+'Overdrawn</span>':'')+'</div>'+
         '</div>'+bankSpark(w)+'</div>';}
     var val=bankTotal(w),negT=val<0,over=bankNegCount(w);
-    var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, tap to open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
+    var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<div class="bank-gl-top">'+bankAcctChip(w)+'</div>'+
       '<div class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
@@ -8004,7 +8004,7 @@ function mysPopContent(){
      toolbar (inherits the canonical header padding), shown only when an account is
      actually overdrawn. Count only, no amount. */
   function bankOdChip(w){var over=bankNegCount(w);if(over<1)return "";var on=!!w.bkOver;
-    return '<button class="bank-odchip'+(on?" on":"")+'" data-action="bank-overdrawn" data-id="'+w.id+'" aria-pressed="'+on+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, tap to '+(on?"show all accounts":"show only these")+'">'+ICON("error")+'<span>'+over+' overdrawn</span></button>';}
+    return '<button class="bank-odchip'+(on?" on":"")+'" data-action="bank-overdrawn" data-id="'+w.id+'" aria-pressed="'+on+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, '+(on?"show all accounts":"show only these")+'">'+ICON("error")+'<span>'+over+' overdrawn</span></button>';}
   function bankContent(w){
     if(w.size==="kpi")return bankGlance(w);
     if(w.bkloading)return bankHeaderBlock(w,"loading")+bankSkeleton();
@@ -8124,10 +8124,10 @@ function purLines(o){
 }
 
 /* (2) RENDER ------------------------------------------------------------ */
-function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, tap to change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
+function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
 function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
   if(paths.length<=1)return ""; /* never a dead control: one path -> omit */
-  return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, tap to change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
+  return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
 function purViewToggle(w){var v=w.purview||"queue",opts=[["queue","Queue","list_alt"],["enc","Committed","bar_chart"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="pur-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 function purAmtWord(w){var s=w.pstatus||"mine";return s==="approved"?"approved":s==="unapproved"?"unapproved":"to approve";}
 /* Queue and Committed are two DIFFERENT data sets, so a top-level DATA SELECTOR
@@ -8169,7 +8169,7 @@ function purKanban(w){
       else if(key==="paid")badge='<span class="pur-kc-badge done">'+ICON("task_alt")+'Complete</span>';
       else badge='<span class="pur-kc-badge okb">'+ICON("check_circle")+(key==="payapproved"?"For payment":"Approved")+'</span>';
       var bud=b.budget?('<span class="pur-kc-bud '+(b.fits?"ok":"over")+'" data-tip="'+dept+' budget has '+money(Math.max(0,b.remaining))+' remaining. This '+money(o.amount)+' request '+(b.fits?"fits.":"is over by "+money(b.over)+".")+'" data-tip-plain><span class="pur-kc-bud-r">'+ICON(b.fits?"savings":"error")+(b.fits?"Fits budget":"Over budget")+'</span><span class="pur-kc-bud-s">'+money(Math.max(0,b.remaining))+' left in '+dept+'</span></span>'):'';
-      return '<div class="pur-kcard'+(needsMe?" needs":"")+'" role="button" tabindex="0" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'"'+((needsMe&&!mg)?' draggable="true"':'')+' aria-label="Request from '+req+', '+dept+', '+money(o.amount)+', vendor '+o.vendor+(needsMe?'. Awaiting your approval. Tap or drag to a forward lane to review.':'. Tap to open.')+'">'+
+      return '<div class="pur-kcard'+(needsMe?" needs":"")+'" role="button" tabindex="0" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'"'+((needsMe&&!mg)?' draggable="true"':'')+' aria-label="Request from '+req+', '+dept+', '+money(o.amount)+', vendor '+o.vendor+(needsMe?'. Awaiting your approval. Tap or drag to a forward lane to review.':'. open.')+'">'+
         '<div class="pur-kc-r1"><span class="pur-kc-amt">'+money(o.amount)+'</span>'+badge+'</div>'+
         '<div class="pur-kc-who"><span class="pur-kc-req">'+req+'</span><span class="pur-kc-dept">'+dept+'</span></div>'+
         '<span class="pur-kc-vend" data-tip="Vendor" data-tip-plain>'+ICON("storefront")+'<span class="pur-kc-vend-nm">'+o.vendor+'</span></span>'+
@@ -8510,8 +8510,8 @@ function arDetailInvoices(w,mode,key){
   return out.sort(function(a,b){return b.days-a.days;});
 }
 /* Filter chips: secondary-fill + leading filter glyph (via .filter-chip[data-action]) + trailing chevron. Sized to content. */
-function arRcChip(w){var rc=w.arRc||"All",spin=w.arloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip ar-chip" data-action="ar-rc" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Revenue center, tap to change">'+spin+'<span class="fc-label">'+(rc==="All"?"All revenue centers":rc)+'</span>'+ICON("expand_more")+'</button>';}
-function arSourceChip(w){var s=w.arSource||"All";return '<button class="filter-chip ar-chip" data-action="ar-source" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Source, tap to change"><span class="fc-label">'+(s==="All"?"All sources":s)+'</span>'+ICON("expand_more")+'</button>';}
+function arRcChip(w){var rc=w.arRc||"All",spin=w.arloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip ar-chip" data-action="ar-rc" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Revenue center, change">'+spin+'<span class="fc-label">'+(rc==="All"?"All revenue centers":rc)+'</span>'+ICON("expand_more")+'</button>';}
+function arSourceChip(w){var s=w.arSource||"All";return '<button class="filter-chip ar-chip" data-action="ar-source" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Source, change"><span class="fc-label">'+(s==="All"?"All sources":s)+'</span>'+ICON("expand_more")+'</button>';}
 function arGroupToggle(w){var g=w.arGroup||"aging";return '<div class="vtoggle" role="group" aria-label="Group by"><button class="vt'+(g==="aging"?" on":"")+'" data-action="ar-group" data-id="'+w.id+'" data-v="aging" aria-pressed="'+(g==="aging")+'" data-tip="Show the balance split by how overdue it is." data-tip-plain>'+ICON("stacked_bar_chart")+'Aging</button><button class="vt'+(g==="customer"?" on":"")+'" data-action="ar-group" data-id="'+w.id+'" data-v="customer" aria-pressed="'+(g==="customer")+'" data-tip="Show which customers owe the most, worst overdue first." data-tip-plain>'+ICON("groups")+'Customers</button></div>';}
 
 /* Compact stacked severity bar (single row) , the Glance aging read and a tidy
@@ -8871,8 +8871,8 @@ function arFDetailInvoices(w,mode,key){
   return out.sort(function(a,b){return b.days-a.days;});
 }
 /* Filter chips: secondary-fill + leading filter glyph (via .filter-chip[data-action]) + trailing chevron. Sized to content. */
-function arFRcChip(w){var rc=w.arFRc||"All",spin=w.arFloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip arF-chip" data-action="arF-rc" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Revenue center, tap to change">'+spin+'<span class="fc-label">'+(rc==="All"?"All revenue centers":rc)+'</span>'+ICON("expand_more")+'</button>';}
-function arFSourceChip(w){var s=w.arFSource||"All";return '<button class="filter-chip arF-chip" data-action="arF-source" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Source, tap to change"><span class="fc-label">'+(s==="All"?"All sources":s)+'</span>'+ICON("expand_more")+'</button>';}
+function arFRcChip(w){var rc=w.arFRc||"All",spin=w.arFloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip arF-chip" data-action="arF-rc" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Revenue center, change">'+spin+'<span class="fc-label">'+(rc==="All"?"All revenue centers":rc)+'</span>'+ICON("expand_more")+'</button>';}
+function arFSourceChip(w){var s=w.arFSource||"All";return '<button class="filter-chip arF-chip" data-action="arF-source" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Source, change"><span class="fc-label">'+(s==="All"?"All sources":s)+'</span>'+ICON("expand_more")+'</button>';}
 function arFGroupToggle(w){var g=w.arFGroup||"aging";return '<div class="vtoggle" role="group" aria-label="Group by"><button class="vt'+(g==="aging"?" on":"")+'" data-action="arF-group" data-id="'+w.id+'" data-v="aging" aria-pressed="'+(g==="aging")+'" data-tip="Show the balance split by how overdue it is." data-tip-plain>'+ICON("stacked_bar_chart")+'Aging</button><button class="vt'+(g==="customer"?" on":"")+'" data-action="arF-group" data-id="'+w.id+'" data-v="customer" aria-pressed="'+(g==="customer")+'" data-tip="Show which customers owe the most, worst overdue first." data-tip-plain>'+ICON("groups")+'Customers</button></div>';}
 
 /* Compact stacked severity bar (single row) , the Glance aging read and a tidy
@@ -9330,8 +9330,8 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoCount(w,tile){var b=ptoBaseRows(w);if(tile==="pending")return b.filter(function(r){return r.s3!=="approved";}).length;if(tile==="approved")return b.filter(function(r){return r.s3==="approved";}).length;return b.length;}
   function ptoKpiCards(w){var cur=ptoTileOf(w),tiles=[["all","All","event_note","neutral"],["pending","Pending","schedule","pending"],["approved","Approved","check_circle","approved"]];
     return '<div class="pto-cards" role="group" aria-label="Filter by status">'+tiles.map(function(t){var on=cur===t[0],n=ptoCount(w,t[0]);return '<button class="pto-card pto-tile-'+t[3]+(on?" sel":"")+'" data-action="pto-tile" data-id="'+w.id+'" data-t="'+t[0]+'" aria-pressed="'+on+'"><span class="pto-card-top"><span class="pto-card-ic material-symbols-rounded" aria-hidden="true">'+t[2]+'</span><span class="pto-card-lbl">'+t[1]+'</span></span><span class="pto-card-n">'+n+'</span></button>';}).join("")+'</div>';}
-  function ptoDeptChip(w){var cur=ptoDeptCur(w),d=ptoDeptList(w).filter(function(x){return x.id===cur;})[0],lbl=cur==="all"?"All departments":(d?d.name:"All departments");return '<button class="filter-chip" data-action="pto-dept" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Department, tap to change"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
-  function ptoPGChip(w){var cur=ptoPGCur(w);return '<button class="filter-chip" data-action="pto-pg" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pay group, tap to change"><span class="fc-label">'+(cur==="all"?"All pay groups":cur)+'</span>'+ICON("expand_more")+'</button>';}
+  function ptoDeptChip(w){var cur=ptoDeptCur(w),d=ptoDeptList(w).filter(function(x){return x.id===cur;})[0],lbl=cur==="all"?"All departments":(d?d.name:"All departments");return '<button class="filter-chip" data-action="pto-dept" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Department, change"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function ptoPGChip(w){var cur=ptoPGCur(w);return '<button class="filter-chip" data-action="pto-pg" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pay group, change"><span class="fc-label">'+(cur==="all"?"All pay groups":cur)+'</span>'+ICON("expand_more")+'</button>';}
   function ptoView2Toggle(w){var v=w.ptoQView||"queue";return '<div class="vtoggle" role="group" aria-label="View">'+
     '<button class="vt'+(v==="queue"?" on":"")+'" data-action="pto-qview" data-id="'+w.id+'" data-v="queue" aria-pressed="'+(v==="queue")+'">'+ICON("list_alt")+'Approval Queue</button>'+
     '<button class="vt'+(v==="calendar"?" on":"")+'" data-action="pto-qview" data-id="'+w.id+'" data-v="calendar" aria-pressed="'+(v==="calendar")+'">'+ICON("calendar_month")+'Leave Calendar</button></div>';}
@@ -9427,9 +9427,9 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoTree(w){var year=ptoCurYear(w),view=w.ptoView||"pending",out=[];
     ptoData(w).forEach(function(d){var emps=[];d.emps.forEach(function(e){var recs=ptoRecsForYear(e,year).filter(function(r){return ptoMatchView(r,view);});if(recs.length)emps.push({emp:e,recs:recs});});if(emps.length)out.push({dept:d,emps:emps});});
     return out;}
-  function ptoYearChip(w){var y=ptoCurYear(w),spin=w.ptoLoading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pto-year-chip" data-action="pto-year" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Calendar year, tap to change"><span class="fc-label">'+spin+y+'</span>'+ICON("expand_more")+'</button>';}
+  function ptoYearChip(w){var y=ptoCurYear(w),spin=w.ptoLoading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pto-year-chip" data-action="pto-year" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Calendar year, change"><span class="fc-label">'+spin+y+'</span>'+ICON("expand_more")+'</button>';}
   function ptoViewLabel(w){var v=w.ptoView||"pending";for(var i=0;i<PTO_VIEWS.length;i++)if(PTO_VIEWS[i][0]===v)return PTO_VIEWS[i][1];return "Show Pending";}
-  function ptoViewChip(w){return '<button class="filter-chip pto-view-chip" data-action="pto-view" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="View filter, tap to change"><span class="fc-label">'+ptoViewLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function ptoViewChip(w){return '<button class="filter-chip pto-view-chip" data-action="pto-view" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="View filter, change"><span class="fc-label">'+ptoViewLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
   function ptoHeaderBlock(w){
     var chips='<div class="pto-chips">'+ptoYearChip(w)+ptoViewChip(w)+'</div>';
     var kpi,pend=ptoPending(w);
@@ -9444,7 +9444,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoDeptRow(w,node){
     var d=node.dept,open=!!(w.ptoExpand&&w.ptoExpand[d.id]),pend=ptoDeptPending(w,d);
     var badge=pend?('<span class="pto-count-badge">'+pend+' pending</span>'):'<span class="pto-count-badge ok">All approved</span>';
-    return '<div class="wt-row pto-l1'+(open?" open":"")+'" data-action="pto-expand" data-id="'+w.id+'" data-key="'+d.id+'" role="button" tabindex="0" aria-expanded="'+open+'" aria-label="Department '+d.name.replace(/"/g,"&quot;")+', '+pend+' pending, tap to '+(open?"collapse":"expand")+'">'+ptoChev(open)+'<span class="lr-main pto-dept-nm">'+d.name+'</span>'+badge+'</div>';
+    return '<div class="wt-row pto-l1'+(open?" open":"")+'" data-action="pto-expand" data-id="'+w.id+'" data-key="'+d.id+'" role="button" tabindex="0" aria-expanded="'+open+'" aria-label="Department '+d.name.replace(/"/g,"&quot;")+', '+pend+' pending, '+(open?"collapse":"expand")+'">'+ptoChev(open)+'<span class="lr-main pto-dept-nm">'+d.name+'</span>'+badge+'</div>';
   }
   function ptoDayRow(w,r,vis){
     var appr=(r.status==="approved");
@@ -9463,7 +9463,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     var action=pend>0
       ?('<button class="pto-abtn pto-abtn-appr" data-action="pto-approve-emp" data-id="'+w.id+'" data-emp="'+e.id+'" aria-label="Review and approve '+pend+' pending day'+(pend===1?"":"s")+' for '+nm+'">'+ICON("check")+'Approve '+pend+'</button>')
       :('<span class="pto-appr-chip">'+ICON("check_circle")+'Approved</span><button class="pto-undo" data-action="pto-unapprove-emp" data-id="'+w.id+'" data-emp="'+e.id+'" aria-label="Undo approval for '+nm+'">'+ICON("undo")+'Undo</button>');
-    var row='<div class="wt-row pto-l2'+(open?" open":"")+'"><span class="pto-l2-head" data-action="pto-expand" data-id="'+w.id+'" data-key="'+e.id+'" role="button" tabindex="0" aria-expanded="'+open+'" aria-label="Employee '+nm+', tap to '+(open?"collapse":"expand")+'">'+ptoChev(open)+'<span class="lr-main pto-emp-nm">'+e.name+'</span>'+meta+'</span><span class="pto-actioncol pto-l2-action">'+action+'</span></div>';
+    var row='<div class="wt-row pto-l2'+(open?" open":"")+'"><span class="pto-l2-head" data-action="pto-expand" data-id="'+w.id+'" data-key="'+e.id+'" role="button" tabindex="0" aria-expanded="'+open+'" aria-label="Employee '+nm+', '+(open?"collapse":"expand")+'">'+ptoChev(open)+'<span class="lr-main pto-emp-nm">'+e.name+'</span>'+meta+'</span><span class="pto-actioncol pto-l2-action">'+action+'</span></div>';
     if(!open)return row;
     var vis=ptoVisTypes(w);
     var colhead='<div class="wt-row pto-colhead"><span class="pto-daycell pto-datecol">Date</span><span class="pto-daycell pto-daycol">Day</span>'+vis.map(function(t){return '<span class="pto-daycell pto-hrcol">'+t.label+'</span>';}).join("")+'<span class="pto-daycell pto-statuscol">Approval</span></div>';
@@ -10287,7 +10287,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     FA_CATALOG[dim].forEach(function(name){var v=faSum(FA_ASSETS.filter(function(a){return a[dim]===name;}),m);if(v>0)rows.push({name:name,val:v});});
     if(faHasNA(dim)){var vn=faSum(FA_ASSETS.filter(function(a){return a[dim]==null;}),m);if(vn>0)rows.push({name:FA_NA_LABEL,val:vn,na:true});}
     rows.sort(function(a,b){return b.val-a.val;});return rows;}
-  function faChip(action,id,label){return '<button class="filter-chip fa-chip" data-action="'+action+'" data-id="'+id+'" aria-haspopup="listbox" aria-label="'+label.replace(/"/g,"&quot;")+', tap to change"><span class="fc-label">'+label+'</span>'+ICON("expand_more")+'</button>';}
+  function faChip(action,id,label){return '<button class="filter-chip fa-chip" data-action="'+action+'" data-id="'+id+'" aria-haspopup="listbox" aria-label="'+label.replace(/"/g,"&quot;")+', change"><span class="fc-label">'+label+'</span>'+ICON("expand_more")+'</button>';}
   function faControls(w){return '<div class="bgt-ctlrow fa-ctlrow">'+faChip("fa-group",w.id,faGroupLabel(w))+'</div>';}
   function faViewToggle(w){var v=faView(w);return '<div class="vtoggle" role="group" aria-label="View">'+
     '<button class="vt'+(v==="table"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'" data-tip="Every asset as a sortable table." data-tip-plain>'+ICON("table_rows")+'Table</button>'+
@@ -10449,7 +10449,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     return "";
   }
 
-  function titleHTML(w){var esc=w.title.replace(/"/g,"&quot;");if(renaming===w.id)return '<input class="wtitle-input" id="rn-'+w.id+'" maxlength="40" value="'+esc+'" data-id="'+w.id+'">';var sub=w.sub?'<span class="wsubh" title="'+w.sub.replace(/"/g,"&quot;")+'">'+w.sub+'</span>':'';if(manage)return '<div class="wtitle-wrap"><h3 class="wtitle wtitle--edit" tabindex="0" role="button" data-action="rename" data-id="'+w.id+'" title="Click to rename">'+w.title+'</h3>'+sub+'</div>';return '<div class="wtitle-wrap"><span class="wtitle-row"><h3 class="wtitle wtitle--swap" tabindex="0" role="button" aria-haspopup="listbox" data-action="wswap" data-id="'+w.id+'" title="'+esc+' — tap to swap widget">'+w.title+'</h3><button class="wtitle-swap" data-action="wswap" data-id="'+w.id+'" data-tip="Swap widget" aria-label="Swap this widget for another">'+ICON("expand_more")+'</button></span>'+sub+'</div>';}
+  function titleHTML(w){var esc=w.title.replace(/"/g,"&quot;");if(renaming===w.id)return '<input class="wtitle-input" id="rn-'+w.id+'" maxlength="40" value="'+esc+'" data-id="'+w.id+'">';var sub=w.sub?'<span class="wsubh" title="'+w.sub.replace(/"/g,"&quot;")+'">'+w.sub+'</span>':'';if(manage)return '<div class="wtitle-wrap"><h3 class="wtitle wtitle--edit" tabindex="0" role="button" data-action="rename" data-id="'+w.id+'" title="Click to rename">'+w.title+'</h3>'+sub+'</div>';return '<div class="wtitle-wrap"><span class="wtitle-row"><h3 class="wtitle wtitle--swap" tabindex="0" role="button" aria-haspopup="listbox" data-action="wswap" data-id="'+w.id+'" title="'+esc+' — swap widget">'+w.title+'</h3><button class="wtitle-swap" data-action="wswap" data-id="'+w.id+'" data-tip="Swap widget" aria-label="Swap this widget for another">'+ICON("expand_more")+'</button></span>'+sub+'</div>';}
   function hoverIconsHTML(w){var gt=(w.title||"").replace(/\s*\([^)]*\)\s*$/,'');var goto=(w.goto===false)?'':'<button class="wmini" data-action="open-report" data-id="'+w.id+'" data-tip="Go to '+gt+'" aria-label="Go to '+gt+'">'+ICON("arrow_outward")+'</button>';var info='<button class="wmini" data-action="winfo" data-id="'+w.id+'" aria-haspopup="dialog" aria-label="About this widget">'+ICON("info")+'</button>';
     return '<div class="whover">'+info+goto+'</div>';}
   function actionsHTML(w){
@@ -11227,7 +11227,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function depFSeriesN(range,n,end){if(range==="P"){var mS=walk("total|M",n,end,0.95,0.13,0.06),qS=walk("total|Q",n,end,0.9,0.13,0.06);return mS.map(function(v,i){return Math.round((v+qS[i])/2);});}var ratio={W:.98,M:.95,Q:.9,F:.82,Y:.72}[range]||.88;return walk("total|"+range,n,end,ratio,0.13,0.06);}
   function depFPeriodLbl(w){return {W:"week",M:"month",P:"period",Q:"quarter",F:"fiscal year",Y:"calendar year"}[w.range||"Q"];}
   function depFTypeLabel(w){if(w.acct){var suf=w.acctNo?w.acctNo.slice(-2):"";return "Account: "+w.acct+(suf?" **"+suf:"");}var f=w.filter||"All types";return f.indexOf("All")===0?"All Accounts":"Account Type: "+f;}
-  function depFScopeChip(w){var lb=depFTypeLabel(w);return '<button class="scope-chip" data-depf="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Scope, tap to change" title="'+lb.replace(/"/g,"&quot;")+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
+  function depFScopeChip(w){var lb=depFTypeLabel(w);return '<button class="scope-chip" data-depf="depfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Scope, change" title="'+lb.replace(/"/g,"&quot;")+'"><span class="sc-nm">'+lb+'</span>'+ICON("expand_more")+'</button>';}
   function depFRangeBtn(w){return '<button class="trend-range" data-depf="rangemenu" data-id="'+w.id+'">vs '+depFPeriodLbl(w)+ICON("expand_more")+'</button>';}
   function depFDelta(p){return '<span class="delta-pill'+(p.neg?" neg":"")+'">'+ICON(p.neg?"south_east":"north_east")+Math.abs(p.dpct).toFixed(1)+'%</span>';}
   function depFTog(opts,cur,w){return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-depf="dep-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+(o[2]?ICON(o[2]):"")+o[1]+'</button>';}).join("")+'</div>';}
