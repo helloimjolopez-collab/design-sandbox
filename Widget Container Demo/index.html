@@ -5467,25 +5467,29 @@ function gftBehindPanel(w){
 /* GLANCE (kpi): % fulfilled + status badge on the LEFT, plain money context,
    a compact overall goal bar, and a follow-up read. Flat (no toolbar). */
 function gftGlance(w){
-  var o=gftOverall(w),thru=gftThru(w);
+  var o=gftOverall(w),thru=gftThru(w),asOf=gftFmtDate(thru);
   var rPct=o.pledgeTotal>0?Math.min(100,o.received/o.pledgeTotal*100):0;
   var dPct=o.pledgeTotal>0?Math.min(100,o.due/o.pledgeTotal*100):0;
   var specific=(gftPurposeCur(w)!=="All purposes");
-  var expTip=gftEsc("Expected by "+gftFmtDate(thru)+": "+money(o.due));
-  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-tip="'+gftEsc(money(o.received)+" of "+money(o.pledgeTotal)+" received")+'" data-tip-plain><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div><span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+Math.max(0,dPct-rPct).toFixed(1)+'%" data-tip="'+expTip+'" data-tip-plain></span></div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" data-tip="'+expTip+'" data-tip-plain></span></div>'):'';
-  /* Purpose switcher so you can swap purpose even in the glance; status badge only for a single purpose. */
+  var barHover="Received   "+money(o.received)+"  ("+gftPct(o.fulfilled)+")\n"+
+    "Expected by "+asOf+"   "+money(o.due)+"\n"+
+    "Goal         "+money(o.pledgeTotal)+"\n"+
+    (o.remaining>0?("Behind by  "+money(o.remaining)):(o.remaining<0?("Ahead by  "+money(Math.abs(o.remaining))):"On track"));
+  var markTip="Expected by "+asOf+": "+money(o.due)+" of "+money(o.pledgeTotal)+" goal";
+  var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
+  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-tip="'+gftEsc(barHover)+'" data-tip-plain data-tip-lines><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" data-tip="'+gftEsc(markTip)+'" data-tip-plain data-tip-narrow></span></div>'):'';
   var chip=gftPurposeChip(w);
   var statusLine=specific
-    ? gftStatusPill(o.status,Math.abs(o.remaining),thru)
+    ? gftMiniBadge(o,thru)
     : (o.behindCount>0
-        ? '<span class="gft-glance-cap"><span class="gft-sevdot"></span>'+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind schedule</span>'
-        : '<span class="gft-glance-cap gft-cap-ok">'+ICON("check")+'On track or ahead across every purpose</span>');
+        ? '<span class="gft-mb gft-mb-behind">'+ICON("error")+o.behindCount+' purpose'+(o.behindCount===1?"":"s")+' behind</span>'
+        : '<span class="gft-mb gft-mb-ontrack">'+ICON("check_circle")+'All on track</span>');
   return '<div class="gft-glance">'+
     '<div class="gft-glance-top">'+(chip?('<span class="sc-nm">Pledge progress</span><span class="gft-glance-swap">'+chip+'</span>'):('<span class="sc-nm">'+gftEsc(gftPurposeCur(w))+'</span>'))+'</div>'+
     '<div class="gft-glance-kpi"><span class="metric-value">'+money(o.received)+'</span><span class="gft-hd-cap">'+gftPct(o.fulfilled)+' of '+money(o.pledgeTotal)+' goal</span></div>'+
     bar+
     '<div class="gft-glance-status">'+statusLine+'</div>'+
-    '<span class="sr-only">'+gftPct(o.fulfilled)+' of the '+money(o.pledgeTotal)+' pledged has been received ('+money(o.received)+') as of '+gftFmtDate(thru)+'. '+money(o.due)+' was expected by then. '+money(o.outstanding)+' is still outstanding.</span>'+
+    '<span class="sr-only">'+gftPct(o.fulfilled)+' of the '+money(o.pledgeTotal)+' pledged has been received ('+money(o.received)+') as of '+asOf+'. '+money(o.due)+' was expected by then. '+money(o.outstanding)+' is still outstanding.</span>'+
   '</div>';
 }
 
