@@ -5460,11 +5460,10 @@ function gftBar(w,p,clickable){
     "Expected by "+asOf+": "+money(p.due)+"\n"+
     "Goal: "+money(p.pledgeTotal)+"\n"+
     (p.remaining>0?("Behind by: "+money(p.remaining)):(p.remaining<0?("Ahead by: "+money(Math.abs(p.remaining))):"On track"));
-  var markTip="Expected by "+asOf+": "+money(p.due)+" of "+money(p.pledgeTotal)+" goal";
   var srtxt=p.purpose+": "+money(p.received)+" received of "+money(p.pledgeTotal)+" goal, "+gftPct(p.fulfilled)+" fulfilled. "+gftRemainingText(p)+".";
   var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(srtxt+" Open the donors behind this purpose.")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
   var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
-  var mark=(p.pledgeTotal>0)?'<span class="gft-mark" style="left:'+dPct.toFixed(1)+'%" data-tip="'+gftEsc(markTip)+'" data-tip-plain data-tip-narrow></span>':'';
+  var mark=(p.pledgeTotal>0)?'<span class="gft-mark" style="left:'+dPct.toFixed(1)+'%" aria-hidden="true"></span>':'';
   return '<div class="gft-prow'+(clickable?" gft-clickable":"")+'"'+attr+'>'+
     '<div class="gft-prow-top">'+
       '<span class="gft-prow-nm">'+p.purpose+'</span>'+
