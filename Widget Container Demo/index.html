@@ -5528,13 +5528,9 @@ function gftGlance(w){
   var rPct=o.pledgeTotal>0?Math.min(100,o.received/o.pledgeTotal*100):0;
   var dPct=o.pledgeTotal>0?Math.min(100,o.due/o.pledgeTotal*100):0;
   var specific=(gftPurposeCur(w)!=="All purposes");
-  var barHover="Pledged: "+money(o.pledgeTotal)+"\n"+
-    "Expected by "+asOf+": "+money(o.due)+"\n"+
-    "Paid: "+money(o.received)+" ("+gftPct(o.fulfilled)+")\n"+
-    "Owed: "+money(o.outstanding)+"\n"+
-    (o.remaining>0?("Behind by: "+money(o.remaining)):(o.remaining<0?("Ahead by: "+money(Math.abs(o.remaining))):"On track"));
+  var gtip=encodeURIComponent(JSON.stringify(gftTipData(o,asOf,gftPurposeCur(w))));
   var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
-  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-tip="'+gftEsc(barHover)+'" data-tip-plain data-tip-lines><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" aria-hidden="true"></span></div>'):'';
+  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-gftip="'+gtip+'" tabindex="0" role="img" aria-label="'+gftEsc(gftPct(o.fulfilled)+" of "+money(o.pledgeTotal)+" pledged paid; "+gftRemainingText(o))+'"><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" aria-hidden="true"></span></div>'):'';
   return '<div class="kpi-row"><div class="kpi-num">'+
     '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value">'+money(o.received)+'</span></span>'+
     '<div class="gl-sub">'+gftKpiTrail(w,o,thru)+'</div>'+
