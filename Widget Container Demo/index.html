@@ -5531,9 +5531,8 @@ function gftGlance(w){
     "Expected by "+asOf+": "+money(o.due)+"\n"+
     "Goal: "+money(o.pledgeTotal)+"\n"+
     (o.remaining>0?("Behind by: "+money(o.remaining)):(o.remaining<0?("Ahead by: "+money(Math.abs(o.remaining))):"On track"));
-  var markTip="Expected by "+asOf+": "+money(o.due)+" of "+money(o.pledgeTotal)+" goal";
   var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
-  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-tip="'+gftEsc(barHover)+'" data-tip-plain data-tip-lines><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" data-tip="'+gftEsc(markTip)+'" data-tip-plain data-tip-narrow></span></div>'):'';
+  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-tip="'+gftEsc(barHover)+'" data-tip-plain data-tip-lines><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" aria-hidden="true"></span></div>'):'';
   return '<div class="kpi-row"><div class="kpi-num">'+
     '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value">'+money(o.received)+'</span></span>'+
     '<div class="gl-sub">'+gftKpiTrail(w,o,thru)+'</div>'+
