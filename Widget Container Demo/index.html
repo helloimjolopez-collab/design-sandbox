@@ -7398,6 +7398,44 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function prFDistTotals(w){var agg=prFAgg(w);return PRF_DISTS.map(function(ds){var t=0,c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){t+=c[pt];});return {id:ds.id,name:ds.name,net:t};}).filter(function(x){return x.net>0;});}
   function prFPTTotals(w){var agg=prFAgg(w),m={};PRF_DISTS.forEach(function(ds){var c=agg[ds.id]||{};Object.keys(c).forEach(function(pt){m[pt]=(m[pt]||0)+c[pt];});});return PRF_PT.filter(function(p){return m[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:m[p.id]};});}
   function prFDrillRows(w,distId){var agg=prFAgg(w),c=agg[distId]||{};return PRF_PT.filter(function(p){return c[p.id]>0;}).map(function(p){return {id:p.id,name:p.name,net:c[p.id]};});}
+  function prFEsc(s){return String(s).replace(/"/g,"&quot;");}
+  /* Permission: viewing employee-level pay requires the Payroll "View Employee Pay" right.
+     Gated per widget via w.empPerm (default allowed). */
+  function prFCanViewEmployees(w){return !w||w.empPerm!==false;}
+  /* Apportion each pay type's distribution total across the roster by stable descending
+     weights, last employee taking the remainder, so employee rows sum back to the exact
+     distribution total. Returns rows A-Z. */
+  function prFEmployeesFor(w,distId){
+    var pts=prFDrillRows(w,distId);if(!pts.length)return [];
+    var names=(PRF_EMP[distId]||[]).slice().sort();if(!names.length)return [];
+    var n=names.length,raw=[],i;for(i=0;i<n;i++)raw.push((n-i)+(i%2?0.35:0));
+    var sum=raw.reduce(function(a,b){return a+b;},0),wts=raw.map(function(x){return x/sum;});
+    var emp=names.map(function(nm){return {name:nm,total:0,pts:[]};});
+    pts.forEach(function(pt){var alloc=0;for(i=0;i<n;i++){var amt=(i===n-1)?(pt.net-alloc):Math.round(pt.net*wts[i]);alloc+=amt;if(amt>0){emp[i].pts.push({name:pt.name,amt:amt});emp[i].total+=amt;}}});
+    return emp;
+  }
+  function prFEmpSection(w){
+    var distId=w.prScope,distName=prFDistName(distId);
+    if(!prFCanViewEmployees(w)){
+      return '<div class="prf-emp"><div class="prf-emp-h"><span class="material-symbols-rounded">groups</span>Employees</div>'+
+        '<div class="prf-emp-locked"><span class="material-symbols-rounded prf-lock-ic">lock</span>'+
+        '<div class="prf-lock-main"><div class="prf-lock-t">Employee pay is restricted</div>'+
+        '<div class="prf-lock-s">The distribution and pay-type totals above are available to you. Seeing pay by individual employee needs the <b>Payroll: View Employee Pay</b> permission.</div></div></div></div>';
+    }
+    var emps=prFEmployeesFor(w,distId);if(!emps.length)return '';
+    var tot=emps.reduce(function(s,e){return s+e.total;},0),open=w.empOpen||{};
+    var rows=emps.map(function(e){
+      var isOpen=!!open[e.name];
+      var sub=isOpen?'<div class="prf-emp-pts">'+e.pts.map(function(p){return '<div class="prf-emp-pt"><span class="prf-emp-pt-n">'+p.name+'</span><span class="prf-emp-pt-a">'+money(p.amt)+'</span></div>';}).join("")+'</div>':'';
+      return '<div class="prf-emp-row'+(isOpen?" open":"")+'" data-action="prF-emp-exp" data-id="'+w.id+'" data-emp="'+prFEsc(e.name)+'" role="button" tabindex="0" aria-expanded="'+isOpen+'" aria-label="'+prFEsc(e.name)+', '+money(e.total)+', tap to '+(isOpen?'collapse':'see pay types')+'">'+
+        '<span class="prf-emp-chev material-symbols-rounded" aria-hidden="true">'+(isOpen?"expand_more":"chevron_right")+'</span>'+
+        '<span class="prf-emp-nm">'+e.name+'</span>'+
+        '<span class="prf-emp-tot">'+money(e.total)+'</span></div>'+sub;
+    }).join("");
+    return '<div class="prf-emp"><div class="prf-emp-h"><span class="material-symbols-rounded">groups</span>Employees in '+distName+'</div>'+
+      '<div class="prf-emp-list">'+rows+'</div>'+
+      '<div class="prf-emp-total"><span>Total, '+emps.length+' employee'+(emps.length===1?"":"s")+'</span><span>'+money(tot)+'</span></div></div>';
+  }
   function prFPTFlat(w){var agg=prFAgg(w),out=[];PRF_DISTS.forEach(function(ds){var c=agg[ds.id]||{};PRF_PT.forEach(function(p){if(c[p.id]>0)out.push({id:ds.id+"_"+p.id,pt:p.name,ptId:p.id,distId:ds.id,distName:ds.name,net:c[p.id]});});});return out;}
   function prFScopeLabel(w){var sc=w.prScope||"all";if(sc==="all")return "All distributions";if(sc==="pt")return "By pay type";return prFDistName(sc);}
   function prFScopeMeta(w){var sc=w.prScope||"all";if(sc==="pt")return {kind:"pt",legend:"Pay types"};if(sc==="all")return {kind:"all",legend:"Distributions"};return {kind:"distpt",legend:prFDistName(sc)+": pay types",dist:sc};}
