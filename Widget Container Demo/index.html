@@ -5410,11 +5410,7 @@ function gftHeaderBlock(w,mode){
     return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numL+'</div></div></div>';}
   /* Badges (status + % of goal) are only meaningful for ONE purpose. For "All purposes" we
      show just the KPI with a quiet "of $X pledged" caption; the per-purpose bars carry the detail. */
-  var specific=(gftPurposeCur(w)!=="All purposes");
-  var trail=specific
-    ?(gftStatusPill(o.status,Math.abs(o.remaining),thru)+'<span class="gft-goalpill">'+gftPct(o.fulfilled)+' of goal</span>')
-    :'<span class="gft-hd-cap">received of '+money(o.pledgeTotal)+' pledged</span>';
-  var numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+money(o.received)+'</span>'+trail+'</div>';
+  var numInner='<div class="dep-hd-kpigrp gft-kpigrp"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value">'+money(o.received)+'</span></span>'+gftKpiTrail(w,o,thru)+'</div>';
   return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+'</div></div></div>';
 }
 
