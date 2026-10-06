@@ -7500,9 +7500,9 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return rows;}
   function prFTableRows(w){var sc=w.prScope||"all",rows;
     if(sc==="all")rows=prFDistTotals(w);
-    else if(sc==="pt")rows=prFPTFlat(w);
+    else if(sc==="pt")rows=prFPTTotals(w);   /* one row per pay type (SubType), summed across distributions */
     else rows=prFDrillRows(w,sc);
-    return prFSortRows(rows,w.prSort||"amt-desc",sc==="pt"?"pt":"other");}
+    return prFSortRows(rows,w.prSort||"amt-desc","other");}
   function prFChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prFDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prFPTTotals(w).sort(function(a,b){return b.net-a.net;});return prFDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
   function prFScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="prF-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, change what the breakdown is grouped by"><span class="fc-label">'+prFScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
   function prFToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
