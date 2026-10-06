@@ -6812,22 +6812,20 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var neg=v<0,ic=neg?"arrow_downward":"arrow_upward";
     if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)"'+tipA+'>'+ICON(ic)+(neg?"Under budget":"Over budget")+pctHTML+'</span>';
     return '<span class="delta-pill'+(neg?" neg":"")+'"'+tipA+'>'+ICON(ic)+(neg?"Unfavourable":"Favourable")+pctHTML+'</span>';}
-  /* Progress-to-budget bar: a full-width track (the budget/target), a fill (the actual), and two end
-     labels mapped to the bar: actual-of-budget on the left, remaining/status on the right. Reads as a
-     real progress bar; precise variance breakdown lives in the hover, not crammed onto the face. */
+  /* Glance-only progress-to-budget bar. Two purples matching the chart legend (budget = light track,
+     actual = dark fill); favourability is never on the bar, only on the badge. The precise breakdown
+     (Budget / Actual / Variance % / amount left) lives in the hover, not crammed onto the face. */
   function bgtFMiniBar(w){
     var bs=bgtFBasis(w),vt=bs.type,sv=bgtFSpanVariance(w,vt),b=sv.sumB,a=sv.sumA,v=sv.v;
     if(!(b>0))return '';
-    var fillPct=Math.max(0,Math.min(100,Math.round(a/b*100)));
-    var favCls=bs.neutral?"neu":(v<0?"neg":"pos");
-    var diff=b-a,rightTxt,unfav;
-    if(bs.neutral){rightTxt=(diff>0)?(money(diff)+' under'):(diff<0?(money(-diff)+' over'):'on budget');unfav=false;}
-    else if(vt==="expense"){rightTxt=(diff>0)?(money(diff)+' left'):(diff<0?(money(-diff)+' over budget'):'fully spent');unfav=(diff<0);}
-    else{rightTxt=(a>=b)?'target met':(money(b-a)+' to go');unfav=(a<b);}
-    var tip='Budget '+money(b)+' · Actual '+money(a)+' · Variance '+(v<0?'−':'+')+money(Math.abs(v));
-    return '<div class="bgtF-bar3" data-tip="'+tip+'" data-tip-plain tabindex="0">'+
-      '<div class="bgtF-bar3-track"><div class="bgtF-bar3-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></div></div>'+
-      '<div class="bgtF-bar3-ends"><span class="bgtF-bar3-actual">'+money(a)+' of '+money(b)+'</span><span class="bgtF-bar3-right'+(unfav?' bgtF-hl-neg':'')+'">'+rightTxt+'</span></div>'+
+    var fillPct=Math.max(0,Math.min(100,Math.round(a/b*100))),pctTxt=bgtFVarPct(v,b)||'0%';
+    var diff=b-a,lastLbl,lastVal;
+    if(bs.neutral){lastLbl=(diff>=0)?'Under budget':'Over budget';lastVal=money(Math.abs(diff));}
+    else if(vt==="expense"){if(diff>=0){lastLbl='Left in budget';lastVal=money(diff);}else{lastLbl='Over budget';lastVal=money(-diff);}}
+    else{if(a>=b){lastLbl='Above target';lastVal=money(a-b);}else{lastLbl='To reach target';lastVal=money(b-a);}}
+    var tip='Budget: '+money(b)+'\nActual: '+money(a)+'\nVariance: '+pctTxt+'\n'+lastLbl+': '+lastVal;
+    return '<div class="bgtF-bar3" data-tip="'+tip+'" data-tip-plain data-tip-lines tabindex="0" aria-label="'+fillPct+'% of budget. '+lastLbl+' '+lastVal+'">'+
+      '<div class="bgtF-bar3-track"><div class="bgtF-bar3-fill" style="width:'+fillPct+'%"></div></div>'+
     '</div>';}
   /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
   function bgtFHeadlineInner(v,neutral,sumB){
