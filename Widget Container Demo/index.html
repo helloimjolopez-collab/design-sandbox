@@ -10131,11 +10131,13 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     data.sort(function(a,b){return b.enroll-a.enroll;});
     var tot=data.reduce(function(s,d){return s+d.enroll;},0);
     if(tot<=0)return '<div class="ins-none">No enrolment to chart for this selection.</div>';
-    var R=52,C=2*Math.PI*R,off=0,arcs="",legend="";
+    var R=52,C=2*Math.PI*R,off=0,arcs="",legend="",DS=(w.size==="xwide")?240:210;
+    var curT=insFTypeLabel?null:null;
     data.forEach(function(d,i){var frac=d.enroll/tot,len=frac*C,pct=Math.round(frac*100),c=INSF_PIE[i%INSF_PIE.length];
-      arcs+='<circle class="seg" cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
-      legend+='<div class="leg"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+d.type+'</span><span class="lg-meta">'+insFNum(d.enroll)+' · '+pct+'%</span></div>';});
-    return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="200" height="200" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+insFNum(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">enrolled</text></svg><div class="legend-col"><div class="legend" style="max-height:220px">'+legend+'</div></div></div></div>';
+      var tip=d.type+' · '+insFNum(d.enroll)+' enrolled · '+pct+'%';
+      arcs+='<circle class="seg" data-seg="'+i+'" data-tip="'+insFEsc(tip)+'" data-tip-plain cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="20" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      legend+='<button class="leg leg-link" data-seg="'+i+'" data-action="insF-set-type" data-id="'+w.id+'" data-v="'+insFEsc(d.type)+'" data-tip="'+insFEsc(tip)+'" data-tip-plain aria-label="Filter to '+insFEsc(d.type)+'"><span class="dot" style="background:'+c+'"></span><span class="lg-main">'+d.type+'</span><span class="lg-meta">'+insFNum(d.enroll)+' · '+pct+'%</span></button>';});
+    return '<div class="ins-pie"><div class="pie-wrap"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1">'+insFNum(tot)+'</text><text x="70" y="85" text-anchor="middle" class="donut-c2">enrolled</text></svg><div class="legend">'+legend+'</div></div></div>';
   }
   function insFViewToggle(w){var v=w.insView||"table";
     return '<div class="vtoggle" role="group" aria-label="Data view">'+
