@@ -9655,10 +9655,15 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     return '<div class="dep-hd ap-hd"><div class="ap-hd-row"><div class="ap-hd-kpi">'+kpi+'</div>'+search+'</div></div>';}
 
   /* ---- the hero: dense due-date table, grouped by aging band --------- */
-  function apRowHTML(x){var od=apIsOverdue(x.due);
-    /* Status: plain "Due in …" text for upcoming (aligns under the Status header); a negative badge ONLY when overdue. */
-    var statusCell=od?('<span class="ap-badge-over">'+apOverdueText(x.due)+'</span>'):('<span class="ap-duein">'+apDueText(x.due)+'</span>');
-    return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(apRowSearch(x))+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-due="'+apEsc(apFmtLong(x.due))+'" data-amt="'+apEsc(apMoney(x.amount))+'" data-status="'+apEsc(apDaysLabel(x.due))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
+  /* One status badge used in the table AND the invoice detail: overdue = negative,
+     due within a month = attention, later = neutral. Icon + label, semantic tokens. */
+  function apStatusChip(iso,full){var n=apDiffDays(iso),lbl=full?apDaysLabel(iso):(n<0?apOverdueText(iso):apDueText(iso));
+    if(n<0)return '<span class="ap-sbadge ap-sbadge-over">'+ICON("error")+lbl+'</span>';
+    if(n<=30)return '<span class="ap-sbadge ap-sbadge-warn">'+ICON(n===0?"event":"schedule")+lbl+'</span>';
+    return '<span class="ap-sbadge ap-sbadge-neutral">'+ICON("schedule")+lbl+'</span>';}
+  function apRowHTML(x){
+    var statusCell=apStatusChip(x.due,false);
+    return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(apRowSearch(x))+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-dueiso="'+apEsc(x.due)+'" data-amt="'+apEsc(apMoney(x.amount))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
       '<span class="lr-main">'+x.vendor+'</span>'+
       '<span class="ap-c-inv">'+codeCopy(x.inv)+'</span>'+
       '<span class="ap-c-duedate">'+apFmtShort(x.due)+'</span>'+
