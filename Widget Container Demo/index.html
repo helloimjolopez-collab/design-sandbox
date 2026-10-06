@@ -7538,8 +7538,8 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return '<div class="prf-gcomp"><div class="prf-gbar" role="img" aria-label="Payroll split across '+rows.length+' distributions this period">'+segs+'</div>'+
       '<div class="prf-gcap"><span class="prf-gdot" style="background:'+(PRF_DIST_COLORS[top.id]||"var(--primitive-color-cool-neutral-250)")+'"></span><span class="prf-gname">'+top.name+'</span><span class="prf-gpct">'+tp+'%</span></div></div>';}
   function prFGlance(w){var tot=prFDistTotals(w).reduce(function(s,a){return s+a.net;},0);
-    if(!tot)return '<div class="kpi-row"><div class="kpi-num">'+prFPeriodChip(w)+'<div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
-    return '<div class="kpi-row"><div class="kpi-num" style="flex:1 1 100%">'+prFPeriodChip(w)+'<div class="metric-value">'+money(tot)+'</div>'+prFGlanceComp(w)+'</div></div>';}
+    if(!tot)return '<div class="kpi-row"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num"><div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
+    return '<div class="kpi-row"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div><div class="kpi-spark prf-gl-comp">'+prFGlanceComp(w)+'</div></div>';}
   function prFHeaderBlock(w,hideToggle,noTotal){
     var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>')+'</div>';
     if(noTotal)return '<div class="dep-hd">'+top+'</div>';
