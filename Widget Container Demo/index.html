@@ -2249,7 +2249,7 @@
   .wt-head .fa-c-cls{font-size:11px;font-weight:600;color:var(--txt-subtle);}
   .wt-head .fa-c-num{color:var(--txt-subtle);font-weight:600;font-size:11px;}
   .fa-c-num.fa-emph{color:var(--txt-primary);font-weight:700;}
-  .wt-head .fa-c-num.fa-emph{color:var(--am-700);}
+  .wt-head .fa-c-num.fa-emph{color:var(--txt-secondary);}
   .fa-total-row .lr-main{font-weight:600;}
   /* Labelled KPI + a single clean sub-caption (replaces the old Cost/Accum/Depreciated stat line that
      duplicated the table's own columns and totals row). */
@@ -10021,17 +10021,22 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(mode==="loading"){
       numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:96px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';
     }else{
-      var tot=insFTotal(w),n=insFPlanCount(w);
-      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+insFNum(tot)+'</span><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span></div>';
+      var tot=insFTotal(w),n=insFPlanCount(w),cost=insFCostTotal(w);
+      numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+insFNum(tot)+'</span><span class="ins-hd-cap">enrolled</span>'+
+        '<span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span>'+
+        '<span class="bank-pill" data-tip="'+insFMoney(cost)+' total monthly premium across all plans in view" data-tip-plain>'+ICON("payments")+insFMoney(cost)+'/mo</span></div>';
     }
     return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insFTypeChip(w)+'<div class="dep-hd-toggle">'+insFViewToggle(w)+'</div></div>'+
       '<div class="dep-hd-num">'+numInner+'</div></div>';
   }
   function insFGlance(w){
-    var tot=insFTotal(w),n=insFPlanCount(w),lead=(w.insType&&w.insType!=="All")?insFTypeLabel(w).toLowerCase():"all types";
+    var tot=insFTotal(w),n=insFPlanCount(w),cost=insFCostTotal(w);
     return '<div class="kpi-row"><div class="kpi-num">'+
-      '<div class="metric-value">'+insFNum(tot)+'</div><div class="gl-sub"><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span></div>'+
-      ''+
+      '<div class="ins-kpi-line"><span class="metric-value">'+insFNum(tot)+'</span><span class="ins-hd-cap">enrolled</span></div>'+
+      '<div class="gl-sub">'+
+        '<span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span>'+
+        '<span class="bank-pill" data-tip="'+insFMoney(cost)+' total monthly premium across all plans in view" data-tip-plain>'+ICON("payments")+insFMoney(cost)+'/mo</span>'+
+      '</div>'+
     '</div></div>';
   }
   function insFEmpty(w){
