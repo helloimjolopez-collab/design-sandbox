@@ -6818,10 +6818,10 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var pct=Math.round(a/b*100),fillPct=Math.max(0,Math.min(100,pct));
     var favCls=bs.neutral?"neu":(v<0?"neg":"pos");
     var uw=bgtFUsedWord(w),verb=(uw==="used")?"spent":(uw==="received")?"received":"of budget";
-    var left=b-a,leftTxt=(left>0)?(money(left)+' left'):(left===0?'none left':(money(-left)+' over'));
+    var left=b-a,leftTxt=(left>0)?(money(left)+' left'):(left===0?'nothing left':(money(-left)+' over'));
     return '<div class="bgtF-bar2">'+
-      '<div class="bgtF-bar2-row"><span class="bgtF-bar2-track"><span class="bgtF-bar2-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></span></span><span class="bgtF-bar2-pct">'+pct+'% '+verb+'</span></div>'+
-      '<div class="bgtF-bar2-legend"><span>'+money(a)+' of '+money(b)+'</span><span class="bgtF-bar2-dot" aria-hidden="true"></span><span class="bgtF-bar2-left'+(left<0?' bgtF-hl-neg':'')+'">'+leftTxt+'</span></div>'+
+      '<span class="bgtF-bar2-track"><span class="bgtF-bar2-fill bgtF-glbar-'+favCls+'" style="width:'+fillPct+'%"></span></span>'+
+      '<span class="bgtF-bar2-lbl">'+pct+'% '+verb+'<span class="bgtF-bar2-sep" aria-hidden="true">·</span><span class="bgtF-bar2-left'+(left<0?' bgtF-hl-neg':'')+'">'+leftTxt+'</span></span>'+
     '</div>';}
   /* Owner delta: the headline dollar variance carries an up/down arrow + leading sign, coloured by favourability exactly like the table's variance column, plus a quiet % of the window's posted budget to its right. Used by the Glance card AND the wide/xwide header so the headline reads the same at every size. */
   function bgtFHeadlineInner(v,neutral,sumB){
