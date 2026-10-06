@@ -9188,9 +9188,18 @@ function arFDetailModalInner(){
   var subbar='<div class="arF-wl-subbar">'+custN+' customer'+(custN===1?"":"s")+' · '+invN+' invoice'+(invN===1?"":"s")+'</div>';
   /* Toolbar: Export all + Search, both on the right. */
   /* Search on the top left. No standing Export — it only appears in the selection row once you pick customers. */
-  var controls='<div class="arF-wl-controls"><div class="arF-wl-search"><span class="material-symbols-rounded" aria-hidden="true">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customer or invoice #" aria-label="Search" value="'+arFEsc(modal.q||"")+'"></div></div>';
-  /* Selection strip: its own row below the search, only when something is selected (details + actions together). */
-  var selbar=selN>0?'<div class="arF-wl-selbar"><span class="arF-sel-n">'+selN+' customer'+(selN===1?"":"s")+' selected</span><span class="arF-wl-ctrl-space"></span><button class="btn primary sm" data-action="arF-export" data-scope="sel">'+ICON("download")+'Export selected</button><button class="arF-sel-clear" data-action="arF-clearsel">'+ICON("close")+'Clear</button></div>':"";
+  /* Share the LIST (this table , customers, aging bucket, balances) , no selection needed.
+     Downloading an individual invoice is a separate, per-row action inside each customer. */
+  var controls='<div class="arF-wl-controls"><div class="arF-wl-search"><span class="material-symbols-rounded" aria-hidden="true">search</span><input id="arFwlq" class="arF-wl-q" placeholder="Search customer or invoice #" aria-label="Search" value="'+arFEsc(modal.q||"")+'"></div><span class="arF-wl-ctrl-space"></span><button class="btn secondary sm'+(modal.shareMenu==="all"?" on":"")+'" data-action="arF-share" data-scope="all" aria-haspopup="menu" aria-expanded="'+(modal.shareMenu==="all")+'">'+ICON("ios_share")+'Share list</button></div>';
+  /* Selection strip: share ONLY the selected customers. */
+  var selbar=selN>0?'<div class="arF-wl-selbar"><span class="arF-sel-n">'+selN+' customer'+(selN===1?"":"s")+' selected</span><span class="arF-wl-ctrl-space"></span><button class="btn primary sm" data-action="arF-share" data-scope="sel" aria-haspopup="menu" aria-expanded="'+(modal.shareMenu==="sel")+'">'+ICON("ios_share")+'Share selected</button><button class="arF-sel-clear" data-action="arF-clearsel">'+ICON("close")+'Clear</button></div>':"";
+  /* Format sheet: what "share the list" produces , the table as a document, not individual invoices. */
+  var shareScopeTxt=(modal.shareMenu==="sel")?(selN+' selected customer'+(selN===1?"":"s")):('the full list ('+custN+' customer'+(custN===1?"":"s")+')');
+  var shareSheet=modal.shareMenu?('<div class="arF-share-sheet"><span class="arF-share-lbl">Share '+shareScopeTxt+' as</span>'+
+    '<button class="btn naked sm" data-action="arF-share-do" data-fmt="Excel">'+ICON("table_view")+'Excel</button>'+
+    '<button class="btn naked sm" data-action="arF-share-do" data-fmt="PDF">'+ICON("picture_as_pdf")+'PDF</button>'+
+    '<button class="btn naked sm" data-action="arF-share-do" data-fmt="email">'+ICON("mail")+'Email</button>'+
+    '<button class="btn naked sm" data-action="arF-share-do" data-fmt="print">'+ICON("print")+'Print</button></div>'):"";
   /* Sortable column header. */
   function mbtn(key,label,num){var on=ms.key===key,ic=on?(ms.dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="arF-colsort'+(num?" num":"")+'" data-action="arF-msort" data-k="'+key+'" aria-sort="'+(on?(ms.dir==="asc"?"ascending":"descending"):"none")+'" aria-label="Sort by '+label+'">'+label+ICON(ic)+'</button>';}
   var thead='<div class="arF-wl-grid arF-wl-head"><span class="arF-wl-c-check" role="checkbox" aria-checked="'+(allSel?"true":(selN?"mixed":"false"))+'" tabindex="0" data-action="arF-selall" aria-label="Select all customers">'+ICON(headIco)+'</span>'+mbtn("customer","Customer",false)+mbtn("oldest","Oldest",false)+mbtn("balance","Balance",true)+'<span aria-hidden="true"></span></div>';
