@@ -9661,6 +9661,24 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(n<0)return '<span class="ap-sbadge ap-sbadge-over">'+ICON("error")+lbl+'</span>';
     if(n<=30)return '<span class="ap-sbadge ap-sbadge-warn">'+ICON(n===0?"event":"schedule")+lbl+'</span>';
     return '<span class="ap-sbadge ap-sbadge-neutral">'+ICON("schedule")+lbl+'</span>';}
+  /* Invoice detail overlay , same structure as the Loan / Pension detail overlays:
+     icon + "Invoice N" title, vendor subtitle, a label/value grid (invoice # copyable,
+     status as a badge), and the footer [Open in Accounts Payable (secondary, left)]
+     [Done (right)]. "Open in Accounts Payable" is the act-on-this-bill drill-through
+     (line items, attachments, schedule payment), mirroring loan "Open loan" etc. */
+  function apBillModalHTML(){var m=modal;
+    function line(lbl,val,cls){return '<div class="loan-dl-row"><span class="loan-dl-lbl">'+lbl+'</span><span class="loan-dl-val'+(cls?" "+cls:"")+'">'+val+'</span></div>';}
+    var grid='<div class="loan-dl-grid">'+
+      line("Vendor",apEsc(m.vendor))+
+      line("Invoice #",codeCopy(m.inv))+
+      line("Due date",apFmtLong(m.dueiso))+
+      line("Status",apStatusChip(m.dueiso,true))+
+      line("Amount",m.amt,"loan-dl-amt")+
+    '</div>';
+    return '<div class="modal-backdrop" data-action="ap-bill-close"><div class="modal modal-wide loan-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Invoice '+apEsc(m.inv)+'">'+
+      '<div class="modal-h loan-detail-h"><span class="modal-title"><span class="material-symbols-rounded" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">receipt_long</span>Invoice '+apEsc(m.inv)+'</span><span class="loan-dsub">'+apEsc(m.vendor)+'</span><span class="loan-dh-spacer"></span><button class="iconbtn" data-action="ap-bill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+      '<div class="modal-b loan-detail-b">'+grid+'</div>'+
+      '<div class="modal-f"><button class="btn secondary sm" data-action="ap-openbill" data-inv="'+apEsc(m.inv)+'">'+ICON("open_in_new")+'Open in Accounts Payable</button><span class="modal-f-spacer"></span><button class="btn primary sm" data-action="ap-bill-close">Done</button></div></div></div>';}
   function apRowHTML(x){
     var statusCell=apStatusChip(x.due,false);
     return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(apRowSearch(x))+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-dueiso="'+apEsc(x.due)+'" data-amt="'+apEsc(apMoney(x.amount))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
