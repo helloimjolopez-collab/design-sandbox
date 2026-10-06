@@ -8177,7 +8177,7 @@ function purHandleClick(a,t,id){
   if(a==="pur-open"){var oid=t.getAttribute("data-oid");modal={type:"pur-po",id:id,oid:oid,confirmReject:false,note:""};modalMounted=false;pop=null;render();return true;}
   if(a==="pur-approve"){if(modal){modal.confirmApprove=true;modal.confirmReject=false;modal.note="";renderModal();}return true;}
   if(a==="pur-approve-cancel"){if(modal){modal.confirmApprove=false;renderModal();}return true;}
-  if(a==="pur-approve-confirm"){var wa=find(id),oa=purFindOrder(wa,t.getAttribute("data-oid"));if(oa){oa.status="approved";oa.approvedByMe=true;oa.decisionNote=(modal&&modal.note)||"";setStatus("Approved "+oa.num+". It has moved to approved orders.");}modal=null;modalMounted=false;pop=null;render();return true;}
+  if(a==="pur-approve-confirm"){var wa=find(id),oa=purFindOrder(wa,t.getAttribute("data-oid"));if(oa){oa.status="approved";oa.approvedByMe=true;oa.decisionNote=(modal&&modal.note)||"";setStatus("Approved "+oa.num+". It has moved to approved orders.");toast("Approved "+oa.num+(oa.vendor?" — "+oa.vendor:""),"check_circle");}modal=null;modalMounted=false;pop=null;render();return true;}
   if(a==="pur-reject"){if(modal){modal.confirmReject=true;modal.confirmApprove=false;modal.note="";renderModal();}return true;}
   if(a==="pur-reject-cancel"){if(modal){modal.confirmReject=false;renderModal();}return true;}
   if(a==="pur-reject-confirm"){var wr=find(id),or=purFindOrder(wr,t.getAttribute("data-oid"));if(or){or.rej=true;or.decisionNote=(modal&&modal.note)||"";setStatus("Rejected "+or.num+". It has been removed from the queue.");}modal=null;modalMounted=false;pop=null;render();return true;}
