@@ -5456,11 +5456,12 @@ function gftBar(w,p,clickable){
   var rPct=p.pledgeTotal>0?Math.min(100,p.received/p.pledgeTotal*100):0;
   var dPct=p.pledgeTotal>0?Math.min(100,p.due/p.pledgeTotal*100):0;
   var st=(p.status==="behind")?"behind":(p.status==="ahead"?"ahead":"ok");
-  var hover="Received: "+money(p.received)+" ("+gftPct(p.fulfilled)+")\n"+
+  var hover="Pledged: "+money(p.pledgeTotal)+"\n"+
     "Expected by "+asOf+": "+money(p.due)+"\n"+
-    "Goal: "+money(p.pledgeTotal)+"\n"+
+    "Paid: "+money(p.received)+" ("+gftPct(p.fulfilled)+")\n"+
+    "Owed: "+money(p.outstanding)+"\n"+
     (p.remaining>0?("Behind by: "+money(p.remaining)):(p.remaining<0?("Ahead by: "+money(Math.abs(p.remaining))):"On track"));
-  var srtxt=p.purpose+": "+money(p.received)+" received of "+money(p.pledgeTotal)+" goal, "+gftPct(p.fulfilled)+" fulfilled. "+gftRemainingText(p)+".";
+  var srtxt=p.purpose+": "+money(p.received)+" paid of "+money(p.pledgeTotal)+" pledged, "+gftPct(p.fulfilled)+" paid. "+money(p.outstanding)+" owed. "+gftRemainingText(p)+".";
   var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(srtxt+" Open the donors behind this purpose.")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
   var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
   var mark=(p.pledgeTotal>0)?'<span class="gft-mark" style="left:'+dPct.toFixed(1)+'%" aria-hidden="true"></span>':'';
