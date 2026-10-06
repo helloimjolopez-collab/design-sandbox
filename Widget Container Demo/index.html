@@ -5133,17 +5133,23 @@ function remFDetailModalInner(){
     if(c.status==="behind"){behindN++;behindAmt+=c.outstanding;}
     if(c.grace){graceN++;graceAmt+=c.outstanding;}});
   var pctPaid=totPledged>0?totPaid/totPledged:null;
-  function sc(k,v,cls){return '<span class="rem-dsum-i"><span class="rem-dsum-k">'+k+'</span><span class="rem-dsum-v'+(cls?" "+cls:"")+'">'+v+'</span></span>';}
-  var sumTip="Behind: paid more than one instalment short of what is expected by now. Grace: behind by one instalment or less, still counted on track.";
+  function sc(k,v){return '<span class="rem-dsum-i"><span class="rem-dsum-k">'+k+'</span><span class="rem-dsum-v">'+v+'</span></span>';}
+  var behindTip="Behind: paid more than one instalment short of what is expected by now.";
+  var graceTip="In grace: behind by one instalment or less, still counted on track.";
+  var behindBadge=behindN
+    ? '<span class="rem-flag rem-flag-warn" data-tip="'+remFEsc(behindTip)+'" data-tip-plain tabindex="0">'+ICON("error")+behindN+' behind · '+money(behindAmt)+'</span>'
+    : '<span class="rem-flag rem-flag-ok">'+ICON("check_circle")+'All on pace</span>';
+  var graceBadge=graceN
+    ? '<span class="rem-flag rem-flag-neutral" data-tip="'+remFEsc(graceTip)+'" data-tip-plain tabindex="0">'+ICON("schedule")+graceN+' in grace · '+money(graceAmt)+'</span>'
+    : '';
   var summary='<div class="rem-dsum">'+
-    sc("Pledged",money(totPledged))+
-    sc("Paid",money(totPaid))+
-    sc("Outstanding",money(totOut),totOut>0?"remF-neg":"")+
-    sc("% Paid",(pctPaid==null?"n/a":remFPct(pctPaid)))+
-    sc("Pledges behind",String(behindN),behindN?"remF-neg":"")+
-    sc("Amount behind",money(behindAmt),behindAmt?"remF-neg":"")+
-    sc("In grace",graceN+' · '+money(graceAmt))+
-    '<span class="rem-dsum-info material-symbols-rounded" data-tip="'+remFEsc(sumTip)+'" data-tip-plain tabindex="0" aria-label="'+remFEsc(sumTip)+'">info</span>'+
+    '<div class="rem-dsum-figs">'+
+      sc("Pledged",money(totPledged))+
+      sc("Paid",money(totPaid))+
+      sc("Outstanding",money(totOut))+
+      sc("% Paid",(pctPaid==null?"n/a":remFPct(pctPaid)))+
+    '</div>'+
+    '<div class="rem-dsum-flags">'+behindBadge+graceBadge+'</div>'+
   '</div>';
   function sb(k,label){var on=ds.key===k,ic=on?(ds.dir==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="remF-dsort" data-k="'+k+'" aria-label="Sort by '+label+'">'+label+' '+ICON(ic)+'</button>';}
   var head='<div class="wt-row rem-ch-row rem-ch-head">'+
