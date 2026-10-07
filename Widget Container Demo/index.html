@@ -7765,7 +7765,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
       var pM=PRF_PT.filter(function(p){return p.name.toLowerCase().indexOf(q)>-1;});
       var out='<div class="dd-search">'+ICON("search")+'<input class="dd-input" id="prfScopeQ" placeholder="Search distributions or pay types" value="'+(prFScopeQuery||"").replace(/"/g,"&quot;")+'" autocomplete="off"></div><div class="menu-scroll" role="listbox">';
       if(!q||"all distributions".indexOf(q)>-1)out+=o("all","All distributions");
-      if(!q||"by pay type".indexOf(q)>-1)out+=o("pt","By pay type");
+      if(!q||"all pay types".indexOf(q)>-1)out+=o("pt","All pay types");
       if(dM.length)out+='<div class="cap">Distributions</div>'+dM.map(function(ds){var on=cur===ds.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="prF-set-scope" data-id="'+wsc.id+'" data-s="'+ds.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="pr-dot" style="background:'+(PRF_DIST_COLORS[ds.id]||"var(--primitive-color-cool-neutral-250)")+'"></span><span class="mi-nm">'+ds.name+'</span></button>';}).join("");
       if(pM.length)out+='<div class="cap">Pay types</div>'+pM.map(function(p){var on=cur==="pt:"+p.id;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="prF-set-scope" data-id="'+wsc.id+'" data-s="pt:'+p.id+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">sell</span><span class="mi-nm">'+p.name+'</span></button>';}).join("");
       if(!dM.length&&!pM.length&&q)out+='<div class="mi-note" style="color:var(--txt-subtle)">No matches for "'+(prFScopeQuery||"").replace(/"/g,"&quot;")+'"</div>';
