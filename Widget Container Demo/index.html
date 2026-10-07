@@ -141,7 +141,13 @@
   .appmain{flex:1;min-width:0;overflow:auto;}
   @media(max-width:900px){.sidenav{display:none;}}
 
-  .shell{max-width:none;margin:0;padding:18px 28px 90px;container-type:inline-size;}
+  /* Page inset = Figma ScreenTemplate padding (SheetContainer/Padding) + Container.Screen.Main padding
+     (Sheet/Padding), so the dashboard sits exactly on the Pathway layout grid: 24 + 32 = 56 each side and
+     16 + 16 = 32 on top at desktop, stepping down with the responsive tokens (40/26 below 1024, 28/16
+     below 768). The bottom keeps its extra room for the floating controls. */
+  .shell{max-width:none;margin:0;padding:32px 56px 90px;container-type:inline-size;}
+  @media(max-width:1023px){.shell{padding:26px 40px 90px;}}
+  @media(max-width:767px){.shell{padding:16px 28px 90px;}}
   @media(max-width:520px){.shell{padding-left:16px;padding-right:16px;}}
   .pagetitle{font-family:'Red Hat Text',sans-serif;font-weight:500;font-size:16px;line-height:22px;color:var(--txt-primary);margin-bottom:22px;}
   .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;flex-wrap:wrap;margin-bottom:14px;}
@@ -161,21 +167,20 @@
   .statusline{font-size:12px;color:var(--txt-subtle);margin:0;min-height:0;}
   .statusline:not(:empty){margin:4px 0 8px;}
 
-  /* Columns are fluid (1fr) but FLOORED via minmax so a widget never compresses
-     below its canonical Figma size (pathway-grid-standard.md). A GLANCE is the
-     Small size = 3 cols desktop / 4 tablet / full mobile; the per-column floors
-     below hold the glance at its canonical minimum (desktop reference 1148 ->
-     ~275px, growing to ~330px at 1440; tablet ~352px; mobile ~360px). Below the
-     floor the grid stops shrinking and .appmain scrolls — the "stopping point"
-     rather than an ever-shrinking glance. */
+  /* PATHWAY GRID (Figma, Widget page, ScreenTemplate 40010514:6808): 12 columns, gutter 16, inside the
+     Sheet padding above. Spans are measured off Figma, not chosen:
+       1440 screen, 1072 grid:  Glance 4 of 12 (346.67), Detail 6 of 12 (528), Explore 12 of 12
+       1920 screen, 1552 grid:  Glance 3 of 12 (376), four per row
+     Glance takes 3 columns only once 3 columns reach Widget/MinWidth/Glance (275), which is a grid of 1148.
+     Below that it takes 4. The 12-column grid starts at 1050, Widget/MinWidth/Explore, which is also the
+     width at which a 6-column Detail clears its own 515 minimum. */
   /* grid-auto-flow:row (NOT dense): widgets hold their source order, so resizing a widget grows it IN PLACE
      and reflows the rest around it, instead of dense back-filling relocating it to the bottom of the board. */
   .dashboard{display:grid;grid-template-columns:repeat(4,minmax(60px,1fr));grid-auto-rows:48px;gap:var(--semantic-layout-units-gap-base);grid-auto-flow:row;}
-  /* Column count keys off the GRID width (the .shell container), not the viewport, so the track's own
-     minimum (8 cols = 720px, 12 cols = 1148px) never exceeds the room the grid actually has and never
-     overflows behind the sidenav. Mirrors the canonical size floors used by curCap. */
+  /* Column count keys off the GRID width (the .shell content box), not the viewport, so it never
+     overflows behind the sidenav. Mirrors the size floors used by curCap. */
   @container (min-width:720px){.dashboard{grid-template-columns:repeat(8,minmax(76px,1fr));}}
-  @container (min-width:1148px){.dashboard{grid-template-columns:repeat(12,minmax(81px,1fr));}}
+  @container (min-width:1050px){.dashboard{grid-template-columns:repeat(12,minmax(0,1fr));}}
   .widget[data-size="kpi"]{grid-row:span 3;}
   .widget[data-size="wide"]{grid-row:span 8;}
   .widget[data-size="xwide"]{grid-row:span 9;}
@@ -201,9 +206,12 @@
     .widget[data-size="kpi"]{grid-column:span 4;}
     .widget[data-size="wide"]{grid-column:span 8;}.widget[data-size="xwide"]{grid-column:span 8;}
   }
-  @container (min-width:1148px){
+  @container (min-width:1050px){
     .widget[data-size="kpi"]{grid-column:span 4;}
     .widget[data-size="wide"]{grid-column:span 6;}.widget[data-size="xwide"]{grid-column:span 12;}
+  }
+  @container (min-width:1148px){
+    .widget[data-size="kpi"]{grid-column:span 3;}
   }
   /* KPI is one row tall: tighten header + content so number + trend fit a short tile */
   .widget[data-size="kpi"] .whead{padding-top:7px;padding-bottom:2px;}
@@ -709,7 +717,7 @@
   /* Full size (xwide): table + donut shown together, no toggle needed since both fit. Equal column widths — neither side should dominate. */
   /* Detail: table + donut as two clearly-separate views, each in its own subtly-stroked panel. The donut
      keeps its legend to the RIGHT (row), never stacked/clipped. Detail only renders when the grid has room
-     (>=1148), so there is always space for the side-by-side pair; narrower sizes use the single-view toggle. */
+     (>=1050), so there is always space for the side-by-side pair; narrower sizes use the single-view toggle. */
   /* Employee breakdown inside the distribution drill pop-up */
   .prf-emp{margin:14px 14px 4px;border-top:1px solid var(--stroke-widget);padding-top:12px;}
   .prf-emp-h{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:12px;font-weight:650;color:var(--txt-secondary);margin-bottom:8px;}
@@ -3606,16 +3614,16 @@
             <table class="spec-tbl"><thead><tr><th>Container width</th><th>Columns</th><th>Min col</th></tr></thead><tbody>
               <tr><td>&lt; 720px</td><td>4</td><td>60px</td></tr>
               <tr><td>≥ 720px</td><td>8</td><td>76px</td></tr>
-              <tr><td>≥ 1148px</td><td>12</td><td>81px</td></tr>
+              <tr><td>≥ 1050px</td><td>12</td><td>fluid (Explore min 1050)</td></tr>
             </tbody></table>
-            <p><code>grid-auto-rows: 48px</code>, <code>gap: 16px</code> (gap-base), <code>grid-auto-flow: row</code>. Widgets span whole columns/rows; height is a row-span multiple of 48 + gaps.</p>
+            <p>This is the Pathway Grid from Figma: 12 columns, gutter 16, inside the SheetContainer and Sheet padding (56 each side at desktop). <code>grid-auto-rows: 48px</code>, <code>gap: 16px</code> (gap-base), <code>grid-auto-flow: row</code>. Widgets span whole columns/rows; height is a row-span multiple of 48 + gaps.</p>
           </div>
 
           <div class="spec-sec" id="spec-sizes">
             <h2>3. Widget sizes</h2>
             <p>Three sizes: <b>Glance</b> (kpi), <b>Explore</b> (wide), <b>Detail</b> (xwide), plus <b>Band</b> (the full-width Financial KPIs). Column span adapts to the current column count; row span is fixed per size.</p>
             <table class="spec-tbl"><thead><tr><th>Size</th><th>4-col</th><th>8-col</th><th>12-col</th><th>Rows</th><th>Role</th></tr></thead><tbody>
-              <tr><td><b>Glance</b> (kpi)</td><td>span 4</td><td>span 4</td><td>span 3</td><td>3 (~144px)</td><td>Headline metric + the one actionable number; hover "View details" drills to Explore without resizing.</td></tr>
+              <tr><td><b>Glance</b> (kpi)</td><td>span 4</td><td>span 4</td><td>span 4; span 3 once the grid is ≥ 1148 (3 columns ≥ 275)</td><td>3 (~144px)</td><td>Headline metric + the one actionable number; hover "View details" drills to Explore without resizing.</td></tr>
               <tr><td><b>Explore</b> (wide)</td><td>span 4</td><td>span 8</td><td>span 6</td><td>8</td><td>Table or chart with controls (filter, sort, view toggle, search).</td></tr>
               <tr><td><b>Detail</b> (xwide)</td><td>span 4</td><td>span 8</td><td>span 12</td><td>9</td><td>Table + chart side by side; fullest in-grid view.</td></tr>
               <tr><td><b>Band</b></td><td colspan="3">full row (1 / -1)</td><td>3</td><td>Full-width KPI band; single size only.</td></tr>
@@ -3624,7 +3632,7 @@
 
           <div class="spec-sec" id="spec-reflow">
             <h2>4. Resize reflow</h2>
-            <p>When a widget is resized, or the container crosses a breakpoint, its size is <b>clamped to the current column cap</b> (<code>fitSize()</code> against <code>curCap()</code>): a widget can never request more columns than the grid currently offers, so it never overflows the viewport or pushes content off-screen. The grid then re-places following widgets automatically (<code>grid-auto-flow: row</code>). On an explicit resize, the widget is scrolled back into view (<code>scrollIntoView</code>, centered) so the user stays oriented. Cap mapping: content width ≥1148 → Detail allowed; ≥566 → Explore; else Glance.</p>
+            <p>When a widget is resized, or the container crosses a breakpoint, its size is <b>clamped to the current column cap</b> (<code>fitSize()</code> against <code>curCap()</code>): a widget can never request more columns than the grid currently offers, so it never overflows the viewport or pushes content off-screen. The grid then re-places following widgets automatically (<code>grid-auto-flow: row</code>). On an explicit resize, the widget is scrolled back into view (<code>scrollIntoView</code>, centered) so the user stays oriented. Cap mapping: content width ≥1050 → Detail allowed; ≥566 → Explore; else Glance.</p>
           </div>
 
           <div class="spec-sec" id="spec-add">
@@ -3678,7 +3686,7 @@
   var DEPTH_LABEL={kpi:"Glance",wide:"Explore",xwide:"Detail"};
   /* G1: step a widget down to the largest size that fits the current breakpoint (phone->Glance, tablet->Explore, desktop->Detail), never above the chosen size. */
   /* G1 caps: each size has a canonical minimum width and works at that width or wider, never narrower.
-     Glance min 275, Explore min 566, Detail min 1148 (design-system canonical). A widget may snap to the
+     Glance min 275, Explore min 566, Detail min 1050 (Widget/MinWidth/Explore, the 12-column size). A widget may snap to the
      grid and flex WIDER, but never render below its size's min. The gate is the actual GRID width (the
      .dashboard content box, which already excludes the sidenav), not the viewport, so a size never renders
      into less room than it needs and clips. curCap returns the largest size the grid can host; anything
@@ -3687,7 +3695,7 @@
     try{var g=document.querySelector(".dashboard");if(g){var cs=getComputedStyle(g);var w=g.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);if(w>0)return w;}}catch(_){}
     var iw=(typeof innerWidth!=="undefined"?innerWidth:1200);return (iw>900)?(iw-272):Math.max(0,iw-32);
   }
-  function curCap(){var w=gridW();return w>=1148?"xwide":w>=566?"wide":"kpi";}
+  function curCap(){var w=gridW();return w>=1050?"xwide":w>=566?"wide":"kpi";}
   function fitSize(w){if(w&&w.kind==="finkpi")return "band";var cap=SIZES.indexOf(curCap());var want=SIZES.indexOf(w.size);if(want<0)want=cap;var lim=Math.min(cap,want);var t=(w.tiers&&w.tiers.length)?w.tiers:SIZES;for(var i=lim;i>=0;i--){if(t.indexOf(SIZES[i])>-1)return SIZES[i];}return SIZES[0];}
   var __bpCap=curCap();
   if(typeof window!=="undefined"&&window.addEventListener){window.addEventListener("resize",function(){var b=curCap();if(b!==__bpCap){__bpCap=b;if(typeof render==="function")render();}});}
