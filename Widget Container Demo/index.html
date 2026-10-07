@@ -7155,13 +7155,13 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   /* The slicer: span chip LEFT + D W M P Q Y interval toggle RIGHT, kept together just above the chart because they constrain each other. */
   function bgtFSlicer(w){return '<div class="bgt-slicer">'+bgtFSpanChip(w)+bgtFIntervalToggle(w,w.binterval||bgtFIvDefault(w.bspan||"year"),"set-bgtF-interval")+'</div>';}
   function bgtFNoTrendState(slic){return '<div class="bgt-ytd-wrap"><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';}
-  function bgtFView(w,fmt){
+  function bgtFView(w,fmt,hideLegend){
     var av=w.acctview||"income";
     if(!bgtFHasBudget(bgtFSet(w)))return bgtFNoBudgetState(w,av);
     if(fmt==="table")return bgtFTable(w,"");
     var rows=bgtFViewRows(w);
     if(fmt==="line"&&rows.length<2)return bgtFNoTrendState("");
-    return (fmt==="line")?bgtFLine(w,rows,""):bgtFBars(w,rows,"");
+    return (fmt==="line")?bgtFLine(w,rows,"",hideLegend):bgtFBars(w,rows,"",hideLegend);
   }
   /* Glance (KPI size): interactive. The scope chip is the same control as the bigger sizes (opens the scope popover; Special report opens the dialog), the "vs. budget, [window]" caption opens the five-window picker, and the big number carries the same arrow/sign/percent as the header headline. */
   /* W01: cumulative-variance favourability sparkline for the budget-mb Glance. Running variance
