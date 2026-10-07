@@ -8106,25 +8106,19 @@ function mysPopContent(){
     var sel=bankSelected(w),cats;
     if(sel)cats=sel.a.slice();else{cats=[0,0,0,0,0,0];bankAccounts(w).forEach(function(a){for(var k=0;k<6;k++)cats[k]+=(a.a[k]||0);});}
     var run=[],acc=0,z;for(z=0;z<cats.length;z++){acc+=cats[z];run.push(acc);}
-    var mx=Math.max.apply(null,run),mn=Math.min.apply(null,run);if(run.length<2)return "";
-    /* These are categorical reconciliation movements (beginning, deposits, voids, checks, withdrawals,
-       ending), NOT dated points, so this is a WATERFALL, not a time-series sparkline: beginning and
-       ending read as solid columns from the baseline, each movement as a floating bar coloured by
-       direction. No time axis is implied, so no dates are promised. */
-    var W=120,H=44,pad=7;
-    var floor=Math.min(0,mn),top=(mx-floor)||1,tp=mx+top*0.08;
+    var mx=Math.max.apply(null,run),mn=Math.min.apply(null,run);if(run.length<2||mx===mn)return "";
+    var W=120,H=44,pad=7,rng=(mx-mn)||1;
     var xs=run.map(function(v,i){return pad+i*(W-2*pad)/(run.length-1);});
-    function yT(v){return (H-pad)-((v-floor)/((tp-floor)||1))*(H-2*pad);}
-    var ys=run.map(yT),base=H-pad,barW=Math.max(5,(W-2*pad)/run.length*0.56);
+    var ys=run.map(function(v){return H-pad-((v-mn)/rng)*(H-2*pad);});
+    var line=smoothPath(xs,ys);
     var labs=["Beginning balance","Deposits","Voids","Checks","Withdrawals","Ending balance"];
-    var bars=run.map(function(v,i){var cx=xs[i],x=(cx-barW/2).toFixed(1),last=(i===run.length-1);
-      if(i===0||last){var y=yT(v);return '<rect class="brs-bar brs-anchor" x="'+x+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+Math.max(1.5,base-y).toFixed(1)+'" rx="1.2" fill="var(--chart)"/>';}
-      var prev=run[i-1],hi=Math.max(prev,v),lo=Math.min(prev,v),up=(v>=prev),yh=yT(hi),yl=yT(lo);
-      return '<rect class="brs-bar '+(up?"brs-up":"brs-dn")+'" x="'+x+'" y="'+yh.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+Math.max(1.5,yl-yh).toFixed(1)+'" rx="1.2" fill="'+(up?"var(--pos-100)":"var(--red-100)")+'"/>';}).join("");
     var pts=run.map(function(v,i){return {lab:labs[i]||("Movement "+i),kind:(i===0?"begin":(i===run.length-1?"end":"move")),move:(i===0?null:cats[i]),bal:v,net:(i===run.length-1?(v-run[0]):null)};});
+    var dots=run.map(function(v,i){var cls=(i===0)?"begin":(i===run.length-1)?"end":((cats[i]>=0)?"add":"sub");return '<span class="brs-dot brs-'+cls+'" style="left:'+(xs[i]/W*100).toFixed(2)+'%;top:'+(ys[i]/H*100).toFixed(2)+'%"></span>';}).join("");
     var xp=xs.map(function(x){return (x/W*100).toFixed(2);}).join(","),yp=ys.map(function(y){return (y/H*100).toFixed(2);}).join(",");
-    return '<div class="kpi-spark bank-rspark bank-rwaterfall" tabindex="0" data-bpts="'+encodeURIComponent(JSON.stringify(pts))+'" data-xp="'+xp+'" data-yp="'+yp+'" aria-label="Balance by reconciliation stage, beginning through ending, as a waterfall of movements. Hover a bar to read its amount and the running balance.">'+
-      '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'+bars+'</svg><div class="brs-hair"></div><div class="brs-cursor"></div></div>';
+    return '<div class="kpi-spark bank-rspark" tabindex="0" data-bpts="'+encodeURIComponent(JSON.stringify(pts))+'" data-xp="'+xp+'" data-yp="'+yp+'" aria-label="Balance since the last reconciliation, beginning to ending. Hover to read each movement.">'+
+      '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="brsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart)" stop-opacity="0.16"/><stop offset="100%" stop-color="var(--chart)" stop-opacity="0"/></linearGradient></defs>'+
+      '<path d="'+line+' L'+xs[xs.length-1].toFixed(1)+','+H+' L'+xs[0].toFixed(1)+','+H+' Z" fill="url(#brsg)"/>'+
+      '<path d="'+line+'" fill="none" stroke="var(--chart)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>'+dots+'<div class="brs-hair"></div><div class="brs-cursor"></div></div>';
   }
   var brsTip=null,brsSp=null;
   function brsHide(){if(brsTip){brsTip.remove();brsTip=null;}if(brsSp){var hr=brsSp.querySelector(".brs-hair"),cu=brsSp.querySelector(".brs-cursor");if(hr)hr.style.opacity="0";if(cu)cu.style.opacity="0";brsSp=null;}}
