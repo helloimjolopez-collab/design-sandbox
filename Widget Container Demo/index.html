@@ -8029,8 +8029,8 @@ function mysPopContent(){
     var shownTot=rows.reduce(function(s,a){return s+bankEnding(a);},0);
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded" aria-hidden="true">search</span><input class="dep-q" placeholder="Search accounts" aria-label="Search accounts"></div></div>';
     var totLabel=w.bkOver?"Overdrawn total":"Total, all accounts";
-    var moreBtn=(remaining>0)?'<button class="bank-more" data-action="bank-more" data-id="'+w.id+'" aria-label="Load more accounts, '+remaining+' remaining">Load more</button>':'';
-    var pager=(nRows>PER)?('<div class="bank-pager"><span class="bank-count">Showing '+shown+' of '+nRows+' accounts</span>'+moreBtn+'</div>'):'';
+    var moreBtn=(remaining>0)?'<button class="bank-more" data-action="bank-more" data-id="'+w.id+'" aria-label="Load 75 more accounts, '+remaining+' remaining">Load more</button>':'';
+    var pager=(nRows>PER)?('<div class="bank-pager"><span class="bank-count">Showing 1-'+shown+' of '+nRows+' accounts</span>'+moreBtn+'</div>'):'';
     return search+'<div class="scroll">'+head+body+pager+'</div><div class="dep-total"><span>'+totLabel+'</span><span'+(shownTot<0?' class="bank-neg"':'')+'>'+bankMoney(shownTot)+'</span></div>';
   }
   /* All-Accounts comparison = a sorted horizontal DIVERGING bar (replaces the pie:
@@ -11055,7 +11055,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="bank-view"){var wbv=find(id);if(wbv)wbv.bkview=t.getAttribute("data-v");pop=null;render();return;}
     if(a==="bank-sort"){var wbs=find(id),k=t.getAttribute("data-k");if(wbs){var cs=(wbs.bksort||"bal-desc").split("-");wbs.bksort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="name"||k==="type")?"asc":"desc"));}render();return;}
     if(a==="bank-ssort"){var wsg=find(id),sgk=t.getAttribute("data-k");if(wsg){var scs=(wsg.bksSort||"amt-desc").split("-");wsg.bksSort=(scs[0]===sgk)?(sgk+"-"+(scs[1]==="asc"?"desc":"asc")):(sgk+"-"+(sgk==="type"?"asc":"desc"));}render();return;}
-    if(a==="bank-more"){var wbm=find(id);if(wbm)wbm.bkShown=(wbm.bkShown||20)+20;render();return;}
+    if(a==="bank-more"){var wbm=find(id);if(wbm)wbm.bkShown=(wbm.bkShown||50)+75;render();return;}
     if(a==="bank-drill"){var wdr=find(id);if(!wdr)return;wdr.bkOver=!!t.getAttribute("data-over");modal={type:"bankdrill",id:id};modalMounted=false;pop=null;render();return;}
     if(a==="bank-acct-drill"){var wad=find(id);if(!wad)return;var inModal=(modal&&modal.type==="bankdrill");modal={type:"bankdrill",id:id,acct:t.getAttribute("data-acct")};if(!inModal)modalMounted=false;pop=null;render();return;}
     if(a==="bank-drill-close"){modal=null;pop=null;render();return;}
