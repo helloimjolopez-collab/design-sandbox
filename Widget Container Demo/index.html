@@ -9469,15 +9469,24 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoHead2(w){
     return '<div class="dep-hd pto-hd"><div class="dep-hd-top"><div class="pto-filters">'+ptoDeptChip(w)+ptoPGChip(w)+'</div><div class="dep-hd-toggle">'+ptoView2Toggle(w)+'</div></div></div>'+
       '<div class="pto-cards-row">'+ptoKpiCards(w)+'</div>';}
+  /* Glance aging donut equivalent: pending vs approved, stacked full-width under the KPI, same component
+     + sizing as every other glance donut. Pending uses the attention (amber) hue, approved the positive
+     (green) hue, so status reads from colour as well as the labelled legend. */
+  function ptoGlanceDonut(pend,appr){
+    var tot=pend+appr;if(tot<=0)return '';
+    var R=52,C=2*Math.PI*R,segs=[{n:pend,c:"var(--semantic-color-foreground-static-attention-on-subtle)",lbl:"Pending"},{n:appr,c:"var(--semantic-color-foreground-static-positive-on-subtle)",lbl:"Approved"}].filter(function(s){return s.n>0;});
+    var off=0,arcs="",legend="";
+    segs.forEach(function(s){var frac=s.n/tot,len=frac*C;
+      arcs+='<circle cx="70" cy="70" r="'+R+'" fill="none" stroke="'+s.c+'" stroke-width="22" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;
+      legend+='<div class="prf-gd-leg"><span class="prf-gd-dot" style="background:'+s.c+'"></span><span class="prf-gd-nm">'+s.lbl+'</span><span class="prf-gd-pct">'+s.n+'</span></div>';});
+    return '<div class="prf-gl-donut"><svg class="donut" viewBox="0 0 140 140" width="56" height="56" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1" style="font-size:20px">'+tot+'</text><text x="70" y="88" text-anchor="middle" class="donut-c2">requests</text></svg><div class="prf-gd-legend">'+legend+'</div></div>';
+  }
   function ptoGlance2(w){
-    if(w.state==="empty")return '<div class="pto-glance"><span class="sc-nm">Scheduled time off</span><div class="pto-gl-kpi"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No access</span></div></div>';
+    if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No access</span></div></div></div>';
     var b=ptoBaseRows(w),pend=b.filter(function(r){return r.s3!=="approved";}).length,appr=b.filter(function(r){return r.s3==="approved";}).length,tot=b.length;
-    var caught=(pend===0);
-    return '<div class="pto-glance">'+
-      '<span class="sc-nm">Scheduled time off</span>'+
-      '<div class="pto-gl-kpi"><span class="metric-value">'+pend+'</span><span class="pto-gl-cap">'+(pend===1?"request pending":"pending your approval")+'</span></div>'+
-      (caught?'<div class="pto-gl-status ok">'+ICON("check_circle")+'All caught up</div>':'<div class="pto-gl-status">'+appr+' approved · '+tot+' this period</div>')+
-    '</div>';}
+    if(tot===0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'No requests</span></div></div></div>';
+    if(pend===0)return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+ptoYearChip(w)+'</div><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All caught up</span></div></div>'+ptoGlanceDonut(pend,appr)+'</div>';
+    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+ptoYearChip(w)+'</div><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Pending your approval</span><span class="metric-value">'+pend+'</span></span><span class="arF-badge arF-badge-sev1">'+ICON("schedule")+(pend===1?"1 to review":pend+" to review")+'</span></div></div>'+ptoGlanceDonut(pend,appr)+'</div>';}
   /* Employee drill (scrim overlay): the person isolated, with their own KPIs. */
   function ptoDrillModalHTML(){
     var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
