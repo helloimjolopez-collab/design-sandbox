@@ -10500,7 +10500,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
       '<span class="lr-main lr-stack"><span class="lr-tipwrap" data-tip="'+tip+'" data-tip-plain><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.tag)+'</span></span></span>'+
       '<span class="fa-c-cls">'+clsBadge(a.cls)+'</span>'+
       MCOLS.map(function(c){return '<span class="fa-c-num'+(c[0]==="net"?" fa-emph":"")+'">'+money(a[c[0]])+'</span>';}).join("")+'</div>';}).join("");
-    var more=rem>0?'<div class="depf-more-row"><button class="depf-more" data-action="fa-more" data-id="'+w.id+'" aria-label="Load more assets, '+rem+' remaining">Load more<span class="depf-more-n">'+rem+'</span></button></div>':'';
+    var more=rem>0?'<div class="depf-more-row"><span class="depf-count">Showing 1-'+shown+' of '+list.length+(list.length===1?" asset":" assets")+'</span><button class="depf-more" data-action="fa-more" data-id="'+w.id+'" aria-label="Load 75 more assets, '+rem+' remaining">Load more</button></div>':'';
     var totals='<div class="wt-row fa-row fa-total-row"><span class="lr-main">Total ('+list.length+(list.length===1?" asset":" assets")+')</span><span class="fa-c-cls"></span>'+MCOLS.map(function(c){return '<span class="fa-c-num'+(c[0]==="net"?" fa-emph":"")+'">'+money(faSum(list,c[0]))+'</span>';}).join("")+'</div>';
     var search=(list.length>8)?'<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded" aria-hidden="true">search</span><input class="dep-q" placeholder="Search assets" aria-label="Search assets by name"></div></div>':'';
     return search+'<div class="fa-tbl"><div class="scroll fa-tbl-scroll">'+head+body+more+totals+'</div></div>';}
