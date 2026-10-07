@@ -1793,9 +1793,10 @@
 .arF-wl-chev:hover{background:var(--wn-200);color:var(--txt-primary);}
 .arF-wl-chev .material-symbols-rounded{font-size:20px;}
 /* Total row: aligned to the same grid, amount sits under Balance; sticky to the bottom of the list. */
-.arF-wl-total{position:sticky;bottom:0;background:var(--surface-widget);border-top:1px solid var(--stroke-container);padding-top:11px;padding-bottom:11px;}
-.arF-wl-tl{grid-column:2;font-size:12px;font-weight:700;color:var(--txt-primary);}
-.arF-wl-tl-amt{grid-column:4;text-align:right;font-weight:700;font-size:13px;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+.arF-wl-total{position:sticky;bottom:0;background:var(--surface-widget);border-top:1px solid var(--stroke-widget);padding-top:11px;padding-bottom:11px;}
+.arF-wl-tl{grid-column:2;font-size:13px;font-weight:600;color:var(--txt-primary);}
+.arF-wl-tl-amt{grid-column:4;text-align:right;font-weight:600;font-size:13px;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+.arF-share-up .arF-share-dd{top:auto;bottom:calc(100% + 6px);}
 .arF-badge{display:inline-flex;align-items:center;gap:5px;min-height:24px;font-size:12px;font-weight:600;line-height:1;padding:3px 10px;border-radius:999px;white-space:nowrap;}
 .arF-badge .material-symbols-rounded{font-size:15px;}
 .arF-badge-ok{color:var(--semantic-color-foreground-static-positive-on-subtle);background:var(--semantic-color-fill-static-positive-subtle);}
@@ -9451,7 +9452,7 @@ function arFDetailModalInner(){
   });}
   var totalRow=invs.length?'<div class="arF-wl-grid arF-wl-total"><span class="arF-wl-tl">Total outstanding</span><span class="arF-wl-tl-amt">'+money(grand)+'</span></div>':"";
   var list='<div class="arF-wl-list" id="arFwlScroll">'+thead+body+totalRow+'</div>';
-  var foot='<div class="modal-f arF-wl-f"><span class="arF-wl-fspace"></span><button class="btn primary sm" data-action="arF-detail-close">Done</button></div>';
+  var foot='<div class="modal-f arF-wl-f"><span class="arF-wl-fspace"></span><div class="arF-share-wrap arF-share-up"><button class="btn primary sm" data-action="arF-share" data-scope="all" aria-haspopup="menu" aria-expanded="'+(modal.shareMenu==="all")+'">'+ICON("ios_share")+'Share list</button>'+(modal.shareMenu==="all"?arFShareDD("all"):"")+'</div></div>';
   return head+'<div class="modal-b arF-wl-b">'+controls+selbar+shareSheet+list+'</div>'+foot;
 }
 function arFDetailModalHTML(){
