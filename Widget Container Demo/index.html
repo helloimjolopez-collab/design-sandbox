@@ -7590,7 +7590,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return rows;}
   function prFTableRows(w){var sc=w.prScope||"all",rows;
     if(sc==="all")rows=prFDistTotals(w);
-    else if(sc==="pt")rows=prFPTTotals(w);   /* one row per pay type (SubType), summed across distributions */
+    else if(sc==="pt")return prFSortRows(prFPTFlat(w),w.prSort||"amt-desc","pt");   /* one row per pay type x distribution, so a Distribution column can show which distribution each pay type belongs to */
     else rows=prFDrillRows(w,sc);
     return prFSortRows(rows,w.prSort||"amt-desc","other");}
   function prFChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prFDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prFPTTotals(w).sort(function(a,b){return b.net-a.net;});return prFDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
