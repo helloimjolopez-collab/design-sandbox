@@ -7192,7 +7192,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
        remaining crystal clear. One fixed window (YTD), no trend line. */
     var sv=bgtFSpanVariance(w,vt),v=sv.v,b=sv.sumB,a=sv.sumA,hv=bgtFHeadlineInner(v,neutral,b);
     var pct=bgtFVarPct(v,b),tip=bgtFExplain(w,vt,neutral,v,a,b)+(pct?(' The '+pct+' is this variance as a share of the budget.'):'');
-    var top='<div class="gl-chiprow">'+chip+'<span class="bgtF-gl-per">'+bgtFPeriodTag(w)+'</span></div>';
+    var top='<div class="gl-chiprow">'+chip+'</div>';
     var metric='<div class="bgtF-gl-metricrow"><div class="metric-value bgtF-hl'+hv.cls+'">'+hv.html+'</div>'+bgtFFavPill(v,neutral,pct,tip)+'</div>';
     return '<div class="kpi-row bgtF-glance">'+top+'<div class="kpi-num bgtF-gl-num">'+metric+'</div>'+bgtFGlanceChart(w,b,a,v,neutral,vt)+'</div>';}
   /* Glance viz: a two-bar Budget vs Actual (period-to-date) chart, scaled to the larger of the two
@@ -11216,7 +11216,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var top=my+14;if(top+bh>innerHeight-M)top=my-bh-14;if(top<M)top=M;
     bgtFBpopEl.style.left=left+"px";bgtFBpopEl.style.top=top+"px";
   }
-  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".bgt-col2[data-bgtfpop],.bgtF-lcol[data-bgtfpop]");if(!col){if(bgtFBpopEl)bgtFHideBpop();return;}bgtFShowBpop(col,e.clientX,e.clientY);});
+  document.addEventListener("mousemove",function(e){var col=e.target.closest&&e.target.closest(".bgt-col2[data-bgtfpop],.bgtF-lcol[data-bgtfpop],.bgtF-gc[data-bgtfpop]");if(!col){if(bgtFBpopEl)bgtFHideBpop();return;}bgtFShowBpop(col,e.clientX,e.clientY);});
   /* Glance spark scrubbing: hover the deposits sparkline to read the total at that point in time */
   var dsTip=null;
   function dsShow(e,label,val){if(!dsTip){dsTip=document.createElement("div");dsTip.className="ds-tip";document.body.appendChild(dsTip);}dsTip.innerHTML='<span class="dst-l">'+label+'</span><span class="dst-v">'+val+'</span>';var x=e.clientX+12,y=e.clientY-16;if(x+140>innerWidth)x=e.clientX-140;dsTip.style.left=x+"px";dsTip.style.top=y+"px";}
