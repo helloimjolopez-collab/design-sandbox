@@ -9208,13 +9208,14 @@ function arFExportPreview(w,groups,selN){
    columns never compete with the customer-level columns above. */
 function arFCustPanel(g){
   /* Header cells are positional (grid columns), so they always sit over their data columns. */
-  var head='<div class="arF-ci arF-ci-head"><span class="arF-colh">Invoice #</span><span class="arF-colh">Due</span><span class="arF-colh">Aging bucket</span><span class="arF-colh num">Amount</span><span aria-hidden="true">Actions</span></div>';
+  var head='<div class="arF-ci arF-ci-head"><span class="arF-colh">Invoice #</span><span class="arF-colh">Due</span><span class="arF-colh">Aging bucket</span><span class="arF-colh">Status</span><span class="arF-colh num">Amount</span><span class="arF-colh" aria-hidden="true"></span></div>';
   var rows=g.invs.map(function(x){
-    var bk=arFBucketLabel(arFBucketOf(x.days)),esc=arFEsc(x.inv),cust=arFEsc(g.customer);
+    var bk=arFBucketLabel(arFBucketOf(x.days)),bkColor=ARF_SEV_COLORS[arFSevOf(x.days)],esc=arFEsc(x.inv),cust=arFEsc(g.customer);
     return '<div class="arF-ci">'+
       '<span class="arF-ci-inv">'+codeCopy(x.inv)+'</span>'+
       '<span class="arF-ci-due">'+arFFmtDate(x.due)+'</span>'+
-      '<span class="arF-ci-status">'+arFStatusBadge(x)+'<span class="arF-ci-bk">'+bk+'</span></span>'+
+      '<span class="arF-ci-bkt"><span class="arF-sevdot" style="background:var('+bkColor+')"></span>'+bk+'</span>'+
+      '<span class="arF-ci-stat">'+arFStatusBadge(x)+'</span>'+
       '<span class="arF-ci-amt">'+money(x.amount)+'</span>'+
       '<span class="arF-ci-act">'+
         '<button class="arF-ci-ibtn" data-action="arF-record-payment" data-inv="'+esc+'" data-cust="'+cust+'" data-tip="Record a payment" data-tip-plain aria-label="Record a payment against invoice '+esc+'">'+ICON("payments")+'</button>'+
