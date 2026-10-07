@@ -1188,7 +1188,14 @@
   .bank-acct-chip .fc-label{display:inline-flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .bank-mi-bal{margin-left:auto;padding-left:10px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--txt-secondary);}
   .bank-tag-over{display:inline-block;margin-right:6px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--red-100);background:var(--red-10);border-radius:4px;padding:1px 5px;vertical-align:middle;}
-  .bank-statcol{flex:0 0 136px;display:flex;align-items:center;min-width:0;}
+  .bank-statcol{display:flex;align-items:center;min-width:0;}
+  /* Bank balances table as a grid so header and body share identical column tracks (alignment is
+     guaranteed, and the Account column can never collapse). Text columns start-aligned, Balance end. */
+  .bank-alltbl .wt-row{display:grid!important;grid-template-columns:minmax(80px,1fr) 92px 124px 120px;align-items:center;column-gap:12px;}
+  .bank-alltbl.nf .wt-row{grid-template-columns:minmax(80px,1fr) 120px;}
+  .bank-alltbl .wt-c2,.bank-alltbl .bank-bal{justify-self:end;text-align:right;}
+  .bank-alltbl .wt-type,.bank-alltbl .bank-statcol{justify-self:start;}
+  .bank-alltbl .bank-pager{display:flex;}
   .bank-dist{padding:2px 0 0;}
   .bank-pie-title{font-size:12px;font-weight:600;color:var(--txt-secondary);padding:2px 16px 6px;}
   .bank-pie-note{display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:var(--txt-subtle);padding:8px 16px 12px;line-height:1.45;}
