@@ -9917,9 +9917,9 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     var vend=apVendors(w).slice(0,6);
     vend.forEach(function(v){
       var tip=v.count+' invoice'+(v.count===1?"":"s")+(v.over>0?(' · '+apMoney(v.over)+' overdue'):' · none overdue');
-      out+='<div class="ap-sum-row ap-static" data-tip="'+String(v.vendor+' · '+tip).replace(/"/g,"&quot;")+'" data-tip-plain tabindex="0">'+
+      out+='<div class="ap-sum-row ap-sum-click" data-action="ap-vendor-drill" data-id="'+w.id+'" data-vendor="'+apEsc(v.vendor)+'" role="button" tabindex="0" data-tip="'+String(v.vendor+' · '+tip+' · open').replace(/"/g,"&quot;")+'" data-tip-plain aria-label="'+apEsc(v.vendor+', '+apMoney(v.total)+', open overdue, due this week and due this month")+'">'+
         '<span class="ap-sum-lbl'+(v.over>0?" over":"")+'">'+v.vendor+'</span>'+
-        '<span class="ap-sum-val">'+apMoney(v.total)+'</span></div>';
+        '<span class="ap-sum-val">'+apMoney(v.total)+ICON("chevron_right")+'</span></div>';
     });
     return out+'</div>';
   }
