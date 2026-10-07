@@ -8964,21 +8964,27 @@ function arFOverduePill(w){
 /* GLANCE (kpi): total owed + overdue badge on the LEFT, a plain context line,
    then a compact aging read (stacked severity bar + oldest-with-balance
    callout). No content toolbar (Glance is flat). Values as text + sr-only. */
+/* Glance aging donut: the outstanding balance split by aging bucket, stacked full-width under the KPI
+   (same component + sizing as the Payroll glance donut, so every glance donut reads the same). Center
+   shows the invoice count; legend shows the top 3 buckets + a "+N more" roll-up. */
+function arFGlanceDonut(w){
+  var rows=arFBuckets(w).filter(function(r){return r.total>0;}),tot=rows.reduce(function(s,a){return s+a.total;},0),n=arFCount(w);
+  if(!tot||!rows.length)return '';
+  var R=52,C=2*Math.PI*R,off=0,arcs="",legend="",shown=rows.slice(0,3);
+  rows.forEach(function(a){var frac=a.total/tot,len=frac*C;
+    arcs+='<circle cx="70" cy="70" r="'+R+'" fill="none" stroke="var('+a.color+')" stroke-width="22" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;});
+  shown.forEach(function(a){var pct=Math.round(a.total/tot*100);
+    legend+='<div class="prf-gd-leg"><span class="prf-gd-dot" style="background:var('+a.color+')"></span><span class="prf-gd-nm">'+a.label+'</span><span class="prf-gd-pct">'+pct+'%</span></div>';});
+  if(rows.length>3)legend+='<div class="prf-gd-leg prf-gd-more">+'+(rows.length-3)+' more</div>';
+  return '<div class="prf-gl-donut"><svg class="donut" viewBox="0 0 140 140" width="56" height="56" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1" style="font-size:20px">'+n+'</text><text x="70" y="88" text-anchor="middle" class="donut-c2">invoices</text></svg><div class="prf-gd-legend">'+legend+'</div></div>';
+}
 function arFGlance(w){
-  var tot=arFTotal(w),n=arFCount(w),worst=arFWorstBucket(w),over=arFOverdue(w);
-  var read="";
-  if(tot>0){
-    var call=(over>0&&worst&&worst.key!=="cur")
-      ?'<span class="arF-glance-cap"><span class="arF-sevdot" style="background:var('+worst.color+')"></span>'+money(worst.total)+' in '+worst.label+'</span>'
-      :'<span class="arF-glance-cap arF-cap-ok">'+ICON("check")+'Every invoice is still current</span>';
-    read='<div class="arF-glance-read">'+arFStackBar(w)+call+'</div>';
-  }
-  return '<div class="kpi-row"><div class="kpi-num">'+
-    '<div class="dep-hd-kpigrp"><span class="metric-value">'+money(tot)+'</span>'+arFOverduePill(w)+'</div>'+
-    ''+
-    read+
-    '<span class="sr-only">'+arFAgeSr(w)+'</span>'+
-  '</div></div>';
+  var tot=arFTotal(w),n=arFCount(w),over=arFOverdue(w),oc=arFOverdueCount(w);
+  if(tot<=0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All settled</span></div></div></div>';
+  var badge=over>0
+    ?'<span class="arF-badge arF-badge-sev4" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due")+'" data-tip-plain>'+ICON("schedule")+'Overdue '+money(over)+'</span>'
+    :'<span class="arF-badge arF-badge-ok">'+ICON("check_circle")+'All current</span>';
+  return '<div class="kpi-row prf-glance arF-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="metric-value">'+money(tot)+'</span></span>'+badge+'</div></div>'+arFGlanceDonut(w)+'<span class="sr-only">'+arFAgeSr(w)+'</span></div>';
 }
 
 function arFEmpty(w){
