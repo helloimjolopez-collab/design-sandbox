@@ -8266,14 +8266,14 @@ function mysPopContent(){
   function bankGlance(w){var sel=bankSelected(w);
     var basisPill='<span class="delta-pill bank-basis" style="color:var(--txt-subtle);background:var(--wn-200)" data-tip="Unreconciled activity since the last reconciliation, not necessarily cleared, spendable cash." data-tip-plain>Unreconciled</span>';
     if(sel){var end=bankEnding(sel),neg=end<0;
-      return '<div class="kpi-row"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num">'+
-        '<div class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</div>'+
+      return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
+        '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Balance</span><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span></span>'+
         '<div class="gl-sub">'+(neg?'<span class="bank-pill warn">'+ICON("error")+'Overdrawn</span>':'')+'</div>'+
         '</div>'+bankSpark(w)+'</div>';}
     var val=bankTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
-    return '<div class="kpi-row"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num">'+
-      '<div class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</div>'+
+    return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
+      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Total balance</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
       '<div class="gl-sub">'+od+'</div>'+
       '</div>'+bankSpark(w)+'</div>';}
   function bankDrillModalHTML(){
