@@ -9033,6 +9033,8 @@ function glanceMiniPie(segs,aria){
   var live=segs.filter(function(s){return s.value>0;});
   var tot=live.reduce(function(s,a){return s+a.value;},0);if(tot<=0||!live.length)return '';
   var cx=70,cy=70,r=66,wedges="";
+  /* thin separators in the widget surface colour so adjacent wedges read as distinct, crisp slices */
+  var sep=(live.length>1)?' stroke="var(--surface-widget)" stroke-width="2.5" stroke-linejoin="round"':'';
   if(live.length===1){
     wedges='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+live[0].color+'"></circle>';
   } else {
@@ -9041,10 +9043,10 @@ function glanceMiniPie(segs,aria){
       var a0=ang,a1=ang+(s.value/tot)*2*Math.PI;ang=a1;
       var x0=(cx+r*Math.cos(a0)).toFixed(2),y0=(cy+r*Math.sin(a0)).toFixed(2),x1=(cx+r*Math.cos(a1)).toFixed(2),y1=(cy+r*Math.sin(a1)).toFixed(2);
       var large=((a1-a0)>Math.PI)?1:0;
-      wedges+='<path d="M'+cx+','+cy+' L'+x0+','+y0+' A'+r+','+r+' 0 '+large+' 1 '+x1+','+y1+' Z" fill="'+s.color+'"></path>';
+      wedges+='<path d="M'+cx+','+cy+' L'+x0+','+y0+' A'+r+','+r+' 0 '+large+' 1 '+x1+','+y1+' Z" fill="'+s.color+'"'+sep+'></path>';
     });
   }
-  return '<div class="gl-pie"><svg viewBox="0 0 140 140" width="50" height="50" role="img" aria-label="'+(aria||"Distribution")+'">'+wedges+'</svg></div>';
+  return '<div class="gl-pie"><svg viewBox="0 0 140 140" width="52" height="52" role="img" aria-label="'+(aria||"Distribution")+'">'+wedges+'</svg></div>';
 }
 /* Glance aging donut: the outstanding balance split by aging bucket, stacked full-width under the KPI
    (same component + sizing as the Payroll glance donut, so every glance donut reads the same). Center
