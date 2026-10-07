@@ -525,8 +525,10 @@
   .btn.primary.is-off{background:var(--wn-300);color:var(--txt-subtle);cursor:default;}
   @media(max-width:520px){.bgt-rm-fields{flex-direction:column;}.bgt-dd-field{width:100%;}}
   /* Two chart colours only: light purple Budget (the plan), dark purple Actual (the result). No red — favourability is read from the hover popover and the headline pill, never from the bar colour itself. */
-  .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;background:var(--am-200);}
-  .bgt-sw-actual{background:var(--am-600);}
+  /* Accessibility: Budget and Actual share the SAME base colour; Budget is distinguished by a
+     subtle diagonal hatch (pattern + colour, not colour alone), Actual is solid. */
+  .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;background-color:var(--am-600);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.5) 0 1px,transparent 1px 3px);}
+  .bgt-sw-actual{background-color:var(--am-600);background-image:none;}
   .bgt-sw-budget-line{width:12px;height:0;border-top:2px dashed var(--am-300);border-radius:0;display:inline-block;}
   .bgt-chart-wrap2{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 8px;}
   .bgt-plotrow2{flex:1;min-height:0;display:flex;gap:8px;padding:0 16px;}
