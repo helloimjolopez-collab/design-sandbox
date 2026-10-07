@@ -5943,19 +5943,13 @@ function loanAgeSr(w){var b=loanBuckets(w);return 'Outstanding by age: '+b.map(f
 /* GLANCE (kpi): total owed + past-due badge on the LEFT, plain context line,
    then a compact aging read. Values in text + sr-only. */
 function loanGlance(w){
-  var tot=loanTotal(w),n=loanCount(w),worst=loanWorstBucket(w),over=loanPastDue(w);
-  var read="";
-  if(tot>0){
-    var call=(over>0&&worst&&worst.key!=="cur")
-      ?'<span class="loan-glance-cap"><span class="loan-sevdot" style="background:var('+worst.color+')"></span>'+loanMoney(worst.total)+' in '+worst.label+'</span>'
-      :'<span class="loan-glance-cap loan-cap-ok">'+ICON("check")+'Every loan is current</span>';
-    read='<div class="loan-glance-read">'+loanStackBar(w)+call+'</div>';
-  }
-  return '<div class="kpi-row"><div class="kpi-num">'+
-    '<div class="loan-kpigrp"><span class="loan-klbl">Total outstanding</span><div class="metric-value">'+loanMoney(tot)+'</div></div>'+
-    read+
-    '<span class="sr-only">'+loanAgeSr(w)+'</span>'+
-  '</div></div>';
+  var tot=loanTotal(w),over=loanPastDue(w),oc=loanPastDueCount(w);
+  if(tot<=0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value loan-allset">'+ICON("check_circle")+'All settled</span></div></div></div>';
+  var badge=over>0
+    ?'<span class="arF-badge arF-badge-sev4" data-tip="'+loanEsc(loanMoney(over)+" across "+oc+" loan"+(oc===1?"":"s")+" is past due")+'" data-tip-plain>'+ICON("schedule")+'Past due '+loanMoney(over)+'</span>'
+    :'<span class="arF-badge arF-badge-ok">'+ICON("check_circle")+'All current</span>';
+  var pieSegs=loanBuckets(w).filter(function(r){return r.total>0;}).map(function(r){return {value:r.total,color:"var("+r.color+")",tip:r.label+' · '+loanMoney(r.total)+' · '+Math.round(r.total/tot*100)+'%'};});
+  return '<div class="kpi-row prf-glance loan-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Total outstanding</span><span class="metric-value">'+loanMoney(tot)+'</span></span>'+badge+'</div></div>'+glanceMiniPie(pieSegs,"Outstanding by age")+'<span class="sr-only">'+loanAgeSr(w)+'</span></div>';
 }
 
 function loanEmpty(w){
