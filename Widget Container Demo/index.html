@@ -8134,7 +8134,12 @@ function mysPopContent(){
   }
   function bankAllView(w,v){return (v==="chart")?bankAllBars(w,false):bankAllTable(w,false);}
   function bankSingleView(w,v){var sel=bankSelected(w);return (v==="chart")?bankBars(w,sel):bankSingleTable(w,sel);}
-  function bankAllFull(w){return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+bankAllTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Balance comparison</div>'+bankAllBars(w,true)+'</div></div>';}
+  function bankAllFull(w){
+    /* When the view is filtered to overdrawn accounts every bar points the same way, so the diverging
+       "Balance comparison" is not a comparison, just a column of red stubs. Show the table on its own
+       there. The comparison stays for the all-accounts view, where positives and negatives diverge. */
+    if(w.bkOver)return '<div class="dep-full one"><div class="dep-col"><div class="dep-col-h">Overdrawn accounts</div>'+bankAllTable(w,true)+'</div></div>';
+    return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balances</div>'+bankAllTable(w,true)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Balance comparison</div>'+bankAllBars(w,true)+'</div></div>';}
   function bankSingleFull(w){var sel=bankSelected(w);return '<div class="dep-full"><div class="dep-col"><div class="dep-col-h">Balance movement since last reconciliation</div>'+bankSingleTable(w,sel)+'</div><div class="dep-col dep-col-dist"><div class="dep-col-h">Activity by type</div>'+bankBars(w,sel)+'</div></div>';}
   /* Glance is interactive: the account chip opens the real picker (filter/search),
      and the overdrawn chip DRILLS, opening the Detail view in a closable overlay
