@@ -456,11 +456,11 @@
   .bgtF-gl-metricrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
   /* Glance viz occupies the sparkline slot (right of the KPI), a compact 2-bar Budget vs Actual mini
      chart , not a full-width block. Hover gives the figures. */
-  .kpi-row .bgtF-gc{flex:0 0 42%;max-width:44%;min-width:104px;align-self:center;height:52px;display:flex;align-items:flex-end;justify-content:center;gap:14px;cursor:default;}
+  .kpi-row .bgtF-gc{flex:0 0 42%;max-width:44%;min-width:104px;align-self:center;height:52px;display:flex;align-items:flex-end;justify-content:center;gap:6px;cursor:default;}
   .bgtF-gc-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;flex:0 0 auto;}
   .bgtF-gc-barwrap{flex:1 1 auto;display:flex;align-items:flex-end;min-height:0;}
   .bgtF-gc-bar{width:20px;border-radius:3px 3px 0 0;display:block;}
-  .bgtF-gc-bud{background-color:var(--am-600,var(--primitive-color-amethyst-600));background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.42) 0 2px,transparent 2px 5px);}
+  .bgtF-gc-bud{background-color:var(--am-200,var(--primitive-color-amethyst-200));background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.14) 0 2px,transparent 2px 5px);}
   .bgtF-gc-act{background-color:var(--am-600,var(--primitive-color-amethyst-600));}
   .bgtF-gc-cap{font-size:10px;line-height:1;color:var(--txt-subtle);white-space:nowrap;}
   .bgtF-kpihead{display:flex;flex-direction:column;align-items:flex-start;gap:9px;min-width:0;}
@@ -530,7 +530,7 @@
   /* Two chart colours only: light purple Budget (the plan), dark purple Actual (the result). No red — favourability is read from the hover popover and the headline pill, never from the bar colour itself. */
   /* Accessibility: Budget and Actual share the SAME base colour; Budget is distinguished by a
      subtle diagonal hatch (pattern + colour, not colour alone), Actual is solid. */
-  .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;background-color:var(--am-600);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.5) 0 1px,transparent 1px 3px);}
+  .bgt-sw{width:11px;height:11px;border-radius:2px;display:inline-block;background-color:var(--am-200);background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);}
   .bgt-sw-actual{background-color:var(--am-600);background-image:none;}
   .bgt-sw-budget-line{width:12px;height:0;border-top:2px dashed var(--am-300);border-radius:0;display:inline-block;}
   .bgt-chart-wrap2{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 0 8px;}
@@ -544,7 +544,7 @@
   .bgt-col2:hover{background:var(--wn-300);}
   .bgt-barpair2{flex:0 0 auto;display:flex;align-items:flex-end;gap:3px;width:100%;justify-content:center;height:100%;}
   .bgt-bar2{width:38%;max-width:18px;border-radius:3px 3px 0 0;min-height:2px;}
-  .bgt-bar-budget2{background-color:var(--am-600);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.42) 0 2px,transparent 2px 5px);}
+  .bgt-bar-budget2{background-color:var(--am-200);background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.14) 0 2px,transparent 2px 5px);}
   .bgt-bar-actual2{background-color:var(--am-600);}
   /* Custom two-line x-axis (period name + its own signed variance) laid out as a second flex row with the same column count/gap as the bars, so alignment is exact by construction. Variance number is a single neutral colour (no red); its sign carries the direction, the popover carries the good/bad reading. */
   .bgt-xaxrow2{display:flex;gap:8px;padding:6px 16px 0;}
@@ -623,7 +623,7 @@
   @keyframes bgtshimmer{from{background-position:200% 0;}to{background-position:-200% 0;}}
   @media(prefers-reduced-motion:reduce){.bgt-spin,.bgt-skel .sk,.bgt-sk-bar,.bgt-skel{animation:none!important;}}
   /* Bar hover shows a formatted popover card, not a cramped one-line tooltip: budget and actual on their own rows with swatches, a divider, then the variance and whether it is favourable or unfavourable. */
-  .bgt-pop{position:fixed;z-index:120;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:10px;box-shadow:var(--elevation-lift);padding:10px 12px;min-width:190px;pointer-events:none;font-size:12px;}
+  .bgt-pop{position:fixed;z-index:4000;background:var(--surface-widget);border:1px solid var(--stroke-widget);border-radius:10px;box-shadow:var(--elevation-lift);padding:10px 12px;min-width:190px;pointer-events:none;font-size:12px;}
   .bgt-pop-h{font-weight:600;font-size:12px;color:var(--txt-primary);margin-bottom:7px;}
   .bgt-pop-r{display:flex;align-items:center;gap:8px;line-height:1.9;color:var(--txt-secondary);}
   .bgt-pop-sw{width:10px;height:10px;border-radius:2px;flex:0 0 auto;}
@@ -11178,7 +11178,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var neg=vr!=null&&vr<0;
     var favCls=(mode==="neutral")?"neutral":(neg?"neg":"");
     var favWord=(mode==="neutral")?(neg?"Under budget":"Over budget"):(neg?"Unfavourable":"Favourable");
-    var rowsHtml='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-200)"></span><span class="bgt-pop-lbl">Budget</span><span class="bgt-pop-v">'+money(budget)+'</span></div>';
+    var rowsHtml='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background-color:var(--am-200);background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px)"></span><span class="bgt-pop-lbl">Budget</span><span class="bgt-pop-v">'+money(budget)+'</span></div>';
     if(actual!=null)rowsHtml+='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600)"></span><span class="bgt-pop-lbl">Actual</span><span class="bgt-pop-v">'+money(actual)+'</span></div>';
     else rowsHtml+='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600);opacity:.35"></span><span class="bgt-pop-lbl">Actual</span><span class="bgt-pop-v" style="color:var(--txt-subtle);font-weight:400">Not posted yet</span></div>';
     var varHtml=(vr!=null)?('<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">Variance</span><span class="bgt-pop-fav '+favCls+'">'+(neg?"−":"+")+money(Math.abs(vr))+' · '+favWord+'</span></div>'):'';
@@ -11202,7 +11202,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     var neg=vr!=null&&vr<0;
     var favCls=(mode==="neutral")?"neutral":(neg?"neg":"");
     var favWord=(mode==="neutral")?(neg?"Under budget":"Over budget"):(neg?"Unfavourable":"Favourable");
-    var rowsHtml='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-200)"></span><span class="bgt-pop-lbl">Budget</span><span class="bgt-pop-v">'+money(budget)+'</span></div>';
+    var rowsHtml='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background-color:var(--am-200);background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px)"></span><span class="bgt-pop-lbl">Budget</span><span class="bgt-pop-v">'+money(budget)+'</span></div>';
     if(actual!=null)rowsHtml+='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600)"></span><span class="bgt-pop-lbl">Actual</span><span class="bgt-pop-v">'+money(actual)+'</span></div>';
     else rowsHtml+='<div class="bgt-pop-r"><span class="bgt-pop-sw" style="background:var(--am-600);opacity:.35"></span><span class="bgt-pop-lbl">Actual</span><span class="bgt-pop-v" style="color:var(--txt-subtle);font-weight:400">Not posted yet</span></div>';
     var varHtml=(vr!=null)?('<div class="bgt-pop-div"></div><div class="bgt-pop-var"><span class="bgt-pop-lbl">Variance</span><span class="bgt-pop-fav '+favCls+'">'+(neg?"−":"+")+money(Math.abs(vr))+' · '+favWord+'</span></div>'):'';
