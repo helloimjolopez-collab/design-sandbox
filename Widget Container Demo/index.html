@@ -6853,7 +6853,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var yl='<span>'+fmtAxis(max)+'</span><span>'+fmtAxis(max/2)+'</span><span>$0</span>';
     /* When a span produces many groups (e.g. All time × Month = 36), the bars would crush together and the labels overlap. So past ~13 groups the plot gets a fixed min width and scrolls horizontally, keeping each budget/actual pair and its label readable. Up to 13 it fills the width as before (no scroll). */
     var n=rows.length,innerW=(n>13)?('min-width:'+(46+n*44)+'px'):'';
-    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+
+    return '<div class="bgt-chart-wrap2"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span></div>'+(ivHTML||"")+'</div>'+
     '<div class="bgt-scrollx"><div class="bgt-inner2" style="'+innerW+'">'+
     '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
     '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div>'+
@@ -6879,7 +6879,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
     var blob="Budget|var(--am-300)|0|"+rows.map(function(r){return r.budget;}).join(",")+(actuals.length?(";Actual|"+aColor+"|1|"+actuals.map(function(r){return r.actual;}).join(",")):"");
     var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas" data-id="'+w.id+'" data-multi="0" data-blob="'+blob.replace(/"/g,"&quot;")+'" data-months="'+months.join(",")+'" data-lo="'+lo+'" data-hi="'+hi+'" data-n="'+n+'">'+svg+'<div class="tr-cross"></div></div><div class="tr-xax">'+xl+'</div></div>';
-    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(ivHTML||"")+'</div>'+plot+'</div>';
+    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span></div>'+(ivHTML||"")+'</div>'+plot+'</div>';
   }
   /* One variance value: signed dollars + a quiet %, coloured green/red by favourability (or neutral grey for a mixed report line). Rendered inside a normal .wt-c2 cell so it sits in the shared table grid. */
   function bgtVarInner(v,neutral,budget){
@@ -6905,7 +6905,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtSlicer(w){return '<div class="bgt-slicer">'+bgtSpanChip(w)+bgtIntervalToggle(w,w.binterval||"month","set-bgt-interval")+'</div>';}
   /* A single-group cut can't be a line. Shown with the slicer still present so the user can widen the span or change interval right there, plus Bar/Table remain available from the header toggle. */
   function bgtNoTrendState(slic){
-    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div>'+(slic||"")+'</div><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';
+    return '<div class="bgt-ytd-wrap"><div class="bgt-legend"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span></div>'+(slic||"")+'</div><div class="bgt-notrend">'+ICON("show_chart")+'<div class="bgt-notrend-t">No trend to show</div><div class="bgt-notrend-s">A line chart needs at least two periods. Widen the time span, change the interval, or switch to Bar or Table.</div></div></div>';
   }
   function bgtView(w,fmt){
     var av=w.acctview||"income";
@@ -7168,8 +7168,8 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   }
   function bgtFSkeleton(){var bars="";[62,80,54,88,70,95,60].forEach(function(hh){bars+='<div class="bgt-sk-col"><span class="sk bgt-sk-bar" style="height:'+hh+'%"></span></div>';});return '<div class="bgt-skel"><div class="bgt-skel-plot">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
   /* Grouped bars from already-aggregated interval rows. Two purples only, no red; signed variance under each bar; formatted popover data rides on the column (data-bgtfpop, namespaced so Jo's own bar-hover listener never grabs ours); full text in an sr-only span. */
-  function bgtFLegendItems(){return '<span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span>';}
-  function bgtFLegendItemsLine(){return '<span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span>';}
+  function bgtFLegendItems(){return '<span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span>';}
+  function bgtFLegendItemsLine(){return '<span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span>';}
   function bgtFBars(w,rows,ivHTML,hideLegend){
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
     var max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual||0);});max=max*1.15;
