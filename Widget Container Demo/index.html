@@ -6429,6 +6429,17 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     if(_toastTimer)clearTimeout(_toastTimer);
     _toastTimer=setTimeout(function(){if(el){el.classList.remove("in");setTimeout(function(){if(host)host.innerHTML="";},240);}},3400);
   }
+  /* Nav/explain dialog: used when an action would hand off to the main app (open a record, record a
+     payment, schedule via AvidPay, export, etc.). Unlike a toast it sits ABOVE any open modal and
+     stays until dismissed, so the person can read end to end what the action does, where it goes and
+     what happens next. body may contain a short list of steps. */
+  function navNote(title,body,icon){
+    var ex=document.getElementById("navnote");if(ex)ex.remove();
+    var el=document.createElement("div");el.className="navnote-back";el.id="navnote";el.setAttribute("data-action","navnote-close");
+    el.innerHTML='<div class="navnote" role="dialog" aria-modal="true" aria-label="'+String(title).replace(/"/g,"&quot;")+'" data-action="stop"><div class="navnote-h"><span class="navnote-ic material-symbols-rounded" aria-hidden="true">'+(icon||"open_in_new")+'</span><span class="navnote-t">'+title+'</span><button class="iconbtn navnote-x" data-action="navnote-close" aria-label="Close">'+ICON("close")+'</button></div><div class="navnote-b">'+body+'</div><div class="navnote-f"><button class="btn primary sm" data-action="navnote-close">Got it</button></div></div>';
+    document.body.appendChild(el);
+    var btn=el.querySelector('.navnote-f .btn');if(btn)btn.focus();
+  }
 
   /* generic content */
   var RANGE_BARS={W:[40,55,48,62,58,70,66],M:[52,60,45,68,72,64,80,76],Q:[52,68,45,80,62,90,70,84],F:[50,64,58,74,66,86,78,90],Y:[60,64,70,66,78,72,85,80,88,84,92,96]};
