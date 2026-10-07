@@ -7201,12 +7201,9 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     else{if(a>=b){lastLbl='Above target';lastVal=money(a-b);}else{lastLbl='To reach target';lastVal=money(b-a);}}
     var pct=bgtFVarPct(v,b)||'0%';
     var tip=('Budget: '+money(b)+'\nActual: '+money(a)+'\nVariance: '+pct+'\n'+lastLbl+': '+lastVal).replace(/"/g,'&quot;');
-    return '<div class="bgtF-gchart" data-tip="'+tip+'" data-tip-plain data-tip-lines tabindex="0" role="img" aria-label="Budget '+money(b)+', actual '+money(a)+' to date. '+lastLbl+' '+lastVal+'.">'+
-      '<div class="bgtF-gc-plot">'+
-        '<div class="bgtF-gc-col"><span class="bgtF-gc-bar bgtF-gc-bud" style="height:'+bH+'%"></span></div>'+
-        '<div class="bgtF-gc-col"><span class="bgtF-gc-bar bgtF-gc-act" style="height:'+aH+'%"></span></div>'+
-      '</div>'+
-      '<div class="bgtF-gc-x"><span class="bgtF-gc-xl">Budget<b>'+money(b)+'</b></span><span class="bgtF-gc-xl">Actual<b>'+money(a)+'</b></span></div>'+
+    return '<div class="kpi-spark bgtF-gc" data-tip="'+tip+'" data-tip-plain data-tip-lines tabindex="0" role="img" aria-label="Budget '+money(b)+', actual '+money(a)+' to date. '+lastLbl+' '+lastVal+'.">'+
+      '<span class="bgtF-gc-col"><span class="bgtF-gc-bar bgtF-gc-bud" style="height:'+bH+'%"></span><span class="bgtF-gc-cap">Budget</span></span>'+
+      '<span class="bgtF-gc-col"><span class="bgtF-gc-bar bgtF-gc-act" style="height:'+aH+'%"></span><span class="bgtF-gc-cap">Actual</span></span>'+
     '</div>';}
   function bgtFPeriodTag(w){return {month:"MTD",period:"PERIOD",quarter:"QTD",year:"YTD",fiscal:"FYTD"}[w.bspan||"year"]||"YTD";}
   /* One Explore panel: its own interval + shape, so the two panels show different cuts of the SAME window (window + scope stay global up in the header). State per side as iA/fA, iB/fB. */
