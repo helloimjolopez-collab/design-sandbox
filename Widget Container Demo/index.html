@@ -7690,7 +7690,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     if(a==="prF-open-history"){setStatus("Opening "+prFDistName(t.getAttribute("data-dist"))+" in Payroll History for this period.");return true;}
     if(a==="prF-modal-export"){setStatus("Exporting the distribution breakdown to Excel.");return true;}
     if(a==="prF-period"){pop=(pop&&pop.type==="prF-period"&&pop.id===id)?null:{type:"prF-period",id:id};render();return true;}
-    if(a==="prF-scope"){pop=(pop&&pop.type==="prF-scope"&&pop.id===id)?null:{type:"prF-scope",id:id};render();return true;}
+    if(a==="prF-scope"){prFScopeQuery="";pop=(pop&&pop.type==="prF-scope"&&pop.id===id)?null:{type:"prF-scope",id:id};render();return true;}
     if(a==="prF-set-scope"){var wps=find(id);if(wps)wps.prScope=t.getAttribute("data-s");pop=null;render();return true;}
     if(a==="prF-sort"){var wsr=find(id),k=t.getAttribute("data-k");if(wsr){var cs=(wsr.prSort||"amt-desc").split("-");wsr.prSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="amt")?"desc":"asc"));}render();return true;}
     if(a==="prF-range-set"){var wprr=find(id),rset=t.getAttribute("data-r");if(wprr){wprr.range=rset;if(rset==="CUSTOM"&&!wprr.begin){var b0=prFRangeBoundsFor("TM",wprr);wprr.begin=b0.begin;wprr.end=b0.end;}}if(rset!=="CUSTOM")pop=null;render();return true;}
