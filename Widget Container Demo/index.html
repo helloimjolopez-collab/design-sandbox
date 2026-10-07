@@ -7200,14 +7200,13 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
      under each bar; hover gives variance + remaining. */
   function bgtFGlanceChart(w,b,a,v,neutral,vt){
     if(!(b>0))return '';
-    var mx=Math.max(b,a)||1,bH=Math.max(4,Math.round(b/mx*100)),aH=Math.max(4,Math.round(a/mx*100));
-    var diff=b-a,lastLbl,lastVal;
-    if(neutral){lastLbl=(diff>=0)?'Under budget':'Over budget';lastVal=money(Math.abs(diff));}
-    else if(vt==="expense"){if(diff>=0){lastLbl='Left in budget';lastVal=money(diff);}else{lastLbl='Over budget';lastVal=money(-diff);}}
-    else{if(a>=b){lastLbl='Above target';lastVal=money(a-b);}else{lastLbl='To reach target';lastVal=money(b-a);}}
-    var pct=bgtFVarPct(v,b)||'0%';
-    var tip=('Budget: '+money(b)+'\nActual: '+money(a)+'\nVariance: '+pct+'\n'+lastLbl+': '+lastVal).replace(/"/g,'&quot;');
-    return '<div class="kpi-spark bgtF-gc" data-tip="'+tip+'" data-tip-plain data-tip-lines tabindex="0" role="img" aria-label="Budget '+money(b)+', actual '+money(a)+' to date. '+lastLbl+' '+lastVal+'.">'+
+    var mx=Math.max(b,a)||1,bH=Math.max(6,Math.round(b/mx*100)),aH=Math.max(6,Math.round(a/mx*100));
+    /* Same rich hover card as the detail/explore bars: carries the shared data-bgtfpop payload
+       (period | budget | actual | variance | mode) so bgtFShowBpop renders the color-coded card. */
+    var mode=neutral?"neutral":"fav";
+    var dpop=['Year to date',b,a,(v!=null?v:''),mode,''].join('|').replace(/"/g,'&quot;');
+    var srtxt='Budget '+money(b)+', actual '+money(a)+' year to date.';
+    return '<div class="kpi-spark bgtF-gc" data-bgtfpop="'+dpop+'" tabindex="0" role="img" aria-label="'+srtxt+'">'+
       '<span class="bgtF-gc-col"><span class="bgtF-gc-barwrap"><span class="bgtF-gc-bar bgtF-gc-bud" style="height:'+bH+'%"></span></span><span class="bgtF-gc-cap">Budget</span></span>'+
       '<span class="bgtF-gc-col"><span class="bgtF-gc-barwrap"><span class="bgtF-gc-bar bgtF-gc-act" style="height:'+aH+'%"></span></span><span class="bgtF-gc-cap">Actual</span></span>'+
     '</div>';}
