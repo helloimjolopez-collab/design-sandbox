@@ -9882,6 +9882,22 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
         '<button class="btn secondary sm" data-action="ap-openbill" data-inv="'+apEsc(m.inv)+'">'+ICON("open_in_new")+'Open in Accounts Payable</button>'+
         (AP_AVIDPAY?('<span class="modal-f-spacer"></span><button class="btn primary sm" data-action="ap-schedule-pay" data-inv="'+apEsc(m.inv)+'" data-tip="Schedule this payment through AvidXchange BillPay" data-tip-plain>'+ICON("event_available")+'Schedule payment</button>'):'')+
       '</div></div></div>';}
+  /* Vendor drill: everything owed to one vendor, read as Overdue / Due this week / Due this month
+     (the three cash-timing bands), then the vendor's invoices earliest-due first. */
+  function apVendorModalHTML(){var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="ap-bill-close"></div>';
+    var vend=modal.vendor,list=apData(w).filter(function(x){return x.vendor===vend;});
+    function band(pred){var f=list.filter(pred);return {total:f.reduce(function(s,x){return s+x.amount;},0),count:f.length};}
+    var over=band(function(x){return apIsOverdue(x.due);}),week=band(function(x){var d=apDiffDays(x.due);return d>=0&&d<=7;}),month=band(function(x){var d=apDiffDays(x.due);return d>=0&&apBandOf(x.due)==="month";});
+    var tot=list.reduce(function(s,x){return s+x.amount;},0);
+    function tile(lbl,icon,tone,b){return '<div class="ap-tile ap-tile-'+tone+' ap-vtile"><span class="ap-tile-top"><span class="ap-tile-ic material-symbols-rounded" aria-hidden="true">'+icon+'</span><span class="ap-tile-lbl">'+lbl+'</span></span><span class="ap-tile-amt">'+apMoney(b.total)+'</span><span class="ap-tile-cnt">'+b.count+' invoice'+(b.count===1?"":"s")+'</span></div>';}
+    var tiles='<div class="ap-tiles ap-vtiles">'+tile("Overdue","error","over",over)+tile("Due this week","event","week",week)+tile("Due this month","calendar_month","neutral",month)+'</div>';
+    var head2='<div class="wt-row wt-head ap-vrow"><span class="lr-main">Invoice</span><span class="ap-vrow-due">Due</span><span class="ap-vrow-st">Status</span><span class="wt-c2">Amount</span></div>';
+    var rows=list.slice().sort(function(a,b){return apParse(a.due)-apParse(b.due);}).map(function(x){return '<div class="wt-row ap-vrow"><span class="lr-main">'+codeCopy(x.inv)+'</span><span class="ap-vrow-due">'+apFmtLong(x.due)+'</span><span class="ap-vrow-st">'+apStatusChip(x.due,false)+'</span><span class="wt-c2">'+apMoney(x.amount)+'</span></div>';}).join("");
+    return '<div class="modal-backdrop" data-action="ap-bill-close"><div class="modal modal-wide loan-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="'+apEsc(vend)+' payables">'+
+      '<div class="modal-h loan-detail-h"><span class="modal-title"><span class="material-symbols-rounded" aria-hidden="true" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">storefront</span>'+apEsc(vend)+'</span><span class="loan-dsub">'+apMoney(tot)+' across '+list.length+' invoice'+(list.length===1?"":"s")+'</span><span class="loan-dh-spacer"></span><button class="iconbtn" data-action="ap-bill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+      '<div class="modal-b loan-detail-b">'+tiles+'<div class="scroll ap-vlist">'+head2+rows+'</div></div>'+
+      '<div class="modal-f"><button class="btn outlined sm" data-action="ap-openbill" data-inv="">'+ICON("open_in_new")+'Open in Accounts Payable</button><span class="modal-f-spacer"></span><button class="btn primary sm" data-action="ap-bill-close">Done</button></div>'+
+    '</div></div>';}
   function apRowHTML(x){
     var statusCell=apStatusChip(x.due,false);
     return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(apRowSearch(x))+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-dueiso="'+apEsc(x.due)+'" data-amt="'+apEsc(apMoney(x.amount))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
