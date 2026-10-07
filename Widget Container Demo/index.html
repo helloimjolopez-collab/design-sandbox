@@ -7636,7 +7636,8 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return '<div class="prf-gl-donut"><svg class="donut" viewBox="0 0 140 140" width="86" height="86" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1" style="font-size:20px">'+rows.length+'</text><text x="70" y="88" text-anchor="middle" class="donut-c2">areas</text></svg><div class="prf-gd-legend">'+legend+'</div></div>';}
   function prFGlance(w){var tot=prFDistTotals(w).reduce(function(s,a){return s+a.net;},0);
     if(!tot)return '<div class="kpi-row"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num"><div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
-    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div>'+prFGlanceDonut(w)+'</div>';}
+    var prPieSegs=prFDistTotals(w).map(function(a){return {value:a.net,color:(PRF_DIST_COLORS[a.id]||"var(--primitive-color-cool-neutral-250)")};});
+    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div>'+glanceMiniPie(prPieSegs,"Payroll split across distributions")+'</div>';}
   function prFHeaderBlock(w,hideToggle,noTotal){
     var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>')+'</div>';
     if(noTotal)return '<div class="dep-hd">'+top+'</div>';
