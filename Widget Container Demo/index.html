@@ -9072,6 +9072,9 @@ function arFFiltered(w){var rc=w.arFRc||"All",src=w.arFSource||"All";return arFD
 function arFSevOf(days){for(var i=0;i<ARF_BUCKETS.length;i++){if(days<=ARF_BUCKETS[i].hi)return ARF_BUCKETS[i].sev;}return 4;}
 function arFBucketOf(days){for(var i=0;i<ARF_BUCKETS.length;i++){if(days<=ARF_BUCKETS[i].hi)return ARF_BUCKETS[i].key;}return "b4";}
 function arFBucketLabel(key){for(var i=0;i<ARF_BUCKETS.length;i++)if(ARF_BUCKETS[i].key===key)return ARF_BUCKETS[i].label;return key;}
+/* Canonical aging-bucket badge: the ONE way an aging bucket is shown everywhere (swatch in the bucket's
+   severity colour + label, amethyst-tinted pill). */
+function arFBktBadge(key){var bk=null;for(var i=0;i<ARF_BUCKETS.length;i++)if(ARF_BUCKETS[i].key===key)bk=ARF_BUCKETS[i];var sevc=bk?ARF_SEV_COLORS[bk.sev]:"--am-300";return '<span class="arF-agebadge" style="background:var(--am-50);border-color:var('+sevc+');color:var(--am-700)"><span class="arF-sw" style="background:var('+sevc+')"></span>'+(bk?bk.label:key)+'</span>';}
 function arFBuckets(w){
   var inv=arFFiltered(w),m={};ARF_BUCKETS.forEach(function(b){m[b.key]={count:0,total:0};});
   inv.forEach(function(x){var k=arFBucketOf(x.days);m[k].count++;m[k].total+=x.amount;});
