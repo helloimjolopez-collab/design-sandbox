@@ -9526,7 +9526,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   /* Glance aging donut equivalent: pending vs approved, stacked full-width under the KPI, same component
      + sizing as every other glance donut. Pending uses the attention (amber) hue, approved the positive
      (green) hue, so status reads from colour as well as the labelled legend. */
-  function ptoGlanceDonut(pend,appr){
+  function glanceMiniPie([{value:pend,color:"var(--semantic-color-foreground-static-attention-on-subtle)"},{value:appr,color:"var(--semantic-color-foreground-static-positive-on-subtle)"}],"Pending versus approved"){
     var tot=pend+appr;if(tot<=0)return '';
     var R=52,C=2*Math.PI*R,segs=[{n:pend,c:"var(--semantic-color-foreground-static-attention-on-subtle)",lbl:"Pending"},{n:appr,c:"var(--semantic-color-foreground-static-positive-on-subtle)",lbl:"Approved"}].filter(function(s){return s.n>0;});
     var off=0,arcs="",legend="";
@@ -9539,8 +9539,8 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No access</span></div></div></div>';
     var b=ptoBaseRows(w),pend=b.filter(function(r){return r.s3!=="approved";}).length,appr=b.filter(function(r){return r.s3==="approved";}).length,tot=b.length;
     if(tot===0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'No requests</span></div></div></div>';
-    if(pend===0)return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+ptoYearChip(w)+'</div><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All caught up</span></div></div>'+ptoGlanceDonut(pend,appr)+'</div>';
-    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+ptoYearChip(w)+'</div><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Pending your approval</span><span class="metric-value">'+pend+'</span></span><span class="arF-badge arF-badge-sev1">'+ICON("schedule")+(pend===1?"1 to review":pend+" to review")+'</span></div></div>'+ptoGlanceDonut(pend,appr)+'</div>';}
+    if(pend===0)return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+ptoYearChip(w)+'</div><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All caught up</span></div></div>'+glanceMiniPie([{value:pend,color:"var(--semantic-color-foreground-static-attention-on-subtle)"},{value:appr,color:"var(--semantic-color-foreground-static-positive-on-subtle)"}],"Pending versus approved")+'</div>';
+    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+ptoYearChip(w)+'</div><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Pending your approval</span><span class="metric-value">'+pend+'</span></span><span class="arF-badge arF-badge-sev1">'+ICON("schedule")+(pend===1?"1 to review":pend+" to review")+'</span></div></div>'+glanceMiniPie([{value:pend,color:"var(--semantic-color-foreground-static-attention-on-subtle)"},{value:appr,color:"var(--semantic-color-foreground-static-positive-on-subtle)"}],"Pending versus approved")+'</div>';}
   /* Employee drill (scrim overlay): the person isolated, with their own KPIs. */
   function ptoDrillModalHTML(){
     var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
