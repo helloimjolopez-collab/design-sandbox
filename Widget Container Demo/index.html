@@ -7724,7 +7724,10 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
        grounded data per the content spec. No employee-level section: the data layer for this
        widget is distribution x pay-type x amount, and the Payroll-History drill-through is
        unconfirmed (dev punch list), so neither is claimed here. */
-    return prFHeaderBlock(w)+((w.view||"table")==="dist"?prFDonut(w):prFTableHTML(w));}
+    var isChart=(w.view||"table")==="dist";
+    /* In chart view the donut centre already shows the total, so the header KPI number is redundant:
+       drop it (noTotal) and give the donut more room. */
+    return prFHeaderBlock(w,false,isChart)+(isChart?prFDonut(w,300):prFTableHTML(w));}
   /* ---- handlers (namespaced prF-; routed via one dispatch line in the
      delegated click listener). View toggle reuses Jo's generic dep-view; the
      custom date fields reuse her global pr-date-input change/focus listeners. ---- */
