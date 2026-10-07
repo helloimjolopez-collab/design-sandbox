@@ -9995,6 +9995,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due"),cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return true;}
     if(a==="ap-sort"){var was=find(id),k=t.getAttribute("data-k");if(was){var cs=(was.apsort||"due-asc").split("-");was.apsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="vendor"||k==="inv"||k==="due")?"asc":"desc"));}render();return true;}
     if(a==="ap-open"){modal={type:"apbill",inv:t.getAttribute("data-inv"),vendor:t.getAttribute("data-vendor"),dueiso:t.getAttribute("data-dueiso"),amt:t.getAttribute("data-amt")};modalMounted=false;pop=null;render();return true;}
+    if(a==="ap-vendor-drill"){modal={type:"apvendor",id:id,vendor:t.getAttribute("data-vendor")};modalMounted=false;pop=null;render();return true;}
     if(a==="ap-bill-close"){modal=null;pop=null;render();return true;}
     if(a==="ap-openbill"){setStatus("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Payable to view line items and attachments.");return true;}
     if(a==="ap-schedule-pay"){toast("Scheduling payment for invoice "+t.getAttribute("data-inv")+" through AvidXchange BillPay","event_available");return true;}
@@ -11012,6 +11013,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(modal.type==="gftdetail"){if(modalMounted){var _gm=mr.querySelector(".modal.gft-detail-modal");if(_gm){var _gs=mr.querySelector(".gft-detail-scroll"),_gt=_gs?_gs.scrollTop:0;_gm.innerHTML=gftDetailModalInner();var _gs2=mr.querySelector(".gft-detail-scroll");if(_gs2)_gs2.scrollTop=_gt;return;}}mr.innerHTML=gftDetailModalHTML();modalMounted=true;return;}
     if(modal.type==="loandetail"){mountOrPatch(loanDetailModalHTML());return;}
     if(modal.type==="apbill"){mountOrPatch(apBillModalHTML());return;}
+    if(modal.type==="apvendor"){mountOrPatch(apVendorModalHTML());return;}
     var body=(modal.scoped?'<div class="wcontent acct-mw">'+((modal.mw&&modal.mw.kind==="payroll-mb")?prFContent(modal.mw):(modal.mw&&modal.mw.kind==="deposits-mb")?depFContent(modal.mw):depContent(modal.mw))+'</div>':modal.b);
     if(modalMounted){var bEl=mr.querySelector(".modal-b");if(bEl){bEl.innerHTML=body;return;}}
     /* Scoped read-only drills (payroll / deposits focus) are dismissed by the header × / Esc /
