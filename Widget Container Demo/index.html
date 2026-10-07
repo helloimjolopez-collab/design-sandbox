@@ -9681,19 +9681,54 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     var bulk=selN?'<div class="pto-bulkbar"><span class="pto-bulk-n">'+selN+' selected</span><button class="btn primary sm" data-action="pto-bulk-approve" data-id="'+w.id+'">'+ICON("check")+'Approve '+selN+'</button><button class="btn naked sm" data-action="pto-selclear" data-id="'+w.id+'">Clear</button></div>':'';
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded" aria-hidden="true">search</span><input class="dep-q" placeholder="Search by person" aria-label="Search by person"></div></div>';
     return search+bulk+'<div class="scroll pto-qtbl">'+head+body+'</div>';}
+  /* Calendar state: a stateful anchor date + granularity (month/week/day), so the user can
+     navigate month to month and switch view. Dept/pay-group chips still filter; the queue's
+     time-range is not applied here (the calendar provides its own navigation). */
+  var PTO_MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var PTO_MSH=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var PTO_DOWF=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  function ptoCalAnchor(w){return w.ptoCalAnchor||PTO_TODAY_ISO;}
+  function ptoCalGran(w){return w.ptoCalGran||"month";}
+  function ptoISO(y,m,d){return y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
+  function ptoParse(iso){var p=iso.split("-");return {y:+p[0],m:+p[1]-1,d:+p[2]};}
+  function ptoShift(iso,kind,n){var a=ptoParse(iso),dt=new Date(a.y,a.m,a.d);if(kind==="month")dt.setMonth(dt.getMonth()+n);else if(kind==="week")dt.setDate(dt.getDate()+7*n);else dt.setDate(dt.getDate()+n);return ptoISO(dt.getFullYear(),dt.getMonth(),dt.getDate());}
+  function ptoCalRows(w){var dept=ptoDeptCur(w),pg=ptoPGCur(w);return ptoAllRows(w).filter(function(r){if(dept!=="all"&&r.deptId!==dept)return false;if(pg!=="all"&&r.pg!==pg)return false;return true;});}
+  function ptoCalIndex(w){var byDate={},ppl={};ptoCalRows(w).forEach(function(r){var k=r.date;byDate[k]=byDate[k]||{ap:0,pe:0,out:0};if(r.s3==="approved")byDate[k].ap++;else if(r.s3==="outstanding")byDate[k].out++;else byDate[k].pe++;(ppl[k]=ppl[k]||[]).push({n:r.emp,dept:r.dept,s:r.s3,t:ptoTypeLabel(w,r.type)});});return {byDate:byDate,ppl:ppl};}
+  function ptoCalChips(c){var s='';if(c.ap)s+='<span class="pto-cal-chip ap">'+c.ap+'</span>';if(c.pe)s+='<span class="pto-cal-chip pe">'+c.pe+'</span>';if(c.out)s+='<span class="pto-cal-chip out">'+ICON("error")+c.out+'</span>';return s;}
+  function ptoCalDayPayload(iso,ppl){return encodeURIComponent(JSON.stringify({date:ptoFmtDate(iso),ppl:(ppl[iso]||[])}));}
+  function ptoCalPpl(ppl,iso){var list=ppl[iso]||[],order={out:0,pe:1,ap:2};return list.slice().sort(function(a,b){return (order[a.s]-order[b.s])||a.n.localeCompare(b.n);});}
   function ptoCalendar(w){
-    var rows=ptoBaseRows(w),year=2026,mon=6,todayD=23;
-    var startDow=new Date(year,mon,1).getDay(),days=new Date(year,mon+1,0).getDate(),byDay={},ppl={};
-    rows.forEach(function(r){var p=r.date.split("-");if(+p[0]===year&&(+p[1]-1)===mon){var d=+p[2];byDay[d]=byDay[d]||{ap:0,pe:0,out:0};if(r.s3==="approved")byDay[d].ap++;else if(r.s3==="outstanding")byDay[d].out++;else byDay[d].pe++;(ppl[d]=ppl[d]||[]).push({n:r.emp,dept:r.dept,s:r.s3,t:ptoTypeLabel(w,r.type)});}});
-    var dow=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(x){return '<div class="pto-cal-dow">'+x+'</div>';}).join("");
-    var cells="";for(var i=0;i<startDow;i++)cells+='<div class="pto-cal-cell pto-cal-empty"></div>';
-    for(var dd=1;dd<=days;dd++){var c=byDay[dd]||{ap:0,pe:0,out:0},isT=(dd===todayD),has=(c.ap||c.pe||c.out);
-      var chips='';if(c.ap)chips+='<span class="pto-cal-chip ap">'+c.ap+'</span>';if(c.pe)chips+='<span class="pto-cal-chip pe">'+c.pe+'</span>';if(c.out)chips+='<span class="pto-cal-chip out">'+ICON("error")+c.out+'</span>';
-      var iso=year+'-'+String(mon+1).padStart(2,"0")+'-'+String(dd).padStart(2,"0");
-      var payload=has?encodeURIComponent(JSON.stringify({date:ptoFmtDate(iso),ppl:(ppl[dd]||[])})):'';
-      cells+='<div class="pto-cal-cell'+(isT?" today":"")+(has?" has":"")+'"'+(has?' data-action="pto-day" data-id="'+w.id+'" data-d="'+iso+'" data-ptocal="'+payload+'" role="button" tabindex="0" aria-label="'+ptoFmtDate(iso)+', '+c.ap+' approved, '+c.pe+' pending, '+c.out+' outstanding. Hover to see who."':'')+'><span class="pto-cal-d">'+dd+'</span><span class="pto-cal-chips">'+chips+'</span></div>';}
+    var anchor=ptoCalAnchor(w),gran=ptoCalGran(w),a=ptoParse(anchor),idx=ptoCalIndex(w);
     var legend='<div class="pto-cal-legend"><span class="pto-cal-lg ap">Approved</span><span class="pto-cal-lg pe">Pending</span><span class="pto-cal-lg out">Outstanding</span></div>';
-    return '<div class="pto-cal-wrap"><div class="pto-cal-hd"><span class="pto-cal-mon">July 2026</span>'+legend+'</div><div class="pto-cal-grid pto-cal-dowrow">'+dow+'</div><div class="pto-cal-grid pto-cal-days">'+cells+'</div></div>';}
+    /* header label */
+    var label;
+    if(gran==="month"){label=PTO_MONTHS[a.m]+" "+a.y;}
+    else if(gran==="week"){var ad=new Date(a.y,a.m,a.d),sun=new Date(ad);sun.setDate(ad.getDate()-ad.getDay());var sat=new Date(sun);sat.setDate(sun.getDate()+6);label=(sun.getMonth()===sat.getMonth())?(sun.getDate()+" to "+sat.getDate()+" "+PTO_MSH[sun.getMonth()]+" "+sun.getFullYear()):(sun.getDate()+" "+PTO_MSH[sun.getMonth()]+" to "+sat.getDate()+" "+PTO_MSH[sat.getMonth()]+" "+sat.getFullYear());}
+    else {label=PTO_DOWF[new Date(a.y,a.m,a.d).getDay()]+", "+ptoFmtDate(anchor);}
+    var granToggle='<div class="vtoggle pto-cal-gran" role="group" aria-label="Calendar view">'+[["month","Month"],["week","Week"],["day","Day"]].map(function(o){var on=gran===o[0];return '<button class="vt'+(on?" on":"")+'" data-action="pto-cal-gran" data-id="'+w.id+'" data-g="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+'</button>';}).join("")+'</div>';
+    var nav='<div class="pto-cal-nav"><button class="pto-cal-navbtn" data-action="pto-cal-nav" data-id="'+w.id+'" data-dir="-1" aria-label="Previous '+gran+'">'+ICON("chevron_left")+'</button><span class="pto-cal-mon">'+label+'</span><button class="pto-cal-navbtn" data-action="pto-cal-nav" data-id="'+w.id+'" data-dir="1" aria-label="Next '+gran+'">'+ICON("chevron_right")+'</button><button class="pto-cal-today" data-action="pto-cal-today" data-id="'+w.id+'">Today</button></div>';
+    var head='<div class="pto-cal-hd">'+nav+'<div class="pto-cal-hd-r">'+granToggle+legend+'</div></div>';
+    var body;
+    if(gran==="month"){
+      var year=a.y,mon=a.m,startDow=new Date(year,mon,1).getDay(),days=new Date(year,mon+1,0).getDate();
+      var dow=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(x){return '<div class="pto-cal-dow">'+x+'</div>';}).join("");
+      var cells="";for(var i=0;i<startDow;i++)cells+='<div class="pto-cal-cell pto-cal-empty"></div>';
+      for(var dd=1;dd<=days;dd++){var iso=ptoISO(year,mon,dd),c=idx.byDate[iso]||{ap:0,pe:0,out:0},isT=(iso===PTO_TODAY_ISO),has=(c.ap||c.pe||c.out);
+        cells+='<div class="pto-cal-cell'+(isT?" today":"")+(has?" has":"")+'"'+(has?' data-action="pto-day" data-id="'+w.id+'" data-d="'+iso+'" data-ptocal="'+ptoCalDayPayload(iso,idx.ppl)+'" role="button" tabindex="0" aria-label="'+ptoFmtDate(iso)+', '+c.ap+' approved, '+c.pe+' pending, '+c.out+' outstanding. Hover to see who."':'')+'><span class="pto-cal-d">'+dd+'</span><span class="pto-cal-chips">'+ptoCalChips(c)+'</span></div>';}
+      body='<div class="pto-cal-grid pto-cal-dowrow">'+dow+'</div><div class="pto-cal-grid pto-cal-days">'+cells+'</div>';
+    } else if(gran==="week"){
+      var ad2=new Date(a.y,a.m,a.d),sun2=new Date(ad2);sun2.setDate(ad2.getDate()-ad2.getDay());
+      var cols="";
+      for(var wi=0;wi<7;wi++){var dt=new Date(sun2);dt.setDate(sun2.getDate()+wi);var iso2=ptoISO(dt.getFullYear(),dt.getMonth(),dt.getDate()),c2=idx.byDate[iso2]||{ap:0,pe:0,out:0},isT2=(iso2===PTO_TODAY_ISO),has2=(c2.ap||c2.pe||c2.out);
+        var items=ptoCalPpl(idx.ppl,iso2).map(function(p){return '<span class="pto-cal-wkitem"><span class="pto-cal-wkdot '+p.s+'"></span><span class="pto-cal-wknm">'+p.n+'</span></span>';}).join("")||'<span class="pto-cal-wknone">'+ICON("remove")+'</span>';
+        cols+='<div class="pto-cal-wkcol'+(isT2?" today":"")+(has2?" has":"")+'"'+(has2?' data-action="pto-day" data-id="'+w.id+'" data-d="'+iso2+'" role="button" tabindex="0" aria-label="'+ptoFmtDate(iso2)+', '+c2.ap+' approved, '+c2.pe+' pending, '+c2.out+' outstanding. Open the day."':'')+'><div class="pto-cal-wkhd">'+["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][wi]+'<span class="pto-cal-wkdate">'+dt.getDate()+(dt.getDate()===1?(" "+PTO_MSH[dt.getMonth()]):"")+'</span></div><div class="pto-cal-wkitems">'+items+'</div></div>';}
+      body='<div class="pto-cal-week">'+cols+'</div>';
+    } else {
+      var list=ptoCalPpl(idx.ppl,anchor);
+      if(!list.length){body='<div class="pto-cal-dayempty"><span class="material-symbols-rounded" aria-hidden="true">event_available</span><span>No time off scheduled</span></div>';}
+      else {body='<div class="pto-cal-day-list">'+list.map(function(p){var sb=p.s==="approved"?'<span class="pto-sb pto-sb-ok">'+ICON("check_circle")+'Approved</span>':(p.s==="outstanding"?'<span class="pto-sb pto-sb-out">'+ICON("error")+'Outstanding</span>':'<span class="pto-sb pto-sb-pend">'+ICON("schedule")+'Pending</span>');return '<div class="pto-cal-day-row"><span class="pto-cal-day-nm">'+p.n+'</span><span class="pto-dept-badge">'+ICON("groups")+p.dept+'</span><span class="pto-cal-day-type">'+p.t+'</span><span class="pto-cal-day-st">'+sb+'</span></div>';}).join("")+'</div>';}
+    }
+    return '<div class="pto-cal-wrap pto-cal-'+gran+'">'+head+body+'</div>';}
   function ptoHead2(w){
     return '<div class="dep-hd pto-hd"><div class="dep-hd-top"><div class="pto-filters">'+ptoDeptChip(w)+ptoPGChip(w)+'</div><div class="dep-hd-toggle">'+ptoView2Toggle(w)+'</div></div></div>'+
       '<div class="pto-cards-row">'+ptoKpiCards(w)+'</div>';}
