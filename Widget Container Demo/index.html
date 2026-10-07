@@ -5289,7 +5289,7 @@ function remFDetailModalInner(){
     var irows=inst.map(function(p,idx){var remn=Math.max(0,p.amount-p.paid);return '<div class="rem-inst-row"><span class="rem-inst-due"><span class="rem-inst-i">'+(idx+1)+'</span>'+remFFmtDate(p.due)+'</span><span></span><span></span><span class="rem-inst-n">'+money(p.amount)+'</span><span class="rem-inst-n">'+money(p.paid)+'</span><span class="rem-inst-n">'+(remn>0?money(remn):"&mdash;")+'</span><span class="rem-inst-st">'+remFInstChip(p.status)+'</span></div>';}).join("");
     return row+'<div class="rem-inst-panel">'+ihead+irows+'</div>';
   }).join("");
-  var more=remaining>0?'<div class="depf-more-row"><button class="depf-more" data-action="remF-ch-more" aria-label="Load 20 more pledges, '+remaining+' remaining">Load 20 more<span class="depf-more-n">'+remaining+'</span></button></div>':'';
+  var more=remaining>0?'<div class="depf-more-row"><span class="depf-count">Showing 1-'+shown+' of '+all.length+' pledges</span><button class="depf-more" data-action="remF-ch-more" aria-label="Load 75 more pledges, '+remaining+' remaining">Load more</button></div>':'';
   var foot='<div class="dep-total rem-ch-total"><span>'+all.length+' pledge'+(all.length===1?"":"s")+(behindN?' · '+behindN+' behind pace':'')+'</span><span>'+money(totPaid)+' paid</span></div>';
   return '<div class="modal-h rem-detail-h"><span class="modal-title"><span class="material-symbols-rounded rem-detail-ic">receipt_long</span>Pledges and instalments</span><span class="rem-dsub">'+remFEsc(r.name)+'</span><span class="rem-dh-spacer"></span><button class="iconbtn" data-action="remF-detail-close" aria-label="Close">'+ICON("close")+'</button></div>'+
     '<div class="modal-b rem-detail-b">'+summary+'<div class="rem-ch-tbl">'+head+'<div class="rem-ch-scroll">'+body+more+'</div></div>'+foot+'</div>'+
@@ -5320,7 +5320,7 @@ function remFHandleClick(a,id,t){
   if(a==="remF-view"){var wv=find(id);if(wv)wv.view=t.getAttribute("data-v");render();return true;}
   if(a==="remF-open"){var wop=find(id);if(!wop)return true;modal={type:"remFdetail",id:id,seq:t.getAttribute("data-seq")};modalMounted=false;pop=null;render();return true;}
   if(a==="remF-dsort"){if(modal&&modal.type==="remFdetail"){var rk=t.getAttribute("data-k"),rc=modal.dsort||{key:"status",dir:"asc"};if(rc.key===rk)rc={key:rk,dir:(rc.dir==="asc"?"desc":"asc")};else rc={key:rk,dir:((rk==="name"||rk==="begin"||rk==="end"||rk==="status")?"asc":"desc")};modal.dsort=rc;renderModal();}return true;}
-  if(a==="remF-ch-more"){if(modal&&modal.type==="remFdetail"){modal.chShown=(modal.chShown||20)+20;renderModal();}return true;}
+  if(a==="remF-ch-more"){if(modal&&modal.type==="remFdetail"){modal.chShown=(modal.chShown||50)+75;renderModal();}return true;}
   if(a==="remF-ch-toggle"){if(modal&&modal.type==="remFdetail"){var nm=t.getAttribute("data-ch");modal.openCh=modal.openCh||{};if(modal.openCh[nm])delete modal.openCh[nm];else modal.openCh[nm]=true;renderModal();}return true;}
   if(a==="remF-detail-close"){modal=null;modalMounted=false;pop=null;render();return true;}
   if(a==="remF-export"){pop=null;setStatus("Exporting the member-church roster to Excel.");render();return true;}
