@@ -9941,10 +9941,13 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
         '<span class="ap-tile-amt">'+apMoney(amt)+'</span>'+
         '<span class="ap-tile-cnt">'+cnt+' invoice'+(cnt===1?"":"s")+'</span>'+
       '</button>';}
-    /* Three fixed filters, each with its own icon + tone (icon + label carry the meaning, colour reinforces it). */
+    /* Filters most-urgent first, each with its own icon + tone: Overdue (negative/red), Due this week
+       (attention/orange), Due this month (neutral). Colour reinforces the label, it does not carry it alone. */
+    var wkT=apDueWithin(w,0,7),wkC=apData(w).filter(function(x){var d=apDiffDays(x.due);return d>=0&&d<=7;}).length;
     var cards=tile("total","All dates","receipt_long","neutral",grand,n)+
-      tile("month","Due this month","calendar_month","month",bd.month.total,bd.month.count)+
-      tile("overdue","Overdue","error","over",bd.overdue.total,bd.overdue.count);
+      tile("overdue","Overdue","error","over",bd.overdue.total,bd.overdue.count)+
+      tile("week","Due this week","event","week",wkT,wkC)+
+      tile("month","Due this month","calendar_month","neutral",bd.month.total,bd.month.count);
     return '<div class="ap-tiles" role="group" aria-label="Filter by due date">'+cards+'</div>';
   }
   function apContent(w){
