@@ -7812,7 +7812,20 @@ function mysRowHTML(w,q){
   var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+q.count+srClick+'"':' aria-disabled="true"';
   return '<div class="wt-row mys-row'+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'>'+nm+aff+count+'</div>';
 }
+/* Glance: the hero is HOW MANY tracked items need action; the top few are listed compactly beneath so
+   the person sees WHICH ones at a glance. Canonical glance layout (eyebrow -> number -> status badge),
+   matching the other glances. Full grouped list lives at larger sizes. */
+function mysGlance(w){
+  var sel=(w.selected||[]).map(mysFind).filter(Boolean);
+  if(!sel.length)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:18px;color:var(--txt-subtle)">Nothing tracked</span></div></div></div>';
+  var action=mysActionItems(sel),n=action.length;
+  if(n===0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All caught up</span></div></div></div>';
+  var top=action.slice(0,3),list=top.map(function(q){return '<div class="mys-gl-item"><span class="mys-gl-dot"></span><span class="mys-gl-nm">'+q.name+'</span><span class="mys-gl-ct">'+q.count+'</span></div>';}).join("");
+  if(action.length>3)list+='<div class="mys-gl-item mys-gl-more">+'+(action.length-3)+' more</div>';
+  return '<div class="kpi-row prf-glance mys-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Needs action</span><span class="metric-value">'+n+'</span></span><span class="arF-badge arF-badge-sev1">'+ICON("priority_high")+(n===1?"1 item":n+" items")+'</span></div></div><div class="mys-gl-list">'+list+'</div></div>';
+}
 function mysContent(w){
+  if(w.size==="kpi")return mysGlance(w);
   var sel=(w.selected||[]).map(mysFind).filter(Boolean);
   if(!sel.length)return '<div class="state mys-empty" data-kind="empty">'+ICON("checklist")+'<div class="state-title">Nothing to show yet</div><div class="state-sub">Pick the things you want to keep an eye on. Their live counts appear here.</div><button class="btn outlined" data-action="mys-config" data-id="'+w.id+'">'+ICON("checklist")+'Configure</button></div>';
   var action=mysActionItems(sel),info=mysInfoItems(sel),clear=mysClearList(sel);
