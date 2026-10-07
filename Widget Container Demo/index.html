@@ -485,6 +485,9 @@
   .bgtF-usedtxt{font-size:12px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;}
   .bgt-legend-under{justify-content:flex-start;padding:8px 16px 2px;}
   .bgt-col-h{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);padding:8px 12px 4px;}
+  .bgt-col-legend{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;text-transform:none;}
+  .bgt-col-h-t{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-subtle);}
+  .bgt-col-legend .bgt-lg{font-size:12px;color:var(--txt-secondary);}
   .bgt-gl2-base{opacity:.9;border-top-style:solid;}
   .dep-total .bgt-vartot{text-align:right;}
   .bgt-notrend{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:34px 24px;color:var(--txt-subtle);}
@@ -7229,7 +7232,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var mh=bgtFHeaderBlock(w);
     if(w.size!=="xwide")return mh+bgtFView(w,w.bshape||"bar");
     if((w.bdetail||"charts")==="table")return mh+bgtFView(w,"table");
-    return mh+'<div class="bgt-explore"><div class="bgt-explore-col"><div class="bgt-col-h">Budget vs actual</div>'+bgtFView(w,"bar")+'</div><div class="bgt-explore-col"><div class="bgt-col-h">Trend</div>'+bgtFView(w,"line")+'</div></div>';
+    return mh+'<div class="bgt-explore"><div class="bgt-explore-col"><div class="bgt-col-h bgt-col-legend"><div class="bgt-lg-items">'+bgtFLegendItems()+'</div></div>'+bgtFView(w,"bar",true)+'</div><div class="bgt-explore-col"><div class="bgt-col-h bgt-col-legend"><span class="bgt-col-h-t">Trend</span><div class="bgt-lg-items">'+bgtFLegendItemsLine()+'</div></div>'+bgtFView(w,"line",true)+'</div></div>';
   }
   /* Data-fetch loading only (scope / report / report-line / window). Interval / shape / sort are client-side re-renders of data already in hand, so they never trigger a load. */
   function bgtFLoad(w){w.bloading=true;clearTimeout(timers["bgtF-"+w.id]);timers["bgtF-"+w.id]=setTimeout(function(){w.bloading=false;render();},850);}
