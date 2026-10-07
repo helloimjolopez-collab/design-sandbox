@@ -11081,7 +11081,11 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="set-bgtF-pinterval"){var wfp=find(id),sg2=t.getAttribute("data-panel");if(wfp){var ivk4=sg2==="a"?"iA":"iB",fmk4=sg2==="a"?"fA":"fB";wfp[ivk4]=t.getAttribute("data-v");var wvv4=Object.assign({},wfp,{binterval:wfp[ivk4]});if(wfp[fmk4]==="line"&&bgtFViewRows(wvv4).length<2)wfp[fmk4]="bar";}render();return;}
     if(a==="set-bgtF-pshape"){var wfps=find(id),sf2=t.getAttribute("data-panel");if(wfps)wfps[sf2==="a"?"fA":"fB"]=t.getAttribute("data-v");render();return;}
     if(a==="winfo"){pop=(pop&&pop.type==="winfo"&&pop.id===id)?null:{type:"winfo",id:id};render();return;}
-    if(a==="glance-drill"){var wgd=find(id);if(wgd){var tgt=(wgd.tiers&&wgd.tiers.indexOf("wide")>-1)?"wide":"kpi";modal={type:"glancedrill",id:wgd.id,mw:Object.assign({},wgd,{id:"__glancedrill",size:tgt,__forceSize:true}),t:wgd.title};}modalMounted=false;pop=null;render();return;}
+    if(a==="glance-drill"){var wgd=find(id);if(wgd){
+      /* Widgets with a purpose-built drill route "View details" straight to it, so item taps inside
+         navigate within one consistent modal (with back nav) instead of jumping modal types. */
+      if(wgd.kind==="bank"){wgd.bkOver=false;modal={type:"bankdrill",id:wgd.id};modalMounted=false;pop=null;render();return;}
+      var tgt=(wgd.tiers&&wgd.tiers.indexOf("wide")>-1)?"wide":"kpi";modal={type:"glancedrill",id:wgd.id,mw:Object.assign({},wgd,{id:"__glancedrill",size:tgt,__forceSize:true}),t:wgd.title};}modalMounted=false;pop=null;render();return;}
     if(a==="pur-gl-tile"){var wgt=find(id);if(wgt){var _t=t.getAttribute("data-t");modal={type:"glancedrill",id:wgt.id,mw:Object.assign({},wgt,{id:"__glancedrill",size:"wide",ptile:_t,__forceSize:true}),t:wgt.title};}modalMounted=false;pop=null;render();return;}
     if(a==="range-set"){var wr=find(id);if(wr)wr.range=t.getAttribute("data-r");pop=null;render();return;}
     if(a==="prperiod"){pop=(pop&&pop.type==="prperiod"&&pop.id===id)?null:{type:"prperiod",id:id};render();return;}
