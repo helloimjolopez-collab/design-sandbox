@@ -7066,7 +7066,9 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   }
   function bgtFSkeleton(){var bars="";[62,80,54,88,70,95,60].forEach(function(hh){bars+='<div class="bgt-sk-col"><span class="sk bgt-sk-bar" style="height:'+hh+'%"></span></div>';});return '<div class="bgt-skel"><div class="bgt-skel-plot">'+bars+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
   /* Grouped bars from already-aggregated interval rows. Two purples only, no red; signed variance under each bar; formatted popover data rides on the column (data-bgtfpop, namespaced so Jo's own bar-hover listener never grabs ours); full text in an sr-only span. */
-  function bgtFBars(w,rows,ivHTML){
+  function bgtFLegendItems(){return '<span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span>';}
+  function bgtFLegendItemsLine(){return '<span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span>';}
+  function bgtFBars(w,rows,ivHTML,hideLegend){
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
     var max=1;rows.forEach(function(r){max=Math.max(max,r.budget,r.actual||0);});max=max*1.15;
     var cols="",xl="";
