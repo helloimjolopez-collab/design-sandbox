@@ -9116,8 +9116,9 @@ function arFGlanceDonut(w){
 function arFGlance(w){
   var tot=arFTotal(w),n=arFCount(w),over=arFOverdue(w),oc=arFOverdueCount(w);
   if(tot<=0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All settled</span></div></div></div>';
+  var overC=over>=1000?('$'+Math.round(over/1000)+'k'):('$'+Math.round(over));
   var badge=over>0
-    ?'<span class="arF-badge arF-badge-sev4" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due")+'" data-tip-plain>'+ICON("schedule")+'Overdue '+money(over)+'</span>'
+    ?'<span class="arF-badge arF-badge-sev4" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due")+'" data-tip-plain>'+ICON("schedule")+'Overdue '+overC+'</span>'
     :'<span class="arF-badge arF-badge-ok">'+ICON("check_circle")+'All current</span>';
   var pieSegs=arFBuckets(w).filter(function(r){return r.total>0;}).map(function(r){return {value:r.total,color:"var("+r.color+")",tip:r.label+' · '+money(r.total)+' · '+Math.round(r.total/tot*100)+'%'};});
   return '<div class="kpi-row prf-glance arF-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="metric-value">'+money(tot)+'</span></span>'+badge+'</div></div>'+glanceMiniPie(pieSegs,"Outstanding by aging bucket")+'<span class="sr-only">'+arFAgeSr(w)+'</span></div>';
