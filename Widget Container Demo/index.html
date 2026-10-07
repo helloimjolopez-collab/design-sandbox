@@ -7088,7 +7088,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     '<div class="bgt-plotrow2"><div class="bgt-yax2">'+yl+'</div><div class="bgt-canvas2"><div class="bgt-gl2" style="bottom:100%"></div><div class="bgt-gl2" style="bottom:50%"></div><div class="bgt-gl2 bgt-gl2-base" style="bottom:0"></div><div class="bgt-cols2">'+cols+'</div></div></div>'+
     '<div class="bgt-xaxrow2"><div class="bgt-yax2sp"></div><div class="bgt-xcols2">'+xl+'</div></div>'+
     '</div></div>'+
-    '<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div></div>'+
+    (hideLegend?'':'<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items">'+bgtFLegendItems()+'</div></div>')+
     '</div>';
   }
   /* Owner delta: dynamic x-axis label thinning (density from estimated plot width vs label width), so a 12-month span labels every month where it fits and every other month where it does not, with no colliding text at any window/interval/scope. */
@@ -7102,7 +7102,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return tk;
   }
   /* Line (trend): budget dashed light purple, actual solid dark purple, no red. Values also land in the DOM as an sr-only summary. Owner delta: nearest-point hover columns (bgtF-lcol) ride over the plot carrying the same data-bgtfpop payload as the bars, so the hover card shows Budget/Actual/Variance with a vertical guide on the hovered point. */
-  function bgtFLine(w,rows,ivHTML){
+  function bgtFLine(w,rows,ivHTML,hideLegend){
     var n=rows.length,actuals=rows.filter(function(r){return r.actual!=null;});
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
     var lo=0,hi=-Infinity;rows.forEach(function(r){if(r.budget>hi)hi=r.budget;});actuals.forEach(function(r){if(r.actual>hi)hi=r.actual;});
@@ -7130,7 +7130,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var xl=tk.map(function(i){return '<span style="left:'+px(i)+'%;transform:translateX('+(i===0?"0":(i===n-1?"-100%":"-50%"))+')">'+months[i]+'</span>';}).join("");
     var sr=rows.map(function(r){return r.period+': budget '+money(r.budget)+(r.actual!=null?(', actual '+money(r.actual)):', actual not posted yet');}).join('; ');
     var plot='<div class="tr-plot"><div class="tr-yax">'+yl+'</div><div class="tr-canvas">'+svg+'<div class="bgtF-lcols">'+hovers+'</div></div><div class="tr-xax">'+xl+'</div><span class="sr-only">Budget and actual trend. '+sr+'</span></div>';
-    return '<div class="bgt-ytd-wrap">'+plot+'<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items"><span class="bgt-lg"><span class="bgt-sw-budget-line"></span>Budget</span><span class="bgt-lg"><span class="bgt-sw bgt-sw-actual"></span>Actual</span></div></div></div>';
+    return '<div class="bgt-ytd-wrap">'+plot+(hideLegend?'':'<div class="bgt-legend bgt-legend-under"><div class="bgt-lg-items">'+bgtFLegendItemsLine()+'</div></div>')+'</div>';
   }
   function bgtFVarInner(v,neutral,budget){
     if(v==null)return '<span class="bgt-vv neu">n/a</span>';
