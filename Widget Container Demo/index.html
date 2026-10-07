@@ -9800,11 +9800,12 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
 
   /* current selection: "total" | band id | ISO date. Defaults to Total. */
   function apIsBand(v){return v==="overdue"||v==="month"||v==="later";}
-  function apSel(w){var v=w&&w.apDue;if(v==null||v==="total")return "total";if(apIsBand(v))return v;var dates=apDueDates(w);return dates.indexOf(v)>-1?v:"total";}
+  function apSel(w){var v=w&&w.apDue;if(v==null||v==="total")return "total";if(v==="week")return "week";if(apIsBand(v))return v;var dates=apDueDates(w);return dates.indexOf(v)>-1?v:"total";}
   function apSelLabel(w){var s=apSel(w);if(s==="total")return "All due dates";if(apIsBand(s)){for(var i=0;i<AP_BANDS.length;i++)if(AP_BANDS[i].id===s)return AP_BANDS[i].label;}return "Due "+apFmtLong(s);}
 
   function apRows(w){var sel=apSel(w),list=apData(w).slice();
-    if(apIsBand(sel))list=list.filter(function(x){return apBandOf(x.due)===sel;});
+    if(sel==="week")list=list.filter(function(x){var d=apDiffDays(x.due);return d>=0&&d<=7;});
+    else if(apIsBand(sel))list=list.filter(function(x){return apBandOf(x.due)===sel;});
     else if(sel!=="total")list=list.filter(function(x){return x.due===sel;});
     var sk=(w.apsort||"due-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
     list.sort(function(a,b){
