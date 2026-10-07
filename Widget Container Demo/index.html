@@ -9579,14 +9579,15 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     return search+bulk+'<div class="scroll pto-qtbl">'+head+body+'</div>';}
   function ptoCalendar(w){
     var rows=ptoBaseRows(w),year=2026,mon=6,todayD=23;
-    var startDow=new Date(year,mon,1).getDay(),days=new Date(year,mon+1,0).getDate(),byDay={};
-    rows.forEach(function(r){var p=r.date.split("-");if(+p[0]===year&&(+p[1]-1)===mon){var d=+p[2];byDay[d]=byDay[d]||{ap:0,pe:0,out:0};if(r.s3==="approved")byDay[d].ap++;else if(r.s3==="outstanding")byDay[d].out++;else byDay[d].pe++;}});
+    var startDow=new Date(year,mon,1).getDay(),days=new Date(year,mon+1,0).getDate(),byDay={},ppl={};
+    rows.forEach(function(r){var p=r.date.split("-");if(+p[0]===year&&(+p[1]-1)===mon){var d=+p[2];byDay[d]=byDay[d]||{ap:0,pe:0,out:0};if(r.s3==="approved")byDay[d].ap++;else if(r.s3==="outstanding")byDay[d].out++;else byDay[d].pe++;(ppl[d]=ppl[d]||[]).push({n:r.emp,dept:r.dept,s:r.s3,t:ptoTypeLabel(w,r.type)});}});
     var dow=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(x){return '<div class="pto-cal-dow">'+x+'</div>';}).join("");
     var cells="";for(var i=0;i<startDow;i++)cells+='<div class="pto-cal-cell pto-cal-empty"></div>';
     for(var dd=1;dd<=days;dd++){var c=byDay[dd]||{ap:0,pe:0,out:0},isT=(dd===todayD),has=(c.ap||c.pe||c.out);
       var chips='';if(c.ap)chips+='<span class="pto-cal-chip ap">'+c.ap+'</span>';if(c.pe)chips+='<span class="pto-cal-chip pe">'+c.pe+'</span>';if(c.out)chips+='<span class="pto-cal-chip out">'+ICON("error")+c.out+'</span>';
       var iso=year+'-'+String(mon+1).padStart(2,"0")+'-'+String(dd).padStart(2,"0");
-      cells+='<div class="pto-cal-cell'+(isT?" today":"")+(has?" has":"")+'"'+(has?' data-action="pto-day" data-id="'+w.id+'" data-d="'+iso+'" role="button" tabindex="0" aria-label="'+ptoFmtDate(iso)+', '+c.ap+' approved, '+c.pe+' pending, '+c.out+' outstanding"':'')+'><span class="pto-cal-d">'+dd+'</span><span class="pto-cal-chips">'+chips+'</span></div>';}
+      var payload=has?encodeURIComponent(JSON.stringify({date:ptoFmtDate(iso),ppl:(ppl[dd]||[])})):'';
+      cells+='<div class="pto-cal-cell'+(isT?" today":"")+(has?" has":"")+'"'+(has?' data-action="pto-day" data-id="'+w.id+'" data-d="'+iso+'" data-ptocal="'+payload+'" role="button" tabindex="0" aria-label="'+ptoFmtDate(iso)+', '+c.ap+' approved, '+c.pe+' pending, '+c.out+' outstanding. Hover to see who."':'')+'><span class="pto-cal-d">'+dd+'</span><span class="pto-cal-chips">'+chips+'</span></div>';}
     var legend='<div class="pto-cal-legend"><span class="pto-cal-lg ap">Approved</span><span class="pto-cal-lg pe">Pending</span><span class="pto-cal-lg out">Outstanding</span></div>';
     return '<div class="pto-cal-wrap"><div class="pto-cal-hd"><span class="pto-cal-mon">July 2026</span>'+legend+'</div><div class="pto-cal-grid pto-cal-dowrow">'+dow+'</div><div class="pto-cal-grid pto-cal-days">'+cells+'</div></div>';}
   function ptoHead2(w){
