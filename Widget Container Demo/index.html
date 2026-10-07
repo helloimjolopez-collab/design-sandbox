@@ -9824,7 +9824,7 @@ function apFmtShort(iso){var d=apParse(iso),s=d.getDate()+" "+AP_M[d.getMonth()]
   /* KPI badge: overdue money (warn) or a positive "Nothing overdue". */
   /* Compact "due this week" cash-timing signal for the glance/header KPI, beside the
    overdue alarm. Shown only when something is due within the week. */
-function apWeekPill(w){var wkTotal=apDueWithin(w,0,7);if(wkTotal<=0)return "";var wkCount=apData(w).filter(function(x){var d=apDiffDays(x.due);return d>=0&&d<=7;}).length;return '<span class="ap-pill" data-tip="'+apEsc(apMoney(wkTotal)+" across "+wkCount+" invoice"+(wkCount===1?"":"s")+" falls due this week.")+'" data-tip-plain>'+ICON("event")+apMoney(wkTotal)+' due this week</span>';}
+function apWeekPill(w){var wkTotal=apDueWithin(w,0,7);if(wkTotal<=0)return "";var wkCount=apData(w).filter(function(x){var d=apDiffDays(x.due);return d>=0&&d<=7;}).length;return '<span class="ap-pill ap-week" data-tip="'+apEsc(apMoney(wkTotal)+" across "+wkCount+" invoice"+(wkCount===1?"":"s")+" falls due this week.")+'" data-tip-plain>'+ICON("event")+apMoney(wkTotal)+' due this week</span>';}
 function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);return '<span class="ap-pill warn" data-tip="'+apMoney(od)+' across '+n+' invoice'+(n===1?"":"s")+' is past its due date." data-tip-plain>'+ICON("warning")+apMoney(od)+' overdue</span>';}return '<span class="ap-pill pos" data-tip="No outstanding invoice is past its due date." data-tip-plain>'+ICON("check_circle")+'Nothing overdue</span>';}
 
   /* ---- header (Detail / Explore) : two-row .dep-hd ------------------- */
