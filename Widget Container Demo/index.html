@@ -7596,9 +7596,10 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function prFTableRows(w){var sc=w.prScope||"all",rows;
     if(sc==="all")rows=prFDistTotals(w);
     else if(sc==="pt")return prFSortRows(prFPTFlat(w),w.prSort||"amt-desc","pt");   /* one row per pay type x distribution, so a Distribution column can show which distribution each pay type belongs to */
+    else if(sc.indexOf("pt:")===0)rows=prFPTAcross(w,sc.slice(3));   /* one pay type, broken down by distribution */
     else rows=prFDrillRows(w,sc);
     return prFSortRows(rows,w.prSort||"amt-desc","other");}
-  function prFChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prFDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prFPTTotals(w).sort(function(a,b){return b.net-a.net;});return prFDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
+  function prFChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prFDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prFPTTotals(w).sort(function(a,b){return b.net-a.net;});if(sc.indexOf("pt:")===0)return prFPTAcross(w,sc.slice(3)).sort(function(a,b){return b.net-a.net;});return prFDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
   function prFScopeChip(w){return '<button class="filter-chip pr-scope-chip" data-action="prF-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, change what the breakdown is grouped by"><span class="fc-label">'+prFScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
   function prFToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
   function prFDistBadge(distId){var c=PRF_DIST_COLORS[distId]||"var(--primitive-color-cool-neutral-250)";return '<span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+prFDistName(distId)+'</span></span>';}
