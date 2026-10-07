@@ -10681,10 +10681,11 @@ function faBar(w){
   var max=1;rows.forEach(function(r){max=Math.max(max,r.cost);});
   var bars=rows.map(function(r){
     var pd=r.cost>0?Math.round(r.acc/r.cost*100):0,netW=r.cost>0?(r.net/r.cost*100):100,accW=r.cost>0?(r.acc/r.cost*100):0,barW=Math.round(r.cost/max*100),hi=(sel!=null&&r.name===sel);
-    return '<div class="fa-brow'+(hi?" fa-brow-hi":"")+'" data-action="fa-set-group" data-id="'+w.id+'" data-g="'+String(r.name).replace(/"/g,"&quot;")+'" role="button" tabindex="0" aria-label="'+String(r.name).replace(/"/g,"&quot;")+', net book value '+money(r.net)+', '+pd+' percent depreciated, cost '+money(r.cost)+'. Filter to this group.">'+
-      '<div class="fa-blbl"><span class="fa-blbl-nm">'+r.name+'</span><span class="fa-blbl-sub">'+pd+'% depreciated</span></div>'+
+    var tip=(r.name+': original cost '+money(r.cost)+', net book value '+money(r.net)+', accumulated depreciation '+money(r.acc)+', '+pd+'% depreciated.').replace(/"/g,"&quot;");
+    return '<div class="fa-brow'+(hi?" fa-brow-hi":"")+'" data-action="fa-set-group" data-id="'+w.id+'" data-g="'+String(r.name).replace(/"/g,"&quot;")+'" role="button" tabindex="0" data-tip="'+tip+'" data-tip-plain aria-label="'+String(r.name).replace(/"/g,"&quot;")+', net book value '+money(r.net)+', '+pd+' percent depreciated, cost '+money(r.cost)+'. Filter to this group.">'+
+      '<div class="fa-blbl"><span class="fa-blbl-nm">'+r.name+'</span><span class="fa-bpct'+(pd>=60?" fa-bpct-hi":"")+'">'+pd+'% depreciated</span></div>'+
       '<div class="fa-btrack"><div class="fa-bfill" style="width:'+Math.max(6,barW)+'%"><div class="fa-bseg fa-bseg-net" style="flex-basis:'+netW.toFixed(1)+'%"></div><div class="fa-bseg fa-bseg-acc" style="flex-basis:'+accW.toFixed(1)+'%"></div></div></div>'+
-      '<div class="fa-bval"><span class="fa-bval-net">'+money(r.net)+'</span><span class="fa-bval-cost">of '+money(r.cost)+'</span></div>'+
+      '<div class="fa-bval"><span class="fa-bval-net">'+money(r.net)+'</span><span class="fa-bval-cost">of '+money(r.cost)+' cost</span></div>'+
     '</div>';}).join("");
   return '<div class="fa-bars"><div class="fa-blegend"><span class="fa-lg"><span class="fa-sw fa-sw-net"></span>Net book value</span><span class="fa-lg"><span class="fa-sw fa-sw-acc"></span>Accumulated depreciation</span></div>'+bars+'</div>';
 }
