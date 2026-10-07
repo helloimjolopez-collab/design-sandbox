@@ -3883,7 +3883,7 @@ function penApptsFor(w,plan){return penFiltered(w).filter(function(a){return a.p
    the left of the toolbar and doubles as the "what am I looking at" label. */
 function penDistChip(w){
   var spin=w.penloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-  return '<button class="filter-chip pen-chip" data-action="pen-dist" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="pen-dist"&&pop.id===w.id?"true":"false")+'" aria-label="District filter, currently '+penEsc(penDistLabel(w))+'">'+spin+'<span class="fc-label">'+penDistLabel(w)+'</span>'+ICON("expand_more")+'</button>';
+  return '<button class="filter-chip pen-chip'+(penDist(w)!=="All Districts"?" applied":"")+'" data-action="pen-dist" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="pen-dist"&&pop.id===w.id?"true":"false")+'" aria-label="District filter, currently '+penEsc(penDistLabel(w))+'">'+spin+'<span class="fc-label">'+penDistLabel(w)+'</span>'+ICON("expand_more")+'</button>';
 }
 /* Bar / pie toggle (segmented, shell .vtoggle/.vt) , only where a standalone
    chart lives (Explore). Resolves the pie-vs-bar open question (11.2): bar is
@@ -4249,7 +4249,7 @@ function penFApptsFor(w,plan,dist){
    the chip while loading. Left of the toolbar, doubles as the current-scope label. */
 function penFDistChip(w){
   var spin=w.penloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-  return '<button class="filter-chip pen-chip" data-action="penF-dist" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="penF-dist"&&pop.id===w.id?"true":"false")+'" aria-label="District filter, currently '+penFEsc(penFDistLabel(w))+'">'+spin+'<span class="fc-label">'+penFDistLabel(w)+'</span>'+ICON("expand_more")+'</button>';
+  return '<button class="filter-chip pen-chip'+(penFDist(w)!=="All Districts"?" applied":"")+'" data-action="penF-dist" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="penF-dist"&&pop.id===w.id?"true":"false")+'" aria-label="District filter, currently '+penFEsc(penFDistLabel(w))+'">'+spin+'<span class="fc-label">'+penFDistLabel(w)+'</span>'+ICON("expand_more")+'</button>';
 }
 /* View toggles (shell .vtoggle/.vt, segmented). Explore (wide): 3-way Table /
    Pie / By district, Table default. Detail (xwide): the table always owns the
@@ -5637,7 +5637,7 @@ function gftStatusPill(status,amt,asOf){
 /* Controls (secondary-fill chips, sized to content). The date chip overrides
    the shared filter-chip glyph with a calendar (see gftv2_styles.css). */
 function gftDateChip(w){var thru=gftThru(w),spin=w.gftloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";var lbl=(thru===GFT_TODAY?"Today, "+gftFmtDate(thru):gftFmtDate(thru));return '<button class="filter-chip gft-datechip" data-action="gft-date" data-id="'+w.id+'" aria-haspopup="dialog" aria-label="Gifts received through '+gftEsc(gftFmtDate(thru))+', change">'+spin+'<span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
-function gftPurposeChip(w){var all=gftAllPurposes(w);if(all.length<=1)return "";var cur=gftPurposeCur(w);return '<button class="filter-chip gft-purpchip" data-action="gft-purpose" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pledge purpose, change"><span class="fc-label">'+gftEsc(cur)+'</span>'+ICON("expand_more")+'</button>';}
+function gftPurposeChip(w){var all=gftAllPurposes(w);if(all.length<=1)return "";var cur=gftPurposeCur(w);return '<button class="filter-chip gft-purpchip'+(gftPurposeCur(w)!=="All purposes"?" applied":"")+'" data-action="gft-purpose" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Pledge purpose, change"><span class="fc-label">'+gftEsc(cur)+'</span>'+ICON("expand_more")+'</button>';}
 function gftViewToggle(w){var v=w.gftView||"progress",opts=[["progress","Progress","insights"],["table","Table","table_rows"]];return '<div class="vtoggle" role="group" aria-label="View">'+opts.map(function(o){return '<button class="vt'+(v===o[0]?" on":"")+'" data-action="gft-view" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(v===o[0])+'">'+ICON(o[2])+o[1]+'</button>';}).join("")+'</div>';}
 
 /* Shared KPI supporting content (status badge + "% of $X goal" pill), so the glance
@@ -7159,7 +7159,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   }
   function bgtFScopeShort(w){var av=w.acctview||"income";return av==="expense"?"Expense accounts":av==="special"?"Special report":"Income accounts";}
   function bgtFScopeContext(w){if((w.acctview||"income")!=="special")return "";return "Special report: "+bgtFReport(w).name+" · "+bgtFReportLine(w).name;}
-  function bgtFScopeChip(w){var spin=w.bloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip bgt-scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, change">'+spin+'<span class="fc-label">'+bgtFScopeShort(w)+'</span>'+ICON("expand_more")+'</button>';}
+  function bgtFScopeChip(w){var spin=w.bloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip bgt-scope-chip'+(((w.acctview||"income")!=="income")?" applied":"")+'" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, change">'+spin+'<span class="fc-label">'+bgtFScopeShort(w)+'</span>'+ICON("expand_more")+'</button>';}
   /* ═══ TIME WINDOW MODULE (owner-approved; W01 Final v2). Two axes: the WINDOW (span) is the slice shown; the INTERVAL (grain) is what each bar/point/row represents.
      Five windows, smallest first (also the picker order): This month, This period, This quarter (rolling 3 months), This year (rolling 12 months), This fiscal year (YTD).
      Law: AVAILABILITY, an interval is offered when it yields 2 to 31 points (plus a Month single-pair summary exception on the month/period windows); DEFAULT, each window's default is its smallest available interval (entry 0 below); TOGGLE, D W M P Q Y always shown in that fixed order, unavailable letters greyed and unclickable, changing the window snaps an invalid interval to the new window's default; ROLLING, the two rolling windows are anchored to an as-of date and may cross fiscal-year boundaries. ═══ */
@@ -7170,7 +7170,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return bgtFTog([["day","D","","Show budget vs actual for each day",d("day")],["week","W","","Show budget vs actual for each week",d("week")],["month","M","","Show budget vs actual for each month",d("month")],["period","P","","Show budget vs actual for each fiscal period",d("period")],["quarter","Q","","Show budget vs actual for each quarter",d("quarter")],["year","Y","","Show budget vs actual for each fiscal year",d("year")]],interval,w,action,"Interval",extra);}
   function bgtFSpanLabel(s){return s==="month"?"This month":s==="period"?"This period":s==="quarter"?"This quarter":s==="roll12"?"This year":"This fiscal year";}
   function bgtFSpanPhrase(s){return s==="month"?"this month":s==="period"?"this fiscal period":s==="quarter"?"the last 3 months":s==="roll12"?"the last 12 months":"this fiscal year to date";}
-  function bgtFSpanChip(w,extra){return '<button class="filter-chip" data-action="bgtF-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, change"><span class="fc-label">'+bgtFSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
+  function bgtFSpanChip(w,extra){return '<button class="filter-chip'+(((w.bspan||"year")!=="year")?" applied":"")+'" data-action="bgtF-span" data-id="'+w.id+'"'+(extra||"")+' aria-haspopup="listbox" aria-label="Time span, change"><span class="fc-label">'+bgtFSpanLabel(w.bspan||"year")+'</span>'+ICON("expand_more")+'</button>';}
   function bgtFShapeToggle(w,fmt,action,extra,lineOff){return bgtFTog([["bar","Bar","bar_chart","Budget and actual side by side"],["line","Line","show_chart",lineOff?"A line needs at least two periods, widen the time span or change the interval":"How budget and actual track over time (the trend)",!!lineOff],["table","Table","table_rows","The exact figures, sortable"]],fmt,w,action,"View",extra);}
   /* Detail size: bar + line charts side by side, with a Charts / Table swap on the right. */
   function bgtFDetailToggle(w){return bgtFTog([["charts","Charts","bar_chart","Bar and line charts side by side"],["table","Table","table_rows","The exact figures, sortable"]],w.bdetail||"charts",w,"set-bgtF-detail","View");}
@@ -7391,7 +7391,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function bgtFGlance(w){
     var bs=bgtFBasis(w),vt=bs.type,neutral=bs.neutral;
     var rows=bgtFSet(w),label=(w.acctview==="special")?bgtFScopeContext(w).replace(/^Special report: /,""):bgtFScopeShort(w);
-    var chip='<button class="scope-chip" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
+    var chip='<button class="scope-chip'+(((w.acctview||"income")!=="income")?" applied":"")+'" data-action="bgtF-scope" data-id="'+w.id+'" aria-haspopup="menu" aria-label="Account scope, change"><span class="sc-nm">'+label+'</span>'+ICON("expand_more")+'</button>';
     if(!bgtFHasBudget(rows))return '<div class="kpi-row"><div class="kpi-num">'+chip+'<div class="metric-value" style="font-size:15px;color:var(--txt-subtle);font-weight:600">No budget set up</div></div></div>';
     /* Glance: scope + period tag; the Variance ($) headline with the Favourable/Unfavourable badge
        (variance % inside it) on the same line; a small progress-to-budget bar that makes spent and
@@ -7980,7 +7980,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function mctRow(w,t,force){var a=mctApp(t.app);var badge=(force||mctCtx(w)==="home")?mctBadge(t.app):"";var aria=(t.label+", "+a.name+", opens "+t.dest).replace(/"/g,"&quot;");return '<div class="mct-row"><button class="mct-row-main" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'"><span class="mct-row-ic">'+ICON(t.icon)+'</span><span class="mct-row-tx"><span class="mct-row-lbl">'+t.label+'</span><span class="mct-row-dest">'+t.dest+'</span></span>'+badge+'</button></div>';}
   function mctItile(w,t){var a=mctApp(t.app);var badge=(mctCtx(w)==="home")?'<span class="mct-itile-badge" data-app="'+a.id+'" aria-hidden="true">'+a.code+'</span>':"";var aria=(t.label+", "+a.name+", opens "+t.dest).replace(/"/g,"&quot;");return '<button class="mct-itile" data-action="mct-open" data-id="'+w.id+'" data-t="'+t.id+'" aria-label="'+aria+'" data-tip="'+(t.label+" ("+a.name+")").replace(/"/g,"&quot;")+'" data-tip-plain>'+ICON(t.icon)+badge+'<span class="sr-only">'+t.label+", "+a.name+'</span></button>';}
   function mctSearch(w){var q=w.mctQ||"";var clr=q?'<button class="mct-q-clear" data-action="mct-clearq" data-id="'+w.id+'" aria-label="Clear search">'+ICON("close")+'</button>':'';return '<div class="mct-search"><span class="material-symbols-rounded" aria-hidden="true">search</span><input class="mct-q" id="mctq-'+w.id+'" placeholder="Search tasks" value="'+q.replace(/"/g,"&quot;")+'" aria-label="Search tasks across all applications" autocomplete="off">'+clr+'</div>';}
-  function mctFilterChip(w){var f=mctFilter(w),lbl=f==="all"?"All applications":(mctApp(f)?mctApp(f).name:"All applications");return '<button class="filter-chip mct-filter" data-action="mct-appfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Filter tasks by application, currently '+lbl+'"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
+  function mctFilterChip(w){var f=mctFilter(w),lbl=f==="all"?"All applications":(mctApp(f)?mctApp(f).name:"All applications");return '<button class="filter-chip mct-filter'+(mctFilter(w)!=="all"?" applied":"")+'" data-action="mct-appfilter" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Filter tasks by application, currently '+lbl+'"><span class="fc-label">'+lbl+'</span>'+ICON("expand_more")+'</button>';}
   function mctRecentSection(w){var list=mctRecentTasks(w);if(!list.length)return "";return '<div class="mct-sec"><div class="mct-sec-h">Recent Tasks</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
   function mctMySection(w){var list=mctMyTasks(w);if(!list.length)return "";return '<div class="mct-sec"><div class="mct-sec-h">My Tasks</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
   function mctStandardSection(w){var list=mctStandardTasks(w);if(!list.length){var msg=(mctCtx(w)==="home"&&mctFilter(w)!=="all")?("No more "+mctApp(mctFilter(w)).name+" content tasks to add."):"All content tasks are already in My Tasks.";return '<div class="mct-sec"><div class="mct-sec-h">Content Tasks</div><div class="mct-sec-empty">'+msg+'</div></div>';}return '<div class="mct-sec"><div class="mct-sec-h">Content Tasks</div><div class="mct-list">'+list.map(function(t){return mctRow(w,t);}).join("")+'</div></div>';}
@@ -8429,7 +8429,7 @@ function purLines(o){
 }
 
 /* (2) RENDER ------------------------------------------------------------ */
-function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
+function purStatusChip(w){var spin=w.purloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";return '<button class="filter-chip pur-status-chip'+(((w.pstatus||"mine")!=="mine")?" applied":"")+'" data-action="pur-status" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval status, change"><span class="fc-label">'+spin+purStatusLabel(w.pstatus||"mine")+'</span>'+ICON("expand_more")+'</button>';}
 function purPathChip(w){var paths=purPathsForStatus(w),cur=purPathCur(w);
   if(paths.length<=1)return ""; /* never a dead control: one path -> omit */
   return '<button class="filter-chip pur-path-chip" data-action="pur-path" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Approval path, change"><span class="fc-label">'+cur+'</span>'+ICON("expand_more")+'</button>';}
@@ -10304,7 +10304,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      ("what am I looking at"), so it sits on the left of the toolbar. */
   function insTypeChip(w){
     var spin=w.insloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-    return '<button class="filter-chip ins-chip" data-action="ins-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="ins-type"&&pop.id===w.id?"true":"false")+'" aria-label="Insurance type filter, currently '+insEsc(insTypeLabel(w))+'">'+spin+'<span class="fc-label">'+insTypeLabel(w)+'</span>'+ICON("expand_more")+'</button>';
+    return '<button class="filter-chip ins-chip'+((w.insType&&w.insType!=="All")?" applied":"")+'" data-action="ins-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="ins-type"&&pop.id===w.id?"true":"false")+'" aria-label="Insurance type filter, currently '+insEsc(insTypeLabel(w))+'">'+spin+'<span class="fc-label">'+insTypeLabel(w)+'</span>'+ICON("expand_more")+'</button>';
   }
 
   /* ---- table atoms -------------------------------------------------- */
@@ -10494,7 +10494,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   function insFTypeChip(w){
     var open=!!(INSF_POP&&INSF_POP.id===w.id);
     var spin=w.insloading?'<span class="bgt-spin" aria-hidden="true"></span>':"";
-    var btn='<button class="filter-chip ins-chip" data-action="insF-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(open?"true":"false")+'" aria-label="Insurance type filter, currently '+insFEsc(insFTypeLabel(w))+'">'+spin+'<span class="fc-label">'+insFTypeLabel(w)+'</span>'+ICON("expand_more")+'</button>';
+    var btn='<button class="filter-chip ins-chip'+((w.insType&&w.insType!=="All")?" applied":"")+'" data-action="insF-type" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(open?"true":"false")+'" aria-label="Insurance type filter, currently '+insFEsc(insFTypeLabel(w))+'">'+spin+'<span class="fc-label">'+insFTypeLabel(w)+'</span>'+ICON("expand_more")+'</button>';
     var menu=open?'<div class="insf-menu" data-action="stop" role="listbox">'+insFPopContent(w)+'</div>':"";
     return '<span class="insf-chip-wrap">'+btn+menu+'</span>';
   }
