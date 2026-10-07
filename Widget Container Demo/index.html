@@ -10936,7 +10936,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="bank-ssort"){var wsg=find(id),sgk=t.getAttribute("data-k");if(wsg){var scs=(wsg.bksSort||"amt-desc").split("-");wsg.bksSort=(scs[0]===sgk)?(sgk+"-"+(scs[1]==="asc"?"desc":"asc")):(sgk+"-"+(sgk==="type"?"asc":"desc"));}render();return;}
     if(a==="bank-more"){var wbm=find(id);if(wbm)wbm.bkShown=(wbm.bkShown||20)+20;render();return;}
     if(a==="bank-drill"){var wdr=find(id);if(!wdr)return;wdr.bkOver=!!t.getAttribute("data-over");modal={type:"bankdrill",id:id};modalMounted=false;pop=null;render();return;}
-    if(a==="bank-acct-drill"){var wad=find(id);if(!wad)return;modal={type:"bankdrill",id:id,acct:t.getAttribute("data-acct")};modalMounted=false;pop=null;render();return;}
+    if(a==="bank-acct-drill"){var wad=find(id);if(!wad)return;var inModal=(modal&&modal.type==="bankdrill");modal={type:"bankdrill",id:id,acct:t.getAttribute("data-acct")};if(!inModal)modalMounted=false;pop=null;render();return;}
     if(a==="bank-drill-close"){modal=null;pop=null;render();return;}
     if(a==="bank-drill-back"){if(modal)modal.acct=null;render();return;}
     if(a==="bank-open-app"){setStatus("Opening "+t.getAttribute("data-name")+" in Bank Accounts…");return;}
