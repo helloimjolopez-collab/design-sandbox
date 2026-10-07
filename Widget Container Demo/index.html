@@ -7634,8 +7634,11 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function prFPTFlat(w){var agg=prFAgg(w),out=[];PRF_DISTS.forEach(function(ds){var c=agg[ds.id]||{};PRF_PT.forEach(function(p){if(c[p.id]>0)out.push({id:ds.id+"_"+p.id,pt:p.name,ptId:p.id,distId:ds.id,distName:ds.name,net:c[p.id]});});});return out;}
   /* A single pay type seen across every distribution (the transpose of a distribution's pay types). */
   function prFPTAcross(w,ptId){var agg=prFAgg(w);return PRF_DISTS.map(function(ds){var c=agg[ds.id]||{};return {id:ds.id,name:ds.name,distId:ds.id,net:c[ptId]||0};}).filter(function(x){return x.net>0;});}
-  function prFScopeLabel(w){var sc=w.prScope||"all";if(sc==="all")return "All distributions";if(sc==="pt")return "By pay type";if(sc.indexOf("pt:")===0)return prFPTName(sc.slice(3));return prFDistName(sc);}
-  function prFScopeMeta(w){var sc=w.prScope||"all";if(sc==="pt")return {kind:"pt",legend:"Pay types"};if(sc==="all")return {kind:"all",legend:"Distributions"};if(sc.indexOf("pt:")===0)return {kind:"ptone",legend:prFPTName(sc.slice(3))+" by distribution",ptId:sc.slice(3)};return {kind:"distpt",legend:prFDistName(sc)+": pay types",dist:sc};}
+  function prFScopeLabel(w){var sc=w.prScope||"all";if(sc==="all")return "All distributions";if(sc==="pt")return "All pay types";if(sc.indexOf("pt:")===0)return prFPTName(sc.slice(3));return prFDistName(sc);}
+  /* kind "all" = distribution totals table. kind "pt" = the flat Pay type x Distribution table (used for
+     All pay types, one distribution, and one pay type alike, so the Distribution badge column is always
+     present as a reminder of the active filter). */
+  function prFScopeMeta(w){var sc=w.prScope||"all";if(sc==="all")return {kind:"all",legend:"Distributions"};if(sc==="pt")return {kind:"pt",legend:"Pay types"};if(sc.indexOf("pt:")===0)return {kind:"pt",legend:prFPTName(sc.slice(3))+" by distribution",ptId:sc.slice(3)};return {kind:"pt",legend:prFDistName(sc)+" pay types",dist:sc};}
   function prFSortRows(rows,sort,kind){var sk=(sort||"amt-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
     rows.sort(function(a,b){
       if(key==="amt")return dir*(a.net-b.net);
