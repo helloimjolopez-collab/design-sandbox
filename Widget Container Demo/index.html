@@ -9481,9 +9481,9 @@ function arFHandleClick(a,id,t){
     var noun={Excel:" as Excel (customer, aging bucket, invoices, balance)",PDF:" as a PDF",email:"",print:""}[fmt]||"";
     toast(verb+" "+who+noun,{Excel:"table_view",PDF:"picture_as_pdf",email:"mail",print:"print"}[fmt]||"ios_share");
     if(modal)modal.shareMenu=null;renderModal();return true;}
-  if(a==="arF-open-invoice"){toast("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Receivable","open_in_new");return true;}
-  if(a==="arF-dl-invoice"){toast("Downloading invoice "+t.getAttribute("data-inv")+" (PDF)","download");return true;}
-  if(a==="arF-record-payment"){toast("Record a payment against invoice "+t.getAttribute("data-inv")+" in Accounts Receivable","payments");return true;}
+  if(a==="arF-open-invoice"){var oi=arFEsc(t.getAttribute("data-inv"));navNote("Open invoice "+oi,'<p>This opens invoice <b>'+oi+'</b> in <b>Accounts Receivable</b>, the full record with its line items, history and attachments.</p><ul class="navnote-steps"><li><span class="material-symbols-rounded">description</span>Review or edit the invoice there.</li><li><span class="material-symbols-rounded">arrow_back</span>Use the browser back to return to this dashboard.</li></ul>',"open_in_new");return true;}
+  if(a==="arF-dl-invoice"){var di=arFEsc(t.getAttribute("data-inv"));navNote("Download invoice "+di,'<p>This downloads invoice <b>'+di+'</b> as a <b>PDF</b> to your device.</p><ul class="navnote-steps"><li><span class="material-symbols-rounded">picture_as_pdf</span>A print-ready copy of the single invoice.</li><li><span class="material-symbols-rounded">attach_email</span>Use it to send the customer a copy or keep it on file.</li></ul>',"download");return true;}
+  if(a==="arF-record-payment"){var ri=arFEsc(t.getAttribute("data-inv")),rc=arFEsc(t.getAttribute("data-cust"));navNote("Record a payment",'<p>This opens <b>Accounts Receivable, Receive Payment</b>, prefilled for invoice <b>'+ri+'</b> ('+rc+').</p><ul class="navnote-steps"><li><span class="material-symbols-rounded">edit</span>Enter the amount received and how it was paid.</li><li><span class="material-symbols-rounded">done_all</span>Post it to apply the payment against this invoice.</li><li><span class="material-symbols-rounded">sync</span>The outstanding balance drops and this list refreshes.</li></ul>',"payments");return true;}
   return false;
 }
 /* popContent branches (routed from popContent(): arF-rc / arF-source -> arFPopContent) */
