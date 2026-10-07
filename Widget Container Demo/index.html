@@ -716,7 +716,7 @@
   .pct-num{font-variant-numeric:tabular-nums;min-width:32px;text-align:right;}
   /* Full size (xwide): table + donut shown together, no toggle needed since both fit. Equal column widths — neither side should dominate. */
   /* Detail: table + donut as two clearly-separate views, each in its own subtly-stroked panel. The donut
-     keeps its legend to the RIGHT (row), never stacked/clipped. Detail only renders when the grid has room
+     keeps its legend to the RIGHT (row), never stacked/clipped. Explore only renders when the grid has room
      (>=1050), so there is always space for the side-by-side pair; narrower sizes use the single-view toggle. */
   /* Employee breakdown inside the distribution drill pop-up */
   .prf-emp{margin:14px 14px 4px;border-top:1px solid var(--stroke-widget);padding-top:12px;}
@@ -3621,18 +3621,18 @@
 
           <div class="spec-sec" id="spec-sizes">
             <h2>3. Widget sizes</h2>
-            <p>Three sizes: <b>Glance</b> (kpi), <b>Explore</b> (wide), <b>Detail</b> (xwide), plus <b>Band</b> (the full-width Financial KPIs). Column span adapts to the current column count; row span is fixed per size.</p>
+            <p>Three sizes, named as in the Figma Widget component set: <b>Glance</b> (kpi), <b>Detail</b> (wide), <b>Explore</b> (xwide), plus <b>Band</b> (the full-width Financial KPIs). Column span adapts to the current column count; row span is fixed per size.</p>
             <table class="spec-tbl"><thead><tr><th>Size</th><th>4-col</th><th>8-col</th><th>12-col</th><th>Rows</th><th>Role</th></tr></thead><tbody>
-              <tr><td><b>Glance</b> (kpi)</td><td>span 4</td><td>span 4</td><td>span 4; span 3 once the grid is ≥ 1148 (3 columns ≥ 275)</td><td>3 (~144px)</td><td>Headline metric + the one actionable number; hover "View details" drills to Explore without resizing.</td></tr>
-              <tr><td><b>Explore</b> (wide)</td><td>span 4</td><td>span 8</td><td>span 6</td><td>8</td><td>Table or chart with controls (filter, sort, view toggle, search).</td></tr>
-              <tr><td><b>Detail</b> (xwide)</td><td>span 4</td><td>span 8</td><td>span 12</td><td>9</td><td>Table + chart side by side; fullest in-grid view.</td></tr>
+              <tr><td><b>Glance</b> (kpi)</td><td>span 4</td><td>span 4</td><td>span 4; span 3 once the grid is ≥ 1148 (3 columns ≥ 275)</td><td>3 (~144px)</td><td>Headline metric + the one actionable number; hover "View details" drills to Detail without resizing.</td></tr>
+              <tr><td><b>Detail</b> (wide)</td><td>span 4</td><td>span 8</td><td>span 6</td><td>8</td><td>Table or chart with controls (filter, sort, view toggle, search).</td></tr>
+              <tr><td><b>Explore</b> (xwide)</td><td>span 4</td><td>span 8</td><td>span 12</td><td>9</td><td>Table + chart side by side; fullest in-grid view.</td></tr>
               <tr><td><b>Band</b></td><td colspan="3">full row (1 / -1)</td><td>3</td><td>Full-width KPI band; single size only.</td></tr>
             </tbody></table>
           </div>
 
           <div class="spec-sec" id="spec-reflow">
             <h2>4. Resize reflow</h2>
-            <p>When a widget is resized, or the container crosses a breakpoint, its size is <b>clamped to the current column cap</b> (<code>fitSize()</code> against <code>curCap()</code>): a widget can never request more columns than the grid currently offers, so it never overflows the viewport or pushes content off-screen. The grid then re-places following widgets automatically (<code>grid-auto-flow: row</code>). On an explicit resize, the widget is scrolled back into view (<code>scrollIntoView</code>, centered) so the user stays oriented. Cap mapping: content width ≥1050 → Detail allowed; ≥566 → Explore; else Glance.</p>
+            <p>When a widget is resized, or the container crosses a breakpoint, its size is <b>clamped to the current column cap</b> (<code>fitSize()</code> against <code>curCap()</code>): a widget can never request more columns than the grid currently offers, so it never overflows the viewport or pushes content off-screen. The grid then re-places following widgets automatically (<code>grid-auto-flow: row</code>). On an explicit resize, the widget is scrolled back into view (<code>scrollIntoView</code>, centered) so the user stays oriented. Cap mapping: content width ≥1050 → Explore allowed; ≥566 → Detail; else Glance.</p>
           </div>
 
           <div class="spec-sec" id="spec-add">
@@ -3666,7 +3666,7 @@
             <h2>8. What changes / is unavailable at smaller sizes</h2>
             <ul class="spec-ul">
               <li><b>Add-widget / manage flow</b>: desktop only, disabled below <b>900px</b> (the catalog needs the rail + grid + preview). Tablet and below show a hint instead.</li>
-              <li><b>Column reflow</b>: 12 → 8 → 4 columns as the container narrows; widgets clamp Detail → Explore → Glance so nothing overflows.</li>
+              <li><b>Column reflow</b>: 12 → 8 → 4 columns as the container narrows; widgets clamp Explore → Detail → Glance so nothing overflows.</li>
               <li>Overlays go full-screen on small viewports.</li>
             </ul>
           </div>
@@ -3682,11 +3682,11 @@
 (function(){
   var ICON=function(n){return '<span class="material-symbols-rounded" aria-hidden="true">'+n+'</span>';};
   var SIZES=["kpi","wide","xwide"];
-  var SIZE_LABEL={kpi:"Glance",wide:"Explore",xwide:"Detail"};
-  var DEPTH_LABEL={kpi:"Glance",wide:"Explore",xwide:"Detail"};
-  /* G1: step a widget down to the largest size that fits the current breakpoint (phone->Glance, tablet->Explore, desktop->Detail), never above the chosen size. */
+  var SIZE_LABEL={kpi:"Glance",wide:"Detail",xwide:"Explore"};
+  var DEPTH_LABEL={kpi:"Glance",wide:"Detail",xwide:"Explore"};
+  /* G1: step a widget down to the largest size that fits the current breakpoint (phone->Glance, tablet->Detail, desktop->Explore), never above the chosen size. */
   /* G1 caps: each size has a canonical minimum width and works at that width or wider, never narrower.
-     Glance min 275, Explore min 566, Detail min 1050 (Widget/MinWidth/Explore, the 12-column size). A widget may snap to the
+     Glance min 275, Detail min 566, Explore min 1050 (Widget/MinWidth/Explore, the 12-column size). A widget may snap to the
      grid and flex WIDER, but never render below its size's min. The gate is the actual GRID width (the
      .dashboard content box, which already excludes the sidenav), not the viewport, so a size never renders
      into less room than it needs and clips. curCap returns the largest size the grid can host; anything
@@ -6359,30 +6359,30 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       {id:"finkpi1",title:"Financial KPIs",kind:"finkpi",size:"band",tiers:["band"],updated:"just now"},
       {id:"bank",title:"Bank Balances",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",bksort:"bal-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bank_k",title:"Bank Balances (Glance)",kind:"bank",size:"kpi",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",bksort:"bal-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"bank_x",title:"Bank Balances (Detail)",kind:"bank",size:"xwide",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",bksort:"bal-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"bank_x",title:"Bank Balances (Explore)",kind:"bank",size:"xwide",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",bksort:"bal-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bank2",title:"Bank Balances: Operating Checking",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:"bk-op",bkview:"chart",bksort:"bal-desc"},
       {id:"bank3",title:"Bank Balances (no accounts)",kind:"bank",size:"wide",tiers:["kpi","wide","xwide"],bkacct:null,bkview:"table",state:"empty"},
       {id:"bgtF",title:"Budget Compared to Actual",kind:"budget-mb",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bgtF_k",title:"Budget Compared to Actual (Glance)",kind:"budget-mb",size:"kpi",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"bgtF_ke",title:"Budget Compared to Actual (Glance, expenses)",kind:"budget-mb",size:"kpi",tiers:["kpi","wide","xwide"],acctview:"expense",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
       {id:"bgtF_ku",title:"Budget Compared to Actual (Glance, over budget)",kind:"budget-mb",size:"kpi",tiers:["kpi","wide","xwide"],acctview:"special",report:"admin",reportLine:"office",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
-      {id:"bgtF2",title:"Budget Compared to Actual (Detail view)",kind:"budget-mb",size:"xwide",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
+      {id:"bgtF2",title:"Budget Compared to Actual (Explore view)",kind:"budget-mb",size:"xwide",tiers:["kpi","wide","xwide"],acctview:"income",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
       {id:"bgtF3",title:"Budget Compared to Actual (expense budget not set up)",kind:"budget-mb",size:"wide",tiers:["kpi","wide","xwide"],acctview:"expense",fy:"2027",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
       {id:"bgtF4",title:"Budget Compared to Actual (income budget not set up)",kind:"budget-mb",size:"wide",tiers:["kpi","wide","xwide"],acctview:"income",fy:"2028",bspan:"year",binterval:"month",bshape:"bar",bsort:"idx-asc",iA:"month",iB:"period",fA:"bar",fB:"line"},
       /* Payroll Distributions: our finalized W03, additive. kind "payroll-mb", prefix prF, default range TM (This month, owner delta). */
       {id:"prF", title:"Payroll Distributions",                    kind:"payroll-mb",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"all", prSort:"amt-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"prF_k", title:"Payroll Distributions (Glance)",                    kind:"payroll-mb",size:"kpi", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"all", prSort:"amt-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"prF_x", title:"Payroll Distributions (Detail)",                    kind:"payroll-mb",size:"xwide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"all", prSort:"amt-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"prF_x", title:"Payroll Distributions (Explore)",                    kind:"payroll-mb",size:"xwide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"all", prSort:"amt-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"prF2",title:"Payroll Distributions (by pay type)",       kind:"payroll-mb",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"pt",  prSort:"amt-desc"},
       {id:"prF3",title:"Payroll Distributions (one distribution)",  kind:"payroll-mb",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",prScope:"admin",prSort:"amt-desc"},
       {id:"prF4",title:"Payroll Distributions (no history)",        kind:"payroll-mb",size:"wide", tiers:["kpi","wide","xwide"],range:"TM",view:"table",state:"empty"},
       {id:"mct", title:"Main Content Tasks", kind:"tasks", size:"wide",  tiers:["kpi","wide","xwide"], appContext:"home", goto:false},
-      {id:"mct2",title:"Main Content Tasks (Detail view)", kind:"tasks", size:"xwide", tiers:["kpi","wide","xwide"], appContext:"home", goto:false},
+      {id:"mct2",title:"Main Content Tasks (Explore view)", kind:"tasks", size:"xwide", tiers:["kpi","wide","xwide"], appContext:"home", goto:false},
       {id:"mct3",title:"Main Content Tasks (new user, content tasks only)", kind:"tasks", size:"wide", tiers:["kpi","wide","xwide"], appContext:"home", mctSaved:[], mctRecent:[], goto:false},
       {id:"mct4",title:"Main Content Tasks (Glance)", kind:"tasks", size:"kpi", tiers:["kpi","wide","xwide"], appContext:"home", goto:false},
       /* Deposits on Hand: our finalized W07, additive. kind "deposits-mb", prefix depF. 1-to-1 with Jo's Deposits on Hand widget PLUS four owner changes: (1) 50/page table pagination over a 125-account mock (grand total $106,726,837), KPI + subtotals over the full set; (2) scope-dependent breakdown (All Accounts: Total / By Account Type; a type: Total / By Account); (3) chart clicks drill (type re-scopes to By Account, account inert), no chart drill-modal, row modal preserved; (4) Compare To gains a fiscal "period" option between month and quarter. Tiers kpi/wide/xwide only (Jo's "large" dropped). */
       {id:"depF", title:"Deposits on Hand",                          kind:"deposits-mb",size:"wide", tiers:["kpi","wide","xwide"],filter:"All types",view:"table",range:"Q",bd:"group",tpage:1,tsort:"net-desc",trIso:null,actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"depF2",title:"Deposits on Hand (Detail view)",             kind:"deposits-mb",size:"xwide",tiers:["kpi","wide","xwide"],filter:"All types",view:"balances",range:"Q",bd:"group",tpage:1,tsort:"net-desc",trIso:null},
+      {id:"depF2",title:"Deposits on Hand (Explore view)",             kind:"deposits-mb",size:"xwide",tiers:["kpi","wide","xwide"],filter:"All types",view:"balances",range:"Q",bd:"group",tpage:1,tsort:"net-desc",trIso:null},
       {id:"depF3",title:"Deposits on Hand (Glance)",                  kind:"deposits-mb",size:"kpi",  tiers:["kpi","wide","xwide"],filter:"All types",view:"table",range:"Q",bd:"group",tpage:1,tsort:"net-desc",trIso:null},
       {id:"depF4",title:"Deposits on Hand (a single account type)",   kind:"deposits-mb",size:"wide", tiers:["kpi","wide","xwide"],filter:"Restricted Funds",view:"dist",range:"Q",bd:"group",tpage:1,tsort:"net-desc",trIso:null},
       {id:"depF5",title:"Deposits on Hand (no data)",                 kind:"deposits-mb",size:"wide", tiers:["kpi","wide","xwide"],filter:"All types",view:"table",range:"Q",bd:"group",tpage:1,state:"empty",dataset:"none"},
@@ -6395,7 +6395,7 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       /* Receivable Invoices Outstanding: our finalized W05, additive. kind "receivables-mb", prefix arF. 1-to-1 with Jo's AR widget PLUS the drill-modal enhancement: row checkboxes, an always-enabled Confirm beside Close, and on Confirm the dev-intent note "Move to unposted transactions" with a live selected count. */
       {id:"arF", title:"Receivable Invoices Outstanding",                     kind:"receivables-mb",size:"wide", tiers:["kpi","wide","xwide"],arFRc:"All",arFSource:"All",arFGroup:"aging",arFSort:"total-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"arF_k", title:"Receivable Invoices Outstanding (Glance)",                     kind:"receivables-mb",size:"kpi", tiers:["kpi","wide","xwide"],arFRc:"All",arFSource:"All",arFGroup:"aging",arFSort:"total-desc",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"arF2",title:"Receivable Invoices Outstanding (Detail, by customer)",  kind:"receivables-mb",size:"xwide",tiers:["kpi","wide","xwide"],arFRc:"All",arFSource:"All",arFGroup:"customer",arFSort:"total-desc"},
+      {id:"arF2",title:"Receivable Invoices Outstanding (Explore, by customer)",  kind:"receivables-mb",size:"xwide",tiers:["kpi","wide","xwide"],arFRc:"All",arFSource:"All",arFGroup:"customer",arFSort:"total-desc"},
       {id:"arF3",title:"Receivable Invoices Outstanding (everything current)",   kind:"receivables-mb",size:"wide", tiers:["kpi","wide","xwide"],dataset:"current",arFRc:"All",arFSource:"All",arFGroup:"aging",arFSort:"total-desc"},
       {id:"arF4",title:"Receivable Invoices Outstanding (single aging bucket)",  kind:"receivables-mb",size:"wide", tiers:["kpi","wide","xwide"],dataset:"single",arFRc:"All",arFSource:"All",arFGroup:"aging",arFSort:"total-desc"},
       {id:"arF5",title:"Receivable Invoices Outstanding (nothing outstanding)",  kind:"receivables-mb",size:"wide", tiers:["kpi","wide","xwide"],state:"empty",arFRc:"All",arFSource:"All",arFGroup:"aging"},
@@ -6405,10 +6405,10 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       {id:"pto3",title:"Payroll Scheduled Time Off (no departments to approve)",kind:"pto",size:"wide",tiers:["kpi","wide","xwide"],ptoView:"pending",ptoExpand:{},state:"empty"},
       {id:"pto4",title:"Payroll Scheduled Time Off (renamed and hidden hour types)",kind:"pto",size:"xwide",tiers:["kpi","wide","xwide"],dataset:"alt",ptoView:"all",ptoExpand:{}},
       {id:"mys",title:"My Status",kind:"mystatus",size:"wide",tiers:["wide","xwide"],selected:MYS_DEFAULT.slice(),mode:"urgency",hideZero:false,goto:false},
-      {id:"mys_x",title:"My Status (Detail)",kind:"mystatus",size:"xwide",tiers:["wide","xwide"],selected:MYS_DEFAULT.slice(),mode:"urgency",hideZero:false,goto:false},
+      {id:"mys_x",title:"My Status (Explore)",kind:"mystatus",size:"xwide",tiers:["wide","xwide"],selected:MYS_DEFAULT.slice(),mode:"urgency",hideZero:false,goto:false},
       {id:"ap",title:"Accounts Payable By Due Date",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apview:"table",apDue:"total",apsort:"due-asc",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"ap_k",title:"Accounts Payable By Due Date (Glance)",kind:"payables",size:"kpi",tiers:["kpi","wide","xwide"],apview:"table",apDue:"total",apsort:"due-asc",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"ap_x",title:"Accounts Payable By Due Date (Detail)",kind:"payables",size:"xwide",tiers:["kpi","wide","xwide"],apview:"table",apDue:"total",apsort:"due-asc",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
+      {id:"ap_x",title:"Accounts Payable By Due Date (Explore)",kind:"payables",size:"xwide",tiers:["kpi","wide","xwide"],apview:"table",apDue:"total",apsort:"due-asc",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"ap2",title:"Accounts Payable By Due Date (Total view)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],apDue:"total",apview:"table",apsort:"due-asc",updated:"just now"},
       {id:"ap3",title:"Accounts Payable By Due Date (single due date)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],dataset:"single",apview:"timeline",apsort:"amt-desc",updated:"just now"},
       {id:"ap4",title:"Accounts Payable By Due Date (nothing outstanding)",kind:"payables",size:"wide",tiers:["kpi","wide","xwide"],state:"empty",updated:"just now"},
@@ -6425,16 +6425,16 @@ document.addEventListener("mousemove",function(e){var row=e.target.closest&&e.ta
       /* Insurance Billing Plans: our finalized W06, additive. kind "insurance-mb", prefix insF. 1-to-1 with Jo's insurance widget PLUS the expandable Type -> Plan nested table with a Cost column (Explore AND Detail), Jo's Share column kept alongside Cost. No status/COBRA/pending field (none exists in the real IB module). */
       {id:"insF", title:"Insurance Billing Plans",                     kind:"insurance-mb", size:"wide",  tiers:["kpi","wide","xwide"], insType:"All",      insSort:"count-desc", insExpanded:{}, updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"insF_k", title:"Insurance Billing Plans (Glance)",                     kind:"insurance-mb", size:"kpi",  tiers:["kpi","wide","xwide"], insType:"All",      insSort:"count-desc", insExpanded:{}, updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"insF2",title:"Insurance Billing Plans (Detail view)",         kind:"insurance-mb", size:"xwide", tiers:["kpi","wide","xwide"], insType:"All",      insSort:"count-desc", insExpanded:{"Medical":true}, updated:"just now"},
+      {id:"insF2",title:"Insurance Billing Plans (Explore view)",         kind:"insurance-mb", size:"xwide", tiers:["kpi","wide","xwide"], insType:"All",      insSort:"count-desc", insExpanded:{"Medical":true}, updated:"just now"},
       {id:"insF3",title:"Insurance Billing Plans (no plans set up)",      kind:"insurance-mb", size:"wide",  tiers:["kpi","wide","xwide"], state:"empty", dataset:"none", insType:"All", updated:"just now"},
       {id:"insF4",title:"Insurance Billing Plans (Dental filter, none set up)", kind:"insurance-mb", size:"wide",  tiers:["kpi","wide","xwide"], dataset:"nodental", insType:"Dental", insSort:"count-desc", insExpanded:{}, updated:"just now"},
       {id:"penF", title:"Pension Plans",                     kind:"pension-mb", size:"wide",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
       {id:"penF_k", title:"Pension Plans (Glance)",                     kind:"pension-mb", size:"kpi",  tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"penF2",title:"Pension Plans (Detail view)",        kind:"pension-mb", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now"},
+      {id:"penF2",title:"Pension Plans (Explore view)",        kind:"pension-mb", size:"xwide", tiers:["kpi","wide","xwide"], penDist:"All Districts", penSort:"amt-desc", penViewM:"table", penChartL:"pie", updated:"just now"},
       {id:"penF3",title:"Pension Plans (no active appointments)", kind:"pension-mb", size:"wide", tiers:["kpi","wide","xwide"], state:"empty", dataset:"none", updated:"just now"},
       /* Remittance Pledges: our finalized W04, additive. kind "remittance-mb", prefix remF. Default view Table (Version A), Pacing bars behind a toggle, per-pledge-term pacing, day-based colour bands. */
       {id:"remF", title:"Remittance Pledges",                 kind:"remittance-mb", size:"wide",  tiers:["kpi","wide","xwide"], remSort:"seq", view:"table", updated:"just now", actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
-      {id:"remF2",title:"Remittance Pledges (Detail view)",     kind:"remittance-mb", size:"xwide", tiers:["kpi","wide","xwide"], remSort:"seq", view:"table", updated:"just now"},
+      {id:"remF2",title:"Remittance Pledges (Explore view)",     kind:"remittance-mb", size:"xwide", tiers:["kpi","wide","xwide"], remSort:"seq", view:"table", updated:"just now"},
       {id:"remF3",title:"Remittance Pledges (no pledges set up)", kind:"remittance-mb", size:"wide", tiers:["kpi","wide","xwide"], state:"empty", updated:"just now"},
       {id:"remF4",title:"Remittance Pledges (Glance)", kind:"remittance-mb", size:"kpi", tiers:["kpi","wide","xwide"], remSort:"seq", view:"table", updated:"just now"},
       {id:"loan",title:"Loans With Balance Due",kind:"loans",size:"wide",tiers:["kpi","wide","xwide"],loanType:"All",loanSort:"amt-desc",loanBucket:"total",updated:"just now",actions:[{icon:"table_view",label:"Export as CSV",fmt:"CSV"},{icon:"description",label:"Export as Excel",fmt:"Excel"},{icon:"picture_as_pdf",label:"Export as PDF",fmt:"PDF"}]},
@@ -11018,7 +11018,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     return '<section class="widget widget-add" data-size="kpi"><button class="widget-add-btn" data-action="add-widget" aria-label="Add widget">'+ICON("add")+'<span>Add widget</span></button></section>';}
   function widgetHTML(w){
     /* On Glance, a "View details" hint that surfaces when you hover the KPI content, opening the fuller
-       Explore view in an overlay — so drilling in never requires resizing the widget. */
+       Detail view in an overlay — so drilling in never requires resizing the widget. */
     var drillHint=(!manage&&fitSize(w)==="kpi"&&w.tiers&&w.tiers.indexOf("wide")>-1)?'<button class="glance-hint" data-action="glance-drill" data-id="'+w.id+'" aria-label="View more details">'+ICON("open_in_full")+'View details</button>':'';
     return '<section class="widget" data-id="'+w.id+'" data-size="'+fitSize(w)+'" data-manage="'+manage+'" data-dragging="'+(dragId===w.id)+'"'+(manage?' draggable="true"':'')+'>'+
       '<div class="whead"><span class="wdrag">'+ICON("drag_indicator")+'</span>'+titleHTML(w)+(manage?'':hoverIconsHTML(w))+'<span class="wspace"></span><div class="wactions">'+actionsHTML(w)+'</div></div><div class="wcontent">'+contentHTML(w)+drillHint+'</div></section>';
