@@ -9005,6 +9005,16 @@ function arFOverduePill(w){
 /* GLANCE (kpi): total owed + overdue badge on the LEFT, a plain context line,
    then a compact aging read (stacked severity bar + oldest-with-balance
    callout). No content toolbar (Glance is flat). Values as text + sr-only. */
+/* Shared glance mini pie: a small filled pie (thick stroke fills the centre, so no hole and no centre
+   text) showing a distribution split. No legend, no centre number: the KPI number sits above it. segs
+   = [{value, color}] where color is a ready CSS colour value. */
+function glanceMiniPie(segs,aria){
+  var tot=segs.reduce(function(s,a){return s+a.value;},0);if(tot<=0)return '';
+  var R=35,C=2*Math.PI*R,off=0,arcs="";
+  segs.forEach(function(s){if(s.value<=0)return;var len=s.value/tot*C;
+    arcs+='<circle cx="70" cy="70" r="'+R+'" fill="none" stroke="'+s.color+'" stroke-width="70" stroke-dasharray="'+Math.min(len,C).toFixed(2)+' '+Math.max(0,C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;});
+  return '<div class="gl-pie"><svg viewBox="0 0 140 140" width="60" height="60" role="img" aria-label="'+(aria||"Distribution")+'">'+arcs+'</svg></div>';
+}
 /* Glance aging donut: the outstanding balance split by aging bucket, stacked full-width under the KPI
    (same component + sizing as the Payroll glance donut, so every glance donut reads the same). Center
    shows the invoice count; legend shows the top 3 buckets + a "+N more" roll-up. */
