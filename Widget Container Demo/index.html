@@ -2905,6 +2905,8 @@
 .ap-hd-row{display:flex;align-items:center;gap:14px;padding:2px 2px 0;}
 .ap-hd-kpi{display:flex;align-items:baseline;gap:8px;min-width:0;}
 .ap-hd-cap{font-size:12px;color:var(--txt-subtle);}
+.ap-bill-note{display:flex;align-items:flex-start;gap:7px;margin-top:12px;padding:9px 11px;background:var(--wn-100);border-radius:8px;font-size:12px;color:var(--txt-secondary);line-height:1.45;}
+.ap-bill-note .material-symbols-rounded{font-size:16px;color:var(--txt-subtle);flex:0 0 auto;}
 .ap-kpi-line{display:inline-flex;align-items:baseline;gap:8px;}
 .ap-hd-search{margin-left:auto;}
 /* AP filter tiles: icon + tone colour + readable text. */
@@ -9843,7 +9845,8 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(a==="ap-sort"){var was=find(id),k=t.getAttribute("data-k");if(was){var cs=(was.apsort||"due-asc").split("-");was.apsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="vendor"||k==="inv"||k==="due")?"asc":"desc"));}render();return true;}
     if(a==="ap-open"){modal={type:"apbill",inv:t.getAttribute("data-inv"),vendor:t.getAttribute("data-vendor"),dueiso:t.getAttribute("data-dueiso"),amt:t.getAttribute("data-amt")};modalMounted=false;pop=null;render();return true;}
     if(a==="ap-bill-close"){modal=null;pop=null;render();return true;}
-    if(a==="ap-openbill"){setStatus("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Payable to view line items and schedule payment.");return true;}
+    if(a==="ap-openbill"){setStatus("Opening invoice "+t.getAttribute("data-inv")+" in Accounts Payable to view line items and attachments.");return true;}
+    if(a==="ap-schedule-pay"){toast("Scheduling payment for invoice "+t.getAttribute("data-inv")+" through AvidXchange BillPay","event_available");return true;}
     if(a==="ap-pick-date"){var wap=find(id);if(wap){var iso=t.getAttribute("data-iso"),cur=apSel(wap);if(iso!==cur){wap.apDue=iso;apLoad(wap);}}pop=null;render();return true;}
     return false;
   }
