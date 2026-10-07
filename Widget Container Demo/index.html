@@ -9740,8 +9740,11 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     '</div>';
     return '<div class="modal-backdrop" data-action="ap-bill-close"><div class="modal modal-wide loan-detail-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Invoice '+apEsc(m.inv)+'">'+
       '<div class="modal-h loan-detail-h"><span class="modal-title"><span class="material-symbols-rounded" aria-hidden="true" style="font-size:19px;vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">receipt_long</span>Invoice '+apEsc(m.inv)+'</span><span class="loan-dsub">'+apEsc(m.vendor)+'</span><span class="loan-dh-spacer"></span><button class="iconbtn" data-action="ap-bill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
-      '<div class="modal-b loan-detail-b">'+grid+'</div>'+
-      '<div class="modal-f"><button class="btn primary sm" data-action="ap-openbill" data-inv="'+apEsc(m.inv)+'">'+ICON("open_in_new")+'Open in Accounts Payable</button></div></div></div>';}
+      '<div class="modal-b loan-detail-b">'+grid+(AP_AVIDPAY?'':'<div class="ap-bill-note">'+ICON("info")+'Online bill payment is available with AvidXchange BillPay (not enabled for this organization).</div>')+'</div>'+
+      '<div class="modal-f">'+
+        '<button class="btn secondary sm" data-action="ap-openbill" data-inv="'+apEsc(m.inv)+'">'+ICON("open_in_new")+'Open in Accounts Payable</button>'+
+        (AP_AVIDPAY?('<span class="modal-f-spacer"></span><button class="btn primary sm" data-action="ap-schedule-pay" data-inv="'+apEsc(m.inv)+'" data-tip="Schedule this payment through AvidXchange BillPay" data-tip-plain>'+ICON("event_available")+'Schedule payment</button>'):'')+
+      '</div></div></div>';}
   function apRowHTML(x){
     var statusCell=apStatusChip(x.due,false);
     return '<div class="wt-row ap-rowclick" data-acct="'+apEsc(apRowSearch(x))+'" data-action="ap-open" data-inv="'+apEsc(x.inv)+'" data-vendor="'+apEsc(x.vendor)+'" data-dueiso="'+apEsc(x.due)+'" data-amt="'+apEsc(apMoney(x.amount))+'" role="button" tabindex="0" aria-label="Invoice '+apEsc(x.inv)+' from '+apEsc(x.vendor)+', due '+apFmtLong(x.due)+', '+apDaysLabel(x.due)+', '+apMoney(x.amount)+'. Open invoice.">'+
