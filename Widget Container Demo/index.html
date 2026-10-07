@@ -7574,9 +7574,21 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var top=rows[0],tp=Math.round(top.net/tot*100);
     return '<div class="prf-gcomp"><div class="prf-gbar" role="img" aria-label="Payroll split across '+rows.length+' distributions this period">'+segs+'</div>'+
       '<div class="prf-gcap"><span class="prf-gdot" style="background:'+(PRF_DIST_COLORS[top.id]||"var(--primitive-color-cool-neutral-250)")+'"></span><span class="prf-gname">'+top.name+'</span><span class="prf-gpct">'+tp+'%</span></div></div>';}
+  /* Glance composition = a donut (distribution split) stacked UNDER the KPI, full width , matching
+     the widget's own chart type at larger sizes (not a thin side bar). */
+  function prFGlanceDonut(w){
+    var rows=prFDistTotals(w).slice().sort(function(a,b){return b.net-a.net;}),tot=rows.reduce(function(s,a){return s+a.net;},0);
+    if(!tot||!rows.length)return '';
+    var R=52,C=2*Math.PI*R,off=0,arcs="",legend="",shown=rows.slice(0,4);
+    rows.forEach(function(a){var frac=a.net/tot,len=frac*C,c=PRF_DIST_COLORS[a.id]||"var(--primitive-color-cool-neutral-250)";
+      arcs+='<circle cx="70" cy="70" r="'+R+'" fill="none" stroke="'+c+'" stroke-width="22" stroke-dasharray="'+Math.min(len+0.9,C).toFixed(2)+' '+Math.max(0,C-len-0.9).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 70 70)"></circle>';off+=len;});
+    shown.forEach(function(a){var c=PRF_DIST_COLORS[a.id]||"var(--primitive-color-cool-neutral-250)",pct=Math.round(a.net/tot*100);
+      legend+='<div class="prf-gd-leg"><span class="prf-gd-dot" style="background:'+c+'"></span><span class="prf-gd-nm">'+a.name+'</span><span class="prf-gd-pct">'+pct+'%</span></div>';});
+    if(rows.length>4)legend+='<div class="prf-gd-leg prf-gd-more">+'+(rows.length-4)+' more</div>';
+    return '<div class="prf-gl-donut"><svg class="donut" viewBox="0 0 140 140" width="86" height="86" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1" style="font-size:20px">'+rows.length+'</text><text x="70" y="88" text-anchor="middle" class="donut-c2">areas</text></svg><div class="prf-gd-legend">'+legend+'</div></div>';}
   function prFGlance(w){var tot=prFDistTotals(w).reduce(function(s,a){return s+a.net;},0);
     if(!tot)return '<div class="kpi-row"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num"><div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
-    return '<div class="kpi-row"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div><div class="kpi-spark prf-gl-comp">'+prFGlanceComp(w)+'</div></div>';}
+    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div>'+prFGlanceDonut(w)+'</div>';}
   function prFHeaderBlock(w,hideToggle,noTotal){
     var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>')+'</div>';
     if(noTotal)return '<div class="dep-hd">'+top+'</div>';
