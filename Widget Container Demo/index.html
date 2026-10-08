@@ -11717,6 +11717,11 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function depFScope(w){if(w.acct){var mine=depFAcctByScope(w);return mine?[mine]:[];}var f=w.filter||"All types";return depFData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;});}
   /* Owner change 2: unified scope-dependent breakdown. "total" = one ring/line; "group" = By Account Type at All Accounts, By Account at a selected type. The old all-accounts By-every-account branch is gone. */
   function depFBd(w){if(w.acct)return "total";return w.bd||"group";}
+  /* Distribution breakdown (separate from Trend's total/group). A distribution of a single "total" is
+     meaningless, so there is no Total: All Accounts toggles By Account Type | By Individual Account;
+     a selected account type shows just the individual accounts within it (no toggle). */
+  function depFDistBd(w){if(w.acct)return "account";var f=w.filter||"All types";if(f.indexOf("All")!==0)return "account";return w.distBd==="account"?"account":"type";}
+  function depFDistTog(w,bd){return '<div class="vtoggle" role="group" aria-label="Break down by">'+[["type","By Account Type","category"],["account","By Individual Account","account_balance_wallet"]].map(function(o){return '<button class="vt'+(bd===o[0]?" on":"")+'" data-depf="distbd" data-id="'+w.id+'" data-b="'+o[0]+'" aria-pressed="'+(bd===o[0])+'"><span class="material-symbols-rounded" aria-hidden="true">'+o[2]+'</span>'+o[1]+'</button>';}).join("")+'</div>';}
   function depFDist(w){var N={wide:8,xwide:14}[w.size]||10;var f=w.filter||"All types",allT=f.indexOf("All")===0,bd=depFBd(w);
     if(w.acct){var mine=depFAcctByScope(w);var tName=mine?mine.type:"";var inT=depFData(w).filter(function(a){return a.type===tName;}).map(function(a){return {name:a.name,net:a.net,type:a.type,acct:a.acct,acctFull:a.acctFull};});return {by:"account",segs:topN(inT,N),total:inT.length,scopeType:tName,legendLabel:"Accounts"};}
     if(bd==="total"){var scopeTot=depFScope(w).reduce(function(s,a){return s+a.net;},0);return {by:"total",segs:[{name:(allT?"All Accounts":f),net:scopeTot,total:true}],total:1,scopeType:(allT?null:f),legendLabel:"Total"};}
