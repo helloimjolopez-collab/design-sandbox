@@ -489,13 +489,13 @@
   .bgtF-gl-metricrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
   /* Glance viz occupies the sparkline slot (right of the KPI), a compact 2-bar Budget vs Actual mini
      chart , not a full-width block. Hover gives the figures. */
-  .kpi-row .bgtF-gc{flex:0 0 42%;max-width:44%;min-width:104px;align-self:center;height:100px;display:flex;align-items:flex-end;justify-content:center;gap:4px;cursor:pointer;border-radius:8px;padding:4px 6px 2px;transition:background var(--dur);}
+  .kpi-row .bgtF-gc{flex:0 0 42%;max-width:44%;min-width:104px;align-self:center;height:84px;display:flex;align-items:flex-end;justify-content:center;gap:4px;cursor:pointer;border-radius:8px;padding:4px 6px 2px;transition:background var(--dur);}
   .bgtF-gc-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;flex:0 0 auto;}
   .bgtF-gc-barwrap{flex:1 1 auto;display:flex;align-items:flex-end;min-height:0;}
   .bgtF-gc-bar{width:30px;border-radius:4px 4px 0 0;display:block;transition:filter var(--dur);}
   /* One unified hover state over the whole mini chart (both bars), since the tooltip describes the
      whole Budget-vs-Actual comparison, not a single bar. */
-  .bgtF-gc:hover{background:var(--wn-100);}
+  .bgtF-gc:hover{background:var(--wn-300);}
   .bgtF-gc:hover .bgtF-gc-bar{filter:brightness(0.95);}
   .bgtF-gc-bud{background-color:var(--am-200,var(--primitive-color-amethyst-200));background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.14) 0 2px,transparent 2px 5px);}
   .bgtF-gc-act{background-color:var(--am-600,var(--primitive-color-amethyst-600));}
@@ -8299,7 +8299,7 @@ function mysPopContent(){
     var val=bankTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
     return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
-      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Total balance</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
+      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Unreconciled balance</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
       '<div class="gl-sub">'+od+'</div>'+
       '</div>'+bankSpark(w)+'</div>';}
   function bankDrillModalHTML(){
