@@ -184,7 +184,10 @@
   @container (min-width:720px){.dashboard{grid-template-columns:repeat(8,minmax(76px,1fr));}}
   @container (min-width:1050px){.dashboard{grid-template-columns:repeat(12,minmax(72px,1fr));}}
   .widget[data-size="kpi"]{grid-row:span 8;}
-  .widget[data-size="wide"]{grid-row:span 22;}
+  /* Detail and Explore are exact multiples of the Glance height so stacked glances tile them with no
+     leftover gap: Glance = span 8 (176px); 3 stacked glances = 176+16+176+16+176 = 560 = span 24. So
+     Detail and Explore are span 24, i.e. one of them equals a column of three glances exactly. */
+  .widget[data-size="wide"]{grid-row:span 24;}
   .widget[data-size="xwide"]{grid-row:span 24;}
   /* At Figma's 416, a body must shrink so its own .scroll region scrolls, rather than push the rest of
      the content (a total row, the last legend entries) past the widget's bottom edge. */
