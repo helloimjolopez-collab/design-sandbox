@@ -782,6 +782,14 @@
   .prf-gd-dot{width:8px;height:8px;border-radius:2px;flex:0 0 auto;}
   .prf-gd-nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .prf-gd-pct{flex:0 0 auto;font-weight:600;color:var(--txt-primary);font-variant-numeric:tabular-nums;}
+  /* Payroll glance donut: fills the right slot beside the KPI, amethyst sequential, with a single legend
+     entry for the largest share (dot + name + % kept together, not split apart). */
+  .kpi-row .prf-gl-pie{flex:0 0 44%;max-width:46%;min-width:120px;align-self:center;display:flex;align-items:center;justify-content:center;gap:10px;}
+  .prf-gl-pie .donut{flex:0 0 auto;width:84px;height:84px;}
+  .prf-gl-pie-leg{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:6px;}
+  .prf-gl-leg-dot{width:10px;height:10px;border-radius:3px;flex:0 0 auto;}
+  .prf-gl-leg-nm{font-size:12px;font-weight:600;color:var(--txt-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .prf-gl-leg-pct{font-size:12px;font-weight:600;color:var(--txt-secondary);flex:0 0 auto;font-variant-numeric:tabular-nums;}
   .prf-gd-more{color:var(--txt-subtle);}
   /* Shared glance KPI head: eyebrow+number group on the left, a status badge inline to its right.
      Used by Receivable Invoices, Scheduled Time Off and My Status glances so every glance reads the
@@ -7833,7 +7841,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     if(!tot)return '<div class="kpi-row"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num"><div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
     var prRows=prFDistTotals(w).slice().sort(function(a,b){return b.net-a.net;}),prRamp=blueRamp(prRows.length);
     var prPieSegs=prRows.map(function(a,i){return {value:a.net,color:prRamp[i],tip:a.name+' · '+money(a.net)+' · '+(tot?Math.round(a.net/tot*100):0)+'%'};});
-    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div>'+prFGlanceComp(w)+'</div>';}
+    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div>'+prFGlanceDonut(w)+'</div>';}
   function prFHeaderBlock(w,hideToggle,noTotal){
     var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>')+'</div>';
     if(noTotal)return '<div class="dep-hd">'+top+'</div>';
