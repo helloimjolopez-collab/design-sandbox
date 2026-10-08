@@ -11722,11 +11722,11 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
      a selected account type shows just the individual accounts within it (no toggle). */
   function depFDistBd(w){if(w.acct)return "account";var f=w.filter||"All types";if(f.indexOf("All")!==0)return "account";return w.distBd==="account"?"account":"type";}
   function depFDistTog(w,bd){return '<div class="vtoggle" role="group" aria-label="Break down by">'+[["type","By Account Type","category"],["account","By Individual Account","account_balance_wallet"]].map(function(o){return '<button class="vt'+(bd===o[0]?" on":"")+'" data-depf="distbd" data-id="'+w.id+'" data-b="'+o[0]+'" aria-pressed="'+(bd===o[0])+'"><span class="material-symbols-rounded" aria-hidden="true">'+o[2]+'</span>'+o[1]+'</button>';}).join("")+'</div>';}
-  function depFDist(w){var N={wide:8,xwide:14}[w.size]||10;var f=w.filter||"All types",allT=f.indexOf("All")===0,bd=depFBd(w);
+  function depFDist(w){var N={wide:8,xwide:14}[w.size]||10;var f=w.filter||"All types",allT=f.indexOf("All")===0,bd=depFDistBd(w);
     if(w.acct){var mine=depFAcctByScope(w);var tName=mine?mine.type:"";var inT=depFData(w).filter(function(a){return a.type===tName;}).map(function(a){return {name:a.name,net:a.net,type:a.type,acct:a.acct,acctFull:a.acctFull};});return {by:"account",segs:topN(inT,N),total:inT.length,scopeType:tName,legendLabel:"Accounts"};}
-    if(bd==="total"){var scopeTot=depFScope(w).reduce(function(s,a){return s+a.net;},0);return {by:"total",segs:[{name:(allT?"All Accounts":f),net:scopeTot,total:true}],total:1,scopeType:(allT?null:f),legendLabel:"Total"};}
-    if(allT){var ty=depFByType(w);return {by:"type",segs:topN(ty,N),total:ty.length,scopeType:null,legendLabel:"Account Types"};}
-    var ac=depFScope(w).map(function(a){return {name:a.name,net:a.net,type:a.type,acct:a.acct,acctFull:a.acctFull};}).sort(function(a,b){return b.net-a.net;});return {by:"account",segs:ac,total:ac.length,scopeType:f,legendLabel:"Accounts"};}
+    if(allT&&bd!=="account"){var ty=depFByType(w);return {by:"type",segs:topN(ty,N),total:ty.length,scopeType:null,legendLabel:"Account Types"};}
+    if(allT){var allA=depFData(w).map(function(a){return {name:a.name,net:a.net,type:a.type,acct:a.acct,acctFull:a.acctFull};}).sort(function(a,b){return b.net-a.net;});return {by:"account",segs:topN(allA,N),total:allA.length,scopeType:null,legendLabel:"Accounts"};}
+    var ac=depFScope(w).map(function(a){return {name:a.name,net:a.net,type:a.type,acct:a.acct,acctFull:a.acctFull};}).sort(function(a,b){return b.net-a.net;});return {by:"account",segs:topN(ac,N),total:ac.length,scopeType:f,legendLabel:"Accounts"};}
   /* Owner change 4: P is a fiscal PERIOD (Time Window Module: per-org fiscal calendar, span between a month and a quarter), distinct from a calendar month, ordered between M and Q. */
   function depFAcctSeries(a,range){var n={W:8,M:9,P:9,Q:9,F:12,Y:12}[range]||9,slope={up:0.72,flat:0.98,down:1.24}[a.trend||"up"];return walk(a.name+"|"+range,n,a.net,slope,0.17,0.05);}
   function depFRangeMonths(range,n){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],out=[],i,now=6;
