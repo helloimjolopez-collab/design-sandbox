@@ -941,13 +941,13 @@
   .filter-chip .material-symbols-rounded{font-size:16px;}
   .whover{display:inline-flex;align-items:center;gap:0;flex:0 0 auto;margin-left:3px;}
   .wspace{flex:1;min-width:6px;}
-  .wmini{width:0;height:24px;border:0;background:transparent;color:var(--txt-subtle);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;overflow:hidden;transition:opacity .12s,width .12s;flex:0 0 auto;}
-  .wmini:hover{background:var(--wn-200);color:var(--brand-400);}
+  .wmini{width:0;height:24px;border:0;background:transparent;color:var(--semantic-color-foreground-action-secondary-rest);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;overflow:hidden;transition:opacity .12s;flex:0 0 auto;}
+  .wmini:hover{background:var(--wn-200);color:var(--semantic-color-foreground-action-secondary-hover);}
   .wmini .material-symbols-rounded{font-size:16px;}
-  /* reveal only when the HEADER is hovered — hovering content (e.g. the mini chart) must not toggle them.
-     At rest the icons take NO width so the title uses the full header; on hover they expand (width) and the
-     title truncates further to make room. */
-  @media(hover:hover){.whead:hover .wmini{opacity:1;pointer-events:auto;width:24px;}}
+  /* Reveal only when the HEADING (title) is hovered, or the icons themselves — NOT the whole header, and
+     not when hovering content. At rest the icons take 0 width so the title uses the full header; on hover
+     they appear and the title truncates to make room. Width snaps (no width transition) so no reflow flicker. */
+  @media(hover:hover){.wtitle-wrap:hover ~ .whover .wmini,.whover:hover .wmini{opacity:1;pointer-events:auto;width:24px;}}
   @media(hover:none){.wmini{opacity:1;pointer-events:auto;width:24px;}}
   /* a11y: also reveal on keyboard focus within the header */
   .whead:focus-within .wmini{opacity:1;pointer-events:auto;width:24px;}
