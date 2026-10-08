@@ -939,15 +939,17 @@
   .filter-chip .material-symbols-rounded{font-size:16px;}
   .whover{display:inline-flex;align-items:center;gap:0;flex:0 0 auto;margin-left:3px;}
   .wspace{flex:1;min-width:6px;}
-  .wmini{width:24px;height:24px;border:0;background:transparent;color:var(--txt-subtle);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .12s;flex:0 0 auto;}
+  .wmini{width:0;height:24px;border:0;background:transparent;color:var(--txt-subtle);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;overflow:hidden;transition:opacity .12s,width .12s;flex:0 0 auto;}
   .wmini:hover{background:var(--wn-200);color:var(--brand-400);}
   .wmini .material-symbols-rounded{font-size:16px;}
-  /* reveal only when the HEADER is hovered — hovering content (e.g. the mini chart) must not toggle them */
-  @media(hover:hover){.whead:hover .wmini{opacity:1;pointer-events:auto;}}
-  @media(hover:none){.wmini{opacity:1;pointer-events:auto;}}
+  /* reveal only when the HEADER is hovered — hovering content (e.g. the mini chart) must not toggle them.
+     At rest the icons take NO width so the title uses the full header; on hover they expand (width) and the
+     title truncates further to make room. */
+  @media(hover:hover){.whead:hover .wmini{opacity:1;pointer-events:auto;width:24px;}}
+  @media(hover:none){.wmini{opacity:1;pointer-events:auto;width:24px;}}
   /* a11y: also reveal on keyboard focus within the header */
-  .whead:focus-within .wmini{opacity:1;pointer-events:auto;}
-  .wmini:focus-visible{opacity:1;pointer-events:auto;}
+  .whead:focus-within .wmini{opacity:1;pointer-events:auto;width:24px;}
+  .wmini:focus-visible{opacity:1;pointer-events:auto;width:24px;}
   /* "View details" hint on glance widgets — surfaces when the KPI content is hovered, so drilling in never requires a resize */
   .glance-hint{position:absolute;right:10px;bottom:8px;z-index:4;display:inline-flex;align-items:center;gap:4px;font-family:inherit;font-size:11px;font-weight:600;color:var(--brand-500);background:var(--surface-widget);border:1px solid var(--brand-100);border-radius:999px;padding:3px 10px 3px 7px;cursor:pointer;opacity:0;transform:translateY(3px);pointer-events:none;transition:opacity .14s var(--ease),transform .14s var(--ease);box-shadow:var(--elevation-widget);}
   .glance-hint .material-symbols-rounded{font-size:14px;}
