@@ -6102,7 +6102,7 @@ function loanGlance(w){
     ?'<span class="arF-badge arF-badge-sev4" data-tip="'+loanEsc(loanMoney(over)+" across "+oc+" loan"+(oc===1?"":"s")+" is past due")+'" data-tip-plain>'+ICON("schedule")+'Past due '+overC+'</span>'
     :'<span class="arF-badge arF-badge-ok">'+ICON("check_circle")+'All current</span>';
   var pieSegs=loanBuckets(w).filter(function(r){return r.total>0;}).map(function(r){return {value:r.total,color:"var("+r.color+")",tip:r.label+' · '+loanMoney(r.total)+' · '+Math.round(r.total/tot*100)+'%'};});
-  return '<div class="kpi-row prf-glance loan-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Total outstanding</span><span class="metric-value">'+loanMoney(tot)+'</span></span>'+badge+'</div></div>'+glanceMiniPie(pieSegs,"Outstanding by age")+'<span class="sr-only">'+loanAgeSr(w)+'</span></div>';
+  return '<div class="kpi-row prf-glance loan-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Total outstanding</span><span class="metric-value">'+loanMoney(tot)+'</span></span>'+badge+'</div></div>'+'<div class="loan-gl-read" style="width:100%;margin-top:8px">'+loanStackBar(w)+'</div>'+'<span class="sr-only">'+loanAgeSr(w)+'</span></div>';
 }
 
 function loanEmpty(w){
