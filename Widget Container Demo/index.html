@@ -872,7 +872,11 @@
   .pie-wrap.col{flex-direction:column;gap:12px;}
   .pie-wrap.row{flex-direction:row;justify-content:center;align-items:center;gap:28px;}
   .pie-wrap.row .donut{align-self:center;flex:0 0 auto;}
-  .pie-wrap.row .legend,.pie-wrap.row .legend-col{align-self:center;}
+  /* Vertically centre the legend column (or a direct legend) next to the donut. Use the direct-child
+     combinator so a legend NESTED inside .legend-col is NOT caught (there it would centre horizontally,
+     shrinking the legend to content width and shifting it on every toggle, out of line with the header). */
+  .pie-wrap.row>.legend,.pie-wrap.row>.legend-col{align-self:center;}
+  .pie-wrap.row .legend-col>.legend{align-self:stretch;}
   .dist-wrap{flex:1;min-height:0;display:flex;flex-direction:column;}
   .chart-title{font-size:12px;font-weight:400;color:var(--txt-secondary);padding:8px 16px 4px;}
   /* ONE canonical focus/detail-overlay size. Fixed height (not auto) so the box never resizes when its
@@ -11895,6 +11899,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="tsort"){var k=t.getAttribute("data-k"),cs=(w.tsort||"net-desc").split("-");w.tsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="name"||k==="type")?"asc":"desc"));w.tshown=50;render();return;}
     if(a==="tmore"){w.tshown=(w.tshown||50)+75;render();return;}
     if(a==="bd"){w.bd=t.getAttribute("data-b");w.trIso=null;render();return;}
+    if(a==="distbd"){w.distBd=t.getAttribute("data-b");render();return;}
     if(a==="dist-drill"){if(t.getAttribute("data-by")==="type"){depFOpenType(w,t.getAttribute("data-val"));}return;} /* account slice: inert */
     if(a==="others"){return;} /* inert: no chart click opens an overlay */
   });
