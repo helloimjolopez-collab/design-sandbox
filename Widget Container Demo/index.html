@@ -8632,14 +8632,22 @@ function purFull(w){var left=purFiltered(w).length?purTable(w,true):purCaughtUp(
 function purGlance(w){
   /* Same tile component as the explore/detail filter tiles (identical .pur-tile styling, toning and
      type), so the KPI tiles look consistent at every size. Only the action differs (glance opens an
-     overlay), and the glance container gives them room to breathe. */
-  return '<div class="pur-tiles pur-gl-tiles" role="group" aria-label="Purchasing by status">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),m=PUR_TILE_META[id]||PUR_TILE_META.all;
-    return '<button class="pur-tile pur-tile-'+m.tone+'" data-action="pur-gl-tile" data-id="'+w.id+'" data-t="'+id+'" aria-label="'+t[1]+', '+cnt+' request'+(cnt===1?"":"s")+', '+money(amt)+'. Open.">'+
-      '<span class="pur-tile-top"><span class="pur-tile-ic material-symbols-rounded">'+m.ic+'</span><span class="pur-tile-lbl">'+t[1]+'</span></span>'+
-      '<span class="pur-tile-n">'+cnt+'</span>'+
-      '<span class="pur-tile-amt">'+money(amt)+'</span>'+
-    '</button>';
-  }).join("")+'</div>';}
+     overlay), and the glance container gives them room to breathe.
+     The glance leads with the Awaiting-me / All scope toggle (default "me") so the three KPIs can be
+     read for what is awaiting this approver or across everyone, and each KPI drills into its queue in
+     an overlay, carrying the active scope. This is the design decision recorded for the brief: the old
+     two-state status filter became three status KPIs plus a For-me/All scope, which answers "how much
+     is on me right now" at a glance far better than a single status dropdown did. */
+  return '<div class="pur-gl-wrap">'+
+    '<div class="pur-gl-scoperow">'+purScopeToggle(w)+'</div>'+
+    '<div class="pur-tiles pur-gl-tiles" role="group" aria-label="Purchasing by status">'+PUR_TILES.map(function(t){var id=t[0],cnt=purTileCount(w,id),amt=purTileSum(w,id),m=PUR_TILE_META[id]||PUR_TILE_META.all;
+      return '<button class="pur-tile pur-tile-'+m.tone+'" data-action="pur-gl-tile" data-id="'+w.id+'" data-t="'+id+'" aria-label="'+t[1]+', '+cnt+' request'+(cnt===1?"":"s")+', '+money(amt)+'. Open.">'+
+        '<span class="pur-tile-top"><span class="pur-tile-ic material-symbols-rounded">'+m.ic+'</span><span class="pur-tile-lbl">'+t[1]+'</span></span>'+
+        '<span class="pur-tile-n">'+cnt+'</span>'+
+        '<span class="pur-tile-amt">'+money(amt)+'</span>'+
+      '</button>';
+    }).join("")+'</div>'+
+  '</div>';}
 function purEmptyState(w){var ec=EMPTY_COPY.purchasing;return '<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div></div>';}
 function purLoad(w){w.purloading=true;clearTimeout(timers["pur-"+w.id]);timers["pur-"+w.id]=setTimeout(function(){w.purloading=false;render();},850);}
 function purBody(w){
