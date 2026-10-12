@@ -7812,10 +7812,18 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   function prFTableHTML(w){var meta=prFScopeMeta(w),rows=prFTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
     if(meta.kind==="pt"){
       /* By pay type: pay type is the row header, a Distribution column shows which distribution each
-         pay type belongs to (flat pay-type x distribution rows). */
-      var headPt='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"pt","Pay type")+'</span><span class="prf-distc">'+prFSortBtn(w,"dist","Distribution")+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
-      var bodyPt=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0,c=PRF_DIST_COLORS[a.distId]||"var(--primitive-color-cool-neutral-250)";
-        return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.pt+'</span><span class="prf-distc"><span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+a.distName+'</span></span></span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
+         pay type belongs to (flat pay-type x distribution rows).
+         When filtered to ONE pay type, each row is a distribution and the percentage is that pay type's
+         share OF THAT DISTRIBUTION (e.g. Medicare is 60% of Lawyers, 20% of Accountants) - these are
+         independent ratios against each distribution's own total, so they do NOT sum to 100%. Only in
+         that single-pay-type case is the denominator the distribution total; otherwise it is the total
+         of the rows shown. The column header says which. */
+      var singlePt=!!meta.ptId,distTot={};
+      if(singlePt)prFDistTotals(w).forEach(function(d){distTot[d.id]=d.net;});
+      var pctHead=singlePt?"% of distribution":"% of total";
+      var headPt='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"pt","Pay type")+'</span><span class="prf-distc">'+prFSortBtn(w,"dist","Distribution")+'</span><span class="wt-c2 wt-pctcol">'+pctHead+'</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
+      var bodyPt=rows.map(function(a){var denom=singlePt?(distTot[a.distId]||0):tot,pctR=denom?Math.round(a.net/denom*100):0,c=PRF_DIST_COLORS[a.distId]||"var(--primitive-color-cool-neutral-250)",pctLbl=singlePt?(pctR+'% of '+a.distName):(pctR+'% of total');
+        return '<div class="wt-row wt-rowh"><span class="lr-main">'+a.pt+'</span><span class="prf-distc"><span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+a.distName+'</span></span></span><span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctLbl+'"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
       return '<div class="scroll">'+headPt+bodyPt+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';
     }
     var col=(meta.kind==="distpt")?"Pay type":"Distribution",drill=(meta.kind==="all");
