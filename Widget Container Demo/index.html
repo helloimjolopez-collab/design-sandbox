@@ -6719,9 +6719,13 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   var PIE_COLORS=["var(--primitive-color-brand-600)","var(--brand-500)","var(--brand-300)","var(--brand-100)","var(--brand-70)","var(--primitive-color-brand-150)","var(--primitive-color-brand-75)","var(--primitive-color-brand-50)"];
   var OTHERS_COLOR="var(--primitive-color-cool-neutral-125)";
   var LINE_COLORS=["var(--brand-500)","var(--brand-100)","var(--brand-70)","var(--brand-300)","var(--brand-90)","var(--primitive-color-brand-150)"];
-  /* real blue scale: hold hue+saturation constant, step the LIGHTNESS (HSL) so every step stays a saturated blue and never fades to grey. Sized to the slice count so steps are always well spread. */
-  /* Exact same hue AND saturation as the original (249°, 40% — the muted amethyst) — only the lightness range is wider, so steps spread further apart without changing the color's character at all. */
-  function blueRamp(n){var H=249,S=40,Lmin=18,Lmax=88,out=[];for(var i=0;i<n;i++){out.push('hsl('+H+','+S+'%,'+Math.round(Lmin+(Lmax-Lmin)*(n>1?i/(n-1):0))+'%)');}return out;}
+  /* Sequential chart ramp = the Pathway AMETHYST primitive token scale (NOT an ad-hoc HSL blue). The
+     design system uses amethyst sequential tokens for every categorical/share chart, reserving
+     semantic colours (positive/negative/alert/severe) for charts that actually encode those meanings.
+     Largest share darkest (i=0 -> amethyst-800), tailing to light across the real token stops. Name
+     kept as blueRamp so every existing chart (donuts, pies, trend lines) switches in one place. */
+  var AM_RAMP_STOPS=['800','700','600','500','400','350','300','250','200','100'];
+  function blueRamp(n){if(n<=1)return ['var(--primitive-color-amethyst-600)'];var out=[];for(var i=0;i<n;i++){var idx=Math.round(i/(n-1)*(AM_RAMP_STOPS.length-1));out.push('var(--primitive-color-amethyst-'+AM_RAMP_STOPS[idx]+')');}return out;}
   /* filter narrows the TABLE only; default sort = Name, Balance column is sortable (desc/asc) */
   function depRows(w){var f=w.filter||"All types";var rows=depData(w).filter(function(a){return f.indexOf("All")===0||a.type===f;}).slice();var bs=w.balSort;if(bs==="desc")rows.sort(function(a,b){return b.net-a.net;});else if(bs==="asc")rows.sort(function(a,b){return a.net-b.net;});else rows.sort(function(a,b){return a.name.localeCompare(b.name);});return rows;}
   function depByType(w){var m={},order=[];depData(w).forEach(function(a){if(m[a.type]===undefined){m[a.type]=0;order.push(a.type);}m[a.type]+=a.net;});return order.map(function(t){return {name:t,net:m[t]};});}
