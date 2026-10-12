@@ -1101,7 +1101,7 @@
   .link-title{cursor:pointer;}
   /* Glance: single flat white card, no inner panel */
   .widget[data-size="kpi"]{background:var(--surface-widget);}
-  .widget[data-size="kpi"] .wcontent{background:transparent;box-shadow:none;border-radius:0;border:none;margin:0;}
+  .widget[data-size="kpi"] .wcontent{background:transparent;box-shadow:none;border-radius:0;border:none;margin:0;padding-bottom:0;}
   /* navigation dialog — explains exactly where a tap would take you */
   /* No entrance animation on the backdrop: several detail overlays rebuild their whole DOM on each
      in-modal interaction, which re-created this element and replayed the pop every time (the "glitch").
@@ -2672,7 +2672,9 @@
   .pen-hd .dep-hd-num{display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .pen-hd .pen-numwrap{min-width:0;}
   .pen-hd .dep-hd-toggle{flex:0 0 auto;}
-  .pen-glance{display:flex;flex-direction:column;gap:9px;padding:2px 2px 4px;}
+  /* Standalone pension glance only; the kpi-row pension variant must inherit the canonical glance
+     padding (0 12 8) from .kpi-row, not this bespoke value, so it matches every other glance. */
+  .pen-glance:not(.kpi-row){display:flex;flex-direction:column;gap:9px;padding:2px 2px 4px;}
   .pen-glance-top{display:flex;align-items:center;gap:8px;}
   .pen-glance-top .sc-nm{font-size:12px;font-weight:600;color:var(--txt-secondary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .pen-glance-swap{margin-left:auto;flex:0 0 auto;}
