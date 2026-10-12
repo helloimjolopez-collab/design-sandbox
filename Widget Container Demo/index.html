@@ -227,7 +227,7 @@
     .widget[data-size="kpi"]{grid-column:span 3;}
   }
   /* KPI is one row tall: tighten header + content so number + trend fit a short tile */
-  .widget[data-size="kpi"] .whead{padding-top:7px;padding-bottom:2px;}
+  .widget[data-size="kpi"] .whead{padding-top:7px;padding-bottom:2px;padding-left:12px;}
   /* KPI glance: number + mini trend SIDE BY SIDE, never a full chart */
   /* Canonical glance layout: the content block is vertically CENTRED in the tile (no top-pack with a
      void below), left-aligned on one edge, with one consistent vertical rhythm. All rhythm comes from
@@ -1331,6 +1331,12 @@
   .bank-drill-h{display:flex;align-items:center;gap:8px;}
   .bank-dh-spacer{flex:1 1 auto;}
   .bank-drill-h .bank-back .material-symbols-rounded{font-size:16px;}
+  /* Bank glance body: chip sits full-width on top (gl-chiprow is flex-basis 100%), then the number group
+     and the right-hand sparkline sit side by side and NEVER wrap (matches Figma glance "Chart & Trend: Right").
+     Without this the number group took the full row width and pushed the sparkline onto a third line,
+     overflowing the 176px glance frame. */
+  .kpi-row .bank-gl-body{flex:0 0 100%;display:flex;flex-wrap:nowrap;align-items:center;gap:16px;min-width:0;}
+  .kpi-row .bank-gl-body .prf-gl-num{flex:1 1 auto;min-width:0;}
   .kpi-row .bank-rspark{flex:0 0 40%;max-width:42%;min-width:96px;width:auto;align-self:center;height:48px;display:block;position:relative;}
   .bank-rspark svg{width:100%;height:100%;display:block;}
   .brs-dot{position:absolute;width:6px;height:6px;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 1.5px var(--cn-0);pointer-events:none;}
