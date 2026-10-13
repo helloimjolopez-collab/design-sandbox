@@ -6019,16 +6019,16 @@ function gftTriggerSelector(){if(pop.type==="gft-date")return '[data-action="gft
 
 /* ===== DATA =========================================================== */
 var LOAN_TODAY="2026-07-24";
-/* Four aging bands in severity order, labelled exactly per DR 11.1
-   (Current / 1-30 / 31-60 / 90+). The top band captures everything over
-   60 days (matching the live "Over 60" band the brief relabels to 90+);
-   no shipped loan sits in 61-89, so "90+" reads truthfully. */
+/* FOUR aging bands, matching what the live widget actually buckets into (verified via the brief's
+   Part A production audit): Current (under 30 days) / 30-59 / 60-89 / 90+. These are contiguous with
+   no gap. A fifth "61-90" band was added earlier by mistake - the real data does NOT distinguish
+   61-90 from 90+ (production has a single top band), so five buckets overstate the data's granularity.
+   Labelled accurately here rather than with production's misleading "Current / 30 / 60 / Over 60". */
 var LOAN_BUCKETS=[
-  {key:"cur",label:"Current",   sub:"not yet due",           hi:0,       sev:0},
-  {key:"b1", label:"1-30 days", sub:"up to 1 month past due", hi:30,     sev:1},
-  {key:"b2", label:"31-60 days",sub:"1 to 2 months past due", hi:60,     sev:2},
-  {key:"b3", label:"61-90 days",sub:"2 to 3 months past due", hi:90,     sev:3},
-  {key:"b4", label:"90+ days",  sub:"most overdue",           hi:Infinity,sev:4}
+  {key:"cur",label:"Current",   sub:"under 30 days",          hi:29,      sev:0},
+  {key:"b1", label:"30-59 days",sub:"1 to 2 months past due", hi:59,      sev:1},
+  {key:"b2", label:"60-89 days",sub:"2 to 3 months past due", hi:89,      sev:2},
+  {key:"b3", label:"90+ days",  sub:"most overdue",           hi:Infinity,sev:3}
 ];
 /* Amethyst severity ramp for the donut (G8, no red). The aging FILTER CARDS use a separate semantic
    scale (LOAN_CARD_COLORS): Current blue, 1-30 purple, 31-60 amber, 61-90 orange, 90+ red (Jo's spec). */
