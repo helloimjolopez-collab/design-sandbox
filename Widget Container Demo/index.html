@@ -8354,24 +8354,31 @@ function mysPopContent(){
   /* Glance is interactive: the account chip opens the real picker (filter/search),
      and the overdrawn chip DRILLS, opening the Detail view in a closable overlay
      filtered to the overdrawn accounts. No inert button-looking chip. */
+  /* Neutral since-last-reconciliation delta (ending - beginning). This is the ONLY real time signal
+     the data supports - there is no balance history, so no sparkline/trend. Direction is carried by
+     the arrow, not colour (a balance moving down is not inherently "bad"), so the pill stays neutral.
+     The "since reconciliation" qualifier names the baseline, like Budget's "vs budget" - the
+     comparison IS the metric, so this short qualifier is allowed on the face. */
+  function bankReconDelta(d){
+    if(Math.round(d)===0)return '<span class="delta-pill bank-recon" data-tip="No change since the last reconciliation." data-tip-plain aria-label="No change since the last reconciliation">'+ICON("remove")+'No change<span class="bank-recon-lbl">since reconciliation</span></span>';
+    var up=d>0,ar=up?"arrow_upward":"arrow_downward";
+    return '<span class="delta-pill bank-recon" data-tip="Change since the last reconciliation: '+(up?"up ":"down ")+bankMoney(Math.abs(d))+'." data-tip-plain aria-label="'+(up?"Up ":"Down ")+bankMoney(Math.abs(d))+' since the last reconciliation">'+ICON(ar)+bankMoney(Math.abs(d))+'<span class="bank-recon-lbl">since reconciliation</span></span>';
+  }
   function bankGlance(w){var sel=bankSelected(w);
-    /* Face carries only the money and the one genuine alarm (overdrawn). The eyebrow names the metric:
-       "Cash on hand" (brief s10) for all accounts, "Ending balance" (the brief's 7-row term) for a
-       single account. The reconciliation-basis provenance is NOT a face element - it does not change
-       the read and would clutter the KPI or collide with the sparkline; it lives in the widget info
-       popover (aboutOf), worded accurately. gl-sub holds the overdrawn alarm only, so it can never sit
-       beside a passive tag or overlap the sparkline. */
-    if(sel){var end=bankEnding(sel),neg=end<0;
-      return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="bank-gl-body"><div class="kpi-num prf-gl-num">'+
+    /* Face: money + a compact since-last-reconciliation delta (the real signal) + the overdrawn alarm
+       when one applies. Eyebrow names the metric: "Cash on hand" (all) / "Ending balance" (single).
+       Reconciliation-basis provenance stays in the info popover (aboutOf), not on the face. */
+    if(sel){var end=bankEnding(sel),beg=sel.a[0],neg=end<0;
+      return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
         '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Ending balance</span><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span></span>'+
-        (neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
-        '</div>'+bankSpark(w)+'</div></div>';}
-    var val=bankTotal(w),negT=val<0,over=bankNegCount(w);
+        '<div class="gl-sub">'+bankReconDelta(end-beg)+(neg?'<span class="bank-pill warn">'+ICON("error")+'Overdrawn</span>':'')+'</div>'+
+        '</div></div>';}
+    var val=bankTotal(w),beg2=bankBeginTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
-    return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="bank-gl-body"><div class="kpi-num prf-gl-num">'+
+    return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
       '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Cash on hand</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
-      (od?'<div class="gl-sub">'+od+'</div>':'')+
-      '</div>'+bankSpark(w)+'</div></div>';}
+      '<div class="gl-sub">'+bankReconDelta(val-beg2)+od+'</div>'+
+      '</div></div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
     var clone=Object.assign({},w,{size:"xwide"}),title="Bank Balances",ao=null;
