@@ -4472,13 +4472,26 @@ function penFGlanceDonut(w){
   if(rows.length>3)legend+='<div class="prf-gd-leg prf-gd-more">+'+(rows.length-3)+' more</div>';
   return '<div class="prf-gl-donut"><svg class="donut" viewBox="0 0 140 140" width="56" height="56" aria-hidden="true">'+arcs+'<text x="70" y="66" text-anchor="middle" class="donut-c1" style="font-size:20px">'+np+'</text><text x="70" y="88" text-anchor="middle" class="donut-c2">plans</text></svg><div class="prf-gd-legend">'+legend+'</div></div>';
 }
+/* Glance by-plan bar: a single horizontal stacked bar of annual contribution by plan, amethyst
+   sequential ramp (largest share darkest), with the top plan named beneath. role="img" + a full
+   aria-label read every plan's share; each segment carries a hover tip. Replaces the mini-pie (a bar
+   reads the split more precisely, per the brief) and fits the glance width. */
+function penFGlanceBar(w){
+  var rows=penFRows(w).slice().sort(function(a,b){return b.amt-a.amt;}),tot=rows.reduce(function(s,r){return s+r.amt;},0);
+  if(!tot||!rows.length)return '';
+  var ramp=blueRamp(rows.length);
+  var segs=rows.map(function(r,i){var pct=r.amt/tot*100;return '<span class="penf-glbar-seg" style="width:'+pct.toFixed(2)+'%;background:var('+ramp[i]+')" data-tip="'+r.plan.replace(/"/g,"&quot;")+': '+penFMoney(r.amt)+', '+Math.round(pct)+'% of annual contribution" data-tip-plain></span>';}).join("");
+  var top=rows[0],topPct=Math.round(top.amt/tot*100);
+  var aria="Annual contribution by plan: "+rows.map(function(r){return r.plan+" "+Math.round(r.amt/tot*100)+"%";}).join(", ")+".";
+  return '<div class="penf-glbar-wrap"><div class="penf-glbar" role="img" aria-label="'+aria.replace(/"/g,"&quot;")+'">'+segs+'</div><div class="penf-glbar-leg"><span class="penf-glbar-dot" style="background:var('+ramp[0]+')"></span><span class="penf-glbar-nm">'+top.plan+'</span><span class="penf-glbar-pct">'+topPct+'%</span></div></div>';
+}
 function penFGlance(w){
   if(w.state==="empty"||!penFFiltered(w).length)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No appointments</span></div><div class="gl-sub"><span class="pen-caption">no active pension appointments</span></div></div></div>';
   var tot=penFTotal(w),na=penFApptCount(w),np=penFPlanCount(w),d=penFDist(w),lead=(d==="All Districts")?"all districts":d.toLowerCase();
   return '<div class="kpi-row prf-glance pen-glance">'+
     '<div class="gl-chiprow">'+penFDistChip(w)+'</div>'+
-    '<div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Annual contribution</span><span class="metric-value">'+penFMoney(tot)+'</span></span></div>'+
-    glanceMiniPie((function(){var rr=penFRows(w).slice().sort(function(a,b){return b.amt-a.amt;}),rp=blueRamp(rr.length),t=rr.reduce(function(s,x){return s+x.amt;},0);return rr.map(function(r,i){return {value:r.amt,color:rp[i],tip:r.plan+' · '+penFMoney(r.amt)+' · '+(t?Math.round(r.amt/t*100):0)+'%'};});})(),"Annual contribution by plan")+
+    '<div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Annual contribution</span><span class="metric-value">'+penFMoney(tot)+'</span></span><div class="gl-sub"><span class="pen-gl-meta">'+np+' plan'+(np===1?"":"s")+' &middot; '+na+' appointee'+(na===1?"":"s")+'</span></div></div>'+
+    penFGlanceBar(w)+
     '<span class="sr-only">Annual pension contribution '+penFMoney(tot)+' across '+np+' plans and '+na+' active appointees, '+lead+'.</span>'+
   '</div>';
 }
