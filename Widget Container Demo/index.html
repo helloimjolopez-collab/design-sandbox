@@ -4488,11 +4488,10 @@ function penFGlanceDonut(w){
 function penFGlanceBar(w){
   var rows=penFRows(w).slice().sort(function(a,b){return b.amt-a.amt;}),tot=rows.reduce(function(s,r){return s+r.amt;},0);
   if(!tot||!rows.length)return '';
-  var ramp=blueRamp(rows.length);
-  var segs=rows.map(function(r,i){var pct=r.amt/tot*100;return '<span class="penf-glbar-seg" style="width:'+pct.toFixed(2)+'%;background:var('+ramp[i]+')" data-tip="'+r.plan.replace(/"/g,"&quot;")+': '+penFMoney(r.amt)+', '+Math.round(pct)+'% of annual contribution" data-tip-plain></span>';}).join("");
-  var top=rows[0],topPct=Math.round(top.amt/tot*100);
+  var ramp=blueRamp(rows.length);/* each entry is already a full var(--primitive-color-amethyst-*) string */
+  var segs=rows.map(function(r,i){var pct=r.amt/tot*100;return '<span class="penf-glbar-seg" style="width:'+pct.toFixed(2)+'%;background:'+ramp[i]+'" data-tip="'+r.plan.replace(/"/g,"&quot;")+': '+penFMoney(r.amt)+', '+Math.round(pct)+'% of annual contribution" data-tip-plain></span>';}).join("");
   var aria="Annual contribution by plan: "+rows.map(function(r){return r.plan+" "+Math.round(r.amt/tot*100)+"%";}).join(", ")+".";
-  return '<div class="penf-glbar-wrap"><div class="penf-glbar" role="img" aria-label="'+aria.replace(/"/g,"&quot;")+'">'+segs+'</div><div class="penf-glbar-leg"><span class="penf-glbar-dot" style="background:var('+ramp[0]+')"></span><span class="penf-glbar-nm">'+top.plan+'</span><span class="penf-glbar-pct">'+topPct+'%</span></div></div>';
+  return '<div class="penf-glbar-wrap"><div class="penf-glbar" role="img" aria-label="'+aria.replace(/"/g,"&quot;")+'">'+segs+'</div></div>';
 }
 function penFGlance(w){
   if(w.state==="empty"||!penFFiltered(w).length)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:20px;color:var(--txt-subtle)">No appointments</span></div><div class="gl-sub"><span class="pen-caption">no active pension appointments</span></div></div></div>';
