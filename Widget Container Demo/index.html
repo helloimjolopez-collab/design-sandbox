@@ -8505,7 +8505,7 @@ function mysPopContent(){
        in balance is a core read of this widget (brief: make overdrawn obvious everywhere), so it is a
        real column, not a size-gated extra and not an inline tag that only appears on negatives. (Type
        stays full-only; note Type is not a structured field in the real bank model - flagged separately.) */
-    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Account")+'</span>'+(full?'<span class="wt-type">'+sb("type","Type")+'</span>':'')+'<span class="bank-statcol">Status</span><span class="wt-c2 bank-bal">'+sb("bal","Balance")+'</span></div>';
+    var head='<div class="wt-row wt-head"><span class="lr-main">'+sb("name","Account")+'</span>'+(full?'<span class="wt-type">'+sb("type","Type")+'</span>':'')+'<span class="bank-statcol">'+sb("status","Status")+'</span><span class="wt-c2 bank-bal">'+sb("bal","Balance")+'</span></div>';
     var nRows=rows.length,PER=50,shown=Math.min(Math.max(PER,w.bkShown||PER),nRows),remaining=nRows-shown,pageRows=rows.slice(0,shown);
     var body=pageRows.map(function(a){var end=bankEnding(a),neg=end<0,aesc=a.name.replace(/"/g,"&quot;");
       var tip=aesc+', Account '+(a.acctFull||a.acct)+(neg?'. This account is overdrawn.':'');
