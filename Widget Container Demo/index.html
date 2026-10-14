@@ -5856,13 +5856,15 @@ function gftHeaderBlock(w,mode){
   var loading=(mode==="loading"),o=gftOverall(w),thru=gftThru(w);
   /* Explore shows progress + follow-up side by side, so the view toggle is hidden there. */
   var toggle=(w.size==="xwide")?"":gftViewToggle(w);
-  var top='<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>';
+  var tg=toggle?('<div class="dep-hd-toggle">'+toggle+'</div>'):'';
+  /* Filters row 1; Received KPI + the view toggle share row 2, toggle far right (not on filters). */
+  var top='<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div></div>';
   if(loading){var numL='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:24px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';
-    return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numL+'</div></div></div>';}
+    return '<div class="dep-hd gft-hd hd-kpitoggle">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numL+'</div>'+tg+'</div></div>';}
   /* Received leads; the pledged total is a hover tooltip on the number (not a plain caption). The
      on-track/behind badge sits inline; the per-purpose bars carry the rest. */
   var numInner='<div class="dep-hd-kpigrp gft-kpigrp"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value" data-tip="'+gftEsc(gftPct(o.fulfilled)+" of "+money(o.pledgeTotal)+" pledged, received as of "+gftFmtDate(thru))+'" data-tip-plain>'+money(o.received)+'</span></span>'+gftKpiTrail(w,o,thru)+'</div>';
-  return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+'</div></div></div>';
+  return '<div class="dep-hd gft-hd hd-kpitoggle">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+'</div>'+tg+'</div></div>';
 }
 
 function gftSkeleton(){var rows=[92,70,54,38].map(function(wd){return '<div class="gft-sk-row"><span class="sk" style="width:120px;height:12px;border-radius:4px"></span><span class="sk gft-sk-bar" style="width:'+wd+'%"></span></div>';}).join("");return '<div class="gft-skel"><div class="gft-skel-rows">'+rows+'</div><div class="bgt-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
