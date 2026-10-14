@@ -2177,12 +2177,21 @@
   .pto-qtbl{min-height:0;overflow:auto;}
   .pto-qrow{display:flex;align-items:center;gap:10px;min-width:640px;padding:7px 14px;border-bottom:1px solid var(--stroke-widget);font-size:var(--semantic-type-font-size-xs);}
   .pto-qc-chk{flex:0 0 24px;}
-  .pto-qc-date{flex:0 0 92px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .pto-qc-emp{flex:1 1 120px;min-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .pto-qc-dept{flex:0 0 148px;min-width:0;}
-  .pto-qc-type{flex:0 0 96px;color:var(--txt-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .pto-qc-status{flex:0 0 118px;}
-  .pto-qc-act{flex:0 0 104px;display:flex;gap:4px;align-items:center;justify-content:flex-end;}
+  .pto-qc-date{flex:0 0 82px;color:var(--txt-secondary);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  /* Employee name is the row's subject: it gets the flexible width and only ellipsises as a last resort,
+     and then the full name is on hover (title). Width is freed by the icon-only approve + shorter date. */
+  .pto-qc-emp{flex:1 1 180px;min-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pto-qc-dept{flex:0 0 130px;min-width:0;}
+  .pto-qc-type{flex:0 0 92px;color:var(--txt-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pto-qc-status{flex:0 0 112px;}
+  .pto-qc-act{flex:0 0 auto;display:flex;gap:4px;align-items:center;justify-content:flex-end;}
+  /* Icon-only approve: a check, positive-tinted, 28px target padded to 44 for touch; frees the width the
+     name needs. Tap still runs the normal approve path. */
+  .pto-approve-ic{border:0;background:transparent;cursor:pointer;color:var(--semantic-color-foreground-static-positive-on-subtle);display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;position:relative;transition:background var(--dur);}
+  .pto-approve-ic:hover{background:var(--semantic-color-fill-static-positive-subtle);}
+  .pto-approve-ic:focus-visible{outline:2px solid var(--brand-fill);outline-offset:1px;}
+  .pto-approve-ic::after{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;transform:translate(-50%,-50%);}
+  .pto-approve-ic .material-symbols-rounded{font-size:var(--semantic-type-font-size-l);}
   .pto-emp-link{border:0;background:transparent;font-family:inherit;font-size:var(--semantic-type-font-size-xs);font-weight:500;color:var(--txt-primary);cursor:pointer;padding:0;text-align:left;display:inline-flex;align-items:center;min-height:24px;}
   .pto-emp-link:hover{text-decoration:underline;text-underline-offset:2px;}
   .pto-dept-badge{display:inline-flex;align-items:center;gap:4px;font-size:var(--semantic-type-font-size-xs);font-weight:600;color:var(--txt-secondary);background:var(--wn-200);border-radius:999px;padding:2px 9px 2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
