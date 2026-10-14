@@ -5812,10 +5812,10 @@ function gftEsc(s){return String(s).replace(/"/g,"&quot;");}
    track / ahead / fully funded. No red (per conventions; red is reserved for
    the app delta pill elsewhere). */
 function gftStatusPill(status,amt,asOf){
-  if(status==="behind")return '<span class="rem-st rem-st-behind" data-tip="'+gftEsc(money(amt)+" more was expected by "+gftFmtDate(asOf)+" than has been received. Behind schedule.")+'" data-tip-plain>'+ICON("error")+money(amt)+' behind</span>';
-  if(status==="ahead")return '<span class="rem-st rem-st-ok" data-tip="'+gftEsc(money(amt)+" more has been received than was expected by "+gftFmtDate(asOf)+". Ahead of schedule.")+'" data-tip-plain>'+ICON("trending_up")+money(amt)+' ahead</span>';
-  if(status==="complete")return '<span class="rem-st rem-st-ok" data-tip="The full pledged amount for this selection has been received." data-tip-plain>'+ICON("check_circle")+'Fully funded</span>';
-  return '<span class="rem-st rem-st-ok" data-tip="Received matches what was expected by '+gftEsc(gftFmtDate(asOf))+'. On track." data-tip-plain>'+ICON("check_circle")+'On track</span>';
+  if(status==="behind")return badge({status:"attention",size:"small",icon:"error",text:money(amt)+" behind",attrs:'data-tip="'+gftEsc(money(amt)+" more was expected by "+gftFmtDate(asOf)+" than has been received. Behind schedule.")+'" data-tip-plain'});
+  if(status==="ahead")return badge({status:"positive",size:"small",icon:"trending_up",text:money(amt)+" ahead",attrs:'data-tip="'+gftEsc(money(amt)+" more has been received than was expected by "+gftFmtDate(asOf)+". Ahead of schedule.")+'" data-tip-plain'});
+  if(status==="complete")return badge({status:"positive",size:"small",icon:"check_circle",text:"Fully funded",attrs:'data-tip="The full pledged amount for this selection has been received." data-tip-plain'});
+  return badge({status:"info",size:"small",icon:"check_circle",text:"On track",attrs:'data-tip="Received matches what was expected by '+gftEsc(gftFmtDate(asOf))+'. On track." data-tip-plain'});
 }
 
 /* Controls (secondary-fill chips, sized to content). The date chip overrides
