@@ -9989,7 +9989,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     } else {
       var list=ptoCalPpl(idx.ppl,anchor);
       if(!list.length){body='<div class="pto-cal-dayempty"><span class="material-symbols-rounded" aria-hidden="true">event_available</span><span>No time off scheduled</span></div>';}
-      else {body='<div class="pto-cal-day-list">'+list.map(function(p){var sb=p.s==="approved"?'<span class="pto-sb pto-sb-ok">'+ICON("check_circle")+'Approved</span>':(p.s==="outstanding"?'<span class="pto-sb pto-sb-out">'+ICON("error")+'Outstanding</span>':'<span class="pto-sb pto-sb-pend">'+ICON("schedule")+'Pending</span>');return '<div class="pto-cal-day-row"><span class="pto-cal-day-nm">'+p.n+'</span><span class="pto-dept-badge">'+ICON("groups")+p.dept+'</span><span class="pto-cal-day-type">'+p.t+'</span><span class="pto-cal-day-st">'+sb+'</span></div>';}).join("")+'</div>';}
+      else {body='<div class="pto-cal-day-list">'+list.map(function(p){var sb=p.s==="approved"?badge({status:"positive",size:"small",icon:"check_circle",text:"Approved"}):(p.s==="outstanding"?badge({status:"attention",size:"small",icon:"error",text:"Outstanding"}):badge({status:"info",size:"small",icon:"schedule",text:"Pending"}));return '<div class="pto-cal-day-row"><span class="pto-cal-day-nm">'+p.n+'</span><span class="pto-dept-badge">'+ICON("groups")+p.dept+'</span><span class="pto-cal-day-type">'+p.t+'</span><span class="pto-cal-day-st">'+sb+'</span></div>';}).join("")+'</div>';}
     }
     return '<div class="pto-cal-wrap pto-cal-'+gran+'">'+head+body+'</div>';}
   function ptoHead2(w){
