@@ -5911,17 +5911,17 @@ function gftBehindPanel(w){
    a compact overall goal bar, and a follow-up read. Flat (no toolbar). */
 function gftGlance(w){
   var o=gftOverall(w),thru=gftThru(w),asOf=gftFmtDate(thru);
-  var rPct=o.pledgeTotal>0?Math.min(100,o.received/o.pledgeTotal*100):0;
-  var dPct=o.pledgeTotal>0?Math.min(100,o.due/o.pledgeTotal*100):0;
-  var specific=(gftPurposeCur(w)!=="All purposes");
-  var gtip=encodeURIComponent(JSON.stringify(gftTipData(o,asOf,gftPurposeCur(w))));
-  var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
-  var bar=o.pledgeTotal>0?('<div class="gft-prow-bar gft-glance-bar" data-gftip="'+gtip+'" tabindex="0" role="img" aria-label="'+gftEsc(gftPct(o.fulfilled)+" of "+money(o.pledgeTotal)+" pledged paid; "+gftRemainingText(o))+'"><div class="gft-track"><div class="gft-fill gft-fill-'+(o.status==="behind"?"behind":"ok")+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div><span class="gft-mark" style="left:'+Math.min(100,dPct).toFixed(1)+'%" aria-hidden="true"></span></div>'):'';
-  return '<div class="kpi-row"><div class="kpi-num">'+
-    '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value">'+money(o.received)+'</span></span>'+
-    '<div class="gl-sub"><span class="gft-kpi-cap">'+gftPct(o.fulfilled)+' of '+money(o.pledgeTotal)+' pledged</span>'+gftKpiTrail(w,o,thru)+'</div>'+
-    '<span class="sr-only">'+gftPct(o.fulfilled)+' of the '+money(o.pledgeTotal)+' pledged has been received ('+money(o.received)+') as of '+asOf+'. '+money(o.due)+' was expected by then. '+money(o.outstanding)+' is still outstanding.</span>'+
-  '</div>'+bar+'</div>';
+  var st=(o.status==="behind")?"behind":(o.status==="ahead"?"ahead":"ok");
+  /* Received leads; the pledged total is a hover tooltip on the number (not a plain "of $X pledged"
+     caption). The segment bar below carries the detail on hover, with the on-track/behind badge inline
+     to its right. No glance filter dropdown. */
+  return '<div class="kpi-row prf-glance gft-glance">'+
+    '<div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span>'+
+      '<span class="metric-value" data-tip="'+gftEsc(gftPct(o.fulfilled)+" of "+money(o.pledgeTotal)+" pledged, received as of "+asOf)+'" data-tip-plain>'+money(o.received)+'</span></span>'+
+      '<span class="sr-only">'+gftPct(o.fulfilled)+' of the '+money(o.pledgeTotal)+' pledged has been received ('+money(o.received)+') as of '+asOf+'. '+money(o.due)+' was expected by then. '+money(o.outstanding)+' is still outstanding.</span>'+
+    '</div>'+
+    (o.pledgeTotal>0?'<div class="gft-prow-bar2 gft-glance-bar2">'+gftZoneTrack(o,asOf,st)+gftKpiTrail(w,o,thru)+'</div>':'')+
+  '</div>';
 }
 
 function gftEmpty(w){
