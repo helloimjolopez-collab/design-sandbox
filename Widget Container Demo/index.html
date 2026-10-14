@@ -8600,16 +8600,16 @@ function mysPopContent(){
        it is the account's own since-reconciliation activity. Eyebrow names the metric: "Cash on hand"
        (all) / "Ending balance" (single). */
     if(sel){var end=bankEnding(sel),beg=sel.a[0],neg=end<0;
-      return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
+      return '<div class="kpi-row depf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="depf-gl-main"><div class="kpi-num">'+
         '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Ending balance</span><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span></span>'+
         (neg?'<div class="gl-sub">'+badge({status:"negative",size:"small",icon:"error",text:"Overdrawn"})+'</div>':'')+
-        '</div>'+bankSpark(w)+'</div>';}
+        '</div>'+bankSpark(w)+'</div></div>';}
     var val=bankTotal(w),beg2=bankBeginTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?badge({status:"negative",size:"small",icon:"error",text:over+" overdrawn",tag:"button",attrs:'data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open"'}):'';
-    return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
+    return '<div class="kpi-row depf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="depf-gl-main"><div class="kpi-num">'+
       '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Cash on hand</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
       (od?'<div class="gl-sub">'+od+'</div>':'')+
-      '</div>'+bankSpark(w)+'</div>';}
+      '</div>'+bankSpark(w)+'</div></div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
     var clone=Object.assign({},w,{size:"xwide"}),title="Bank Balances",ao=null;
