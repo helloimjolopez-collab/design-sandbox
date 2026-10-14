@@ -2439,7 +2439,6 @@
 .ap-sum-fill.zero{background:var(--wn-300);}
 .ap-sum-val{flex:0 0 auto;text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;}
 .ap-sum-row{justify-content:space-between;}
-.ap-sum-val.over{color:var(--red-100);}
 .ap-sum-sep{height:1px;background:var(--stroke-widget);margin:10px 2px 2px;}
 
 /* ---- loading skeleton (table rows) ---- */
@@ -8163,14 +8162,19 @@ function mysHeaderBlock(w,sel){
     :'<span class="mys-allclear-h">'+ICON("check_circle")+'You’re all caught up</span>';
   return '<div class="dep-hd mys-hd"><div class="dep-hd-top"><div class="mys-hgrp">'+status+'</div><div class="dep-hd-toggle">'+mysConfigBtn(w)+'</div></div></div>';
 }
-function mysRowHTML(w,q){
+/* Each row is coded by its status category so the three kinds read apart at a glance: a leading status
+   icon (attention / info / positive) and the count as a status-coloured badge. cat = action|info|clear. */
+function mysRowHTML(w,q,cat){
+  cat=cat||(q.count<=0?"clear":"action");
   var zero=q.count<=0, clickable=!zero;
+  var ic=(cat==="action")?"priority_high":(cat==="clear")?"check_circle":"info";
   var aff=(!zero&&q.click==="nav")?'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens '+q.navTo+' (leaves the dashboard)" data-tip-plain>arrow_outward</span>':'';
   var srClick=clickable?(q.click==="nav"?", opens "+q.navTo:", opens the list"):", nothing to do";
-  var nm='<span class="lr-main mys-nm">'+q.name+'</span>';
-  var count='<span class="wt-c2 mys-count'+(zero?" mys-count-zero":"")+'">'+q.count+'<span class="sr-only">'+srClick+'</span></span>';
+  var nm='<span class="lr-main mys-nm"><span class="mys-rowic mys-ic-'+cat+' material-symbols-rounded" aria-hidden="true">'+ic+'</span>'+q.name+'</span>';
+  var countInner=(cat==="clear")?ICON("check"):q.count;
+  var count='<span class="wt-c2 mys-count mys-count-'+cat+(zero?" mys-count-zero":"")+'">'+countInner+'<span class="sr-only">'+srClick+'</span></span>';
   var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+q.count+srClick+'"':' aria-disabled="true"';
-  return '<div class="wt-row mys-row'+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'>'+nm+aff+count+'</div>';
+  return '<div class="wt-row mys-row mys-row-'+cat+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'>'+nm+aff+count+'</div>';
 }
 /* Glance: the hero is HOW MANY tracked items need action; the top few are listed compactly beneath so
    the person sees WHICH ones at a glance. Canonical glance layout (eyebrow -> number -> status badge),
