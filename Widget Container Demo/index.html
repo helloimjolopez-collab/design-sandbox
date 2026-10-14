@@ -9410,8 +9410,8 @@ function arFAgeSr(w){var b=arFBuckets(w);return 'Outstanding by age: '+b.map(fun
    red is reserved for the app delta pill, not used here. */
 function arFOverduePill(w){
   var tot=arFTotal(w),over=arFOverdue(w),oc=arFOverdueCount(w),pct=tot>0?Math.round(over/tot*100):0;
-  if(over>0)return '<span class="bank-pill" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue</span>';
-  return '<span class="delta-pill" data-tip="Every outstanding invoice is still within terms, not yet past due." data-tip-plain>'+ICON("check")+'All current</span>';
+  if(over>0)return badge({status:"negative",size:"small",icon:"schedule",text:money(over)+" overdue",attrs:'data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain'});
+  return badge({status:"positive",size:"small",icon:"check",text:"All current",attrs:'data-tip="Every outstanding invoice is still within terms, not yet past due." data-tip-plain'});
 }
 
 /* GLANCE (kpi): total owed + overdue badge on the LEFT, a plain context line,
