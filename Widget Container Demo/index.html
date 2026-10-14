@@ -8498,7 +8498,7 @@ function mysPopContent(){
     var rows=bankAccounts(w).slice();
     if(w.bkOver)rows=rows.filter(function(a){return bankEnding(a)<0;});
     var sk=(w.bksort||"bal-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    function val(a){if(key==="name")return a.name;if(key==="type")return a.type;return bankEnding(a);}
+    function val(a){if(key==="name")return a.name;if(key==="type")return a.type;if(key==="status")return bankEnding(a)<0?0:1;return bankEnding(a);}
     rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="name"||key==="type")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="bank-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded" aria-hidden="true">'+ic+'</span></button>';}
     /* Status column shows at EVERY size of the all-accounts table (detail and full alike): overdrawn vs
@@ -8531,7 +8531,7 @@ function mysPopContent(){
     var rows=bankAccounts(w).slice();
     if(w.bkOver)rows=rows.filter(function(a){return bankEnding(a)<0;});
     var sk=(w.bksort||"bal-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
-    function val(a){if(key==="name")return a.name;if(key==="type")return a.type;return bankEnding(a);}
+    function val(a){if(key==="name")return a.name;if(key==="type")return a.type;if(key==="status")return bankEnding(a)<0?0:1;return bankEnding(a);}
     rows.sort(function(a,b){var av=val(a),bv=val(b);if(key==="name"||key==="type")return dir*String(av).localeCompare(String(bv));return dir*(av-bv);});
     var maxPos=0,maxNeg=0;rows.forEach(function(a){var e=bankEnding(a);if(e>maxPos)maxPos=e;if(-e>maxNeg)maxNeg=-e;});
     var span=(maxPos+maxNeg)||1,zero=maxNeg/span*100;
