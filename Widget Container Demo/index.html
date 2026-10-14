@@ -9390,7 +9390,7 @@ function arFAgeSr(w){var b=arFBuckets(w);return 'Outstanding by age: '+b.map(fun
    red is reserved for the app delta pill, not used here. */
 function arFOverduePill(w){
   var tot=arFTotal(w),over=arFOverdue(w),oc=arFOverdueCount(w),pct=tot>0?Math.round(over/tot*100):0;
-  if(over>0)return '<span class="bank-pill" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue ('+pct+'%)</span>';
+  if(over>0)return '<span class="bank-pill" data-tip="'+arFEsc(money(over)+" across "+oc+" invoice"+(oc>1?"s":"")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+money(over)+' overdue</span>';
   return '<span class="delta-pill" data-tip="Every outstanding invoice is still within terms, not yet past due." data-tip-plain>'+ICON("check")+'All current</span>';
 }
 
@@ -9432,7 +9432,7 @@ function arFGlance(w){
   /* Glance: chip on top, eyebrow + total, then the overdue amount and % as a VISIBLE read (a primary
      figure the brief wants on the face, not hidden in a chart), and the ordered severity bar
      (current -> most overdue) as the graphic, per the brief's "ordered bar, not a pie". */
-  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="metric-value">'+money(tot)+'</span></span><div class="gl-sub">'+arFOverduePill(w)+'</div></div><div class="arF-gl-barwrap">'+arFStackBar(w)+'</div><span class="sr-only">'+arFAgeSr(w)+'</span></div>';
+  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="arF-valline"><span class="metric-value">'+money(tot)+'</span>'+arFOverduePill(w)+'</span></span></div><div class="arF-gl-barwrap">'+arFStackBar(w)+'</div><span class="sr-only">'+arFAgeSr(w)+'</span></div>';
 }
 
 function arFEmpty(w){
