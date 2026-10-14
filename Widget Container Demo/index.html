@@ -5228,7 +5228,7 @@ function remFRows(w){
   return rows.slice().sort(function(a,b){
     if(key==="name")return dir*a.name.localeCompare(b.name);
     if(key==="pct"){var pa=(a.pctPaid==null?-1:a.pctPaid),pb=(b.pctPaid==null?-1:b.pctPaid);return dir*(pa-pb);}
-    if(key==="status"){var da=(a.daysAhead==null?Infinity:a.daysAhead),db=(b.daysAhead==null?Infinity:b.daysAhead);return dir*(da-db);} /* asc = most days behind first; no-pledge last */
+    if(key==="status"){var da=(a.status==='neutral'?Infinity:a.gap),db=(b.status==='neutral'?Infinity:b.gap);return dir*(da-db);} /* asc = most behind first (smallest gap vs year); no-pledge last */
     if(key==="behind")return dir*(remFBehindFor(a)-remFBehindFor(b));
     if(key==="annual")return dir*(a.total-b.total);
     if(key==="expected")return dir*(a.expected-b.expected);
