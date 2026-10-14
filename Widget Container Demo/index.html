@@ -5884,12 +5884,18 @@ function gftBar(w,p,clickable){
   var st=(p.status==="behind")?"behind":(p.status==="ahead"?"ahead":"ok");
   var srtxt=p.purpose+": "+money(p.received)+" paid of "+money(p.pledgeTotal)+" pledged, "+gftPct(p.fulfilled)+" paid. "+money(p.outstanding)+" owed. "+gftRemainingText(p)+".";
   var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(srtxt+" Open the donors behind this purpose.")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
+  /* Layout: a left column holding the purpose name + pledged total (right-aligned ABOVE the bar) and the
+     bar itself; the status badge is a SEPARATE right-hand column. So the pledged amount reads as the
+     total over the bar, never as the badge's amount. */
   return '<div class="gft-prow'+(clickable?" gft-clickable":"")+'"'+attr+'>'+
-    '<div class="gft-prow-top">'+
-      '<span class="gft-prow-nm">'+p.purpose+'</span>'+
-      '<span class="gft-prow-goal" data-tip="Total pledged for this purpose" data-tip-plain>'+money(p.pledgeTotal)+'</span>'+
+    '<div class="gft-prow-main">'+
+      '<div class="gft-prow-top">'+
+        '<span class="gft-prow-nm">'+p.purpose+'</span>'+
+        '<span class="gft-prow-goal" data-tip="Total pledged for this purpose" data-tip-plain>'+money(p.pledgeTotal)+'</span>'+
+      '</div>'+
+      gftZoneTrack(p,asOf,st)+
     '</div>'+
-    '<div class="gft-prow-bar2">'+gftZoneTrack(p,asOf,st)+gftMiniBadge(p,thru)+'</div>'+
+    gftMiniBadge(p,thru)+
     '<span class="sr-only">'+srtxt+'</span>'+
   '</div>';
 }
