@@ -10854,7 +10854,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   function faControls(w){return '<div class="bgt-ctlrow fa-ctlrow">'+faChip("fa-groupby",w.id,"View by "+faDimLabel(faDim(w)))+faChip("fa-group",w.id,faGroupLabel(w))+'</div>';}
   function faViewToggle(w){var v=faView(w);return '<div class="vtoggle" role="group" aria-label="View">'+
     '<button class="vt'+(v==="table"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'" data-tip="Every asset as a sortable table." data-tip-plain>'+ICON("table_rows")+'Table</button>'+
-    '<button class="vt'+(v==="chart"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="chart" aria-pressed="'+(v==="chart")+'" data-tip="Net book value and depreciation by class." data-tip-plain>'+ICON("bar_chart")+'Chart</button>'+
+    '<button class="vt'+(v==="chart"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="chart" aria-pressed="'+(v==="chart")+'" data-tip="Net book value and depreciation by group." data-tip-plain>'+ICON("bar_chart")+'Chart</button>'+
   '</div>';}
   function faRows(w){var list=faTableAssets(w).slice(),sk=(w.faSort||"net-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
     list.sort(function(a,b){if(key==="tag")return dir*a.tag.localeCompare(b.tag);if(key==="name")return dir*a.name.localeCompare(b.name);if(key==="cls")return dir*String(a.cls||"").localeCompare(String(b.cls||""));if(key==="bld")return dir*String(a.bld||"").localeCompare(String(b.bld||""));return dir*((a[key]||0)-(b[key]||0));});
@@ -10869,7 +10869,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     return '<div class="dep-hd fa-hd"><div class="dep-hd-top">'+faControls(w)+'<div class="dep-hd-toggle">'+faViewToggle(w)+'</div></div>'+
       '<div class="dep-hd-num"><div class="fa-numwrap">'+numInner+'</div></div></div>';}
   function faTable(w){var list=faRows(w);
-    if(!list.length)return '<div class="fa-tbl"><div class="state fa-inline-empty" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No assets in this class</div><div class="state-sub">Nothing is assigned to '+faGroupLabel(w)+' yet.</div></div></div>';
+    if(!list.length)return '<div class="fa-tbl"><div class="state fa-inline-empty" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No assets in this group</div><div class="state-sub">Nothing is assigned to '+faGroupLabel(w)+' yet.</div></div></div>';
     var PER=50,shown=Math.min(Math.max(PER,w.faShown||PER),list.length);w.faShown=shown;var rem=list.length-shown,view=list.slice(0,shown);
     function clsBadge(c){return '<span class="type-badge tb-static"><span class="material-symbols-rounded tb-ic">category</span><span class="tb-nm">'+(c||"Unclassified")+'</span></span>';}
     /* W11 View 3: the detail table carries all 5 financial measures at large/expanded;
