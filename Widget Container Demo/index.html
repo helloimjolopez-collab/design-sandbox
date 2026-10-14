@@ -5112,29 +5112,24 @@ function remFDayPhrase(r){
   if(g<0)return 'About '+(-g)+' point'+((-g)===1?'':'s')+' behind the year-to-date pace';
   return 'On the year-to-date pace';
 }
-/* PER-PLEDGE TERM PACING (calculation-only fix, dev-confirmed 2026-07-28). For each
-   pledge, pace against its OWN term (begin to end), not the calendar year:
-     termDays    = end - begin
-     elapsedDays = clamp(receiptsThrough - begin, 0, termDays)
-     pace        = elapsedDays / termDays
-     expected    = round(total * pace)
-     pctPaid     = paid / total   (null when total = 0)
-     daysAhead   = (pctPaid * termDays) - elapsedDays   (+ ahead, - behind) */
+/* CALENDAR-YTD PACING (the brief's mandated basis, 2026-10-14). Pace every pledge against the share
+   of the CALENDAR YEAR elapsed (1 Jan -> the selected receipts-through date), NOT its own begin/end
+   term (those dates are informational only per the brief):
+     pctYear  = (asOf - Jan 1) / (Dec 31 - Jan 1)   clamped 0..1
+     pace     = pctYear
+     expected = round(total * pctYear)
+     pctPaid  = paid / total   (null when total = 0)
+     gap      = pctPaid - pctYear   (+ ahead of the year, - behind) */
+function remFPctYear(iso){var d=remFParse(iso),y=d.getFullYear(),j=new Date(y,0,1),dec=new Date(y,11,31);var f=(d-j)/((dec-j)||1);return Math.max(0,Math.min(1,f));}
 function remFCompute(w){
-  var iso=remFThru(w),asOf=remFParse(iso);
+  var iso=remFThru(w),py=remFPctYear(iso);
   return remFData(w).map(function(a){
-    var b=remFParse(a.begin),e=remFParse(a.end);
-    var termDays=Math.round((e-b)/86400000);
-    var elapsedDays=Math.max(0,Math.min(termDays,Math.round((asOf-b)/86400000)));
-    var pace=termDays>0?elapsedDays/termDays:0;
-    var paid=remFPaid(a,iso),expected=Math.round(a.total*pace),outstanding=a.total-paid;
-    var pctPaid=a.total>0?paid/a.total:null;
-    var paidEquivalentDays=(pctPaid==null?null:pctPaid*termDays);
-    var daysAhead=(paidEquivalentDays==null?null:paidEquivalentDays-elapsedDays);
-    var r={seq:a.seq,name:a.name,ref:a.ref,total:a.total,begin:a.begin,end:a.end,freq:a.freq,dur:a.dur,
-      paid:paid,expected:expected,outstanding:Math.max(0,outstanding),pctPaid:pctPaid,pace:pace,
-      termDays:termDays,elapsedDays:elapsedDays,paidEquivalentDays:paidEquivalentDays,daysAhead:daysAhead,
-      gap:(pctPaid==null?0:pctPaid-pace),payments:a.payments||[]};
+    var paid=remFPaid(a,iso),total=a.total,expected=Math.round(total*py),outstanding=total-paid;
+    var pctPaid=total>0?paid/total:null;
+    var gap=(pctPaid==null?0:pctPaid-py);
+    var r={seq:a.seq,name:a.name,ref:a.ref,total:total,begin:a.begin,end:a.end,freq:a.freq,dur:a.dur,
+      paid:paid,expected:expected,outstanding:Math.max(0,outstanding),pctPaid:pctPaid,pace:py,pctYear:py,
+      gap:gap,payments:a.payments||[]};
     r.status=remFStatus(r);
     return r;
   });
