@@ -10086,7 +10086,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     }
     if(r.s3==="outstanding")return badge({status:"attention",size:"small",icon:"error",text:"Outstanding",attrs:'data-tip="Past its date and still not approved." data-tip-plain'});
     return badge({status:"info",size:"small",icon:"schedule",text:"Pending",attrs:'data-tip="Awaiting your approval." data-tip-plain'});}
-  function ptoAllSelected(w){var rows=ptoQueueRows(w).filter(function(r){return r.s3!=="approved";}),sel=w.ptoSel||{};return !!rows.length&&rows.every(function(r){return sel[r.id];});}
+  function ptoAllSelected(w){var rows=ptoQueueRows(w),sel=w.ptoSel||{};return !!rows.length&&rows.every(function(r){return sel[r.id];});}
   function ptoQueueTable(w){
     var rows=ptoQueueRows(w).slice(),sk=(w.ptoSort||"date-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,sel=w.ptoSel||{};
     rows.sort(function(a,b){if(key==="emp")return dir*a.emp.localeCompare(b.emp);if(key==="dept")return dir*a.dept.localeCompare(b.dept);if(key==="status")return dir*a.s3.localeCompare(b.s3);return dir*(a.date<b.date?-1:a.date>b.date?1:0);});
