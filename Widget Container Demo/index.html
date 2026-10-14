@@ -8050,7 +8050,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var head2='<div class="wt-row wt-head"><span class="lr-main">'+prFSortBtn(w,"name",col)+'</span><span class="wt-c2 wt-pctcol">% of total</span><span class="wt-c2">'+prFSortBtn(w,"amt","Amount")+'</span></div>';
     var body2=rows.map(function(a){var pctR=tot?Math.round(a.net/tot*100):0;
       /* Whole row is the drill target (same in Explore and Detail), so the row isn't "clickable-looking" but dead. */
-      var rowAttr=drill?' data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+a.name+', see its pay types" data-tip-plain':'';
+      var rowAttr=drill?' data-action="prF-drilldist" data-dist="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" aria-label="'+a.name.replace(/"/g,"&quot;")+', see its pay types"':'';
       var nm='<span class="lr-main'+(drill?" lr-link":"")+'">'+a.name+'</span>';
       return '<div class="wt-row wt-rowh'+(drill?" wt-rowlink":"")+'"'+rowAttr+'>'+nm+'<span class="wt-c2 wt-pctcol"><span class="pct-bar" role="img" aria-label="'+pctR+'% of total"><span class="pct-fill" style="width:'+pctR+'%"></span></span><span class="pct-num">'+pctR+'%</span></span><span class="wt-c2">'+money(a.net)+'</span></div>';}).join("");
     return '<div class="scroll">'+head2+body2+'</div><div class="dep-total"><span>Total</span><span>'+money(tot)+'</span></div>';}
