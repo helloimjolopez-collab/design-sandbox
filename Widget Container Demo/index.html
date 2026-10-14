@@ -5811,9 +5811,9 @@ function gftHeaderBlock(w,mode){
   var top='<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>';
   if(loading){var numL='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:24px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';
     return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numL+'</div></div></div>';}
-  /* Badges (status + % of goal) are only meaningful for ONE purpose. For "All purposes" we
-     show just the KPI with a quiet "of $X pledged" caption; the per-purpose bars carry the detail. */
-  var numInner='<div class="dep-hd-kpigrp gft-kpigrp"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value">'+money(o.received)+'</span></span><span class="gft-kpi-cap">'+gftPct(o.fulfilled)+' of '+money(o.pledgeTotal)+' pledged</span>'+gftKpiTrail(w,o,thru)+'</div>';
+  /* Received leads; the pledged total is a hover tooltip on the number (not a plain caption). The
+     on-track/behind badge sits inline; the per-purpose bars carry the rest. */
+  var numInner='<div class="dep-hd-kpigrp gft-kpigrp"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Received</span><span class="metric-value" data-tip="'+gftEsc(gftPct(o.fulfilled)+" of "+money(o.pledgeTotal)+" pledged, received as of "+gftFmtDate(thru))+'" data-tip-plain>'+money(o.received)+'</span></span>'+gftKpiTrail(w,o,thru)+'</div>';
   return '<div class="dep-hd gft-hd">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numInner+'</div></div></div>';
 }
 
