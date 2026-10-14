@@ -6268,7 +6268,7 @@ function loanTypeChip(w){
    "All current". */
 function loanBadge(w){
   var over=loanPastDue(w);
-  if(over>0){var n=loanPastDueCount(w),pct=loanPct(w);return '<span class="bank-pill" data-tip="'+loanEsc(loanMoney(over)+" across "+n+" loan"+(n===1?"":"s")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain>'+ICON("schedule")+loanMoney(over)+' past due ('+pct+'%)</span>';}
+  if(over>0){var n=loanPastDueCount(w),pct=loanPct(w);return badge({status:"negative",size:"small",icon:"schedule",text:loanMoney(over)+" past due",attrs:'data-tip="'+loanEsc(loanMoney(over)+" across "+n+" loan"+(n===1?"":"s")+" is past due, that is "+pct+"% of the outstanding balance.")+'" data-tip-plain'});}
   return '<span class="delta-pill" data-tip="Every loan with a balance is current, nothing is past due." data-tip-plain>'+ICON("check")+'All current</span>';
 }
 
@@ -9626,7 +9626,7 @@ function arFContact(name){
 /* Status as a badge (icon + text + tone), never colour-only text. */
 function arFStatusBadge(x){
   if(x.days>0){var sv=arFSevOf(x.days),tone=(sv>=4)?"sev4":(sv>=3?"sev3":(sv>=2?"sev2":"sev1"));return '<span class="arF-badge arF-badge-'+tone+'">'+ICON("schedule")+'Overdue '+x.days+'d</span>';}
-  return '<span class="arF-badge arF-badge-ok">'+ICON("check_circle")+'Current</span>';
+  return badge({status:"positive",size:"small",icon:"check_circle",text:"Current"});
 }
 /* Export preview: shows the exact scope (selected vs all), the columns and the
    first rows, so Maria sees what she is exporting before she commits. */
