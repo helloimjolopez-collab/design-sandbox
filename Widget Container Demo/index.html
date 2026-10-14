@@ -8844,8 +8844,13 @@ function purSkeleton(){var rows=[0,1,2,3,4].map(function(){return '<div class="p
 function purStatusCell(o,w){
   var ap=(o.status==="approved");
   var bdg=ap?badge({status:"positive",size:"small",icon:"check_circle",text:"Approved"}):badge({status:"attention",size:"small",icon:"hourglass_top",text:"Pending"});
-  var act=(w&&purCanAct(o))?'<button class="btn tertiary sm pur-row-approve" data-action="pur-row-approve" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Approve purchase order '+o.num+'">'+ICON("check")+'Approve</button>':'';
-  return '<span class="pur-c-status">'+bdg+act+'</span>';}
+  return '<span class="pur-c-status">'+bdg+'</span>';}
+/* Actions cell: for a row pending MY approval, a proper (outlined) Approve button at the row's far right.
+   Tapping it OPENS the record overlay (pur-open) to review details, then Approve, then Confirm approve,
+   the same review-then-confirm flow Payroll Scheduled Time Off uses. It never approves straight from the row. */
+function purActionCell(o,w){
+  var act=(w&&purCanAct(o))?'<button class="btn outlined sm pur-row-approve" data-action="pur-open" data-id="'+w.id+'" data-oid="'+o.id+'" aria-label="Review purchase order '+o.num+' to approve">'+ICON("check")+'Approve</button>':'';
+  return '<span class="pur-c-act">'+act+'</span>';}
 function purTable(w,full){
   var rows=purFiltered(w).slice();
   var sk=(w.psort||"issued-desc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1;
