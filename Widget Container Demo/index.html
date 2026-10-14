@@ -9717,19 +9717,21 @@ function arFStatusBadge(x){
 }
 /* Export preview: shows the exact scope (selected vs all), the columns and the
    first rows, so Maria sees what she is exporting before she commits. */
-function arFExportPreview(w,groups,selN){
+function arFExportPreview(w,groups,selN,fmt){
+  fmt=fmt||"Excel";var fIco=(fmt==="PDF")?"picture_as_pdf":"table_view";
   var sel=modal.sel||{};
   var scope=selN>0?groups.filter(function(g){return sel[g.customer];}):groups;
   var custN=scope.length,invN=scope.reduce(function(s,g){return s+g.count;},0),tot=scope.reduce(function(s,g){return s+g.total;},0);
   var cols=["Customer","Invoice #","Due date","Days past due","Outstanding"];
-  return '<div class="arF-xp-back" data-action="arF-export-cancel"><div class="arF-xp" data-action="stop" role="dialog" aria-modal="true" aria-label="Export to Excel">'+
-    '<div class="arF-xp-h"><span class="arF-xp-ht">'+ICON("download")+'Export to Excel</span><button class="iconbtn" data-action="arF-export-cancel" aria-label="Cancel">'+ICON("close")+'</button></div>'+
+  return '<div class="arF-xp-back" data-action="arF-export-cancel"><div class="arF-xp" data-action="stop" role="dialog" aria-modal="true" aria-label="Export as '+fmt+'">'+
+    '<div class="arF-xp-h"><span class="arF-xp-ht">'+ICON(fIco)+'Export as '+fmt+'</span><button class="iconbtn" data-action="arF-export-cancel" aria-label="Cancel">'+ICON("close")+'</button></div>'+
     '<div class="arF-xp-b">'+
       '<div class="arF-xp-scope">'+custN+' customer'+(custN===1?"":"s")+' · '+invN+' invoice'+(invN===1?"":"s")+' · '+money(tot)+'</div>'+
+      '<div class="arF-xp-note">Every outstanding invoice behind each customer, one row per invoice, not only the customer summary rows shown here.</div>'+
       '<div class="arF-xp-cap">Columns</div><div class="arF-xp-cols">'+cols.map(function(cn){return '<span class="arF-xp-col">'+cn+'</span>';}).join("")+'</div>'+
       '<div class="arF-xp-list">'+scope.slice(0,6).map(function(g){return '<div class="arF-xp-row"><span class="arF-xp-rc">'+g.customer+'</span><span>'+g.count+' inv</span><span class="arF-xp-ra">'+money(g.total)+'</span></div>';}).join("")+(scope.length>6?'<div class="arF-xp-more">plus '+(scope.length-6)+' more</div>':'')+'</div>'+
     '</div>'+
-    '<div class="arF-xp-f"><button class="btn naked sm" data-action="arF-export-cancel">Cancel</button><button class="btn primary sm" data-action="arF-export-do">'+ICON("download")+'Export '+custN+' customer'+(custN===1?"":"s")+'</button></div>'+
+    '<div class="arF-xp-f"><button class="btn naked sm" data-action="arF-export-cancel">Cancel</button><button class="btn primary sm" data-action="arF-export-do" data-fmt="'+fmt+'">'+ICON(fIco)+'Export '+invN+' invoice'+(invN===1?"":"s")+'</button></div>'+
   '</div></div>';
 }
 /* Worklist body, re-rendered in place on every in-modal tap (no full app render,
