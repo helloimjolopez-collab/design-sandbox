@@ -10538,6 +10538,18 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(w.size==="xwide")return mh+cards+apFull(w);
     return mh+cards+apTable(w);
   }
+  /* Drill overlay opened from a glance due-horizon badge (mirrors Bank Balances' Overdrawn drill): the
+     full detail, pre-filtered to the chosen horizon. */
+  function apDrillModalHTML(){
+    var w=find(modal.id);if(!w)return "";
+    var clone=Object.assign({},w,{size:"xwide",apDue:modal.due||"total",aploading:false});
+    var titles={overdue:"Overdue",week:"Due this week",month:"Due this month",total:"Accounts Payable by Due Date"};
+    var title=titles[modal.due]||"Accounts Payable by Due Date";
+    return '<div class="modal-backdrop" data-action="ap-drill-close"><div class="modal modal-wide ap-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="'+title.replace(/"/g,"&quot;")+'">'+
+      '<div class="modal-h"><span class="modal-title">'+title+'</span><button class="iconbtn" data-action="ap-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
+      '<div class="modal-b ap-drill-b">'+apContent(clone)+'</div>'+
+    '</div></div>';
+  }
 
   /* ---- loading: only on a data-fetch (filter change), never on sort -- */
   function apLoad(w){w.aploading=true;clearTimeout(timers["ap-"+w.id]);timers["ap-"+w.id]=setTimeout(function(){w.aploading=false;w.updated="just now";render();},800);}
@@ -10546,6 +10558,8 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   function apHandleClick(a,id,t){
     if(a==="ap-due"){apDueQuery="";pop=(pop&&pop.type==="ap-due"&&pop.id===id)?null:{type:"ap-due",id:id};render();return true;}
     if(a==="ap-set-due"){var wad=find(id);if(wad){var nv=t.getAttribute("data-due"),cur=apSel(wad);if(nv!==cur){wad.apDue=nv;apLoad(wad);}}pop=null;render();return true;}
+    if(a==="ap-drill"){var wdd=find(id);if(wdd){wdd.apDue=t.getAttribute("data-due")||"total";}modal={type:"apdrill",id:id,due:t.getAttribute("data-due")||"total"};modalMounted=false;pop=null;render();return true;}
+    if(a==="ap-drill-close"){modal=null;pop=null;render();return true;}
     if(a==="ap-sort"){var was=find(id),k=t.getAttribute("data-k");if(was){var cs=(was.apsort||"due-asc").split("-");was.apsort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="vendor"||k==="inv"||k==="due")?"asc":"desc"));}render();return true;}
     if(a==="ap-open"){modal={type:"apbill",inv:t.getAttribute("data-inv"),vendor:t.getAttribute("data-vendor"),dueiso:t.getAttribute("data-dueiso"),amt:t.getAttribute("data-amt")};modalMounted=false;pop=null;render();return true;}
     if(a==="ap-vendor-drill"){modal={type:"apvendor",id:id,vendor:t.getAttribute("data-vendor")};modalMounted=false;pop=null;render();return true;}
