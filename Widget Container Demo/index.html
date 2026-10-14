@@ -8194,9 +8194,9 @@ function mysContent(w){
   if(!sel.length)return '<div class="state mys-empty" data-kind="empty">'+ICON("checklist")+'<div class="state-title">Nothing to show yet</div><div class="state-sub">Pick the things you want to keep an eye on. Their live counts appear here.</div><button class="btn outlined" data-action="mys-config" data-id="'+w.id+'">'+ICON("checklist")+'Configure</button></div>';
   var action=mysActionItems(sel),info=mysInfoItems(sel),clear=mysClearList(sel);
   var body="";
-  if(action.length)body+='<div class="cap mys-grp">Needs action</div>'+action.map(function(q){return mysRowHTML(w,q);}).join("");
-  if(info.length)body+='<div class="cap mys-grp">Good to know</div>'+info.map(function(q){return mysRowHTML(w,q);}).join("");
-  if(clear.length)body+='<div class="cap mys-grp">Up to date</div>'+clear.map(function(q){return mysRowHTML(w,q);}).join("");
+  if(action.length)body+='<div class="cap mys-grp">Needs action</div>'+action.map(function(q){return mysRowHTML(w,q,"action");}).join("");
+  if(info.length)body+='<div class="cap mys-grp">Good to know</div>'+info.map(function(q){return mysRowHTML(w,q,"info");}).join("");
+  if(clear.length)body+='<div class="cap mys-grp">Up to date</div>'+clear.map(function(q){return mysRowHTML(w,q,"clear");}).join("");
   return mysHeaderBlock(w,sel)+'<div class="scroll mys-list">'+body+'</div>';
 }
 
