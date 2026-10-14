@@ -7982,7 +7982,19 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return prFSortRows(flat,w.prSort||"amt-desc","pt");}
   function prFChartRows(w){var sc=w.prScope||"all";if(sc==="all")return prFDistTotals(w).sort(function(a,b){return b.net-a.net;});if(sc==="pt")return prFPTTotals(w).sort(function(a,b){return b.net-a.net;});if(sc.indexOf("pt:")===0)return prFPTAcross(w,sc.slice(3)).sort(function(a,b){return b.net-a.net;});return prFDrillRows(w,sc).sort(function(a,b){return b.net-a.net;});}
   function prFScopeChip(w){return '<button class="filter-chip pr-scope-chip'+((w.prScope&&w.prScope!=="all")?" applied":"")+'" data-action="prF-scope" data-id="'+w.id+'" aria-haspopup="listbox" aria-label="Show, change what the breakdown is grouped by"><span class="fc-label">'+prFScopeLabel(w)+'</span>'+ICON("expand_more")+'</button>';}
-  function prFToggle(w){var v=w.view||"table";return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
+  /* A single pay type (scope "pt:<id>") has no meaningful whole to chart: a donut of its share of the
+     grand total across all distributions is misleading. So the breakdown it belongs to cannot be a pie. */
+  function prFSinglePay(w){return (w.prScope||"all").indexOf("pt:")===0;}
+  function prFToggle(w){var v=w.view||"table";
+    if(prFSinglePay(w)){
+      /* Keep the Table/Chart toggle, but disable Chart with an explaining tooltip (hover + tap). Table
+         stays active. The Chart button carries no data-action, so a tap does not switch the view. */
+      return '<div class="vtoggle" role="group" aria-label="View">'+
+        '<button class="vt on" data-action="dep-view" data-id="'+w.id+'" data-v="table" aria-pressed="true">'+ICON("table_rows")+'Table</button>'+
+        '<button class="vt vt-disabled" aria-disabled="true" tabindex="0" data-tip="Chart view not available for individual pay types" data-tip-plain>'+ICON("donut_small")+'Chart</button>'+
+      '</div>';
+    }
+    return tog([["table","Table","table_rows"],["dist","Chart","donut_small"]],v,w);}
   function prFDistBadge(distId){var c=PRF_DIST_COLORS[distId]||"var(--primitive-color-cool-neutral-250)";return '<span class="pr-dbadge"><span class="pr-dot" style="background:'+c+'"></span><span class="pr-dbadge-nm">'+prFDistName(distId)+'</span></span>';}
   function prFSortBtn(w,k,label){var sk=(w.prSort||"amt-desc").split("-"),on=sk[0]===k,ic=on?(sk[1]==="asc"?"arrow_upward":"arrow_downward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="prF-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' <span class="material-symbols-rounded" aria-hidden="true">'+ic+'</span></button>';}
   function prFTableHTML(w){var meta=prFScopeMeta(w),rows=prFTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
