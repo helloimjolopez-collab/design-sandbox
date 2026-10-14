@@ -8377,14 +8377,14 @@ function mysPopContent(){
        Reconciliation-basis provenance stays in the info popover (aboutOf), not on the face. */
     if(sel){var end=bankEnding(sel),beg=sel.a[0],neg=end<0;
       return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
-        '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Ending balance</span><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span></span>'+
-        '<div class="gl-sub">'+bankReconDelta(end-beg)+(neg?'<span class="bank-pill warn">'+ICON("error")+'Overdrawn</span>':'')+'</div>'+
+        '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Ending balance</span><span class="bank-val-line"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+bankReconInfo(end,beg)+'</span></span>'+
+        (neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
         '</div></div>';}
     var val=bankTotal(w),beg2=bankBeginTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
     return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
-      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Cash on hand</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
-      '<div class="gl-sub">'+bankReconDelta(val-beg2)+od+'</div>'+
+      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Cash on hand</span><span class="bank-val-line"><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span>'+bankReconInfo(val,beg2)+'</span></span>'+
+      (od?'<div class="gl-sub">'+od+'</div>':'')+
       '</div></div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
