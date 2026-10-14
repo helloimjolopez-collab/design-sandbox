@@ -5900,9 +5900,9 @@ function gftBehindPanel(w){
   var behind=gftBehindPurposes(w);
   if(!behind.length)return '<div class="state gft-followup-ok" data-kind="empty" data-tone="pos">'+ICON("task_alt")+'<div class="state-title">Nothing to follow up</div><div class="state-sub">Every purpose is on track or ahead of schedule as of '+gftFmtDate(gftThru(w))+'.</div></div>';
   return '<div class="gft-followup">'+behind.map(function(p){
-    return '<button class="gft-fu-row" data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" data-view="behind" aria-label="'+gftEsc(p.purpose+", "+money(p.remaining)+" behind schedule, follow up with the donors behind")+'">'+
-      '<span class="gft-fu-main"><span class="gft-fu-nm">'+p.purpose+'</span><span class="gft-fu-sub">'+gftPct(p.fulfilled)+' fulfilled, '+p.donors+' donor'+(p.donors===1?"":"s")+'</span></span>'+
-      '<span class="gft-fu-amt">'+money(p.remaining)+'<span class="gft-fu-amt-cap">behind</span></span>'+
+    return '<button class="gft-fu-row" data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" data-view="behind" aria-label="'+gftEsc(p.purpose+", "+money(p.remaining)+" behind schedule, "+gftPct(p.fulfilled)+" funded, "+p.donors+" donor"+(p.donors===1?"":"s")+", follow up")+'">'+
+      '<span class="gft-fu-main"><span class="gft-fu-nm">'+p.purpose+'</span><span class="gft-fu-sub">'+gftPct(p.fulfilled)+' funded &middot; '+p.donors+' donor'+(p.donors===1?"":"s")+'</span></span>'+
+      '<span class="gft-mb gft-mb-behind gft-fu-badge" data-tip="'+gftEsc(money(p.remaining)+" behind the amount expected by now")+'" data-tip-plain>'+ICON("error")+money(p.remaining)+'</span>'+
       '<span class="gft-fu-go" aria-hidden="true">'+ICON("chevron_right")+'</span></button>';
   }).join("")+'</div>';
 }
