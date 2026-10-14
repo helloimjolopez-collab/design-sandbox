@@ -8440,7 +8440,7 @@ function mysPopContent(){
     var body=moves.map(function(r){var v=r[1],neg=v<0,pos=v>0,amt=(pos?"+":"")+bankMoney(v);
       return '<div class="wt-row"><span class="lr-main">'+r[0]+'</span><span class="wt-c2 bank-amt'+(neg?" bank-neg":(pos?" bank-pos":""))+'">'+amt+'</span></div>';
     }).join("");
-    var endNeg=end<0,endPill=endNeg?'<span class="bank-tag-over">Overdrawn</span>':'';
+    var endNeg=end<0,endPill=endNeg?badge({status:"negative",size:"small",icon:"error",text:"Overdrawn"}):'';
     var total='<div class="dep-total"><span>Ending balance</span><span class="bank-amt'+(endNeg?" bank-neg":"")+'">'+endPill+'<span class="bank-bal-amt">'+bankMoney(end)+'</span></span></div>';
     return '<div class="scroll bank-7scroll">'+head+begRow+body+'</div>'+total;
   }
@@ -8488,7 +8488,7 @@ function mysPopContent(){
     if(sel){var end=bankEnding(sel),beg=sel.a[0],neg=end<0;
       return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
         '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Ending balance</span><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span></span>'+
-        (neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
+        (neg?'<div class="gl-sub">'+badge({status:"negative",size:"small",icon:"error",text:"Overdrawn"})+'</div>':'')+
         '</div>'+bankSpark(w)+'</div>';}
     var val=bankTotal(w),beg2=bankBeginTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
