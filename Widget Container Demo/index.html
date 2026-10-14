@@ -10054,7 +10054,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     var nm=e.name.replace(/"/g,"&quot;");
     var action=pend>0
       ?('<button class="pto-abtn pto-abtn-appr" data-action="pto-approve-emp" data-id="'+w.id+'" data-emp="'+e.id+'" aria-label="Review and approve '+pend+' pending day'+(pend===1?"":"s")+' for '+nm+'">'+ICON("check")+'Approve '+pend+'</button>')
-      :('<span class="pto-appr-chip">'+ICON("check_circle")+'Approved</span><button class="pto-undo" data-action="pto-unapprove-emp" data-id="'+w.id+'" data-emp="'+e.id+'" aria-label="Undo approval for '+nm+'">'+ICON("undo")+'Undo</button>');
+      :('<span class="pto-appr-chip">'+ICON("check_circle")+'Approved</span>');
     var row='<div class="wt-row pto-l2'+(open?" open":"")+'"><span class="pto-l2-head" data-action="pto-expand" data-id="'+w.id+'" data-key="'+e.id+'" role="button" tabindex="0" aria-expanded="'+open+'" aria-label="Employee '+nm+', '+(open?"collapse":"expand")+'">'+ptoChev(open)+'<span class="lr-main pto-emp-nm">'+e.name+'</span>'+meta+'</span><span class="pto-actioncol pto-l2-action">'+action+'</span></div>';
     if(!open)return row;
     var vis=ptoVisTypes(w);
@@ -12100,10 +12100,14 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function ptoCalHide(){if(ptoCalPop){ptoCalPop.remove();ptoCalPop=null;}ptoCalCur=null;}
   function ptoCalBuild(cell){var data;try{data=JSON.parse(decodeURIComponent(cell.getAttribute("data-ptocal")));}catch(e){return;}if(!data||!data.ppl||!data.ppl.length){ptoCalHide();return;}
     var tone={approved:"ap",pending:"pe",outstanding:"out"};
+    /* By-department summary first (the immediate read Jo wants on hover): how many people from each
+       department are off that day, biggest first; the named list follows. */
+    var byDept={};data.ppl.forEach(function(p){byDept[p.dept]=(byDept[p.dept]||0)+1;});
+    var deptChips=Object.keys(byDept).sort(function(a,b){return byDept[b]-byDept[a];}).map(function(d){return '<span class="pto-pop-deptchip"><span class="material-symbols-rounded" aria-hidden="true">groups</span>'+d+'<b>'+byDept[d]+'</b></span>';}).join("");
     var rowsH=data.ppl.map(function(p){return '<div class="pto-pop-r"><span class="pto-pop-dot '+(tone[p.s]||"pe")+'"></span><span class="pto-pop-nm">'+p.n+'</span><span class="pto-pop-dept">'+p.dept+'</span><span class="pto-pop-type">'+p.t+'</span></div>';}).join("");
     if(ptoCalPop)ptoCalPop.remove();
     var el=document.createElement("div");el.className="pto-cal-pop";
-    el.innerHTML='<div class="pto-pop-h">'+data.date+'<span class="pto-pop-cnt">'+data.ppl.length+(data.ppl.length===1?' person':' people')+' on leave</span></div>'+rowsH;
+    el.innerHTML='<div class="pto-pop-h">'+data.date+'<span class="pto-pop-cnt">'+data.ppl.length+(data.ppl.length===1?' person':' people')+' on leave</span></div>'+'<div class="pto-pop-depts">'+deptChips+'</div>'+rowsH;
     document.body.appendChild(el);ptoCalPop=el;}
   function ptoCalPos(mx,my){if(!ptoCalPop)return;var r=ptoCalPop.getBoundingClientRect();var x=mx+14,y=my+14;if(x+r.width>window.innerWidth-8)x=mx-r.width-14;if(y+r.height>window.innerHeight-8)y=my-r.height-14;ptoCalPop.style.left=Math.max(8,x)+"px";ptoCalPop.style.top=Math.max(8,y)+"px";}
   document.addEventListener("mousemove",function(e){var cell=e.target.closest&&e.target.closest(".pto-cal-cell[data-ptocal]");if(!cell){if(ptoCalPop)ptoCalHide();return;}if(cell!==ptoCalCur){ptoCalCur=cell;ptoCalBuild(cell);}ptoCalPos(e.clientX,e.clientY);});
