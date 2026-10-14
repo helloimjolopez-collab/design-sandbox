@@ -12279,7 +12279,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     el.innerHTML='<div class="pto-pop-h">'+data.date+'<span class="pto-pop-cnt">'+data.ppl.length+(data.ppl.length===1?' person':' people')+' on leave</span></div>'+'<div class="pto-pop-depts">'+deptChips+'</div>'+rowsH;
     document.body.appendChild(el);ptoCalPop=el;}
   function ptoCalPos(mx,my){if(!ptoCalPop)return;var r=ptoCalPop.getBoundingClientRect();var x=mx+14,y=my+14;if(x+r.width>window.innerWidth-8)x=mx-r.width-14;if(y+r.height>window.innerHeight-8)y=my-r.height-14;ptoCalPop.style.left=Math.max(8,x)+"px";ptoCalPop.style.top=Math.max(8,y)+"px";}
-  document.addEventListener("mousemove",function(e){var cell=e.target.closest&&e.target.closest(".pto-cal-cell[data-ptocal]");if(!cell){if(ptoCalPop)ptoCalHide();return;}if(cell!==ptoCalCur){ptoCalCur=cell;ptoCalBuild(cell);}ptoCalPos(e.clientX,e.clientY);});
+  document.addEventListener("mousemove",function(e){var cell=e.target.closest&&e.target.closest(".pto-cal-cell[data-ptocal],.pto-cal-wkcol[data-ptocal]");if(!cell){if(ptoCalPop)ptoCalHide();return;}if(cell!==ptoCalCur){ptoCalCur=cell;ptoCalBuild(cell);}ptoCalPos(e.clientX,e.clientY);});
   window.addEventListener("resize",function(){depFRepositionPop();});
   render();
 })();
