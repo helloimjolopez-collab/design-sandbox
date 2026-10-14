@@ -5297,9 +5297,9 @@ function remFMiniBar(r){
 function remFPaceChip(w){var v=w.remPaceF||"all";return '<button class="filter-chip" data-action="remF-pacef" data-id="'+w.id+'" aria-haspopup="listbox" aria-expanded="'+(pop&&pop.type==="remF-pacef"&&pop.id===w.id?"true":"false")+'" aria-label="Pace filter, change"><span class="fc-label">'+remFPaceLabel(v)+'</span>'+ICON("expand_more")+'</button>';}
 function remFStatusChip(r){
   var s=remFStatus(r);
-  if(s==="neutral")return '<span class="rem-st rem-st-none">No pledge</span>';
+  if(s==="neutral")return badge({status:"neutral",size:"small",text:"No pledge"});
   var ok=(s==="full"||s==="ahead"||s==="onpace");
-  return '<span class="rem-st '+(ok?"rem-st-ok":"rem-st-behind")+'">'+ICON(ok?"check_circle":"error")+remFStatusLabel(s)+'</span>';
+  return badge({status:ok?"positive":"attention",size:"small",icon:ok?"check_circle":"error",text:remFStatusLabel(s)});
 }
 /* overall pacing badge (Jo's binary: On track / All pledges paid positive pill;
    Behind pace warn pill), against the blended expected-vs-paid sums over terms. */
