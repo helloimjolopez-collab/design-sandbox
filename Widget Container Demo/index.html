@@ -9381,8 +9381,8 @@ function arFGroupToggle(w){var g=w.arFGroup||"aging";return '<div class="vtoggle
 function arFStackBar(w){
   var tot=arFTotal(w);if(tot<=0)return "";
   var segs=arFBuckets(w).filter(function(r){return r.total>0;});
-  var inner=segs.map(function(r){var pct=r.total/tot*100;return '<span class="arF-seg" style="flex-basis:'+pct.toFixed(2)+'%;background:var('+r.color+')" title="'+arFEsc(r.label+": "+money(r.total))+'"></span>';}).join("");
-  return '<div class="arF-stack" aria-hidden="true">'+inner+'</div>';
+  var inner=segs.map(function(r){var pct=r.total/tot*100;return '<span class="arF-seg" style="flex-basis:'+pct.toFixed(2)+'%;background:var('+r.color+')" data-tip="'+arFEsc(r.label+": "+money(r.total)+" ("+Math.round(pct)+"% of outstanding)")+'" data-tip-plain></span>';}).join("");
+  return '<div class="arF-stack" role="img" aria-label="Outstanding by aging bucket, hover a segment for its amount">'+inner+'</div>';
 }
 function arFAgeSr(w){var b=arFBuckets(w);return 'Outstanding by age: '+b.map(function(r){return r.label+" "+money(r.total);}).join(", ")+'.';}
 
