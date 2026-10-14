@@ -8360,7 +8360,7 @@ function mysPopContent(){
        (overdrawn), nothing else. */
     var numInner;
     if(loading){numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';}
-    else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?'<span class="bank-pill warn">'+ICON("warning")+'Overdrawn</span>':'')+'</div>';}
+    else if(sel){var end=bankEnding(sel),neg=end<0;numInner='<div class="dep-hd-kpigrp"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+(neg?badge({status:"negative",size:"small",icon:"error",text:"Overdrawn"}):'')+'</div>';}
     else{var tot=bankTotal(w);
       /* KPI is the money + the overdrawn count (a tap-to-filter control). No basis chip on the face. */
       numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span>'+od+'</div>';}
@@ -8389,7 +8389,7 @@ function mysPopContent(){
       return '<div class="wt-row" data-acct="'+aesc+'">'+
         '<span class="lr-main lr-stack lr-link bank-namecell" data-action="bank-acct-drill" data-acct="'+a.id+'" data-id="'+w.id+'" role="button" tabindex="0" data-tip="'+tip+', open" data-tip-plain aria-label="'+a.name+', open account"><span class="lr-name">'+a.name+'</span><span class="lr-acctno">'+codeCopy(a.acct,a.acctFull)+'</span></span>'+
         (full?'<span class="wt-type">'+a.type+'</span>':'')+
-        '<span class="bank-statcol">'+badge+'</span>'+
+        '<span class="bank-statcol">'+stbadge+'</span>'+
         '<span class="wt-c2 bank-bal'+(neg?" bank-neg":"")+'"><span class="bank-bal-amt">'+bankMoney(end)+'</span></span></div>';
     }).join("");
     var shownTot=rows.reduce(function(s,a){return s+bankEnding(a);},0);
