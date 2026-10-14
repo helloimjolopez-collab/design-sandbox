@@ -273,7 +273,10 @@
   /* Glance content padding is read from the Pathway widget shell (Figma node 40009622:39701, "Size=Glance"):
      horizontal 12px = token Padding/Tight, bottom 8px = token Padding/XTight; the 44px header supplies the top.
      Do NOT hand-tune these; they are the canonical glance frame values. */
-  .kpi-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:0 12px 8px;flex:1;min-height:0;}
+  /* Glance content is TOP-anchored (Figma Glance config 01-04): header, then the eyebrow + number +
+     delta badge (+ chart) sit directly below it. Without align-content:flex-start the wrapped lines
+     distribute down the 200px tile, leaving a gap between the filter row and the KPI/badge/chart. */
+  .kpi-row{display:flex;flex-wrap:wrap;align-items:center;align-content:flex-start;gap:8px 14px;padding:0 12px 8px;flex:1;min-height:0;}
   .kpi-row .gl-chiprow{margin-bottom:2px;}
   /* Canonical glance layout: the filter chip (where present) sits on its own line directly under
      the widget header; the KPI group + badges sit left, the spark/bar to their right. */
