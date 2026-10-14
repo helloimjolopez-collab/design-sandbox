@@ -5449,12 +5449,13 @@ function remFViewToggle(w){
 /* Header KPI: straight totals (Paid to date, of pledged, outstanding). No aggregate "expected by now"
    or "% behind pace" across the whole list — pace is a per-pledge property, shown per row and counted
    (not summed) in the Behind / On track / Ahead cards below. */
-function remFKpiHead(t){
+function remFKpiHead(t,trail){
   var cap="of "+money(t.total)+" pledged"+(t.out>0?(" · "+money(t.out)+" outstanding"):"");
   /* Paid-to-date leads; the pledged total + outstanding are a hover tooltip on the number, not a plain
-     caption beside it. */
-  return '<div class="remF-kpi2">'+
-    '<div class="remF-kpi-metric"><span class="remF-kpi-eye">Paid to date</span><span class="metric-value" data-tip="'+remFEsc(cap)+'" data-tip-plain>'+money(t.paid)+'</span></div>'+
+     caption beside it. In the detail header, the view toggle is passed as `trail` and sits inline with
+     the number, far right (not on the filters row); the glance passes nothing. */
+  return '<div class="remF-kpi2'+(trail?' remF-kpi2-hd':'')+'">'+
+    '<div class="remF-kpi-metric"><span class="remF-kpi-eye">Paid to date</span><span class="metric-value" data-tip="'+remFEsc(cap)+'" data-tip-plain>'+money(t.paid)+'</span></div>'+(trail||'')+
   '</div>';
 }
 /* Per-band stats for the KPI filter cards (count + outstanding). */
