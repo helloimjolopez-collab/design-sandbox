@@ -168,24 +168,34 @@
      icon + label. Colours are the Figma static status tokens (Fill/Stroke/Foreground Static <status>
      Subtle/On Subtle); radius = CornerRadius/Large (12); type = Label/Badge/<size>/Medium. Render every
      badge via badge(); never author a bespoke badge. */
-  .badge{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:4px;
-    height:22px;padding:0 8px;font-family:inherit;font-size:11px;font-weight:500;line-height:1;letter-spacing:0.04em;
-    border:1px solid transparent;border-radius:12px;font-variant-numeric:tabular-nums;white-space:nowrap;margin:0;
-    --bdg-fill:var(--semantic-color-fill-static-neutral-subtle,var(--wn-200));
-    --bdg-stroke:var(--semantic-color-stroke-static-neutral-subtle,var(--stroke-container));
-    --bdg-fg:var(--semantic-color-foreground-static-neutral-subtle,var(--txt-secondary));}
-  .badge .material-symbols-rounded{font-size:14px;line-height:1;}
-  .badge[data-size="small"]{height:20px;padding:0 6px;font-size:11px;}
-  .badge[data-size="medium"]{height:22px;padding:0 8px;font-size:11px;}
-  .badge[data-size="large"]{height:22px;padding:0 10px;font-size:12px;}
-  button.badge,a.badge,.badge[role="button"]{cursor:pointer;font:inherit;font-size:11px;}
-  button.badge,.badge[role="button"]{min-height:24px;}
-  .badge[data-status="positive"]{--bdg-fill:var(--semantic-color-fill-static-positive-subtle);--bdg-stroke:var(--semantic-color-stroke-static-positive-subtle);--bdg-fg:var(--semantic-color-foreground-static-positive-on-subtle);}
-  .badge[data-status="negative"]{--bdg-fill:var(--semantic-color-fill-static-negative-subtle);--bdg-stroke:var(--semantic-color-stroke-static-negative-subtle);--bdg-fg:var(--semantic-color-foreground-static-negative-on-subtle);}
-  .badge[data-status="attention"]{--bdg-fill:var(--semantic-color-fill-static-attention-subtle);--bdg-stroke:var(--semantic-color-stroke-static-attention-subtle);--bdg-fg:var(--semantic-color-foreground-static-attention-on-subtle);}
-  .badge[data-status="info"]{--bdg-fill:var(--semantic-color-fill-static-info-subtle);--bdg-stroke:var(--semantic-color-stroke-static-info-subtle);--bdg-fg:var(--semantic-color-foreground-static-info-on-subtle);}
+  /* Badge: faithful port of the Pathway DS Badge component (Figma set 40017025:86804),
+     token-bound exactly per components/badge/badge.jsx. Nothing hardcoded: every geometry and
+     type value is a Pathway semantic token. No fixed height; the box sizes to content (line-height
+     + 2px top/bottom padding + 1px border), as the Figma component does. Size sets the type + leading
+     icon; status sets the colour family (READ PER VARIANT, never derived: Neutral binds Base fill +
+     Bold stroke/foreground, Attention's stroke is Strong, Accent 2 = Jade, Accent 3 = Mauve); style
+     picks which of fill/stroke paint. padding-xxxxtight (2px vertical) is absent at tokens@10.0.4, so
+     it falls back to the real 2px token gap-xxxtight and auto-resolves if the CDN is bumped. */
+  .badge{box-sizing:border-box;display:inline-flex;align-items:center;margin:0;white-space:nowrap;font-variant-numeric:tabular-nums;
+    gap:var(--semantic-layout-units-gap-xxxtight);
+    padding:var(--semantic-layout-units-padding-xxxxtight,var(--semantic-layout-units-gap-xxxtight)) var(--semantic-layout-units-padding-xxtight) var(--semantic-layout-units-padding-xxxxtight,var(--semantic-layout-units-gap-xxxtight)) var(--semantic-layout-units-padding-xxxtight);
+    border:var(--semantic-layout-units-borderwidth-base) solid transparent;border-radius:var(--semantic-layout-units-cornerradius-large);
+    font-family:inherit;font-weight:var(--semantic-type-weight-medium);letter-spacing:var(--semantic-type-letter-spacing-extraspacious);
+    font-size:var(--semantic-type-font-size-xxs);line-height:var(--semantic-type-line-height-xxs-single);--bdg-icon:11px;
+    --bdg-fill:var(--semantic-color-fill-static-neutral-base);--bdg-stroke:var(--semantic-color-stroke-static-neutral-bold);--bdg-fg:var(--semantic-color-foreground-static-neutral-bold);}
+  .badge .material-symbols-rounded{font-size:var(--bdg-icon);line-height:1;}
+  .badge[data-size="small"]{font-size:var(--semantic-type-font-size-xxs);line-height:var(--semantic-type-line-height-xxs-single);--bdg-icon:11px;}
+  .badge[data-size="medium"]{font-size:var(--semantic-type-font-size-xs);line-height:var(--semantic-type-line-height-xs-single);--bdg-icon:12px;}
+  .badge[data-size="large"]{font-size:var(--semantic-type-font-size-s);line-height:var(--semantic-type-line-height-xs-single);--bdg-icon:14px;}
+  button.badge,a.badge,.badge[role="button"]{cursor:pointer;font-family:inherit;}
+  .badge[data-status="neutral"]{--bdg-fill:var(--semantic-color-fill-static-neutral-base);--bdg-stroke:var(--semantic-color-stroke-static-neutral-bold);--bdg-fg:var(--semantic-color-foreground-static-neutral-bold);}
   .badge[data-status="severe"]{--bdg-fill:var(--semantic-color-fill-static-severe-subtle);--bdg-stroke:var(--semantic-color-stroke-static-severe-subtle);--bdg-fg:var(--semantic-color-foreground-static-severe-on-subtle);}
-  .badge[data-status="neutral"]{--bdg-fill:var(--semantic-color-fill-static-neutral-subtle,var(--wn-200));--bdg-stroke:var(--semantic-color-stroke-static-neutral-subtle,var(--stroke-container));--bdg-fg:var(--semantic-color-foreground-static-neutral-subtle,var(--txt-secondary));}
+  .badge[data-status="negative"]{--bdg-fill:var(--semantic-color-fill-static-negative-subtle);--bdg-stroke:var(--semantic-color-stroke-static-negative-subtle);--bdg-fg:var(--semantic-color-foreground-static-negative-on-subtle);}
+  .badge[data-status="positive"]{--bdg-fill:var(--semantic-color-fill-static-positive-subtle);--bdg-stroke:var(--semantic-color-stroke-static-positive-subtle);--bdg-fg:var(--semantic-color-foreground-static-positive-on-subtle);}
+  .badge[data-status="attention"]{--bdg-fill:var(--semantic-color-fill-static-attention-subtle);--bdg-stroke:var(--semantic-color-stroke-static-attention-strong);--bdg-fg:var(--semantic-color-foreground-static-attention-on-subtle);}
+  .badge[data-status="info"]{--bdg-fill:var(--semantic-color-fill-static-info-subtle);--bdg-stroke:var(--semantic-color-stroke-static-info-subtle);--bdg-fg:var(--semantic-color-foreground-static-info-on-subtle);}
+  .badge[data-status="accent2"]{--bdg-fill:var(--semantic-color-fill-static-accent-jade-subtle);--bdg-stroke:var(--semantic-color-stroke-static-accent-jade);--bdg-fg:var(--semantic-color-foreground-static-accent-jade-on-subtle);}
+  .badge[data-status="accent3"]{--bdg-fill:var(--semantic-color-fill-static-accent-mauve-subtle);--bdg-stroke:var(--semantic-color-stroke-static-accent-mauve);--bdg-fg:var(--semantic-color-foreground-static-accent-mauve-on-subtle);}
   .badge,.badge[data-style="outlinefill"]{background:var(--bdg-fill);border-color:var(--bdg-stroke);color:var(--bdg-fg);}
   .badge[data-style="fill"]{background:var(--bdg-fill);border-color:transparent;color:var(--bdg-fg);}
   .badge[data-style="outline"]{background:transparent;border-color:var(--bdg-stroke);color:var(--bdg-fg);}
