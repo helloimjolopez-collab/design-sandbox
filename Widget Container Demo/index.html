@@ -3632,6 +3632,9 @@
   .remF-legend-tick{width:11px;height:11px;border-radius:3px;background-color:var(--wn-200);background-image:repeating-linear-gradient(45deg,var(--wn-750) 0 1px,transparent 1px 5px);border:1px solid var(--stroke-widget);display:inline-block;flex:0 0 auto;}
   /* -- KPI (two-number) + pace filter + slim/mini shared bars -- */
   .remF-kpi2{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;}
+  /* Detail header: KPI number left, view toggle far right, on one row (never on the filters row). */
+  .remF-kpi2-hd{width:100%;align-items:center;justify-content:space-between;flex-wrap:nowrap;}
+  .remF-kpi2-hd .dep-hd-toggle{flex:0 0 auto;}
   .remF-kpi2 .metric-value{font-size:19px;line-height:1.05;}
   .remF-kpi-metric{display:flex;flex-direction:column;gap:1px;min-width:0;}
   .remF-kpi-eye{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--txt-subtle);white-space:nowrap;line-height:1;}
@@ -5481,7 +5484,7 @@ function remFPaceCards(w,drill){
 function remFHeaderBlock(w,mode){
   var toggle=(w.size==="wide"||w.size==="xwide")?('<div class="dep-hd-toggle">'+remFViewToggle(w)+'</div>'):"";
   if(mode==="loading"){
-    return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+'</div>'+remFKpiHead({paid:0,total:0,out:0},toggle)+'<div class="remF-tiles"><span class="sk remF-tile-sk"></span><span class="sk remF-tile-sk"></span><span class="sk remF-tile-sk"></span></div></div>';
+    return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+toggle+'</div><div class="remF-tiles"><span class="sk remF-tile-sk"></span><span class="sk remF-tile-sk"></span><span class="sk remF-tile-sk"></span></div></div>';
   }
   /* Filters row 1; Paid-to-date KPI + the view toggle share row 2, toggle far right (not on filters). */
   return '<div class="dep-hd rem-hd"><div class="dep-hd-top">'+remFThruChip(w)+'</div>'+remFKpiHead(remFTotals(w),toggle)+remFPaceCards(w)+'</div>';
