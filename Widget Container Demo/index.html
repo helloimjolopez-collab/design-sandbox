@@ -8064,10 +8064,12 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     return '<div class="dist-wrap"><div class="pie-wrap row"><svg class="donut" viewBox="0 0 140 140" width="'+DS+'" height="'+DS+'" aria-hidden="true">'+arcs+'<text x="70" y="67" text-anchor="middle" class="donut-c1">'+money(tot)+'</text><text x="70" y="86" text-anchor="middle" class="donut-c2">total</text></svg><div class="legend-col"><div class="legend" style="max-height:'+DS+'px">'+legend+'</div></div></div></div>';}
   function prFGlanceComp(w){var rows=prFDistTotals(w).slice().sort(function(a,b){return b.net-a.net;}),tot=rows.reduce(function(s,a){return s+a.net;},0);
     if(!tot||!rows.length)return "";
-    var segs=rows.map(function(a){var pct=a.net/tot*100;return '<span class="prf-gseg" style="width:'+pct.toFixed(2)+'%;background:'+(PRF_DIST_COLORS[a.id]||"var(--primitive-color-cool-neutral-250)")+'" data-tip="'+a.name+': '+money(a.net)+', '+Math.round(pct)+'% of payroll this period" data-tip-plain></span>';}).join("");
+    /* Sequential amethyst (same ramp as the glance donut and the larger charts), darkest = largest
+       share, ordered by size. No per-category rainbow. */
+    var segs=rows.map(function(a,i){var pct=a.net/tot*100;return '<span class="prf-gseg" style="width:'+pct.toFixed(2)+'%;background:'+prfAmColor(i)+'" data-tip="'+a.name+': '+money(a.net)+', '+Math.round(pct)+'% of payroll this period" data-tip-plain></span>';}).join("");
     var top=rows[0],tp=Math.round(top.net/tot*100);
     return '<div class="prf-gcomp"><div class="prf-gbar" role="img" aria-label="Payroll split across '+rows.length+' distributions this period">'+segs+'</div>'+
-      '<div class="prf-gcap"><span class="prf-gdot" style="background:'+(PRF_DIST_COLORS[top.id]||"var(--primitive-color-cool-neutral-250)")+'"></span><span class="prf-gname">'+top.name+'</span><span class="prf-gpct">'+tp+'%</span></div></div>';}
+      '<div class="prf-gcap"><span class="prf-gdot" style="background:'+prfAmColor(0)+'"></span><span class="prf-gname">'+top.name+'</span><span class="prf-gpct">'+tp+'%</span></div></div>';}
   /* Glance composition = a donut (distribution split) stacked UNDER the KPI, full width , matching
      the widget's own chart type at larger sizes (not a thin side bar). */
   /* Amethyst SEQUENTIAL ramp (DS chart colour), darkest = largest slice. Charts use the amethyst family,
