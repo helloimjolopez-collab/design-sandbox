@@ -8374,20 +8374,23 @@ function mysPopContent(){
     return '<span class="bank-kpi-info" tabindex="0" data-tip="'+t+'" data-tip-plain role="img" aria-label="'+t+'">'+ICON("info")+'</span>';
   }
   function bankGlance(w){var sel=bankSelected(w);
-    /* Face: money + a compact since-last-reconciliation delta (the real signal) + the overdrawn alarm
-       when one applies. Eyebrow names the metric: "Cash on hand" (all) / "Ending balance" (single).
-       Reconciliation-basis provenance stays in the info popover (aboutOf), not on the face. */
+    /* Face: money + a running-balance sparkline from the last reconciliation (beginning) to the current
+       ending, stepping through the real movements since then (deposits, voids, checks, withdrawals, EFT),
+       plus the overdrawn alarm when one applies. The sparkline IS the signal: it shows where the balance
+       started and how it moved to now. Each movement is read on hover; it is not a fabricated time trend,
+       it is the account's own since-reconciliation activity. Eyebrow names the metric: "Cash on hand"
+       (all) / "Ending balance" (single). */
     if(sel){var end=bankEnding(sel),beg=sel.a[0],neg=end<0;
       return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
-        '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Ending balance</span><span class="bank-val-line"><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span>'+bankReconInfo(end,beg)+'</span></span>'+
+        '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Ending balance</span><span class="metric-value'+(neg?" bank-neg":"")+'">'+bankMoney(end)+'</span></span>'+
         (neg?'<div class="gl-sub"><span class="bank-pill warn">'+ICON("error")+'Overdrawn</span></div>':'')+
-        '</div></div>';}
+        '</div>'+bankSpark(w)+'</div>';}
     var val=bankTotal(w),beg2=bankBeginTotal(w),negT=val<0,over=bankNegCount(w);
     var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
     return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
-      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Cash on hand</span><span class="bank-val-line"><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span>'+bankReconInfo(val,beg2)+'</span></span>'+
+      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Cash on hand</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
       (od?'<div class="gl-sub">'+od+'</div>':'')+
-      '</div></div>';}
+      '</div>'+bankSpark(w)+'</div>';}
   function bankDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
     var clone=Object.assign({},w,{size:"xwide"}),title="Bank Balances",ao=null;
