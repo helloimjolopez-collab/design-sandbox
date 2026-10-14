@@ -10091,18 +10091,26 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     var rows=ptoQueueRows(w).slice(),sk=(w.ptoSort||"date-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,sel=w.ptoSel||{};
     rows.sort(function(a,b){if(key==="emp")return dir*a.emp.localeCompare(b.emp);if(key==="dept")return dir*a.dept.localeCompare(b.dept);if(key==="status")return dir*a.s3.localeCompare(b.s3);return dir*(a.date<b.date?-1:a.date>b.date?1:0);});
     if(!rows.length)return '<div class="state pto-state" data-kind="empty"><span class="material-symbols-rounded pto-state-ic ok">check_circle</span><div class="state-title">You are all caught up</div><div class="state-sub">No time off matches these filters.</div></div>';
-    var anyAct=rows.some(function(r){return r.s3!=="approved";});
+    /* Every row is selectable (pending to approve, approved to undo), so both tiles get a Select column
+       and a Select-all. The Action column carries the row's reversible action: Approve for a pending row,
+       Undo for an approved one. */
+    var anyAct=rows.length>0;
     function sb(k,label){var on=key===k,ic=on?(dir<0?"arrow_downward":"arrow_upward"):"unfold_more";return '<button class="wt-sort'+(on?" on":"")+'" data-action="pto-sort" data-id="'+w.id+'" data-k="'+k+'">'+label+' '+ICON(ic)+'</button>';}
-    var head='<div class="wt-row wt-head pto-qrow"><span class="pto-qc-chk">'+(anyAct?'<button class="pto-chk" data-action="pto-selall" data-id="'+w.id+'" aria-label="Select all actionable rows">'+ICON(ptoAllSelected(w)?"check_box":"check_box_outline_blank")+'</button>':'')+'</span><span class="pto-qc-date">'+sb("date","Date")+'</span><span class="pto-qc-emp lr-main">'+sb("emp","Employee")+'</span><span class="pto-qc-dept">'+sb("dept","Department")+'</span><span class="pto-qc-type">Leave type</span><span class="pto-qc-status">'+sb("status","Status")+'</span><span class="pto-qc-act"></span></div>';
+    var head='<div class="wt-row wt-head pto-qrow"><span class="pto-qc-chk">'+(anyAct?'<button class="pto-chk" data-action="pto-selall" data-id="'+w.id+'" aria-label="Select all rows">'+ICON(ptoAllSelected(w)?"check_box":"check_box_outline_blank")+'</button>':'')+'</span><span class="pto-qc-date">'+sb("date","Date")+'</span><span class="pto-qc-emp lr-main">'+sb("emp","Employee")+'</span><span class="pto-qc-dept">'+sb("dept","Department")+'</span><span class="pto-qc-type">Leave type</span><span class="pto-qc-status">'+sb("status","Status")+'</span><span class="pto-qc-act">Action</span></div>';
     var body=rows.map(function(r){
-      var act=r.s3!=="approved",chk=act?('<button class="pto-chk" data-action="pto-selrec" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Select">'+ICON(sel[r.id]?"check_box":"check_box_outline_blank")+'</button>'):'';
+      var chk='<button class="pto-chk" data-action="pto-selrec" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Select">'+ICON(sel[r.id]?"check_box":"check_box_outline_blank")+'</button>';
       var action=(r.s3==="approved")
-        ?''/* Approval is final from here (Jo: we let go of the "undo" option); the Status badge already reads Approved. Corrections happen in the main app. */
-        :('<button class="pto-approve-ic pto-approve" data-action="pto-approve" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Approve time off for '+r.emp.replace(/"/g,"&quot;")+'" data-tip="Approve" data-tip-plain>'+ICON("check_circle")+'</button>');/* Dismiss removed: production has no reject and no confirmed way to dispose of a lapsed request, so we do not invent one (brief: only Pending and Approved exist). */
+        ?('<button class="pto-undo-ic pto-undo" data-action="pto-undo" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Undo approval for '+r.emp.replace(/"/g,"&quot;")+'" data-tip="Undo approval" data-tip-plain>'+ICON("undo")+'</button>')
+        :('<button class="pto-approve-ic pto-approve" data-action="pto-approve" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Approve time off for '+r.emp.replace(/"/g,"&quot;")+'" data-tip="Approve" data-tip-plain>'+ICON("check_circle")+'</button>');
       return '<div class="wt-row pto-qrow" data-acct="'+r.emp.replace(/"/g,"&quot;")+'"><span class="pto-qc-chk">'+chk+'</span><span class="pto-qc-date">'+ptoFmtDate(r.date)+'</span><span class="pto-qc-emp lr-main" title="'+r.emp.replace(/"/g,"&quot;")+'"><button class="pto-emp-link" data-action="pto-drill" data-id="'+w.id+'" data-emp="'+r.empId+'">'+r.emp+'</button></span><span class="pto-qc-dept">'+ptoDeptBadge(r.dept)+'</span><span class="pto-qc-type">'+ptoTypeLabel(w,r.type)+'</span><span class="pto-qc-status">'+ptoStatusBadge(r,w)+'</span><span class="pto-qc-act">'+action+'</span></div>';
     }).join("");
-    var selN=Object.keys(sel).filter(function(k){return sel[k];}).length;
-    var bulk=selN?'<div class="pto-bulkbar"><span class="pto-bulk-n">'+selN+' selected</span><button class="btn primary sm" data-action="pto-bulk-approve" data-id="'+w.id+'">'+ICON("check")+'Approve '+selN+'</button><button class="btn naked sm" data-action="pto-selclear" data-id="'+w.id+'">Clear</button></div>':'';
+    var selIds=Object.keys(sel).filter(function(k){return sel[k];});
+    var selById={};rows.forEach(function(r){selById[r.id]=r;});
+    var selP=selIds.filter(function(k){return selById[k]&&selById[k].s3!=="approved";}).length;
+    var selA=selIds.filter(function(k){return selById[k]&&selById[k].s3==="approved";}).length;
+    var selN=selP+selA;
+    var bulkBtns=(selP?'<button class="btn primary sm" data-action="pto-bulk-approve" data-id="'+w.id+'">'+ICON("check")+'Approve '+selP+'</button>':'')+(selA?'<button class="btn outlined sm" data-action="pto-bulk-undo" data-id="'+w.id+'">'+ICON("undo")+'Undo '+selA+'</button>':'');
+    var bulk=selN?'<div class="pto-bulkbar"><span class="pto-bulk-n">'+selN+' selected</span>'+bulkBtns+'<button class="btn naked sm" data-action="pto-selclear" data-id="'+w.id+'">Clear</button></div>':'';
     var search='<div class="tbl-search"><div class="dep-search"><span class="material-symbols-rounded" aria-hidden="true">search</span><input class="dep-q" placeholder="Search by person" aria-label="Search by person"></div></div>';
     return search+bulk+'<div class="scroll pto-qtbl">'+head+body+'</div>';}
   /* Calendar state: a stateful anchor date + granularity (month/week/day), so the user can
