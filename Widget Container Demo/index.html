@@ -7931,11 +7931,14 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var top=rows[0],topPct=Math.round(top.net/tot*100);
     return '<div class="prf-gl-pie pie-wrap"><svg class="donut" viewBox="0 0 140 140" width="84" height="84" role="img" aria-label="Payroll split across '+rows.length+' distributions; largest is '+top.name.replace(/"/g,"&quot;")+' at '+topPct+'%">'+arcs+'</svg>'+
       '<div class="prf-gl-pie-leg"><span class="prf-gl-leg-dot" style="background:'+prfAmColor(0)+'"></span><span class="prf-gl-leg-nm">'+top.name+'</span><span class="prf-gl-leg-pct">'+topPct+'%</span></div></div>';}
+  /* Glance = KPI (paid this period) + the distribution split as a full-width stacked BAR under it
+     (prFGlanceComp), NOT a donut. The donut legend got truncated at glance width; the bar reads at any
+     width, matches the widget's own chart family, and its segments have hover states + tooltips. */
   function prFGlance(w){var tot=prFDistTotals(w).reduce(function(s,a){return s+a.net;},0);
     if(!tot)return '<div class="kpi-row"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num"><div class="metric-value" style="font-size:16px;color:var(--txt-subtle)">No payroll this period</div></div></div>';
-    var prRows=prFDistTotals(w).slice().sort(function(a,b){return b.net-a.net;}),prRamp=blueRamp(prRows.length);
-    var prPieSegs=prRows.map(function(a,i){return {value:a.net,color:prRamp[i],tip:a.name+' · '+money(a.net)+' · '+(tot?Math.round(a.net/tot*100):0)+'%'};});
-    return '<div class="kpi-row prf-glance prf-gl-2col"><div class="prf-gl-leftcol"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div></div>'+prFGlanceDonut(w)+'</div>';}
+    return '<div class="kpi-row prf-glance"><div class="gl-chiprow">'+prFPeriodChip(w)+'</div>'+
+      '<div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div>'+
+      prFGlanceComp(w)+'</div>';}
   function prFHeaderBlock(w,hideToggle,noTotal){
     var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>')+'</div>';
     if(noTotal)return '<div class="dep-hd">'+top+'</div>';
