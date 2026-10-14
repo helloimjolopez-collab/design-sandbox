@@ -8920,6 +8920,7 @@ function purHandleClick(a,t,id){
   if(a==="pur-approve"){if(modal){modal.confirmApprove=true;modal.confirmReject=false;modal.note="";renderModal();}return true;}
   if(a==="pur-approve-cancel"){if(modal){modal.confirmApprove=false;renderModal();}return true;}
   if(a==="pur-approve-confirm"){var wa=find(id),oa=purFindOrder(wa,t.getAttribute("data-oid"));if(oa){oa.status="approved";oa.approvedByMe=true;oa.decisionNote=(modal&&modal.note)||"";setStatus("Approved "+oa.num+". It has moved to approved orders.");toast("Approved "+oa.num+(oa.vendor?", "+oa.vendor:""),"check_circle");}modal=null;modalMounted=false;pop=null;render();return true;}
+  if(a==="pur-row-approve"){var wra=find(id),ora=purFindOrder(wra,t.getAttribute("data-oid"));if(ora){ora.status="approved";ora.approvedByMe=true;setStatus("Approved "+ora.num+". It has moved to approved orders.");toast("Approved "+ora.num+(ora.vendor?", "+ora.vendor:""),"check_circle");}pop=null;render();return true;}
   if(a==="pur-reject"){if(modal){modal.confirmReject=true;modal.confirmApprove=false;modal.note="";renderModal();}return true;}
   if(a==="pur-reject-cancel"){if(modal){modal.confirmReject=false;renderModal();}return true;}
   if(a==="pur-reject-confirm"){var wr=find(id),or=purFindOrder(wr,t.getAttribute("data-oid"));if(or){or.rej=true;or.decisionNote=(modal&&modal.note)||"";setStatus("Rejected "+or.num+". It has been removed from the queue.");toast("Rejected "+or.num+(or.vendor?", "+or.vendor:""),"do_not_disturb_on");}modal=null;modalMounted=false;pop=null;render();return true;}
@@ -9539,7 +9540,7 @@ function arFGlance(w){
      the OLDEST money (the hardest to recover) so the bar reads at a glance, not only on hover. */
   var abk=arFBuckets(w).filter(function(r){return r.total>0;}),oldest=abk.length?abk[abk.length-1]:null;
   var cap=oldest?'<div class="arF-gl-cap"><span class="arF-gl-capdot" style="background:var('+oldest.color+')"></span><span class="arF-gl-capnm">'+oldest.label+'</span><span class="arF-gl-capv">'+money(oldest.total)+'</span><span class="arF-gl-capk">oldest</span></div>':'';
-  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="arF-valline"><span class="metric-value">'+money(tot)+'</span>'+arFOverduePill(w)+'</span></span></div><div class="arF-gl-barwrap">'+arFStackBar(w)+cap+'</div><span class="sr-only">'+arFAgeSr(w)+'</span></div>';
+  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="arF-valline"><span class="metric-value">'+money(tot)+'</span></span></span></div><div class="arF-gl-barwrap">'+arFStackBar(w)+cap+'</div><span class="sr-only">'+arFAgeSr(w)+'</span></div>';
 }
 
 function arFEmpty(w){
