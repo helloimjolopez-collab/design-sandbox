@@ -10851,7 +10851,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(faHasNA(dim)){var vn=faSum(FA_ASSETS.filter(function(a){return a[dim]==null;}),m);if(vn>0)rows.push({name:FA_NA_LABEL,val:vn,na:true});}
     rows.sort(function(a,b){return b.val-a.val;});return rows;}
   function faChip(action,id,label){return '<button class="filter-chip fa-chip" data-action="'+action+'" data-id="'+id+'" aria-haspopup="listbox" aria-label="'+label.replace(/"/g,"&quot;")+', change"><span class="fc-label">'+label+'</span>'+ICON("expand_more")+'</button>';}
-  function faControls(w){return '<div class="bgt-ctlrow fa-ctlrow">'+faChip("fa-group",w.id,faGroupLabel(w))+'</div>';}
+  function faControls(w){return '<div class="bgt-ctlrow fa-ctlrow">'+faChip("fa-groupby",w.id,"View by "+faDimLabel(faDim(w)))+faChip("fa-group",w.id,faGroupLabel(w))+'</div>';}
   function faViewToggle(w){var v=faView(w);return '<div class="vtoggle" role="group" aria-label="View">'+
     '<button class="vt'+(v==="table"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="table" aria-pressed="'+(v==="table")+'" data-tip="Every asset as a sortable table." data-tip-plain>'+ICON("table_rows")+'Table</button>'+
     '<button class="vt'+(v==="chart"?" on":"")+'" data-action="fa-view" data-id="'+w.id+'" data-v="chart" aria-pressed="'+(v==="chart")+'" data-tip="Net book value and depreciation by class." data-tip-plain>'+ICON("bar_chart")+'Chart</button>'+
@@ -10953,7 +10953,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   }
   function faPopContent(){
     if(pop.type==="fa-groupby"){var wg=find(pop.id),cd=faDim(wg);
-      return '<div class="cap">Group assets by</div>'+FA_DIMS.map(function(o){var on=cd===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="fa-set-groupby" data-id="'+wg.id+'" data-d="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+'</span></button>';}).join("");}
+      return '<div class="cap">View assets by</div>'+FA_DIMS.map(function(o){var on=cd===o[0];return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="fa-set-groupby" data-id="'+wg.id+'" data-d="'+o[0]+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+o[1]+'</span></button>';}).join("");}
     if(pop.type==="fa-group"){var wg2=find(pop.id),cg=faGroup(wg2),opts=faGroupOptions(wg2),all=opts[0],rest=opts.slice(1);
       var out='<div class="cap">Show group</div><button class="mi'+(cg===all.v?" check":"")+'" role="option" aria-selected="'+(cg===all.v)+'" data-action="fa-set-group" data-id="'+wg2.id+'" data-g="'+all.v+'">'+(cg===all.v?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-nm">'+all.label+'</span><span class="mi-sub">'+all.count+'</span></button>';
       out+='<div class="sep"></div><div class="menu-scroll" role="listbox">'+rest.map(function(o){var on=cg===o.v;return '<button class="mi'+(on?" check":"")+'" role="option" aria-selected="'+on+'" data-action="fa-set-group" data-id="'+wg2.id+'" data-g="'+String(o.v).replace(/"/g,"&quot;")+'">'+(on?ICON("check"):'<span class="mi-gap"></span>')+'<span class="mi-ic material-symbols-rounded">'+(o.na?"help":"folder")+'</span><span class="mi-nm">'+o.label+'</span><span class="mi-sub">'+(o.count?o.count:"no assets")+'</span></button>';}).join("")+'</div>';
