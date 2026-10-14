@@ -10542,12 +10542,15 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      full detail, pre-filtered to the chosen horizon. */
   function apDrillModalHTML(){
     var w=find(modal.id);if(!w)return "";
-    var clone=Object.assign({},w,{size:"xwide",apDue:modal.due||"total",aploading:false});
+    /* Clean filtered list, no second filter-tile bank (the modal title already states the horizon, and
+       stacking the tiles in the narrower modal looked wrong). Just the invoices for the chosen horizon. */
+    var clone=Object.assign({},w,{size:"wide",apDue:modal.due||"total",aploading:false});
     var titles={overdue:"Overdue",week:"Due this week",month:"Due this month",total:"Accounts Payable by Due Date"};
     var title=titles[modal.due]||"Accounts Payable by Due Date";
+    var tot=apDrillBucketTotal?0:0;
     return '<div class="modal-backdrop" data-action="ap-drill-close"><div class="modal modal-wide ap-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="'+title.replace(/"/g,"&quot;")+'">'+
       '<div class="modal-h"><span class="modal-title">'+title+'</span><button class="iconbtn" data-action="ap-drill-close" aria-label="Close">'+ICON("close")+'</button></div>'+
-      '<div class="modal-b ap-drill-b">'+apContent(clone)+'</div>'+
+      '<div class="modal-b ap-drill-b">'+apTable(clone)+'</div>'+
     '</div></div>';
   }
 
