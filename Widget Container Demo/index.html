@@ -9655,14 +9655,9 @@ function arFContent(w){
   if(w.arFloading)return arFHeaderBlock(w,"loading")+arFSkeleton();
   var mh=arFHeaderBlock(w),group=w.arFGroup||"aging";
   var table=(group==="customer")?arFCustTable(w):arFAgingTable(w);
-  /* Explore (wide): the table only. Detail (xwide): table on the left, a share pie on the right.
-     Either way the only toggle is Aging / Customers (no Table/Pie switch). */
-  if(w.size==="xwide"){
-    return mh+'<div class="dep-full arF-full">'+
-      '<div class="dep-col"><div class="dep-col-h">'+(group==="customer"?"Customers, most owed first":"Aging, current to most overdue")+'</div>'+table+'</div>'+
-      '<div class="dep-col arF-col-chart"><div class="dep-col-h">'+(group==="customer"?"Most owed first":"Ordered by age, current to most overdue")+'</div><div class="arF-chartwrap">'+arFBar(w,group)+'</div></div>'+
-    '</div>';
-  }
+  /* Just the view, Aging or Customers, as a sortable table at every size. No second "most owed first"
+     ordered-bar panel and no imposed sort label: the table's own column headers (Customer / Aging /
+     Balance) let the user sort however they want. */
   return mh+'<div class="arF-body">'+table+'</div>';
 }
 
