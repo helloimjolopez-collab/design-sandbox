@@ -8513,7 +8513,10 @@ function mysPopContent(){
      toolbar (inherits the canonical header padding), shown only when an account is
      actually overdrawn. Count only, no amount. */
   function bankOdChip(w){var over=bankNegCount(w);if(over<1)return "";var on=!!w.bkOver;
-    return '<button class="bank-odchip'+(on?" on":"")+'" data-action="bank-overdrawn" data-id="'+w.id+'" aria-pressed="'+on+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, '+(on?"show all accounts":"show only these")+'">'+ICON("error")+'<span>'+over+' overdrawn</span></button>';}
+    /* Same Badge component as the glance overdrawn summary and the per-row Overdrawn badges, so
+       the overdrawn signal reads identically everywhere. This instance is a toggle filter: the
+       pressed state is the solid Figma style variant (fill), the rest the subtle one (outlinefill). */
+    return badge({status:"negative",size:"small",style:on?"fill":"outlinefill",icon:"error",text:over+" overdrawn",tag:"button",cls:"bank-odtoggle",attrs:'data-action="bank-overdrawn" data-id="'+w.id+'" aria-pressed="'+on+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, '+(on?"show all accounts":"show only these")+'"'});}
   function bankContent(w){
     if(w.size==="kpi")return bankGlance(w);
     if(w.bkloading)return bankHeaderBlock(w,"loading")+bankSkeleton();
