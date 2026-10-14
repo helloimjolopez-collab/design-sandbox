@@ -9861,11 +9861,15 @@ function arFHandleClick(a,id,t){
   if(a==="arF-msort"){if(modal){var mk=t.getAttribute("data-k"),cur=modal.msort||{key:"oldest",dir:"desc"};if(cur.key===mk)cur={key:mk,dir:(cur.dir==="asc"?"desc":"asc")};else cur={key:mk,dir:(mk==="customer"?"asc":"desc")};modal.msort=cur;}renderModal();return true;}
   if(a==="arF-share"){if(modal){var scp=t.getAttribute("data-scope");modal.shareMenu=(modal.shareMenu===scp)?null:scp;}renderModal();return true;}
   if(a==="arF-share-do"){var fmt=t.getAttribute("data-fmt"),scope=modal&&modal.shareMenu,sn2=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;
+    /* Excel / PDF produce a file: show the contents dialog first (exactly what the file holds) rather
+       than exporting silently. email / print share the same content and stay one tap. */
+    if(fmt==="Excel"||fmt==="PDF"){if(modal){modal.exportFmt=fmt;modal.shareMenu=null;}renderModal();return true;}
     var who=(scope==="sel"&&sn2>0)?(sn2+" selected customer"+(sn2>1?"s":"")):"the full customer list";
-    var verb={Excel:"Downloaded",PDF:"Downloaded",email:"Emailed",print:"Sent to print"}[fmt]||"Shared";
-    var noun={Excel:" as Excel (customer, aging bucket, invoices, balance)",PDF:" as a PDF",email:"",print:""}[fmt]||"";
-    toast(verb+" "+who+noun,{Excel:"table_view",PDF:"picture_as_pdf",email:"mail",print:"print"}[fmt]||"ios_share");
+    var verb={email:"Emailed",print:"Sent to print"}[fmt]||"Shared";
+    toast(verb+" "+who,{email:"mail",print:"print"}[fmt]||"ios_share");
     if(modal)modal.shareMenu=null;renderModal();return true;}
+  if(a==="arF-export-cancel"){if(modal)modal.exportFmt=null;renderModal();return true;}
+  if(a==="arF-export-do"){var efmt=(modal&&modal.exportFmt)||t.getAttribute("data-fmt")||"Excel";var esn=modal&&modal.sel?Object.keys(modal.sel).filter(function(k){return modal.sel[k];}).length:0;var ewho=esn>0?(esn+" selected customer"+(esn>1?"s":"")):"the full customer list";toast("Downloaded "+ewho+" as "+efmt,efmt==="PDF"?"picture_as_pdf":"table_view");if(modal){modal.exportFmt=null;modal.shareMenu=null;}renderModal();return true;}
   if(a==="arF-open-invoice"){var oi=arFEsc(t.getAttribute("data-inv"));navNote("Open invoice "+oi,'<p>This opens invoice <b>'+oi+'</b> in <b>Accounts Receivable</b>, the full record with its line items, history and attachments.</p><ul class="navnote-steps"><li><span class="material-symbols-rounded">description</span>Review or edit the invoice there.</li><li><span class="material-symbols-rounded">arrow_back</span>Use the browser back to return to this dashboard.</li></ul>',"open_in_new");return true;}
   if(a==="arF-dl-invoice"){var di=arFEsc(t.getAttribute("data-inv"));navNote("Download invoice "+di,'<p>This downloads invoice <b>'+di+'</b> as a <b>PDF</b> to your device.</p><ul class="navnote-steps"><li><span class="material-symbols-rounded">picture_as_pdf</span>A print-ready copy of the single invoice.</li><li><span class="material-symbols-rounded">attach_email</span>Use it to send the customer a copy or keep it on file.</li></ul>',"download");return true;}
   if(a==="arF-record-payment"){var ri=arFEsc(t.getAttribute("data-inv")),rc=arFEsc(t.getAttribute("data-cust"));navNote("Record a payment",'<p>This opens <b>Accounts Receivable, Receive Payment</b>, prefilled for invoice <b>'+ri+'</b> ('+rc+').</p><ul class="navnote-steps"><li><span class="material-symbols-rounded">edit</span>Enter the amount received and how it was paid.</li><li><span class="material-symbols-rounded">done_all</span>Post it to apply the payment against this invoice.</li><li><span class="material-symbols-rounded">sync</span>The outstanding balance drops and this list refreshes.</li></ul>',"payments");return true;}
