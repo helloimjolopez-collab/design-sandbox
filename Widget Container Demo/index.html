@@ -3799,6 +3799,17 @@
 <script>
 (function(){
   var ICON=function(n){return '<span class="material-symbols-rounded" aria-hidden="true">'+n+'</span>';};
+  /* badge(): the one way to render a Pathway Badge (Figma component 40016938:73294). Mirrors the Figma
+     variant props: status (neutral|severe|attention|negative|positive|info|accent2|accent3),
+     size (small|medium|large), style (outlinefill|outline|fill|naked), an optional leading icon and an
+     optional trailing icon, and the label text. tag/attrs allow an interactive (button) badge. No widget
+     may hand-roll a badge; they all come through here so one status looks identical everywhere. */
+  function badge(o){o=o||{};
+    var st=o.status||"neutral",sz=o.size||"small",sty=o.style||"outlinefill",tag=o.tag||"span";
+    var lead=o.icon?('<span class="material-symbols-rounded" aria-hidden="true">'+o.icon+'</span>'):'';
+    var trail=o.trailingIcon?('<span class="material-symbols-rounded" aria-hidden="true">'+o.trailingIcon+'</span>'):'';
+    var attrs=' data-status="'+st+'" data-size="'+sz+'" data-style="'+sty+'"'+(o.attrs?(' '+o.attrs):'');
+    return '<'+tag+' class="badge'+(o.cls?(' '+o.cls):'')+'"'+attrs+'>'+lead+(o.text!=null?o.text:'')+trail+'</'+tag+'>';}
   var SIZES=["kpi","wide","xwide"];
   var SIZE_LABEL={kpi:"Glance",wide:"Detail",xwide:"Explore"};
   var DEPTH_LABEL={kpi:"Glance",wide:"Detail",xwide:"Explore"};
