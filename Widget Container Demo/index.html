@@ -7367,12 +7367,11 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
   /* Canonical favourability badge (standard .delta-pill). Carries the label plus, after a dot,
      the variance percentage, all inside the one badge. Used at every size so it reads identically. */
   function bgtFFavPill(v,neutral,pct,tip){
-    /* Variance is expressed as a DOLLAR amount (the headline). The favourability pill carries only the
-       direction (Favourable / Unfavourable); the "% of budget" share is NOT shown a second time on the
-       face, it lives in the pill's hover tooltip. One number on the face, not two. */
-    var tipFull=(tip?tip+" ":"")+(pct?("Variance is "+pct+"."):"");
+    /* Direction (Favourable / Unfavourable) + the variance as % of budget on the face (restored, Jo).
+       The dollar amount is the headline; the % qualifies the direction. Fuller breakdown in the hover. */
+    var tipFull=(tip?tip+" ":"");
     var tipA=tipFull?(' data-tip="'+tipFull.replace(/"/g,"&quot;")+'" data-tip-plain data-tip-narrow tabindex="0"'):'';
-    var pctHTML='';
+    var pctHTML=pct?(' <span class="bgtF-fav-pct">'+pct+'</span>'):'';
     if(v==null)return '<span class="delta-pill" style="color:var(--txt-subtle);background:var(--wn-200)"'+tipA+'>No data yet</span>';
     var neg=v<0,ic=neg?"arrow_downward":"arrow_upward";
     if(neutral)return '<span class="delta-pill" style="color:var(--txt-secondary);background:var(--wn-200)"'+tipA+'>'+ICON(ic)+(neg?"Under budget":"Over budget")+pctHTML+'</span>';
