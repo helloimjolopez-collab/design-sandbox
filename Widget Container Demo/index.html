@@ -12241,8 +12241,10 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     /* By-department summary first (the immediate read Jo wants on hover): how many people from each
        department are off that day, biggest first; the named list follows. */
     var byDept={};data.ppl.forEach(function(p){byDept[p.dept]=(byDept[p.dept]||0)+1;});
-    var deptChips=Object.keys(byDept).sort(function(a,b){return byDept[b]-byDept[a];}).map(function(d){return '<span class="pto-pop-deptchip"><span class="material-symbols-rounded" aria-hidden="true">groups</span>'+d+'<b>'+byDept[d]+'</b></span>';}).join("");
-    var rowsH=data.ppl.map(function(p){return '<div class="pto-pop-r"><span class="pto-pop-dot '+(tone[p.s]||"pe")+'"></span><span class="pto-pop-nm">'+p.n+'</span><span class="pto-pop-dept">'+p.dept+'</span><span class="pto-pop-type">'+p.t+'</span></div>';}).join("");
+    var deptChips=Object.keys(byDept).sort(function(a,b){return byDept[b]-byDept[a];}).map(function(d){return '<span class="pto-pop-deptchip"><span class="material-symbols-rounded" aria-hidden="true">corporate_fare</span>'+d+'<b>'+byDept[d]+'</b></span>';}).join("");
+    /* Each person: name, then the department Badge (generic department icon) inline on the right, then
+       the leave reason (type). */
+    var rowsH=data.ppl.map(function(p){return '<div class="pto-pop-r"><span class="pto-pop-dot '+(tone[p.s]||"pe")+'"></span><span class="pto-pop-nm">'+p.n+'</span>'+ptoDeptBadge(p.dept)+(p.t?'<span class="pto-pop-type">'+p.t+'</span>':'')+'</div>';}).join("");
     if(ptoCalPop)ptoCalPop.remove();
     var el=document.createElement("div");el.className="pto-cal-pop";
     el.innerHTML='<div class="pto-pop-h">'+data.date+'<span class="pto-pop-cnt">'+data.ppl.length+(data.ppl.length===1?' person':' people')+' on leave</span></div>'+'<div class="pto-pop-depts">'+deptChips+'</div>'+rowsH;
