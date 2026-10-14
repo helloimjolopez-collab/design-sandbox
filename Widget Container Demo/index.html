@@ -10823,11 +10823,17 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   var FA_PIE=["var(--am-600)","var(--am-400)","var(--am-300)","var(--am-500)","var(--am-200)","var(--am-700)","var(--am-100)"];
   function faDimLabel(d){for(var i=0;i<FA_DIMS.length;i++)if(FA_DIMS[i][0]===d)return FA_DIMS[i][1];return "Class";}
   function faMeasureLabel(m){for(var i=0;i<FA_MEASURES.length;i++)if(FA_MEASURES[i][0]===m)return FA_MEASURES[i][1];return "Net Value";}
-  /* W11 (G10): Group-by dimension removed. Classifications are table columns; the one filter narrows by
-     Class. NBV is the lead measure everywhere. */
-  function faDim(w){return "cls";}
+  /* "View by" is a saved, user-chosen breakdown dimension (Class / Building / Room / Asset Account /
+     Accum. Deprec. Account), reinstated per the brief's "preserve the flexible grouping" direction. In
+     product terms it is a breakdown/pivot control, NOT a filter (it does not subset) and NOT a sort (it
+     does not reorder by value): it re-pivots the synced chart + table by the chosen classification, which
+     is the documented job "break the register down by class, location or account". NBV stays the lead
+     measure, the chart tells the whole cost/accumulated/net depreciation story, so no single-measure
+     switch is needed. */
+  function faDimPlural(d){return {cls:"classes",bld:"buildings",room:"rooms",aacct:"asset accounts",dacct:"accumulated depreciation accounts"}[d]||"groups";}
+  function faDim(w){var d=w&&w.faGroupBy;for(var i=0;i<FA_DIMS.length;i++)if(FA_DIMS[i][0]===d)return d;return "cls";}
   function faMeasure(w){return "net";}
-  function faGroup(w){var g=w&&w.faGroup;if(g===FA_ALL||g===FA_NA)return g;if(g&&FA_CATALOG.cls.indexOf(g)>-1)return g;return FA_ALL;}
+  function faGroup(w){var g=w&&w.faGroup,dim=faDim(w);if(g===FA_ALL||g===FA_NA)return g;if(g&&FA_CATALOG[dim]&&FA_CATALOG[dim].indexOf(g)>-1)return g;return FA_ALL;}
   function faView(w){return w.faView||"table";}
   function faHasNA(dim){return FA_ASSETS.some(function(a){return a[dim]==null;});}
   function faTableAssets(w){var dim=faDim(w),g=faGroup(w);
