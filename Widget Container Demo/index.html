@@ -10079,15 +10079,10 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoDeptBadge(d){return badge({status:"neutral",size:"small",icon:"corporate_fare",text:d});}
   function ptoStatusBadge(r,w){
     if(r.s3==="approved"){
-      /* Approved is reversible (Jo): hovering the Approved badge shows who approved and when; tapping it
-         reveals an Undo action beside it (tap again to dismiss). When w is not passed (read-only contexts
-         such as the calendar day summary) it is a plain, non-interactive badge with the same tooltip. */
+      /* Approved is a plain status badge; it reads who/when on hover. Reversing it is a real row action
+         (Undo) in the Action column, not a two-tap on the badge itself. */
       var who="Approved"+(r.by?" by "+r.by:"")+(r.on?" on "+r.on:"")+".";
-      if(!w)return badge({status:"positive",size:"small",icon:"check_circle",text:"Approved",attrs:'data-tip="'+who+'" data-tip-plain'});
-      var open=w.ptoUndoRec===r.id;
-      var bdg=badge({status:"positive",size:"small",icon:"check_circle",text:"Approved",tag:"button",cls:"pto-appr-badge"+(open?" open":""),attrs:'data-action="pto-approved-toggle" data-id="'+w.id+'" data-rec="'+r.id+'" aria-haspopup="true" aria-expanded="'+open+'" data-tip="'+who+' Tap to undo." data-tip-plain'});
-      var undo=open?('<button class="pto-undo" data-action="pto-undo" data-id="'+w.id+'" data-rec="'+r.id+'">'+ICON("undo")+'Undo</button>'):'';
-      return '<span class="pto-appr-wrap">'+bdg+undo+'</span>';
+      return badge({status:"positive",size:"small",icon:"check_circle",text:"Approved",attrs:'data-tip="'+who+'" data-tip-plain'});
     }
     if(r.s3==="outstanding")return badge({status:"attention",size:"small",icon:"error",text:"Outstanding",attrs:'data-tip="Past its date and still not approved." data-tip-plain'});
     return badge({status:"info",size:"small",icon:"schedule",text:"Pending",attrs:'data-tip="Awaiting your approval." data-tip-plain'});}
