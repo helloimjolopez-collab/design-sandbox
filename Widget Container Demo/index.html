@@ -9445,10 +9445,11 @@ function arFGlanceDonut(w){
 function arFGlance(w){
   var tot=arFTotal(w),n=arFCount(w),over=arFOverdue(w),oc=arFOverdueCount(w);
   if(tot<=0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All settled</span></div></div></div>';
-  /* Glance: chip on top, eyebrow + total, then the overdue amount and % as a VISIBLE read (a primary
-     figure the brief wants on the face, not hidden in a chart), and the ordered severity bar
-     (current -> most overdue) as the graphic, per the brief's "ordered bar, not a pie". */
-  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="arF-valline"><span class="metric-value">'+money(tot)+'</span>'+arFOverduePill(w)+'</span></span></div><div class="arF-gl-barwrap">'+arFStackBar(w)+'</div><span class="sr-only">'+arFAgeSr(w)+'</span></div>';
+  /* Glance: Outstanding + the overdue badge inline, then the ordered severity bar with a caption naming
+     the OLDEST money (the hardest to recover) so the bar reads at a glance, not only on hover. */
+  var abk=arFBuckets(w).filter(function(r){return r.total>0;}),oldest=abk.length?abk[abk.length-1]:null;
+  var cap=oldest?'<div class="arF-gl-cap"><span class="arF-gl-capdot" style="background:var('+oldest.color+')"></span><span class="arF-gl-capnm">'+oldest.label+'</span><span class="arF-gl-capv">'+money(oldest.total)+'</span><span class="arF-gl-capk">oldest</span></div>':'';
+  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="arF-valline"><span class="metric-value">'+money(tot)+'</span>'+arFOverduePill(w)+'</span></span></div><div class="arF-gl-barwrap">'+arFStackBar(w)+cap+'</div><span class="sr-only">'+arFAgeSr(w)+'</span></div>';
 }
 
 function arFEmpty(w){
