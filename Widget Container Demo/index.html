@@ -4451,7 +4451,7 @@ function penFChartToggleL(w){
 /* ---- KPI badge ---- */
 function penFBadge(w){
   var na=penFApptCount(w),np=penFPlanCount(w);
-  return '<span class="bank-pill" data-tip="'+penFEsc("Per year contribution across "+np+" plan"+(np===1?"":"s")+" and "+na+" appointee"+(na===1?"":"s")+".")+'" data-tip-plain>'+ICON("groups")+np+' plan'+(np===1?"":"s")+'</span>';
+  return badge({status:"neutral",size:"small",icon:"groups",text:np+" plan"+(np===1?"":"s"),attrs:'data-tip="'+penFEsc("Per year contribution across "+np+" plan"+(np===1?"":"s")+" and "+na+" appointee"+(na===1?"":"s")+".")+'" data-tip-plain'});
 }
 
 /* ---- header (Detail / Explore): two-row .dep-hd ---- */
@@ -8221,7 +8221,7 @@ function mysGlance(w){
   if(n===0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All caught up</span></div></div></div>';
   var top=action.slice(0,3),list=top.map(function(q){return '<div class="mys-gl-item"><span class="mys-gl-dot"></span><span class="mys-gl-nm">'+q.name+'</span><span class="mys-gl-ct">'+q.count+'</span></div>';}).join("");
   if(action.length>3)list+='<div class="mys-gl-item mys-gl-more">+'+(action.length-3)+' more</div>';
-  return '<div class="kpi-row prf-glance mys-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Needs action</span><span class="metric-value">'+n+'</span></span><span class="arF-badge arF-badge-sev1">'+ICON("priority_high")+(n===1?"1 item":n+" items")+'</span></div></div><div class="mys-gl-list">'+list+'</div></div>';
+  return '<div class="kpi-row prf-glance mys-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Needs action</span><span class="metric-value">'+n+'</span></span>'+badge({status:"attention",size:"small",icon:"priority_high",text:(n===1?"1 item":n+" items")})+'</div></div><div class="mys-gl-list">'+list+'</div></div>';
 }
 function mysContent(w){
   if(w.size==="kpi")return mysGlance(w);
