@@ -6289,9 +6289,9 @@ function loanGlance(w){
   var tot=loanTotal(w),over=loanPastDue(w),oc=loanPastDueCount(w);
   if(tot<=0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value loan-allset">'+ICON("check_circle")+'All settled</span></div></div></div>';
   var overC=over>=1000?('$'+Math.round(over/1000)+'k'):('$'+Math.round(over));
-  var badge=over>0
-    ?'<span class="arF-badge arF-badge-sev4" data-tip="'+loanEsc(loanMoney(over)+" across "+oc+" loan"+(oc===1?"":"s")+" is past due")+'" data-tip-plain>'+ICON("schedule")+'Past due '+overC+'</span>'
-    :'<span class="arF-badge arF-badge-ok">'+ICON("check_circle")+'All current</span>';
+  var pdBadge=over>0
+    ?badge({status:"negative",size:"small",icon:"error",text:"Past due "+overC,attrs:'data-tip="'+loanEsc(loanMoney(over)+" across "+oc+" loan"+(oc===1?"":"s")+" is past due")+'" data-tip-plain'})
+    :badge({status:"positive",size:"small",icon:"check_circle",text:"All current"});
   var pieSegs=loanBuckets(w).filter(function(r){return r.total>0;}).map(function(r){return {value:r.total,color:"var("+r.color+")",tip:r.label+' · '+loanMoney(r.total)+' · '+Math.round(r.total/tot*100)+'%'};});
   return '<div class="kpi-row prf-glance loan-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Total outstanding</span><span class="metric-value">'+loanMoney(tot)+'</span></span>'+badge+'</div></div>'+'<div class="loan-gl-read" style="width:100%;margin-top:8px">'+loanStackBar(w)+'</div>'+'<span class="sr-only">'+loanAgeSr(w)+'</span></div>';
 }
@@ -8491,7 +8491,7 @@ function mysPopContent(){
         (neg?'<div class="gl-sub">'+badge({status:"negative",size:"small",icon:"error",text:"Overdrawn"})+'</div>':'')+
         '</div>'+bankSpark(w)+'</div>';}
     var val=bankTotal(w),beg2=bankBeginTotal(w),negT=val<0,over=bankNegCount(w);
-    var od=over?'<button class="bank-pill warn bank-odpill" data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open">'+ICON("error")+over+' overdrawn'+ICON("chevron_right")+'</button>':'';
+    var od=over?badge({status:"negative",size:"small",icon:"error",text:over+" overdrawn",trailingIcon:"chevron_right",tag:"button",attrs:'data-action="bank-drill" data-over="1" data-id="'+w.id+'" aria-label="'+over+' account'+(over>1?"s":"")+' overdrawn, open"'}):'';
     return '<div class="kpi-row prf-glance bank-glance"><div class="gl-chiprow">'+bankAcctChip(w)+'</div><div class="kpi-num prf-gl-num">'+
       '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Cash on hand</span><span class="metric-value'+(negT?" bank-neg":"")+'">'+bankMoney(val)+'</span></span>'+
       (od?'<div class="gl-sub">'+od+'</div>':'')+
