@@ -5562,10 +5562,10 @@ function remFContent(w){
    illustrative demo data pro-rated from the fund, paced against the fund's own term
    fraction, sorted worst-first so the chase list writes itself. ---- */
 function remFChStatusChip(c){
-  if(c.status==="neutral")return '<span class="rem-st rem-st-none">No pledge</span>';
-  if(c.status==="full")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+'Paid in full</span>';
-  if(c.status==="onpace")return '<span class="rem-st rem-st-ok">'+ICON("check_circle")+(c.grace?'On track (grace)':'On track')+'</span>';
-  return '<span class="rem-st rem-st-behind">'+ICON("error")+'Behind</span>';
+  if(c.status==="neutral")return badge({status:"neutral",size:"small",text:"No pledge"});
+  if(c.status==="full")return badge({status:"positive",size:"small",icon:"check_circle",text:"Paid in full"});
+  if(c.status==="onpace")return badge({status:"positive",size:"small",icon:"check_circle",text:(c.grace?"On track (grace)":"On track")});
+  return badge({status:"attention",size:"small",icon:"error",text:"Behind"});
 }
 function remFChStatusWord(c){return c.status==="neutral"?"no pledge":c.status==="full"?"paid in full":c.status==="behind"?"behind pace":(c.grace?"on track, in grace":"on track");}
 function remFShortDate(iso){var d=remFParse(iso);return REMF_MON[d.getMonth()]+" "+d.getFullYear();}
