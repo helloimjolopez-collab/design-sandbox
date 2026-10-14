@@ -5829,22 +5829,34 @@ function gftMiniBadge(p,thru){
 function gftTipData(p,asOf,title){
   return {t:(title||p.purpose),pledged:money(p.pledgeTotal),exp:money(p.due),expDate:asOf,paid:money(p.received),pct:gftPct(p.fulfilled),owed:money(Math.max(0,p.outstanding)),dir:(p.remaining>0?"behind":(p.remaining<0?"ahead":"on")),amt:money(Math.abs(p.remaining))};
 }
-function gftBar(w,p,clickable){
-  var thru=gftThru(w),asOf=gftFmtDate(thru);
+/* The pledge bar as three hoverable zones: PAID (the fill), the EXPECTED gap (striped, how far behind the
+   pace expected by now), and REMAINING (how far short of the full pledge). Each zone names itself on
+   hover, so the bar is self-explanatory with no plain-text caption. A dashed mark sits at "expected by
+   now". */
+function gftZoneTrack(p,asOf,st){
   var rPct=p.pledgeTotal>0?Math.min(100,p.received/p.pledgeTotal*100):0;
   var dPct=p.pledgeTotal>0?Math.min(100,p.due/p.pledgeTotal*100):0;
+  var gapW=Math.max(0,dPct-rPct),remW=Math.max(0,100-Math.max(rPct,dPct)),expGap=Math.max(0,p.due-p.received);
+  var tipPaid=money(p.received)+" paid so far, "+gftPct(p.fulfilled)+" of the pledge.";
+  var tipGap="Expected by "+asOf+": "+money(p.due)+". Behind the expected pace by "+money(expGap)+".";
+  var tipRem=(p.outstanding>0?money(Math.max(0,p.outstanding))+" still to come of "+money(p.pledgeTotal)+" pledged.":"Fully funded: "+money(p.received)+" of "+money(p.pledgeTotal)+" pledged.");
+  return '<div class="gft-barhold"><div class="gft-track gft-track-zones gft-track-'+st+'">'+
+    '<span class="gft-z gft-z-paid" style="flex-basis:'+rPct.toFixed(2)+'%" data-tip="'+gftEsc(tipPaid)+'" data-tip-plain></span>'+
+    (gapW>0?'<span class="gft-z gft-z-gap" style="flex-basis:'+gapW.toFixed(2)+'%" data-tip="'+gftEsc(tipGap)+'" data-tip-plain></span>':'')+
+    '<span class="gft-z gft-z-rem" style="flex-basis:'+remW.toFixed(2)+'%" data-tip="'+gftEsc(tipRem)+'" data-tip-plain></span>'+
+    '</div>'+(p.pledgeTotal>0?'<span class="gft-mark" style="left:'+dPct.toFixed(1)+'%" aria-hidden="true"></span>':'')+'</div>';
+}
+function gftBar(w,p,clickable){
+  var thru=gftThru(w),asOf=gftFmtDate(thru);
   var st=(p.status==="behind")?"behind":(p.status==="ahead"?"ahead":"ok");
   var srtxt=p.purpose+": "+money(p.received)+" paid of "+money(p.pledgeTotal)+" pledged, "+gftPct(p.fulfilled)+" paid. "+money(p.outstanding)+" owed. "+gftRemainingText(p)+".";
-  var gtip=encodeURIComponent(JSON.stringify(gftTipData(p,asOf)));
-  var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" data-gftip="'+gtip+'" aria-label="'+gftEsc(srtxt+" Open the donors behind this purpose.")+'"'):' role="img" data-gftip="'+gtip+'" aria-label="'+gftEsc(srtxt)+'"';
-  var gap=(dPct>rPct)?'<span class="gft-gap" style="left:'+rPct.toFixed(1)+'%;width:'+(dPct-rPct).toFixed(1)+'%"></span>':'';
-  var mark=(p.pledgeTotal>0)?'<span class="gft-mark" style="left:'+dPct.toFixed(1)+'%" aria-hidden="true"></span>':'';
+  var attr=clickable?(' data-action="gft-open" data-id="'+w.id+'" data-purpose="'+gftEsc(p.purpose)+'" role="button" tabindex="0" aria-label="'+gftEsc(srtxt+" Open the donors behind this purpose.")+'"'):' role="img" aria-label="'+gftEsc(srtxt)+'"';
   return '<div class="gft-prow'+(clickable?" gft-clickable":"")+'"'+attr+'>'+
     '<div class="gft-prow-top">'+
       '<span class="gft-prow-nm">'+p.purpose+'</span>'+
-      '<span class="gft-prow-end">'+gftMiniBadge(p,thru)+'<span class="gft-prow-goal"><span class="gft-goal-k">Pledged</span> '+money(p.pledgeTotal)+'</span></span>'+
+      '<span class="gft-prow-goal" data-tip="Total pledged for this purpose" data-tip-plain>'+money(p.pledgeTotal)+'</span>'+
     '</div>'+
-    '<div class="gft-prow-bar"><div class="gft-track"><div class="gft-fill gft-fill-'+st+'" style="width:'+Math.max(2,rPct).toFixed(1)+'%"></div>'+gap+'</div>'+mark+'</div>'+
+    '<div class="gft-prow-bar2">'+gftZoneTrack(p,asOf,st)+gftMiniBadge(p,thru)+'</div>'+
     '<span class="sr-only">'+srtxt+'</span>'+
   '</div>';
 }
