@@ -5857,12 +5857,10 @@ function gftSkeleton(){var rows=[92,70,54,38].map(function(wd){return '<div clas
    the row stays a clean glance. Tap opens the donors behind the purpose. */
 /* Small status badge: icon + colour + label, canonical semantic tokens (never colour alone). */
 function gftMiniBadge(p,thru){
-  var cls,ic,lbl;
-  if(p.status==="complete"){cls="gft-mb-ahead";ic="check_circle";lbl="Funded";}
-  else if(p.status==="behind"){cls="gft-mb-behind";ic="error";lbl="Behind";}
-  else if(p.status==="ahead"){cls="gft-mb-ahead";ic="trending_up";lbl="Ahead";}
-  else {cls="gft-mb-ontrack";ic="check_circle";lbl="On track";}
-  return '<span class="gft-mb '+cls+'">'+ICON(ic)+lbl+'</span>';
+  if(p.status==="complete")return badge({status:"positive",size:"small",icon:"check_circle",text:"Funded"});
+  if(p.status==="behind")return badge({status:"attention",size:"small",icon:"error",text:"Behind"});
+  if(p.status==="ahead")return badge({status:"positive",size:"small",icon:"trending_up",text:"Ahead"});
+  return badge({status:"info",size:"small",icon:"check_circle",text:"On track"});
 }
 /* One purpose = one row. Name at the start of the bar, Goal at the end (the bar's end IS the goal, no
    mid-bar marker). A small behind/on-track/ahead badge sits just left of the goal. The exact paid /
