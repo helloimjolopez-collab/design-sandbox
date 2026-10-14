@@ -8386,9 +8386,10 @@ function mysPopContent(){
     else{var tot=bankTotal(w);
       /* KPI is the money + the overdrawn count (a tap-to-filter control). No basis chip on the face. */
       numInner='<div class="dep-hd-kpigrp"><span class="metric-value">'+bankMoney(tot)+'</span>'+od+'</div>';}
-    return '<div class="dep-hd">'+
-      '<div class="dep-hd-top"><div class="bank-hd-left">'+bankAcctChip(w)+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
-      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div></div>'+
+    /* Filters row 1; balance KPI + the Table/Bars toggle share row 2, toggle far right (not on filters). */
+    return '<div class="dep-hd hd-kpitoggle">'+
+      '<div class="dep-hd-top"><div class="bank-hd-left">'+bankAcctChip(w)+'</div></div>'+
+      '<div class="dep-hd-num"><div class="bank-numwrap">'+numInner+'</div><div class="dep-hd-toggle">'+toggle+'</div></div>'+
       '</div>';
   }
   function bankSkeleton(){var bars="";[58,82,50,90,66,74,60].forEach(function(h){bars+='<div class="bank-sk-col"><span class="sk bank-sk-bar" style="height:'+h+'%"></span></div>';});return '<div class="bank-skel"><div class="bank-skel-plot">'+bars+'</div><div class="bank-skel-cap"><span class="bgt-spin"></span>Loading…</div></div>';}
