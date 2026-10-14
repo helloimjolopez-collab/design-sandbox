@@ -414,9 +414,11 @@
   .tab{border:none;background:transparent;font-family:inherit;font-size:11px;font-weight:500;padding:3px 7px;border-radius:6px;cursor:pointer;color:var(--txt-secondary);}
   .tab[aria-selected="true"]{background:var(--surface-widget);color:var(--txt-primary);box-shadow:var(--elevation-widget);}
   .pad{padding:14px 16px 8px;}
-  /* KPI number = Figma headline type, every property a token (family / size / weight / line-height),
-     no hardcoded values. If Figma changes a value, update the token, not here. */
-  .metric-value{font-family:var(--semantic-type-family-brand);font-weight:var(--semantic-type-weight-semibold);font-size:var(--semantic-type-font-size-xxl);line-height:var(--semantic-type-line-height-xxl-single);font-variant-numeric:tabular-nums;}
+  /* KPI number = Figma text style "Heading/Page/Large/Semibold": family Brand, size XXL(32),
+     weight Semibold(600), line-height "32pt/Tight"(36), letter-spacing Standard(0.1 = pkg "wide").
+     Every property a token, nothing hardcoded. GAP: 10.0.4 ships no line-height = 36 (the Figma
+     "xxl/tight" rung); the nearest real token is xxl-single(40), used until the package adds it. */
+  .metric-value{font-family:var(--semantic-type-family-brand);font-weight:var(--semantic-type-weight-semibold);font-size:var(--semantic-type-font-size-xxl);line-height:var(--semantic-type-line-height-xxl-tight,var(--semantic-type-line-height-xxl-single));letter-spacing:var(--semantic-type-letter-spacing-wide);font-variant-numeric:tabular-nums;}
   .metric-delta{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:500;margin-top:6px;color:var(--txt-pos);}.metric-delta .material-symbols-rounded{font-size:16px;}
   .spark{margin-top:auto;width:100%;display:block;padding:6px 16px 12px;}.spark svg{display:block;width:100%;height:100%;}
   .chartwrap{flex:1;min-height:0;display:flex;gap:6px;padding:6px 16px 14px;}
