@@ -10943,10 +10943,11 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     if(mode==="loading"){
       numInner='<div class="dep-hd-kpigrp"><span class="sk" style="width:96px;height:22px;border-radius:6px"></span><span class="sk" style="width:84px;height:20px;border-radius:999px"></span></div>';
     }else{
-      var tot=insFTotal(w),n=insFPlanCount(w),cost=insFCostTotal(w);
-      numInner='<div class="dep-hd-kpigrp"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Enrolled</span><span class="metric-value">'+insFNum(tot)+'</span></span>'+
-        badge({status:"neutral",icon:"groups",text:n+' plan'+(n===1?"":"s")})+
-        badge({status:"neutral",icon:"payments",text:insFMoney(cost)+'/mo',attrs:'data-tip="'+insFMoney(cost)+' total monthly premium across all plans in view" data-tip-plain'})+'</div>';
+      var tot=insFTotal(w),n=insFPlanCount(w);
+      /* Enrolled is the real metric (beta1 shows counts only; premium/cost is unconfirmed per the brief,
+         so no $/mo badge). Plans count sits inline with the number, like the other widgets' KPI rows. */
+      numInner='<div class="dep-hd-kpigrp"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Enrolled</span><span class="ins-numrow"><span class="metric-value">'+insFNum(tot)+'</span>'+
+        badge({status:"neutral",icon:"groups",text:n+' plan'+(n===1?"":"s")})+'</span></span></div>';
     }
     /* Filters row 1; Enrolled KPI + the Table/Pie toggle share row 2, toggle far right (not on filters). */
     return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insFTypeChip(w)+'</div>'+
