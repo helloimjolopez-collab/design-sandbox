@@ -9924,9 +9924,9 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     '<button class="vt'+(v==="calendar"?" on":"")+'" data-action="pto-qview" data-id="'+w.id+'" data-v="calendar" aria-pressed="'+(v==="calendar")+'">'+ICON("calendar_month")+'Leave Calendar</button></div>';}
   function ptoRangeToggle(w){if((w.ptoQView||"queue")==="calendar")return "";var cur=ptoRangeOf(w),opts=[["day","D","Day"],["week","W","Week"],["month","M","Month"],["quarter","Q","Quarter"],["year","Y","Year"]];return '<div class="vtoggle pto-range" role="group" aria-label="Time range">'+opts.map(function(o){return '<button class="vt'+(cur===o[0]?" on":"")+'" data-action="pto-range" data-id="'+w.id+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'" data-tip="'+o[2]+'" data-tip-plain>'+o[1]+'</button>';}).join("")+'</div>';}
   function ptoStatusBadge(r){
-    if(r.s3==="approved")return '<span class="pto-sb pto-sb-ok" data-tip="Approved'+(r.by?" by "+r.by:"")+(r.on?" on "+r.on:"")+'." data-tip-plain>'+ICON("check_circle")+'Approved</span>';
-    if(r.s3==="outstanding")return '<span class="pto-sb pto-sb-out" data-tip="Past its date and still not approved." data-tip-plain>'+ICON("error")+'Outstanding</span>';
-    return '<span class="pto-sb pto-sb-pend" data-tip="Awaiting your approval." data-tip-plain>'+ICON("schedule")+'Pending</span>';}
+    if(r.s3==="approved")return badge({status:"positive",size:"small",icon:"check_circle",text:"Approved",attrs:'data-tip="Approved'+(r.by?" by "+r.by:"")+(r.on?" on "+r.on:"")+'." data-tip-plain'});
+    if(r.s3==="outstanding")return badge({status:"attention",size:"small",icon:"error",text:"Outstanding",attrs:'data-tip="Past its date and still not approved." data-tip-plain'});
+    return badge({status:"info",size:"small",icon:"schedule",text:"Pending",attrs:'data-tip="Awaiting your approval." data-tip-plain'});}
   function ptoAllSelected(w){var rows=ptoQueueRows(w).filter(function(r){return r.s3!=="approved";}),sel=w.ptoSel||{};return !!rows.length&&rows.every(function(r){return sel[r.id];});}
   function ptoQueueTable(w){
     var rows=ptoQueueRows(w).slice(),sk=(w.ptoSort||"date-asc").split("-"),key=sk[0],dir=sk[1]==="asc"?1:-1,sel=w.ptoSel||{};
