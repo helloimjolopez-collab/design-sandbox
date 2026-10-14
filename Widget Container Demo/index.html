@@ -8364,15 +8364,6 @@ function mysPopContent(){
   /* The only real time signal the data supports is ending minus beginning since the last
      reconciliation (there is no balance history, so no sparkline/trend). It is TERTIARY provenance,
      so it is deferred to a hover tooltip on a quiet info icon beside the balance, never a face badge. */
-  function bankReconTip(end,beg){
-    var d=Math.round(end-beg),mv=bankMoney(Math.abs(d));
-    var dir=d>0?("up "+mv):(d<0?("down "+mv):"unchanged");
-    return "Since the last reconciliation: "+dir+" (beginning "+bankMoney(beg)+"). Some recent activity may not be reconciled yet.";
-  }
-  function bankReconInfo(end,beg){
-    var t=bankReconTip(end,beg).replace(/"/g,"&quot;");
-    return '<span class="bank-kpi-info" tabindex="0" data-tip="'+t+'" data-tip-plain role="img" aria-label="'+t+'">'+ICON("info")+'</span>';
-  }
   function bankGlance(w){var sel=bankSelected(w);
     /* Face: money + a running-balance sparkline from the last reconciliation (beginning) to the current
        ending, stepping through the real movements since then (deposits, voids, checks, withdrawals, EFT),
