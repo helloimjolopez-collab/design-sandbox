@@ -9963,7 +9963,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
       for(var wi=0;wi<7;wi++){var dt=new Date(sun2);dt.setDate(sun2.getDate()+wi);var iso2=ptoISO(dt.getFullYear(),dt.getMonth(),dt.getDate()),c2=idx.byDate[iso2]||{ap:0,pe:0,out:0},isT2=(iso2===PTO_TODAY_ISO),has2=(c2.ap||c2.pe||c2.out);
         var items=ptoCalPpl(idx.ppl,iso2).map(function(p){return '<span class="pto-cal-wkitem"><span class="pto-cal-wkdot '+p.s+'"></span><span class="pto-cal-wknm">'+p.n+'</span></span>';}).join("")||'<span class="pto-cal-wknone">'+ICON("remove")+'</span>';
         cols+='<div class="pto-cal-wkcol'+(isT2?" today":"")+(has2?" has":"")+'"'+(has2?' data-action="pto-day" data-id="'+w.id+'" data-d="'+iso2+'" role="button" tabindex="0" aria-label="'+ptoFmtDate(iso2)+', '+c2.ap+' approved, '+c2.pe+' pending, '+c2.out+' outstanding. Open the day."':'')+'><div class="pto-cal-wkhd">'+["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][wi]+'<span class="pto-cal-wkdate">'+dt.getDate()+(dt.getDate()===1?(" "+PTO_MSH[dt.getMonth()]):"")+'</span></div><div class="pto-cal-wkitems">'+items+'</div></div>';}
-      body='<div class="pto-cal-week">'+cols+'</div>';
+      body='<div class="pto-cal-weekgrid">'+cols+'</div>';
     } else {
       var list=ptoCalPpl(idx.ppl,anchor);
       if(!list.length){body='<div class="pto-cal-dayempty"><span class="material-symbols-rounded" aria-hidden="true">event_available</span><span>No time off scheduled</span></div>';}
