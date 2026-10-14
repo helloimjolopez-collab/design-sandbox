@@ -5304,10 +5304,10 @@ function remFStatusChip(r){
 /* overall pacing badge (Jo's binary: On track / All pledges paid positive pill;
    Behind pace warn pill), against the blended expected-vs-paid sums over terms. */
 function remFPaceBadge(t){
-  if(t.allPaid)return '<span class="rem-st rem-st-ok" data-tip="Every remittance pledge is fully paid for its term." data-tip-plain>'+ICON("check_circle")+'All pledges paid</span>';
-  if(t.status==="ontrack")return '<span class="rem-st rem-st-ok" data-tip="'+remFEsc(remFPct(t.pctPaid)+' of the total pledged is paid, at or ahead of the '+remFPct(t.pace)+' expected by now (the share of the calendar year elapsed).')+'" data-tip-plain>'+ICON("check_circle")+'On track</span>';
+  if(t.allPaid)return badge({status:"positive",size:"small",icon:"check_circle",text:"All pledges paid",attrs:'data-tip="Every remittance pledge is fully paid for its term." data-tip-plain'});
+  if(t.status==="ontrack")return badge({status:"positive",size:"small",icon:"check_circle",text:"On track",attrs:'data-tip="'+remFEsc(remFPct(t.pctPaid)+' of the total pledged is paid, at or ahead of the '+remFPct(t.pace)+' expected by now (the share of the calendar year elapsed).')+'" data-tip-plain'});
   var gapPts=Math.round((t.pace-t.pctPaid)*100);
-  return '<span class="rem-st rem-st-behind" data-tip="'+remFEsc(remFPct(t.pctPaid)+' paid against an expected '+remFPct(t.pace)+' by now (the share of the calendar year elapsed), about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind the expected pace.')+'" data-tip-plain>'+ICON("error")+'Behind pace</span>';
+  return badge({status:"attention",size:"small",icon:"error",text:"Behind pace",attrs:'data-tip="'+remFEsc(remFPct(t.pctPaid)+' paid against an expected '+remFPct(t.pace)+' by now (the share of the calendar year elapsed), about '+money(t.shortfall)+' ('+gapPts+' percentage point'+(gapPts===1?"":"s")+') behind the expected pace.')+'" data-tip-plain'});
 }
 /* ---- sort (seq default = conference order) ---- */
 function remFRows(w){
