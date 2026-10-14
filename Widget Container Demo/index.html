@@ -6386,7 +6386,6 @@ function loanHandleClick(a,id,t){
   if(a==="loan-sort"){var ws=find(id),k=t.getAttribute("data-k");if(ws){var cs=(ws.loanSort||"days-desc").split("-");ws.loanSort=(cs[0]===k)?(k+"-"+(cs[1]==="asc"?"desc":"asc")):(k+"-"+((k==="name"||k==="last")?"asc":"desc"));}render();return true;}
   if(a==="loan-set-bucket"){var wb=find(id);if(wb){var nb=t.getAttribute("data-bucket");wb.loanBucket=(wb.loanBucket===nb)?"total":nb;}render();return true;}
   if(a==="loan-band-toggle"){var wbt=find(id);if(wbt){wbt.loanOpenBands=wbt.loanOpenBands||{};var bk=t.getAttribute("data-band");wbt.loanOpenBands[bk]=(wbt.loanOpenBands[bk]===false);}render();return true;}
-  if(a==="loan-view"){var wv=find(id);if(wv)wv.loanView=t.getAttribute("data-v");render();return true;}
   if(a==="loan-open"){var wop=find(id);if(!wop)return true;modal={type:"loandetail",id:id,acct:t.getAttribute("data-acct")};modalMounted=false;pop=null;render();return true;}
   if(a==="loan-detail-close"){modal=null;pop=null;render();return true;}
   if(a==="loan-open-loan"){setStatus("Opening loan "+t.getAttribute("data-acct")+" in Loan Processing…");return true;}
@@ -11029,7 +11028,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     {cat:"Receivables & payables", kind:"remittance-mb", title:"Remittance Pledges", desc:"How each pledge is pacing against what was expected.", props:function(){return {remSort:"seq",view:"table"};}},
     {cat:"Giving", kind:"gifts", title:"Gifts Pledges", desc:"Per-purpose pledge progress, with a behind-schedule flag.", props:function(){return {gftThru:GFT_TODAY,gftView:"progress",gftSort:"fulfilled-asc",gftPurpose:"All purposes"};}},
     {cat:"Assets & loans", kind:"fixedassets", title:"Fixed Asset Values", desc:"Net book value by asset, with cost and depreciation.", props:function(){return {faGroup:"__all",faView:"table",faSort:"net-desc"};}},
-    {cat:"Assets & loans", kind:"loans", title:"Loans With Balance Due", desc:"Every loan that still carries a balance, by aging band.", props:function(){return {loanType:"All",loanSort:"amt-desc",loanBucket:"total",loanView:"table"};}},
+    {cat:"Assets & loans", kind:"loans", title:"Loans With Balance Due", desc:"Every loan that still carries a balance, by aging band.", props:function(){return {loanType:"All",loanSort:"amt-desc",loanBucket:"total"};}},
     {cat:"Purchasing", kind:"purchasing", title:"Purchasing Management", desc:"Approve purchase requests; see committed spend.", props:function(){return {pdata:"queue",ptile:"pending",pscope:"me",qview:"table"};}},
     {cat:"Tasks", kind:"tasks", title:"Main Content Tasks", desc:"A quick launcher for common accounting tasks.", props:function(){return {mctQ:""};}}
   ];
