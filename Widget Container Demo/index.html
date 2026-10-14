@@ -5589,10 +5589,10 @@ function remFChurchInstallments(c,r,iso){
   return list;
 }
 function remFInstChip(s){
-  if(s==="paid")return '<span class="rem-ist rem-ist-paid">'+ICON("check_circle")+'Paid</span>';
-  if(s==="partial")return '<span class="rem-ist rem-ist-part">'+ICON("adjust")+'Part paid</span>';
-  if(s==="overdue")return '<span class="rem-ist rem-ist-over">'+ICON("error")+'Overdue</span>';
-  return '<span class="rem-ist rem-ist-due">'+ICON("schedule")+'Upcoming</span>';
+  if(s==="paid")return badge({status:"positive",size:"small",icon:"check_circle",text:"Paid"});
+  if(s==="partial")return badge({status:"attention",size:"small",icon:"adjust",text:"Part paid"});
+  if(s==="overdue")return badge({status:"negative",size:"small",icon:"error",text:"Overdue"});
+  return badge({status:"info",size:"small",icon:"schedule",text:"Upcoming"});
 }
 function remFChurchesFor(r){
   var pace=r.pace||0,names=REM_CHURCH_NAMES,per=r.total/names.length;
