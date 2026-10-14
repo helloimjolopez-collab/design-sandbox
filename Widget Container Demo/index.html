@@ -9361,10 +9361,10 @@ function arFGlanceDonut(w){
 function arFGlance(w){
   var tot=arFTotal(w),n=arFCount(w),over=arFOverdue(w),oc=arFOverdueCount(w);
   if(tot<=0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All settled</span></div></div></div>';
-  var pieSegs=arFBuckets(w).filter(function(r){return r.total>0;}).map(function(r){return {value:r.total,color:"var("+r.color+")",tip:r.label+' · '+money(r.total)+' · '+Math.round(r.total/tot*100)+'%'};});
-  /* Canonical glance: filter chip on top, eyebrow + KPI, and the aging donut in the graphic slot. The
-     overdue read lives in the donut's red slices (and their hover), not a cluttering badge. */
-  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="metric-value">'+money(tot)+'</span></span></div>'+glanceMiniPie(pieSegs,"Outstanding by aging bucket")+'<span class="sr-only">'+arFAgeSr(w)+'</span></div>';
+  /* Glance: chip on top, eyebrow + total, then the overdue amount and % as a VISIBLE read (a primary
+     figure the brief wants on the face, not hidden in a chart), and the ordered severity bar
+     (current -> most overdue) as the graphic, per the brief's "ordered bar, not a pie". */
+  return '<div class="kpi-row prf-glance arF-glance"><div class="gl-chiprow">'+arFRcChip(w)+'</div><div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Outstanding</span><span class="metric-value">'+money(tot)+'</span></span><div class="gl-sub">'+arFOverduePill(w)+'</div></div><div class="arF-gl-barwrap">'+arFStackBar(w)+'</div><span class="sr-only">'+arFAgeSr(w)+'</span></div>';
 }
 
 function arFEmpty(w){
