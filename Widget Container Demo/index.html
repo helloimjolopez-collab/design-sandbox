@@ -10954,13 +10954,12 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
       '<div class="dep-hd-num">'+numInner+'<div class="dep-hd-toggle">'+insFViewToggle(w)+'</div></div></div>';
   }
   function insFGlance(w){
-    var tot=insFTotal(w),n=insFPlanCount(w),cost=insFCostTotal(w);
-    return '<div class="kpi-row"><div class="kpi-num">'+
-      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Enrolled</span><span class="metric-value">'+insFNum(tot)+'</span></span>'+
-      '<div class="gl-sub">'+
-        badge({status:"neutral",icon:"groups",text:n+' plan'+(n===1?"":"s")})+
-        badge({status:"neutral",icon:"payments",text:insFMoney(cost)+'/mo',attrs:'data-tip="'+insFMoney(cost)+' total monthly premium across all plans in view" data-tip-plain'})+
-      '</div>'+
+    var tot=insFTotal(w),n=insFPlanCount(w);
+    /* Glance carries the type filter at top (it drives the read and there is room), then Enrolled with
+       the plans badge inline. No cost badge (premium unconfirmed per the brief). */
+    return '<div class="kpi-row"><div class="gl-chiprow">'+insFTypeChip(w)+'</div><div class="kpi-num">'+
+      '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Enrolled</span><span class="ins-numrow"><span class="metric-value">'+insFNum(tot)+'</span>'+
+      badge({status:"neutral",icon:"groups",text:n+' plan'+(n===1?"":"s")})+'</span></span>'+
     '</div></div>';
   }
   function insFEmpty(w){
