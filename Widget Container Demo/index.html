@@ -10999,12 +10999,14 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
       var list=FA_ASSETS,nbv=faSum(list,"net"),cost=faSum(list,"cost"),acc=faSum(list,"acc"),n=list.length,pd=cost>0?Math.round(acc/cost*100):0;
       if(w.faLoading)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="sk" style="width:130px;height:30px;border-radius:6px"></span></div></div></div>';
       var netW=cost>0?(nbv/cost*100):100,barTip=("Original cost "+money(cost)+", net book value "+money(nbv)+", accumulated depreciation "+money(acc)+", "+pd+"% depreciated.").replace(/"/g,"&quot;");
+      /* Glance: Net book value leads with the asset count inline; the depreciation split bar (net vs
+         accumulated) is the one signal, full width, with "X% depreciated" as its caption; cost and
+         accumulated detail live on the bar's hover (no plain-text dumping of every figure on the face). */
       return '<div class="kpi-row fa-glance">'+
-        '<div class="kpi-num fa-gl-num">'+
-          '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Net book value</span><span class="metric-value" data-total="'+money(nbv)+'">'+money(nbv)+'</span></span>'+
-          '<div class="fa-gl-reads"><span class="fa-gl-read"><span class="fa-gl-k">Cost</span><span class="fa-gl-v">'+money(cost)+'</span></span><span class="fa-gl-read"><span class="fa-gl-k">Accum. deprec.</span><span class="fa-gl-v">'+money(acc)+'</span></span><span class="fa-gl-read"><span class="fa-gl-k">Depreciated</span><span class="fa-gl-v">'+pd+'%</span></span></div>'+
-        '</div>'+
-        '<div class="fa-gl-side"><span class="fa-count-badge">'+ICON("inventory_2")+n+(n===1?" asset":" assets")+'</span><div class="fa-gl-depbar" data-tip="'+barTip+'" data-tip-plain role="img" aria-label="'+barTip+'"><span class="fa-gl-depbar-net" style="width:'+netW.toFixed(1)+'%"></span><span class="fa-gl-depbar-acc" style="width:'+(100-netW).toFixed(1)+'%"></span></div><span class="fa-gl-depcap"><span class="fa-gl-dot fa-gl-dot-net"></span>Net value<span class="fa-gl-dot fa-gl-dot-acc"></span>Depreciation</span></div>'+
+        '<div class="kpi-num fa-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Net book value</span>'+
+          '<span class="fa-gl-valline"><span class="metric-value" data-tip="'+barTip+'" data-tip-plain data-total="'+money(nbv)+'">'+money(nbv)+'</span><span class="fa-count-badge">'+ICON("inventory_2")+n+(n===1?" asset":" assets")+'</span></span></span></div>'+
+        '<div class="fa-gl-barline"><div class="fa-gl-depbar" data-tip="'+barTip+'" data-tip-plain role="img" aria-label="'+barTip+'"><span class="fa-gl-depbar-net" style="width:'+netW.toFixed(1)+'%"></span><span class="fa-gl-depbar-acc" style="width:'+(100-netW).toFixed(1)+'%"></span></div>'+
+          '<span class="fa-gl-depcap"><span class="fa-gl-dot fa-gl-dot-net"></span>Net value<span class="fa-gl-dot fa-gl-dot-acc"></span>'+pd+'% depreciated</span></div>'+
       '</div>';}
     var head=faHeader(w);
     if(w.faLoading)return head+faSkeletonBody(false);
