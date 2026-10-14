@@ -5512,12 +5512,14 @@ var REMF_BAND_TIP={
 function remFPaceCards(w,drill){
   var cur=w.remPaceF||"all",st=remFBandStats(w);
   var defs=[["behind","Behind","error"],["ontrack","On track","check_circle"],["ahead","Ahead","trending_up"]];
+  /* Icon on top, full-width label beneath, then the count: the label gets the whole tile width so
+     "On track" never truncates, and there is no info icon (nobody needs "Behind" explained). */
   return '<div class="remF-tiles" role="group" aria-label="'+(drill?"Pledge pace, open":"Filter pledges by pace")+'">'+defs.map(function(d){
-    var b=st[d[0]],tip=REMF_BAND_TIP[d[0]];
-    var top='<span class="remF-tile-head"><span class="remF-tile-top">'+ICON(d[2])+'<span class="remF-tile-lbl">'+d[1]+'</span></span><span class="remF-tile-info material-symbols-rounded" data-tip="'+remFEsc(tip)+'" data-tip-plain data-tip-narrow aria-hidden="true">info</span></span><span class="remF-tile-n">'+b.n+'</span>';
-    if(drill)return '<button class="remF-tile remF-tile-'+d[0]+'" data-action="remF-drill" data-id="'+w.id+'" data-band="'+d[0]+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+'. '+tip+' open.')+'">'+top+'</button>';
+    var b=st[d[0]];
+    var top=ICON(d[2])+'<span class="remF-tile-lbl">'+d[1]+'</span><span class="remF-tile-n">'+b.n+'</span>';
+    if(drill)return '<button class="remF-tile remF-tile-'+d[0]+'" data-action="remF-drill" data-id="'+w.id+'" data-band="'+d[0]+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', open.')+'">'+top+'</button>';
     var on=cur===d[0];
-    return '<button class="remF-tile remF-tile-'+d[0]+(on?" sel":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+'. '+tip+' filter.')+'">'+top+'</button>';
+    return '<button class="remF-tile remF-tile-'+d[0]+(on?" sel":"")+'" data-action="remF-set-pacef" data-id="'+w.id+'" data-v="'+(on?"all":d[0])+'" aria-pressed="'+on+'" aria-label="'+remFEsc(d[1]+', '+b.n+' pledge'+(b.n===1?"":"s")+', filter.')+'">'+top+'</button>';
   }).join("")+'</div>';
 }
 function remFHeaderBlock(w,mode){
