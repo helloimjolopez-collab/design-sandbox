@@ -6492,7 +6492,8 @@ function loanContent(w){
   if(w.loanloading)return loanHeaderBlock(w,"loading")+loanSkeleton();
   if(!loanFiltered(w).length)return loanControlsHeader(w)+'<div class="loan-body">'+loanScopedEmpty(w)+'</div>';
   var mh=loanHeaderBlock(w);
-  if(w.size==="xwide")return mh+loanFull(w);
+  /* Same approach as Receivable Invoices Outstanding: one sortable table (aging-band grouped), no
+     bespoke "aging and risk" / "most overdue" side panels. The table's own sort + bands carry it. */
   return mh+'<div class="loan-body">'+loanTable(w)+'</div>';
 }
 function loanControlsHeader(w){return '<div class="dep-hd"><div class="dep-hd-top"><div class="loan-ctlrow">'+loanTypeChip(w)+'</div><div class="dep-hd-toggle"></div></div></div>';}
