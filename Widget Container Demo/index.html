@@ -5093,13 +5093,13 @@ function remFEndOfLastMonth(base){var d=new Date(base.getFullYear(),base.getMont
 function remFThru(w){return w.remThru||remFISO(REMF_TODAY);}
 function remFPct(x){return Math.round(x*100)+"%";}
 function remFPaid(act,iso){return (act.payments||[]).filter(function(p){return p.date<=iso;}).reduce(function(s,p){return s+p.amount;},0);}
-/* ---- DAY-BASED colour scale (owner scale, 2026-07-28): keyed to daysAhead =
-   paidEquivalentDays - elapsedDays over each pledge's OWN term. Thresholds live
-   here once; the SAME band colours the % Paid cell, the status chip and the bar
-   FILL. The class names (remF-ahead/onpace/behind/farbehind/neutral) are the only
-   selection surface, so nothing else needs to know the numbers. ---- */
-function remFBandFromDays(d){if(d>=30)return 'ahead';if(d>=-30)return 'onpace';if(d>=-60)return 'behind';return 'farbehind';}
-function remFStatus(r){if(r.total<=0)return 'neutral';if(r.outstanding<=0)return 'full';return remFBandFromDays(r.daysAhead);}
+/* ---- Pace band keyed to the GAP between % received and % of the CALENDAR YEAR elapsed
+   (gap = pctPaid - pctYear, in points). This is the brief's mandated basis: reporting range is
+   calendar YTD (1 Jan -> selected date), and a pledge's own begin/end dates are informational only,
+   never used to pace or total. The SAME band colours the % Paid cell, the status chip and the bar
+   fill via remF-ahead/onpace/behind/farbehind/neutral. ---- */
+function remFBandFromGap(g){if(g>=0.05)return 'ahead';if(g>=-0.05)return 'onpace';if(g>=-0.15)return 'behind';return 'farbehind';}
+function remFStatus(r){if(r.total<=0)return 'neutral';if(r.outstanding<=0)return 'full';return remFBandFromGap(r.gap);}
 function remFBand(r){var s=remFStatus(r);return s==='full'?'ahead':s;}
 function remFStatusLabel(s){return {neutral:'No pledge',full:'Paid in full',ahead:'30+ days ahead',onpace:'On track',behind:'About a month behind',farbehind:'60+ days behind'}[s]||'';}
 /* Plain-language day-count phrase for the hover card + drill note (accompanies the
