@@ -5415,17 +5415,17 @@ function remFHead(w){
 }
 function remFRow(w,r){
   var behind=remFBehindFor(r);
-  var outCell=r.outstanding>0?('<span class="remF-cell remF-num remF-neg">'+money(r.outstanding)+'</span>'):('<span class="remF-cell remF-num remF-zero">'+money(r.outstanding)+'</span>');
-  var behindCell=behind>0?('<span class="remF-cell remF-num remF-neg">'+behind+'</span>'):('<span class="remF-cell remF-num remF-zero">0</span>');
+  /* Outstanding is a plain number (the column header labels it); the Status badge, not colour, now
+     carries behind / on track / ahead, with an icon. */
+  var outCell='<span class="remF-cell remF-num">'+money(r.outstanding)+'</span>';
   return '<div class="remF-row" data-action="remF-open" data-id="'+w.id+'" data-seq="'+r.seq+'" role="button" tabindex="0" aria-label="'+remFEsc(r.name+", "+remFRowSr(r)+" "+behind+" pledge"+(behind===1?"":"s")+" behind. "+remFStatusLabel(remFStatus(r))+". Open the member churches behind this fund.")+'">'+
-    '<span class="remF-cell remF-seq">'+r.seq+'</span>'+
     '<div class="remF-cell remF-name"><span class="remF-name-nm">'+r.name+'</span></div>'+
     '<span class="remF-cell remF-num">'+money(r.total)+'</span>'+
     '<span class="remF-cell remF-num">'+money(r.paid)+'</span>'+
     '<span class="remF-cell remF-num">'+money(r.expected)+'</span>'+
     outCell+
-    behindCell+
     '<span class="remF-cell remF-pct">'+remFMiniBar(r)+'</span>'+
+    '<span class="remF-cell remF-status">'+remFStatusChip(r)+'</span>'+
     '<span class="sr-only">'+remFRowSr(r)+' '+behind+' behind. '+remFStatusLabel(remFStatus(r))+'.</span>'+
   '</div>';
 }
