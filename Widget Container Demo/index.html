@@ -5417,9 +5417,11 @@ function remFViewToggle(w){
    or "% behind pace" across the whole list — pace is a per-pledge property, shown per row and counted
    (not summed) in the Behind / On track / Ahead cards below. */
 function remFKpiHead(t){
+  var cap="of "+money(t.total)+" pledged"+(t.out>0?(" · "+money(t.out)+" outstanding"):"");
+  /* Paid-to-date leads; the pledged total + outstanding are a hover tooltip on the number, not a plain
+     caption beside it. */
   return '<div class="remF-kpi2">'+
-    '<div class="remF-kpi-metric"><span class="remF-kpi-eye">Paid to date</span><span class="metric-value">'+money(t.paid)+'</span></div>'+
-    '<span class="remF-kpi-cap">of '+money(t.total)+' pledged'+(t.out>0?(' · '+money(t.out)+' outstanding'):'')+'</span>'+
+    '<div class="remF-kpi-metric"><span class="remF-kpi-eye">Paid to date</span><span class="metric-value" data-tip="'+remFEsc(cap)+'" data-tip-plain>'+money(t.paid)+'</span></div>'+
   '</div>';
 }
 /* Per-band stats for the KPI filter cards (count + outstanding). */
