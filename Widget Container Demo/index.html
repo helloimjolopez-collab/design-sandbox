@@ -5101,16 +5101,16 @@ function remFPaid(act,iso){return (act.payments||[]).filter(function(p){return p
 function remFBandFromGap(g){if(g>=0.05)return 'ahead';if(g>=-0.05)return 'onpace';if(g>=-0.15)return 'behind';return 'farbehind';}
 function remFStatus(r){if(r.total<=0)return 'neutral';if(r.outstanding<=0)return 'full';return remFBandFromGap(r.gap);}
 function remFBand(r){var s=remFStatus(r);return s==='full'?'ahead':s;}
-function remFStatusLabel(s){return {neutral:'No pledge',full:'Paid in full',ahead:'30+ days ahead',onpace:'On track',behind:'About a month behind',farbehind:'60+ days behind'}[s]||'';}
+function remFStatusLabel(s){return {neutral:'No pledge',full:'Paid in full',ahead:'Ahead of pace',onpace:'On track',behind:'Behind pace',farbehind:'Well behind pace'}[s]||'';}
 /* Plain-language day-count phrase for the hover card + drill note (accompanies the
    colour, so colour is never the only signal). */
 function remFDayPhrase(r){
   if(r.total<=0)return 'No pledge amount set, nothing to pace';
-  if(r.outstanding<=0)return 'Paid in full for its term';
-  var d=Math.round(r.daysAhead);
-  if(d>0)return 'About '+d+' day'+(d===1?'':'s')+' ahead of schedule';
-  if(d<0)return 'About '+(-d)+' day'+((-d)===1?'':'s')+' behind schedule';
-  return 'On schedule';
+  if(r.outstanding<=0)return 'Paid in full';
+  var g=Math.round((r.gap||0)*100);
+  if(g>0)return 'About '+g+' point'+(g===1?'':'s')+' ahead of the year-to-date pace';
+  if(g<0)return 'About '+(-g)+' point'+((-g)===1?'':'s')+' behind the year-to-date pace';
+  return 'On the year-to-date pace';
 }
 /* PER-PLEDGE TERM PACING (calculation-only fix, dev-confirmed 2026-07-28). For each
    pledge, pace against its OWN term (begin to end), not the calendar year:
