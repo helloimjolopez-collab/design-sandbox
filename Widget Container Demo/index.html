@@ -10489,12 +10489,20 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   /* ---- Glance ------------------------------------------------------- */
   function apGlance(w){
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div></div>';}
-    var tot=apTotalDue(w);
-    /* Glance face: Total due + the ONE alarm (overdue). "Due this week" is a second dataset and lives at
-       larger sizes, not stacked as a second pill that overflows the glance. */
+    var tot=apTotalDue(w),bd=apBandData(w);
+    var wkT=apDueWithin(w,0,7),wkC=apData(w).filter(function(x){var d=apDiffDays(x.due);return d>=0&&d<=7;}).length;
+    /* Glance: Total due + the due-horizon badges (Overdue / Due this week / Due this month). Each is the
+       Figma Badge used as a button: tapping it drills into the detail filtered to that horizon, the same
+       way the Overdrawn badge in Bank Balances opens its drill. Colour never carries the meaning alone. */
+    function dbadge(due,status,icon,amt,cnt,label){return badge({status:status,size:"small",icon:icon,text:apMoney(amt)+" "+label,tag:"button",cls:"ap-gl-drill",attrs:'data-action="ap-drill" data-due="'+due+'" data-id="'+w.id+'" data-tip="'+apEsc(apMoney(amt)+" across "+cnt+" invoice"+(cnt===1?"":"s")+", open")+'" data-tip-plain aria-label="'+apEsc(apMoney(amt)+" "+label+", "+cnt+" invoice"+(cnt===1?"":"s")+", open")+'"'});}
+    var badges=[];
+    if(bd.overdue.total>0)badges.push(dbadge("overdue","negative","error",bd.overdue.total,bd.overdue.count,"overdue"));
+    if(wkT>0)badges.push(dbadge("week","attention","event",wkT,wkC,"due this week"));
+    if(bd.month.total>0)badges.push(dbadge("month","neutral","calendar_month",bd.month.total,bd.month.count,"due this month"));
+    if(!badges.length)badges.push(badge({status:"positive",size:"small",icon:"check_circle",text:"Nothing due"}));
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Total due</span><span class="metric-value">'+apMoney(tot)+'</span></span>'+
-      '<div class="gl-sub">'+apBadge(w)+'</div>'+
+      '<div class="gl-sub ap-gl-badges">'+badges.join("")+'</div>'+
       '</div></div>';}
 
   /* ---- skeleton (table rows; loading is data-fetch only) ------------ */
