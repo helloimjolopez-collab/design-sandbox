@@ -3972,6 +3972,18 @@
   function depData(w){var co=w&&w.company;if(co==="Grace Community Foundation")return DEP_BIG;return (w&&w.dataset==="big")?DEP_BIG:DEP;}
   function depTypes(w){var seen={},out=["All types"];depData(w).forEach(function(a){if(!seen[a.type]){seen[a.type]=1;out.push(a.type);}});return out;}
   function money(n){return "$"+n.toLocaleString();}
+  /* Large-number abbreviation for KPI headlines so the 32px token value fits the glance.
+     Only kicks in past 5 figures (>= 100,000): 405098 -> $405.09K, 4000000 -> $4M,
+     106726837 -> $106.73M. Keeps a sign, trims trailing .0/.00. Full value stays in the
+     hover/drill; this only shortens the on-face headline. */
+  function moneyAbbr(n){
+    var v=Number(n)||0, neg=v<0, a=Math.abs(v), s;
+    if(a>=1e9){s=(a/1e9);s=(s>=100?s.toFixed(0):s.toFixed(2)).replace(/\.?0+$/,"")+"B";}
+    else if(a>=1e6){s=(a/1e6);s=(s>=100?s.toFixed(0):s.toFixed(2)).replace(/\.?0+$/,"")+"M";}
+    else if(a>=1e5){s=(a/1e3);s=(s>=100?s.toFixed(0):s.toFixed(2)).replace(/\.?0+$/,"")+"K";}
+    else return (neg?"−$":"$")+a.toLocaleString();
+    return (neg?"−$":"$")+s;
+  }
 
 /* === MY STATUS (mys) data === */
   var MYS_AREA = {GL:"GL and posting", AP:"Accounts Payable", PUR:"Purchasing", HR:"Payroll and HR"};
