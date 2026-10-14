@@ -5376,10 +5376,11 @@ function remFHeaderBlock(w,mode){
    small graded flat fill with the navy expected tick; legend hidden. ---- */
 function remFGlance(w){
   var t=remFTotals(w),st=remFBandStats(w);
-  /* Glance leads with the pace breakdown that earns the space: Behind / On track / Ahead
-     tiles (tappable to open). No lead money number, no caption. */
+  /* Glance leads with the MONEY remitted so far (brief Direction #2: headline the money, not a
+     percentage), then the Behind / On track / Ahead pace tiles (tappable to open). */
   return '<div class="remF-glancewrap">'+
     '<span class="scope-chip" style="cursor:default"><span class="sc-nm">Remittance pledges</span></span>'+
+    remFKpiHead(t)+
     remFPaceCards(w,true)+
     '<span class="sr-only">'+money(t.paid)+' remitted of '+money(t.total)+' pledged, '+remFPct(t.pctPaid)+', as of '+remFFmtDate(t.iso)+', across '+(st.behind.n)+' behind, '+(st.ontrack.n)+' on track, '+(st.ahead.n)+' ahead.</span>'+
   '</div>';
