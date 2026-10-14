@@ -2481,8 +2481,11 @@
    .state .sk .bgt-spin .cap .mi. Only ins-* rules are defined here.
    ===================================================================== */
 
-  /* header context line (row 2): quiet, single statement, no big number */
-  .ins-hd .dep-hd-num{align-self:center;}
+  /* Header: filters row 1; Enrolled KPI + Table/Pie toggle share row 2, toggle far right (matches
+     Receivables / Payroll / Pension). Flex column so the KPI row stretches and space-between works. */
+  .ins-hd{display:flex;flex-direction:column;gap:12px;}
+  .ins-hd .dep-hd-num{display:flex;align-items:center;justify-content:space-between;gap:12px;align-self:stretch;width:100%;}
+  .ins-hd .dep-hd-toggle{flex:0 0 auto;}
   .ins-ctx{font-size:11px;color:var(--txt-subtle);line-height:1.45;max-width:64ch;}
 
   /* body: table scrolls, total row pins beneath it */
@@ -10832,8 +10835,8 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Enrolled</span><span class="metric-value">'+insFNum(tot)+'</span></span>'+
       '<div class="gl-sub">'+
-        '<span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span>'+
-        '<span class="bank-pill" data-tip="'+insFMoney(cost)+' total monthly premium across all plans in view" data-tip-plain>'+ICON("payments")+insFMoney(cost)+'/mo</span>'+
+        badge({status:"neutral",icon:"groups",text:n+' plan'+(n===1?"":"s")})+
+        badge({status:"neutral",icon:"payments",text:insFMoney(cost)+'/mo',attrs:'data-tip="'+insFMoney(cost)+' total monthly premium across all plans in view" data-tip-plain'})+
       '</div>'+
     '</div></div>';
   }
