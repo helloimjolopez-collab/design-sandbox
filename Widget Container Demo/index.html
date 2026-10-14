@@ -8007,11 +8007,14 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
       '<div class="kpi-num prf-gl-num"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Paid this period</span><span class="metric-value">'+money(tot)+'</span></span></div>'+
       prFGlanceComp(w)+'</div>';}
   function prFHeaderBlock(w,hideToggle,noTotal){
-    var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+(hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>')+'</div>';
-    if(noTotal)return '<div class="dep-hd">'+top+'</div>';
-    var rows=prFTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0),meta=prFScopeMeta(w);
-    var ctx='';
-    return '<div class="dep-hd">'+top+'<div class="dep-hd-num"><span class="metric-value">'+money(tot)+'</span>'+ctx+'</div></div>';}
+    /* Filters on row 1; the Table/Chart view toggle sits INLINE with the KPI number, far right (row 2),
+       not on the filters row. In chart view the KPI number is dropped (the donut centre carries the
+       total), so the toggle keeps its own thin row, still far right, so it never jumps onto the filters. */
+    var tg=hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>';
+    var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div></div>';
+    if(noTotal)return '<div class="dep-hd prF-hd">'+top+(hideToggle?'':'<div class="dep-hd-num prF-hd-num prF-hd-num-solo">'+tg+'</div>')+'</div>';
+    var rows=prFTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
+    return '<div class="dep-hd prF-hd">'+top+'<div class="dep-hd-num prF-hd-num"><span class="metric-value">'+money(tot)+'</span>'+tg+'</div></div>';}
   function prFContent(w){
     if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
       return prFHeaderBlock(w,(w.size==="xwide"||w.size==="kpi"),true)+body;}
