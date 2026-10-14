@@ -10341,9 +10341,11 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   function apGlance(w){
     if(w.state==="empty"||!apData(w).length){var ec=EMPTY_COPY.payables;return '<div class="state" data-kind="empty">'+ICON("task_alt")+'<div class="state-title">'+ec.title+'</div></div>';}
     var tot=apTotalDue(w);
+    /* Glance face: Total due + the ONE alarm (overdue). "Due this week" is a second dataset and lives at
+       larger sizes, not stacked as a second pill that overflows the glance. */
     return '<div class="kpi-row"><div class="kpi-num">'+
       '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Total due</span><span class="metric-value">'+apMoney(tot)+'</span></span>'+
-      '<div class="gl-sub">'+apBadge(w)+apWeekPill(w)+'</div>'+
+      '<div class="gl-sub">'+apBadge(w)+'</div>'+
       '</div></div>';}
 
   /* ---- skeleton (table rows; loading is data-fetch only) ------------ */
