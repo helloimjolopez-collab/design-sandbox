@@ -11536,7 +11536,8 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function tbLeftHTML(){var d=cur();
     if(manage||dashRenaming)return '<input class="dash-name-input" id="dashInput" maxlength="40" value="'+d.name.replace(/"/g,"&quot;")+'">';
     var open=!!(pop&&pop.type==="switcher");
-    return '<span class="dash-select"><span class="dash-name" data-action="dash-rename-inline" title="Click to rename">'+d.name+'</span><button class="dash-caret" data-action="switcher" aria-haspopup="menu" aria-expanded="'+open+'" aria-label="Switch dashboard">'+ICON("expand_more")+'</button></span>';}
+    /* Edit dashboard sits right of the dashboard heading (not in the right-hand actions slot). */
+    return '<span class="dash-headrow"><span class="dash-select"><span class="dash-name" data-action="dash-rename-inline" title="Click to rename">'+d.name+'</span><button class="dash-caret" data-action="switcher" aria-haspopup="menu" aria-expanded="'+open+'" aria-label="Switch dashboard">'+ICON("expand_more")+'</button></span><button class="iconbtn tb-ic tb-edit-dash" data-action="manage" data-tip="Edit dashboard" data-tip-plain aria-label="Edit dashboard">'+ICON("tune")+'</button></span>';}
   function tbRightHTML(){
     if(manage){
       /* Managing: edits autosave; Save as new dashboard (primary outlined), Delete this dashboard
