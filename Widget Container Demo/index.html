@@ -6032,10 +6032,14 @@ function gftSkeleton(){var rows=[92,70,54,38].map(function(wd){return '<div clas
    the row stays a clean glance. Tap opens the donors behind the purpose. */
 /* Small status badge: icon + colour + label, canonical semantic tokens (never colour alone). */
 function gftMiniBadge(p,thru){
-  if(p.status==="complete")return badge({status:"positive",size:"small",icon:"check_circle",text:"Funded"});
-  if(p.status==="behind")return badge({status:"attention",size:"small",icon:"error",text:"Behind"});
-  if(p.status==="ahead")return badge({status:"positive",size:"small",icon:"trending_up",text:"Ahead"});
-  return badge({status:"info",size:"small",icon:"check_circle",text:"On track"});
+  /* The badge reads its own meaning on hover: for a behind pledge, BOTH how far behind the pace expected
+     by now (behind today) AND how far short of the full pledge (behind total), as Jo asked. */
+  var asOf=gftFmtDate(thru);
+  var behindToday=money(Math.max(0,p.due-p.received)),behindTotal=money(Math.max(0,p.outstanding));
+  if(p.status==="complete")return badge({status:"positive",size:"small",icon:"check_circle",text:"Funded",attrs:'data-tip="'+gftEsc("Fully funded: "+money(p.received)+" received of "+money(p.pledgeTotal)+" pledged.")+'" data-tip-plain'});
+  if(p.status==="behind")return badge({status:"attention",size:"small",icon:"error",text:"Behind",attrs:'data-tip="'+gftEsc("Behind today by "+behindToday+" (expected "+money(p.due)+" by "+asOf+", received "+money(p.received)+"). Behind the full pledge by "+behindTotal+" of "+money(p.pledgeTotal)+".")+'" data-tip-plain'});
+  if(p.status==="ahead")return badge({status:"positive",size:"small",icon:"trending_up",text:"Ahead",attrs:'data-tip="'+gftEsc("Ahead of pace: "+money(p.received)+" received, "+money(p.due)+" expected by "+asOf+".")+'" data-tip-plain'});
+  return badge({status:"info",size:"small",icon:"check_circle",text:"On track",attrs:'data-tip="'+gftEsc("On track: "+money(p.received)+" received of "+money(p.pledgeTotal)+" pledged, at or ahead of the pace expected by "+asOf+".")+'" data-tip-plain'});
 }
 /* One purpose = one row. Name at the start of the bar, Goal at the end (the bar's end IS the goal, no
    mid-bar marker). A small behind/on-track/ahead badge sits just left of the goal. The exact paid /
