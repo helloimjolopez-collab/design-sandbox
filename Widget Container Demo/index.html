@@ -10703,7 +10703,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     return '<div class="ap-cash-chart" role="group" aria-label="Cash due by date, select to filter">'+rows.map(function(d){
       var pct=Math.max(4,Math.round(d.total/max*100)),on=(sel===d.iso);
       return '<button class="ap-cash-row'+(d.overdue?" over":"")+(on?" sel":"")+'" data-action="ap-pick-date" data-iso="'+d.iso+'" data-id="'+w.id+'" aria-pressed="'+on+'" aria-label="'+apEsc(apFmtLong(d.iso)+', '+apMoney(d.total)+', '+d.count+' invoice'+(d.count===1?'':'s')+(d.overdue?', overdue':''))+'">'+
-        '<span class="ap-cash-date">'+apFmtLong(d.iso)+(d.overdue?' <span class="ap-cash-od">overdue</span>':'')+'</span>'+
+        '<span class="ap-cash-date">'+(d.overdue?'<span class="material-symbols-rounded ap-cash-odic" aria-hidden="true">error</span>':'')+apFmtLong(d.iso)+'</span>'+
         '<span class="ap-cash-track"><span class="ap-cash-fill" style="width:'+pct+'%"></span></span>'+
         '<span class="ap-cash-amt">'+apMoney(d.total)+'</span>'+
       '</button>';
