@@ -11549,15 +11549,14 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
       var done='<button class="btn primary sm" data-action="done-manage">Done</button>';
       return '<div class="tb-manage">'+addB+saveNew+del+autosave+done+'</div>';
     }
-    /* Far-right action icons (Figma action-icon size): Search widgets, Add widget, Refresh all, and a
-       persistent Edit dashboard icon. Search opens the search bar in a popover (works at every breakpoint). */
+    /* Dashboard-actions slot, left to right: Search (secondary outlined icon), Refresh (secondary naked
+       icon), then Add widget LAST on the far right as a primary icon+label button. Search opens the search
+       bar in a popover (works at every breakpoint). Edit dashboard lives by the heading, not here. */
     var fopen=!!(pop&&pop.type==="wfind");
-    function ic(act,icon,tip,extra){return '<button class="iconbtn tb-ic'+(extra||"")+'" data-action="'+act+'" data-tip="'+tip+'" data-tip-plain aria-label="'+tip+'">'+ICON(icon)+'</button>';}
     return '<div class="tb-actions">'+
-      '<button class="iconbtn tb-ic'+(fopen?" on":"")+'" data-action="wfind" aria-haspopup="dialog" aria-expanded="'+fopen+'" data-tip="Search widgets" data-tip-plain aria-label="Search widgets">'+ICON("search")+'</button>'+
-      ic("add-widget","add","Add widget")+
-      ic("refresh-all","refresh","Refresh all")+
-      ic("manage","tune","Edit dashboard")+
+      '<button class="btn outlined sm tb-iconbtn'+(fopen?" on":"")+'" data-action="wfind" aria-haspopup="dialog" aria-expanded="'+fopen+'" data-tip="Search widgets" data-tip-plain aria-label="Search widgets">'+ICON("search")+'</button>'+
+      '<button class="btn naked sm tb-iconbtn" data-action="refresh-all" data-tip="Refresh all" data-tip-plain aria-label="Refresh all">'+ICON("refresh")+'</button>'+
+      '<button class="btn primary sm" data-action="add-widget">'+ICON("add")+'Add widget</button>'+
     '</div>';}
 
   function popContent(){
