@@ -1048,7 +1048,10 @@
   .delta-ref{color:var(--txt-subtle);font-weight:var(--semantic-type-weight-medium);}
   .dep-full{flex:1;min-height:0;display:flex;gap:12px;padding:12px 14px;}
   .menu-scroll{max-height:240px;overflow-y:auto;}
-  .filter-chip{display:inline-flex;align-items:center;gap:2px;font-family:inherit;font-size:var(--semantic-type-font-size-xs);font-weight:var(--semantic-type-weight-medium);color:var(--txt-primary);background:transparent;border:1px solid var(--stroke-widget);border-radius:8px;padding:4px 6px 4px 10px;cursor:pointer;max-width:260px;}
+  .filter-chip{display:inline-flex;align-items:center;gap:2px;font-family:inherit;font-size:var(--semantic-type-font-size-xs);font-weight:var(--semantic-type-weight-medium);color:var(--txt-primary);background:transparent;border:1px solid var(--stroke-widget);border-radius:8px;padding:4px 6px 4px 10px;cursor:pointer;max-width:260px;position:relative;}
+/* AA touch target >=44pt without changing the chip's visible size: an invisible hit area spanning the
+   chip width, centred vertically. The button's own size and padding are unchanged. */
+.filter-chip::after,.scope-chip::after{content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);min-height:44px;height:100%;}
   /* Applied/active state: a filter or scope control holding a non-default value reads as the DS
      secondary PRESSED state (neutral fill + near-black foreground on both label and icon), so it is
      clearly "on" without inventing a brand tint, harming contrast, or changing the font weight. */
@@ -2165,6 +2168,8 @@
   .pto-glance{display:flex;flex-direction:column;justify-content:center;gap:8px;padding:0 12px 8px;}
   .pto-glance .pto-cards{flex-wrap:nowrap;gap:6px;}
   .pto-glance .pto-card{min-width:0;padding:8px 9px;}
+  .pto-gl-filters{flex:0 0 auto;gap:6px;flex-wrap:nowrap;margin-bottom:2px;}
+  .pto-gl-filters .filter-chip{min-width:0;flex:1 1 0;max-width:none;}
   .pto-glance .sc-nm{font-size:var(--semantic-type-font-size-xs);font-weight:var(--semantic-type-weight-semibold);color:var(--txt-secondary);}
   .pto-gl-kpi{display:flex;align-items:baseline;gap:8px;}
   .pto-gl-cap{font-size:var(--semantic-type-font-size-xs);color:var(--txt-subtle);}
