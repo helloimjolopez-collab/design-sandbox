@@ -10722,11 +10722,15 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      Due this week, Due this month, Later, plus All. Amount-led + count; reuses the ap-set-due handler. */
   function apBucketCards(w){
     var sel=apSel(w),grand=apTotalDue(w),bd=apBandData(w),n=apData(w).length;
+    /* Canonical shared tile (.pto-card), same component as My Status / PTO, with an optional
+       count sub-line. Tone maps onto the shared set: overdue = negative, due-this-week = attention
+       (pending), everything else neutral. */
+    var TONE={neutral:"pto-tile-neutral",over:"pto-tile-negative",week:"pto-tile-pending"};
     function tile(id,label,icon,tone,amt,cnt){var isSel=(sel===id);
-      return '<button class="ap-tile ap-tile-'+tone+(isSel?" sel":"")+'" data-action="ap-set-due" data-due="'+id+'" data-id="'+w.id+'" aria-pressed="'+isSel+'">'+
-        '<span class="ap-tile-top"><span class="ap-tile-ic material-symbols-rounded" aria-hidden="true">'+icon+'</span><span class="ap-tile-lbl">'+label+'</span></span>'+
-        '<span class="ap-tile-amt">'+apMoney(amt)+'</span>'+
-        '<span class="ap-tile-cnt">'+cnt+' invoice'+(cnt===1?"":"s")+'</span>'+
+      return '<button class="pto-card '+(TONE[tone]||"pto-tile-neutral")+(isSel?" sel":"")+'" data-action="ap-set-due" data-due="'+id+'" data-id="'+w.id+'" aria-pressed="'+isSel+'">'+
+        '<span class="pto-card-top"><span class="pto-card-ic material-symbols-rounded" aria-hidden="true">'+icon+'</span><span class="pto-card-lbl">'+label+'</span></span>'+
+        '<span class="pto-card-n">'+apMoney(amt)+'</span>'+
+        '<span class="pto-card-sub">'+cnt+' invoice'+(cnt===1?"":"s")+'</span>'+
       '</button>';}
     /* Filters most-urgent first, each with its own icon + tone: Overdue (negative/red), Due this week
        (attention/orange), Due this month (neutral). Colour reinforces the label, it does not carry it alone. */
