@@ -11806,6 +11806,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="bank-drill-close"){modal=null;pop=null;render();return;}
     if(a==="bank-drill-back"){if(modal)modal.acct=null;render();return;}
     if(a==="bank-open-app"){setStatus("Opening "+t.getAttribute("data-name")+" in Bank Accounts…");return;}
+    if(a==="mys-tile"){var wmt=find(id);if(wmt)wmt.mysTile=t.getAttribute("data-t");pop=null;render();return;}
     if(a==="mys-config"){var wc0=find(id);modal={type:"mysconfig",id:id,q:"",draft:(wc0.selected||[]).slice()};modalMounted=false;pop=null;render();return;}
     if(a==="mys-toggle"){var qid=t.getAttribute("data-q");if(modal){modal.draft=modal.draft||[];var ix=modal.draft.indexOf(qid);if(ix>-1)modal.draft.splice(ix,1);else modal.draft.push(qid);}renderModal();return;}
     if(a==="mys-config-done"){var wcd=find(modal.id);var chg=JSON.stringify(wcd.selected)!==JSON.stringify(modal.draft);wcd.selected=modal.draft.slice();modal=null;pop=null;if(chg){wcd.state="loading";render();clearTimeout(timers[wcd.id]);timers[wcd.id]=setTimeout(function(){wcd.state="ready";wcd.updated="just now";render();},700);}else render();return;}
