@@ -10185,7 +10185,9 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
   function ptoGlance2(w){
     if(w.state==="empty")return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:var(--semantic-type-font-size-m);color:var(--txt-subtle)">No access</span></div></div></div>';
     if(!ptoBaseRows(w).length)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'No requests</span></div></div></div>';
-    return '<div class="pto-glance pto-glance-tiles">'+ptoKpiCards(w)+'</div>';}
+    /* Glance carries the same Department + Pay group filters as the larger sizes; the status tiles'
+       counts respond to them, so the filters have a visible effect at a glance too. */
+    return '<div class="pto-glance pto-glance-tiles"><div class="gl-chiprow pto-gl-filters">'+ptoDeptChip(w)+ptoPGChip(w)+'</div>'+ptoKpiCards(w)+'</div>';}
   /* Employee drill (scrim overlay): the person isolated, with their own KPIs. */
   function ptoDrillModalHTML(){
     var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
