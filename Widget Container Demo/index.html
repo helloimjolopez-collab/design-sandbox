@@ -8481,9 +8481,17 @@ function mysContent(w){
   if(!sel.length)return '<div class="state mys-empty" data-kind="empty">'+ICON("checklist")+'<div class="state-title">Nothing to show yet</div><div class="state-sub">Pick the things you want to keep an eye on. Their live counts appear here.</div><button class="btn outlined" data-action="mys-config" data-id="'+w.id+'">'+ICON("checklist")+'Configure</button></div>';
   var cur=mysTileOf(w);
   var rows=cur==="info"?mysInfoItems(sel):cur==="clear"?mysClearList(sel):mysActionItems(sel);
-  var head='<div class="wt-row wt-head mys-trow"><span class="lr-main">Item</span><span class="mys-c-status">Status</span><span class="wt-c2">Count</span></div>';
-  var body=rows.length?rows.map(function(q){return mysRowHTML(w,q,cur);}).join(""):('<div class="mys-caughtup">'+ICON(cur==="action"?"task_alt":cur==="info"?"inbox":"check_circle")+'<span>'+(cur==="action"?"Nothing needs action right now.":cur==="info"?"Nothing to note right now.":"Nothing is up to date yet.")+'</span></div>');
-  return '<div class="mys-tophd">'+mysKpiTiles(w,sel)+mysConfigBtn(w)+'</div><div class="scroll mys-list">'+head+body+'</div>';
+  var explore=(w.size==="xwide");
+  var body;
+  if(!rows.length){
+    body='<div class="mys-caughtup">'+ICON(cur==="action"?"task_alt":cur==="info"?"inbox":"check_circle")+'<span>'+(cur==="action"?"Nothing needs action right now.":cur==="info"?"Nothing to note right now.":"Nothing is up to date yet.")+'</span></div>';
+  }else if(explore){
+    body=mysGrouped(w,rows);
+  }else{
+    var head='<div class="wt-row wt-head mys-trow"><span class="lr-main">Item</span><span class="mys-c-area">Area</span><span class="wt-c2">Count</span></div>';
+    body=head+rows.map(function(q){return mysRowHTML(w,q,cur,true);}).join("");
+  }
+  return '<div class="mys-tophd">'+mysKpiTiles(w,sel)+mysConfigBtn(w)+'</div><div class="scroll mys-list'+(explore&&rows.length?' mys-list-grouped':'')+'">'+body+'</div>';
 }
 
 /* Inner content only (patched in place so the dialog never re-animates / loses focus). */
