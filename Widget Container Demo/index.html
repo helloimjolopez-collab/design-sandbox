@@ -10186,11 +10186,18 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
     var rows=ptoAllRows(w).filter(function(r){return r.empId===modal.emp;}).sort(function(a,b){return a.date<b.date?-1:1;});
     var nm=rows.length?rows[0].emp:"Employee",dept=rows.length?rows[0].dept:"";
     var pend=rows.filter(function(r){return r.s3!=="approved";}).length,appr=rows.filter(function(r){return r.s3==="approved";}).length;
-    var kpis='<div class="pto-drill-kpis"><span class="pto-drill-kpi"><b>'+rows.length+'</b> total</span><span class="pto-drill-kpi"><b>'+pend+'</b> pending</span><span class="pto-drill-kpi"><b>'+appr+'</b> approved</span></div>';
-    var list=rows.map(function(r){var act=r.s3!=="approved";
-      var action=act?('<button class="btn subtle sm pto-approve" data-action="pto-approve" data-id="'+w.id+'" data-rec="'+r.id+'">'+ICON("check")+'Approve</button>'):'';/* approval is final from here (undo removed) */
-      return '<div class="pto-drill-row"><span class="pto-drill-date">'+ptoFmtDate(r.date)+'</span><span class="pto-drill-type">'+ptoTypeLabel(w,r.type)+'</span><span class="pto-drill-st">'+ptoStatusBadge(r,w)+'</span><span class="pto-drill-act">'+action+'</span></div>';}).join("");
-    return '<div class="modal-backdrop" data-action="modal-close"><div class="modal modal-wide pto-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Time off for '+nm.replace(/"/g,"&quot;")+'"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" aria-hidden="true" style="font-size:var(--semantic-type-font-size-m);vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">person</span>'+nm+'<span class="pto-drill-dept">'+dept+'</span></span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b pto-drill-b">'+kpis+'<div class="pto-drill-list">'+list+'</div></div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">Done</button></div></div></div>';}
+    var tiles='<div class="pto-drill-tiles">'+
+      '<div class="pto-drill-tile"><span class="pto-drill-tile-n">'+rows.length+'</span><span class="pto-drill-tile-l">Total</span></div>'+
+      '<div class="pto-drill-tile"><span class="pto-drill-tile-n">'+pend+'</span><span class="pto-drill-tile-l">Pending</span></div>'+
+      '<div class="pto-drill-tile"><span class="pto-drill-tile-n">'+appr+'</span><span class="pto-drill-tile-l">Approved</span></div>'+
+    '</div>';
+    var thead='<div class="wt-row wt-head pto-drill-trow"><span class="pto-drill-date">Date</span><span class="pto-drill-type">Leave type</span><span class="pto-drill-st">Status</span><span class="pto-drill-act">Action</span></div>';
+    var list=rows.map(function(r){
+      var action=(r.s3==="approved")
+        ?('<button class="pto-undo-ic pto-undo" data-action="pto-undo" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Undo approval" data-tip="Undo approval" data-tip-plain>'+ICON("undo")+'</button>')
+        :('<button class="pto-approve-ic pto-approve" data-action="pto-approve" data-id="'+w.id+'" data-rec="'+r.id+'" aria-label="Approve" data-tip="Approve" data-tip-plain>'+ICON("check_circle")+'</button>');
+      return '<div class="wt-row pto-drill-trow"><span class="pto-drill-date">'+ptoFmtDate(r.date)+'</span><span class="pto-drill-type">'+ptoTypeLabel(w,r.type)+'</span><span class="pto-drill-st">'+ptoStatusBadge(r,w)+'</span><span class="pto-drill-act">'+action+'</span></div>';}).join("");
+    return '<div class="modal-backdrop" data-action="modal-close"><div class="modal modal-wide pto-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="Time off for '+nm.replace(/"/g,"&quot;")+'"><div class="modal-h pto-drill-h"><span class="pto-drill-who"><span class="pto-drill-avatar material-symbols-rounded" aria-hidden="true">person</span><span class="pto-drill-whotext"><span class="pto-drill-name">'+nm+'</span>'+ptoDeptBadge(dept)+'</span></span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b pto-drill-b">'+tiles+'<div class="pto-drill-list">'+thead+list+'</div></div><div class="modal-f"><button class="btn primary sm" data-action="modal-close">Done</button></div></div></div>';}
   /* Tapping a calendar day opens THAT day's leave in a focus overlay (never bounces you to the queue). */
   function ptoDayModalHTML(){
     var w=find(modal.id);if(!w)return '<div class="modal-backdrop" data-action="modal-close"></div>';
