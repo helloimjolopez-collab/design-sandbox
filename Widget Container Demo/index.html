@@ -12074,10 +12074,15 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   /* styled label tooltips for [data-tip] elements (refresh, resize, go-to, etc.) */
   var tipEl=null,tipTimer=null;
   function hideTip(){clearTimeout(tipTimer);if(tipEl){tipEl.remove();tipEl=null;}}
-  function showTip(trg){if(!trg||!trg.isConnected)return;var txt=trg.getAttribute("data-tip");if(!txt)return;hideTip();tipEl=document.createElement("div");tipEl.className="tip"+(trg.hasAttribute("data-tip-plain")?" tip-plain":"")+(trg.hasAttribute("data-tip-narrow")?" tip-narrow":"")+(trg.hasAttribute("data-tip-lines")?" tip-lines":"");tipEl.textContent=txt;document.body.appendChild(tipEl);var r=trg.getBoundingClientRect(),M=8,tw=tipEl.offsetWidth,th=tipEl.offsetHeight;var left=r.left+r.width/2-tw/2;if(left<M)left=M;if(left+tw>innerWidth-M)left=innerWidth-M-tw;var flipped=false,top=r.bottom+7;if(top+th>innerHeight-M){var up=r.top-th-7;if(up>=M){top=up;flipped=true;}}var cx=(r.left+r.width/2)-left;cx=Math.max(12,Math.min(tw-12,cx));tipEl.style.setProperty("--caret-x",cx+"px");tipEl.setAttribute("data-dir",flipped?"down":"up");tipEl.style.left=left+"px";tipEl.style.top=top+"px";}
-  document.addEventListener("mouseover",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(!t)return;clearTimeout(tipTimer);tipTimer=setTimeout(function(){showTip(t);},300);});
+  /* Anchor horizontally to the CURSOR (tipMX), not the element centre: a wide trigger (a whole table row
+     or cell) otherwise centres the tooltip in the middle of the table, far from where the cursor actually
+     is. Clamp the anchor inside the element so it still reads as attached. Vertical stays on the element's
+     edge. For keyboard focus there is no cursor, so fall back to the element centre. */
+  var tipMX=null;
+  function showTip(trg){if(!trg||!trg.isConnected)return;var txt=trg.getAttribute("data-tip");if(!txt)return;hideTip();tipEl=document.createElement("div");tipEl.className="tip"+(trg.hasAttribute("data-tip-plain")?" tip-plain":"")+(trg.hasAttribute("data-tip-narrow")?" tip-narrow":"")+(trg.hasAttribute("data-tip-lines")?" tip-lines":"");tipEl.textContent=txt;document.body.appendChild(tipEl);var r=trg.getBoundingClientRect(),M=8,tw=tipEl.offsetWidth,th=tipEl.offsetHeight;var anchorX=(tipMX!=null)?Math.max(r.left+12,Math.min(r.right-12,tipMX)):(r.left+r.width/2);var left=anchorX-tw/2;if(left<M)left=M;if(left+tw>innerWidth-M)left=innerWidth-M-tw;var flipped=false,top=r.bottom+7;if(top+th>innerHeight-M){var up=r.top-th-7;if(up>=M){top=up;flipped=true;}}var cx=anchorX-left;cx=Math.max(12,Math.min(tw-12,cx));tipEl.style.setProperty("--caret-x",cx+"px");tipEl.setAttribute("data-dir",flipped?"down":"up");tipEl.style.left=left+"px";tipEl.style.top=top+"px";}
+  document.addEventListener("mouseover",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(!t)return;tipMX=e.clientX;clearTimeout(tipTimer);tipTimer=setTimeout(function(){showTip(t);},300);});
   document.addEventListener("mouseout",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)hideTip();});
-  document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)showTip(t);});
+  document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t){tipMX=null;showTip(t);}});
   document.addEventListener("focusout",hideTip);
   /* Rich hover/focus card for the Gifts progress bars , same designed card as the Bank spark
      tooltip (header + label/value rows + divider + emphasised pace row). */
