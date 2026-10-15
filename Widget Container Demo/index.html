@@ -6164,10 +6164,11 @@ function gftContent(w){
    row expands to its gift history + a stewardship follow-up. Export + Close.
    Board / report ready. modal.type === "gftdetail". */
 function gftDonorStatusChip(st){
-  if(st==="behind")return '<span class="gft-dstatus gft-dstatus-behind">Behind</span>';
-  if(st==="ahead")return '<span class="gft-dstatus gft-dstatus-ok">Ahead</span>';
-  if(st==="complete")return '<span class="gft-dstatus gft-dstatus-ok">Fully paid</span>';
-  return '<span class="gft-dstatus gft-dstatus-ok">On track</span>';
+  /* The Figma Badge component (not a bespoke pill), matching the status badges used everywhere else. */
+  if(st==="behind")return badge({status:"attention",size:"small",icon:"error",text:"Behind"});
+  if(st==="ahead")return badge({status:"positive",size:"small",icon:"trending_up",text:"Ahead"});
+  if(st==="complete")return badge({status:"positive",size:"small",icon:"check_circle",text:"Fully paid"});
+  return badge({status:"positive",size:"small",icon:"check_circle",text:"On track"});
 }
 function gftDetailModalInner(){
   var w=find(modal.id);if(!w)return "";
