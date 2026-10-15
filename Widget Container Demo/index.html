@@ -4568,13 +4568,14 @@ function penFDistChip(w){
    Pie / By district, Table default. Detail (xwide): the table always owns the
    left panel, so the right panel gets a 2-way Pie / By district toggle. Plain
    language data-tip per segment (shell tooltip engine). */
-function penFViewToggleM(w){
-  var v=w.penViewM||"table";
+/* Data-view toggle (Table vs Chart) lives on the FILTERS row with the district chip. The chart's grouping
+   (Pie = by plan, or By district) is a separate toggle shown inline with the KPI only when Chart is active. */
+function penFDataToggle(w){
+  var v=(w.penViewM||"table")==="table"?"table":"chart";
   function seg(val,lbl,ic,tip){return '<button class="vt'+(v===val?" on":"")+'" data-action="penF-view" data-id="'+w.id+'" data-v="'+val+'" aria-pressed="'+(v===val)+'" data-tip="'+penFEsc(tip)+'" data-tip-plain>'+ICON(ic)+lbl+'</button>';}
   return '<div class="vtoggle pen-vtoggle" role="group" aria-label="View">'+
     seg("table","Table","table_rows","The plans as a sortable list: appointees and annual amount per plan.")+
-    seg("pie","Pie","donut_small","Show each plan as a slice of the total annual contribution.")+
-    seg("gbar","By district","bar_chart","Compare each plan's annual amount district by district.")+
+    seg("chart","Chart","insights","Show the plans as a chart.")+
   '</div>';
 }
 function penFChartToggleL(w){
