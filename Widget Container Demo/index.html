@@ -10983,7 +10983,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      Columns: Insurance type / plan | Share | Enrolled | Cost. */
   function insFNestedTable(w){
     var rows=insFFiltered(w).slice(),gEnroll=insFTotal(w),gCost=insFCostTotal(w);
-    if(!rows.length)return '<div class="scroll ins-tscroll">'+insFHeadRow(w)+'<div class="wt-row ins-row"><span class="lr-main ins-none">No plans of this insurance type.</span></div></div>'+insFTotalRow(0,0);
+    if(!rows.length)return '<div class="scroll ins-tscroll">'+insFHeadRow(w)+'<div class="wt-row ins-row"><span class="lr-main ins-none">No plans of this insurance type.</span></div></div>'+insFTotalRow(0);
     var groups={},order=[];
     rows.forEach(function(p){if(!groups[p.type]){groups[p.type]=[];order.push(p.type);}groups[p.type].push(p);});
     function subEnroll(ty){return groups[ty].reduce(function(s,p){return s+p.enroll;},0);}
@@ -11005,7 +11005,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
         (open?sortIn(list).map(function(p){return insFPlanRow(p,gEnroll);}).join(""):"")+
         '</div>';
     });
-    return '<div class="scroll ins-tscroll">'+insFHeadRow(w)+html+'</div>'+insFTotalRow(gEnroll,gCost);
+    return '<div class="scroll ins-tscroll">'+insFHeadRow(w)+html+'</div>'+insFTotalRow(gEnroll);
   }
   /* Enrolment share by insurance type, as a canonical donut (shared .donut/.legend atoms). */
   var INSF_PIE=["var(--am-600)","var(--am-400)","var(--am-300)","var(--am-500)","var(--am-200)","var(--am-700)"];
