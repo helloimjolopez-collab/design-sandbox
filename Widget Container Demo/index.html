@@ -11548,7 +11548,8 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
       var rowswf=listwf.length
         ? listwf.map(function(w){return '<button class="mi wfind-opt" role="option" data-action="wfind-go" data-id="'+w.id+'"><span class="wfind-nm">'+w.title+'</span><span class="wfind-sz">'+(SZ[w.size]||w.size)+'</span></button>';}).join("")
         : '<div class="wfind-none">No widgets on this dashboard match “'+widgetFindQuery.replace(/</g,"&lt;").replace(/"/g,"&quot;")+'”.</div>';
-      return '<div class="menu-scroll wfind-scroll" id="wfindList" role="listbox">'+rowswf+'</div><div class="sep"></div><button class="mi wfind-add" data-action="add-widget">'+ICON("add")+'Add widget</button>';}
+      var searchField='<div class="dd-search wfind-ddsearch" data-action="stop"><span class="material-symbols-rounded" aria-hidden="true">search</span><input class="dep-q" id="wfindq" type="text" role="combobox" aria-expanded="true" aria-controls="wfindList" aria-label="Search widgets on this dashboard" placeholder="Search widgets" value="'+widgetFindQuery.replace(/"/g,"&quot;")+'" autocomplete="off"></div>';
+      return searchField+'<div class="menu-scroll wfind-scroll" id="wfindList" role="listbox">'+rowswf+'</div><div class="sep"></div><button class="mi wfind-add" data-action="add-widget">'+ICON("add")+'Add widget</button>';}
     if(pop.type==="wswap"){var wsw=find(pop.id),curk=wsw?wsw.kind:null,qsw=((pop.q)||"").trim().toLowerCase();
       var listsw=PALETTE.map(function(p,i){return {p:p,i:i};}).filter(function(x){return !qsw||(x.p.title+" "+x.p.cat).toLowerCase().indexOf(qsw)>-1;});
       var rowssw=listsw.length
