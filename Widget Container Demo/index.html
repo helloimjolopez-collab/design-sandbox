@@ -10966,14 +10966,13 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
   /* Child plan row. gEnroll = grand total enrolled (this view); Share is this
      plan's enrolment as a share of that grand total (Jo's original meaning). */
   function insFPlanRow(p,gEnroll){
-    var zero=p.enroll===0,cost=insFCost(p);
-    /* No row tooltip: it restated exactly what the row already shows (and asserted an unconfirmed
-       per-month premium). The row's own cells carry the read. */
+    var zero=p.enroll===0;
+    /* No Cost column: per-plan premium is not a confirmed field in the Insurance Billing data (brief),
+       so we do not show an invented amount. No row tooltip either: the cells carry the read. */
     return '<div class="wt-row ins-row ins-row-in ins-child'+(zero?" ins-zero":"")+'">'+
       '<span class="lr-main ins-plan"><span class="ins-plan-nm">'+p.plan+'</span></span>'+
       insFShareCell(p.enroll,gEnroll)+
-      '<span class="wt-c2">'+insFNum(p.enroll)+(zero?' <span class="ins-zero-tag">none</span>':'')+'</span>'+
-      '<span class="ins-cost">'+insFMoney(cost)+'</span></div>';
+      '<span class="wt-c2">'+insFNum(p.enroll)+(zero?' <span class="ins-zero-tag">none</span>':'')+'</span></div>';
   }
   function insFTotalRow(totEnroll,totCost){
     return '<div class="ins-total-detail"><span class="ins-total-lead">Total (all types)</span><span class="ins-total-en">'+insFNum(totEnroll)+'</span><span class="ins-total-cost">'+insFMoney(totCost)+'</span></div>';
