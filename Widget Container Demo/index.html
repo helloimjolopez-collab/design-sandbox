@@ -11473,6 +11473,18 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     return '<div class="modal-backdrop" data-action="modal-close"><div class="modal modal-wide glance-drill-modal" data-action="stop" role="dialog" aria-modal="true" aria-label="'+String(modal.t||"Details").replace(/"/g,"&quot;")+'"><div class="modal-h"><span class="modal-title"><span class="material-symbols-rounded" aria-hidden="true" style="font-size:var(--semantic-type-font-size-m);vertical-align:-4px;margin-right:7px;color:var(--txt-subtle)">open_in_full</span>'+(modal.t||"Details")+'</span><button class="iconbtn" data-action="modal-close" aria-label="Close">'+ICON("close")+'</button></div><div class="modal-b glance-drill-b">'+body+'</div></div></div>';}
   function addWidgetPlaceholderHTML(){
     return '<section class="widget widget-add" data-size="kpi"><button class="widget-add-btn" data-action="add-widget" aria-label="Add widget">'+ICON("add")+'<span>Add widget</span></button></section>';}
+  /* Does the widget currently render a data table/list (vs a chart, KPI, pie, progress or calendar view)?
+     Read from the live DOM: a list has data rows (.wt-row that are not the header). This decides the share
+     options: a list can be exported as structured data (Excel/CSV/print); a view can only be shared as the
+     picture it is (PNG/PDF/email). */
+  function widgetIsList(w){try{if(!w)return false;var el=document.querySelector('.widget[data-id="'+w.id+'"]');return !!(el&&el.querySelector('.wt-row:not(.wt-head)'));}catch(_wl){return false;}}
+  function shareBlock(id){
+    var w=find(id),list=widgetIsList(w);
+    var items=list
+      ?[["Excel","Download as Excel","table_view"],["CSV","Download as CSV","grid_on"],["PDF","Save as PDF","picture_as_pdf"],["print","Print this list","print"],["email","Email this list","mail"]]
+      :[["PNG","Download as PNG","image"],["PDF","Save as PDF","picture_as_pdf"],["email","Email this view","mail"]];
+    return '<div class="cap">Share this '+(list?"list":"view")+'</div>'+items.map(function(o){return '<button class="mi" data-action="export-do" data-id="'+id+'" data-fmt="'+o[0]+'">'+ICON(o[2])+o[1]+'</button>';}).join("");
+  }
   function widgetHTML(w){
     /* On Glance, a "View details" hint that surfaces when you hover the KPI content, opening the fuller
        Detail view in an overlay — so drilling in never requires resizing the widget. */
