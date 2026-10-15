@@ -12138,9 +12138,9 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     return h+rows+foot;
   }
   function showTip(trg){if(!trg||!trg.isConnected)return;var card=trg.getAttribute("data-tipcard"),txt=trg.getAttribute("data-tip");if(!card&&!txt)return;hideTip();tipEl=document.createElement("div");var cd=null;if(card){try{cd=JSON.parse(decodeURIComponent(card));}catch(_e){cd=null;}}if(cd){tipEl.className="tip tip-card";tipEl.innerHTML=buildTipCard(cd);}else{tipEl.className="tip"+(trg.hasAttribute("data-tip-plain")?" tip-plain":"")+(trg.hasAttribute("data-tip-narrow")?" tip-narrow":"")+(trg.hasAttribute("data-tip-lines")?" tip-lines":"");tipEl.textContent=txt;}document.body.appendChild(tipEl);var r=trg.getBoundingClientRect(),M=8,tw=tipEl.offsetWidth,th=tipEl.offsetHeight;var anchorX=(tipMX!=null)?Math.max(r.left+12,Math.min(r.right-12,tipMX)):(r.left+r.width/2);var left=anchorX-tw/2;if(left<M)left=M;if(left+tw>innerWidth-M)left=innerWidth-M-tw;var flipped=false,top=r.bottom+7;if(top+th>innerHeight-M){var up=r.top-th-7;if(up>=M){top=up;flipped=true;}}var cx=anchorX-left;cx=Math.max(12,Math.min(tw-12,cx));tipEl.style.setProperty("--caret-x",cx+"px");tipEl.setAttribute("data-dir",flipped?"down":"up");tipEl.style.left=left+"px";tipEl.style.top=top+"px";}
-  document.addEventListener("mouseover",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(!t)return;tipMX=e.clientX;clearTimeout(tipTimer);tipTimer=setTimeout(function(){showTip(t);},300);});
-  document.addEventListener("mouseout",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t)hideTip();});
-  document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");if(t){tipMX=null;showTip(t);}});
+  document.addEventListener("mouseover",function(e){var t=e.target.closest&&e.target.closest("[data-tip],[data-tipcard]");if(!t)return;tipMX=e.clientX;clearTimeout(tipTimer);tipTimer=setTimeout(function(){showTip(t);},300);});
+  document.addEventListener("mouseout",function(e){var t=e.target.closest&&e.target.closest("[data-tip],[data-tipcard]");if(t)hideTip();});
+  document.addEventListener("focusin",function(e){var t=e.target.closest&&e.target.closest("[data-tip],[data-tipcard]");if(t){tipMX=null;showTip(t);}});
   document.addEventListener("focusout",hideTip);
   /* Rich hover/focus card for the Gifts progress bars , same designed card as the Bank spark
      tooltip (header + label/value rows + divider + emphasised pace row). */
