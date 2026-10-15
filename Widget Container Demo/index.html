@@ -4013,7 +4013,7 @@
   var DEP_TYPES=["Checking","Savings","Money Market","Certificate of Deposit","Escrow","Restricted Funds","Endowment","Trust Accounts","Operating Reserve","Payroll Clearing","Grant Funds","Building Fund"];
   var DEP=(function(){var out=[],seed=42;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
     var big={"Restricted Funds":16,"Grant Funds":9,"Trust Accounts":7};
-    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Facilities","Worship","Children","Fellowship"];
+    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Buildings & Grounds","Worship","Children","Fellowship"];
     var inc=["Jan 2012","Jun 2014","Mar 2016","Aug 2018","Feb 2020","Nov 2022"],trs=["up","up","flat","down"];
     DEP_TYPES.forEach(function(t){var c=big[t]||(2+Math.floor(r()*3));for(var i=0;i<c;i++){var s4=1000+Math.floor(r()*8999);out.push({name:(suf[i%suf.length]+(i>=suf.length?" "+(Math.floor(i/suf.length)+1):"")),type:t,incept:inc[Math.floor(r()*6)],acct:"••"+s4,acctFull:"004417"+s4,net:Math.round(25000+r()*1650000),trend:trs[Math.floor(r()*4)]});}});
     /* Deliberate test cases: real-world duplicate account names (Shelby doesn't enforce name uniqueness — two different accounts can be created with the same exact name) and a long account name to exercise truncation. acctFull is the complete, unmasked account number — shown only in the tooltip, never in the row itself. */
@@ -4025,7 +4025,7 @@
   /* large dataset for the edge-case instance: ~120 accounts across ~20 types, some types with 20–33 accounts */
   var DEP_BIG=(function(){var out=[],seed=99;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
     var types=DEP_TYPES.concat(["Sweep Account","Lockbox","Investment Pool","Foundation Fund","Scholarship Fund","Cemetery Trust","Debt Service","Capital Reserve"]);
-    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Facilities","Worship"];
+    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Buildings & Grounds","Worship"];
     types.forEach(function(t,ti){var c=(ti%5===0)?(20+Math.floor(r()*14)):(3+Math.floor(r()*6));for(var i=0;i<c;i++){var s4=1000+Math.floor(r()*8999);out.push({name:(suf[i%suf.length]+(i>=suf.length?" "+(Math.floor(i/suf.length)+1):"")),type:t,incept:["Jan 2012","Jun 2014","Mar 2016","Aug 2018","Feb 2020","Nov 2022"][Math.floor(r()*6)],acct:"••"+s4,acctFull:"004417"+s4,net:Math.round(12000+Math.pow(r(),2.6)*2100000),trend:["up","up","flat","down"][Math.floor(r()*4)]});}});
     /* Same deliberate test cases as DEP: duplicate names and a too-long name, so the edge-case (120-account) instance also exercises both. */
     out.push({name:"General",type:"Checking",incept:"May 2019",acct:"••7734",acctFull:"0044177734",net:412500,trend:"up"});
@@ -4079,7 +4079,7 @@
     {id:"q_prnext",area:"PUR",urgency:"action", name:"Purchasing requests needing my approval next",sys:"Purchasing Requests Needing My Approval Next", count:2, click:"nav", navTo:"Purchasing, Upcoming Approvals"},
     {id:"q_revnow",area:"HR", urgency:"action", name:"Employees needing review now",           sys:"Employees Needing Review Now",                    count:2, click:"detail", records:[
         {Employee:"Dana Whitfield", Role:"Ministry Assistant", "Review due":"20 Jul 2026"},
-        {Employee:"Marcus Lee",     Role:"Facilities",         "Review due":"22 Jul 2026"}]},
+        {Employee:"Marcus Lee",     Role:"Buildings & Grounds",         "Review due":"22 Jul 2026"}]},
     {id:"q_revmo", area:"HR", urgency:"info",   name:"Employees needing review within next month", sys:"Employees Needing Review Within Next Month",   count:5, click:"detail", records:[
         {Employee:"Priya Nair", Role:"Accounting Clerk", "Review due":"09 Aug 2026"}]},
     {id:"q_clock", area:"HR", urgency:"info",   name:"Active employee time clock info",        sys:"Active Employee Time Clock Info",                 count:9, click:"detail", records:[
@@ -7814,7 +7814,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     {id:"worship", name:"Worship & Music"},
     {id:"youth",   name:"Youth Ministry"},
     {id:"children",name:"Children's Ministry"},
-    {id:"facilities",name:"Facilities"},
+    {id:"facilities",name:"Buildings & Grounds"},
     {id:"office",  name:"Office & Reception"},
     {id:"missions",name:"Missions & Outreach"}
   ];
@@ -7958,7 +7958,7 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     {id:"worship", name:"Worship & Music"},
     {id:"youth",   name:"Youth Ministry"},
     {id:"children",name:"Children's Ministry"},
-    {id:"facilities",name:"Facilities"},
+    {id:"facilities",name:"Buildings & Grounds"},
     {id:"office",  name:"Office & Reception"},
     {id:"missions",name:"Missions & Outreach"}
   ];
@@ -8724,7 +8724,7 @@ var PUR_PERIODS=["Apr","May","Jun","Jul","Aug","Sep"];
    budget/committed are SYNTHETIC (no data-layer link yet) purely to demonstrate the
    at-a-glance "does this fit the remaining budget?" check. See the data-dependency annex. */
 var PUR_PATH_META={
-  "Facilities and maintenance":{req:"Marcus Reed",dept:"Facilities",cat:"Facilities supplies",budget:18000,committed:12800},
+  "Facilities and maintenance":{req:"Marcus Reed",dept:"Buildings & Grounds",cat:"Buildings & grounds supplies",budget:18000,committed:12800},
   "Technology and media":{req:"Dana Kim",dept:"Technology & media",cat:"Technology",budget:26000,committed:14200},
   "Missions and outreach":{req:"Priya Anand",dept:"Missions & outreach",cat:"Outreach materials",budget:9000,committed:6100},
   "General operating":{req:"Sam Ortiz",dept:"General operating",cat:"Operating supplies",budget:15000,committed:9400},
@@ -10039,7 +10039,7 @@ document.addEventListener("input",function(e){if(!e.target||e.target.id!=="arFwl
         {id:"r12",date:"2026-07-29",day:"Wed",type:"pers",hrs:8,status:"pending"}
       ]}
     ]},
-    {id:"d-fac",name:"Facilities",emps:[
+    {id:"d-fac",name:"Buildings & Grounds",emps:[
       {id:"e-sam",name:"Sam Ortiz",recs:[
         {id:"r7",date:"2026-07-31",day:"Fri",type:"misc",hrs:8,status:"pending"},
         {id:"r8",date:"2026-09-01",day:"Tue",type:"vac", hrs:8,status:"pending"}
@@ -12198,7 +12198,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   var DEPF_TARGET_TOTAL=106726837;
   var DEPF_DEP=(function(){var out=[],seed=7;function r(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
     var groups=[{t:"Checking",n:14},{t:"Savings",n:16},{t:"Money Market",n:10},{t:"Certificate of Deposit",n:12},{t:"Restricted Funds",n:22},{t:"Endowment",n:9},{t:"Trust Accounts",n:11},{t:"Grant Funds",n:13},{t:"Operating Reserve",n:8},{t:"Escrow",n:7}]; // 122 generated + 3 edge-case rows = 125
-    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Facilities","Worship","Children","Fellowship","Building","Scholarship","Cemetery","Music","Media","Camp","Housing","Senior"];
+    var suf=["General","Youth","Missions","Benevolence","Capital","Memorial","Legacy","Outreach","Buildings & Grounds","Worship","Children","Fellowship","Building","Scholarship","Cemetery","Music","Media","Camp","Housing","Senior"];
     var inc=["Jan 2011","Jun 2013","Mar 2015","Aug 2017","Feb 2019","Nov 2021","Apr 2023"],trs=["up","up","flat","down"];
     groups.forEach(function(g){for(var i=0;i<g.n;i++){var s4=1000+Math.floor(r()*8999);out.push({name:suf[i%suf.length]+(i>=suf.length?" "+(Math.floor(i/suf.length)+1):""),type:g.t,incept:inc[Math.floor(r()*inc.length)],acct:"••"+s4,acctFull:"004417"+s4,net:Math.round(30000+Math.pow(r(),1.9)*2100000),trend:trs[Math.floor(r()*4)]});}});
     /* Deliberate real-world edge cases (Shelby does not enforce name uniqueness, and names can be long): two accounts sharing a name differing only by account number, plus one very long name to exercise truncation. */
