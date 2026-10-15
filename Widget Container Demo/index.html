@@ -11219,9 +11219,9 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
         '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Net value</span><span class="metric-value">'+money(nbv)+'</span></span>'+
         badge({status:"neutral",icon:"inventory_2",text:n+(n===1?" asset":" assets")})+
       '</div>';}
-    /* Filters row 1; Net value KPI + the Table/Chart toggle share row 2, toggle far right (not on filters). */
-    return '<div class="dep-hd fa-hd hd-kpitoggle"><div class="dep-hd-top">'+faControls(w)+'</div>'+
-      '<div class="dep-hd-num"><div class="fa-numwrap">'+numInner+'</div><div class="dep-hd-toggle">'+faViewToggle(w)+'</div></div></div>';}
+    /* Data-view toggle (Table/Chart) on the FILTERS row with the controls; Net value KPI owns row 2. */
+    return '<div class="dep-hd fa-hd hd-kpitoggle"><div class="dep-hd-top">'+faControls(w)+'<div class="dep-hd-toggle">'+faViewToggle(w)+'</div></div>'+
+      '<div class="dep-hd-num"><div class="fa-numwrap">'+numInner+'</div></div></div>';}
   function faTable(w){var list=faRows(w);
     if(!list.length)return '<div class="fa-tbl"><div class="state fa-inline-empty" data-kind="empty">'+ICON("inbox")+'<div class="state-title">No assets in this group</div><div class="state-sub">Nothing is assigned to '+faGroupLabel(w)+' yet.</div></div></div>';
     var PER=50,shown=Math.min(Math.max(PER,w.faShown||PER),list.length);w.faShown=shown;var rem=list.length-shown,view=list.slice(0,shown);
