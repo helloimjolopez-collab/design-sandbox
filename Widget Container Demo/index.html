@@ -8447,14 +8447,27 @@ function mysStatusBadge(cat){
   if(cat==="clear")return badge({status:"positive",size:"small",icon:"check_circle",text:"Up to date"});
   return badge({status:"attention",size:"small",icon:"error",text:"Needs action"});
 }
-function mysRowHTML(w,q,cat){
+/* Area/module tag (GL, Accounts Payable, Purchasing, Payroll and HR). The item's module is the
+   meaningful per-row dimension (it tells you WHERE to act); the status is already carried by the
+   selected filter tile, so a per-row status badge would just repeat it. Uses the one neutral tag. */
+function mysAreaTag(q){return '<span class="type-badge"><span class="tb-nm">'+MYS_AREA[q.area]+'</span></span>';}
+function mysRowHTML(w,q,cat,showArea){
   cat=cat||(q.count<=0?"clear":"action");
   var zero=q.count<=0, clickable=!zero;
   var aff=(!zero&&q.click==="nav")?'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens '+q.navTo+' (leaves the dashboard)" data-tip-plain>arrow_outward</span>':'';
   var srClick=clickable?(q.click==="nav"?", opens "+q.navTo:", opens the list"):", nothing to do";
   var countInner=(cat==="clear")?ICON("check"):q.count;
-  var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+q.count+srClick+'"':' aria-disabled="true"';
-  return '<div class="wt-row mys-trow mys-row-'+cat+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'><span class="lr-main mys-nm">'+q.name+aff+'</span><span class="mys-c-status">'+mysStatusBadge(cat)+'</span><span class="wt-c2 mys-count mys-count-'+cat+(zero?" mys-count-zero":"")+'">'+countInner+'<span class="sr-only">'+srClick+'</span></span></div>';
+  var areaCol=(showArea!==false)?('<span class="mys-c-area">'+mysAreaTag(q)+'</span>'):'';
+  var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+MYS_AREA[q.area]+', '+q.count+srClick+'"':' aria-disabled="true"';
+  return '<div class="wt-row mys-trow mys-row-'+cat+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'><span class="lr-main mys-nm">'+q.name+aff+'</span>'+areaCol+'<span class="wt-c2 mys-count mys-count-'+cat+(zero?" mys-count-zero":"")+'">'+countInner+'<span class="sr-only">'+srClick+'</span></span></div>';
+}
+/* Explore groups the items by module so the breakdown reads as structure, not a longer flat list. */
+function mysGrouped(w,rows){
+  var order=["GL","AP","PUR","HR"],byArea={};
+  rows.forEach(function(q){(byArea[q.area]=byArea[q.area]||[]).push(q);});
+  return order.filter(function(a){return byArea[a]&&byArea[a].length;}).map(function(a){
+    return '<div class="mys-grp"><div class="mys-grp-h">'+MYS_AREA[a]+'</div>'+byArea[a].map(function(q){return mysRowHTML(w,q,mysTileOf(w),false);}).join("")+'</div>';
+  }).join("");
 }
 /* Glance: the same three tiles, compact. Tapping one sets the filter that carries into the larger size. */
 function mysGlance(w){
