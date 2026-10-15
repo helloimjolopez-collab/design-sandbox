@@ -8491,20 +8491,19 @@ function mysContent(w){
   var cur=mysTileOf(w);
   var rows=cur==="info"?mysInfoItems(sel):cur==="clear"?mysClearList(sel):mysActionItems(sel);
   var explore=(w.size==="xwide");
-  var body;
+  var body,grouped=false;
   if(!rows.length){
     body='<div class="mys-caughtup">'+ICON(cur==="action"?"task_alt":cur==="info"?"inbox":"check_circle")+'<span>'+(cur==="action"?"Nothing needs action right now.":cur==="info"?"Nothing to note right now.":"Nothing is up to date yet.")+'</span></div>';
-  }else if(explore){
-    body=mysGrouped(w,rows);
   }else{
-    var head='<div class="wt-row wt-head mys-trow"><span class="lr-main">Item</span><span class="mys-c-area">Area</span><span class="wt-c2">Count</span></div>';
-    body=head+rows.map(function(q){return mysRowHTML(w,q,cur,true);}).join("");
+    /* Brief Part C: the body is a grouped, prioritised list (group by area). Detail groups in a
+       single column; Explore spreads the groups across two columns. */
+    body=mysGrouped(w,rows);grouped=true;
   }
   /* Canonical status-widget structure (matches PTO): controls in the .dep-hd header toolbar,
      the three filter tiles in their own .pto-cards-row, then the list. Configure is NOT inline
      with the tiles. */
   var hd='<div class="dep-hd mys-hd"><div class="dep-hd-top"><div class="dep-hd-toggle">'+mysConfigBtn(w)+'</div></div></div>';
-  return hd+'<div class="pto-cards-row">'+mysKpiTiles(w,sel)+'</div><div class="scroll mys-list'+(explore&&rows.length?' mys-list-grouped':'')+'">'+body+'</div>';
+  return hd+'<div class="pto-cards-row">'+mysKpiTiles(w,sel)+'</div><div class="scroll mys-list'+(grouped?' mys-list-grouped':'')+(grouped&&explore?' mys-list-2col':'')+'">'+body+'</div>';
 }
 
 /* Inner content only (patched in place so the dialog never re-animates / loses focus). */
