@@ -11520,7 +11520,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
   function widgetHTML(w){
     /* On Glance, a "View details" hint that surfaces when you hover the KPI content, opening the fuller
        Detail view in an overlay — so drilling in never requires resizing the widget. */
-    var drillHint=(!manage&&fitSize(w)==="kpi"&&w.tiers&&w.tiers.indexOf("wide")>-1)?'<button class="glance-hint" data-action="glance-drill" data-id="'+w.id+'" aria-label="View more details">'+ICON("open_in_full")+'View details</button>':'';
+    var drillHint='';/* "View details" glance hover-hint removed (Jo): glances don't carry it. */
     return '<section class="widget" data-id="'+w.id+'" data-size="'+fitSize(w)+'" data-manage="'+manage+'" data-dragging="'+(dragId===w.id)+'"'+(manage?' draggable="true"':'')+'>'+
       '<div class="whead"><span class="wdrag">'+ICON("drag_indicator")+'</span>'+titleHTML(w)+(manage?'':hoverIconsHTML(w))+'<span class="wspace"></span><div class="wactions">'+actionsHTML(w)+'</div></div><div class="wcontent">'+contentHTML(w)+drillHint+'</div></section>';
   }
