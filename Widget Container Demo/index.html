@@ -8494,7 +8494,11 @@ function mysContent(w){
     var head='<div class="wt-row wt-head mys-trow"><span class="lr-main">Item</span><span class="mys-c-area">Area</span><span class="wt-c2">Count</span></div>';
     body=head+rows.map(function(q){return mysRowHTML(w,q,cur,true);}).join("");
   }
-  return '<div class="mys-tophd">'+mysKpiTiles(w,sel)+mysConfigBtn(w)+'</div><div class="scroll mys-list'+(explore&&rows.length?' mys-list-grouped':'')+'">'+body+'</div>';
+  /* Canonical status-widget structure (matches PTO): controls in the .dep-hd header toolbar,
+     the three filter tiles in their own .pto-cards-row, then the list. Configure is NOT inline
+     with the tiles. */
+  var hd='<div class="dep-hd mys-hd"><div class="dep-hd-top"><div class="dep-hd-toggle">'+mysConfigBtn(w)+'</div></div></div>';
+  return hd+'<div class="pto-cards-row">'+mysKpiTiles(w,sel)+'</div><div class="scroll mys-list'+(explore&&rows.length?' mys-list-grouped':'')+'">'+body+'</div>';
 }
 
 /* Inner content only (patched in place so the dialog never re-animates / loses focus). */
