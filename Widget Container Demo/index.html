@@ -8203,9 +8203,9 @@ function codeCopy(txt,full){var v=(full!=null?full:txt),esc=String(v).replace(/"
     var tg=hideToggle?"":'<div class="dep-hd-toggle">'+prFToggle(w)+'</div>';
     /* Data-view toggle (Table/Chart) on the FILTERS row with the period + scope chips; KPI owns row 2. */
     var top='<div class="dep-hd-top"><div class="pr-tools">'+prFPeriodChip(w)+prFScopeChip(w)+'</div>'+tg+'</div>';
-    if(noTotal)return '<div class="dep-hd prF-hd">'+top+'</div>';
+    if(noTotal)return '<div class="dep-hd prF-hd hd-kpitoggle">'+top+'</div>';
     var rows=prFTableRows(w),tot=rows.reduce(function(s,a){return s+a.net;},0);
-    return '<div class="dep-hd prF-hd">'+top+'<div class="dep-hd-num prF-hd-num"><span class="metric-value">'+money(tot)+'</span></div></div>';}
+    return '<div class="dep-hd prF-hd hd-kpitoggle">'+top+'<div class="dep-hd-num prF-hd-num"><span class="metric-value">'+money(tot)+'</span></div></div>';}
   function prFContent(w){
     if(w.state==="empty"){var ec=EMPTY_COPY.payroll,body='<div class="state" data-kind="empty">'+ICON("inbox")+'<div class="state-title">'+ec.title+'</div><div class="state-sub">'+ec.sub+'</div>'+(ec.cta?'<button class="btn outlined" data-action="'+ec.action+'" data-id="'+w.id+'">'+ICON("add")+ec.cta+'</button>':'')+'</div>';
       return prFHeaderBlock(w,(w.size==="xwide"||w.size==="kpi"),true)+body;}
@@ -11072,7 +11072,7 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
         badge({status:"neutral",icon:"groups",text:n+' plan'+(n===1?"":"s")})+'</span></span></div>';
     }
     /* Data-view toggle (Table/Pie) on the FILTERS row with the type chip; Enrolled KPI owns row 2. */
-    return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insFTypeChip(w)+'<div class="dep-hd-toggle">'+insFViewToggle(w)+'</div></div>'+
+    return '<div class="dep-hd ins-hd hd-kpitoggle"><div class="dep-hd-top">'+insFTypeChip(w)+'<div class="dep-hd-toggle">'+insFViewToggle(w)+'</div></div>'+
       '<div class="dep-hd-num">'+numInner+'</div></div>';
   }
   function insFGlance(w){
