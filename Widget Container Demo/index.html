@@ -11552,14 +11552,13 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     return '<span class="dash-headrow"><span class="dash-select"><span class="dash-name" data-action="dash-rename-inline" title="Click to rename">'+d.name+'</span><button class="dash-caret" data-action="switcher" aria-haspopup="menu" aria-expanded="'+open+'" aria-label="Switch dashboard">'+ICON("expand_more")+'</button></span><button class="iconbtn tb-ic tb-edit-dash" data-action="manage" data-tip="Edit dashboard" data-tip-plain aria-label="Edit dashboard">'+ICON("tune")+'</button></span>';}
   function tbRightHTML(){
     if(manage){
-      /* Managing: edits autosave; Save as new dashboard (primary outlined), Delete this dashboard
-         (destructive naked, only when this dashboard can be deleted), Add widget, and Done (primary fill). */
-      var addB='<button class="btn tertiary sm" data-action="add-widget">'+ICON("add")+'Add widget</button>';
-      var saveNew='<button class="btn outlined sm" data-action="save-new">'+ICON("content_copy")+'Save as new dashboard</button>';
-      var del=(!isSystem())?'<button class="btn naked sm tb-del" data-danger data-action="delete-dash">'+ICON("delete")+'Delete this dashboard</button>':'';
-      var autosave='<span class="tb-autosave" title="Changes save automatically">'+ICON("cloud_done")+'All changes saved</span>';
-      var done='<button class="btn primary sm" data-action="done-manage">Done</button>';
-      return '<div class="tb-manage">'+addB+saveNew+del+autosave+done+'</div>';
+      /* Managing, left to right: Delete this dashboard (destructive, negative tokens, only when deletable),
+         Add widget (secondary outlined), Save as new dashboard (tertiary fill), Save changes (primary fill). */
+      var del=(!isSystem())?'<button class="btn naked tb-del" data-danger data-action="delete-dash">'+ICON("delete")+'Delete this dashboard</button>':'';
+      var addB='<button class="btn outlined" data-action="add-widget">'+ICON("add")+'Add widget</button>';
+      var saveNew='<button class="btn tertiary-fill" data-action="save-new">'+ICON("content_copy")+'Save as new dashboard</button>';
+      var saveChanges='<button class="btn primary" data-action="done-manage">'+ICON("check")+'Save changes</button>';
+      return '<div class="tb-manage">'+del+addB+saveNew+saveChanges+'</div>';
     }
     /* Dashboard-actions slot, left to right: Search (secondary outlined icon), Refresh (secondary naked
        icon), then Add widget LAST on the far right as a primary icon+label button. Search opens the search
