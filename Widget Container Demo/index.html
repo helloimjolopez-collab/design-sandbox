@@ -10974,8 +10974,8 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
       insFShareCell(p.enroll,gEnroll)+
       '<span class="wt-c2">'+insFNum(p.enroll)+(zero?' <span class="ins-zero-tag">none</span>':'')+'</span></div>';
   }
-  function insFTotalRow(totEnroll,totCost){
-    return '<div class="ins-total-detail"><span class="ins-total-lead">Total (all types)</span><span class="ins-total-en">'+insFNum(totEnroll)+'</span><span class="ins-total-cost">'+insFMoney(totCost)+'</span></div>';
+  function insFTotalRow(totEnroll){
+    return '<div class="ins-total-detail"><span class="ins-total-lead">Total (all types)</span><span class="ins-total-en">'+insFNum(totEnroll)+'</span></div>';
   }
   /* Expandable Type -> Plan nested table (Explore AND Detail). Type rows are
      role="button" parents carrying enrolled + cost subtotals; collapsed by
@@ -10996,12 +10996,11 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     function sortIn(arr){return arr.slice().sort(function(a,b){if((a.enroll===0)!==(b.enroll===0))return a.enroll===0?1:-1;if(key==="plan")return dir*a.plan.localeCompare(b.plan);return dir*(planVal(a)-planVal(b));});}
     var exp=w.insExpanded||{},html="";
     order.forEach(function(ty){
-      var list=groups[ty],se=subEnroll(ty),sc=subCost(ty),open=!!exp[ty],gid=insFTypeGroupId(w,ty);
-      html+='<div class="wt-row ins-row ins-grp ins-typerow'+(open?" ins-open":"")+'" role="button" tabindex="0" data-action="insF-toggle-type" data-id="'+w.id+'" data-ty="'+insFEsc(ty)+'" aria-expanded="'+(open?"true":"false")+'" aria-controls="'+gid+'" aria-label="'+insFEsc(ty+", "+se+" enrolled, cost "+insFMoney(sc)+", "+(open?"expanded":"collapsed")+". Activate to "+(open?"collapse":"expand")+" its plans.")+'">'+
+      var list=groups[ty],se=subEnroll(ty),open=!!exp[ty],gid=insFTypeGroupId(w,ty);
+      html+='<div class="wt-row ins-row ins-grp ins-typerow'+(open?" ins-open":"")+'" role="button" tabindex="0" data-action="insF-toggle-type" data-id="'+w.id+'" data-ty="'+insFEsc(ty)+'" aria-expanded="'+(open?"true":"false")+'" aria-controls="'+gid+'" aria-label="'+insFEsc(ty+", "+se+" enrolled, "+(open?"expanded":"collapsed")+". Activate to "+(open?"collapse":"expand")+" its plans.")+'">'+
         '<span class="lr-main ins-grp-nm"><span class="ins-caret material-symbols-rounded" aria-hidden="true">'+(open?"expand_more":"chevron_right")+'</span>'+ty+' <span class="ins-grp-ct">'+list.length+' plan'+(list.length===1?"":"s")+'</span></span>'+
         insFShareCell(se,gEnroll)+
-        '<span class="wt-c2">'+insFNum(se)+'</span>'+
-        '<span class="ins-cost">'+insFMoney(sc)+'</span></div>';
+        '<span class="wt-c2">'+insFNum(se)+'</span></div>';
       html+='<div class="ins-grp-body" id="'+gid+'" role="group" aria-label="'+insFEsc(ty+" plans")+'">'+
         (open?sortIn(list).map(function(p){return insFPlanRow(p,gEnroll);}).join(""):"")+
         '</div>';
