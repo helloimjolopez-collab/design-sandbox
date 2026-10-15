@@ -10689,10 +10689,30 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     });
     return out+'</div>';
   }
+  /* Brief Part C ("Now"): a date-ordered cash-outflow read, overdue emphasised, that doubles as the
+     filter (clicking a date selects it) , fixing the production pie that ignored the filter. Bars are
+     the amethyst chart palette; overdue bars take the negative tone so what is late stands out. Bounded
+     to the nearest dates so it fits beside the table without clipping. */
+  function apCashChart(w){
+    var dates=apByDate(w); if(!dates.length) return '';
+    var over=dates.filter(function(d){return d.overdue;});
+    var up=dates.filter(function(d){return !d.overdue;});
+    var rows=over.concat(up).slice(0,6);
+    var max=Math.max.apply(null,rows.map(function(d){return d.total;}))||1;
+    var sel=apSel(w);
+    return '<div class="ap-cash-chart" role="group" aria-label="Cash due by date, select to filter">'+rows.map(function(d){
+      var pct=Math.max(4,Math.round(d.total/max*100)),on=(sel===d.iso);
+      return '<button class="ap-cash-row'+(d.overdue?" over":"")+(on?" sel":"")+'" data-action="ap-pick-date" data-iso="'+d.iso+'" data-id="'+w.id+'" aria-pressed="'+on+'" aria-label="'+apEsc(apFmtLong(d.iso)+', '+apMoney(d.total)+', '+d.count+' invoice'+(d.count===1?'':'s')+(d.overdue?', overdue':''))+'">'+
+        '<span class="ap-cash-date">'+apFmtLong(d.iso)+(d.overdue?' <span class="ap-cash-od">overdue</span>':'')+'</span>'+
+        '<span class="ap-cash-track"><span class="ap-cash-fill" style="width:'+pct+'%"></span></span>'+
+        '<span class="ap-cash-amt">'+apMoney(d.total)+'</span>'+
+      '</button>';
+    }).join("")+'</div>';
+  }
   function apFull(w){
     return '<div class="dep-full">'+
       '<div class="dep-col"><div class="dep-col-h">Outstanding invoices</div>'+apTable(w)+'</div>'+
-      '<div class="dep-col ap-col-cash"><div class="dep-col-h">Top vendors owed</div>'+apPanel(w)+'</div>'+
+      '<div class="dep-col ap-col-cash"><div class="dep-col-h">Cash due by date</div>'+apCashChart(w)+'<div class="dep-col-h ap-col-h2">Top vendors owed</div>'+apPanel(w)+'</div>'+
       '</div>';}
 
   /* ---- Glance ------------------------------------------------------- */
