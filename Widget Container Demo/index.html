@@ -1151,6 +1151,17 @@
   .dd-search{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--stroke-widget);margin:-6px -6px 4px;}
   /* Toolbar widget finder — styled as a search-select field, not a naked button */
   /* Toolbar "Find a widget" — a real combobox search field (type directly; results drop down beneath). */
+  /* Toolbar action icons (far right): Search / Add / Refresh / Edit dashboard. Figma action-icon size. */
+  .tb-actions{display:inline-flex;align-items:center;gap:2px;}
+  .tb-manage{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+  .tb-ic{width:36px;height:36px;color:var(--semantic-color-foreground-action-secondary-rest);}
+  .tb-ic .material-symbols-rounded{font-size:var(--semantic-type-font-size-l);}
+  .tb-ic:hover{background:var(--semantic-color-fill-action-secondary-hover);color:var(--semantic-color-foreground-action-secondary-hover);}
+  .tb-ic.on{background:var(--semantic-color-fill-action-secondary-pressed);color:var(--semantic-color-foreground-action-secondary-pressed);}
+  .tb-ic:focus-visible{outline:none;box-shadow:0 0 0 2px var(--brand-10);border:1px solid var(--brand-100);}
+  .tb-del{color:var(--semantic-color-foreground-static-negative-on-subtle);}
+  .tb-del:hover{background:var(--semantic-color-fill-static-negative-subtle);}
+  .wfind-ddsearch{min-width:248px;}
   .wfind-box{display:flex;align-items:center;gap:6px;min-width:236px;border:1px solid var(--stroke-widget);background:var(--surface-widget);border-radius:8px;padding:6px 8px 6px 10px;min-height:34px;box-sizing:border-box;transition:border-color var(--dur),box-shadow var(--dur);}
   .wfind-box:hover{border-color:var(--cn-40);}
   .wfind-box.on,.wfind-box:focus-within{border-color:var(--brand-100);box-shadow:0 0 0 3px var(--brand-10);}
@@ -11868,7 +11879,7 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="save"){if(isSystem()){pop={type:"save"};setStatus("System dashboard can’t be overwritten. Choose “Save as new”.");render();}else{manage=false;pop=null;setStatus("Saved. Updated “"+cur().name+"”.");render();}return;}
     if(a==="savemenu"){pop=(pop&&pop.type==="save")?null:{type:"save"};render();return;}
     if(a==="save-update"){manage=false;pop=null;setStatus("Saved. Updated “"+cur().name+"”.");render();return;}
-    if(a==="save-new"){addCount++;var ndc={id:"nd"+Date.now(),name:cur().name+" (copy)",custom:true,widgets:cur().widgets.map(function(w){return Object.assign({},w);})};dashboards.push(ndc);currentId=ndc.id;manage=true;focusDash=true;pop=null;setStatus("Saved as a new dashboard. Rename it here.");render();return;}
+    if(a==="save-new"){addCount++;var base=cur().name.replace(/ \(\d+\)$/,""),cnum=1;while(dashboards.some(function(d){return d.name===base+" ("+cnum+")";}))cnum++;var ndc={id:"nd"+Date.now(),name:base+" ("+cnum+")",custom:true,widgets:cur().widgets.map(function(w){return Object.assign({},w);})};dashboards.push(ndc);currentId=ndc.id;manage=true;focusDash=true;pop=null;setStatus("Saved as a new dashboard. Rename it here.");render();return;}
     if(a==="reset"){setStatus("Reset. Reverted to the last saved version.");pop=null;render();return;}
     if(a==="switcher"){pop=(pop&&pop.type==="switcher")?null:{type:"switcher"};render();return;}
     if(a==="select-dash"){currentId=t.getAttribute("data-did");manage=false;pop=null;setStatus("Switched to “"+cur().name+"”.");render();return;}
