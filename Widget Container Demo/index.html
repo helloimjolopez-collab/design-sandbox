@@ -11868,9 +11868,35 @@ function faPie(w,size){var rows=faPieData(w),tot=rows.reduce(function(s,r){retur
     if(a==="done-manage"){manage=false;pop=null;setStatus("Saved changes to “"+cur().name+"”.");render();return;}
     if(a==="wmenu"){pop=(pop&&pop.type==="wmenu"&&pop.id===id)?null:{type:"wmenu",id:id};render();return;}
     if(a==="expmenu"){pop=(pop&&pop.type==="expmenu"&&pop.id===id)?null:{type:"expmenu",id:id};render();return;}
-    if(a==="export-do"){var wex=find(id),fmt=t.getAttribute("data-fmt"),nm=wex?wex.title:"this view";
-      var msg={email:"Email the current view of <b>"+nm+"</b> (as a PDF attachment).",print:"Send the current view of <b>"+nm+"</b> to the printer."}[fmt]||("Download the current view of <b>"+nm+"</b> as <b>"+fmt+"</b>.");
-      showModal("Share this view",msg);return;}
+    if(a==="export-do"){var wex=find(id),fmt=t.getAttribute("data-fmt"),nm=wex?wex.title:"this widget";
+      /* This dialog is an IMPLEMENTATION SPEC for a developer/PM, not customer-facing UI: it states exactly
+         what the chosen export produces for THIS widget in its current state, read from the live view. */
+      var el=document.querySelector('.widget[data-id="'+id+'"]');
+      var cols=el?[...el.querySelectorAll('.wt-head > span, .wt-head .wt-sort')].map(function(c){return c.textContent.replace(/(unfold_more|arrow_upward|arrow_downward)/g,"").replace(/\s+/g," ").trim();}).filter(function(x){return x;}):[];
+      cols=cols.filter(function(v,i){return cols.indexOf(v)===i;});
+      var nrows=el?el.querySelectorAll('.wt-row:not(.wt-head)').length:0;
+      var isList=widgetIsList(wex);
+      var colLine=cols.length?('Columns, in display order: <b>'+cols.join(" · ")+'</b>.'):'';
+      var scope='Reflects the active filters and sort exactly as shown now.';
+      var body;
+      if(fmt==="Excel"||fmt==="CSV"){
+        body='<p><b>Developer note, not customer-facing.</b> Defines the '+fmt+' export of "'+nm+'".</p>'+
+          '<p>'+(fmt==="CSV"?"A single CSV file, UTF-8, comma-separated.":"A single worksheet.")+' One row per list item ('+nrows+' row'+(nrows===1?"":"s")+' at present), a header row first'+(isList?', a totals row last':'')+'. '+colLine+'</p>'+
+          '<p>Amounts are numeric (no currency symbol or thousands separators) so they stay sortable; dates ISO 8601 (YYYY-MM-DD); status/flag columns carry the label text, not the colour. '+scope+'</p>';
+      } else if(fmt==="PDF"){
+        body='<p><b>Developer note, not customer-facing.</b> Defines the PDF export of "'+nm+'".</p>'+
+          (isList
+            ?('<p>A paginated PDF of the table as shown: the same columns in the same order, the header row repeated on each page, a totals row at the end, and a one-line filter/sort summary in the page header. '+colLine+' '+scope+'</p>')
+            :('<p>A single-page PDF snapshot of the widget exactly as displayed (heading, KPI number, chart and badges) at its current size. '+scope+'</p>'));
+      } else if(fmt==="PNG"){
+        body='<p><b>Developer note, not customer-facing.</b> Defines the PNG export of "'+nm+'".</p>'+
+          '<p>A raster image of the widget exactly as displayed at its current size (2x pixel density), transparent padding trimmed. '+scope+'</p>';
+      } else if(fmt==="print"){
+        body='<p><b>Developer note, not customer-facing.</b></p><p>Opens the browser print dialog with a print stylesheet of the '+(isList?'list (same columns, header repeated per page, totals row last)':'view')+'. '+scope+'</p>';
+      } else { /* email */
+        body='<p><b>Developer note, not customer-facing.</b></p><p>Opens the user’s mail client with the '+(isList?'list':'view')+' attached as a PDF (same contents as the PDF export) and a prefilled subject of "'+nm+'". '+scope+'</p>';
+      }
+      showModal("Export spec: "+nm+" ("+fmt+")",body);return;}
     if(a==="wsize"){pop=(pop&&pop.type==="size"&&pop.id===id)?null:{type:"size",id:id};render();return;}
     if(a==="pick-size"){var w=find(id);if(!w){pop=null;render();return;}var arr=cur().widgets;
       /* Keep the resized widget ANCHORED in place: measure its row before the change, and if growing it
