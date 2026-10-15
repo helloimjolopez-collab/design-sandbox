@@ -4090,6 +4090,9 @@
   function depData(w){var co=w&&w.company;if(co==="Grace Community Foundation")return DEP_BIG;return (w&&w.dataset==="big")?DEP_BIG:DEP;}
   function depTypes(w){var seen={},out=["All types"];depData(w).forEach(function(a){if(!seen[a.type]){seen[a.type]=1;out.push(a.type);}});return out;}
   function money(n){return "$"+n.toLocaleString();}
+  /* Encode a structured tooltip-card spec {t,r:[[lbl,val],..],foot:{l,v,tone}} for a
+     data-tipcard attribute; showTip() renders it as a designed card, not a paragraph. */
+  function tipCard(o){return encodeURIComponent(JSON.stringify(o)).replace(/'/g,"%27");}
   /* Large-number abbreviation for KPI headlines so the 32px token value fits the glance.
      Only kicks in past 5 figures (>= 100,000): 405098 -> $405.09K, 4000000 -> $4M,
      106726837 -> $106.73M. Keeps a sign, trims trailing .0/.00. Full value stays in the
