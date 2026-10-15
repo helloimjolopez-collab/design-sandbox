@@ -8345,49 +8345,44 @@ function mysConfigBtn(w){return '<button class="btn outlined sm mys-cfg-btn" dat
 function mysActionItems(sel){return sel.filter(function(q){return q.urgency==="action"&&q.count>0;}).slice().sort(function(a,b){return b.count-a.count;});}
 function mysInfoItems(sel){return sel.filter(function(q){return q.urgency==="info"&&q.count>0;}).slice().sort(function(a,b){return b.count-a.count;});}
 function mysClearList(sel){return sel.filter(function(q){return q.count<=0;});}
-function mysHeaderBlock(w,sel){
-  var n=mysActionItems(sel).length;
-  var status=n
-    ?'<span class="metric-value">'+n+'</span><span class="mys-hlabel">'+(n===1?"item needs action":"items need action")+'</span>'
-    :'<span class="mys-allclear-h">'+ICON("check_circle")+'You’re all caught up</span>';
-  return '<div class="dep-hd mys-hd"><div class="dep-hd-top"><div class="mys-hgrp">'+status+'</div><div class="dep-hd-toggle">'+mysConfigBtn(w)+'</div></div></div>';
+function mysTileOf(w){return w.mysTile||"action";}
+/* Three KPI filter tiles (Needs action / Good to know / Up to date), the same tile component the other
+   status widgets use. The active tile filters the table below; status is shown by a BADGE (icon + label)
+   in its own column, never colour alone. */
+function mysKpiTiles(w,sel){
+  var cur=mysTileOf(w);
+  var tiles=[["action","Needs action","priority_high","pto-tile-pending",mysActionItems(sel).length],["info","Good to know","info","pto-tile-info",mysInfoItems(sel).length],["clear","Up to date","check_circle","pto-tile-approved",mysClearList(sel).length]];
+  return '<div class="pto-cards mys-cards" role="group" aria-label="Filter by status">'+tiles.map(function(t){var on=cur===t[0];return '<button class="pto-card '+t[3]+(on?" sel":"")+'" data-action="mys-tile" data-id="'+w.id+'" data-t="'+t[0]+'" aria-pressed="'+on+'"><span class="pto-card-top"><span class="pto-card-ic material-symbols-rounded" aria-hidden="true">'+t[2]+'</span><span class="pto-card-lbl">'+t[1]+'</span></span><span class="pto-card-n">'+t[4]+'</span></button>';}).join("")+'</div>';
 }
-/* Each row is coded by its status category so the three kinds read apart at a glance: a leading status
-   icon (attention / info / positive) and the count as a status-coloured badge. cat = action|info|clear. */
+function mysStatusBadge(cat){
+  if(cat==="info")return badge({status:"info",size:"small",icon:"info",text:"Good to know"});
+  if(cat==="clear")return badge({status:"positive",size:"small",icon:"check_circle",text:"Up to date"});
+  return badge({status:"attention",size:"small",icon:"priority_high",text:"Needs action"});
+}
 function mysRowHTML(w,q,cat){
   cat=cat||(q.count<=0?"clear":"action");
   var zero=q.count<=0, clickable=!zero;
-  var ic=(cat==="action")?"priority_high":(cat==="clear")?"check_circle":"info";
   var aff=(!zero&&q.click==="nav")?'<span class="mys-aff material-symbols-rounded" aria-hidden="true" data-tip="Opens '+q.navTo+' (leaves the dashboard)" data-tip-plain>arrow_outward</span>':'';
   var srClick=clickable?(q.click==="nav"?", opens "+q.navTo:", opens the list"):", nothing to do";
-  var nm='<span class="lr-main mys-nm"><span class="mys-rowic mys-ic-'+cat+' material-symbols-rounded" aria-hidden="true">'+ic+'</span>'+q.name+'</span>';
   var countInner=(cat==="clear")?ICON("check"):q.count;
-  var count='<span class="wt-c2 mys-count mys-count-'+cat+(zero?" mys-count-zero":"")+'">'+countInner+'<span class="sr-only">'+srClick+'</span></span>';
   var attrs=clickable?' data-action="mys-row" data-id="'+w.id+'" data-q="'+q.id+'" tabindex="0" role="button" aria-label="'+q.name+', '+q.count+srClick+'"':' aria-disabled="true"';
-  return '<div class="wt-row mys-row mys-row-'+cat+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'>'+nm+aff+count+'</div>';
+  return '<div class="wt-row mys-trow mys-row-'+cat+(zero?" mys-zero":"")+(clickable?" mys-clickable":"")+'"'+attrs+'><span class="lr-main mys-nm">'+q.name+aff+'</span><span class="mys-c-status">'+mysStatusBadge(cat)+'</span><span class="wt-c2 mys-count mys-count-'+cat+(zero?" mys-count-zero":"")+'">'+countInner+'<span class="sr-only">'+srClick+'</span></span></div>';
 }
-/* Glance: the hero is HOW MANY tracked items need action; the top few are listed compactly beneath so
-   the person sees WHICH ones at a glance. Canonical glance layout (eyebrow -> number -> status badge),
-   matching the other glances. Full grouped list lives at larger sizes. */
+/* Glance: the same three tiles, compact. Tapping one sets the filter that carries into the larger size. */
 function mysGlance(w){
   var sel=(w.selected||[]).map(mysFind).filter(Boolean);
   if(!sel.length)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value" style="font-size:var(--semantic-type-font-size-m);color:var(--txt-subtle)">Nothing tracked</span></div></div></div>';
-  var action=mysActionItems(sel),n=action.length;
-  if(n===0)return '<div class="kpi-row"><div class="kpi-num"><div class="dep-hd-kpigrp"><span class="metric-value arF-allset">'+ICON("check_circle")+'All caught up</span></div></div></div>';
-  var top=action.slice(0,3),list=top.map(function(q){return '<div class="mys-gl-item"><span class="mys-gl-dot"></span><span class="mys-gl-nm">'+q.name+'</span><span class="mys-gl-ct">'+q.count+'</span></div>';}).join("");
-  if(action.length>3)list+='<div class="mys-gl-item mys-gl-more">+'+(action.length-3)+' more</div>';
-  return '<div class="kpi-row prf-glance mys-glance"><div class="kpi-num prf-gl-num"><div class="arF-gl-head"><span class="kpi-eyegrp"><span class="kpi-eyebrow">Needs action</span><span class="metric-value">'+n+'</span></span>'+badge({status:"attention",size:"small",icon:"priority_high",text:(n===1?"1 item":n+" items")})+'</div></div><div class="mys-gl-list">'+list+'</div></div>';
+  return '<div class="pto-glance mys-glance-tiles">'+mysKpiTiles(w,sel)+'</div>';
 }
 function mysContent(w){
   if(w.size==="kpi")return mysGlance(w);
   var sel=(w.selected||[]).map(mysFind).filter(Boolean);
   if(!sel.length)return '<div class="state mys-empty" data-kind="empty">'+ICON("checklist")+'<div class="state-title">Nothing to show yet</div><div class="state-sub">Pick the things you want to keep an eye on. Their live counts appear here.</div><button class="btn outlined" data-action="mys-config" data-id="'+w.id+'">'+ICON("checklist")+'Configure</button></div>';
-  var action=mysActionItems(sel),info=mysInfoItems(sel),clear=mysClearList(sel);
-  var body="";
-  if(action.length)body+='<div class="cap mys-grp">Needs action</div>'+action.map(function(q){return mysRowHTML(w,q,"action");}).join("");
-  if(info.length)body+='<div class="cap mys-grp">Good to know</div>'+info.map(function(q){return mysRowHTML(w,q,"info");}).join("");
-  if(clear.length)body+='<div class="cap mys-grp">Up to date</div>'+clear.map(function(q){return mysRowHTML(w,q,"clear");}).join("");
-  return mysHeaderBlock(w,sel)+'<div class="scroll mys-list">'+body+'</div>';
+  var cur=mysTileOf(w);
+  var rows=cur==="info"?mysInfoItems(sel):cur==="clear"?mysClearList(sel):mysActionItems(sel);
+  var head='<div class="wt-row wt-head mys-trow"><span class="lr-main">Item</span><span class="mys-c-status">Status</span><span class="wt-c2">Count</span></div>';
+  var body=rows.length?rows.map(function(q){return mysRowHTML(w,q,cur);}).join(""):('<div class="mys-caughtup">'+ICON(cur==="action"?"task_alt":cur==="info"?"inbox":"check_circle")+'<span>'+(cur==="action"?"Nothing needs action right now.":cur==="info"?"Nothing to note right now.":"Nothing is up to date yet.")+'</span></div>');
+  return '<div class="mys-tophd">'+mysKpiTiles(w,sel)+mysConfigBtn(w)+'</div><div class="scroll mys-list">'+head+body+'</div>';
 }
 
 /* Inner content only (patched in place so the dialog never re-animates / loses focus). */
