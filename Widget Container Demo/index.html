@@ -6008,9 +6008,9 @@ function gftHeaderBlock(w,mode){
   var loading=(mode==="loading"),o=gftOverall(w),thru=gftThru(w);
   /* Explore shows progress + follow-up side by side, so the view toggle is hidden there. */
   var toggle=(w.size==="xwide")?"":gftViewToggle(w);
-  var tg=toggle?('<div class="dep-hd-toggle">'+toggle+'</div>'):'';
-  /* Filters row 1; Received KPI + the view toggle share row 2, toggle far right (not on filters). */
-  var top='<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div></div>';
+  var tg='';
+  /* Data-view toggle (Progress/Table) on the FILTERS row with the date + purpose chips; Received KPI owns row 2. */
+  var top='<div class="dep-hd-top"><div class="gft-ctlrow">'+gftDateChip(w)+gftPurposeChip(w)+'</div>'+(toggle?'<div class="dep-hd-toggle">'+toggle+'</div>':'')+'</div>';
   if(loading){var numL='<div class="dep-hd-kpigrp"><span class="sk" style="width:120px;height:24px;border-radius:6px"></span><span class="sk" style="width:120px;height:20px;border-radius:999px"></span></div>';
     return '<div class="dep-hd gft-hd hd-kpitoggle">'+top+'<div class="dep-hd-num"><div class="gft-numwrap">'+numL+'</div>'+tg+'</div></div>';}
   /* Received leads; the pledged total is a hover tooltip on the number (not a plain caption). The
