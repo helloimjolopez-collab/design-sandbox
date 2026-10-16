@@ -1,0 +1,1220 @@
+<!doctype html>
+<html lang="en" data-theme="light" style="color-scheme: light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Select</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet" />
+<style>
+/* ===========================================================================
+   PATHWAY TOKENS, the subset this component binds.
+   Primitives first, then the Light theme aliases onto them, which is the order
+   the contract requires: the theme file is nothing but aliases, so a demo that
+   loads only the theme renders every colour as an unresolved variable.
+   Values read from src/tokens/primitives.css and src/tokens/themes/light.css.
+   =========================================================================== */
+:root {
+  /* Primitive: Color */
+  --primitive-color-cool-neutral-0: #ffffff;
+  --primitive-color-cool-neutral-10: #fafafa;
+  --primitive-color-cool-neutral-300: #7b7b7b;
+  --primitive-color-cool-neutral-350: #6b6b6b;
+  --primitive-color-cool-neutral-400: #606060;
+  --primitive-color-cool-neutral-450: #545454;
+  --primitive-color-cool-neutral-500: #484848;
+  --primitive-color-cool-neutral-600: #313131;
+  --primitive-color-cool-neutral-550: #3d3d3d;
+  --primitive-color-cool-neutral-700: #202020;
+  --primitive-color-cool-neutral-900: #070707;
+  --primitive-color-cool-neutral-900-50: rgba(7, 7, 7, 0.5);
+  --primitive-color-warm-neutral-0: #fefefd;
+  --primitive-color-warm-neutral-25: #f9f7f5;
+  --primitive-color-warm-neutral-50: #f3f0ec;
+  --primitive-color-warm-neutral-75: #e6e2dc;
+  --primitive-color-warm-neutral-100-24: rgba(216, 211, 205, 0.24);
+  --primitive-color-warm-neutral-100-36: rgba(216, 211, 205, 0.36);
+  --primitive-color-warm-neutral-500-24: rgba(87, 83, 78, 0.24);
+  --primitive-color-brand-75-24: rgba(182, 198, 236, 0.24);
+  --primitive-color-brand-200: #6e8bd4;
+  --primitive-color-brand-25: #e2e9f7;
+  --primitive-color-brand-500: #345499;
+  --primitive-color-brand-700: #152343;
+  --primitive-color-red-25: #faefef;
+  --primitive-color-red-250: #cf6e6e;
+  --primitive-color-red-300: #c55858;
+  --primitive-color-red-350: #ba4646;
+  --primitive-color-red-700: #722121;
+
+  /* Primitive: Type */
+  --primitive-type-family-brand: "Red Hat Text";
+  --primitive-type-letter-spacing-standard: 0.1px;
+  --primitive-type-letter-spacing-wide: 0.3px;
+  --primitive-type-letter-spacing-extrawide: 0.6px;
+
+  /* Semantic: Color, Light */
+  --semantic-color-fill-action-disabled: var(--primitive-color-warm-neutral-100-36);
+  --semantic-color-fill-action-selection-hover: var(--primitive-color-warm-neutral-100-24);
+  --semantic-color-fill-action-selection-selected: var(--primitive-color-brand-75-24);
+  --semantic-color-fill-surface-overlay: var(--primitive-color-cool-neutral-0);
+  --semantic-color-fill-static-neutral-mono: var(--primitive-color-cool-neutral-0);
+  --semantic-color-fill-action-primary-subtle-hover: var(--primitive-color-brand-25);
+  --semantic-color-foreground-action-primary-on-subtle-rest: var(--primitive-color-brand-500);
+  --semantic-color-foreground-action-primary-on-subtle-hover: var(--primitive-color-brand-700);
+  --semantic-color-fill-surface-canvas: var(--primitive-color-cool-neutral-10);
+  --semantic-color-fill-surface-elevated: var(--primitive-color-cool-neutral-0);
+  --semantic-color-fill-static-neutral-faint: var(--primitive-color-warm-neutral-0);
+  --semantic-color-fill-static-neutral-subtle: var(--primitive-color-warm-neutral-25);
+  --semantic-color-foreground-static-neutral-subtle: var(--primitive-color-cool-neutral-500);
+  --semantic-color-foreground-static-neutral-strong: var(--primitive-color-cool-neutral-900);
+  --semantic-color-foreground-action-secondary-rest: var(--primitive-color-cool-neutral-550);
+  --semantic-color-foreground-action-secondary-hover: var(--primitive-color-cool-neutral-700);
+  --semantic-color-foreground-action-secondary-pressed: var(--primitive-color-cool-neutral-900);
+  --semantic-color-foreground-action-disabled: var(--primitive-color-cool-neutral-900-50);
+  --semantic-color-foreground-static-negative-on-subtle: var(--primitive-color-red-700);
+  --semantic-color-stroke-action-field-rest: var(--primitive-color-cool-neutral-300);
+  --semantic-color-stroke-action-field-hover: var(--primitive-color-cool-neutral-350);
+  --semantic-color-stroke-action-field-pressed: var(--primitive-color-cool-neutral-400);
+  --semantic-color-stroke-focusring-base: var(--primitive-color-brand-200);
+  --semantic-color-stroke-action-disabled: var(--primitive-color-warm-neutral-500-24);
+  --semantic-color-foreground-static-neutral-faint: var(--primitive-color-cool-neutral-450);
+  --semantic-color-foreground-static-neutral-base: var(--primitive-color-cool-neutral-600);
+  --semantic-color-fill-action-status-negative-subtle-rest: var(--primitive-color-red-25);
+  --semantic-color-stroke-action-status-negative-rest: var(--primitive-color-red-250);
+  --semantic-color-stroke-action-status-negative-hover: var(--primitive-color-red-300);
+  --semantic-color-stroke-action-status-negative-pressed: var(--primitive-color-red-350);
+  --semantic-color-stroke-static-neutral-base: var(--primitive-color-warm-neutral-75);
+
+  /* Semantic: Layout & Units */
+  --semantic-layout-units-cornerradius-base: 8px;
+  --semantic-layout-units-borderwidth-xthin: 0.5px;
+  --semantic-layout-units-borderwidth-base: 1px;
+  --semantic-layout-units-padding-xxxtight: 4px;
+  --semantic-layout-units-padding-xxtight: 6px;
+  --semantic-layout-units-padding-xtight: 8px;
+  --semantic-layout-units-padding-tight: 12px;
+  --semantic-layout-units-gap-xxxtight: 2px;
+  --semantic-layout-units-gap-xxtight: 4px;
+  --semantic-layout-units-gap-tight: 8px;
+  --semantic-accessibility-touch-target-aa: 44px;
+
+  /* Semantic: Type */
+  --semantic-type-font-size-xs: 12px;
+  --semantic-type-font-size-s: 14px;
+  --semantic-type-font-size-r: 16px;
+  --semantic-type-line-height-xs-single: 18px;
+  --semantic-type-line-height-s-single: 20px;
+  --semantic-type-line-height-r-single: 22px;
+  --semantic-type-line-height-m-single: 24px;
+  --semantic-type-weight-medium: 500;
+  --semantic-type-weight-regular: 400;
+
+  /* Elevation */
+  --elevation-overlay: 0 20px 48px -10px rgba(24,27,43,0.08);
+
+  /* Motion */
+  --motion-duration-2: 160ms;
+  --motion-duration-3: 240ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Visually hidden, still announced. The required marker is an asterisk on
+   screen and the word "required" to a screen reader. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 32px;
+  background: var(--semantic-color-fill-surface-canvas);
+  font-family: var(--primitive-type-family-brand), sans-serif;
+  color: var(--semantic-color-foreground-static-neutral-strong);
+}
+.material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+
+h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; letter-spacing: var(--primitive-type-letter-spacing-wide); }
+.sub { margin: 0 0 28px; font-size: 13px; color: var(--semantic-color-foreground-static-neutral-subtle); }
+h2 { font-size: 14px; font-weight: 600; margin: 32px 0 12px; letter-spacing: var(--primitive-type-letter-spacing-wide); }
+.card {
+  background: var(--semantic-color-fill-surface-elevated);
+  border: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-static-neutral-base);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+  padding: 24px;
+  max-width: 520px;
+  box-shadow: var(--elevation-overlay);
+}
+.row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+.col { display: flex; flex-direction: column; gap: 20px; flex: 0 0 280px; max-width: 280px; }
+.caption { font-size: 11px; color: var(--semantic-color-foreground-static-neutral-subtle); margin-bottom: 6px; }
+
+/* ===========================================================================
+   SELECT
+   =========================================================================== */
+.pw-select { display: flex; flex-direction: column; gap: var(--semantic-layout-units-gap-xxxtight); position: relative; --pw-field-h: 36px; }
+.pw-select[data-size="xs"] { --pw-field-h: 30px; }
+.pw-select[data-size="base"] { --pw-field-h: 36px; }
+.pw-select[data-size="large"] { --pw-field-h: 44px; }
+
+.pw-select__label {
+  display: inline-flex; align-items: center; gap: var(--semantic-layout-units-gap-xxxtight);
+  color: var(--semantic-color-foreground-action-secondary-rest);
+  font-weight: var(--semantic-type-weight-medium);
+}
+.pw-select__label .material-symbols-rounded { font-size: 14px; }
+/* The required marker and the help icon sit on the label's own colour, which
+   Figma holds at Secondary/Rest in every state except Disabled: the label does
+   not follow the field through hover and active. */
+.pw-select__req { color: inherit; }
+.pw-select[data-disabled="true"] .pw-select__req { color: var(--semantic-color-foreground-action-disabled); }
+
+/* The 44 target is the control, the field is centred inside it. */
+/* The 44 target is also the panel's anchor: an absolutely positioned child of a
+   flex container takes its static position from the container's padding box, not
+   from the sibling above it, so a panel anchored to .pw-select opened OVER the
+   field. It anchors to the field's own wrapper instead. */
+.pw-select__target {
+  position: relative;
+  display: flex; align-items: center;
+  min-height: var(--semantic-accessibility-touch-target-aa);
+  min-width: var(--semantic-accessibility-touch-target-aa);
+}
+.pw-select__field {
+  display: flex; align-items: center; width: 100%;
+  padding: var(--semantic-layout-units-padding-xxxtight) var(--semantic-layout-units-padding-xxtight);
+  border: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-action-field-rest);
+  /* Weight is per state, not constant: Active, Focus, Error and Error-Focus all
+     bind BorderWidth/Base in Figma, the rest bind BorderWidth/XThin. */
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+  background: transparent;              /* inherits the surface, by design */
+  font-family: inherit; text-align: left; cursor: pointer;
+  transition: background var(--motion-duration-2) var(--motion-easing-standard),
+              border-color var(--motion-duration-2) var(--motion-easing-standard),
+              box-shadow var(--motion-duration-2) var(--motion-easing-standard);
+}
+/* Hover is a state of its own, not a layer over another one. Once the field
+   is open, active, focused or showing a selection, hover stops resolving: in
+   Figma these are separate variants and only one can be true at a time, and
+   the CSS has to say the same thing. */
+.pw-select[data-force="hover"] .pw-select__field,
+.pw-select:not([data-disabled="true"]):not([data-open="true"]):not([data-filled="true"]):not([data-force="active"]):not([data-force="active"]):not([data-force="selection"]) .pw-select__field:not(:has(.pw-select__text:focus-visible)):hover {
+  background: var(--semantic-color-fill-action-selection-hover);
+  border-color: var(--semantic-color-stroke-action-field-hover);
+}
+.pw-select[data-force="active"] .pw-select__field,
+.pw-select__field:has(.pw-select__text:focus-visible),
+.pw-select[data-open="true"] .pw-select__field {
+  outline: none;
+  background: var(--semantic-color-fill-static-neutral-mono);
+  border-width: var(--semantic-layout-units-borderwidth-base);
+  border-color: var(--semantic-color-stroke-focusring-base);
+  /* Figma's Active and Focus carry a 1px Brand/200 stroke over a Mono fill and
+     nothing else. The 2.5px halo that used to sit here was mine. */
+}
+/* Once a value is chosen the field moves to Selection and stays there: the
+   brand tint and the Brand/200 hairline are how a filled field reads at rest.
+   Active still wins while the panel is open, and hover does not paint over it,
+   because a state is one state. */
+.pw-select[data-force="selection"] .pw-select__field,
+.pw-select[data-filled="true"]:not([data-open="true"]):not([data-invalid="true"]):not([data-disabled="true"]) .pw-select__field {
+  background: var(--semantic-color-fill-action-selection-selected);
+  border-color: var(--semantic-color-stroke-focusring-base);
+}
+.pw-select[data-invalid="true"] .pw-select__field {
+  border-width: var(--semantic-layout-units-borderwidth-base);
+  border-color: var(--semantic-color-stroke-action-status-negative-rest);
+}
+/* An invalid field stays invalid while you touch it. Hover and Active step
+   along the negative stroke ramp the system already carries, Rest to Hover to
+   Pressed, instead of handing the field back to the neutral ramp. Added to
+   Figma as State=Error-Hover and State=Error-Active on 2026-10-15. */
+/* An invalid field washes negative on hover, not neutral: the whole field is
+   in an error state, so the fill has no business borrowing the neutral
+   selection wash. Bound in Figma to Fill/Action/Status/Negative/Subtle/Rest,
+   the lightest rung of the negative ramp, which is the same jump in weight
+   that a neutral field makes from transparent to Selection/Hover. */
+.pw-select[data-invalid="true"][data-force="hover"] .pw-select__field,
+.pw-select[data-invalid="true"]:not([data-disabled="true"]):not([data-open="true"]):not([data-filled="true"]):not([data-force="active"]):not([data-force="active"]):not([data-force="selection"]) .pw-select__field:not(:has(.pw-select__text:focus-visible)):hover {
+  background: var(--semantic-color-fill-action-status-negative-subtle-rest);
+  border-color: var(--semantic-color-stroke-action-status-negative-hover);
+}
+.pw-select[data-invalid="true"][data-force="active"] .pw-select__field,
+.pw-select[data-invalid="true"] .pw-select__field:has(.pw-select__text:focus-visible),
+.pw-select[data-invalid="true"][data-open="true"] .pw-select__field {
+  background: var(--semantic-color-fill-static-neutral-mono);
+  border-width: var(--semantic-layout-units-borderwidth-base);
+  border-color: var(--semantic-color-stroke-action-status-negative-pressed);
+}
+.pw-select[data-disabled="true"] .pw-select__field {
+  background: var(--semantic-color-fill-action-disabled);
+  border-color: var(--semantic-color-stroke-action-disabled);
+  cursor: not-allowed;
+}
+
+.pw-select__content { display: flex; align-items: center; flex: 1; min-width: 0; gap: 0; }
+.pw-select__lead { display: flex; flex: 0 0 auto; color: var(--semantic-color-foreground-action-secondary-rest); }
+/* Container.Field's gap is 0, but the text does not butt against the icon:
+   Container.Label carries 4 either side, bound to Padding/XXXTight. Reading the
+   parent's gap alone and dropping this was wrong. */
+.pw-select__textwrap { flex: 1; min-width: 0; padding: 0 var(--semantic-layout-units-padding-xxxtight); }
+.pw-select__text {
+  display: block; width: 100%; border: 0; padding: 0; background: transparent;
+  font-family: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  /* Placeholder, Value and Label are all Medium in Figma at every size. This
+     inherited the body's Regular, which is why the field read light. */
+  font-weight: var(--semantic-type-weight-medium);
+  /* -webkit-text-fill-color is set alongside colour because under a dark UA
+     colour-scheme Chrome paints an input's text with its own fill colour and
+     ignores `color`, which is what turned the typed text white. */
+  color: var(--semantic-color-foreground-static-neutral-subtle);
+  -webkit-text-fill-color: var(--semantic-color-foreground-static-neutral-subtle);
+  color-scheme: light;
+}
+.pw-select__text:focus { outline: none; }
+.pw-select__text::placeholder { color: var(--semantic-color-foreground-static-neutral-subtle); opacity: 1; }
+/* A value the user typed is a value, so searchable fields read Strong as soon
+   as there is something in them, not just once a row has been picked. */
+.pw-select[data-filled="true"] .pw-select__text,
+.pw-select[data-typed="true"] .pw-select__text {
+  color: var(--semantic-color-foreground-static-neutral-strong);
+  -webkit-text-fill-color: var(--semantic-color-foreground-static-neutral-strong);
+}
+.pw-select[data-disabled="true"] .pw-select__text,
+.pw-select[data-disabled="true"] .pw-select__lead,
+.pw-select[data-disabled="true"] .pw-select__trail,
+.pw-select[data-disabled="true"] .pw-select__label,
+.pw-select[data-disabled="true"] .pw-select__hint { color: var(--semantic-color-foreground-action-disabled); }
+.pw-select[data-disabled="true"] .pw-select__text::placeholder { color: var(--semantic-color-foreground-action-disabled); }
+.pw-select[data-disabled="true"] .pw-select__text { -webkit-text-fill-color: var(--semantic-color-foreground-action-disabled); }
+.pw-select__trail { display: flex; flex: 0 0 auto; color: var(--semantic-color-foreground-action-secondary-rest); }
+/* On a search and select the trailing icon is the way out: pressing it empties
+   the field so someone can start typing again. It takes the same foreground
+   ramp as the chevron it replaces, so nothing about the state model changes. */
+.pw-select__clear {
+  border: 0; background: transparent; padding: 0; margin: 0; cursor: pointer;
+  color: inherit; font: inherit; line-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  /* It appears only once there is something to clear: text being typed, or a
+     value that has been chosen. Not at Rest, not at Hover, and not in an empty
+     Active field either. It is taken out of the layout rather than hidden in
+     place, because a resting search and select carries one icon, the
+     magnifying glass, and nothing on the right. */
+  display: none;
+}
+.pw-select[data-typed="true"] .pw-select__clear,
+.pw-select[data-filled="true"] .pw-select__clear { display: flex; }
+.pw-select[data-disabled="true"] .pw-select__clear { display: none; }
+.pw-select__clear:focus-visible {
+  outline: var(--semantic-layout-units-borderwidth-base) solid var(--semantic-color-stroke-focusring-base);
+  outline-offset: 2px; border-radius: 2px;
+}
+.pw-select[data-disabled="true"] .pw-select__clear { cursor: not-allowed; }
+
+/* THE FOREGROUND RAMPS WITH THE STATE, which my first pass flattened: the
+   placeholder and both icons step Rest to Hover to Pressed, while a chosen
+   value stays Strong throughout. Read off the Base variants 2026-10-15. */
+.pw-select[data-force="hover"] .pw-select__text::placeholder,
+.pw-select:not([data-disabled="true"]):not([data-open="true"]):not([data-filled="true"]):not([data-force="active"]):not([data-force="active"]):not([data-force="selection"]) .pw-select__field:not(:has(.pw-select__text:focus-visible)):hover .pw-select__text::placeholder {
+  color: var(--semantic-color-foreground-action-secondary-hover);
+}
+.pw-select[data-force="hover"] .pw-select__lead,
+.pw-select[data-force="hover"] .pw-select__trail,
+.pw-select:not([data-disabled="true"]):not([data-open="true"]):not([data-filled="true"]):not([data-force="active"]):not([data-force="active"]):not([data-force="selection"]) .pw-select__field:hover .pw-select__lead,
+.pw-select:not([data-disabled="true"]):not([data-open="true"]):not([data-filled="true"]):not([data-force="active"]):not([data-force="active"]):not([data-force="selection"]) .pw-select__field:hover .pw-select__trail {
+  color: var(--semantic-color-foreground-action-secondary-hover);
+}
+.pw-select[data-force="active"] .pw-select__text::placeholder,
+.pw-select[data-filled="true"]:not([data-open="true"]) .pw-select__text::placeholder,
+.pw-select[data-force="selection"] .pw-select__text::placeholder,
+.pw-select[data-open="true"] .pw-select__text::placeholder {
+  color: var(--semantic-color-foreground-action-secondary-pressed);
+}
+.pw-select[data-force="active"] .pw-select__lead,
+.pw-select[data-force="active"] .pw-select__trail,
+.pw-select[data-force="active"] .pw-select__lead,
+.pw-select[data-force="active"] .pw-select__trail,
+.pw-select[data-filled="true"]:not([data-open="true"]) .pw-select__lead,
+.pw-select[data-filled="true"]:not([data-open="true"]) .pw-select__trail,
+.pw-select[data-force="selection"] .pw-select__lead,
+.pw-select[data-force="selection"] .pw-select__trail,
+.pw-select[data-open="true"] .pw-select__lead,
+.pw-select[data-open="true"] .pw-select__trail {
+  color: var(--semantic-color-foreground-action-secondary-pressed);
+}
+
+/* Error-Hover and Error-Active move the placeholder and icons along the same
+   neutral foreground ramp as the non-error states, which is what Figma binds:
+   the red lives in the stroke, not the text. Error-Focus used to leave its
+   icons on Rest while its placeholder was Pressed; that is fixed in Figma now
+   and matched here. */
+.pw-select[data-invalid="true"][data-force="hover"] .pw-select__text::placeholder,
+.pw-select[data-invalid="true"]:not([data-disabled="true"]):not([data-open="true"]):not([data-filled="true"]):not([data-force="active"]):not([data-force="active"]):not([data-force="selection"]) .pw-select__field:not(:has(.pw-select__text:focus-visible)):hover .pw-select__text::placeholder,
+.pw-select[data-invalid="true"][data-force="hover"] .pw-select__lead,
+.pw-select[data-invalid="true"][data-force="hover"] .pw-select__trail {
+  color: var(--semantic-color-foreground-action-secondary-hover);
+}
+.pw-select[data-invalid="true"][data-force="active"] .pw-select__text::placeholder,
+.pw-select[data-invalid="true"][data-force="active"] .pw-select__lead,
+.pw-select[data-invalid="true"][data-force="active"] .pw-select__trail,
+.pw-select[data-invalid="true"][data-open="true"] .pw-select__lead,
+.pw-select[data-invalid="true"][data-open="true"] .pw-select__trail {
+  color: var(--semantic-color-foreground-action-secondary-pressed);
+}
+
+/* The hint is XS Regular at every size, ExtraWide tracking included: it does
+   not grow with the field. */
+.pw-select__hint {
+  font-size: var(--semantic-type-font-size-xs); line-height: var(--semantic-type-line-height-xs-single);
+  letter-spacing: var(--primitive-type-letter-spacing-extrawide);
+  font-weight: var(--semantic-type-weight-regular); color: var(--semantic-color-foreground-static-neutral-subtle);
+}
+.pw-select[data-invalid="true"] .pw-select__hint { color: var(--semantic-color-foreground-static-negative-on-subtle); }
+
+/* Size: field height, type size and tracking all move together. */
+.pw-select[data-size="xs"] .pw-select__field { height: 30px; }
+.pw-select[data-size="xs"] .pw-select__text,
+.pw-select[data-size="xs"] .pw-select__label { font-size: var(--semantic-type-font-size-xs); line-height: var(--semantic-type-line-height-xs-single); letter-spacing: var(--primitive-type-letter-spacing-extrawide); }
+.pw-select[data-size="xs"] .pw-select__lead .material-symbols-rounded,
+.pw-select[data-size="xs"] .pw-select__trail .material-symbols-rounded { font-size: 12px; }
+
+.pw-select[data-size="base"] .pw-select__field { height: 36px; }
+.pw-select[data-size="base"] .pw-select__text,
+.pw-select[data-size="base"] .pw-select__label { font-size: var(--semantic-type-font-size-s); line-height: var(--semantic-type-line-height-s-single); letter-spacing: var(--primitive-type-letter-spacing-wide); }
+.pw-select[data-size="base"] .pw-select__lead .material-symbols-rounded,
+.pw-select[data-size="base"] .pw-select__trail .material-symbols-rounded { font-size: 14px; }
+
+.pw-select[data-size="large"] .pw-select__field { height: 44px; }
+.pw-select[data-size="large"] .pw-select__text { font-size: var(--semantic-type-font-size-r); line-height: var(--semantic-type-line-height-r-single); letter-spacing: var(--primitive-type-letter-spacing-standard); }
+/* The field's own label stays on the Base style at Large: Figma binds
+   Label/Input/Base/Medium there, 14/20, not the Large rung. */
+.pw-select[data-size="large"] .pw-select__label { font-size: var(--semantic-type-font-size-s); line-height: var(--semantic-type-line-height-s-single); letter-spacing: var(--primitive-type-letter-spacing-wide); }
+.pw-select[data-size="large"] .pw-select__lead .material-symbols-rounded,
+.pw-select[data-size="large"] .pw-select__trail .material-symbols-rounded { font-size: 16px; }
+
+/* The panel: elevation carries it, the hairline is secondary. */
+/* Geometry read off State=Active-Open at all three sizes. The panel sits 4
+   below the field, on Gap/XXTight: the field is 36 at Base and the menu's y is
+   40. An earlier pass here read that 40 as the field's height and concluded
+   the gap was 0, which was wrong. Padding is 6 block / 4 inline (Padding/XXTight
+   and Padding/XXXTight on the Menu.Items slot) and the rows are 8 apart
+   (Gap/Tight). Height is 252 at Base and Large, 222 at XS. */
+.pw-select__panel {
+  position: absolute; left: 0; right: 0; z-index: 20;
+  /* Anchored to the FIELD's bottom edge, not the 44 hit target's. The field is
+     centred inside that target, so top:100% sat 4 too low at XS and Base and
+     the gap measured 8 instead of 4. */
+  top: calc(50% + (var(--pw-field-h) / 2) + var(--semantic-layout-units-gap-xxtight));
+  margin-top: 0;
+  display: flex; flex-direction: column;
+  gap: var(--semantic-layout-units-gap-tight);
+  background: var(--semantic-color-fill-surface-overlay);
+  border: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-static-neutral-base);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+  box-shadow: var(--elevation-overlay);
+  padding: var(--semantic-layout-units-padding-xxtight) var(--semantic-layout-units-padding-xxxtight);
+  max-height: 252px; overflow: auto;
+  /* Figma draws a 22-wide scrollbar instance inside the menu rather than
+     leaning on the platform one. This is the nearest CSS equivalent. */
+  scrollbar-width: thin;
+  animation: pwSelectIn var(--motion-duration-3) var(--motion-easing-standard);
+}
+@keyframes pwSelectIn { from { opacity: 0 } to { opacity: 1 } }
+.pw-select__panel[hidden] { display: none; }
+/* In the state grid the panel sits in flow, so the examples lay out side by
+   side instead of covering whatever is under them. */
+.pw-select[data-static="true"] .pw-select__target { flex-direction: column; align-items: stretch; }
+.pw-select[data-static="true"] .pw-select__panel {
+  position: static; top: auto; animation: none;
+  margin-top: var(--semantic-layout-units-gap-xxtight);
+}
+
+.pw-select__option {
+  display: flex; align-items: center; gap: var(--semantic-layout-units-gap-tight);
+  width: 100%; border: 0; background: transparent; cursor: pointer; text-align: left;
+  font-family: inherit; color: var(--semantic-color-foreground-action-secondary-rest);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+  padding: var(--semantic-layout-units-padding-tight) var(--semantic-layout-units-padding-xtight);
+  font-size: var(--semantic-type-font-size-s); line-height: var(--semantic-type-line-height-s-single);
+  letter-spacing: var(--primitive-type-letter-spacing-wide);
+  font-weight: var(--semantic-type-weight-medium);
+}
+/* Size=Small rows: XS type on ExtraWide, and the supporting text goes Medium
+   rather than Regular, which is the one place the two row sizes disagree. */
+.pw-select[data-size="xs"] .pw-select__option {
+  padding: var(--semantic-layout-units-padding-xxxtight) var(--semantic-layout-units-padding-xtight);
+  font-size: var(--semantic-type-font-size-xs); line-height: var(--semantic-type-line-height-xs-single);
+  letter-spacing: var(--primitive-type-letter-spacing-extrawide);
+}
+.pw-select[data-size="xs"] .pw-select__option-sub { font-weight: var(--semantic-type-weight-medium); }
+/* Select.MenuItems ramps its text the same way the field does, which this
+   used to ignore by only moving the background:
+     Base      label Secondary/Rest     supporting Static/Neutral/Faint
+     Hover     label Secondary/Hover    supporting Secondary/Hover
+     Selected  label Secondary/Pressed  supporting Static/Neutral/Base
+   and the tick is Primary/On Subtle/Rest in every one of them, not the row's
+   own colour. */
+.pw-select__option:hover, .pw-select__option[data-active="true"] {
+  background: var(--semantic-color-fill-action-selection-hover);
+  color: var(--semantic-color-foreground-action-secondary-hover);
+}
+.pw-select__option:hover .pw-select__option-sub,
+.pw-select__option[data-active="true"] .pw-select__option-sub {
+  color: var(--semantic-color-foreground-action-secondary-hover);
+}
+.pw-select__option[aria-selected="true"] {
+  background: var(--semantic-color-fill-action-selection-selected);
+  color: var(--semantic-color-foreground-action-secondary-pressed);
+}
+.pw-select__option[aria-selected="true"] .pw-select__option-sub {
+  color: var(--semantic-color-foreground-static-neutral-base);
+}
+.pw-select__option[aria-disabled="true"] { color: var(--semantic-color-foreground-action-disabled); cursor: not-allowed; }
+.pw-select__option[aria-disabled="true"] .pw-select__option-sub { color: var(--semantic-color-foreground-action-disabled); }
+.pw-select__option .material-symbols-rounded {
+  font-size: 18px; margin-left: auto; opacity: 0;
+  color: var(--semantic-color-foreground-action-primary-on-subtle-rest);
+}
+.pw-select__option[aria-selected="true"] .material-symbols-rounded { opacity: 1; }
+.pw-select__option-sub {
+  color: var(--semantic-color-foreground-static-neutral-faint);
+  font-weight: var(--semantic-type-weight-regular);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+}
+.pw-select__option > span:first-child { white-space: nowrap; flex: 0 0 auto; }
+/* The way back to Rest. Without a row that clears the field there is no way
+   out of a chosen value short of reloading, so an optional Select gets one. */
+.pw-select__option--none { color: var(--semantic-color-foreground-static-neutral-subtle); }
+.pw-select__option--none[aria-selected="true"] { color: var(--semantic-color-foreground-static-neutral-strong); }
+
+/* The empty result: one quiet row quoting the query. */
+.pw-select__empty {
+  padding: var(--semantic-layout-units-padding-tight) var(--semantic-layout-units-padding-xtight);
+  color: var(--semantic-color-foreground-static-neutral-subtle);
+  font-size: var(--semantic-type-font-size-s); line-height: var(--semantic-type-line-height-s-single);
+  font-weight: var(--semantic-type-weight-medium);
+}
+
+/* ===========================================================================
+   STYLE = NAKED. For a Select that already sits inside a panel, a filter
+   dropdown being the case in hand: the panel is the surface, so a second
+   border inside it is one box too many. The focus ring stays, because a
+   borderless field still has to show focus.
+   =========================================================================== */
+.pw-select[data-style="naked"] .pw-select__field {
+  border-color: transparent;
+  background: transparent;
+}
+.pw-select[data-style="naked"]:not([data-disabled="true"]) .pw-select__field:hover {
+  background: var(--semantic-color-fill-action-selection-hover);
+  border-color: transparent;
+}
+.pw-select[data-style="naked"][data-force="active"] .pw-select__field,
+.pw-select[data-style="naked"] .pw-select__field:has(.pw-select__text:focus-visible),
+.pw-select[data-style="naked"][data-open="true"] .pw-select__field {
+  background: transparent;
+  border-color: transparent;
+  border-width: var(--semantic-layout-units-borderwidth-xthin);
+  box-shadow: 0 0 0 2.5px rgba(182, 198, 236, 0.5);
+}
+
+/* The panel a naked Select lives in, with the field pinned at its top and a
+   hairline between the field and the rows. */
+.panelbox {
+  background: var(--semantic-color-fill-surface-overlay);
+  border: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-static-neutral-base);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+  box-shadow: var(--elevation-overlay);
+  width: 300px; overflow: hidden;
+}
+.panelbox__search { padding: var(--semantic-layout-units-padding-xxxtight);
+  border-bottom: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-static-neutral-base); }
+.panelbox__rows { padding: var(--semantic-layout-units-padding-xxtight) var(--semantic-layout-units-padding-xxxtight); }
+.pw-rows { display: flex; flex-direction: column; gap: var(--semantic-layout-units-gap-tight); }
+
+/* The filter button a panel like that hangs from. */
+.filterbtn {
+  display: inline-flex; align-items: center; gap: var(--semantic-layout-units-gap-tight);
+  min-height: var(--semantic-accessibility-touch-target-aa);
+  padding: 7px 10px; font-family: inherit; font-size: 13px;
+  font-weight: var(--semantic-type-weight-medium); cursor: pointer;
+  color: var(--semantic-color-foreground-action-secondary-rest);
+  background: transparent;
+  border: var(--semantic-layout-units-borderwidth-base) solid var(--semantic-color-stroke-static-neutral-base);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+}
+.filterbtn .material-symbols-rounded { font-size: 16px; }
+.toolbar { display: flex; gap: var(--semantic-layout-units-gap-tight); align-items: center; flex-wrap: wrap; }
+
+/* A plausible product surface to sit the filters on, so the component can be
+   judged where it will actually live rather than on a blank page. */
+.screen {
+  background: var(--semantic-color-fill-surface-elevated);
+  border: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-static-neutral-base);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+  box-shadow: var(--elevation-overlay);
+  padding: 24px; max-width: 980px; padding-bottom: 320px;
+}
+.screen--tight { padding-bottom: 340px; }
+.screen__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.screen__title {
+  font-size: var(--semantic-type-font-size-r); line-height: var(--semantic-type-line-height-r-single);
+  font-weight: var(--semantic-type-weight-medium); color: var(--semantic-color-foreground-static-neutral-strong);
+  letter-spacing: var(--primitive-type-letter-spacing-wide);
+}
+.screen__meta {
+  margin-top: 2px; font-size: var(--semantic-type-font-size-xs); line-height: var(--semantic-type-line-height-xs-single);
+  color: var(--semantic-color-foreground-static-neutral-faint);
+}
+.screen__filters {
+  display: flex; gap: var(--semantic-layout-units-gap-tight); align-items: center;
+  flex-wrap: wrap; margin-bottom: 20px;
+}
+.filterfield { flex: 0 0 auto; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: var(--semantic-layout-units-gap-xxxtight);
+  min-height: var(--semantic-accessibility-touch-target-aa);
+  padding: 0 var(--semantic-layout-units-padding-tight);
+  font-family: inherit; font-size: var(--semantic-type-font-size-s);
+  font-weight: var(--semantic-type-weight-medium); cursor: pointer;
+  color: var(--semantic-color-foreground-static-negative-on-strong, #fff);
+  background: var(--primitive-color-brand-500); border: 0;
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+}
+.btn-primary .material-symbols-rounded { font-size: 18px; }
+.btn-quiet {
+  min-height: var(--semantic-accessibility-touch-target-aa);
+  padding: 0 var(--semantic-layout-units-padding-xtight);
+  font-family: inherit; font-size: var(--semantic-type-font-size-s);
+  font-weight: var(--semantic-type-weight-medium); cursor: pointer;
+  color: var(--semantic-color-foreground-action-secondary-rest);
+  background: transparent; border: 0;
+}
+.btn-quiet:hover { color: var(--semantic-color-foreground-action-secondary-hover); }
+
+/* The trigger for the row picker. Not a filter, so not a Select: a quiet
+   button that opens a panel. */
+.assignbtn {
+  display: inline-flex; align-items: center; gap: var(--semantic-layout-units-gap-xxxtight);
+  min-height: 36px; padding: 0 var(--semantic-layout-units-padding-xtight);
+  font-family: inherit; font-size: var(--semantic-type-font-size-s);
+  font-weight: var(--semantic-type-weight-medium); cursor: pointer;
+  color: var(--semantic-color-foreground-action-secondary-rest);
+  background: transparent;
+  border: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-static-neutral-base);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+}
+.assignbtn:hover {
+  background: var(--semantic-color-fill-action-selection-hover);
+  color: var(--semantic-color-foreground-action-secondary-hover);
+}
+.assignbtn[aria-expanded="true"] {
+  background: var(--semantic-color-fill-action-selection-hover);
+  color: var(--semantic-color-foreground-action-secondary-pressed);
+}
+.assignbtn .material-symbols-rounded { font-size: 18px; }
+.mini .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* A popover that actually hangs off its button, so the panel can be seen
+   covering what is under it rather than sitting politely beside it. */
+.pop { position: relative; display: inline-flex; }
+.pop__panel {
+  position: absolute; top: calc(100% + var(--semantic-layout-units-gap-xxxtight));
+  left: 0; z-index: 40; width: 300px;
+  animation: pwSelectIn var(--motion-duration-3) var(--motion-easing-standard);
+}
+.pop__panel--right { left: auto; right: 0; }
+.pop__panel[hidden] { display: none; }
+.pop > .filterbtn[aria-expanded="true"] {
+  background: var(--semantic-color-fill-action-selection-hover);
+  color: var(--semantic-color-foreground-action-secondary-pressed);
+}
+/* Enough room under the toolbar for an open panel to be seen in full. */
+.demo-stage { padding-bottom: 300px; }
+.stage-note { margin: 16px 0 0; font-size: 12px; color: var(--semantic-color-foreground-static-neutral-faint); }
+.demo-stage code, .sub code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em;
+  background: var(--semantic-color-fill-static-neutral-subtle);
+  padding: 1px 5px; border-radius: 4px;
+}
+
+.mini { border-collapse: collapse; font-size: var(--semantic-type-font-size-s); }
+.mini th, .mini td {
+  text-align: left; padding: var(--semantic-layout-units-padding-xtight) var(--semantic-layout-units-padding-tight);
+  border-bottom: var(--semantic-layout-units-borderwidth-xthin) solid var(--semantic-color-stroke-static-neutral-base);
+}
+.mini th {
+  font-weight: var(--semantic-type-weight-medium); font-size: var(--semantic-type-font-size-xs);
+  color: var(--semantic-color-foreground-static-neutral-faint);
+}
+.mini td { font-weight: var(--semantic-type-weight-medium); color: var(--semantic-color-foreground-static-neutral-strong); }
+.mini td.muted { font-weight: var(--semantic-type-weight-regular); color: var(--semantic-color-foreground-static-neutral-subtle); }
+
+/* ===========================================================================
+   THE EMPTY RESULT. Three ways of saying the same thing, to pick between, and
+   a fourth that carries an action in a SLOT so the consumer decides what the
+   way out is.
+   =========================================================================== */
+.pw-empty {
+  padding: var(--semantic-layout-units-padding-tight) var(--semantic-layout-units-padding-xtight);
+  font-size: var(--semantic-type-font-size-s); line-height: var(--semantic-type-line-height-s-single);
+}
+.pw-empty--a { font-weight: var(--semantic-type-weight-medium); color: var(--semantic-color-foreground-static-neutral-subtle); }
+.pw-empty--b { font-weight: var(--semantic-type-weight-regular); color: var(--semantic-color-foreground-static-neutral-subtle); }
+.pw-empty--c { display: flex; flex-direction: column; gap: var(--semantic-layout-units-gap-xxxtight); }
+.pw-empty--c .pw-empty__head { font-weight: var(--semantic-type-weight-medium); color: var(--semantic-color-foreground-static-neutral-strong); }
+.pw-empty--c .pw-empty__sub { font-size: var(--semantic-type-font-size-xs); line-height: var(--semantic-type-line-height-xs-single);
+  font-weight: var(--semantic-type-weight-regular); color: var(--semantic-color-foreground-static-neutral-subtle); }
+.pw-empty__slot { margin-top: var(--semantic-layout-units-gap-xxxtight); }
+
+/* Naked Primary, the button Pathway already has: transparent, brand text, a
+   subtle brand tint on hover, no border. Whatever goes in the slot is the
+   consumer's: this is one example of it, not the rule. */
+.btn-naked-primary {
+  display: inline-flex; align-items: center; gap: var(--semantic-layout-units-gap-xxxtight);
+  min-height: var(--semantic-accessibility-touch-target-aa);
+  padding: 0 var(--semantic-layout-units-padding-xxtight);
+  margin-left: calc(var(--semantic-layout-units-padding-xxtight) * -1);
+  border: none; background: transparent; cursor: pointer; font-family: inherit;
+  font-size: var(--semantic-type-font-size-s); line-height: var(--semantic-type-line-height-s-single);
+  font-weight: var(--semantic-type-weight-medium);
+  letter-spacing: var(--primitive-type-letter-spacing-wide);
+  color: var(--semantic-color-foreground-action-primary-on-subtle-rest);
+  border-radius: var(--semantic-layout-units-cornerradius-base);
+}
+.btn-naked-primary:hover { background: var(--semantic-color-fill-action-primary-subtle-hover);
+  color: var(--semantic-color-foreground-action-primary-on-subtle-hover); }
+.btn-naked-primary .material-symbols-rounded { font-size: 18px; }
+
+/* Option B for the open question: an error field whose text and icons go red
+   as well as its border. */
+.pw-select[data-invalid="true"][data-tinterror="true"] .pw-select__text,
+.pw-select[data-invalid="true"][data-tinterror="true"] .pw-select__lead,
+.pw-select[data-invalid="true"][data-tinterror="true"] .pw-select__trail {
+  color: var(--semantic-color-foreground-static-negative-on-subtle);
+}
+.pw-select[data-invalid="true"][data-tinterror="true"] .pw-select__text::placeholder {
+  color: var(--semantic-color-foreground-static-negative-on-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pw-select__field, .pw-select__panel { transition: none; animation: none; }
+}
+</style>
+</head>
+<body>
+
+<h1>Select</h1>
+<p class="sub">One component, two ways in: pick from the panel, or swap the leading icon to a magnifying glass and type to narrow it. Keyboard works throughout: Enter or Down to open, arrows to move, Enter to pick, Escape to close.</p>
+
+<h2>In a form</h2>
+<div class="card">
+  <div class="col">
+    <div id="s-fund"></div>
+    <div id="s-search"></div>
+    <div id="s-error"></div>
+  </div>
+</div>
+
+<h2>In a product filter bar</h2>
+<p class="sub">A filter in a toolbar <em>is</em> this component: a Select field, not a button that happens to open a menu. Four of them here, three picking from a list and one searching, over the table they filter. Everything is placeholder content; the structure is the point.</p>
+<div class="screen">
+  <div class="screen__head">
+    <div>
+      <div class="screen__title">Contributions</div>
+      <div class="screen__meta">1,284 gifts &middot; 1 Jan to 15 Oct 2026</div>
+    </div>
+    <button class="btn-primary" type="button">
+      <span class="material-symbols-rounded" aria-hidden="true">add</span>Record a gift
+    </button>
+  </div>
+
+  <div class="screen__filters">
+    <div class="filterfield" style="width:210px"><div id="fb-fund"></div></div>
+    <div class="filterfield" style="width:170px"><div id="fb-status"></div></div>
+    <div class="filterfield" style="width:180px"><div id="fb-date"></div></div>
+    <div class="filterfield" style="width:230px"><div id="fb-donor"></div></div>
+    <button class="btn-quiet" type="button">Clear all</button>
+  </div>
+
+  <table class="mini">
+    <thead>
+      <tr><th>Date</th><th>Donor</th><th>Fund</th><th>Method</th><th class="num">Amount</th><th>Assigned to</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="muted">14 Oct</td>
+        <td>Ana Perez</td>
+        <td>General Fund</td>
+        <td class="muted">Card</td>
+        <td class="num">$1,240.00</td>
+        <td>
+          <div class="pop">
+            <button class="assignbtn" id="pop-who-btn" type="button" aria-expanded="false" aria-haspopup="dialog">
+              <span class="material-symbols-rounded" aria-hidden="true">person_add</span>Assign
+            </button>
+            <div class="panelbox pop__panel pop__panel--right" id="pop-who-panel" hidden>
+              <div class="panelbox__search"><div id="who-search"></div></div>
+              <div class="panelbox__rows"><div id="who-rows"></div></div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr><td class="muted">14 Oct</td><td>Antonio Garcia</td><td>Building Fund</td><td class="muted">Bank transfer</td><td class="num">$500.00</td><td class="muted">Demi Wilkinson</td></tr>
+      <tr><td class="muted">13 Oct</td><td>Bilal Khan</td><td>Youth Ministry</td><td class="muted">Cash</td><td class="num">$75.00</td><td class="muted">Olivia Rhye</td></tr>
+      <tr><td class="muted">13 Oct</td><td>Caroline Mwangi</td><td>General Fund</td><td class="muted">Card</td><td class="num">$320.00</td><td class="muted">Demi Wilkinson</td></tr>
+    </tbody>
+  </table>
+  <p class="stage-note">Press a filter to open it. The Donor filter has its leading icon swapped to a magnifying glass, so typing narrows the rows in its panel.</p>
+</div>
+
+<h2>Naked, inside a popover</h2>
+<p class="sub">The one place the field is not the trigger: a picker opened from a table row. The panel is the surface, so the field inside it drops its border. It opens at rest, not focused: a search that sits lit up before anyone has touched it reads as broken. This is <code>Borderless=True</code> in the Figma set: a variant axis across all nine states and three sizes. It drops the resting neutral border and keeps every stroke that carries meaning, so Active, Active-Open and the three error states keep theirs.</p>
+<div class="screen screen--tight">
+  <p class="stage-note" style="margin:0 0 16px">Press <strong>Assign</strong> in the table above, or the one here.</p>
+  <div class="pop">
+    <button class="assignbtn" id="pop-who2-btn" type="button" aria-expanded="false" aria-haspopup="dialog">
+      <span class="material-symbols-rounded" aria-hidden="true">person_add</span>Assign
+    </button>
+    <div class="panelbox pop__panel" id="pop-who2-panel" hidden>
+      <div class="panelbox__search"><div id="who2-search"></div></div>
+      <div class="panelbox__rows"><div id="who2-rows"></div></div>
+    </div>
+  </div>
+</div>
+
+<h2>Outlined and unstyled, side by side</h2>
+<div class="row">
+  <div class="col"><div class="caption">Outlined, on a page</div><div id="sty-outlined"></div></div>
+  <div class="col"><div class="caption">Unstyled, inside a panel</div>
+    <div class="panelbox" style="width:280px"><div class="panelbox__search"><div id="sty-naked"></div></div></div>
+  </div>
+</div>
+
+<h2>Error: border only, or text and icons too</h2>
+<p class="sub">A is what Figma draws now: the border and the hint line go red, the placeholder and icons keep their usual colours. B reddens the text and the icons as well.</p>
+<div class="row">
+  <div class="col"><div class="caption">A, border and hint only, as built</div><div id="err-a"></div></div>
+  <div class="col"><div class="caption">B, text and icons red as well</div><div id="err-b"></div></div>
+</div>
+
+<h2>No matches: three ways of saying it</h2>
+<p class="sub">Same component, same query, three treatments. A is what is built today, 14 Medium on the quiet foreground, which reads like a row you could click. B drops to Regular so it reads as supporting text rather than an option. C gives it a strong first line and a supporting second.</p>
+<div class="row">
+  <div class="col"><div class="caption">A, 14 Medium, as built</div><div id="em-a"></div></div>
+  <div class="col"><div class="caption">B, 14 Regular</div><div id="em-b"></div></div>
+  <div class="col"><div class="caption">C, two lines</div><div id="em-c"></div></div>
+</div>
+
+<h2>No matches, with an action</h2>
+<p class="sub">The action sits in a slot under the message, so a consumer puts whatever belongs there and is not held to one action or one button style. Below it is a Naked Primary button, which is one example of what can go in the slot, not a rule about what must.</p>
+<div class="row">
+  <div class="col"><div class="caption">People picker, nothing found</div><div id="em-action"></div></div>
+  <div class="col"><div class="caption">Two lines, with the same slot</div><div id="em-action-c"></div></div>
+</div>
+
+<h2>Sizes</h2>
+<div class="row">
+  <div class="col"><div class="caption">XS, 30 tall</div><div id="s-xs"></div></div>
+  <div class="col"><div class="caption">Base, 36 tall</div><div id="s-base"></div></div>
+  <div class="col"><div class="caption">Large, 44 tall</div><div id="s-large"></div></div>
+</div>
+
+<h2>States</h2>
+<p class="sub">All nine, named as the Figma set names them: Rest, Hover, Active, Active-Open, Selection, Disabled, Error, Error-Hover, Error-Active. There is no Focus state. Active is the state and Active-Open is the same field with its panel down, so the two Focus variants the set used to carry have been folded away. Error-Hover and Error-Active keep an invalid field on the negative stroke ramp instead of handing it back to the neutral one.</p>
+<div class="row">
+  <div class="col"><div class="caption">Rest</div><div id="st-rest"></div></div>
+  <div class="col"><div class="caption">Hover</div><div id="st-hover"></div></div>
+  <div class="col"><div class="caption">Active, closed</div><div id="st-focus"></div></div>
+  <div class="col"><div class="caption">Active-Open</div><div id="st-active"></div></div>
+</div>
+<div class="row" style="margin-top:24px">
+  <div class="col"><div class="caption">Selection</div><div id="st-filled"></div></div>
+  <div class="col"><div class="caption">Disabled</div><div id="st-disabled"></div></div>
+  <div class="col"><div class="caption">Error</div><div id="st-error"></div></div>
+  <div class="col"><div class="caption">Error-Hover</div><div id="st-errorhover"></div></div>
+</div>
+<div class="row" style="margin-top:24px">
+  <div class="col"><div class="caption">Error-Active</div><div id="st-erroractive"></div></div>
+  <div class="col"></div>
+  <div class="col"></div>
+  <div class="col"></div>
+</div>
+
+<h2>Search and select</h2>
+<p class="sub">The same component. The leading icon is swapped to a magnifying glass, someone types in the field, and what they type narrows the rows in the open panel.</p>
+<div class="row">
+  <div class="col"><div class="caption">Typing, panel filtering</div><div id="ss-typing"></div></div>
+  <div class="col"><div class="caption">Typed, nothing matches</div><div id="ss-empty"></div></div>
+  <div class="col"><div class="caption">Nothing typed yet</div><div id="ss-idle"></div></div>
+</div>
+
+<script>
+const FUNDS = [
+  { id: "general",   label: "General Fund",    sub: "Unrestricted" },
+  { id: "building",  label: "Building Fund",   sub: "Restricted" },
+  { id: "missions",  label: "Missions",        sub: "Restricted" },
+  { id: "youth",     label: "Youth Ministry",  sub: "Restricted" },
+  { id: "benevolence", label: "Benevolence",   sub: "Restricted" },
+  { id: "memorial",  label: "Memorial Giving", sub: "Restricted", disabled: true },
+];
+
+const PEOPLE = [
+  { id: "aperez",  label: "Ana Perez",        sub: "Member" },
+  { id: "agarcia", label: "Antonio Garcia",   sub: "Member" },
+  { id: "bkhan",   label: "Bilal Khan",       sub: "Staff" },
+  { id: "cmwangi", label: "Caroline Mwangi",  sub: "Member" },
+];
+const ADD_PERSON = '<button class="btn-naked-primary" type="button"><span class="material-symbols-rounded" aria-hidden="true">add</span>Add new person</button>';
+
+/* Just the option rows, for a panel that carries its own field. Same row
+   markup and the same tokens as the rows inside a Select's own panel. */
+/* The rows on their own, for a panel that already carries its own field: the
+   naked Select at the top of a filter dropdown is the field, so a second
+   bordered field below it would be one too many. Same None row, same gap. */
+function Rows(mount, options, selectedId) {
+  const list = document.createElement("div");
+  list.setAttribute("role", "listbox");
+  list.setAttribute("aria-label", "Funds");
+  list.className = "pw-rows";
+  let sel = selectedId;
+  const draw = () => {
+  list.innerHTML = [{ id: "__none__", label: "None", none: true }].concat(options).map((x) => `
+    <button class="pw-select__option${x.none ? " pw-select__option--none" : ""}" type="button" role="option"
+      data-id="${x.id}" aria-selected="${x.none ? !sel : x.id === sel}" ${x.disabled ? 'aria-disabled="true"' : ""}>
+      <span>${x.label}</span>
+      <span class="pw-select__option-sub">${x.sub || ""}</span>
+      <span class="material-symbols-rounded" aria-hidden="true">check</span>
+    </button>`).join("");
+    list.querySelectorAll(".pw-select__option").forEach((b) => {
+      b.addEventListener("click", () => {
+        sel = b.dataset.id === "__none__" ? null : b.dataset.id;
+        draw();
+      });
+    });
+  };
+  draw();
+  mount.replaceChildren(list);
+  return list;
+}
+
+let uid = 0;
+
+function Select(mount, opts) {
+  const o = Object.assign({
+    size: "base", label: null, required: false, help: false,
+    placeholder: "Select an option", hint: null, invalid: false, disabled: false,
+    searchable: false, leadingIcon: null, value: null, options: FUNDS,
+    open: false, force: null, staticPanel: false, query: "",
+    style: "outlined",        // outlined | naked
+    tintError: false,         // does an error field also redden its text and icons
+    empty: "b",               // which empty-result treatment
+    emptyAction: null,        // HTML for the slot under the message, consumer's own
+  }, opts);
+
+  const id = "pwsel" + (++uid);
+  const root = document.createElement("div");
+  root.className = "pw-select";
+  root.dataset.size = o.size;
+  if (o.invalid) root.dataset.invalid = "true";
+  if (o.disabled) root.dataset.disabled = "true";
+  if (o.force) root.dataset.force = o.force;
+  if (o.staticPanel) root.dataset.static = "true";
+  root.dataset.style = o.style;
+  if (o.tintError) root.dataset.tinterror = "true";
+
+  const labelHtml = o.label ? `
+    <label class="pw-select__label" for="${id}">
+      ${o.label}${o.required ? '<span class="pw-select__req" aria-hidden="true">*</span><span class="sr-only"> required</span>' : ""}
+      ${o.help ? '<span class="material-symbols-rounded" aria-hidden="true">help</span>' : ""}
+    </label>` : "";
+
+  root.innerHTML = `
+    ${labelHtml}
+    <div class="pw-select__target">
+      <div class="pw-select__field">
+        <span class="pw-select__content">
+          ${o.leadingIcon ? `<span class="pw-select__lead"><span class="material-symbols-rounded" aria-hidden="true">${o.leadingIcon}</span></span>` : ""}
+          <span class="pw-select__textwrap">
+            <input class="pw-select__text" id="${id}" role="combobox" aria-expanded="false"
+              aria-controls="${id}-list" aria-autocomplete="${o.searchable ? "list" : "none"}"
+              ${o.hint ? `aria-describedby="${id}-hint"` : ""}
+              ${o.invalid ? 'aria-invalid="true"' : ""}
+              ${o.disabled ? "disabled" : ""}
+              ${o.searchable ? "" : "readonly"}
+              placeholder="${o.placeholder}" />
+          </span>
+          ${o.searchable
+            ? `<button class="pw-select__trail pw-select__clear" type="button" aria-label="Clear ${(o.label || "the field").toLowerCase()}"><span class="material-symbols-rounded" aria-hidden="true">cancel</span></button>`
+            : `<span class="pw-select__trail"><span class="material-symbols-rounded" aria-hidden="true">expand_more</span></span>`}
+        </span>
+      </div>
+      <div class="pw-select__panel" id="${id}-list" role="listbox" aria-label="${o.label || "Options"}" hidden></div>
+    </div>
+    ${o.hint ? `<div class="pw-select__hint" id="${id}-hint">${o.hint}</div>` : ""}
+  `;
+  mount.replaceChildren(root);
+
+  const field = root.querySelector(".pw-select__field");
+  const input = root.querySelector(".pw-select__text");
+  const panel = root.querySelector(".pw-select__panel");
+  let open = false, active = -1, chosen = o.value, query = o.query || "";
+
+  /* An optional Select needs a row that clears it, otherwise a value once
+     chosen can never be taken back and the field can never return to Rest.
+     It is suppressed while filtering, because "None" is not a search result,
+     and on a required field, where no value is not a legal answer. */
+  const NONE = { id: "__none__", label: "None", none: true };
+  const shown = () => {
+    const q = query.trim().toLowerCase();
+    if (!q) return o.required ? o.options : [NONE].concat(o.options);
+    return o.options.filter((x) => x.label.toLowerCase().includes(q));
+  };
+
+  /* THE EMPTY RESULT. The message is one line of supporting text, and anything
+     the consumer wants to offer as a way out goes in the slot under it: a
+     button, a link, nothing at all. The component does not decide. */
+  function emptyHtml(q) {
+    const slot = o.emptyAction ? `<div class="pw-select__empty__slot pw-empty__slot">${o.emptyAction}</div>` : "";
+    if (o.empty === "a") {
+      return `<div class="pw-empty pw-empty--a">No options match "${q}"${slot ? "" : ""}</div>${slot ? `<div class="pw-empty pw-empty--a" style="padding-top:0">${slot}</div>` : ""}`;
+    }
+    if (o.empty === "c") {
+      return `<div class="pw-empty pw-empty--c">
+        <span class="pw-empty__head">No matches for "${q}"</span>
+        <span class="pw-empty__sub">Check the spelling, or try a shorter search.</span>
+        ${slot}
+      </div>`;
+    }
+    return `<div class="pw-empty pw-empty--b">No options match "${q}"${slot ? "" : ""}</div>${slot ? `<div class="pw-empty pw-empty--b" style="padding-top:0">${slot}</div>` : ""}`;
+  }
+
+  function paint() {
+    const list = shown();
+    root.dataset.filled = chosen ? "true" : "false";
+    root.dataset.typed = input.value.trim() ? "true" : "false";
+    if (chosen && !open) {
+      const picked = o.options.find((x) => x.id === chosen);
+      input.value = picked ? picked.label : "";
+    } else if (!o.searchable) {
+      const picked = o.options.find((x) => x.id === chosen);
+      input.value = picked ? picked.label : "";
+    }
+    panel.innerHTML = list.length
+      ? list.map((x, i) => `
+          <button class="pw-select__option${x.none ? " pw-select__option--none" : ""}" type="button" role="option" data-id="${x.id}"
+            aria-selected="${x.none ? !chosen : x.id === chosen}" ${x.disabled ? 'aria-disabled="true"' : ""}
+            data-active="${i === active}">
+            <span>${x.label}</span>
+            <span class="pw-select__option-sub">${x.sub || ""}</span>
+            <span class="material-symbols-rounded" aria-hidden="true">check</span>
+          </button>`).join("")
+      : emptyHtml(query.trim());
+    panel.querySelectorAll(".pw-select__option").forEach((b) => {
+      b.addEventListener("click", () => { if (b.getAttribute("aria-disabled") !== "true") pick(b.dataset.id); });
+    });
+  }
+
+  function setOpen(next) {
+    open = next;
+    root.dataset.open = String(next);
+    panel.hidden = !next;
+    input.setAttribute("aria-expanded", String(next));
+    if (next) { active = Math.max(0, shown().findIndex((x) => x.id === chosen)); }
+    paint();
+  }
+  function pick(idv) {
+    chosen = idv === "__none__" ? null : idv;
+    query = "";
+    input.value = "";
+    setOpen(false);
+    input.focus();
+  }
+  function move(delta) {
+    const list = shown();
+    if (!list.length) return;
+    let i = active;
+    do { i = (i + delta + list.length) % list.length; } while (list[i].disabled && i !== active);
+    active = i; paint();
+  }
+
+  const clearBtn = root.querySelector(".pw-select__clear");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (o.disabled) return;
+      chosen = null;
+      query = "";
+      input.value = "";
+      active = 0;
+      setOpen(true);
+      input.focus();
+    });
+  }
+
+  field.addEventListener("click", (e) => {
+    if (o.disabled) return;
+    if (e.target.closest(".pw-select__clear")) return;
+    if (o.searchable) { input.focus(); setOpen(true); return; }
+    if (e.target.closest(".pw-select__option")) return;
+    setOpen(!open);
+  });
+  input.addEventListener("input", () => {
+    root.dataset.typed = input.value.trim() ? "true" : "false";
+    if (!o.searchable) return;
+    query = input.value; active = 0; setOpen(true);
+  });
+  input.addEventListener("keydown", (e) => {
+    if (o.disabled) return;
+    if (e.key === "Escape") { if (open) { e.stopPropagation(); setOpen(false); } return; }
+    if (e.key === "ArrowDown") { e.preventDefault(); open ? move(1) : setOpen(true); return; }
+    if (e.key === "ArrowUp") { e.preventDefault(); if (open) move(-1); return; }
+    if (e.key === "Home" && open) { e.preventDefault(); active = 0; paint(); return; }
+    if (e.key === "End" && open) { e.preventDefault(); active = shown().length - 1; paint(); return; }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!open) { setOpen(true); return; }
+      const list = shown();
+      if (list[active] && !list[active].disabled) pick(list[active].id);
+      return;
+    }
+    if ((e.key === " " || e.code === "Space") && !o.searchable) { e.preventDefault(); setOpen(!open); }
+  });
+  /* A grid example is a picture of a state, so it stays open. A real one closes
+     when you click away from it. */
+  if (!o.staticPanel) {
+    document.addEventListener("click", (e) => { if (open && !root.contains(e.target)) setOpen(false); });
+  }
+
+  if (o.query && o.searchable) input.value = o.query;
+  if (o.open) setOpen(true); else paint();
+  return root;
+}
+
+Select(document.getElementById("s-fund"), {
+  label: "Fund", required: true, help: true, leadingIcon: "filter_list",
+  hint: "Pick the fund this gift belongs to.", placeholder: "Select a fund",
+});
+Select(document.getElementById("s-search"), {
+  label: "Find a fund", searchable: true, leadingIcon: "search",
+  placeholder: "Search funds", hint: "Type to narrow the list.",
+});
+Select(document.getElementById("s-error"), {
+  label: "Designation", required: true, leadingIcon: "filter_list",
+  invalid: true, hint: "Pick a designation from the list.", placeholder: "Select a designation",
+});
+Select(document.getElementById("s-xs"), { size: "xs", leadingIcon: "filter_list", placeholder: "Select an option" });
+Select(document.getElementById("s-base"), { size: "base", leadingIcon: "filter_list", placeholder: "Select an option" });
+Select(document.getElementById("s-large"), { size: "large", leadingIcon: "filter_list", placeholder: "Select an option" });
+const base = { leadingIcon: "filter_list", placeholder: "Select an option",
+  label: "Fund", required: true, help: true, hint: "Pick the fund this gift belongs to." };
+Select(document.getElementById("st-rest"), Object.assign({}, base));
+Select(document.getElementById("st-hover"), Object.assign({}, base, { force: "hover" }));
+Select(document.getElementById("st-focus"), Object.assign({}, base, { force: "active" }));
+Select(document.getElementById("st-filled"), Object.assign({}, base, { force: "selection", value: "general" }));
+Select(document.getElementById("st-error"), Object.assign({}, base, { invalid: true, hint: "Pick a fund from the list." }));
+Select(document.getElementById("st-errorhover"), Object.assign({}, base, { invalid: true, force: "hover", hint: "Pick a fund from the list." }));
+Select(document.getElementById("st-erroractive"), Object.assign({}, base, { invalid: true, force: "active", hint: "Pick a fund from the list." }));
+Select(document.getElementById("st-disabled"), Object.assign({}, base, { disabled: true }));
+Select(document.getElementById("st-active"), Object.assign({}, base, { open: true, staticPanel: true, value: "general" }));
+
+Select(document.getElementById("ss-typing"), { searchable: true, leadingIcon: "search",
+  placeholder: "Search funds", query: "mis", open: true, staticPanel: true });
+Select(document.getElementById("ss-empty"), { searchable: true, leadingIcon: "search",
+  placeholder: "Search funds", query: "zzz", open: true, staticPanel: true });
+Select(document.getElementById("ss-idle"), { searchable: true, leadingIcon: "search",
+  placeholder: "Search funds" });
+
+/* In a filter panel: unstyled field pinned to the top, rows under it. */
+/* The filter bar. Each filter IS this component: three picking from a list,
+   one searching. Nothing bespoke, because a filter dropdown field is exactly
+   what the Select is for. */
+Select(document.getElementById("fb-fund"), {
+  leadingIcon: "filter_list", placeholder: "All funds", options: FUNDS });
+Select(document.getElementById("fb-status"), {
+  leadingIcon: "filter_list", placeholder: "Any status", options: [
+    { id: "posted", label: "Posted" },
+    { id: "pending", label: "Pending" },
+    { id: "failed", label: "Failed" },
+    { id: "refunded", label: "Refunded" },
+  ] });
+Select(document.getElementById("fb-date"), {
+  leadingIcon: "calendar_today", placeholder: "This year", options: [
+    { id: "7", label: "Last 7 days" },
+    { id: "30", label: "Last 30 days" },
+    { id: "qtd", label: "Quarter to date" },
+    { id: "ytd", label: "Year to date" },
+    { id: "custom", label: "Custom range" },
+  ] });
+Select(document.getElementById("fb-donor"), {
+  searchable: true, leadingIcon: "search", placeholder: "Any donor", options: PEOPLE });
+
+
+
+/* The picker in the row action: the same naked search and select, a smaller
+   panel around it, and people instead of funds. */
+Select(document.getElementById("who-search"), { searchable: true, style: "naked",
+  leadingIcon: "search", placeholder: "Search people", options: PEOPLE, staticPanel: false, open: false });
+Rows(document.getElementById("who-rows"), PEOPLE, null);
+Select(document.getElementById("who2-search"), { searchable: true, style: "naked",
+  leadingIcon: "search", placeholder: "Search people", options: PEOPLE });
+Rows(document.getElementById("who2-rows"), PEOPLE, null);
+
+/* Open on press, close on Escape, on a press outside, or on the button again.
+   Focus moves into the search as the panel opens, which is what makes the
+   searching mode usable from the keyboard. */
+function Popover(btnId, panelId, focusId) {
+  const btn = document.getElementById(btnId);
+  const panel = document.getElementById(panelId);
+  if (!btn || !panel) return;
+  /* The panel opens with the field at REST. Forcing focus into the search made
+     it sit in Active the whole time the popover was open, which reads as a
+     field already in use before anyone has touched it. Keyboard users reach it
+     with Tab, which is the first stop inside the panel. */
+  const setOpen = (next) => {
+    panel.hidden = !next;
+    btn.setAttribute("aria-expanded", String(next));
+  };
+  btn.addEventListener("click", (e) => { e.stopPropagation(); setOpen(panel.hidden); });
+  document.addEventListener("click", (e) => {
+    if (!panel.hidden && !panel.contains(e.target) && e.target !== btn) setOpen(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || panel.hidden) return;
+    // the Select inside swallows Escape first to close its own panel
+    if (document.activeElement && document.activeElement.closest(".pw-select[data-open=\"true\"]")) return;
+    setOpen(false);
+    btn.focus();
+  });
+}
+Popover("pop-who-btn", "pop-who-panel");
+Popover("pop-who2-btn", "pop-who2-panel");
+
+Select(document.getElementById("sty-outlined"), { leadingIcon: "filter_list", placeholder: "Select an option" });
+Select(document.getElementById("sty-naked"), { searchable: true, style: "naked",
+  leadingIcon: "search", placeholder: "Search funds" });
+
+/* Error, as built against Figma, versus error that tints its text and icons too. */
+Select(document.getElementById("err-a"), { leadingIcon: "filter_list", invalid: true,
+  hint: "Pick a fund from the list.", placeholder: "Select a fund" });
+Select(document.getElementById("err-b"), { leadingIcon: "filter_list", invalid: true, tintError: true,
+  hint: "Pick a fund from the list.", placeholder: "Select a fund" });
+
+/* The three empty-result treatments, same query. */
+["a", "b", "c"].forEach((k) => {
+  Select(document.getElementById("em-" + k), { searchable: true, leadingIcon: "search",
+    placeholder: "Search funds", query: "zzz", open: true, staticPanel: true, empty: k });
+});
+
+/* And with an action in the slot. */
+Select(document.getElementById("em-action"), { searchable: true, leadingIcon: "search",
+  placeholder: "Search people", options: PEOPLE, query: "Ana Gonzalez",
+  open: true, staticPanel: true, empty: "b", emptyAction: ADD_PERSON });
+Select(document.getElementById("em-action-c"), { searchable: true, leadingIcon: "search",
+  placeholder: "Search people", options: PEOPLE, query: "Ana Gonzalez",
+  open: true, staticPanel: true, empty: "c", emptyAction: ADD_PERSON });
+</script>
+</body>
+</html>
