@@ -10972,12 +10972,23 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
       '<div class="dep-hd-num"><div class="ins-ctx">'+ctx+'</div></div></div>';
   }
 
+  /* Enrolment aggregated by insurance type (over the full dataset), largest first , the glance signal. */
+  function insByType(w){var m={},order=[];insDataset(w).forEach(function(p){if(!m[p.type]){m[p.type]={type:p.type,enroll:0};order.push(p.type);}m[p.type].enroll+=p.enroll;});return order.map(function(k){return m[k];}).sort(function(a,b){return b.enroll-a.enroll;});}
+  /* Compact stacked share bar of enrolment by type: the "how is enrolment spread" signal, as a graphic
+     (glance discipline), amethyst chart ramp, precise counts deferred to the table + hover title. */
+  function insDistBar(w){
+    var types=insByType(w).filter(function(t){return t.enroll>0;}),tot=types.reduce(function(s,t){return s+t.enroll;},0);
+    if(tot<=0)return '';
+    var ramp=["--am-600","--am-400","--am-300","--am-200","--am-100"];
+    var segs=types.map(function(t,i){var pct=t.enroll/tot*100;return '<span class="ins-dist-seg" style="flex-basis:'+pct.toFixed(2)+'%;background:var('+ramp[Math.min(i,ramp.length-1)]+')" title="'+insEsc(t.type+": "+insNum(t.enroll)+" ("+Math.round(pct)+"%)")+'"></span>';}).join("");
+    return '<div class="ins-dist"><span class="ins-dist-bar" aria-hidden="true">'+segs+'</span><span class="sr-only">Enrolment by type: '+types.map(function(t){return t.type+" "+insNum(t.enroll);}).join(", ")+'.</span></div>';
+  }
   /* ---- Glance ------------------------------------------------------- */
   function insGlance(w){
-    var tot=insTotal(w),n=insPlanCount(w),lead=(w.insType&&w.insType!=="All")?insTypeLabel(w).toLowerCase():"all types";
+    var tot=insTotal(w),n=insPlanCount(w);
     return '<div class="kpi-row"><div class="kpi-num">'+
-      '<div class="dep-hd-kpigrp"><span class="metric-value">'+insNum(tot)+'</span><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span></div>'+
-      ''+
+      '<div class="dep-hd-kpigrp"><span class="kpi-eyebrow">Enrolled</span><span class="metric-value">'+insNum(tot)+'</span><span class="bank-pill">'+ICON("groups")+n+' plan'+(n===1?"":"s")+'</span></div>'+
+      insDistBar(w)+
     '</div></div>';
   }
 
