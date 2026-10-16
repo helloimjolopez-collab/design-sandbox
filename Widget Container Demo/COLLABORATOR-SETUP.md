@@ -2,7 +2,7 @@
 
 Active work happens on the **`phase-2`** branch. Your edits publish to the
 **phase-2 preview**:
-https://helloimjolopez-collab.github.io/design-sandbox/phase-2/Widget%20Container%20Demo/
+https://ministry-brands-llc.github.io/jolopez-collab-designsandbox/phase-2/Widget%20Container%20Demo/
 
 `main` is frozen and serves the original demo at the root URL — **do not edit `main`.**
 
@@ -23,7 +23,7 @@ one local file, and a watcher auto-pushes your change to the phase-2 preview.
 
 3. **Clone and switch to the `phase-2` branch:**
    ```bash
-   git clone https://github.com/helloimjolopez-collab/design-sandbox.git
+   git clone https://github.com/ministry-brands-llc/jolopez-collab-designsandbox.git
    cd design-sandbox
    git checkout phase-2
    ```
