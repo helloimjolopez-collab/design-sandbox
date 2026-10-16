@@ -10963,13 +10963,16 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
      line , NO big total here (the table's Total row owns it; avoids the
      redundant-total the old version had). The employees-and-dependents basis
      is stated exactly once, here. */
+  /* Row 1: type chip + view toggle. Row 2: the Enrolled KPI leads (canonical headline, not a prose
+     caption). The employees-and-dependents basis is a hover/focus tooltip on an info glyph, never a
+     sentence on the face (text ban). */
   function insHeader(w,mode){
-    var ctx;
-    if(mode==="loading"){ctx="Updating the enrolment breakdown…";}
-    else{var n=insPlanCount(w),lead=(w.insType&&w.insType!=="All")?insTypeLabel(w):"All insurance types";
-      ctx="Counts include employees and their dependents.";}
-    return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insTypeChip(w)+'<div class="dep-hd-toggle"></div></div>'+
-      '<div class="dep-hd-num"><div class="ins-ctx">'+ctx+'</div></div></div>';
+    var num;
+    if(mode==="loading"){num='<span class="sk" style="width:120px;height:26px;border-radius:6px"></span>';}
+    else{num='<span class="kpi-eyegrp"><span class="kpi-eyebrow">Enrolled</span><span class="metric-value">'+insNum(insTotal(w))+'</span></span>'+
+      '<span class="ins-basis" data-tip="Counts include employees and their dependents." data-tip-plain tabindex="0" role="img" aria-label="Counts include employees and their dependents">'+ICON("info")+'</span>';}
+    return '<div class="dep-hd ins-hd"><div class="dep-hd-top">'+insTypeChip(w)+'<div class="dep-hd-toggle">'+insViewToggle(w)+'</div></div>'+
+      '<div class="dep-hd-num"><div class="dep-hd-kpigrp ins-kpigrp">'+num+'</div></div></div>';
   }
 
   /* Enrolment aggregated by insurance type (over the full dataset), largest first , the glance signal. */
