@@ -307,6 +307,17 @@ h2 { font-size: 14px; font-weight: 600; margin: 32px 0 12px; letter-spacing: var
 .pw-select[data-typed="true"] .pw-select__clear,
 .pw-select[data-filled="true"] .pw-select__clear { display: flex; }
 .pw-select[data-disabled="true"] .pw-select__clear { display: none; }
+/* The hit area is the target, not the glyph. The glyph stays 12/14/16 to match
+   the chevron it replaces; an invisible extension carries the hit area out to
+   the AA touch target so the control is reachable on touch without changing
+   the field's layout by a single pixel. */
+.pw-select__clear { position: relative; }
+.pw-select__clear::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: var(--semantic-accessibility-touch-target-aa);
+  height: var(--semantic-accessibility-touch-target-aa);
+  transform: translate(-50%, -50%);
+}
 .pw-select__clear:focus-visible {
   outline: var(--semantic-layout-units-borderwidth-base) solid var(--semantic-color-stroke-focusring-base);
   outline-offset: 2px; border-radius: 2px;
