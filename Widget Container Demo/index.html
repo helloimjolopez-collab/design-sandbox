@@ -198,7 +198,9 @@
   .badge[data-size="small"]{font-size:var(--semantic-type-font-size-xxs);line-height:var(--semantic-type-line-height-xxs-single);--bdg-icon:11px;}
   .badge[data-size="medium"]{font-size:var(--semantic-type-font-size-xs);line-height:var(--semantic-type-line-height-xs-single);--bdg-icon:12px;}
   .badge[data-size="large"]{font-size:var(--semantic-type-font-size-s);line-height:var(--semantic-type-line-height-xs-single);--bdg-icon:14px;}
-  button.badge,a.badge,.badge[role="button"]{cursor:pointer;font-family:inherit;transition:filter var(--dur),box-shadow var(--dur),border-color var(--dur);}
+  button.badge,a.badge,.badge[role="button"]{position:relative;cursor:pointer;font-family:inherit;transition:filter var(--dur),box-shadow var(--dur),border-color var(--dur);}
+  /* WCAG 2.2 target size: badge labels run ~22px tall; an invisible hit area lifts the interactive ones to 24px without resizing the visible pill. */
+  button.badge::after,a.badge::after,.badge[role="button"]::after{content:"";position:absolute;top:50%;left:0;width:100%;height:24px;transform:translateY(-50%);}
   /* Interactive badge: clickability shown by hover + pressed states (shadow/tone only, never a rise). */
   button.badge:hover,a.badge:hover,.badge[role="button"]:hover{filter:brightness(0.96);box-shadow:var(--elevation-widget);}
   button.badge:active,a.badge:active,.badge[role="button"]:active{filter:brightness(0.92);box-shadow:none;}
