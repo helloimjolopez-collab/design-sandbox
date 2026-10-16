@@ -11215,13 +11215,25 @@ function apBadge(w){var od=apOverdueTotal(w);if(od>0){var n=apOverdueCount(w);re
     return '<div class="dep-hd ins-hd hd-kpitoggle"><div class="dep-hd-top">'+insFTypeChip(w)+'<div class="dep-hd-toggle">'+insFViewToggle(w)+'</div></div>'+
       '<div class="dep-hd-num">'+numInner+'</div></div>';
   }
+  /* Compact stacked share bar of enrolment by type , the glance-level "how is enrolment spread" signal
+     as a graphic (glance discipline), reusing the donut's type palette; precise counts defer to the
+     table/hover. */
+  function insFDistBar(w){
+    var rows=insFFiltered(w),groups={},order=[];
+    rows.forEach(function(p){if(!(p.type in groups)){groups[p.type]=0;order.push(p.type);}groups[p.type]+=p.enroll;});
+    var data=order.map(function(ty){return {type:ty,enroll:groups[ty]};}).filter(function(d){return d.enroll>0;}).sort(function(a,b){return b.enroll-a.enroll;});
+    var tot=data.reduce(function(s,d){return s+d.enroll;},0); if(tot<=0)return '';
+    var segs=data.map(function(d,i){var pct=d.enroll/tot*100;return '<span class="ins-dist-seg" style="flex-basis:'+pct.toFixed(2)+'%;background:'+INSF_PIE[i%INSF_PIE.length]+'" title="'+insFEsc(d.type+": "+insFNum(d.enroll)+" ("+Math.round(pct)+"%)")+'"></span>';}).join("");
+    return '<div class="ins-dist"><span class="ins-dist-bar" aria-hidden="true">'+segs+'</span><span class="sr-only">Enrolment by type: '+data.map(function(d){return d.type+" "+insFNum(d.enroll);}).join(", ")+'.</span></div>';
+  }
   function insFGlance(w){
     var tot=insFTotal(w),n=insFPlanCount(w);
     /* Glance carries the type filter at top (it drives the read and there is room), then Enrolled with
-       the plans badge inline. No cost badge (premium unconfirmed per the brief). */
+       the plans badge inline, then a compact by-type distribution bar as the at-a-glance signal. */
     return '<div class="kpi-row"><div class="gl-chiprow">'+insFTypeChip(w)+'</div><div class="kpi-num">'+
       '<span class="kpi-eyegrp"><span class="kpi-eyebrow">Enrolled</span><span class="ins-numrow"><span class="metric-value">'+insFNum(tot)+'</span>'+
       badge({status:"neutral",icon:"groups",text:n+' plan'+(n===1?"":"s")})+'</span></span>'+
+      insFDistBar(w)+
     '</div></div>';
   }
   function insFEmpty(w){
