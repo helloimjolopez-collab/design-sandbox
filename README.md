@@ -2,7 +2,7 @@
 
 Widget and dashboard prototypes, published to GitHub Pages and auto-deployed on save.
 
-**Live:** https://helloimjolopez-collab.github.io/design-sandbox/
+**Live:** https://ministry-brands-llc.github.io/jolopez-collab-designsandbox/
 
 ## What's here
 
@@ -22,4 +22,4 @@ repository** — renaming changes the Pages URL and breaks every link already sh
 The other demos, prototypes and audits that used to live here are now private Claude
 Artifacts, indexed from a single front page. The full original history of this repo,
 including everything removed, is archived privately at
-`helloimjolopez-collab/jo-design-sandbox`.
+`ministry-brands-llc/jolopez-collab-personalsandbox`.

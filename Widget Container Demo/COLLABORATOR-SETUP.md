@@ -1,7 +1,7 @@
 # Widget Container Demo — collaborator setup
 
 This demo is published at
-https://helloimjolopez-collab.github.io/design-sandbox/Widget%20Container%20Demo/
+https://ministry-brands-llc.github.io/jolopez-collab-designsandbox/Widget%20Container%20Demo/
 
 You edit it the same way the owner does: tell Claude what you want, Claude edits
 one local file, and a watcher auto-pushes your change to the live page. **No web
@@ -20,7 +20,7 @@ UI, no manual git.**
 
 3. **Clone the repo:**
    ```bash
-   git clone https://github.com/helloimjolopez-collab/design-sandbox.git
+   git clone https://github.com/ministry-brands-llc/jolopez-collab-designsandbox.git
    cd design-sandbox
    ```
 
